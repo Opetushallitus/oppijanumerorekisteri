@@ -2,3 +2,5 @@
 *.iml
 target/*
 oppijanumerorekisteri-service/target/*
+oppijanumerorekisteri-api/target/*
+oppijanumerorekisteri-domain/target/*
