@@ -13,6 +13,7 @@ public class TestController {
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public String test() {
+        logger.error("HELLLOOOUUU");
         return "Hello";
     }
 }
