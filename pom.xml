@@ -28,13 +28,24 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
-        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 
-        <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
-        <querydsl.version>3.7.4</querydsl.version>
+        <!-- library versions -->
         <spring-boot-log4j.version>1.3.7.RELEASE</spring-boot-log4j.version>
         <springfox.version>2.5.0</springfox.version>
+
+        <!-- buildversion.txt generation plugin -->
+        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+        <!-- javadoc generation plugin -->
+        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+
+        <!-- querydsl metadata generation plugin -->
+        <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
+        <querydsl.version>3.7.4</querydsl.version>
+
+        <!-- schema.ddl generation plugin -->
+        <jpa-schema-maven-plugin.version>0.2.0</jpa-schema-maven-plugin.version>
+        <hibernate-entitymanager.version>5.2.2.Final</hibernate-entitymanager.version>
+        <org.eclipse.persistence.jpa.version>2.6.4</org.eclipse.persistence.jpa.version>
     </properties>
 
     <dependencyManagement>
@@ -113,6 +124,7 @@ buildTtime=${maven.build.timestamp}
 
     <profiles>
         <profile>
+            <!-- Generate javadoc -->
             <id>javadoc</id>
             <build>
                 <plugins>

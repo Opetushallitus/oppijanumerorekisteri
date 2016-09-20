@@ -36,6 +36,7 @@
 
     <build>
         <plugins>
+            <!-- Generate querydsl metadata -->
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
@@ -76,6 +77,47 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <!-- Generate schema.ddl from which .html/.png presentation of domain model can be generated later -->
+            <plugin>
+                <groupId>io.github.divinespear</groupId>
+                <artifactId>jpa-schema-maven-plugin</artifactId>
+                <version>${jpa-schema-maven-plugin.version}</version>
+                <configuration>
+                    <scriptAction>create</scriptAction>
+                    <createOutputFileName>schema.ddl</createOutputFileName>
+                    <databaseProductName>PostgreSQL</databaseProductName>
+
+                    <databaseMajorVersion>9</databaseMajorVersion>
+                    <databaseMinorVersion>3</databaseMinorVersion>
+                    <format>true</format>
+                    <lineSeparator>LF</lineSeparator>
+                    <packageToScan>
+                        <scan>fi.vm.sade.oppijanumerorekisteri.models</scan>
+                    </packageToScan>
+                    <vendor>hibernate</vendor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.eclipse.persistence</groupId>
+                        <artifactId>org.eclipse.persistence.jpa</artifactId>
+                        <version>${org.eclipse.persistence.jpa.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-entitymanager</artifactId>
+                        <version>${hibernate-entitymanager.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
         </plugins>
     </build>
 </project>
