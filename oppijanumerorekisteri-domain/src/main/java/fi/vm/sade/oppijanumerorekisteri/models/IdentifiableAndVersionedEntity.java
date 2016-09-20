@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri;
+package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.Getter;
 import lombok.Setter;
