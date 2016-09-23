@@ -72,6 +72,21 @@
             <artifactId>spring-boot-starter-log4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-cas</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>velocity</artifactId>
+                    <groupId>velocity</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+        </dependency>
+
         <!-- DB / Domain -->
         <dependency>
             <groupId>org.postgresql</groupId>

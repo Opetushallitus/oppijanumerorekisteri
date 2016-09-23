@@ -4,7 +4,7 @@
 ### oppijanumerorekisteri
 Main
 ### oppijanumerorekisteri-api
-Jaettavat resurssit kuten DTO:t
+Rajapintojen palauttamat luokat kuten DTO:t ja enumeraatiot
 ### oppijanumerorekisteri-domain
 Domain model
 ### oppijanumerorekisteri-service
