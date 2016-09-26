@@ -21,8 +21,6 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
-import java.util.Collection;
-
 // Sample of using multiple <http> configs if needed
 // https://github.com/spring-projects/spring-security/blob/master/config/src/test/groovy/org/springframework/security/config/annotation/web/SampleWebSecurityConfigurerAdapterTests.groovy#L277
 
