@@ -15,8 +15,15 @@
     <name>oppijanumerorekisteri-service</name>
     <description>Oppijanumerorekisteri-service module</description>
 
-    <!-- Spring-boot -->
     <dependencies>
+        <!-- Internal -->
+        <dependency>
+            <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
+            <artifactId>oppijanumerorekisteri-domain</artifactId>
+            <version>${oppijanumerorekisteri.version}</version>
+        </dependency>
+
+        <!-- Spring-boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>

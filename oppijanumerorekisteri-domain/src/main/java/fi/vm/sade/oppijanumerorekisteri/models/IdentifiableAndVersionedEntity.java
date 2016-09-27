@@ -2,13 +2,16 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.Parameter;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
-@MappedSuperclass
-public class IdentifiableAndVersionedEntity {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class IdentifiableAndVersionedEntity extends AbstractPersistable<Long> {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue

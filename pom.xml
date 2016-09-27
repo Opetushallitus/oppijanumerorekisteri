@@ -5,7 +5,7 @@
 
     <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
     <artifactId>oppijanumerorekisteri</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${oppijanumerorekisteri.version}</version>
     <packaging>pom</packaging>
 
     <name>oppijanumerorekisteri</name>
@@ -25,6 +25,7 @@
     </modules>
 
     <properties>
+        <oppijanumerorekisteri.version>0.0.1-SNAPSHOT</oppijanumerorekisteri.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -32,15 +33,10 @@
         <!-- library versions -->
         <spring-boot-log4j.version>1.3.7.RELEASE</spring-boot-log4j.version>
         <springfox.version>2.5.0</springfox.version>
-
-        <!-- buildversion.txt generation plugin -->
-        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
-        <!-- javadoc generation plugin -->
-        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+        <!--<querydsl.version>${querydsl.version}</querydsl.version>-->
 
         <!-- querydsl metadata generation plugin -->
         <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
-        <querydsl.version>3.7.4</querydsl.version>
 
         <!-- schema.ddl generation plugin -->
         <jpa-schema-maven-plugin.version>0.2.0</jpa-schema-maven-plugin.version>
@@ -53,21 +49,21 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.16.10</version>
+                <version>${lombok.version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.9.4</version>
+                <version>${joda-time.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jadira.usertype</groupId>
-                <artifactId>usertype.jodatime</artifactId>
-                <version>2.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mysema.querydsl</groupId>
+                <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-jpa</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
                 <version>${querydsl.version}</version>
             </dependency>
             <dependency>
@@ -94,7 +90,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>write buildversion.txt</id>
@@ -131,7 +126,6 @@ buildTtime=${maven.build.timestamp}
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>install</phase>

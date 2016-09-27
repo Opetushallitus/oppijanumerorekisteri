@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations;
+package fi.vm.sade.oppijanumerorekisteri.configurations.DB;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

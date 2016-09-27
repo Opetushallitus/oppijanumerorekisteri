@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations;
+package fi.vm.sade.oppijanumerorekisteri.configurations.DB;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;

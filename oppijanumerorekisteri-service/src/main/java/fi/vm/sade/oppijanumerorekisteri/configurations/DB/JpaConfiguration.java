@@ -1,9 +1,11 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations;
+package fi.vm.sade.oppijanumerorekisteri.configurations.DB;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -20,6 +22,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableJpaRepositories(basePackages = {"fi.vm.sade.oppijanumerorekisteri.DAOs"})
+@ComponentScan(basePackages = "fi.vm.sade.oppijanumerorekisteri.models")
 @EntityScan({"fi.vm.sade.oppijanumerorekisteri.models"})
 @EnableTransactionManagement
 public class JpaConfiguration {
@@ -49,24 +52,26 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public JpaTransactionManager transactionManager() {
+    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(entityManagerFactoryBean().getObject());
+        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
         return jpaTransactionManager;
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactoryBean() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
         lef.setDataSource(dataSource);
         lef.setJpaVendorAdapter(jpaVendorAdapter());
         lef.setJpaDialect(jpaDialect());
         lef.setMappingResources();
+        // TODO: wft is this?
+        lef.setPackagesToScan("fi.vm.sade.oppijanumerorekisteri.models");
 
         // TODO: maybe create separate entityManagerFactoryBean() with embedded profile
         String hbm2ddl = env.getProperty("jpa.hibernate.ddl-auto");
         if(Arrays.asList(env.getActiveProfiles()).contains("embedded")) {
-            hbm2ddl = "CREATE";
+            hbm2ddl = "create";
         }
 
         Properties props = new Properties();

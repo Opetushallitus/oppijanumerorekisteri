@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.services.TestBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,18 @@ public class TestController {
 
     private Environment environment;
 
+    private TestBusinessService testBusinessService;
+
     @Autowired
-    public TestController(Environment environment) {
+    public TestController(Environment environment, TestBusinessService testBusinessService) {
         this.environment = environment;
+        this.testBusinessService = testBusinessService;
     }
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public String test() {
         logger.error("HELLLOOOUUU " + environment.getProperty("arpa"));
-        return "Hello";
+        long henkiloCount = testBusinessService.getHenkiloCountFromDb();
+        return "Hello " + Long.toString(henkiloCount);
     }
 }
