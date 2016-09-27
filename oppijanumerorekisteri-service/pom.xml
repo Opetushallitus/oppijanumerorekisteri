@@ -6,7 +6,7 @@
     <parent>
         <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
         <artifactId>oppijanumerorekisteri</artifactId>
-        <version>${oppijanumerorekisteri.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>oppijanumerorekisteri-service</artifactId>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
             <artifactId>oppijanumerorekisteri-domain</artifactId>
-            <version>${oppijanumerorekisteri.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- Spring-boot -->
@@ -78,6 +78,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j</artifactId>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-devtools</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.security</groupId>

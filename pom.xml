@@ -5,7 +5,7 @@
 
     <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
     <artifactId>oppijanumerorekisteri</artifactId>
-    <version>${oppijanumerorekisteri.version}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>oppijanumerorekisteri</name>
@@ -25,7 +25,6 @@
     </modules>
 
     <properties>
-        <oppijanumerorekisteri.version>0.0.1-SNAPSHOT</oppijanumerorekisteri.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
