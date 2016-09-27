@@ -12,11 +12,13 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic()
-        .and().csrf().disable()
+        .and()
+        .csrf().disable()
         .authorizeRequests()
             .antMatchers("/buildversion.txt").permitAll()
             .antMatchers("/swagger-ui.html").permitAll()
             .antMatchers("/swagger-resources/**").permitAll()
+            .antMatchers("/v2/api-docs").permitAll()
             .anyRequest().authenticated();
     }
 
