@@ -1,0 +1,27 @@
+#
+# TÄHÄN TIEDOSTOON EI SAA TALLENTAA YMPÄRISTÖKOHTAISIA ARVOJA MUUTOIN KUIN MUUTTUJINA!!!
+#
+# Tämä tiedosto toimii pohjana oph-configuration/common.properties tiedostolle,
+# joka asettaa tomcatin ympäristökohtaiset arvot.
+#
+
+# Aseta vähintään nämä ympäristökohtaiset arvot
+arpa=kuutio
+
+jpa.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+jpa.show-sql=true
+jpa.format-sql=true
+jpa.hibernate.implicit-naming-strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+jpa.hibernate.ddl-auto=validate
+jpa.connection.charset=utf-8
+jpa.current-session-context-class=org.springframework.orm.hibernate5.SpringSessionContext
+jpa.archive.autodetection=class,hbm
+#JTA thingie
+#jpa.transaction-manager-lookup-class=
+
+datasource.driver-class-name=org.postgresql.Driver
+datasource.url=jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{postgresql_oppijanumerorekisteri_port}}/authentication
+datasource.username={{postgresql_oppijanumerorekisteri_user}}
+datasource.password={{postgresql_oppijanumerorekisteri_password}}
+#datasource.test-while-idle=true
+#datasource.validation-query=SELECT 1

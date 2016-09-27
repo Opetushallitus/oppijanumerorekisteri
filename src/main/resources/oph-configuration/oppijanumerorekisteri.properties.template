@@ -1,8 +1,0 @@
-#
-# TÄHÄN TIEDOSTOON EI SAA TALLENTAA YMPÄRISTÖKOHTAISIA ARVOJA MUUTOIN KUIN MUUTTUJINA!!!
-#
-# Tämä tiedosto toimii pohjana oph-configuration/common.properties tiedostolle,
-# joka asettaa tomcatin ympäristökohtaiset arvot.
-#
-
-# Aseta vähintään nämä ympäristökohtaiset arvot

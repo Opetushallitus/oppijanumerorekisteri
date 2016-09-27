@@ -6,7 +6,7 @@
     <parent>
         <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
         <artifactId>oppijanumerorekisteri</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${oppijanumerorekisteri.version}</version>
     </parent>
 
     <artifactId>oppijanumerorekisteri-service</artifactId>
