@@ -13,5 +13,5 @@ Palvelinpuoli
 ## Ajaminen lokaalisti
 1) Hae `oppijanumerorekisteri-service.properties`-tiedosto luokalta (nimellä `common.properties`) ja vie se kotihakemistosi `oph-configuration`-kansioon.
 2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
-3) Aja projekti lokaalisti `spring-boot:run -Dspring.profiles.active=dev`
+3) Aja projekti lokaalisti `mvn spring-boot:run -Dspring.profiles.active=dev`
 
