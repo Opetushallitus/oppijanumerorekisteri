@@ -22,19 +22,19 @@ jpa:
 
 datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{postgresql_oppijanumerorekisteri_port}}/authentication
-    username: {{postgresql_oppijanumerorekisteri_user}}
-    password: {{postgresql_oppijanumerorekisteri_password}}
+    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
+    username: {{postgresql_user}}
+    password: {{postgresql_pass}}
 #datasource.test-while-idle=true
 #datasource.validation-query=SELECT 1
 cas:
     ldap:
-        url: ldap\://{{host.ldap}}/dc\=opintopolku,dc\=fi
-        managed-dn: {{ldap.manager.userdn}}
+        url: ldap\://{{host_ldap}}/dc\=opintopolku,dc\=fi
+        managed-dn: {{ldap_manager_userdn}}
         password: {{ldap_manager_password}}
         user-search-base: ou\=people
         user-search-filter: (|(mail\={0})(uid\={0}))
-    service: https\://{{host.virkailija}}/organisaatio-service
+    service: https\://{{host_virkailija}}/organisaatio-service
     send-renew: false
     key: caskey
-    url: https\://{{host.cas}}/cas
+    url: https\://{{host_cas}}/cas
