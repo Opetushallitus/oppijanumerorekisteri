@@ -24,9 +24,8 @@ public class TestController {
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public String test() {
-        logger.error("HELLLOOOUUU ");
+        logger.error("HELLLOOOUUU");
         long henkiloCount = testBusinessService.getHenkiloCountFromDb();
-        logger.error(Long.toString(henkiloCount));
         return "Hello " + Long.toString(henkiloCount);
     }
 }

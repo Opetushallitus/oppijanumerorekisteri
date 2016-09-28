@@ -27,3 +27,14 @@ datasource:
     password: {{postgresql_oppijanumerorekisteri_password}}
 #datasource.test-while-idle=true
 #datasource.validation-query=SELECT 1
+cas:
+    ldap:
+        url: ldap\://{{host.ldap}}/dc\=opintopolku,dc\=fi
+        managed-dn: {{ldap.manager.userdn}}
+        password: {{ldap_manager_password}}
+        user-search-base: ou\=people
+        user-search-filter: (|(mail\={0})(uid\={0}))
+    service: https\://{{host.virkailija}}/organisaatio-service
+    send-renew: false
+    key: caskey
+    url: https\://{{host.cas}}/cas

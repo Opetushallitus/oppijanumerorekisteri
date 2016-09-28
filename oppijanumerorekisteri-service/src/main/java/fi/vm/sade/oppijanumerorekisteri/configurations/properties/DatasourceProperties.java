@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "datasource")
+@ConfigurationProperties(prefix = "datasource", ignoreUnknownFields = false, ignoreInvalidFields = false)
 public class DatasourceProperties {
     private String driverClassName;
     private String url;

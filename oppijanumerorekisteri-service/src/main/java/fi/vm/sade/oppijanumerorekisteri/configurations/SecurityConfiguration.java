@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -29,12 +31,19 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 @EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private CasProperties casProperties;
+
+    @Autowired
+    public SecurityConfiguration(CasProperties casProperties) {
+        this.casProperties = casProperties;
+    }
 
     @Bean
     public ServiceProperties serviceProperties() {
         ServiceProperties serviceProperties = new ServiceProperties();
-        serviceProperties.setService("https://localhost:8443/cas-sample/j_spring_cas_security_check");
-        serviceProperties.setSendRenew(false);
+        serviceProperties.setService(casProperties.getService() + "/j_spring_cas_security_check");
+        serviceProperties.setSendRenew(casProperties.getSendRenew());
+        serviceProperties.setAuthenticateAllArtifacts(true);
         return serviceProperties;
     }
 
@@ -48,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         casAuthenticationProvider.setAuthenticationUserDetailsService(authenticationUserDetailsService());
         casAuthenticationProvider.setServiceProperties(serviceProperties());
         casAuthenticationProvider.setTicketValidator(cas20ServiceTicketValidator());
-        casAuthenticationProvider.setKey("an_id_for_this_auth_provider_only");
+        casAuthenticationProvider.setKey(casProperties.getKey());
         return casAuthenticationProvider;
     }
 
@@ -59,9 +68,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public LdapContextSource ldapContextSource() {
         LdapContextSource ldapContextSource = new LdapContextSource();
-        ldapContextSource.setUrl("${ldap.url.with.base}");
-        ldapContextSource.setUserDn("${ldap.manager-dn}"); // Correct?
-        ldapContextSource.setPassword("${ldap.manager-password}");
+        ldapContextSource.setUrl(casProperties.getLdap().getUrl());
+        ldapContextSource.setUserDn(casProperties.getLdap().getManagedDn());
+        ldapContextSource.setPassword(casProperties.getLdap().getPassword());
         return ldapContextSource;
     }
 
@@ -76,8 +85,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public LdapUserDetailsService ldapUserDetailsService() {
-        FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch("${cas.user-search-base}",
-                "${cas.user-search-filter}", ldapContextSource());
+        FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(casProperties.getLdap().getUserSearchBase(),
+                casProperties.getLdap().getUserSearchFilter(), ldapContextSource());
         LdapUserDetailsService ldapUserDetailsService = new LdapUserDetailsService(userSearch);
         ldapUserDetailsService.setUserDetailsMapper(userDetailsContextMapper());
         return ldapUserDetailsService;
@@ -89,19 +98,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 -> ldapUserDetailsService().loadUserByUsername(casAssertionAuthenticationToken.getName()));
     }
 
+    // Tarvitaanko proxyCallbackUrl, proxyGrantingTicketStorage tai acceptAnyProxy täällä?
     @Bean
     public Cas20ServiceTicketValidator cas20ServiceTicketValidator() {
-        return new Cas20ServiceTicketValidator("https://localhost:9443/cas");
+        return new Cas20ServiceTicketValidator(casProperties.getUrl());
     }
 
     //
     // CAS filter
     //
 
+    // proxyGrantingTicketStorage tai proxyReceptorUrl tarvitaanko?
     @Bean
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
         CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
         casAuthenticationFilter.setAuthenticationManager(authenticationManager());
+        casAuthenticationFilter.setServiceProperties(serviceProperties());
+        casAuthenticationFilter.setFilterProcessesUrl("/j_spring_cas_security_check");
         return casAuthenticationFilter;
     }
 
@@ -112,7 +125,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
         CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
-        casAuthenticationEntryPoint.setLoginUrl("https://localhost:9443/cas/login");
+        casAuthenticationEntryPoint.setLoginUrl(casProperties.getUrl() + "/login");
         casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
         return casAuthenticationEntryPoint;
     }
