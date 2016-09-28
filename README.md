@@ -17,4 +17,7 @@ Palvelinpuoli
 
 IntelliJ ei osaa sulkea spring-boot:run ajettua tomcattia oikein. Kannattaa siis tehdä spring-boot ajokonfiguraatio `OppijanumerorekisteriServiceApplication.java`-tiedostolle seuraavilla VM Options:lla `-Dspring.profiles.active=dev -Dspring.config.location=C:\Users\pryhanen\oph-configuration\oppijanumerorekisteri.yml`
 
-Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla komentorivillä.
+Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla olevan esimerkin tavoin suoraan javan kautta: 
+
+`java -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\pryhanen\oph-configuration\oppijanumerorekisteri.yml`
+
