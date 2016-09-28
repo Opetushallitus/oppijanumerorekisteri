@@ -34,7 +34,7 @@ cas:
         password: {{ldap_manager_password}}
         user-search-base: ou\=people
         user-search-filter: (|(mail\={0})(uid\={0}))
-    service: https\://{{host_virkailija}}/organisaatio-service
+    service: https\://{{host_virkailija}}/oppijanumerorekisteri-service
     send-renew: false
     key: caskey
     url: https\://{{host_cas}}/cas
