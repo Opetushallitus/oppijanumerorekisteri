@@ -14,20 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Environment environment;
 
     private TestBusinessService testBusinessService;
 
     @Autowired
-    public TestController(Environment environment, TestBusinessService testBusinessService) {
-        this.environment = environment;
+    public TestController(TestBusinessService testBusinessService) {
         this.testBusinessService = testBusinessService;
     }
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public String test() {
-        logger.error("HELLLOOOUUU " + environment.getProperty("arpa"));
+        logger.error("HELLLOOOUUU ");
         long henkiloCount = testBusinessService.getHenkiloCountFromDb();
+        logger.error(Long.toString(henkiloCount));
         return "Hello " + Long.toString(henkiloCount);
     }
 }
