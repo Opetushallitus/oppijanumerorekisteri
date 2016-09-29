@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.ldap.authentication.DefaultValuesAuthenticationSourceDecorator;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
@@ -69,9 +71,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public LdapContextSource ldapContextSource() {
         LdapContextSource ldapContextSource = new LdapContextSource();
         ldapContextSource.setUrl(casProperties.getLdap().getUrl());
-        ldapContextSource.setUserDn(casProperties.getLdap().getManagedDn());
-        ldapContextSource.setPassword(casProperties.getLdap().getPassword());
+        ldapContextSource.setAuthenticationSource(authenticationSource());
         return ldapContextSource;
+    }
+
+    @Bean
+    DefaultValuesAuthenticationSourceDecorator authenticationSource() {
+        DefaultValuesAuthenticationSourceDecorator decorator = new DefaultValuesAuthenticationSourceDecorator();
+        decorator.setDefaultUser(casProperties.getLdap().getManagedDn());
+        decorator.setDefaultPassword(casProperties.getLdap().getPassword());
+        decorator.setTarget(springSecurityAuthenticationSource());
+        return decorator;
+    }
+
+    @Bean
+    SpringSecurityAuthenticationSource springSecurityAuthenticationSource() {
+        return new SpringSecurityAuthenticationSource();
     }
 
     // TODO: https://github.com/Opetushallitus/generic/blob/7680b845b932239d90474fd21dfe08306acf393a/generic-common/src/main/java/fi/vm/sade/security/CustomUserDetailsMapper.java
@@ -80,7 +95,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         LdapUserDetailsMapper ldapUserDetailsMapper = new LdapUserDetailsMapper();
         ldapUserDetailsMapper.setRolePrefix("ROLE_");
         ldapUserDetailsMapper.setConvertToUpperCase(true);
-        return  ldapUserDetailsMapper;
+        return ldapUserDetailsMapper;
     }
 
     @Bean

@@ -31,9 +31,9 @@ cas:
     url: ldap://{{host_ldap}}/dc=opintopolku,dc=fi
     managed-dn: {{ldap_manager_userdn}}
     password: {{ldap_manager_password}}
-    user-search-base: ou\=people
-    user-search-filter: (|(mail\={0})(uid\={0}))
+    user-search-base: ou=People
+    user-search-filter: (|(mail={0})(uid={0}))
   service: https://{{host_virkailija}}/oppijanumerorekisteri-service
   send-renew: false
-  key: caskey
+  key: oppijanumerorekisteri-service
   url: https://{{host_cas}}/cas
