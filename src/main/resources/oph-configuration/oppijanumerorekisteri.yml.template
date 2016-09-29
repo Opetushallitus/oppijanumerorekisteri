@@ -28,7 +28,7 @@ datasource:
 
 cas:
   ldap:
-    url: ldap://{{host_ldap}}/dc\=opintopolku,dc\=fi
+    url: ldap://{{host_ldap}}/dc=opintopolku,dc=fi
     managed-dn: {{ldap_manager_userdn}}
     password: {{ldap_manager_password}}
     user-search-base: ou\=people
