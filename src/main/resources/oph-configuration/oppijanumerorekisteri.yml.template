@@ -8,33 +8,32 @@
 # Aseta vähintään nämä ympäristökohtaiset arvot
 
 jpa:
-    hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-        ddl-auto: validate
-    show-sql: true
-    format-sql: true
-    connection:
-        charset: utf-8
-    current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
-    archive:
-        autodetection: class,hbm
+  hibernate:
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+    implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+    ddl-auto: validate
+  show-sql: true
+  format-sql: true
+  connection:
+    charset: utf-8
+  current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
+  archive:
+    autodetection: class,hbm
 
 datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
-    username: {{postgresql_user}}
-    password: {{postgresql_pass}}
-#datasource.test-while-idle=true
-#datasource.validation-query=SELECT 1
+  driver-class-name: org.postgresql.Driver
+  url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
+  username: {{postgresql_user}}
+  password: {{postgresql_pass}}
+
 cas:
-    ldap:
-        url: ldap\://{{host_ldap}}/dc\=opintopolku,dc\=fi
-        managed-dn: {{ldap_manager_userdn}}
-        password: {{ldap_manager_password}}
-        user-search-base: ou\=people
-        user-search-filter: (|(mail\={0})(uid\={0}))
-    service: https\://{{host_virkailija}}/oppijanumerorekisteri-service
-    send-renew: false
-    key: caskey
-    url: https\://{{host_cas}}/cas
+  ldap:
+    url: ldap://{{host_ldap}}/dc\=opintopolku,dc\=fi
+    managed-dn: {{ldap_manager_userdn}}
+    password: {{ldap_manager_password}}
+    user-search-base: ou\=people
+    user-search-filter: (|(mail\={0})(uid\={0}))
+  service: https://{{host_virkailija}}/oppijanumerorekisteri-service
+  send-renew: false
+  key: caskey
+  url: https://{{host_cas}}/cas
