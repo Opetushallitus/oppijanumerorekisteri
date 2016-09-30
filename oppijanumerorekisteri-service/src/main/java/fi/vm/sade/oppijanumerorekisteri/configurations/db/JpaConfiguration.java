@@ -3,7 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.configurations.db;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.JpaProperties;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -11,8 +13,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.jpa.JpaDialect;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
@@ -57,9 +59,17 @@ public class JpaConfiguration {
     }
 
     @Bean
-    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(entityManagerFactory);
+    public SessionFactory sessionFactory(EntityManagerFactory entityManagerFactory) {
+        if(entityManagerFactory.unwrap(SessionFactory.class) == null) {
+            throw new NullPointerException("factory is not a hibernate factory");
+        }
+        return entityManagerFactory.unwrap(SessionFactory.class);
+    }
+
+    @Bean
+    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+        HibernateTransactionManager jpaTransactionManager = new HibernateTransactionManager();
+        jpaTransactionManager.setSessionFactory(sessionFactory);
         return jpaTransactionManager;
     }
 

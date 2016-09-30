@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ public class HenkiloController {
     }
 
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
+    @Transactional
     public Boolean hasHetu() {
         // get oid from security context
         return oppijanumerorekisteriBusinessService.getHasHetu(getCurrentUserOid());

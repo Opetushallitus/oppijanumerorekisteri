@@ -1,3 +1,2 @@
 server:
   contextPath: /oppijanumerorekisteri-service
-  port: 8180
