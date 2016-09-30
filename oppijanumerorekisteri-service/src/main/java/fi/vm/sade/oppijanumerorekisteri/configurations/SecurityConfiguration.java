@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
+import fi.vm.sade.authentication.ldap.CustomUserDetailsMapper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,10 +90,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new SpringSecurityAuthenticationSource();
     }
 
-    // TODO: https://github.com/Opetushallitus/generic/blob/7680b845b932239d90474fd21dfe08306acf393a/generic-common/src/main/java/fi/vm/sade/security/CustomUserDetailsMapper.java
     @Bean
     public UserDetailsContextMapper userDetailsContextMapper() {
-        LdapUserDetailsMapper ldapUserDetailsMapper = new LdapUserDetailsMapper();
+        CustomUserDetailsMapper ldapUserDetailsMapper = new CustomUserDetailsMapper();
         ldapUserDetailsMapper.setRolePrefix("ROLE_");
         ldapUserDetailsMapper.setConvertToUpperCase(true);
         return ldapUserDetailsMapper;
@@ -147,16 +147,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilter(casAuthenticationFilter())
-        .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint())
-        .and()
-        .csrf().disable()
-        .authorizeRequests()
-            .antMatchers("/buildversion.txt").permitAll()
-            .antMatchers("/swagger-ui.html").permitAll()
-            .antMatchers("/swagger-resources/**").permitAll()
-            .antMatchers("/v2/api-docs").permitAll()
-            .anyRequest().authenticated();
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                    .antMatchers("/buildversion.txt").permitAll()
+                    .antMatchers("/swagger-ui.html").permitAll()
+                    .antMatchers("/swagger-resources/**").permitAll()
+                    .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
+                    .antMatchers("/v2/api-docs").permitAll()
+                    .anyRequest().authenticated()
+                .and()
+                .addFilter(casAuthenticationFilter())
+                .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint());
     }
 
     @Override
