@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.DAOs.TestDao;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

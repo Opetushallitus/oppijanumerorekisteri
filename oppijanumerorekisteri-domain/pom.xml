@@ -41,31 +41,14 @@
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
                 <version>${apt-maven-plugin.version}</version>
-                <configuration>
-                    <logOnlyOnError>true</logOnlyOnError>
-                    <processors>
-                        <processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>
-                    </processors>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>sources</id>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>process</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/generated-sources/java/qclasses</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-sources</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>test-process</goal>
-                        </goals>
-                        <configuration>
-                            <testOutputDirectory>target/generated-test-sources/java/test-qclasses</testOutputDirectory>
+                            <outputDirectory>target/generated-sources/java</outputDirectory>
+                            <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
                         </configuration>
                     </execution>
                 </executions>

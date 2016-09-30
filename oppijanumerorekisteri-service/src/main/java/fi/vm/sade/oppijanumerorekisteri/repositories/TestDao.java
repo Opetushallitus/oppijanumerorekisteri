@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.DAOs;
+package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

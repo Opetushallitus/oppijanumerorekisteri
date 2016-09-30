@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations.DB;
+package fi.vm.sade.oppijanumerorekisteri.configurations.db;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 @Configuration
-@EnableJpaRepositories(basePackages = {"fi.vm.sade.oppijanumerorekisteri.DAOs"})
+@EnableJpaRepositories(basePackages = {"fi.vm.sade.oppijanumerorekisteri.repositories"})
 @ComponentScan(basePackages = "fi.vm.sade.oppijanumerorekisteri.models")
 @EntityScan({"fi.vm.sade.oppijanumerorekisteri.models"})
 @EnableTransactionManagement

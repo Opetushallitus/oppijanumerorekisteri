@@ -14,10 +14,12 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private String oidHenkilo;
 
-    @Column(name = "passivoitu", nullable = false)
+    private String hetu;
+
+    @Column(nullable = false)
     private boolean passivoitu;
 
-    @Column(name = "henkiloTyyppi", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private HenkiloTyyppi henkiloTyyppi;
 
