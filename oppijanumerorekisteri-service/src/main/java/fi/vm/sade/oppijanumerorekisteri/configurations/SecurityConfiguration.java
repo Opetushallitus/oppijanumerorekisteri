@@ -22,12 +22,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-
-// Sample of using multiple <http> configs if needed
-// https://github.com/spring-projects/spring-security/blob/master/config/src/test/groovy/org/springframework/security/config/annotation/web/SampleWebSecurityConfigurerAdapterTests.groovy#L277
 
 @Profile("!dev")
 @Configuration
@@ -113,7 +109,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 -> ldapUserDetailsService().loadUserByUsername(casAssertionAuthenticationToken.getName()));
     }
 
-    // Tarvitaanko proxyCallbackUrl, proxyGrantingTicketStorage tai acceptAnyProxy täällä?
     @Bean
     public Cas20ServiceTicketValidator cas20ServiceTicketValidator() {
         return new Cas20ServiceTicketValidator(casProperties.getUrl());
@@ -123,7 +118,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     // CAS filter
     //
 
-    // proxyGrantingTicketStorage tai proxyReceptorUrl tarvitaanko?
     @Bean
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
         CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();

@@ -1,28 +1,25 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
-import com.querydsl.jpa.hibernate.HibernateQueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Transactional
 public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Autowired
-    public HenkiloRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    private HibernateQueryFactory getHibernateQueryFactory() {
-        return new HibernateQueryFactory(this.sessionFactory.getCurrentSession());
+    private JPAQueryFactory getHibernateQueryFactory() {
+        return new JPAQueryFactory(this.entityManager);
     }
 
     @Override
     public String getHetuByOid(String henkiloOid) {
-        HibernateQueryFactory hibernateQueryFactory = this.getHibernateQueryFactory();
+        JPAQueryFactory hibernateQueryFactory = this.getHibernateQueryFactory();
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
         return hibernateQueryFactory.selectFrom(qHenkilo).select(qHenkilo.hetu)

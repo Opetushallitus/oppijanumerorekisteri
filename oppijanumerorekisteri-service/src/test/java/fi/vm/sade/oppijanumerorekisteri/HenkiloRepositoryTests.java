@@ -3,18 +3,17 @@ package fi.vm.sade.oppijanumerorekisteri;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@ActiveProfiles({"embedded"})
 @RunWith(SpringRunner.class)
-@SpringBootTest
-public class OppijanumerorekisteriServiceApplicationTests {
+@DataJpaTest
+public class HenkiloRepositoryTests {
 
-    @Ignore
     @Test
-    public void contextLoads() {
+    public void jpaContextLoads() {
     }
 
 }

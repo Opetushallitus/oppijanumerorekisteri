@@ -21,3 +21,17 @@ Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla 
 
 `java -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\pryhanen\oph-configuration\oppijanumerorekisteri.yml`
 
+## Lokaalin CAS palvelimen kanssa
+1) Käännä authentication projecti `mvn clean package`
+2) Kopioi `cas/target/cas-9.3-SNAPSHOT.war` tomcatin oletuskansioon `webapps` tai määrittämääsi kansioon ja uudelleennimeä se `cas.war`
+3) Aja tomcat `startup.bat` / `startup.sh`
+4) Muuta oppijanumerorekisterin lokaali konfiguraatiosi alla olevat kentät
+```yaml
+cas:
+  service: http://localhost:8180/oppijanumerorekisteri-service
+  url: http://localhost:8080/cas
+server:
+  port: 8180
+```
+5) Aja oppijanumerorekisteri
+
