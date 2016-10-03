@@ -23,7 +23,7 @@ public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
         return hibernateQueryFactory.selectFrom(qHenkilo).select(qHenkilo.hetu)
-                .where(qHenkilo.oidHenkilo.eq(henkiloOid))
+                .where(qHenkilo.oidhenkilo.eq(henkiloOid))
                 .fetchOne();
     }
 }

@@ -39,9 +39,9 @@ public class Kayttajatiedot extends IdentifiableAndVersionedEntity {
     /**
      * Can be used to invalidate password for being too old
      */
-    @Column(name = "createdAt")
+    @Column(name = "createdat")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date createdat;
 
     /**
      * Manually invalidated password
@@ -54,7 +54,7 @@ public class Kayttajatiedot extends IdentifiableAndVersionedEntity {
         return "Kayttajatiedot{" +
                 "username='" + username + '\'' +
                 ", invalidated=" + invalidated +
-                ", createdAt=" + createdAt +
+                ", createdat=" + createdat +
                 '}';
     }
 }

@@ -7,25 +7,28 @@
 
 # Aseta vähintään nämä ympäristökohtaiset arvot
 
-jpa:
-  hibernate:
-    dialect: org.hibernate.dialect.PostgreSQLDialect
-    implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-    ddl-auto: validate
-  show-sql: true
-  format-sql: true
-  connection:
-    charset: utf-8
-  current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
-  archive:
-    autodetection: class,hbm
-
-datasource:
-  driver-class-name: org.postgresql.Driver
-  url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
-  username: {{postgresql_user}}
-  password: {{postgresql_pass}}
-
+spring:
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+      ddl-auto: validate
+    connection:
+      charset: utf-8
+    archive:
+      autodetection: class,hbm
+    show-sql: true
+    format-sql: true
+    current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
+    username: {{postgresql_user}}
+    password: {{postgresql_pass}}
+dev:
+  username: user
+  password: password
 cas:
   ldap:
     url: ldap://{{host_ldap}}/dc=opintopolku,dc=fi

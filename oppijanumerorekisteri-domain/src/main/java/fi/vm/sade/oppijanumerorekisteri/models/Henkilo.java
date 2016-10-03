@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(nullable = false)
-    private String oidHenkilo;
+    private String oidhenkilo;
 
     private String hetu;
 
@@ -21,7 +21,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private HenkiloTyyppi henkiloTyyppi;
+    private HenkiloTyyppi henkilotyyppi;
 
     @OneToOne(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Kayttajatiedot kayttajatiedot;

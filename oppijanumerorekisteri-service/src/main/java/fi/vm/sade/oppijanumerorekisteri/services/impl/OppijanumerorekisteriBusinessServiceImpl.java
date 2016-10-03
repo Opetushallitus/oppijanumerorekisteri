@@ -18,6 +18,6 @@ public class OppijanumerorekisteriBusinessServiceImpl implements Oppijanumerorek
 
     public Boolean getHasHetu(String oid) {
         String hetu = henkiloRepository.getHetuByOid(oid);
-        return !hetu.isEmpty();
+        return hetu != null && !hetu.isEmpty();
     }
 }
