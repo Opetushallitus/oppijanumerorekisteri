@@ -78,6 +78,11 @@
                 <artifactId>springfox-swagger2</artifactId>
                 <version>${springfox.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikaricp.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

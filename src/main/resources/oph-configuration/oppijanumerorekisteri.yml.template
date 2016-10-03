@@ -21,11 +21,16 @@ spring:
     format-sql: true
     current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+hikari:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
+    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
     username: {{postgresql_user}}
     password: {{postgresql_pass}}
+    connection-test-query: SELECT 1
+    maximum-pool-size: 5
+    connection-timeout: 10000
+    max-lifetime: 60000
 dev:
   username: user
   password: password
