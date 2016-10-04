@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri;
+package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.controllers.HenkiloController;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
@@ -31,6 +31,12 @@ public class HenkiloControllerTest {
     public void hasHetuTest() throws Exception {
         given(this.service.getHasHetu("1.2.3.4.5")).willReturn(true);
         this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk()).andExpect(content().string("true"));
+                .andExpect(status().isOk()).andExpect(content().string("true"));
+    }
+
+    @Test
+    public void isSecuredTest() throws Exception {
+        this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isUnauthorized());
     }
 }
