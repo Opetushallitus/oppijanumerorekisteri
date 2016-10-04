@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
 import fi.vm.sade.authentication.ldap.CustomUserDetailsMapper;
+import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,9 +121,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
-        CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
+        OpintopolkuCasAuthenticationFilter casAuthenticationFilter = new OpintopolkuCasAuthenticationFilter(serviceProperties());
         casAuthenticationFilter.setAuthenticationManager(authenticationManager());
-        casAuthenticationFilter.setServiceProperties(serviceProperties());
         casAuthenticationFilter.setFilterProcessesUrl("/j_spring_cas_security_check");
         return casAuthenticationFilter;
     }
