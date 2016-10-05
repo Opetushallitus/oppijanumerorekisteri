@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    {% raw %}
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <Append>true</Append>
         <File>${user.home}/logs/oph-oppijanumerorekisteri.log</File>
@@ -19,7 +18,6 @@
             <MaxFileSize>10MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
-    {% endraw %}
     <root level="info">
         <appender-ref ref="FILE" />
         <appender-ref ref="CONSOLE" />
