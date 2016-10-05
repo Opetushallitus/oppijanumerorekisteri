@@ -21,6 +21,8 @@ Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla 
 
 `java -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\pryhanen\oph-configuration\oppijanumerorekisteri.yml`
 
+Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oidia kysyvät rajapinnat toimivat oikein.
+
 ## Lokaalin CAS palvelimen kanssa
 1) Hae luokalta `authentication`-projektin `common.properties`-tiedosto ja lisää se omaan oph-configuration-hakemistoosi nimellä `cas.properties`
 2) Käännä authentication projecti `mvn clean package`
