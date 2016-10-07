@@ -24,7 +24,7 @@
     </root>
     <logger name="org.springframework" level="warn" />
     <logger name="org.springframework.security" level="warn" />
-    <logger name="org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration" level="info" />
+    <logger name="org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration" level="warn" />
     <logger name="fi.vm" level="debug" />
     <logger name="org.hibernate.SQL" level="error" />
 </configuration>

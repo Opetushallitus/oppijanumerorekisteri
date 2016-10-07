@@ -1,2 +1,4 @@
 server:
   contextPath: /oppijanumerorekisteri-service
+new:
+  property: xxdf

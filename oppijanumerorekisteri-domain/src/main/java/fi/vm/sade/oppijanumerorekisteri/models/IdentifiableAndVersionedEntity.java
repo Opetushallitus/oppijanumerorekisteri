@@ -2,8 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.*;
