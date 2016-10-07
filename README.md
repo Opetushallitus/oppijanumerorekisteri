@@ -37,3 +37,19 @@ server:
   port: 8180
 ```
 5) Aja oppijanumerorekisteri
+
+## Url.properties ja CSRF
+Aina ulkoisia riippuvuuksia lisättäessä lisättävä osoite url.properties:iin
+https://github.com/Opetushallitus/java-utils/tree/master/java-properties
+
+Näiden hakemiseen käytetään httpclient:ia jos CAS autentikointia ei tarvita
+https://github.com/Opetushallitus/java-utils/tree/master/httpclient
+
+Jos CAS autentikointia tarvitaa on käytettävä muuta clientia.
+
+## Auditlokitus
+Koska käsitellään henkilötietoja kaikki servicekutsut lokitetaan alla olevan projektin mukaisesti
+https://github.com/Opetushallitus/auditlogger
+
+Muutokset laitetaan oppijanumerorekisterin omaan pakettiin 
+https://github.com/Opetushallitus/auditlogger/tree/master/src/main/java/fi/vm/sade/auditlog/oppijanumerorekisteri

@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
+import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,22 +21,6 @@ public class HenkiloController {
     @Transactional
     public Boolean hasHetu() {
         // get oid from security context
-        return oppijanumerorekisteriBusinessService.getHasHetu(getCurrentUserOid());
-    }
-
-    /**
-     * Fetches user oid from SecurityContext
-     *
-     * @return oid of currently authenticated user
-     * @throws NullPointerException
-     *             if user oid is not available from security context
-     */
-    private String getCurrentUserOid() throws NullPointerException {
-        String oid = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (oid == null) {
-            throw new NullPointerException("No user name available from SecurityContext!");
-        }
-
-        return oid;
+        return oppijanumerorekisteriBusinessService.getHasHetu(UserDetailsUtil.getCurrentUserOid());
     }
 }

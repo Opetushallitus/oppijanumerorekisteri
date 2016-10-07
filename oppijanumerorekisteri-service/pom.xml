@@ -40,6 +40,10 @@
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade</groupId>
+            <artifactId>auditlogger</artifactId>
+        </dependency>
 
         <!-- Spring-boot -->
         <dependency>

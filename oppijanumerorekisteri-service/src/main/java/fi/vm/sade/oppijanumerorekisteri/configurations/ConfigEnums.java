@@ -1,7 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
 public enum  ConfigEnums {
-    SUBSYSTEMCODE("oppijanumerorekisteri-service");
+    SUBSYSTEMCODE("oppijanumerorekisteri-service"),
+    SERVICENAME("oppijanumerorekisteri");
 
     private final String value;
 

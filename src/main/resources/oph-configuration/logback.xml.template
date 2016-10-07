@@ -19,7 +19,24 @@
             <MaxFileSize>10MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.home}/tomcat/logs/auditlog_oppijanumerorekisteri.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${user.home}/tomcat/logs/auditlog_oppijanumerorekisteri.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>10</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%date AUDIT %msg%n</pattern>
+        </encoder>
+    </appender>
     {% endraw %}
+
+    <!-- Standard logging -->
     <root level="info">
         <appender-ref ref="FILE" />
         <appender-ref ref="CONSOLE" />
@@ -29,4 +46,10 @@
     <logger name="org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration" level="info" />
     <logger name="fi.vm" level="debug" />
     <logger name="org.hibernate.SQL" level="error" />
+
+    <!-- Auditlog -->
+    <logger name="fi.vm.sade.auditlog.Audit" level="INFO">
+        <appender-ref ref="ROLLING" />
+    </logger>
+
 </configuration>

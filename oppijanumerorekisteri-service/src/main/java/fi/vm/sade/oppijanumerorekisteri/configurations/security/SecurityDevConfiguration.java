@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations;
+package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import org.springframework.beans.factory.annotation.Autowired;
