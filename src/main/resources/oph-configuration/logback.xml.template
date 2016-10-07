@@ -4,7 +4,7 @@
     {% raw %}
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <Append>true</Append>
-        <File>${user.home}/logs/oph-oppijanumerorekisteri.log</File>
+        <File>${user.home}/tomcat/logs/oppijanumerorekisteri.log</File>
         <encoder>
             <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSX} %-5p {%X{user}} [%t] %-5p %c: %m%n</pattern>
         </encoder>
@@ -13,7 +13,7 @@
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>20</maxIndex>
-            <FileNamePattern>${user.home}/logs/oph-oppijanumerorekisteri.log.%i</FileNamePattern>
+            <FileNamePattern>${user.home}/tomcat/logs/oppijanumerorekisteri.log.%i</FileNamePattern>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>10MB</MaxFileSize>
