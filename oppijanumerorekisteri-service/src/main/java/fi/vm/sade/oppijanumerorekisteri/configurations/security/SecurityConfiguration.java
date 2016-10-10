@@ -1,15 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
-import fi.vm.sade.authentication.ldap.CustomUserDetailsMapper;
 import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
+import fi.vm.sade.oppijanumerorekisteri.configurations.HttpMockedUserDetailsConfig;
+import fi.vm.sade.oppijanumerorekisteri.configurations.HttpMockedUserDetailsProvider;
+import fi.vm.sade.oppijanumerorekisteri.configurations.LdapUserDetailsConfig;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.ldap.authentication.DefaultValuesAuthenticationSourceDecorator;
-import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
@@ -21,18 +22,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
-import org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource;
-import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+
+import java.util.Optional;
 
 @Profile("!dev")
 @Configuration
+@Import({LdapUserDetailsConfig.class, HttpMockedUserDetailsConfig.class})
 @EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CasProperties casProperties;
 
+    @Autowired(required = false)
+    private LdapUserDetailsService ldapUserDetailsService;
+
+    @Autowired(required = false)
+    private HttpMockedUserDetailsProvider fallbackUserDetailsService;
+    
     @Autowired
     public SecurityConfiguration(CasProperties casProperties) {
         this.casProperties = casProperties;
@@ -61,53 +69,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return casAuthenticationProvider;
     }
 
-    //
-    // LDAP
-    //
-
-    @Bean
-    public LdapContextSource ldapContextSource() {
-        LdapContextSource ldapContextSource = new LdapContextSource();
-        ldapContextSource.setUrl(casProperties.getLdap().getUrl());
-        ldapContextSource.setAuthenticationSource(authenticationSource());
-        return ldapContextSource;
-    }
-
-    @Bean
-    DefaultValuesAuthenticationSourceDecorator authenticationSource() {
-        DefaultValuesAuthenticationSourceDecorator decorator = new DefaultValuesAuthenticationSourceDecorator();
-        decorator.setDefaultUser(casProperties.getLdap().getManagedDn());
-        decorator.setDefaultPassword(casProperties.getLdap().getPassword());
-        decorator.setTarget(springSecurityAuthenticationSource());
-        return decorator;
-    }
-
-    @Bean
-    SpringSecurityAuthenticationSource springSecurityAuthenticationSource() {
-        return new SpringSecurityAuthenticationSource();
-    }
-
-    @Bean
-    public UserDetailsContextMapper userDetailsContextMapper() {
-        CustomUserDetailsMapper ldapUserDetailsMapper = new CustomUserDetailsMapper();
-        ldapUserDetailsMapper.setRolePrefix("ROLE_");
-        ldapUserDetailsMapper.setConvertToUpperCase(true);
-        return ldapUserDetailsMapper;
-    }
-
-    @Bean
-    public LdapUserDetailsService ldapUserDetailsService() {
-        FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(casProperties.getLdap().getUserSearchBase(),
-                casProperties.getLdap().getUserSearchFilter(), ldapContextSource());
-        LdapUserDetailsService ldapUserDetailsService = new LdapUserDetailsService(userSearch);
-        ldapUserDetailsService.setUserDetailsMapper(userDetailsContextMapper());
-        return ldapUserDetailsService;
-    }
-
     @Bean
     public AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService() {
-        return ((CasAssertionAuthenticationToken casAssertionAuthenticationToken)
-                -> ldapUserDetailsService().loadUserByUsername(casAssertionAuthenticationToken.getName()));
+        return (CasAssertionAuthenticationToken casAssertionAuthenticationToken)
+                -> Optional.<UserDetailsService>ofNullable(ldapUserDetailsService)
+                .orElse(fallbackUserDetailsService).loadUserByUsername(casAssertionAuthenticationToken.getName());
     }
 
     @Bean

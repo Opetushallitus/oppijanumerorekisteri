@@ -25,4 +25,5 @@ public class CasProperties {
     private Boolean sendRenew;
     private String key;
     private String url;
+    private String fallbackUserDetailsProviderUrl;
 }
