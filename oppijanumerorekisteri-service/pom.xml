@@ -12,8 +12,10 @@
     <artifactId>oppijanumerorekisteri-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>oppijanumerorekisteri-service</name>
-    <description>Oppijanumerorekisteri-service module</description>
+    <properties>
+        <!-- Do not deploy this module to artifactory -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <!-- Internal -->
