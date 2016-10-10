@@ -95,95 +95,97 @@
             </plugin>
         </plugins>
     </build>
-    <!-- Generate db diagram from schema.ddl on Bamboo master branch builds -->
-    <profile>
-        <id>generate-db-diagram</id>
-        <activation>
-            <property>
-                <name>branch</name>
-                <value>master</value>
-            </property>
-        </activation>
-        <properties>
-            <schema.file>${project.basedir}/target/generated-schema/schema.ddl</schema.file>
-            <dbdiagram.generator>/usr/sbin/sql2diagram</dbdiagram.generator>
-            <dbdiagram.output>${project.basedir}/target/sql2diagram/</dbdiagram.output>
-            <dbdiagram.filename>${project.artifactId}-${project.version}</dbdiagram.filename>
-        </properties>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <phase>install</phase>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                            <configuration>
-                                <target>
-                                    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
-                                    <if>
-                                        <available file="${schema.file}" />
-                                        <then>
-                                            <echo>Generate DB Diagrams fom file '${schema.file}'.</echo>
-                                            <mkdir dir="${dbdiagram.output}" />
+    <profiles>
+        <!-- Generate db diagram from schema.ddl on Bamboo master branch builds -->
+        <profile>
+            <id>generate-db-diagram</id>
+            <activation>
+                <property>
+                    <name>branch</name>
+                    <value>master</value>
+                </property>
+            </activation>
+            <properties>
+                <schema.file>${project.basedir}/target/generated-schema/schema.ddl</schema.file>
+                <dbdiagram.generator>/usr/sbin/sql2diagram</dbdiagram.generator>
+                <dbdiagram.output>${project.basedir}/target/sql2diagram/</dbdiagram.output>
+                <dbdiagram.filename>${project.artifactId}-${project.version}</dbdiagram.filename>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
+                                        <if>
+                                            <available file="${schema.file}" />
+                                            <then>
+                                                <echo>Generate DB Diagrams fom file '${schema.file}'.</echo>
+                                                <mkdir dir="${dbdiagram.output}" />
 
-                                            <!-- generate diagrams -->
-                                            <exec executable="${dbdiagram.generator}">
-                                                <arg value="${schema.file}" />
-                                                <arg value="${dbdiagram.output}/${dbdiagram.filename}" />
-                                            </exec>
+                                                <!-- generate diagrams -->
+                                                <exec executable="${dbdiagram.generator}">
+                                                    <arg value="${schema.file}" />
+                                                    <arg value="${dbdiagram.output}/${dbdiagram.filename}" />
+                                                </exec>
 
-                                            <!-- copy diagrams with name *-LATEST.* -->
-                                            <copy file="${dbdiagram.output}/${dbdiagram.filename}.html"
-                                                  tofile="${dbdiagram.output}/${project.artifactId}-LATEST.html"/>
+                                                <!-- copy diagrams with name *-LATEST.* -->
+                                                <copy file="${dbdiagram.output}/${dbdiagram.filename}.html"
+                                                      tofile="${dbdiagram.output}/${project.artifactId}-LATEST.html"/>
 
-                                            <copy file="${dbdiagram.output}/${dbdiagram.filename}.png"
-                                                  tofile="${dbdiagram.output}/${project.artifactId}-LATEST.png"/>
+                                                <copy file="${dbdiagram.output}/${dbdiagram.filename}.png"
+                                                      tofile="${dbdiagram.output}/${project.artifactId}-LATEST.png"/>
 
-                                            <!-- SCP files to pulpetti apache -->
-                                            <scp todir="bamboo@pulpetti:/var/www/html/db/" trust="true"
-                                                 keyfile="${user.home}/.ssh/id_rsa" passphrase="">
-                                                <fileset dir="${dbdiagram.output}">
-                                                    <include name="**/*" />
-                                                </fileset>
-                                            </scp>
-                                        </then>
-                                        <else>
-                                            <echo>Skip DBDiagramGenerator, because file '${schema.file}' not found.</echo>
-                                        </else>
-                                    </if>
-                                </target>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-jsch</artifactId>
-                            <version>${ant-jsch.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.jcraft</groupId>
-                            <artifactId>jsch</artifactId>
-                            <version>${jsch.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>ant-contrib</groupId>
-                            <artifactId>ant-contrib</artifactId>
-                            <version>${ant-contrib.version}</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>ant</groupId>
-                                    <artifactId>ant</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
+                                                <!-- SCP files to pulpetti apache -->
+                                                <scp todir="bamboo@pulpetti:/var/www/html/db/" trust="true"
+                                                     keyfile="${user.home}/.ssh/id_rsa" passphrase="">
+                                                    <fileset dir="${dbdiagram.output}">
+                                                        <include name="**/*" />
+                                                    </fileset>
+                                                </scp>
+                                            </then>
+                                            <else>
+                                                <echo>Skip DBDiagramGenerator, because file '${schema.file}' not found.</echo>
+                                            </else>
+                                        </if>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-jsch</artifactId>
+                                <version>${ant-jsch.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.jcraft</groupId>
+                                <artifactId>jsch</artifactId>
+                                <version>${jsch.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>ant-contrib</groupId>
+                                <artifactId>ant-contrib</artifactId>
+                                <version>${ant-contrib.version}</version>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>ant</groupId>
+                                        <artifactId>ant</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
