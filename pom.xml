@@ -8,8 +8,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>oppijanumerorekisteri</name>
-    <description>Oppijanumerorekisteri project</description>
+    <properties>
+        <!-- Do not deploy this module to artifactory -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

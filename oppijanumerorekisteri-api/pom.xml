@@ -12,6 +12,11 @@
 
     <artifactId>oppijanumerorekisteri-api</artifactId>
 
+    <properties>
+        <!-- Make sure this module is deployed to artifactory -->
+        <maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
