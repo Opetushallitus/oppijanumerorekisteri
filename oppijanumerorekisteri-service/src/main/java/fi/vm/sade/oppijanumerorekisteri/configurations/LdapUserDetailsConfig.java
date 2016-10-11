@@ -11,6 +11,7 @@ import org.springframework.ldap.authentication.DefaultValuesAuthenticationSource
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
@@ -67,10 +68,13 @@ public class LdapUserDetailsConfig {
     }
 
     @Bean
-    public LdapUserDetailsService ldapUserDetailsService() {
+    public LdapUserDetailsService ldapUserDetailsService(LdapContextSource ldapContextSource) {
         FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(casProperties.getLdap().getUserSearchBase(),
-                casProperties.getLdap().getUserSearchFilter(), ldapContextSource());
-        LdapUserDetailsService ldapUserDetailsService = new LdapUserDetailsService(userSearch);
+                casProperties.getLdap().getUserSearchFilter(), ldapContextSource);
+        DefaultLdapAuthoritiesPopulator ldapAuthoritiesPopulator = new DefaultLdapAuthoritiesPopulator(ldapContextSource, casProperties.getLdap().getGroupSearchBase());
+        ldapAuthoritiesPopulator.setGroupSearchFilter(casProperties.getLdap().getGroupSearchFilter());
+        ldapAuthoritiesPopulator.setGroupRoleAttribute(casProperties.getLdap().getGroupRoleAttribute());
+        LdapUserDetailsService ldapUserDetailsService = new LdapUserDetailsService(userSearch, ldapAuthoritiesPopulator);
         ldapUserDetailsService.setUserDetailsMapper(userDetailsContextMapper());
         return ldapUserDetailsService;
     }
