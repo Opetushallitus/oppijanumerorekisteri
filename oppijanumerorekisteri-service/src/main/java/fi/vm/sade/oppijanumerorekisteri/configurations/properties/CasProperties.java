@@ -18,6 +18,9 @@ public class CasProperties {
         private String password;
         private String userSearchBase;
         private String userSearchFilter;
+        private String groupSearchBase;
+        private String groupSearchFilter;
+        private String groupRoleAttribute;
     }
     private Ldap ldap;
 

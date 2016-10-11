@@ -41,6 +41,9 @@ cas:
     password: {{ldap_manager_password}}
     user-search-base: ou=People
     user-search-filter: (|(mail={0})(uid={0}))
+    group-search-base: ou=groups
+    group-search-filter: (uniqueMember={0})
+    group-role-attribute: cn
   service: https://{{host_virkailija}}/oppijanumerorekisteri-service
   send-renew: false
   key: oppijanumerorekisteri-service
