@@ -1,4 +1,6 @@
 server:
   contextPath: /oppijanumerorekisteri-service
-new:
-  property: xxdf
+flyway:
+  out-of-order: true
+  enabled: false
+  baseline-on-migrate: true
