@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/henkilo")
 public class HenkiloController {
-    private OppijanumerorekisteriBusinessService henkiloService;
+    private HenkiloService henkiloService;
 
-    public HenkiloController(OppijanumerorekisteriBusinessService henkiloService) {
+    public HenkiloController(HenkiloService henkiloService) {
         this.henkiloService = henkiloService;
     }
 

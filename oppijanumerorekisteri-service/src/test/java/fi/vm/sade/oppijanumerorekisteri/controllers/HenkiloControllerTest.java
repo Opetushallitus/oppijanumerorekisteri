@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class HenkiloControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private OppijanumerorekisteriBusinessService service;
+    private HenkiloService service;
 
     @Test
     @WithMockUser(username = "1.2.3.4.5")

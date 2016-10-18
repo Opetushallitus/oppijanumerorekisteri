@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import DTOs.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/s2s")
 public class Service2ServiceController {
-    private OppijanumerorekisteriBusinessService henkiloService;
+    private HenkiloService henkiloService;
 
     @Autowired
-    public Service2ServiceController(OppijanumerorekisteriBusinessService henkiloService) {
+    public Service2ServiceController(HenkiloService henkiloService) {
         this.henkiloService = henkiloService;
     }
 

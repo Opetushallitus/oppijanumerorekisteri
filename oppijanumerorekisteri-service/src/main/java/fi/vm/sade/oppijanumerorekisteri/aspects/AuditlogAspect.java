@@ -24,7 +24,7 @@ public class AuditlogAspect {
     }
 
     // Simple general advice.
-    @Around("execution(public * fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService.*(..))")
+    @Around("execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.*(..))")
     private Object oppijanumerorekisteriBusinessAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         // Make sure user has oid to log before running the method.
         String oid = UserDetailsUtil.getCurrentUserOid();
