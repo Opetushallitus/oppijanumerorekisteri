@@ -110,6 +110,16 @@
                 <artifactId>flyway-core</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ma.glasnost.orika</groupId>
+                <artifactId>orika-core</artifactId>
+                <version>1.4.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jresearch.orika</groupId>
+                <artifactId>org.jresearch.orika.spring</artifactId>
+                <version>1.0.5</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

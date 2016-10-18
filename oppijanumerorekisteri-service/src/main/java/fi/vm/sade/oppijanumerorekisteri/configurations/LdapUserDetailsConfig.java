@@ -46,7 +46,7 @@ public class LdapUserDetailsConfig {
     }
 
     @Bean
-    DefaultValuesAuthenticationSourceDecorator authenticationSource() {
+    public DefaultValuesAuthenticationSourceDecorator authenticationSource() {
         DefaultValuesAuthenticationSourceDecorator decorator = new DefaultValuesAuthenticationSourceDecorator();
         decorator.setDefaultUser(casProperties.getLdap().getManagedDn());
         decorator.setDefaultPassword(casProperties.getLdap().getPassword());
@@ -55,7 +55,7 @@ public class LdapUserDetailsConfig {
     }
 
     @Bean
-    SpringSecurityAuthenticationSource springSecurityAuthenticationSource() {
+    public SpringSecurityAuthenticationSource springSecurityAuthenticationSource() {
         return new SpringSecurityAuthenticationSource();
     }
 
