@@ -26,7 +26,6 @@ public class HenkiloJsonTest {
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
         henkilo.setHetu("123456-9999");
         henkilo.setPassivoitu(false);
-        henkilo.setKayttajatiedot(null);
 
         assertThat(this.json.write(henkilo)).hasJsonPathBooleanValue("@.passivoitu")
                 .extractingJsonPathBooleanValue("@.passivoitu").isFalse();

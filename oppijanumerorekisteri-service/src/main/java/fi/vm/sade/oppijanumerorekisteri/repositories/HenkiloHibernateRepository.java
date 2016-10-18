@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HenkiloHibernateRepository {
     String getHetuByOid(String henkiloOid);
+    String getOidByHetu(String hetu);
 }

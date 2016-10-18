@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.authentication.ldap.SadeUserDetailsWrapper;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,11 +16,10 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(HenkiloController.class)
-public class HenkiloControllerTest {
+@WebMvcTest(Service2ServiceController.class)
+public class Service2ServiceControllerTest {
     @Autowired
     private MockMvc mvc;
 
@@ -31,10 +27,19 @@ public class HenkiloControllerTest {
     private OppijanumerorekisteriBusinessService service;
 
     @Test
-    @WithMockUser(username = "1.2.3.4.5")
-    public void hasHetuTest() throws Exception {
-        given(this.service.getHasHetu("1.2.3.4.5")).willReturn(true);
-        this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))
+    @WithMockUser
+    public void getOidByHetu() throws Exception{
+        given(this.service.getOidByHetu("123456-9999")).willReturn("1.2.3.4.5");
+        this.mvc.perform(get("/s2s/oidByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
+    }
+
+    @Test
+    @WithMockUser
+    public void oidExists() throws Exception{
+        given(this.service.getOidExists("1.2.3.4.5")).willReturn(true);
+        this.mvc.perform(get("/s2s/oidExists/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().string("true"));
     }
+
 }
