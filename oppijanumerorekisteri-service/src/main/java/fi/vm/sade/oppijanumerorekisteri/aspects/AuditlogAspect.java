@@ -4,7 +4,6 @@ import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
 import fi.vm.sade.oppijanumerorekisteri.configurations.AuditlogConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
 import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

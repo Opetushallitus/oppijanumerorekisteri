@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class OppijanumerorekisteriBusinessServiceImpl implements OppijanumerorekisteriBusinessService {
     private HenkiloHibernateRepository henkiloRepository;
     private HenkiloRepository henkiloJpaRepository;
@@ -30,20 +29,24 @@ public class OppijanumerorekisteriBusinessServiceImpl implements Oppijanumerorek
         this.mapper = mapper;
     }
 
+    @Transactional(readOnly = true)
     public Boolean getHasHetu(String oid) {
         String hetu = henkiloRepository.getHetuByOid(oid);
         return hetu != null && !hetu.isEmpty();
     }
 
+    @Transactional(readOnly = true)
     public boolean getOidExists(String oid) {
         Predicate searchPredicate = QHenkilo.henkilo.oidhenkilo.eq(oid);
         return this.henkiloJpaRepository.exists(searchPredicate);
     }
 
+    @Transactional(readOnly = true)
     public String getOidByHetu(String hetu) {
         return this.henkiloRepository.getOidByHetu(hetu);
     }
 
+    @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietosByOids(List<String> oids) {
         List<Henkilo> henkilos = this.henkiloJpaRepository.findByOidhenkiloIsIn(oids);
         return mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);

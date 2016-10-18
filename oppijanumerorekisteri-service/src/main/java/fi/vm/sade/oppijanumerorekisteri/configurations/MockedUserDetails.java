@@ -9,11 +9,6 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
-/**
- * User: tommiratamaa
- * Date: 10/10/2016
- * Time: 11.18
- */
 public class MockedUserDetails implements UserDetails {
     private String username;
     private String password;

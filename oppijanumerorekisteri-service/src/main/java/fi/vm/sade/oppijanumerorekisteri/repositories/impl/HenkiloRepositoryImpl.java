@@ -3,12 +3,13 @@ package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-@Transactional
+@Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
     @PersistenceContext
     private EntityManager entityManager;
