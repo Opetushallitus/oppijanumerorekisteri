@@ -20,9 +20,10 @@ public class HenkiloMapperTest {
 
     @Test
     public void HenkiloToHenkiloPerustietoDto() {
-        Henkilo henkilo = EntityUtils.createPerustietoHenkilo("arpa", "kuutio", "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
+        Henkilo henkilo = EntityUtils.createPerustietoHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
         HenkiloPerustietoDto henkiloPerustietoDto = modelmapper.map(henkilo, HenkiloPerustietoDto.class);
 
+        assertThat(henkiloPerustietoDto.getEtunimet()).isEqualTo("arpa");
         assertThat(henkiloPerustietoDto.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkiloPerustietoDto.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkiloPerustietoDto.getHetu()).isEqualTo("123456-9999");
@@ -34,9 +35,10 @@ public class HenkiloMapperTest {
 
     @Test
     public void HenkiloPerustietoDtoToHenkilo() {
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "kuutio", "123456-9999",
+        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5", "fi", "suomi", "246");
         Henkilo henkilo = modelmapper.map(henkiloPerustietoDto, Henkilo.class);
+        assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkilo.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkilo.getHetu()).isEqualTo("123456-9999");

@@ -20,10 +20,11 @@ class DtoUtils {
         return kansalaisuusDto;
     }
 
-    static HenkiloPerustietoDto createHenkiloPerustietoDto(String kutsumanimi, String sukunimi, String hetu,
+    static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
                                                                   String henkiloOid, String kielikoodi, String kielityyppi,
                                                                   String kansalaisuuskoodi) {
         HenkiloPerustietoDto henkiloPerustietoDto = new HenkiloPerustietoDto();
+        henkiloPerustietoDto.setEtunimet(etunimet);
         henkiloPerustietoDto.setHetu(hetu);
         henkiloPerustietoDto.setKutsumanimi(kutsumanimi);
         henkiloPerustietoDto.setSukunimi(sukunimi);

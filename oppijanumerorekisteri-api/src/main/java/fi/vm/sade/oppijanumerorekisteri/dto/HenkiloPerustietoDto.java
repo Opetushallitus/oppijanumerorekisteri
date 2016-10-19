@@ -15,6 +15,8 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private String hetu;
 
+    private String etunimet;
+
     private String kutsumanimi;
 
     private String sukunimi;

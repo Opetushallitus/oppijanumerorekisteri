@@ -33,6 +33,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Enumerated(EnumType.STRING)
     private HenkiloTyyppi henkilotyyppi;
 
+    private String etunimet;
+
     private String kutsumanimi;
 
     private String sukunimi;

@@ -12,43 +12,64 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
-    private HenkiloHibernateRepository henkiloRepository;
-    private HenkiloRepository henkiloJpaRepository;
+    private HenkiloHibernateRepository henkiloHibernateRepository;
+    private HenkiloRepository henkiloDataRepository;
     private OrikaSpringMapper mapper;
 
     @Autowired
-    public HenkiloServiceImpl(HenkiloHibernateRepository henkiloRepository,
-                          HenkiloRepository henkiloJpaRepository,
+    public HenkiloServiceImpl(HenkiloHibernateRepository henkiloHibernateRepository,
+                          HenkiloRepository henkiloDataRepository,
                           OrikaSpringMapper mapper) {
-        this.henkiloRepository = henkiloRepository;
-        this.henkiloJpaRepository = henkiloJpaRepository;
+        this.henkiloHibernateRepository = henkiloHibernateRepository;
+        this.henkiloDataRepository = henkiloDataRepository;
         this.mapper = mapper;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Boolean getHasHetu(String oid) {
-        String hetu = henkiloRepository.getHetuByOid(oid);
+        String hetu = henkiloHibernateRepository.findHetuByOid(oid);
         return hetu != null && !hetu.isEmpty();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public boolean getOidExists(String oid) {
         Predicate searchPredicate = QHenkilo.henkilo.oidhenkilo.eq(oid);
-        return this.henkiloJpaRepository.exists(searchPredicate);
+        return this.henkiloDataRepository.exists(searchPredicate);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public String getOidByHetu(String hetu) {
-        return this.henkiloRepository.getOidByHetu(hetu);
+        return this.henkiloHibernateRepository.findOidByHetu(hetu);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietosByOids(List<String> oids) {
-        List<Henkilo> henkilos = this.henkiloJpaRepository.findByOidhenkiloIsIn(oids);
+        List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
         return mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloPerustietoDto> getHenkiloPerustietosByName(String etunimet, String sukunimi) {
+        List<String> etunimetList = Arrays.stream(etunimet.split(" ")).collect(Collectors.toList());
+        List<Henkilo> henkilos = this.henkiloHibernateRepository.findHenkiloByEtunimetOrSukunimi(etunimetList, sukunimi);
+        return this.mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloPerustietoDto getHenkiloPerustietosByHetu(String hetu) {
+        Henkilo henkilo = this.henkiloDataRepository.findByHetu(hetu);
+        return mapper.map(henkilo, HenkiloPerustietoDto.class);
     }
 }

@@ -20,11 +20,12 @@ class EntityUtils {
         return kielisyys;
     }
 
-    static Henkilo createPerustietoHenkilo(String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+    static Henkilo createPerustietoHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                                       String kielikoodi, String kielityyppi, String kansalaisuuskoodi) {
         Henkilo henkilo = new Henkilo();
         henkilo.setHetu(hetu);
         henkilo.setPassivoitu(false);
+        henkilo.setEtunimet(etunimet);
         henkilo.setKutsumanimi(kutsumanimi);
         henkilo.setSukunimi(sukunimi);
         henkilo.setOidhenkilo(oidHenkilo);

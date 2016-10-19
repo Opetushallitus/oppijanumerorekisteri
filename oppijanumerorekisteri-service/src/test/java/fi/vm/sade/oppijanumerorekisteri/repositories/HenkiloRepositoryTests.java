@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class HenkiloRepositoryTests {
         henkilo.setOidhenkilo("1.2.3.4.5.6");
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
         this.testEntityManager.persist(henkilo);
-        String hetu = this.repository.getHetuByOid("1.2.3.4.5.6");
+        String hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
         assertThat(hetu.equals("123456"));
     }
 
@@ -42,13 +41,13 @@ public class HenkiloRepositoryTests {
         henkilo.setOidhenkilo("1.2.3.4.5.6");
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
         this.testEntityManager.persist(henkilo);
-        String hetu = this.repository.getHetuByOid("1.2.3.4.5.6");
+        String hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
         assertThat(hetu.isEmpty());
     }
 
     @Test
     public void userOidNotInDb() {
-        String hetu = this.repository.getHetuByOid("unknown oid");
+        String hetu = this.repository.findHetuByOid("unknown oid");
         assertThat(hetu == null);
     }
 }

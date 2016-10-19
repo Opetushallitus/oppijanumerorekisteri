@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAQuery;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import org.springframework.transaction.annotation.Propagation;
@@ -8,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
@@ -19,7 +23,7 @@ public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
     }
 
     @Override
-    public String getHetuByOid(String henkiloOid) {
+    public String findHetuByOid(String henkiloOid) {
         JPAQueryFactory jpaQueryFactory = this.getJpaQueryFactory();
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
@@ -29,12 +33,26 @@ public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
     }
 
     @Override
-    public String getOidByHetu(String hetu) {
+    public String findOidByHetu(String hetu) {
         JPAQueryFactory jpaQueryFactory = this.getJpaQueryFactory();
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
         return jpaQueryFactory.selectFrom(qHenkilo).select(qHenkilo.oidhenkilo)
                 .where(qHenkilo.hetu.eq(hetu))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Henkilo> findHenkiloByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        JPAQuery<Henkilo> query = this.getJpaQueryFactory().selectFrom(qHenkilo);
+        query.select(qHenkilo);
+        BooleanBuilder builder = new BooleanBuilder();
+        for(String etunimi : etunimet) {
+            builder.or(qHenkilo.etunimet.containsIgnoreCase(etunimi));
+        }
+        builder.or(qHenkilo.sukunimi.equalsIgnoreCase(sukunimi));
+        query = query.where(builder);
+        return query.fetch();
     }
 }
