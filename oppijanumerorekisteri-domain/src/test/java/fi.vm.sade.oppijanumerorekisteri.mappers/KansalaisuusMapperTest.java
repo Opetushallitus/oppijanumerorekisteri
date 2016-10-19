@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import DTOs.KansalaisuusDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Test;

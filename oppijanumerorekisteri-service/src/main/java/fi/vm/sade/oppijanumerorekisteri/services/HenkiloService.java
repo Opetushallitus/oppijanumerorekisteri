@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import DTOs.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 
 import java.util.List;
 

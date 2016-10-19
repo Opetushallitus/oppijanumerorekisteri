@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 
-import DTOs.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Test;
