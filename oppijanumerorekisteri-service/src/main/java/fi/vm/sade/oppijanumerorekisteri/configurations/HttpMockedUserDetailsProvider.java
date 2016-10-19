@@ -16,11 +16,6 @@ import java.net.URL;
 
 import static java.util.Optional.ofNullable;
 
-/**
- * User: tommiratamaa
- * Date: 10/10/2016
- * Time: 11.06
- */
 public class HttpMockedUserDetailsProvider implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(HttpMockedUserDetailsProvider.class);
     

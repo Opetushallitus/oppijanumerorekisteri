@@ -6,11 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-/**
- * User: tommiratamaa
- * Date: 10/10/2016
- * Time: 11.10
- */
 @Configuration
 @Conditional(value = HttpMockedUserDetailsConfig.UseCondition.class)
 public class HttpMockedUserDetailsConfig {

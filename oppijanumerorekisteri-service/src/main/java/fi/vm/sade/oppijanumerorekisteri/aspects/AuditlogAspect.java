@@ -4,7 +4,6 @@ import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
 import fi.vm.sade.oppijanumerorekisteri.configurations.AuditlogConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService;
 import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -25,7 +24,7 @@ public class AuditlogAspect {
     }
 
     // Simple general advice.
-    @Around("execution(public * fi.vm.sade.oppijanumerorekisteri.services.OppijanumerorekisteriBusinessService.*(..))")
+    @Around("execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.*(..))")
     private Object oppijanumerorekisteriBusinessAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         // Make sure user has oid to log before running the method.
         String oid = UserDetailsUtil.getCurrentUserOid();

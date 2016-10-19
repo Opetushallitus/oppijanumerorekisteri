@@ -4,7 +4,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.OppijanumerorekisteriBusinessServiceImpl;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,17 +14,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 
-public class OppijanumerorekisteriBusinessServiceTest {
+public class HenkiloServiceTest {
     private HenkiloHibernateRepository henkiloHibernateRepositoryMock;
     private HenkiloRepository henkiloJpaRepositoryMock;
-    private OppijanumerorekisteriBusinessService service;
+    private HenkiloService service;
 
     @Before
     public void setup() {
         this.henkiloHibernateRepositoryMock = Mockito.mock(HenkiloHibernateRepository.class);
         this.henkiloJpaRepositoryMock = Mockito.mock(HenkiloRepository.class);
         OrikaSpringMapper mapperMock = Mockito.mock(OrikaSpringMapper.class);
-        this.service = new OppijanumerorekisteriBusinessServiceImpl(this.henkiloHibernateRepositoryMock,
+        this.service = new HenkiloServiceImpl(this.henkiloHibernateRepositoryMock,
                 henkiloJpaRepositoryMock, mapperMock);
     }
 

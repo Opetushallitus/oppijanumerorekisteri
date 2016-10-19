@@ -15,11 +15,6 @@ import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopul
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
-/**
- * User: tommiratamaa
- * Date: 10/10/2016
- * Time: 10.54
- */
 @Configuration
 @Conditional(value = LdapUserDetailsConfig.UseCondition.class)
 public class LdapUserDetailsConfig {
