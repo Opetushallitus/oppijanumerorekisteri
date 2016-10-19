@@ -1,4 +1,4 @@
-package DTOs;
+package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import lombok.Getter;
 import lombok.Setter;

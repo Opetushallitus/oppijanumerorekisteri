@@ -1,11 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import DTOs.HenkiloPerustietoDto;
-import DTOs.KansalaisuusDto;
-import DTOs.KielisyysDto;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
-import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 
 import java.util.Collections;
 
