@@ -2,12 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Transactional(readOnly = true)
-public class HenkiloRepositoryTests {
-
+public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     @Autowired
     private HenkiloHibernateRepository repository;
-
-    @Autowired
-    private TestEntityManager testEntityManager;
 
     @Test
     public void userHasHetu() {
