@@ -1,15 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "yhteystiedotryhma")
 public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
     

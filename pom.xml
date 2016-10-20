@@ -28,6 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <commons.io.version>1.3.2</commons.io.version>
 
         <!-- library versions -->
         <springfox.version>2.5.0</springfox.version>
@@ -120,8 +121,21 @@
                 <artifactId>org.jresearch.orika.spring</artifactId>
                 <version>1.0.5</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+            <version>12.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>

@@ -1,12 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.Getter;
+import lombok.*;
 import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class YhteystiedotDto implements Serializable, WritableYhteystiedot, ReadableYhteystiedot {
     private String sahkoposti;
     private String puhelinnumero;

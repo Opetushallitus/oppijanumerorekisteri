@@ -1,8 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -18,6 +17,9 @@ import java.util.Set;
                 @NamedAttributeNode(value = "aidinkieli")
         }
 )
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
 

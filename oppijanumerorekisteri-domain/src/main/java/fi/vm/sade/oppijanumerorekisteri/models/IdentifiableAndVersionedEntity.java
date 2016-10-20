@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
@@ -9,7 +8,6 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @MappedSuperclass
 public class IdentifiableAndVersionedEntity implements Persistable<Long> {
     private static final long serialVersionUID = 5576257928837225161L;

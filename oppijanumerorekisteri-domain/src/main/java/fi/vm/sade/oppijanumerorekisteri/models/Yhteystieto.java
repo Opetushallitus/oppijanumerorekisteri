@@ -1,13 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "yhteystiedot")
 public class Yhteystieto extends IdentifiableAndVersionedEntity {
