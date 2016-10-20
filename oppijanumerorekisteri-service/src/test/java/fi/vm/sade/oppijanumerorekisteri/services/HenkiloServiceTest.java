@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -43,6 +45,6 @@ public class HenkiloServiceTest {
     @Test
     public void getOidByHetu() {
         given(this.henkiloHibernateRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn("123456-9999");
-        assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
+        assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo(Optional.of("123456-9999"));
     }
 }

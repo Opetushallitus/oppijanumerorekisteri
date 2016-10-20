@@ -14,7 +14,8 @@ public class SwaggerConfiguration {
     @Bean
     public Docket henkiloApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo());
+                .apiInfo(apiInfo())
+                .useDefaultResponseMessages(false);
     }
 
     @Bean

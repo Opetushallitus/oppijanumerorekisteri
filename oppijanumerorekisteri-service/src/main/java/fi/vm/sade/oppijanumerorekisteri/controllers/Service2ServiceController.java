@@ -4,11 +4,15 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.NotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Api(tags = "Service To Service")
 @RestController
@@ -29,10 +33,11 @@ public class Service2ServiceController {
     }
 
     @ApiOperation("Hakee annettua henkilötunnusta vastaavan henkilö OID:n")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/oidByHetu/{hetu}", method = RequestMethod.GET)
-    public String oidByHetu(@PathVariable String hetu) {
-        return this.henkiloService.getOidByHetu(hetu);
+    public String oidByHetu(@PathVariable String hetu) throws NotFoundException {
+        return this.henkiloService.getOidByHetu(hetu).orElseThrow(NotFoundException::new);
     }
 
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")

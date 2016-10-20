@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
@@ -47,8 +49,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public String getOidByHetu(String hetu) {
-        return this.henkiloHibernateRepository.findOidByHetu(hetu);
+    public Optional<String> getOidByHetu(String hetu) {
+        return Optional.ofNullable(this.henkiloHibernateRepository.findOidByHetu(hetu));
     }
 
     @Override
@@ -60,16 +62,16 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloPerustietoDto> getHenkiloPerustietosByName(String etunimet, String sukunimi) {
+    public List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi) {
         List<String> etunimetList = Arrays.stream(etunimet.split(" ")).collect(Collectors.toList());
         List<Henkilo> henkilos = this.henkiloHibernateRepository.findHenkiloByEtunimetOrSukunimi(etunimetList, sukunimi);
-        return this.mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
+        return this.mapper.mapAsList(henkilos, HenkiloOidHetuNimiDto.class);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public HenkiloPerustietoDto getHenkiloPerustietosByHetu(String hetu) {
+    public Optional<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByHetu(String hetu) {
         Henkilo henkilo = this.henkiloDataRepository.findByHetu(hetu);
-        return mapper.map(henkilo, HenkiloPerustietoDto.class);
+        return Optional.ofNullable(mapper.map(henkilo, HenkiloOidHetuNimiDto.class));
     }
 }

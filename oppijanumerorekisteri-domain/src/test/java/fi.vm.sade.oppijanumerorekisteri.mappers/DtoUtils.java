@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
@@ -34,5 +35,16 @@ class DtoUtils {
         KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
         henkiloPerustietoDto.setKansalaisuus(Collections.singleton(kansalaisuus));
         return henkiloPerustietoDto;
+    }
+
+    static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
+                                                             String hetu, String oidHenkilo) {
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto();
+        henkiloOidHetuNimiDto.setEtunimet(etunimet);
+        henkiloOidHetuNimiDto.setKutsumanimi(kutsumanimi);
+        henkiloOidHetuNimiDto.setSukunimi(sukunimi);
+        henkiloOidHetuNimiDto.setHetu(hetu);
+        henkiloOidHetuNimiDto.setOidhenkilo(oidHenkilo);
+        return henkiloOidHetuNimiDto;
     }
 }
