@@ -14,7 +14,8 @@ public enum YhteystietoRyhma {
     HAKEMUS_OSOITE("yhteystietotyyppi6", "hakemusOsoite"),
     MUU_OSOITE("yhteystietotyyppi7", "muuOsoite"),
     VTJ_SAHKOINEN_OSOITE("yhteystietotyyppi8", "vtjSahkoinenOsoite");
-
+    
+    public static final YhteystietoRyhma[] PRIORITY_ORDER = {TYOOSOITE, KOTIOSOITE, MUU_OSOITE, VAPAA_AJAN_OSOITE};
     private final String ryhmanKuvaus;
     private final String alias;
 
@@ -38,8 +39,8 @@ public enum YhteystietoRyhma {
             return null;
         }
         return Stream.of(values()).filter(v -> str.equalsIgnoreCase(v.name())
-                || str.equalsIgnoreCase(v.getAlias())
-                || str.equalsIgnoreCase(v.getRyhmanKuvaus()))
+                    || str.equalsIgnoreCase(v.getAlias())
+                    || str.equalsIgnoreCase(v.getRyhmanKuvaus()))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Can not find YhteystietoRyhma for " + str));
     }
 }

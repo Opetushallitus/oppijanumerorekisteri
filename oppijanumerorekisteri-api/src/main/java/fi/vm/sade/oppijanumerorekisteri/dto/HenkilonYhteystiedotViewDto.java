@@ -32,4 +32,12 @@ public class HenkilonYhteystiedotViewDto implements Serializable {
     public Map<YhteystietoRyhma, YhteystiedotDto> asMap() {
         return yhteystiedot;
     }
+    
+    public ReadableYhteystiedot get(YhteystietoRyhma ...ryhmatInPriorityOrder) {
+        return new HenkilonYhteystiedotByPriorityOrderDto(yhteystiedot, true, ryhmatInPriorityOrder);
+    }
+    
+    public ReadableYhteystiedot getExclusively(YhteystietoRyhma ...ryhmatInPriorityOrder) {
+        return new HenkilonYhteystiedotByPriorityOrderDto(yhteystiedot, false, ryhmatInPriorityOrder);
+    }
 }
