@@ -64,7 +64,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi) {
         List<String> etunimetList = Arrays.stream(etunimet.split(" ")).collect(Collectors.toList());
-        List<Henkilo> henkilos = this.henkiloHibernateRepository.findHenkiloByEtunimetOrSukunimi(etunimetList, sukunimi);
+        List<Henkilo> henkilos = this.henkiloHibernateRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(etunimetList, sukunimi);
         return this.mapper.mapAsList(henkilos, HenkiloOidHetuNimiDto.class);
     }
 

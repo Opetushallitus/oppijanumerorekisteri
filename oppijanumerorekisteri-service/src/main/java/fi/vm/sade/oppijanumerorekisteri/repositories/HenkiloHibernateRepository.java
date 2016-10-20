@@ -14,7 +14,6 @@ public interface HenkiloHibernateRepository {
 
     Optional<String> findOidByHetu(String hetu);
 
-    @EntityGraph("henkiloWithKansalaisuusAndAidinkieli")
-    List<Henkilo> findHenkiloByEtunimetOrSukunimi(List<String> etunimet, String sukunimi);
+    List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi);
 
 }

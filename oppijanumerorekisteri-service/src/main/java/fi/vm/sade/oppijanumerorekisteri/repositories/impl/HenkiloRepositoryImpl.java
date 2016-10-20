@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -44,10 +45,10 @@ public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
     }
 
     @Override
-    public List<Henkilo> findHenkiloByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
+    public List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         JPAQuery<Henkilo> query = this.getJpaQueryFactory().selectFrom(qHenkilo);
-        query.select(qHenkilo);
+        query.select(Projections.bean(Henkilo.class, qHenkilo.oidhenkilo, qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, qHenkilo.hetu));
         BooleanBuilder builder = new BooleanBuilder();
         for(String etunimi : etunimet) {
             builder.or(qHenkilo.etunimet.containsIgnoreCase(etunimi));
