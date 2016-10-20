@@ -32,7 +32,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void getHasHetu() {
-        given(this.henkiloHibernateRepositoryMock.findHetuByOid("1.2.3.4.5")).willReturn("123456-9999");
+        given(this.henkiloHibernateRepositoryMock.findHetuByOid("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
         assertThat(this.service.getHasHetu("1.2.3.4.5")).isTrue();
     }
 
@@ -44,7 +44,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void getOidByHetu() {
-        given(this.henkiloHibernateRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn("123456-9999");
+        given(this.henkiloHibernateRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
         assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo(Optional.of("123456-9999"));
     }
 }

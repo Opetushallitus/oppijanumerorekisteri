@@ -35,8 +35,8 @@ public class HenkiloController {
     @ApiOperation("Hakee henkilöiden perustiedot nimen perusteella")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
-    public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet", required = false) String etunimet,
-                                                                @RequestParam(value = "sukunimi", required = false) String sukunimi) {
+    public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
+                                                                @RequestParam(value = "sukunimi") String sukunimi) {
         return this.henkiloService.getHenkiloOidHetuNimiByName(etunimet, sukunimi);
     }
 

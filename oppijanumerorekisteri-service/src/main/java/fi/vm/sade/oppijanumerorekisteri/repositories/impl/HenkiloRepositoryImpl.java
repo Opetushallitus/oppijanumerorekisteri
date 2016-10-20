@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
@@ -23,23 +24,23 @@ public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
     }
 
     @Override
-    public String findHetuByOid(String henkiloOid) {
+    public Optional<String> findHetuByOid(String henkiloOid) {
         JPAQueryFactory jpaQueryFactory = this.getJpaQueryFactory();
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
-        return jpaQueryFactory.selectFrom(qHenkilo).select(qHenkilo.hetu)
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(qHenkilo).select(qHenkilo.hetu)
                 .where(qHenkilo.oidhenkilo.eq(henkiloOid))
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
-    public String findOidByHetu(String hetu) {
+    public Optional<String> findOidByHetu(String hetu) {
         JPAQueryFactory jpaQueryFactory = this.getJpaQueryFactory();
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
-        return jpaQueryFactory.selectFrom(qHenkilo).select(qHenkilo.oidhenkilo)
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(qHenkilo).select(qHenkilo.oidhenkilo)
                 .where(qHenkilo.hetu.eq(hetu))
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
@@ -51,7 +52,7 @@ public class HenkiloRepositoryImpl implements HenkiloHibernateRepository {
         for(String etunimi : etunimet) {
             builder.or(qHenkilo.etunimet.containsIgnoreCase(etunimi));
         }
-        builder.or(qHenkilo.sukunimi.equalsIgnoreCase(sukunimi));
+        builder.and(qHenkilo.sukunimi.containsIgnoreCase(sukunimi));
         query = query.where(builder);
         return query.fetch();
     }

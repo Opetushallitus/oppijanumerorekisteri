@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -30,8 +32,8 @@ public class HenkiloRepositoryTests {
         henkilo.setOidhenkilo("1.2.3.4.5.6");
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
         this.testEntityManager.persist(henkilo);
-        String hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
-        assertThat(hetu.equals("123456"));
+        Optional<String> hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
+        assertThat(hetu.orElse("").equals("123456"));
     }
 
     @Test
@@ -41,13 +43,13 @@ public class HenkiloRepositoryTests {
         henkilo.setOidhenkilo("1.2.3.4.5.6");
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
         this.testEntityManager.persist(henkilo);
-        String hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
-        assertThat(hetu.isEmpty());
+        Optional<String> hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
+        assertThat(hetu.orElse("").isEmpty());
     }
 
     @Test
     public void userOidNotInDb() {
-        String hetu = this.repository.findHetuByOid("unknown oid");
-        assertThat(hetu == null);
+        Optional<String> hetu = this.repository.findHetuByOid("unknown oid");
+        assertThat(hetu.isPresent()).isFalse();
     }
 }

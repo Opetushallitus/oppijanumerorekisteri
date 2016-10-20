@@ -36,8 +36,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Boolean getHasHetu(String oid) {
-        String hetu = henkiloHibernateRepository.findHetuByOid(oid);
-        return hetu != null && !hetu.isEmpty();
+        Optional<String> hetu = henkiloHibernateRepository.findHetuByOid(oid);
+        return !hetu.orElse("").isEmpty();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Optional<String> getOidByHetu(String hetu) {
-        return Optional.ofNullable(this.henkiloHibernateRepository.findOidByHetu(hetu));
+        return this.henkiloHibernateRepository.findOidByHetu(hetu);
     }
 
     @Override
