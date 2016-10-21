@@ -18,6 +18,9 @@ public interface HenkiloRepository extends JpaRepository<Henkilo, Long>, QueryDs
     @EntityGraph("henkiloWithKansalaisuusAndAidinkieli")
     List<Henkilo> findByOidhenkiloIsIn(List<String> oidhenkilo);
 
+    @EntityGraph("henkiloWithPerustiedot")
+    List<Henkilo> findByOidhenkiloIn(List<String> oidhenkilo);
+
     @EntityGraph("henkiloWithKansalaisuusAndAidinkieli")
     Henkilo findByHetu(String hetu);
 

@@ -1,19 +1,25 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.querydsl.core.types.Predicate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -23,14 +29,17 @@ public class HenkiloServiceImpl implements HenkiloService {
     private HenkiloHibernateRepository henkiloHibernateRepository;
     private HenkiloRepository henkiloDataRepository;
     private OrikaSpringMapper mapper;
+    private OidGenerator oidGenerator;
 
     @Autowired
     public HenkiloServiceImpl(HenkiloHibernateRepository henkiloHibernateRepository,
-                          HenkiloRepository henkiloDataRepository,
-                          OrikaSpringMapper mapper) {
+                            HenkiloRepository henkiloDataRepository,
+                            OrikaSpringMapper mapper,
+                            OidGenerator oidGenerator) {
         this.henkiloHibernateRepository = henkiloHibernateRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.mapper = mapper;
+        this.oidGenerator = oidGenerator;
     }
 
     @Override
@@ -55,10 +64,18 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloPerustietoDto> getHenkiloPerustietosByOids(List<String> oids) {
+    public List<HenkiloKoskiDto> getHenkiloKoskiPerustietoByOids(List<String> oids) {
         List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
+        return mapper.mapAsList(henkilos, HenkiloKoskiDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
+        List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIn(oids);
         return mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -73,5 +90,28 @@ public class HenkiloServiceImpl implements HenkiloService {
     public Optional<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByHetu(String hetu) {
         Henkilo henkilo = this.henkiloDataRepository.findByHetu(hetu);
         return Optional.ofNullable(mapper.map(henkilo, HenkiloOidHetuNimiDto.class));
+    }
+
+    @Override
+    @Transactional
+    public Optional<HenkiloKoskiDto> createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto) {
+        Henkilo henkilo = mapper.map(henkiloKoskiDto, Henkilo.class);
+        henkilo.setHenkilotyyppi(HenkiloTyyppi.OPPIJA);
+        return Optional.ofNullable(mapper.map(this.createHenkilo(henkilo), HenkiloKoskiDto.class));
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    private @Nullable Henkilo createHenkilo(Henkilo henkilo) {
+        henkilo.setOidhenkilo(getFreePersonOid());
+        henkilo.setCreated(new Date());
+        henkilo.setModified(new Date());
+        return this.henkiloDataRepository.save(henkilo);
+    }
+
+    @Transactional(readOnly = true)
+    private String getFreePersonOid() {
+        final String newOid = oidGenerator.generateOID();
+        if (!this.getOidExists(newOid)) return getFreePersonOid();
+        return newOid;
     }
 }

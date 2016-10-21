@@ -22,6 +22,5 @@ public class Kielisyys extends IdentifiableAndVersionedEntity {
     private String kielityyppi;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "kielisyys")
-//    @JsonIgnore
     private Set<Henkilo> henkilos = new HashSet<>();
 }

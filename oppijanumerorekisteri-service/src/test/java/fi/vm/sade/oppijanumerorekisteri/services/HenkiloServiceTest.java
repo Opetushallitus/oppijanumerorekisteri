@@ -26,8 +26,9 @@ public class HenkiloServiceTest {
         this.henkiloHibernateRepositoryMock = Mockito.mock(HenkiloHibernateRepository.class);
         this.henkiloJpaRepositoryMock = Mockito.mock(HenkiloRepository.class);
         OrikaSpringMapper mapperMock = Mockito.mock(OrikaSpringMapper.class);
+        MockOidGenerator mockOidGenerator = new MockOidGenerator();
         this.service = new HenkiloServiceImpl(this.henkiloHibernateRepositoryMock,
-                henkiloJpaRepositoryMock, mapperMock);
+                henkiloJpaRepositoryMock, mapperMock, mockOidGenerator);
     }
 
     @Test

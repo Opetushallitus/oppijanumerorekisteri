@@ -5,21 +5,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// If you do changes to lazy loaded stuff update henkiloWithPerustiedot entity graph from Henkilo.java
-public class HenkiloPerustietoDto implements Serializable {
+public class HenkiloKoskiDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
     private String oidhenkilo;
 
+    @NotNull
     private String hetu;
 
     private String etunimet;
@@ -28,7 +29,9 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private String sukunimi;
 
+    @Null
     private KielisyysDto aidinkieli;
 
-    private KielisyysDto asiointikieli;
+    @Null
+    private Set<KansalaisuusDto> kansalaisuus;
 }

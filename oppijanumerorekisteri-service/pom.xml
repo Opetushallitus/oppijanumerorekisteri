@@ -51,6 +51,10 @@
             <groupId>fi.vm.sade</groupId>
             <artifactId>auditlogger</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>oid-generator</artifactId>
+        </dependency>
 
         <!-- Spring-boot -->
         <dependency>

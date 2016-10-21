@@ -1,10 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 
 import java.util.Collections;
+import java.util.Date;
 
 class EntityUtils {
     static Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
@@ -20,18 +22,28 @@ class EntityUtils {
         return kielisyys;
     }
 
-    static Henkilo createPerustietoHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
-                                                      String kielikoodi, String kielityyppi, String kansalaisuuskoodi) {
+    static Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi) {
+        Kielisyys aidinkieli = new Kielisyys();
+        aidinkieli.setKielityyppi(kielityyppi);
+        aidinkieli.setKielikoodi(kielikoodi);
+
+        Kansalaisuus kansalaisuus = new Kansalaisuus();
+        kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
+
         Henkilo henkilo = new Henkilo();
-        henkilo.setHetu(hetu);
-        henkilo.setPassivoitu(false);
         henkilo.setEtunimet(etunimet);
         henkilo.setKutsumanimi(kutsumanimi);
         henkilo.setSukunimi(sukunimi);
+        henkilo.setHetu(hetu);
         henkilo.setOidhenkilo(oidHenkilo);
-        Kielisyys aidinkieli = EntityUtils.createKielisyys(kielikoodi, kielityyppi);
+        henkilo.setPassivoitu(passivoitu);
+        henkilo.setHenkilotyyppi(henkiloTyyppi);
+        henkilo.setCreated(new Date());
+        henkilo.setModified(new Date());
         henkilo.setAidinkieli(aidinkieli);
-        Kansalaisuus kansalaisuus = EntityUtils.createKansalaisuus(kansalaisuuskoodi);
+        henkilo.setKielisyys(Collections.singleton(aidinkieli));
         henkilo.setKansalaisuus(Collections.singleton(kansalaisuus));
         return henkilo;
     }

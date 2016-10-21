@@ -1,8 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.api;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.HenkiloTyyppi;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ public class HenkiloJsonTest {
     public void testSerialize() throws Exception {
         Henkilo henkilo = new Henkilo();
         henkilo.setOidhenkilo("1.2.3.4.5");
-        henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
         henkilo.setHetu("123456-9999");
         henkilo.setPassivoitu(false);
 
@@ -33,17 +30,13 @@ public class HenkiloJsonTest {
                 .extractingJsonPathStringValue("@.oidhenkilo").isEqualTo("1.2.3.4.5");
         assertThat(this.json.write(henkilo)).hasJsonPathStringValue("@.hetu")
                 .extractingJsonPathStringValue("@.hetu").isEqualTo("123456-9999");
-        assertThat(this.json.write(henkilo)).hasJsonPathStringValue("@.henkilotyyppi")
-                .extractingJsonPathStringValue("@.henkilotyyppi").isEqualTo(HenkiloTyyppi.VIRKAILIJA.toString());
     }
 
     @Test
     public void testDeserialize() throws Exception {
-        String content = "{\"passivoitu\": false, \"oidhenkilo\": \"1.2.3.4.5\", \"hetu\": \"123456-9999\", " +
-                "\"henkilotyyppi\": \""+ HenkiloTyyppi.VIRKAILIJA.toString() +"\"}";
+        String content = "{\"passivoitu\": false, \"oidhenkilo\": \"1.2.3.4.5\", \"hetu\": \"123456-9999\"}";
         assertThat(this.json.parseObject(content).getHetu()).isEqualTo("123456-9999");
         assertThat(this.json.parseObject(content).getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(this.json.parseObject(content).getHenkilotyyppi()).isEqualTo(HenkiloTyyppi.VIRKAILIJA);
         assertThat(this.json.parseObject(content).isPassivoitu()).isFalse();
     }
 }

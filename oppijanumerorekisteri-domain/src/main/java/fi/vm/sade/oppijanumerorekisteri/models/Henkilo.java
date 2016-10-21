@@ -1,33 +1,44 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter @Setter
 @Table(name = "henkilo", schema = "public")
-@NamedEntityGraph(
-        name = "henkiloWithKansalaisuusAndAidinkieli",
-        attributeNodes = {
-                @NamedAttributeNode(value = "kansalaisuus"),
-                @NamedAttributeNode(value = "aidinkieli")
-        }
-)
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "henkiloWithKansalaisuusAndAidinkieli",
+                attributeNodes = {
+                        @NamedAttributeNode("kansalaisuus"),
+                        @NamedAttributeNode("aidinkieli")
+                }
+        ),
+        @NamedEntityGraph(
+                name = "henkiloWithPerustiedot",
+                attributeNodes = {
+                        @NamedAttributeNode("asiointikieli"),
+                        @NamedAttributeNode("aidinkieli")
+                }
+        )
+})
+// nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
 
     @Column(nullable = false)
     private String oidhenkilo;
 
+    @Column(unique = true)
     private String hetu;
-
-    @Column(nullable = false)
-    private boolean passivoitu;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -42,6 +53,33 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aidinkieli_id")
     private Kielisyys aidinkieli;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asiointikieli_id")
+    private Kielisyys asiointikieli;
+
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modified;
+
+    @Column(nullable = false)
+    private boolean passivoitu;
+
+    @Column(nullable = false)
+    private boolean yksiloity;
+
+    @Column(nullable = false)
+    private boolean yksiloityvtj;
+
+    @Column(nullable = false)
+    private boolean yksilointiYritetty;
+
+    @Column(nullable = false)
+    private boolean duplicate;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",

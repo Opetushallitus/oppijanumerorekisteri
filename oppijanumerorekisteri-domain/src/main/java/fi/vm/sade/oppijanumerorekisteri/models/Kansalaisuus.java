@@ -21,7 +21,6 @@ public class Kansalaisuus extends IdentifiableAndVersionedEntity {
     private String kansalaisuuskoodi;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "kansalaisuus")
-//    @JsonIgnore
     private Set<Henkilo> henkilos;
 
 }
