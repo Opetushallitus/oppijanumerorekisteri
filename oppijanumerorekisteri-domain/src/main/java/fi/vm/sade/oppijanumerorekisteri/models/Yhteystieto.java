@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,7 +15,6 @@ public class Yhteystieto extends IdentifiableAndVersionedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "yhteystiedotryhma_id", nullable = false, unique = false)
-    @JsonIgnore
     private YhteystiedotRyhma yhteystiedotRyhma;
     
     @Column(name = "yhteystieto_tyyppi")

@@ -5,7 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
+import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
+import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -39,21 +44,40 @@ public class HenkiloControllerTest extends AbstractTest {
     }
     
     @Test
-    @Ignore // TODO: WithMockUser won't work: 403
-    @WithMockUser(username = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(username = "1.2.3.4.5")
     public void getHenkiloYhteystiedot() throws Exception {
         given(this.service.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-            .put(YhteystietoRyhma.KOTIOSOITE, YhteystiedotDto.builder()
-                        .sahkoposti("testi@test.com")
-                        .matkapuhelinnumero("+358451234567")
-                        .katuosoite("Testikatu 2")
-                        .postinumero("12345")
-                        .kunta("Toijala")
-                        .kaupunki("Toijala")
-                        .maa("Suomi")
-                    .build()));
+            .put(YhteystietoRyhma.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(jsonResource("classpath:henkilo/simpleTestYhteystiedot.json")));
+        
+        given(this.service.getHenkiloYhteystiedot("1.2.3.4.6")).willReturn(new HenkilonYhteystiedotViewDto());
+        this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json("{}"));
+    }
+    
+    @Test
+    @WithMockUser(username = "1.2.3.4.5")
+    public void getHenkiloYhteystiedotByRyhma() throws Exception {
+        given(this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE)).willReturn(
+                of(YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResource("classpath:henkilo/simpleYhteystieto.json")));
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/yhteystietotyyppi1").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonResource("classpath:henkilo/simpleYhteystieto.json")));
+
+        given(this.service.getHenkiloYhteystiedot("1.2.3.4.5", TYOOSOITE)).willReturn(empty());
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tyoosoite").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
+        
+        given(this.service.getHenkiloYhteystiedot("1.2.3.4.6", KOTIOSOITE)).willReturn(empty());
+        this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
+        
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tuntematon_tyyppi").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
     }
 }

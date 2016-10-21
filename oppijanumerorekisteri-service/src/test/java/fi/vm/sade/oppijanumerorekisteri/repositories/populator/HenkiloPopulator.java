@@ -39,23 +39,21 @@ public class HenkiloPopulator implements Populator<Henkilo> {
     
     @Override
     public Henkilo apply(EntityManager entityManager) {
-        Henkilo existing = Populator.first(entityManager.createQuery("select h from Henkilo h where h.oidhenkilo = :oid")
-                .setParameter("oid", oid));
-        if (existing != null) {
-            return existing;
-        }
-        Henkilo henkilo = new Henkilo();
-        henkilo.setOidhenkilo(oid);
-        henkilo.setHetu(hetu);
-        henkilo.setHenkilotyyppi(tyyppi);
-        entityManager.persist(henkilo);
-        
-        yhteystietoRyhmas.forEach(r -> {
-            YhteystiedotRyhma ryhma = r.apply(entityManager);
-            ryhma.setHenkilo(henkilo);
-            henkilo.getYhteystiedotRyhmas().add(ryhma);
+        return Populator.<Henkilo>firstOptional(entityManager.createQuery("select h from Henkilo h " +
+                "   where h.oidhenkilo = :oid").setParameter("oid", oid)).orElseGet(() -> {
+            Henkilo henkilo = new Henkilo();
+            henkilo.setOidhenkilo(oid);
+            henkilo.setHetu(hetu);
+            henkilo.setHenkilotyyppi(tyyppi);
+            entityManager.persist(henkilo);
+
+            yhteystietoRyhmas.forEach(ryhmaPopulator -> {
+                YhteystiedotRyhma ryhma = ryhmaPopulator.apply(entityManager);
+                ryhma.setHenkilo(henkilo);
+                henkilo.getYhteystiedotRyhmas().add(ryhma);
+            });
+
+            return entityManager.merge(henkilo);
         });
-        
-        return entityManager.merge(henkilo);
     }
 }

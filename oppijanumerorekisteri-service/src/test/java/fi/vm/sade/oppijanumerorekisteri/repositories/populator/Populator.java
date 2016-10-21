@@ -15,6 +15,7 @@ public interface Populator<T> extends Function<EntityManager, T> {
     }
     
     static <T> T first(Query q) {
+        @SuppressWarnings("unchecked")
         List<T> l = (List<T>)q.setMaxResults(1).getResultList();
         if (l.isEmpty()) {
             return null;

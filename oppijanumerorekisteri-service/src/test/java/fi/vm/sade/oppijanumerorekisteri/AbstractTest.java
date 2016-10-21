@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri;
 
 import org.apache.commons.io.IOUtils;
 import org.intellij.lang.annotations.Language;
-import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -11,11 +10,6 @@ import java.io.IOException;
 public abstract class AbstractTest {
     @Autowired
     private ApplicationContext applicationContext;
-
-    @BeforeClass
-    public static void beforeClass() {
-        System.setProperty("hibernate.hbm2ddl.auto", "update");
-    }
 
     /**
      * @see #resource(String)

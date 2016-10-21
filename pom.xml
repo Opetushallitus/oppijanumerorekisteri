@@ -42,6 +42,9 @@
         <ant-contrib.version>20020829</ant-contrib.version>
         <jsch.version>0.1.54</jsch.version>
         <ant-jsch.version>1.9.7</ant-jsch.version>
+        
+        <!-- dev tools -->
+        <intellij.annoatations.version>12.0</intellij.annoatations.version>
     </properties>
 
     <dependencyManagement>
@@ -126,16 +129,13 @@
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.intellij</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${intellij.annoatations.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>annotations</artifactId>
-            <version>12.0</version>
-        </dependency>
-    </dependencies>
 
     <build>
         <pluginManagement>

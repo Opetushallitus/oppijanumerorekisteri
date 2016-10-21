@@ -1,0 +1,22 @@
+{
+  "kotiosoite": {
+    "sahkoposti": "testi@test.com",
+    "puhelinnumero": null,
+    "matkapuhelinnumero": "+358451234567",
+    "katuosoite": "Testikatu 2",
+    "kunta": "Toijala",
+    "postinumero": "12345",
+    "kaupunki": "Toijala",
+    "maa": "Suomi"
+  },
+  "tyoosoite": {
+    "sahkoposti": "tyo@osoite.fi",
+    "puhelinnumero": "01234567",
+    "matkapuhelinnumero": "+3584040404",
+    "katuosoite": "Työkatu 6",
+    "kunta": "Vilppula",
+    "postinumero": "54321",
+    "kaupunki": "Vilppula",
+    "maa": null
+  }
+}

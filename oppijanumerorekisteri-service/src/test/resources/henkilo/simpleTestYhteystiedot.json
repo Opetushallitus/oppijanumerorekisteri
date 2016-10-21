@@ -2,11 +2,11 @@
   "kotiosoite": {
     "sahkoposti": "testi@test.com",
     "puhelinnumero": null,
-    "matkapuhelinnumero": "+358451234567",
-    "katuosoite": "Testikatu 2",
-    "kunta": "Toijala",
-    "postinumero": "12345",
-    "kaupunki": "Toijala",
-    "maa": "Suomi"
+    "matkapuhelinnumero": null,
+    "katuosoite": null,
+    "kunta": null,
+    "postinumero": null,
+    "kaupunki": null,
+    "maa": null
   }
 }

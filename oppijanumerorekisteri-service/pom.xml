@@ -154,6 +154,11 @@
             <artifactId>org.jresearch.orika.spring</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>com.h2database</groupId>

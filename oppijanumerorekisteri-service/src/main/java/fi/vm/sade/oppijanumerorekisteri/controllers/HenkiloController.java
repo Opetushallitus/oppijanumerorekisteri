@@ -44,22 +44,24 @@ public class HenkiloController {
     
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-     // TODO: @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    // TODO: use proper organization related checks when implemented, used to be:
+    // @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}/yhteystiedot", method = RequestMethod.GET)
     public HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(
-            @ApiParam("Henkilön OID") @PathVariable("oid") String oid/**,
-            TODO: @P("permissionService") @RequestHeader("External-Permission-Service")
+            @ApiParam("Henkilön OID") @PathVariable("oid") String oid
+            /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
                     PermissionChecker.ExternalPermissionService permissionService */) {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
     @ApiOperation("Hakee annetun henkilön yhteystietoryhmän yhteystiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    // TODO: @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    // TODO: use proper organization related checks when implemented, used to be:
+    // @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}/yhteystiedot/{ryhma}", method = RequestMethod.GET)
     public YhteystiedotDto getHenkiloYhteystiedot(@ApiParam("Henkilön OID") @PathVariable("oid") String oid,
-                  @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma/**,
-                   TODO: @P("permissionService") @RequestHeader("External-Permission-Service")
+                  @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma
+                  /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
                            PermissionChecker.ExternalPermissionService permissionService */) {
         return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhma.forValue(ryhma))
                 .orElseThrow(() -> new ResourceNotFoundException("Yhteystiedot not found by ryhma="+ryhma));
