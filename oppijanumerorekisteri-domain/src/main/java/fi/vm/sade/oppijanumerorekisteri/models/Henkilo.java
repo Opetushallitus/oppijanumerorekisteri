@@ -87,6 +87,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean duplicate;
 
+    @Column(nullable = false)
+    private boolean eisuomalaistahetua;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "kielisyys_id",

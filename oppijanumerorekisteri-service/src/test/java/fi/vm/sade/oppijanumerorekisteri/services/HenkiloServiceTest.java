@@ -14,6 +14,7 @@ import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -127,5 +128,11 @@ public class HenkiloServiceTest {
         Optional<YhteystiedotDto> tiedot = this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE);
         assertThat(tiedot.isPresent()).isTrue();
         assertThat(tiedot.get().getKatuosoite()).isEqualTo("Siilikuja 6");
+    }
+
+    @Test
+    public void generateOid() {
+        String oid = ReflectionTestUtils.invokeMethod(service, "getFreePersonOid");
+        assertThat(oid).isNotNull();
     }
 }

@@ -132,7 +132,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private String getFreePersonOid() {
         final String newOid = oidGenerator.generateOID();
-        if (!this.getOidExists(newOid)) {
+        if (this.getOidExists(newOid)) {
             return getFreePersonOid();
         }
         return newOid;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "Henkilöt")
+@Api(tags = "Henkilot")
 @RestController
 @RequestMapping("/henkilo")
 public class HenkiloController {
@@ -31,15 +31,15 @@ public class HenkiloController {
         return henkiloService.getHasHetu(UserDetailsUtil.getCurrentUserOid());
     }
 
-    @ApiOperation("Hakee henkilöiden perustiedot nimen perusteella")
+    @ApiOperation("Hakee henkilöiden OID:n, HeTu:n ja nimet nimen perusteella")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
     public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
                                                                 @RequestParam(value = "sukunimi") String sukunimi) {
         return this.henkiloService.getHenkiloOidHetuNimiByName(etunimet, sukunimi);
     }
-    
-    @ApiOperation(value = "Hakee henkilön perustiedot henkilötunnuksen perusteella")
+
+    @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
@@ -54,13 +54,13 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
     }
 
-    @ApiOperation(value = "Luo uuden henkilön annetuista perustiedoista")
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created"), @ApiResponse(code = 400, message = "Validation exception")})
+    @ApiOperation(value = "Luo uuden henkilön annetuista koski perustiedoista")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<HenkiloKoskiDto> createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
-        HenkiloKoskiDto koskiDto = this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(koskiDto);
+    public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
+        return this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
