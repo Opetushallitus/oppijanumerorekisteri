@@ -2,12 +2,14 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,13 +64,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @NotNull
     @Column(name = "created")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date luontiPvm;
+    private LocalDateTime luontiPvm;
 
     @NotNull
     @Column(name = "modified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date muokkausPvm;
+    private LocalDateTime muokkausPvm;
 
     @Column(nullable = false)
     private boolean passivoitu;

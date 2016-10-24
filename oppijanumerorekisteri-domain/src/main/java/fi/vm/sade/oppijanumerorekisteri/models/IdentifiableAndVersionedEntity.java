@@ -20,7 +20,8 @@ public class IdentifiableAndVersionedEntity implements Persistable<Long> {
     @Version
     @Column(nullable = false)
     private Long version;
-
+    
+    @Override
     @Transient
     public boolean isNew() {
         return null == this.getId();

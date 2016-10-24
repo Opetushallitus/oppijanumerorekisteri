@@ -1,9 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
@@ -14,15 +12,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Optional;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloHibernateRepository {
@@ -46,10 +40,10 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        JPAQuery<Henkilo> query = this.getJpaQueryFactory().selectFrom(qHenkilo);
+        JPAQuery<Henkilo> query = jpa().selectFrom(qHenkilo);
         query.select(Projections.bean(Henkilo.class, qHenkilo.oidhenkilo, qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, qHenkilo.hetu));
         BooleanBuilder builder = new BooleanBuilder();
-        for(String etunimi : etunimet) {
+        for (String etunimi : etunimet) {
             builder.or(qHenkilo.etunimet.containsIgnoreCase(etunimi));
         }
         builder.and(qHenkilo.sukunimi.containsIgnoreCase(sukunimi));

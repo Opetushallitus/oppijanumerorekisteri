@@ -1,11 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 
 import java.util.List;
 import java.util.Optional;

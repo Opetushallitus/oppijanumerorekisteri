@@ -1,10 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,9 @@ public class HenkiloPopulator implements Populator<Henkilo> {
             Henkilo henkilo = new Henkilo();
             henkilo.setOidhenkilo(oid);
             henkilo.setHetu(hetu);
+            LocalDateTime createdAt = LocalDateTime.now();
+            henkilo.setLuontiPvm(createdAt);
+            henkilo.setMuokkausPvm(createdAt);
             henkilo.setHenkilotyyppi(tyyppi);
             entityManager.persist(henkilo);
 

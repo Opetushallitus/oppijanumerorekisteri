@@ -5,7 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.HenkiloTyyppi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +43,9 @@ public class HenkiloJsonTest extends AbstractTest {
     @Test
     public void testDeserialize() throws Exception {
         String content = "{\"passivoitu\": false, \"oidhenkilo\": \"1.2.3.4.5\", \"hetu\": \"123456-9999\"}";
-        assertThat(this.json.parseObject(content).getHetu()).isEqualTo("123456-9999");
-        assertThat(this.json.parseObject(content).getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(this.json.parseObject(content).isPassivoitu()).isFalse();
+        assertThat(this.henkiloJson.parseObject(content).getHetu()).isEqualTo("123456-9999");
+        assertThat(this.henkiloJson.parseObject(content).getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(this.henkiloJson.parseObject(content).isPassivoitu()).isFalse();
     }
     
     @Test
