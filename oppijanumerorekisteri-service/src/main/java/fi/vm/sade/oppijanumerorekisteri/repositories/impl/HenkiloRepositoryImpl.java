@@ -1,6 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAQuery;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
@@ -14,23 +19,42 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Optional;
+
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloHibernateRepository {
 
     @Override
-    public String getHetuByOid(String henkiloOid) {
+    public Optional<String> findHetuByOid(String henkiloOid) {
         QHenkilo qHenkilo = henkilo;
-        return jpa().selectFrom(qHenkilo).select(qHenkilo.hetu)
+        return Optional.ofNullable(jpa().selectFrom(qHenkilo).select(qHenkilo.hetu)
                 .where(qHenkilo.oidhenkilo.eq(henkiloOid))
-                .fetchOne();
+                .fetchOne());
     }
 
     @Override
-    public String getOidByHetu(String hetu) {
+    public Optional<String> findOidByHetu(String hetu) {
         QHenkilo qHenkilo = henkilo;
-        return jpa().selectFrom(qHenkilo).select(qHenkilo.oidhenkilo)
+        return Optional.ofNullable(jpa().selectFrom(qHenkilo).select(qHenkilo.oidhenkilo)
                 .where(qHenkilo.hetu.eq(hetu))
-                .fetchOne();
+                .fetchOne());
+    }
+
+    @Override
+    public List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        JPAQuery<Henkilo> query = this.getJpaQueryFactory().selectFrom(qHenkilo);
+        query.select(Projections.bean(Henkilo.class, qHenkilo.oidhenkilo, qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, qHenkilo.hetu));
+        BooleanBuilder builder = new BooleanBuilder();
+        for(String etunimi : etunimet) {
+            builder.or(qHenkilo.etunimet.containsIgnoreCase(etunimi));
+        }
+        builder.and(qHenkilo.sukunimi.containsIgnoreCase(sukunimi));
+        query = query.where(builder);
+        return query.fetch();
     }
 
     @Override

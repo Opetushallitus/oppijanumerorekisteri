@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.models;
+package fi.vm.sade.oppijanumerorekisteri.dto;
 
 public enum HenkiloTyyppi {
     OPPIJA, VIRKAILIJA, PALVELU;

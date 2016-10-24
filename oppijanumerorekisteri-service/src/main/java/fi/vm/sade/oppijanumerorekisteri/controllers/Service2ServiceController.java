@@ -1,9 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +31,17 @@ public class Service2ServiceController {
     }
 
     @ApiOperation("Hakee annettua henkilötunnusta vastaavan henkilö OID:n")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/oidByHetu/{hetu}", method = RequestMethod.GET)
     public String oidByHetu(@PathVariable String hetu) {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
-    @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")
+    @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden koski perustiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilotByHenkiloOidList", method = RequestMethod.POST)
-    public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@RequestBody List<String> henkiloOids) {
-        return this.henkiloService.getHenkiloPerustietosByOids(henkiloOids);
+    public List<HenkiloKoskiDto> henkilotByHenkiloOidList(@RequestBody List<String> henkiloOids) {
+        return this.henkiloService.getHenkiloKoskiPerustietoByOids(henkiloOids);
     }
 }
