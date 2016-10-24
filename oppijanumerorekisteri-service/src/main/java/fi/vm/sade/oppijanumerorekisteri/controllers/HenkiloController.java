@@ -60,6 +60,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Luo uuden henkilön annetuista perustiedoista")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created"), @ApiResponse(code = 400, message = "Validation exception")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {

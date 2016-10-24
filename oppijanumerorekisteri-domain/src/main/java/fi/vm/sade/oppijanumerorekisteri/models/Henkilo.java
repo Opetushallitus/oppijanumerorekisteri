@@ -44,6 +44,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Enumerated(EnumType.STRING)
     private HenkiloTyyppi henkilotyyppi;
 
+    @NotNull
     private String etunimet;
 
     private String kutsumanimi;
@@ -59,12 +60,14 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Kielisyys asiointikieli;
 
     @NotNull
+    @Column(name = "luontiPvm")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
+    private Date luontiPvm;
 
     @NotNull
+    @Column(name = "muokkausPvm")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date modified;
+    private Date muokkausPvm;
 
     @Column(nullable = false)
     private boolean passivoitu;

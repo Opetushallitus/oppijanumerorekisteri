@@ -8,21 +8,21 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import java.util.Collections;
 import java.util.Date;
 
-class EntityUtils {
-    static Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
+public class EntityUtils {
+    static public Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
         Kansalaisuus kansalaisuus = new Kansalaisuus();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
         return kansalaisuus;
     }
 
-    static Kielisyys createKielisyys(String kielikoodi, String kielityyppi) {
+    static public Kielisyys createKielisyys(String kielikoodi, String kielityyppi) {
         Kielisyys kielisyys = new Kielisyys();
         kielisyys.setKielikoodi(kielikoodi);
         kielisyys.setKielityyppi(kielityyppi);
         return kielisyys;
     }
 
-    static Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+    static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi) {
         Kielisyys aidinkieli = new Kielisyys();
@@ -40,8 +40,8 @@ class EntityUtils {
         henkilo.setOidhenkilo(oidHenkilo);
         henkilo.setPassivoitu(passivoitu);
         henkilo.setHenkilotyyppi(henkiloTyyppi);
-        henkilo.setCreated(new Date());
-        henkilo.setModified(new Date());
+        henkilo.setLuontiPvm(new Date());
+        henkilo.setMuokkausPvm(new Date());
         henkilo.setAidinkieli(aidinkieli);
         henkilo.setKielisyys(Collections.singleton(aidinkieli));
         henkilo.setKansalaisuus(Collections.singleton(kansalaisuus));

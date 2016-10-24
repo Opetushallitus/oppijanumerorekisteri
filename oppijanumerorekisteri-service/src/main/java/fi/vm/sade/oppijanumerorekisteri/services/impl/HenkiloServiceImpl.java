@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -104,8 +103,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(propagation = Propagation.MANDATORY)
     private Henkilo createHenkilo(Henkilo henkilo) {
         henkilo.setOidhenkilo(getFreePersonOid());
-        henkilo.setCreated(new Date());
-        henkilo.setModified(new Date());
+        henkilo.setLuontiPvm(new Date());
+        henkilo.setMuokkausPvm(new Date());
         return this.henkiloDataRepository.save(henkilo);
     }
 
