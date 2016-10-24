@@ -74,7 +74,7 @@ public class HenkiloRepositoryTests {
 
     @Test(expected = ConstraintViolationException.class)
     public void createUserWithNullLuontiPvm() {
-        Henkilo henkiloWithNullLuontiPvm = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "2dasasd",
+        Henkilo henkiloWithNullLuontiPvm = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246");
         henkiloWithNullLuontiPvm.setLuontiPvm(null);
         testEntityManager.persist(henkiloWithNullLuontiPvm);

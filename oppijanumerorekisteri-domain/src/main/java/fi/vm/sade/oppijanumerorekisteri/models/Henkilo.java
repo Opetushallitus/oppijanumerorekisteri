@@ -59,12 +59,12 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Kielisyys asiointikieli;
 
     @NotNull
-    @Column(name = "luontiPvm")
+    @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date luontiPvm;
 
     @NotNull
-    @Column(name = "muokkausPvm")
+    @Column(name = "modified")
     @Temporal(TemporalType.TIMESTAMP)
     private Date muokkausPvm;
 

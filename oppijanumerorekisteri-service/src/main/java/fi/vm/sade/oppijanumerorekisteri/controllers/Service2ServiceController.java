@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 
 @Api(tags = "Service To Service")
@@ -35,7 +34,7 @@ public class Service2ServiceController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/oidByHetu/{hetu}", method = RequestMethod.GET)
-    public String oidByHetu(@PathVariable String hetu) throws NotFoundException {
+    public String oidByHetu(@PathVariable String hetu) {
         return this.henkiloService.getOidByHetu(hetu);
     }
 

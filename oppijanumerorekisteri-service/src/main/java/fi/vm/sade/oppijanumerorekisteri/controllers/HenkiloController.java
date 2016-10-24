@@ -10,14 +10,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 
 @Api(tags = "Henkilöt")
 @RestController
@@ -63,8 +62,8 @@ public class HenkiloController {
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Created"), @ApiResponse(code = 400, message = "Validation exception")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
+    public ResponseEntity<HenkiloKoskiDto> createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
         HenkiloKoskiDto koskiDto = this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
-        return Response.status(Response.Status.CREATED).entity(koskiDto).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(koskiDto);
     }
 }
