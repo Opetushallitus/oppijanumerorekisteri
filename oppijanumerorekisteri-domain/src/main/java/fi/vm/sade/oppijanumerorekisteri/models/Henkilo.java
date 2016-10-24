@@ -44,7 +44,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Enumerated(EnumType.STRING)
     private HenkiloTyyppi henkilotyyppi;
 
-    @NotNull
     private String etunimet;
 
     private String kutsumanimi;
