@@ -1,9 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
-import fi.vm.sade.oppijanumerorekisteri.configurations.HttpMockedUserDetailsConfig;
-import fi.vm.sade.oppijanumerorekisteri.configurations.HttpMockedUserDetailsProvider;
-import fi.vm.sade.oppijanumerorekisteri.configurations.LdapUserDetailsConfig;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;

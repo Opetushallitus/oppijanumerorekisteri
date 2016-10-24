@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -24,13 +26,14 @@ public class HenkiloServiceTest {
         this.henkiloHibernateRepositoryMock = Mockito.mock(HenkiloHibernateRepository.class);
         this.henkiloJpaRepositoryMock = Mockito.mock(HenkiloRepository.class);
         OrikaSpringMapper mapperMock = Mockito.mock(OrikaSpringMapper.class);
+        MockOidGenerator mockOidGenerator = new MockOidGenerator();
         this.service = new HenkiloServiceImpl(this.henkiloHibernateRepositoryMock,
-                henkiloJpaRepositoryMock, mapperMock);
+                henkiloJpaRepositoryMock, mapperMock, mockOidGenerator);
     }
 
     @Test
     public void getHasHetu() {
-        given(this.henkiloHibernateRepositoryMock.getHetuByOid("1.2.3.4.5")).willReturn("123456-9999");
+        given(this.henkiloHibernateRepositoryMock.findHetuByOid("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
         assertThat(this.service.getHasHetu("1.2.3.4.5")).isTrue();
     }
 
@@ -42,7 +45,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void getOidByHetu() {
-        given(this.henkiloHibernateRepositoryMock.getOidByHetu("1.2.3.4.5")).willReturn("123456-9999");
+        given(this.henkiloHibernateRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
         assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
     }
 }

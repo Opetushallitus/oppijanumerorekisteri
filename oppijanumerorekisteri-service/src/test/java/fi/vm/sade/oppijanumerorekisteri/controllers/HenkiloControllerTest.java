@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,5 +32,11 @@ public class HenkiloControllerTest {
         given(this.service.getHasHetu("1.2.3.4.5")).willReturn(true);
         this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().string("true"));
+    }
+
+    @Test
+    @WithMockUser
+    public void createHenkiloTest() {
+//        given(this.service.createHenkiloFromKoskiDto(new HenkiloKoskiDto())).willThrow()
     }
 }

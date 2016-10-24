@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations;
+package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.authentication.ldap.CustomUserDetailsMapper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
