@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -125,7 +125,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private Henkilo createHenkilo(Henkilo henkilo) {
         henkilo.setOidhenkilo(getFreePersonOid());
-        henkilo.setLuontiPvm(LocalDateTime.now());
+        henkilo.setLuontiPvm(new Date());
         henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
         return this.henkiloDataRepository.save(henkilo);
     }

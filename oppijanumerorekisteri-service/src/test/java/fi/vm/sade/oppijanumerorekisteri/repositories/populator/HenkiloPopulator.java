@@ -5,8 +5,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class HenkiloPopulator implements Populator<Henkilo> {
@@ -45,9 +45,8 @@ public class HenkiloPopulator implements Populator<Henkilo> {
             Henkilo henkilo = new Henkilo();
             henkilo.setOidhenkilo(oid);
             henkilo.setHetu(hetu);
-            LocalDateTime createdAt = LocalDateTime.now();
-            henkilo.setLuontiPvm(createdAt);
-            henkilo.setMuokkausPvm(createdAt);
+            henkilo.setLuontiPvm(new Date());
+            henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
             henkilo.setHenkilotyyppi(tyyppi);
             entityManager.persist(henkilo);
 

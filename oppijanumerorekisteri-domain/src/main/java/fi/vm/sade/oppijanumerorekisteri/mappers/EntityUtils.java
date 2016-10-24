@@ -5,8 +5,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Date;
 
 public class EntityUtils {
     static public Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
@@ -40,7 +40,7 @@ public class EntityUtils {
         henkilo.setOidhenkilo(oidHenkilo);
         henkilo.setPassivoitu(passivoitu);
         henkilo.setHenkilotyyppi(henkiloTyyppi);
-        henkilo.setLuontiPvm(LocalDateTime.now());
+        henkilo.setLuontiPvm(new Date());
         henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
         henkilo.setAidinkieli(aidinkieli);
         henkilo.setKielisyys(Collections.singleton(aidinkieli));

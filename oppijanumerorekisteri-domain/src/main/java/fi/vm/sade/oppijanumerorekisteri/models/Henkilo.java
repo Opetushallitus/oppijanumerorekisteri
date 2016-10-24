@@ -9,7 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,11 +64,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @NotNull
     @Column(name = "created")
-    private LocalDateTime luontiPvm;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date luontiPvm;
 
     @NotNull
     @Column(name = "modified")
-    private LocalDateTime muokkausPvm;
+    @Temporal(TemporalType.TIMESTAMP) 
+    private Date muokkausPvm;
 
     @Column(nullable = false)
     private boolean passivoitu;

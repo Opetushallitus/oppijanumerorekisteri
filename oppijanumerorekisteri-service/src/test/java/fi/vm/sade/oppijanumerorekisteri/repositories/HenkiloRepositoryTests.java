@@ -15,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +45,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         henkilo.setHetu("123456");
         henkilo.setOidhenkilo("1.2.3.4.5.6");
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
-        henkilo.setLuontiPvm(LocalDateTime.now());
+        henkilo.setLuontiPvm(new Date());
         henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
         this.testEntityManager.persist(henkilo);
         Optional<String> hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
@@ -59,7 +58,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         henkilo.setHetu("");
         henkilo.setOidhenkilo("1.2.3.4.5.6");
         henkilo.setHenkilotyyppi(HenkiloTyyppi.VIRKAILIJA);
-        henkilo.setLuontiPvm(LocalDateTime.now());
+        henkilo.setLuontiPvm(new Date());
         henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
         this.testEntityManager.persist(henkilo);
         Optional<String> hetu = this.repository.findHetuByOid("1.2.3.4.5.6");
