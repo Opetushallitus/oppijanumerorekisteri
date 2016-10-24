@@ -41,7 +41,7 @@ public class EntityUtils {
         henkilo.setPassivoitu(passivoitu);
         henkilo.setHenkilotyyppi(henkiloTyyppi);
         henkilo.setLuontiPvm(new Date());
-        henkilo.setMuokkausPvm(new Date());
+        henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
         henkilo.setAidinkieli(aidinkieli);
         henkilo.setKielisyys(Collections.singleton(aidinkieli));
         henkilo.setKansalaisuus(Collections.singleton(kansalaisuus));

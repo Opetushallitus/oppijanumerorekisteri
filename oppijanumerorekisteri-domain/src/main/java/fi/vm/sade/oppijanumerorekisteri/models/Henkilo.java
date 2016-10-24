@@ -2,7 +2,9 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -30,6 +32,8 @@ import java.util.Set;
                 }
         )
 })
+@NoArgsConstructor
+@AllArgsConstructor
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
@@ -65,7 +69,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @NotNull
     @Column(name = "modified")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIMESTAMP) 
     private Date muokkausPvm;
 
     @Column(nullable = false)
@@ -95,4 +99,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             name = "kansalaisuus_id", referencedColumnName = "id"))
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
+    @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    private Set<YhteystiedotRyhma> yhteystiedotRyhmas = new HashSet<>();
 }

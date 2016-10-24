@@ -1,15 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,7 +38,7 @@ public class HenkiloController {
                                                                 @RequestParam(value = "sukunimi") String sukunimi) {
         return this.henkiloService.getHenkiloOidHetuNimiByName(etunimet, sukunimi);
     }
-
+    
     @ApiOperation(value = "Hakee henkilön perustiedot henkilötunnuksen perusteella")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
@@ -65,5 +61,30 @@ public class HenkiloController {
     public ResponseEntity<HenkiloKoskiDto> createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
         HenkiloKoskiDto koskiDto = this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(koskiDto);
+    }
+
+    @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    // TODO: use proper organization related checks when implemented, used to be:
+    // @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/{oid}/yhteystiedot", method = RequestMethod.GET)
+    public HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(
+            @ApiParam("Henkilön OID") @PathVariable("oid") String oid
+            /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
+             PermissionChecker.ExternalPermissionService permissionService */) {
+        return henkiloService.getHenkiloYhteystiedot(oid);
+    }
+
+    @ApiOperation("Hakee annetun henkilön yhteystietoryhmän yhteystiedot")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    // TODO: use proper organization related checks when implemented, used to be:
+    // @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/{oid}/yhteystiedot/{ryhma}", method = RequestMethod.GET)
+    public YhteystiedotDto getHenkiloYhteystiedot(@ApiParam("Henkilön OID") @PathVariable("oid") String oid,
+                                                  @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma
+                                                  /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
+                                                   PermissionChecker.ExternalPermissionService permissionService */) {
+        return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhma.forValue(ryhma))
+                .orElseThrow(() -> new ResourceNotFoundException("Yhteystiedot not found by ryhma="+ryhma));
     }
 }

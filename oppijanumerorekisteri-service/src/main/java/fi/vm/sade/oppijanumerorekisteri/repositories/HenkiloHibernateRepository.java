@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Repository;
@@ -16,4 +18,5 @@ public interface HenkiloHibernateRepository {
 
     List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi);
 
+    List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
 }

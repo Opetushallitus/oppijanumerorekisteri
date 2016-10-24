@@ -94,6 +94,10 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
 
         <!-- Spring -->
         <dependency>
@@ -144,6 +148,11 @@
         <dependency>
             <groupId>org.jresearch.orika</groupId>
             <artifactId>org.jresearch.orika.spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
 
         <!-- Test -->

@@ -1,8 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,5 +14,6 @@ public interface HenkiloService {
     List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi);
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
     HenkiloKoskiDto createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto);
-
+    HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
+    Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhma ryhma);
 }
