@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import io.swagger.annotations.Api;
@@ -14,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +49,7 @@ public class HenkiloController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
     public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) throws NotFoundException {
-        return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu).orElseThrow(NotFoundException::new);
+        return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")
@@ -63,13 +63,7 @@ public class HenkiloController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
-        Optional<HenkiloKoskiDto> koskiDto = this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
-        if(koskiDto.isPresent()) {
-            return Response.status(Response.Status.CREATED).entity(koskiDto.get()).build();
-        }
-        else {
-            throw new InternalServerErrorException("Could not create new henkilo");
-        }
+        HenkiloKoskiDto koskiDto = this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
+        return Response.status(Response.Status.CREATED).entity(koskiDto).build();
     }
-
 }

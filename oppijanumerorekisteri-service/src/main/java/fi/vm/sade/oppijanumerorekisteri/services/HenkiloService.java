@@ -10,11 +10,11 @@ import java.util.Optional;
 public interface HenkiloService {
     Boolean getHasHetu(String oid);
     boolean getOidExists(String oid);
-    Optional<String> getOidByHetu(String hetu);
+    String getOidByHetu(String hetu);
     List<HenkiloKoskiDto> getHenkiloKoskiPerustietoByOids(List<String> oids);
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
     List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi);
-    Optional<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByHetu(String hetu);
-    Optional<HenkiloKoskiDto> createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto);
+    HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
+    HenkiloKoskiDto createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto);
 
 }

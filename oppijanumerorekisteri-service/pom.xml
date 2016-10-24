@@ -22,12 +22,12 @@
         <dependency>
             <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
             <artifactId>oppijanumerorekisteri-domain</artifactId>
-            <version>${oppijanumerorekisteri.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
             <artifactId>oppijanumerorekisteri-api</artifactId>
-            <version>${oppijanumerorekisteri.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- OPH -->

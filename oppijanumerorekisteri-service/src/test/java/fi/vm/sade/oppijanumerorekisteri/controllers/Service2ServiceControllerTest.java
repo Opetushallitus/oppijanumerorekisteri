@@ -30,7 +30,7 @@ public class Service2ServiceControllerTest {
     @Test
     @WithMockUser
     public void getOidByHetu() throws Exception{
-        given(this.service.getOidByHetu("123456-9999")).willReturn(Optional.of("1.2.3.4.5"));
+        given(this.service.getOidByHetu("123456-9999")).willReturn("1.2.3.4.5");
         this.mvc.perform(get("/s2s/oidByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
     }

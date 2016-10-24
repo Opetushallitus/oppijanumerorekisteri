@@ -46,6 +46,6 @@ public class HenkiloServiceTest {
     @Test
     public void getOidByHetu() {
         given(this.henkiloHibernateRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
-        assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo(Optional.of("123456-9999"));
+        assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
     }
 }

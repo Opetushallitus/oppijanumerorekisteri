@@ -20,7 +20,7 @@
         <dependency>
             <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
             <artifactId>oppijanumerorekisteri-api</artifactId>
-            <version>${oppijanumerorekisteri.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -116,7 +116,7 @@
                     <dependency>
                         <groupId>fi.vm.sade.oppijanumerorekisteri</groupId>
                         <artifactId>oppijanumerorekisteri-api</artifactId>
-                        <version>${oppijanumerorekisteri.version}</version>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

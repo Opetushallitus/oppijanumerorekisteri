@@ -41,7 +41,6 @@
         <ant-contrib.version>20020829</ant-contrib.version>
         <jsch.version>0.1.54</jsch.version>
         <ant-jsch.version>1.9.7</ant-jsch.version>
-        <oppijanumerorekisteri.version>0.0.1-SNAPSHOT</oppijanumerorekisteri.version>
     </properties>
 
     <dependencyManagement>

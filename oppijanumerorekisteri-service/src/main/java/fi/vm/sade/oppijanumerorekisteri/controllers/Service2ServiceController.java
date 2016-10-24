@@ -36,7 +36,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/oidByHetu/{hetu}", method = RequestMethod.GET)
     public String oidByHetu(@PathVariable String hetu) throws NotFoundException {
-        return this.henkiloService.getOidByHetu(hetu).orElseThrow(NotFoundException::new);
+        return this.henkiloService.getOidByHetu(hetu);
     }
 
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden koski perustiedot")

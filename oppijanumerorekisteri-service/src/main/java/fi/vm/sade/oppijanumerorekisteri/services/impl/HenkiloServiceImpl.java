@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
@@ -58,8 +59,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<String> getOidByHetu(String hetu) {
-        return this.henkiloHibernateRepository.findOidByHetu(hetu);
+    public String getOidByHetu(String hetu) {
+        return this.henkiloHibernateRepository.findOidByHetu(hetu).orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -87,21 +88,21 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByHetu(String hetu) {
-        Henkilo henkilo = this.henkiloDataRepository.findByHetu(hetu);
-        return Optional.ofNullable(mapper.map(henkilo, HenkiloOidHetuNimiDto.class));
+    public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
+        Optional<Henkilo> henkilo = this.henkiloDataRepository.findByHetu(hetu);
+        return mapper.map(henkilo.orElseThrow(NotFoundException::new), HenkiloOidHetuNimiDto.class);
     }
 
     @Override
     @Transactional
-    public Optional<HenkiloKoskiDto> createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto) {
+    public HenkiloKoskiDto createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto) {
         Henkilo henkilo = mapper.map(henkiloKoskiDto, Henkilo.class);
         henkilo.setHenkilotyyppi(HenkiloTyyppi.OPPIJA);
-        return Optional.ofNullable(mapper.map(this.createHenkilo(henkilo), HenkiloKoskiDto.class));
+        return mapper.map(this.createHenkilo(henkilo), HenkiloKoskiDto.class);
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    private @Nullable Henkilo createHenkilo(Henkilo henkilo) {
+    private Henkilo createHenkilo(Henkilo henkilo) {
         henkilo.setOidhenkilo(getFreePersonOid());
         henkilo.setCreated(new Date());
         henkilo.setModified(new Date());
