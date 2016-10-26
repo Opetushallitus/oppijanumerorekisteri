@@ -52,9 +52,4 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public void badRequestIllegalArgumentException() {
     }
-    
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "internal_server_error") // 500 Internal
-    @ExceptionHandler(Exception.class) // any other type
-    public void internalError() {
-    }
 }

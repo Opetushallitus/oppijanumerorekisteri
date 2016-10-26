@@ -160,4 +160,10 @@ public class HenkiloControllerTest extends AbstractTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @WithMockUser(roles = {"INAPPROPRIATE_ROLE"})
+    public void unauthorizedTest() throws Exception {
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isForbidden());
+    }
 }
