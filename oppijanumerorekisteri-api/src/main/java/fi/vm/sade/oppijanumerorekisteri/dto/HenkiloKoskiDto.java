@@ -1,8 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
@@ -14,6 +12,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class HenkiloKoskiDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 

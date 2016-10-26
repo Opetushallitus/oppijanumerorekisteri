@@ -1,13 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import fi.vm.sade.oppijanumerorekisteri.AbstractTest;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
+import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,28 +26,25 @@ public class HenkiloJsonTest extends AbstractTest {
     private JacksonTester<Henkilo> henkiloJson;
     @Autowired
     private JacksonTester<HenkilonYhteystiedotViewDto> yhteystiedotJson;
+    @Autowired
+    private JacksonTester<HenkiloKoskiDto> koskiJson;
 
     @Test
-    public void testSerialize() throws Exception {
-        Henkilo henkilo = new Henkilo();
-        henkilo.setOidhenkilo("1.2.3.4.5");
-        henkilo.setHetu("123456-9999");
-        henkilo.setPassivoitu(false);
+    public void testHenkiloKoskiDtoSerialize() throws Exception {
+        HenkiloKoskiDto henkiloKoskiDto = DtoUtils.createHenkiloKoskiDto("arpa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5", "fi", "suomi", "246");
 
-        assertThat(this.henkiloJson.write(henkilo)).hasJsonPathBooleanValue("@.passivoitu")
-                .extractingJsonPathBooleanValue("@.passivoitu").isFalse();
-        assertThat(this.henkiloJson.write(henkilo)).hasJsonPathStringValue("@.oidhenkilo")
+        assertThat(this.koskiJson.write(henkiloKoskiDto)).hasJsonPathStringValue("@.oidhenkilo")
                 .extractingJsonPathStringValue("@.oidhenkilo").isEqualTo("1.2.3.4.5");
-        assertThat(this.henkiloJson.write(henkilo)).hasJsonPathStringValue("@.hetu")
+        assertThat(this.koskiJson.write(henkiloKoskiDto)).hasJsonPathStringValue("@.hetu")
                 .extractingJsonPathStringValue("@.hetu").isEqualTo("123456-9999");
     }
 
     @Test
-    public void testDeserialize() throws Exception {
+    public void testHenkiloKoskiDtoDeserialize() throws Exception {
         String content = "{\"passivoitu\": false, \"oidhenkilo\": \"1.2.3.4.5\", \"hetu\": \"123456-9999\"}";
-        assertThat(this.henkiloJson.parseObject(content).getHetu()).isEqualTo("123456-9999");
-        assertThat(this.henkiloJson.parseObject(content).getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(this.henkiloJson.parseObject(content).isPassivoitu()).isFalse();
+        assertThat(this.koskiJson.parseObject(content).getHetu()).isEqualTo("123456-9999");
+        assertThat(this.koskiJson.parseObject(content).getOidhenkilo()).isEqualTo("1.2.3.4.5");
     }
     
     @Test

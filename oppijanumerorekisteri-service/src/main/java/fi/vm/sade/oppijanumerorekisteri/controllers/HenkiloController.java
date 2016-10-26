@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Api(tags = "Henkilot")
@@ -58,8 +59,8 @@ public class HenkiloController {
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) throws ConstraintViolationException {
         return this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
     }
 

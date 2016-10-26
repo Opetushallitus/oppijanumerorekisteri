@@ -15,11 +15,13 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -92,10 +94,14 @@ public class GlobalExceptionHandler {
         return handleConstraintViolations(req, exception, exception.getConstraintViolations());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 Bad Request
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_persistence") // 400 Bad Request
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public Map<String,Object> badRequest(HttpServletRequest req, DataIntegrityViolationException exception) {
-        return handleException(req, exception, "bad_request_illegal_argument", exception.getMessage());
+    public void badRequestDataIntegrityViolationException() {
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_parameter") // 400 Bad Request
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public void badRequestMethodArgumentNotValidException() {
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST) // 400 Bad Request
@@ -111,9 +117,13 @@ public class GlobalExceptionHandler {
     }
 
     private Map<String,Object> handleConstraintViolations(HttpServletRequest req, Exception exception,
-                                                          Set<? extends ConstraintViolation<?>> exViolations) {
-        Collection<ViolationDto> violations = Collections2.transform(exViolations, VIOLATIONS_TRANSFORMER::apply);
-        Collection<String> violationsMsgs = Collections2.transform(exViolations, MESSAGES_TRANSFORMER::apply);
+                                                          @Nullable Set<? extends ConstraintViolation<?>> exViolations) {
+        Collection<ViolationDto> violations = new ArrayList<>();
+        Collection<String> violationsMsgs = new ArrayList<>();
+        if(exViolations != null) {
+            violations = Collections2.transform(exViolations, VIOLATIONS_TRANSFORMER::apply);
+            violationsMsgs = Collections2.transform(exViolations, MESSAGES_TRANSFORMER::apply);
+        }
         Map<String,Object> result = handleException(req, exception, "bad_request_error",
                 StringHelper.join(", ", violationsMsgs.iterator()));
         result.put("errors", violationsMsgs);
@@ -124,7 +134,7 @@ public class GlobalExceptionHandler {
     protected Map<String,Object> handleException(HttpServletRequest req, Throwable exception, String messageKey, String message,
                                                  Object... params) {
         logger.error("Request: " + req.getRequestURL() + " raised " + exception, exception);
-        Map<String,Object> result = new HashMap<String,Object>();
+        Map<String,Object> result = new HashMap<>();
         result.put("message", message);
         result.put("messageKey", messageKey);
         result.put("messageParams", params);
