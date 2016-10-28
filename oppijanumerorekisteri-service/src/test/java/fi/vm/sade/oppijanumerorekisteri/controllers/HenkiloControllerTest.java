@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.validation.ConstraintViolationException;
 
+import java.util.Collections;
+
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
 import static java.util.Optional.empty;
@@ -48,7 +50,7 @@ public class HenkiloControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser
-    public void henkiloOidHetuNimiByHetu() throws Exception {
+    public void henkiloOidHetuNimiByHetuTest() throws Exception {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5");
         String content = "{\"etunimet\": \"arpa\"," +
@@ -63,10 +65,40 @@ public class HenkiloControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser
-    public void henkiloOidHetuNimiByHetuNotFound() throws Exception {
+    public void henkiloOidHetuNimiByHetuNotFoundTest() throws Exception {
         given(this.service.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new NotFoundException());
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void henkilotByHenkiloOidListTest() throws Exception {
+        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5", "fi", "suomi");
+        String inputOidList = "[\"1.2.3.4.5\"]";
+        String returnContent = "[" +
+                "  {" +
+                "    \"aidinkieli\": {" +
+                "      \"kielikoodi\": \"fi\"," +
+                "      \"kielityyppi\": \"suomi\"" +
+                "    }," +
+                "    \"asiointikieli\": {" +
+                "      \"kielikoodi\": \"fi\"," +
+                "      \"kielityyppi\": \"suomi\"" +
+                "    }," +
+                "    \"etunimet\": \"arpa\"," +
+                "    \"hetu\": \"123456-9999\"," +
+                "    \"kutsumanimi\": \"arpa\"," +
+                "    \"oidhenkilo\": \"1.2.3.4.5\"," +
+                "    \"sukunimi\": \"kuutio\"" +
+                "  }" +
+                "]";
+        given(this.service.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5")))
+                .willReturn(Collections.singletonList(henkiloPerustietoDto));
+        this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloOidList").content(inputOidList)
+                .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json(returnContent));
     }
 
     @Test
