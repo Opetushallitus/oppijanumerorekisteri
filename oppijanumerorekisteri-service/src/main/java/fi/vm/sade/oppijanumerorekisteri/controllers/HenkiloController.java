@@ -1,18 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import io.swagger.annotations.*;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Api(tags = "Henkilot")
@@ -44,7 +41,7 @@ public class HenkiloController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
-    public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) throws NotFoundException {
+    public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
@@ -60,7 +57,7 @@ public class HenkiloController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) throws ConstraintViolationException {
+    public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
         return this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
     }
 
