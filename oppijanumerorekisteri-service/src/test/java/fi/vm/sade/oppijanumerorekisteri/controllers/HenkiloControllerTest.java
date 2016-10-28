@@ -80,7 +80,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"hetu\": \"123456-9999\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
         given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloKoskiDto);
-        this.mvc.perform(post("/henkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().json(content));
     }
 
@@ -92,7 +92,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
         given(this.service.createHenkiloFromKoskiDto(anyObject())).willThrow(new ConstraintViolationException("message", null));
-        this.mvc.perform(post("/henkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -104,7 +104,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
         given(this.service.createHenkiloFromKoskiDto(anyObject())).willThrow(new DataIntegrityViolationException("message"));
-        this.mvc.perform(post("/henkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -118,7 +118,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
         given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloKoskiDto);
-        this.mvc.perform(post("/henkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 

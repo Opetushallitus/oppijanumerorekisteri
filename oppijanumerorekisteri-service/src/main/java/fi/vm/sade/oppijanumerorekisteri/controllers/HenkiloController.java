@@ -56,7 +56,7 @@ public class HenkiloController {
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/koskihenkilo", method = RequestMethod.POST)
     public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
         return this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
     }
