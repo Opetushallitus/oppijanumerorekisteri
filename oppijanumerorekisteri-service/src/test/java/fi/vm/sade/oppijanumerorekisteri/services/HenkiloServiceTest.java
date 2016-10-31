@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -18,10 +19,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
@@ -56,6 +56,12 @@ public class HenkiloServiceTest {
     }
 
     @Test
+    public void getHasHetuNotFoundTest() {
+        given(this.henkiloJpaRepositoryMock.findHetuByOid("1.2.3.4.5")).willReturn(Optional.empty());
+        assertThat(this.service.getHasHetu("1.2.3.4.5")).isFalse();
+    }
+
+    @Test
     public void getOidExistsTest() {
         given(this.henkiloDataRepositoryMock.exists(any(Predicate.class))).willReturn(true);
         assertThat(this.service.getOidExists("1.2.3.4.5")).isTrue();
@@ -65,6 +71,12 @@ public class HenkiloServiceTest {
     public void getOidByHetuTest() {
         given(this.henkiloJpaRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
         assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getOidByHetuNotFoundTest() {
+        given(this.henkiloJpaRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.empty());
+        this.service.getOidByHetu("1.2.3.4.5");
     }
 
     @Test
@@ -153,15 +165,7 @@ public class HenkiloServiceTest {
                 .willReturn(Collections.singletonList(henkiloKoskiDtoMock));
         List<HenkiloKoskiDto> henkiloKoskiDtoList = this.service.getHenkiloKoskiPerustietoByOids(Collections.singletonList("1.2.3.4.5"));
         HenkiloKoskiDto henkiloKoskiDto = henkiloKoskiDtoList.get(0);
-        assertThat(henkiloKoskiDto.getHetu()).isEqualTo(henkiloMock.getHetu());
-        assertThat(henkiloKoskiDto.getOidhenkilo()).isEqualTo(henkiloMock.getOidhenkilo());
-        assertThat(henkiloKoskiDto.getEtunimet()).isEqualTo(henkiloMock.getEtunimet());
-        assertThat(henkiloKoskiDto.getKutsumanimi()).isEqualTo(henkiloMock.getKutsumanimi());
-        assertThat(henkiloKoskiDto.getSukunimi()).isEqualTo(henkiloMock.getSukunimi());
-        assertThat(henkiloKoskiDto.getAidinkieli().getKielikoodi()).isEqualTo(henkiloMock.getAidinkieli().getKielikoodi());
-        assertThat(henkiloKoskiDto.getAidinkieli().getKielityyppi()).isEqualTo(henkiloMock.getAidinkieli().getKielityyppi());
-        assertThat(henkiloKoskiDto.getKansalaisuus().iterator().next().getKansalaisuuskoodi())
-                .isEqualTo(henkiloMock.getKansalaisuus().iterator().next().getKansalaisuuskoodi());
+        assertThat(henkiloKoskiDto).isEqualTo(henkiloKoskiDtoMock);
     }
 
     @Test
@@ -177,16 +181,33 @@ public class HenkiloServiceTest {
 
         List<HenkiloPerustietoDto> henkiloPerustietoDtoList = this.service.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5"));
         HenkiloPerustietoDto henkiloPerustietoDto = henkiloPerustietoDtoList.get(0);
-        assertThat(henkiloPerustietoDto.getHetu()).isEqualTo(henkiloMock.getHetu());
-        assertThat(henkiloPerustietoDto.getOidhenkilo()).isEqualTo(henkiloMock.getOidhenkilo());
-        assertThat(henkiloPerustietoDto.getEtunimet()).isEqualTo(henkiloMock.getEtunimet());
-        assertThat(henkiloPerustietoDto.getKutsumanimi()).isEqualTo(henkiloMock.getKutsumanimi());
-        assertThat(henkiloPerustietoDto.getSukunimi()).isEqualTo(henkiloMock.getSukunimi());
-        assertThat(henkiloPerustietoDto.getAidinkieli().getKielikoodi()).isEqualTo(henkiloMock.getAidinkieli().getKielikoodi());
-        assertThat(henkiloPerustietoDto.getAidinkieli().getKielityyppi()).isEqualTo(henkiloMock.getAidinkieli().getKielityyppi());
-        assertThat(henkiloPerustietoDto.getAsiointikieli().getKielikoodi()).isEqualTo(henkiloMock.getAsiointikieli().getKielikoodi());
-        assertThat(henkiloPerustietoDto.getAsiointikieli().getKielityyppi()).isEqualTo(henkiloMock.getAsiointikieli().getKielityyppi());
+        assertThat(henkiloPerustietoDto).isEqualTo(henkiloPerustietoDtoMock);
     }
+
+    @Test
+    public void getHenkiloOidHetuNimiByNameTest() {
+        Henkilo henkiloMock = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date());
+        List<Henkilo> henkiloMockList = Collections.singletonList(henkiloMock);
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDtoMock = DtoUtils.createHenkiloOidHetuNimiDto("arpa noppa", "arpa", "kuutio",
+                "123456-9999", "1.2.3.4.5");
+        List<String> etunimetList = Stream.of("arpa", "noppa").collect(Collectors.toList());
+        given(this.henkiloJpaRepositoryMock.findHenkiloOidHetuNimisByEtunimetOrSukunimi(etunimetList, "kuutio"))
+                .willReturn(henkiloMockList);
+        given(this.mapperMock.mapAsList(henkiloMockList, HenkiloOidHetuNimiDto.class))
+                .willReturn(Collections.singletonList(henkiloOidHetuNimiDtoMock));
+
+        List<HenkiloOidHetuNimiDto> henkiloOidHetuNimiDtoList = this.service.getHenkiloOidHetuNimiByName("arpa noppa", "kuutio");
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = henkiloOidHetuNimiDtoList.get(0);
+        assertThat(henkiloOidHetuNimiDto).isEqualTo(henkiloOidHetuNimiDtoMock);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getHenkiloOidHetuNimiByHetuNotFoundTest() {
+        given(this.henkiloDataRepositoryMock.findByHetu("123456-9999")).willReturn(Optional.empty());
+        this.service.getHenkiloOidHetuNimiByHetu("123456-9999");
+    }
+
 
 
 }
