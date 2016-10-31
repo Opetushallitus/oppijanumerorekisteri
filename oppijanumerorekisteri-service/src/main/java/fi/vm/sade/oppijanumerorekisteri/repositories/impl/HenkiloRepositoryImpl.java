@@ -24,7 +24,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public Optional<String> findHetuByOid(String henkiloOid) {
         QHenkilo qHenkilo = henkilo;
-        return Optional.ofNullable(jpa().selectFrom(qHenkilo).select(qHenkilo.hetu)
+        return Optional.ofNullable(jpa().select(qHenkilo.hetu).from(qHenkilo)
                 .where(qHenkilo.oidhenkilo.eq(henkiloOid))
                 .fetchOne());
     }
@@ -32,7 +32,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public Optional<String> findOidByHetu(String hetu) {
         QHenkilo qHenkilo = henkilo;
-        return Optional.ofNullable(jpa().selectFrom(qHenkilo).select(qHenkilo.oidhenkilo)
+        return Optional.ofNullable(jpa().select(qHenkilo.oidhenkilo).from(qHenkilo)
                 .where(qHenkilo.hetu.eq(hetu))
                 .fetchOne());
     }
@@ -40,8 +40,9 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        JPAQuery<Henkilo> query = jpa().selectFrom(qHenkilo);
-        query.select(Projections.bean(Henkilo.class, qHenkilo.oidhenkilo, qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, qHenkilo.hetu));
+        JPAQuery<Henkilo> query = jpa().select(Projections.bean(Henkilo.class, qHenkilo.oidhenkilo, qHenkilo.etunimet,
+                qHenkilo.kutsumanimi, qHenkilo.sukunimi, qHenkilo.hetu))
+                .from(qHenkilo);
         BooleanBuilder builder = new BooleanBuilder();
         for (String etunimi : etunimet) {
             builder.or(qHenkilo.etunimet.containsIgnoreCase(etunimi));
