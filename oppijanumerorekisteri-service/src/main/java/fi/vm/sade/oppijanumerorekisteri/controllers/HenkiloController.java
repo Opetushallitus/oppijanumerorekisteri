@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.utils.UserDetailsUtil;
 import io.swagger.annotations.*;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class HenkiloController {
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {
         // get oid from security context
-        return henkiloService.getHasHetu(UserDetailsUtil.getCurrentUserOid());
+        return henkiloService.getHasHetu();
     }
 
     @ApiOperation("Hakee henkilöiden OID:n, HeTu:n ja nimet nimen perusteella")

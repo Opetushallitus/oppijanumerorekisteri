@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HenkiloService {
-    Boolean getHasHetu(String oid);
+    Boolean getHasHetu();
     boolean getOidExists(String oid);
     String getOidByHetu(String hetu);
     List<HenkiloKoskiDto> getHenkiloKoskiPerustietoByOids(List<String> oids);

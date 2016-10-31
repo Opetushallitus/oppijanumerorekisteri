@@ -38,6 +38,7 @@ public class HenkiloServiceTest {
     private HenkiloRepository henkiloDataRepositoryMock;
     private HenkiloService service;
     private OrikaSpringMapper mapperMock;
+    private UserDetailsHelper userDetailsHelperMock;
 
     @Before
     public void setup() {
@@ -45,20 +46,23 @@ public class HenkiloServiceTest {
         this.henkiloDataRepositoryMock = Mockito.mock(HenkiloRepository.class);
         this.mapperMock = Mockito.mock(OrikaSpringMapper.class);
         MockOidGenerator mockOidGenerator = new MockOidGenerator();
-        this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock,
-                henkiloDataRepositoryMock, mapperMock, new YhteystietoConverter(), mockOidGenerator);
+        this.userDetailsHelperMock = Mockito.mock(UserDetailsHelper.class);
+        this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, mapperMock,
+                new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock);
     }
 
     @Test
     public void getHasHetuTest() {
+        given(this.userDetailsHelperMock.getCurrentUserOid()).willReturn(Optional.of("1.2.3.4.5"));
         given(this.henkiloJpaRepositoryMock.findHetuByOid("1.2.3.4.5")).willReturn(Optional.of("123456-9999"));
-        assertThat(this.service.getHasHetu("1.2.3.4.5")).isTrue();
+        assertThat(this.service.getHasHetu()).isTrue();
     }
 
     @Test
     public void getHasHetuNotFoundTest() {
+        given(this.userDetailsHelperMock.getCurrentUserOid()).willReturn(Optional.of("1.2.3.4.5"));
         given(this.henkiloJpaRepositoryMock.findHetuByOid("1.2.3.4.5")).willReturn(Optional.empty());
-        assertThat(this.service.getHasHetu("1.2.3.4.5")).isFalse();
+        assertThat(this.service.getHasHetu()).isFalse();
     }
 
     @Test

@@ -43,7 +43,7 @@ public class HenkiloControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5")
     public void hasHetuTest() throws Exception {
-        given(this.service.getHasHetu("1.2.3.4.5")).willReturn(true);
+        given(this.service.getHasHetu()).willReturn(true);
         this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().string("true"));
     }

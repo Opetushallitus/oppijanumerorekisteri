@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
@@ -10,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,24 +34,28 @@ public class HenkiloServiceImpl implements HenkiloService {
     private YhteystietoConverter yhteystietoConverter;
     private OrikaSpringMapper mapper;
     private OidGenerator oidGenerator;
+    private UserDetailsHelper userDetailsHelper;
 
     @Autowired
     public HenkiloServiceImpl(HenkiloHibernateRepository henkiloHibernateRepository,
                               HenkiloRepository henkiloDataRepository,
                               OrikaSpringMapper mapper,
                               YhteystietoConverter yhteystietoConverter,
-                              OidGenerator oidGenerator) {
+                              OidGenerator oidGenerator,
+                              UserDetailsHelper userDetailsHelper) {
         this.henkiloHibernateRepository = henkiloHibernateRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.yhteystietoConverter = yhteystietoConverter;
         this.mapper = mapper;
         this.oidGenerator = oidGenerator;
+        this.userDetailsHelper = userDetailsHelper;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Boolean getHasHetu(String oid) {
-        Optional<String> hetu = henkiloHibernateRepository.findHetuByOid(oid);
+    public Boolean getHasHetu() {
+        Optional<String> hetu = henkiloHibernateRepository.findHetuByOid(this.userDetailsHelper.getCurrentUserOid()
+                .orElseThrow(UserHasNoOidException::new));
         return !hetu.orElse("").isEmpty();
     }
 
@@ -137,4 +143,5 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         return newOid;
     }
+
 }
