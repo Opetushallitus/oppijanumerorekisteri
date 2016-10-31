@@ -55,16 +55,7 @@ public class DtoUtils {
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
 
-        HenkiloDto henkiloDto = new HenkiloDto();
-        henkiloDto.setEtunimet(etunimet);
-        henkiloDto.setKutsumanimi(kutsumanimi);
-        henkiloDto.setSukunimi(sukunimi);
-        henkiloDto.setHetu(hetu);
-        henkiloDto.setOidhenkilo(oidHenkilo);
-        henkiloDto.setPassivoitu(passivoitu);
-        henkiloDto.setAidinkieli(aidinkieli);
-        henkiloDto.setKielisyys(Collections.singleton(aidinkieli));
-        henkiloDto.setKansalaisuus(Collections.singleton(kansalaisuus));
-        return henkiloDto;
+        return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
+                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus));
     }
 }

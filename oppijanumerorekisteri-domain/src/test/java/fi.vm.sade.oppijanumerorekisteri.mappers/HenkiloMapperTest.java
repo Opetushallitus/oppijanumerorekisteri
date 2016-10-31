@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -21,7 +23,7 @@ public class HenkiloMapperTest {
     @Test
     public void henkiloToHenkiloKoskiDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
-                "fi", "suomi", "246");
+                "fi", "suomi", "246", new Date());
         HenkiloKoskiDto henkiloKoskiDto = modelmapper.map(henkilo, HenkiloKoskiDto.class);
 
         assertThat(henkiloKoskiDto.getEtunimet()).isEqualTo("arpa");
@@ -52,7 +54,7 @@ public class HenkiloMapperTest {
     @Test
     public void henkiloToHenkiloPerustietoDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
-                "fi", "suomi", "246");
+                "fi", "suomi", "246", new Date());
         HenkiloPerustietoDto henkiloPerustietoDto = modelmapper.map(henkilo, HenkiloPerustietoDto.class);
 
         assertThat(henkiloPerustietoDto.getEtunimet()).isEqualTo("arpa");
@@ -81,7 +83,7 @@ public class HenkiloMapperTest {
     @Test
     public void henkiloToHenkiloOidHetuNimiDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
-                "fi", "suomi", "246");
+                "fi", "suomi", "246", new Date());
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = modelmapper.map(henkilo, HenkiloOidHetuNimiDto.class);
         assertThat(henkiloOidHetuNimiDto.getEtunimet()).isEqualTo("arpa");
         assertThat(henkiloOidHetuNimiDto.getKutsumanimi()).isEqualTo("arpa");
@@ -104,7 +106,7 @@ public class HenkiloMapperTest {
     @Test
     public void henkiloToHenkiloDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
-                "fi", "suomi", "246");
+                "fi", "suomi", "246", new Date());
         HenkiloDto henkiloDto = modelmapper.map(henkilo, HenkiloDto.class);
         assertThat(henkiloDto.getEtunimet()).isEqualTo("arpa");
         assertThat(henkiloDto.getKutsumanimi()).isEqualTo("arpa");
