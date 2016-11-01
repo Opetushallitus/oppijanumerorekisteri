@@ -21,37 +21,6 @@ public class HenkiloMapperTest {
     private OrikaSpringMapper modelmapper;
 
     @Test
-    public void henkiloToHenkiloKoskiDto() {
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
-                "fi", "suomi", "246", new Date());
-        HenkiloKoskiDto henkiloKoskiDto = modelmapper.map(henkilo, HenkiloKoskiDto.class);
-
-        assertThat(henkiloKoskiDto.getEtunimet()).isEqualTo("arpa");
-        assertThat(henkiloKoskiDto.getKutsumanimi()).isEqualTo("arpa");
-        assertThat(henkiloKoskiDto.getSukunimi()).isEqualTo("kuutio");
-        assertThat(henkiloKoskiDto.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkiloKoskiDto.getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(henkiloKoskiDto.getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkiloKoskiDto.getAidinkieli().getKielityyppi()).isEqualTo("suomi");
-        assertThat(henkiloKoskiDto.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
-    }
-
-    @Test
-    public void henkiloKoskiDtoToHenkilo() {
-        HenkiloKoskiDto henkiloKoskiDto = DtoUtils.createHenkiloKoskiDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246");
-        Henkilo henkilo = modelmapper.map(henkiloKoskiDto, Henkilo.class);
-        assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
-        assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
-        assertThat(henkilo.getSukunimi()).isEqualTo("kuutio");
-        assertThat(henkilo.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkilo.getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(henkilo.getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkilo.getAidinkieli().getKielityyppi()).isEqualTo("suomi");
-        assertThat(henkilo.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
-    }
-
-    @Test
     public void henkiloToHenkiloPerustietoDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
                 "fi", "suomi", "246", new Date());

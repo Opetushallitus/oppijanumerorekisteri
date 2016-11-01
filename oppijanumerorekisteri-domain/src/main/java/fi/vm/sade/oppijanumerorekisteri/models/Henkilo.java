@@ -13,8 +13,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Getter @Setter
 @Table(name = "henkilo", schema = "public")
 @NamedEntityGraphs({
         @NamedEntityGraph(
@@ -26,8 +29,6 @@ import java.util.Set;
                 }
         )
 })
-@NoArgsConstructor
-@AllArgsConstructor
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;

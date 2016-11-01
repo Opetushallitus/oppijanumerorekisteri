@@ -27,15 +27,6 @@ public class DtoUtils {
                 Collections.singleton(kansalaisuusDto));
     }
 
-    public static HenkiloKoskiDto createHenkiloKoskiDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
-                                                 String henkiloOid, String kielikoodi, String kielityyppi,
-                                                 String kansalaisuuskoodi) {
-        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
-        KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
-        return new HenkiloKoskiDto(henkiloOid, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli,
-                Collections.singleton(kansalaisuus));
-    }
-
     public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
                                                              String hetu, String oidHenkilo) {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto();

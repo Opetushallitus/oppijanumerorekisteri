@@ -29,23 +29,6 @@ public class HenkiloJsonTest {
     @Autowired
     private JacksonTester<HenkilonYhteystiedotViewDto> yhteystiedotJson;
 
-    @Autowired
-    private JacksonTester<HenkiloKoskiDto> koskiJson;
-
-    @Test
-    public void testHenkiloKoskiDtoSerialize() throws Exception {
-        HenkiloKoskiDto henkiloKoskiDto = DtoUtils.createHenkiloKoskiDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246");
-        assertThat(this.koskiJson.write(henkiloKoskiDto)).isEqualToJson("/henkilo/testHenkiloKoskiDto.json");
-    }
-
-    @Test
-    public void testHenkiloKoskiDtoDeserialize() throws Exception {
-        HenkiloKoskiDto henkiloKoskiDto = DtoUtils.createHenkiloKoskiDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246");
-        assertThat(this.koskiJson.read("/henkilo/testHenkiloKoskiDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloKoskiDto);
-    }
-    
     @Test
     public void testHenkiloOidHetuNimiDtoSerialize() throws Exception {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
