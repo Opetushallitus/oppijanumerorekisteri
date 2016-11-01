@@ -63,14 +63,14 @@ public class HenkiloJsonTest {
     @Test
     public void testHenkiloPerustietoDtoSerialize() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi");
+                "1.2.3.4.5", "fi", "suomi", "246");
         assertThat(this.perustietoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloPerustietoDto.json");
     }
 
     @Test
     public void testHenkiloPerustietoDtoDeserialize() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi");
+                "1.2.3.4.5", "fi", "suomi", "246");
         assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
     }
 

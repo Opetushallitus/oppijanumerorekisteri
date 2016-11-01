@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,10 +38,4 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
-    @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden koski perustiedot")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/henkilotByHenkiloOidList", method = RequestMethod.POST)
-    public List<HenkiloKoskiDto> henkilotByHenkiloOidList(@RequestBody List<String> henkiloOids) {
-        return this.henkiloService.getHenkiloKoskiPerustietoByOids(henkiloOids);
-    }
 }

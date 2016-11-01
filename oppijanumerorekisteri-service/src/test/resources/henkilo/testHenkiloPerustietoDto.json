@@ -7,6 +7,11 @@
     "kielikoodi": "fi",
     "kielityyppi": "suomi"
   },
+  "kansalaisuus": [
+    {
+      "kansalaisuuskoodi": "246"
+    }
+  ],
   "etunimet": "arpa",
   "hetu": "123456-9999",
   "kutsumanimi": "arpa",

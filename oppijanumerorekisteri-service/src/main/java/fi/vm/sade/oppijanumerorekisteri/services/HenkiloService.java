@@ -9,7 +9,6 @@ public interface HenkiloService {
     Boolean getHasHetu();
     boolean getOidExists(String oid);
     String getOidByHetu(String hetu);
-    List<HenkiloKoskiDto> getHenkiloKoskiPerustietoByOids(List<String> oids);
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
     List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi);
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);

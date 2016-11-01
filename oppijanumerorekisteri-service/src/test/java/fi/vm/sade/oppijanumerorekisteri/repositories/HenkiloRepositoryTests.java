@@ -102,19 +102,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     }
 
     @Test
-    public void findByOidhenkiloInTest() {
-        Date luontiMuokkausPvm = new Date();
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", luontiMuokkausPvm);
-        Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", luontiMuokkausPvm);
-        this.testEntityManager.persist(persistedHenkilo);
-        List<Henkilo> resultHenkiloList = this.dataRepository.findByOidhenkiloIn(Collections.singletonList("1.2.3.4.5"));
-        persistedHenkilo = resultHenkiloList.get(0);
-        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version");
-    }
-
-    @Test
     public void findByHetuTest() {
         Date luontiMuokkausPvm = new Date();
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,

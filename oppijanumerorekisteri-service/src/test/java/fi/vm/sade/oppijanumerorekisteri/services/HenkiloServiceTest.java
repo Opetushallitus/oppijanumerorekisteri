@@ -158,27 +158,12 @@ public class HenkiloServiceTest {
     }
 
     @Test
-    public void getHenkiloKoskiPerustietoByOidsTest() {
-        Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA,
-                "fi", "suomi", "246", new Date());
-        HenkiloKoskiDto henkiloKoskiDtoMock = DtoUtils.createHenkiloKoskiDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                "fi", "suomi", "246");
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList("1.2.3.4.5")))
-                .willReturn(Collections.singletonList(henkiloMock));
-        given(this.mapperMock.mapAsList(Collections.singletonList(henkiloMock), HenkiloKoskiDto.class))
-                .willReturn(Collections.singletonList(henkiloKoskiDtoMock));
-        List<HenkiloKoskiDto> henkiloKoskiDtoList = this.service.getHenkiloKoskiPerustietoByOids(Collections.singletonList("1.2.3.4.5"));
-        HenkiloKoskiDto henkiloKoskiDto = henkiloKoskiDtoList.get(0);
-        assertThat(henkiloKoskiDto).isEqualTo(henkiloKoskiDtoMock);
-    }
-
-    @Test
     public void getHenkiloPerustietoByOidsTest() {
         Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date());
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi");
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIn(Collections.singletonList("1.2.3.4.5")))
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
+        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloMock));
         given(this.mapperMock.mapAsList(Collections.singletonList(henkiloMock), HenkiloPerustietoDto.class))
                 .willReturn(Collections.singletonList(henkiloPerustietoDtoMock));
@@ -211,7 +196,4 @@ public class HenkiloServiceTest {
         given(this.henkiloDataRepositoryMock.findByHetu("123456-9999")).willReturn(Optional.empty());
         this.service.getHenkiloOidHetuNimiByHetu("123456-9999");
     }
-
-
-
 }
