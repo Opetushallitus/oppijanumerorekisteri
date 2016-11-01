@@ -1,8 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -11,6 +9,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(name = "UK_kielisyys_01",
         columnNames = { "kielikoodi" }))
 @Entity

@@ -1,13 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.api;
 
-import fi.vm.sade.oppijanumerorekisteri.AbstractTest;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,35 +16,61 @@ import static org.assertj.core.api.Assertions.assertThat;
 // Probably not necessary if we don't want to return Henkilo objects through api. Serves as sample for API module.
 @RunWith(SpringRunner.class)
 @JsonTest
-public class HenkiloJsonTest extends AbstractTest {
+public class HenkiloJsonTest {
     @Autowired
-    private JacksonTester<Henkilo> henkiloJson;
+    private JacksonTester<HenkiloOidHetuNimiDto> oidNimiHetuJson;
+
+    @Autowired
+    private JacksonTester<HenkiloPerustietoDto> perustietoJson;
+
+    @Autowired
+    private JacksonTester<HenkiloDto> henkiloDtoJson;
+
     @Autowired
     private JacksonTester<HenkilonYhteystiedotViewDto> yhteystiedotJson;
 
     @Test
-    public void testSerialize() throws Exception {
-        Henkilo henkilo = new Henkilo();
-        henkilo.setOidhenkilo("1.2.3.4.5");
-        henkilo.setHetu("123456-9999");
-        henkilo.setPassivoitu(false);
-
-        assertThat(this.henkiloJson.write(henkilo)).hasJsonPathBooleanValue("@.passivoitu")
-                .extractingJsonPathBooleanValue("@.passivoitu").isFalse();
-        assertThat(this.henkiloJson.write(henkilo)).hasJsonPathStringValue("@.oidhenkilo")
-                .extractingJsonPathStringValue("@.oidhenkilo").isEqualTo("1.2.3.4.5");
-        assertThat(this.henkiloJson.write(henkilo)).hasJsonPathStringValue("@.hetu")
-                .extractingJsonPathStringValue("@.hetu").isEqualTo("123456-9999");
+    public void testHenkiloOidHetuNimiDtoSerialize() throws Exception {
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5");
+        assertThat(this.oidNimiHetuJson.write(henkiloOidHetuNimiDto)).isEqualToJson("/henkilo/testHenkiloOidHetuNimiDto.json");
     }
 
     @Test
-    public void testDeserialize() throws Exception {
-        String content = "{\"passivoitu\": false, \"oidhenkilo\": \"1.2.3.4.5\", \"hetu\": \"123456-9999\"}";
-        assertThat(this.henkiloJson.parseObject(content).getHetu()).isEqualTo("123456-9999");
-        assertThat(this.henkiloJson.parseObject(content).getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(this.henkiloJson.parseObject(content).isPassivoitu()).isFalse();
+    public void testHenkiloOidHetuNimiDtoDeserialize() throws Exception {
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5");
+        assertThat(this.oidNimiHetuJson.read("/henkilo/testHenkiloOidHetuNimiDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloOidHetuNimiDto);
     }
-    
+
+    @Test
+    public void testHenkiloPerustietoDtoSerialize() throws Exception {
+        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5", "fi", "suomi", "246");
+        assertThat(this.perustietoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloPerustietoDto.json");
+    }
+
+    @Test
+    public void testHenkiloPerustietoDtoDeserialize() throws Exception {
+        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5", "fi", "suomi", "246");
+        assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
+    }
+
+    @Test
+    public void testHenkiloDtoSerialize() throws Exception {
+        HenkiloDto henkiloPerustietoDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246");
+        assertThat(this.henkiloDtoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloDto.json");
+    }
+
+    @Test
+    public void testHenkiloDtoDeserialize() throws Exception {
+        HenkiloDto henkiloPerustietoDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246");
+        assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
+    }
+
     @Test
     public void testSerializeYhteystiedot() throws IOException {
         HenkilonYhteystiedotViewDto dto = new HenkilonYhteystiedotViewDto()
@@ -70,6 +93,6 @@ public class HenkiloJsonTest extends AbstractTest {
                         .kaupunki("Vilppula")
                     .build());
         assertThat(this.yhteystiedotJson.write(dto))
-                .isEqualToJson(jsonResource("classpath:henkilo/testYhteystiedot.json"));
+                .isEqualToJson("/henkilo/testYhteystiedot.json");
     }
 }

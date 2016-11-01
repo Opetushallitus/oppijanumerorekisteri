@@ -4,37 +4,30 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 
 import java.util.Collections;
 
-class DtoUtils {
-    static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
+public class DtoUtils {
+    public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
         kielisyysDto.setKielikoodi(kielikoodi);
         kielisyysDto.setKielityyppi(kielityyppi);
         return kielisyysDto;
     }
 
-    static KansalaisuusDto createKansalaisuusDto(String kansalaisuuskoodi) {
+    public static KansalaisuusDto createKansalaisuusDto(String kansalaisuuskoodi) {
         KansalaisuusDto kansalaisuusDto = new KansalaisuusDto();
         kansalaisuusDto.setKansalaisuuskoodi(kansalaisuuskoodi);
         return kansalaisuusDto;
     }
 
-    static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
-                                                 String henkiloOid, String kielikoodi, String kielityyppi) {
+    public static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
+                                                 String henkiloOid, String kielikoodi, String kielityyppi, String kansalaisuusKoodi) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
-        return new HenkiloPerustietoDto(henkiloOid, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli, asiointikieli);
+        KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
+        return new HenkiloPerustietoDto(henkiloOid, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli, asiointikieli,
+                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA);
     }
 
-    static HenkiloKoskiDto createHenkiloKoskiDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
-                                                 String henkiloOid, String kielikoodi, String kielityyppi,
-                                                 String kansalaisuuskoodi) {
-        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
-        KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
-        return new HenkiloKoskiDto(henkiloOid, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli,
-                Collections.singleton(kansalaisuus));
-    }
-
-    static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
+    public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
                                                              String hetu, String oidHenkilo) {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = new HenkiloOidHetuNimiDto();
         henkiloOidHetuNimiDto.setEtunimet(etunimet);
@@ -45,7 +38,7 @@ class DtoUtils {
         return henkiloOidHetuNimiDto;
     }
 
-    static HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+    public static HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi) {
         KielisyysDto aidinkieli = new KielisyysDto();
@@ -55,16 +48,7 @@ class DtoUtils {
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
 
-        HenkiloDto henkiloDto = new HenkiloDto();
-        henkiloDto.setEtunimet(etunimet);
-        henkiloDto.setKutsumanimi(kutsumanimi);
-        henkiloDto.setSukunimi(sukunimi);
-        henkiloDto.setHetu(hetu);
-        henkiloDto.setOidhenkilo(oidHenkilo);
-        henkiloDto.setPassivoitu(passivoitu);
-        henkiloDto.setAidinkieli(aidinkieli);
-        henkiloDto.setKielisyys(Collections.singleton(aidinkieli));
-        henkiloDto.setKansalaisuus(Collections.singleton(kansalaisuus));
-        return henkiloDto;
+        return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
+                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus));
     }
 }
