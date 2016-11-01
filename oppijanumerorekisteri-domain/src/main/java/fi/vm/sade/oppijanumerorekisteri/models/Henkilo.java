@@ -41,6 +41,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private String oidhenkilo;
 
+    // This constraint is actually not in db level
     @Column(unique = true)
     private String hetu;
 
