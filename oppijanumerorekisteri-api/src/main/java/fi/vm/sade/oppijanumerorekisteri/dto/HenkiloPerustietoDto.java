@@ -32,4 +32,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private KielisyysDto asiointikieli;
 
     private Set<KansalaisuusDto> kansalaisuus;
+
+    @NotNull
+    private HenkiloTyyppi henkilotyyppi;
 }

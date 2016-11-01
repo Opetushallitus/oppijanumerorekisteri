@@ -57,7 +57,7 @@ public class HenkiloController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/createHenkilo", method = RequestMethod.POST)
     public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        return this.henkiloService.createHenkiloFromKoskiDto(henkiloPerustietoDto);
+        return this.henkiloService.createHenkiloFromPerustietoDto(henkiloPerustietoDto);
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")

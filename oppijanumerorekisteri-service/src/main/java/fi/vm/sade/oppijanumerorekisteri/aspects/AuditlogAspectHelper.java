@@ -24,11 +24,12 @@ public class AuditlogAspectHelper {
         this.userDetailsHelper = userDetailsHelper;
     }
 
-    void logHenkiloPerustietoDto(OppijanumerorekisteriOperation operation, HenkiloPerustietoDto henkiloPerustietoDto, Object returnHenkiloKoskiDto) {
+    void logHenkiloPerustietoDto(OppijanumerorekisteriOperation operation, HenkiloPerustietoDto henkiloPerustietoDto,
+                                 Object returnHenkiloPerustietoDto) {
         LogMessage.LogMessageBuilder logMessage = builder()
                 .setOperaatio(operation);
-        if(returnHenkiloKoskiDto instanceof HenkiloPerustietoDto) {
-            logMessage.kohdehenkiloOid(((HenkiloPerustietoDto)returnHenkiloKoskiDto).getOidhenkilo());
+        if(returnHenkiloPerustietoDto instanceof HenkiloPerustietoDto) {
+            logMessage.kohdehenkiloOid(((HenkiloPerustietoDto)returnHenkiloPerustietoDto).getOidhenkilo());
         }
         this.finishLogging(logMessage);
     }

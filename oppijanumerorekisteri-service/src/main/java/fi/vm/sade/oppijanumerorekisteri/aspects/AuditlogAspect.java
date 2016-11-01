@@ -18,7 +18,7 @@ public class AuditlogAspect {
         this.auditlogAspectHelper = auditlogAspectHelper;
     }
 
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.createHenkiloFromKoskiDto(*))" +
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.createHenkiloFromPerustietoDto(*))" +
             "&& args(henkiloPerustietoDto)", argNames = "proceedingJoinPoint, henkiloPerustietoDto")
     private Object oppijanumerorekisteriBusinessAdvice(ProceedingJoinPoint proceedingJoinPoint, HenkiloPerustietoDto henkiloPerustietoDto)
             throws Throwable {
@@ -26,7 +26,7 @@ public class AuditlogAspect {
         try {
             result = proceedingJoinPoint.proceed();
         } finally {
-            auditlogAspectHelper.logHenkiloPerustietoDto(OppijanumerorekisteriOperation.CREATE_KOSKI_HENKILO, henkiloPerustietoDto, result);
+            auditlogAspectHelper.logHenkiloPerustietoDto(OppijanumerorekisteriOperation.CREATE_HENKILO, henkiloPerustietoDto, result);
         }
         return result;
     }

@@ -105,13 +105,14 @@ public class HenkiloControllerTest extends AbstractTest {
     @WithMockUser
     public void createHenkiloTest() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-        .hetu("123456-9999").oidhenkilo("1.2.3.4.5").build();
+        .hetu("123456-9999").oidhenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
+                "\"henkilotyyppi\": \"VIRKAILIJA\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
-        given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloPerustietoDto);
+        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().json(content));
     }
@@ -123,7 +124,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
-        given(this.service.createHenkiloFromKoskiDto(anyObject())).willThrow(new ConstraintViolationException("message", null));
+        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willThrow(new ConstraintViolationException("message", null));
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -135,7 +136,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
-        given(this.service.createHenkiloFromKoskiDto(anyObject())).willThrow(new DataIntegrityViolationException("message"));
+        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willThrow(new DataIntegrityViolationException("message"));
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -149,7 +150,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
-        given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloPerustietoDto);
+        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
