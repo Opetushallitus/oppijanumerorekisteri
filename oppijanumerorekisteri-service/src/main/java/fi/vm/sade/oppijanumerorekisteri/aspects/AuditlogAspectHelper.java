@@ -4,7 +4,7 @@ import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
 import fi.vm.sade.oppijanumerorekisteri.configurations.AuditlogConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloKoskiDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,13 +24,13 @@ public class AuditlogAspectHelper {
         this.userDetailsHelper = userDetailsHelper;
     }
 
-    void logKoskiDto(OppijanumerorekisteriOperation operation, HenkiloKoskiDto henkiloKoskiDto, Object returnHenkiloKoskiDto) {
+    void logHenkiloPerustietoDto(OppijanumerorekisteriOperation operation, HenkiloPerustietoDto henkiloPerustietoDto, Object returnHenkiloKoskiDto) {
         LogMessage.LogMessageBuilder logMessage = builder()
                 .setOperaatio(operation);
-        if(returnHenkiloKoskiDto instanceof HenkiloKoskiDto) {
-            logMessage.kohdehenkiloOid(((HenkiloKoskiDto)returnHenkiloKoskiDto).getOidhenkilo());
+        if(returnHenkiloKoskiDto instanceof HenkiloPerustietoDto) {
+            logMessage.kohdehenkiloOid(((HenkiloPerustietoDto)returnHenkiloKoskiDto).getOidhenkilo());
         }
-        finishLogging(logMessage);
+        this.finishLogging(logMessage);
     }
 
     // Set the method calling user id and log.

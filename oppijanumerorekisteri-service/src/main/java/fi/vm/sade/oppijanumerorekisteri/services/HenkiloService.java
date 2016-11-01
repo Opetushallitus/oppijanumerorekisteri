@@ -12,7 +12,7 @@ public interface HenkiloService {
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
     List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi);
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
-    HenkiloKoskiDto createHenkiloFromKoskiDto(HenkiloKoskiDto henkiloKoskiDto);
+    HenkiloPerustietoDto createHenkiloFromKoskiDto(HenkiloPerustietoDto henkiloPerustietoDto);
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
     Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhma ryhma);
 }

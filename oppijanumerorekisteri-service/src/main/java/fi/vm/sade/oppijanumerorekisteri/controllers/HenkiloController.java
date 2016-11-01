@@ -51,13 +51,13 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
     }
 
-    @ApiOperation(value = "Luo uuden henkilön annetuista koski perustiedoista")
+    @ApiOperation(value = "Luo uuden henkilön annetuista henkilon perustiedoista")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/koskihenkilo", method = RequestMethod.POST)
-    public HenkiloKoskiDto createNewHenkilo(@Validated @RequestBody HenkiloKoskiDto henkiloKoskiDto) {
-        return this.henkiloService.createHenkiloFromKoskiDto(henkiloKoskiDto);
+    @RequestMapping(value = "/createHenkilo", method = RequestMethod.POST)
+    public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
+        return this.henkiloService.createHenkiloFromKoskiDto(henkiloPerustietoDto);
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")

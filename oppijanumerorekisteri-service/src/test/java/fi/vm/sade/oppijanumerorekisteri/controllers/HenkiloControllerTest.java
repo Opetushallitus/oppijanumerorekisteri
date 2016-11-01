@@ -104,15 +104,15 @@ public class HenkiloControllerTest extends AbstractTest {
     @Test
     @WithMockUser
     public void createHenkiloTest() throws Exception {
-        HenkiloKoskiDto henkiloKoskiDto = HenkiloKoskiDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
+        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
         .hetu("123456-9999").oidhenkilo("1.2.3.4.5").build();
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
-        given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloKoskiDto);
-        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloPerustietoDto);
+        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().json(content));
     }
 
@@ -124,7 +124,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
         given(this.service.createHenkiloFromKoskiDto(anyObject())).willThrow(new ConstraintViolationException("message", null));
-        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -136,21 +136,21 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
         given(this.service.createHenkiloFromKoskiDto(anyObject())).willThrow(new DataIntegrityViolationException("message"));
-        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @WithMockUser
     public void createHenkiloNullHetuTest() throws Exception {
-        HenkiloKoskiDto henkiloKoskiDto = HenkiloKoskiDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
+        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
                 .oidhenkilo("1.2.3.4.5").build();
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
-        given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloKoskiDto);
-        this.mvc.perform(post("/henkilo/koskihenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.service.createHenkiloFromKoskiDto(anyObject())).willReturn(henkiloPerustietoDto);
+        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
