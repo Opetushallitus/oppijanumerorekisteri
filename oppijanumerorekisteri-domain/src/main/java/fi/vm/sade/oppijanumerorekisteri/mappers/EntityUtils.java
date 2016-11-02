@@ -10,21 +10,16 @@ import java.util.Date;
 
 public class EntityUtils {
     static public Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
-        Kansalaisuus kansalaisuus = new Kansalaisuus();
-        kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
-        return kansalaisuus;
+        return new Kansalaisuus(kansalaisuuskoodi, null);
     }
 
     static public Kielisyys createKielisyys(String kielikoodi, String kielityyppi) {
-        Kielisyys kielisyys = new Kielisyys();
-        kielisyys.setKielikoodi(kielikoodi);
-        kielisyys.setKielityyppi(kielityyppi);
-        return kielisyys;
+        return new Kielisyys(kielikoodi, kielityyppi, null);
     }
 
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
-                                       String kansalaisuuskoodi) {
+                                       String kansalaisuuskoodi, Date luontiMuokkausPvm) {
         Kielisyys aidinkieli = new Kielisyys();
         aidinkieli.setKielityyppi(kielityyppi);
         aidinkieli.setKielikoodi(kielikoodi);
@@ -32,19 +27,8 @@ public class EntityUtils {
         Kansalaisuus kansalaisuus = new Kansalaisuus();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
 
-        Henkilo henkilo = new Henkilo();
-        henkilo.setEtunimet(etunimet);
-        henkilo.setKutsumanimi(kutsumanimi);
-        henkilo.setSukunimi(sukunimi);
-        henkilo.setHetu(hetu);
-        henkilo.setOidhenkilo(oidHenkilo);
-        henkilo.setPassivoitu(passivoitu);
-        henkilo.setHenkilotyyppi(henkiloTyyppi);
-        henkilo.setLuontiPvm(new Date());
-        henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
-        henkilo.setAidinkieli(aidinkieli);
-        henkilo.setKielisyys(Collections.singleton(aidinkieli));
-        henkilo.setKansalaisuus(Collections.singleton(kansalaisuus));
-        return henkilo;
+        return new Henkilo(oidHenkilo, hetu, henkiloTyyppi, etunimet, kutsumanimi, sukunimi, aidinkieli, aidinkieli,
+                luontiMuokkausPvm, luontiMuokkausPvm, passivoitu, false, false, false, false, false,
+                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), null);
     }
 }

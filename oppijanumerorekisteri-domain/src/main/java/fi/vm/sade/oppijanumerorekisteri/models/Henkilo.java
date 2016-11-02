@@ -13,27 +13,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Getter @Setter
 @Table(name = "henkilo", schema = "public")
 @NamedEntityGraphs({
-        @NamedEntityGraph(
-                name = "henkiloWithKansalaisuusAndAidinkieli",
-                attributeNodes = {
-                        @NamedAttributeNode("kansalaisuus"),
-                        @NamedAttributeNode("aidinkieli")
-                }
-        ),
         @NamedEntityGraph(
                 name = "henkiloWithPerustiedot",
                 attributeNodes = {
                         @NamedAttributeNode("asiointikieli"),
-                        @NamedAttributeNode("aidinkieli")
+                        @NamedAttributeNode("aidinkieli"),
+                        @NamedAttributeNode("kansalaisuus")
                 }
         )
 })
-@NoArgsConstructor
-@AllArgsConstructor
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
@@ -41,6 +36,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private String oidhenkilo;
 
+    // This constraint is actually not in db level
     @Column(unique = true)
     private String hetu;
 
@@ -86,6 +82,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(nullable = false)
     private boolean duplicate;
+
+    @Column(nullable = false)
+    private boolean eisuomalaistahetua;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
