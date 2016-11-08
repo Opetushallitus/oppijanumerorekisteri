@@ -46,7 +46,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date());
         this.testEntityManager.persist(henkilo);
         Optional<String> hetu = this.jpaRepository.findHetuByOid("1.2.3.4.5");
-        assertThat(hetu.orElse("")).isEqualTo("123456-9999");
+        assertThat(hetu).hasValue("123456-9999");
     }
 
     @Test
@@ -55,7 +55,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date());
         this.testEntityManager.persist(henkilo);
         Optional<String> hetu = this.jpaRepository.findHetuByOid("1.2.3.4.5");
-        assertThat(hetu.orElse("").isEmpty());
+        assertThat(hetu).hasValue("");
     }
 
     @Test
@@ -64,13 +64,13 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date());
         this.testEntityManager.persist(henkilo);
         Optional<String> oid = this.jpaRepository.findOidByHetu("123456-9999");
-        assertThat(oid.orElse("")).isEqualTo("1.2.3.4.5");
+        assertThat(oid).hasValue("1.2.3.4.5");
     }
 
     @Test
     public void userOidNotInDbTest() {
         Optional<String> hetu = this.jpaRepository.findHetuByOid("unknown oid");
-        assertThat(hetu.isPresent()).isFalse();
+        assertThat(hetu).isEmpty();
     }
 
     @Test(expected = DataIntegrityViolationException.class)

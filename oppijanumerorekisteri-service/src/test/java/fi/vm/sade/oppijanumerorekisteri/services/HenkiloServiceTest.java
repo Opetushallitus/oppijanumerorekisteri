@@ -139,7 +139,7 @@ public class HenkiloServiceTest {
     public void getHenkiloYhteystiedotByRyhmaEmptyTest() {
         given(this.henkiloJpaRepositoryMock.findYhteystiedot(any(YhteystietoCriteria.class)))
                 .willReturn(emptyList());
-        assertThat(this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE).isPresent()).isFalse();
+        assertThat(this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE)).isEmpty();
     }
 
     @Test
@@ -147,8 +147,7 @@ public class HenkiloServiceTest {
         given(this.henkiloJpaRepositoryMock.findYhteystiedot(any(YhteystietoCriteria.class)))
                 .willReturn(testYhteystiedot("1.2.3.4.5"));
         Optional<YhteystiedotDto> tiedot = this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE);
-        assertThat(tiedot.isPresent()).isTrue();
-        assertThat(tiedot.orElse(new YhteystiedotDto()).getKatuosoite()).isEqualTo("Siilikuja 6");
+        assertThat(tiedot.map(YhteystiedotDto::getKatuosoite)).hasValue("Siilikuja 6");
     }
 
     @Test
