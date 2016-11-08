@@ -55,6 +55,10 @@
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>oid-generator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.kayttooikeus</groupId>
+            <artifactId>kayttooikeus-api</artifactId>
+        </dependency>
 
         <!-- Spring-boot -->
         <dependency>
@@ -137,10 +141,6 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ma.glasnost.orika</groupId>
-            <artifactId>orika-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jresearch.orika</groupId>
