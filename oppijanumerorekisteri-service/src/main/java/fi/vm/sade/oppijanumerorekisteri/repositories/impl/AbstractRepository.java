@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -12,9 +11,5 @@ public class AbstractRepository {
 
     protected JPAQueryFactory jpa() {
         return new JPAQueryFactory(em);
-    }
-
-    protected boolean exists(JPAQuery<?> q) {
-        return q.limit(1).fetchCount() > 0;
     }
 }

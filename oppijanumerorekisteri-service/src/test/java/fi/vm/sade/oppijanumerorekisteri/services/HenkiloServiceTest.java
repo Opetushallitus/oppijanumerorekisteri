@@ -9,6 +9,8 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -47,8 +49,12 @@ public class HenkiloServiceTest {
         this.mapperMock = Mockito.mock(OrikaSpringMapper.class);
         MockOidGenerator mockOidGenerator = new MockOidGenerator();
         this.userDetailsHelperMock = Mockito.mock(UserDetailsHelper.class);
+        KielisyysRepository kielisyysRepositoryMock = Mockito.mock(KielisyysRepository.class);
+        KoodistoService koodistoServiceMock = Mockito.mock(KoodistoService.class);
+        KansalaisuusRepository kansalaisuusRepositoryMock = Mockito.mock(KansalaisuusRepository.class);
         this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, mapperMock,
-                new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock);
+                new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, kielisyysRepositoryMock,
+                koodistoServiceMock, kansalaisuusRepositoryMock);
     }
 
     @Test

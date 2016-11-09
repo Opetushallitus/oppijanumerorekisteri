@@ -59,6 +59,14 @@
             <groupId>fi.vm.sade.kayttooikeus</groupId>
             <artifactId>kayttooikeus-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.koodisto</groupId>
+            <artifactId>koodisto-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+        </dependency>
 
         <!-- Spring-boot -->
         <dependency>

@@ -5,11 +5,15 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -18,11 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
@@ -31,10 +33,15 @@ import static java.util.Optional.ofNullable;
 public class HenkiloServiceImpl implements HenkiloService {
     private HenkiloHibernateRepository henkiloHibernateRepository;
     private HenkiloRepository henkiloDataRepository;
+    private KielisyysRepository kielisyysRepository;
+    private KansalaisuusRepository kansalaisuusRepository;
+
     private YhteystietoConverter yhteystietoConverter;
     private OrikaSpringMapper mapper;
     private OidGenerator oidGenerator;
     private UserDetailsHelper userDetailsHelper;
+
+    private KoodistoService koodistoService;
 
     @Autowired
     public HenkiloServiceImpl(HenkiloHibernateRepository henkiloHibernateRepository,
@@ -42,13 +49,19 @@ public class HenkiloServiceImpl implements HenkiloService {
                               OrikaSpringMapper mapper,
                               YhteystietoConverter yhteystietoConverter,
                               OidGenerator oidGenerator,
-                              UserDetailsHelper userDetailsHelper) {
+                              UserDetailsHelper userDetailsHelper,
+                              KielisyysRepository kielisyysRepository,
+                              KoodistoService koodistoService,
+                              KansalaisuusRepository kansalaisuusRepository) {
         this.henkiloHibernateRepository = henkiloHibernateRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.yhteystietoConverter = yhteystietoConverter;
         this.mapper = mapper;
         this.oidGenerator = oidGenerator;
         this.userDetailsHelper = userDetailsHelper;
+        this.kielisyysRepository = kielisyysRepository;
+        this.koodistoService = koodistoService;
+        this.kansalaisuusRepository = kansalaisuusRepository;
     }
 
     @Override
@@ -132,6 +145,24 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkilo.setOidhenkilo(getFreePersonOid());
         henkilo.setLuontiPvm(new Date());
         henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
+
+        if(henkilo.getAidinkieli() != null && henkilo.getAidinkieli().getKielikoodi() != null) {
+            henkilo.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkilo.getAidinkieli().getKielikoodi())
+                    .orElseThrow(() -> new ValidationException("invalid_aidinkieli")));
+        }
+        if(henkilo.getAsiointikieli() != null && henkilo.getAsiointikieli().getKielikoodi() != null) {
+            henkilo.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkilo.getAsiointikieli().getKielikoodi())
+                    .orElseThrow(() -> new ValidationException("invalid_asiointikieli")));
+        }
+        if(henkilo.getKansalaisuus() != null) {
+            koodistoService.validateKansalaisuus(henkilo.getKansalaisuus());
+            Set<Kansalaisuus> kansalaisuusSet = henkilo.getKansalaisuus().stream()
+                    .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
+                            .orElseThrow(ValidationException::new))
+                    .collect(Collectors.toSet());
+            henkilo.setKansalaisuus(kansalaisuusSet);
+        }
+
         return this.henkiloDataRepository.save(henkilo);
     }
 

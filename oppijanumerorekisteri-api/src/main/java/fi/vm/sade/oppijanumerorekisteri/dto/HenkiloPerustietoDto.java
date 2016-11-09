@@ -1,9 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import lombok.*;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -18,17 +20,21 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private String oidhenkilo;
 
-    @NotNull
+    @NotNull @Size(min = 1)
     private String hetu;
 
+    @NotNull @Size(min = 1)
     private String etunimet;
 
+    @NotNull @Size(min = 1)
     private String kutsumanimi;
 
+    @NotNull @Size(min = 1)
     private String sukunimi;
 
     private KielisyysDto aidinkieli;
 
+    @ValidateAsiointikieli
     private KielisyysDto asiointikieli;
 
     private Set<KansalaisuusDto> kansalaisuus;

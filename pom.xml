@@ -63,6 +63,17 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>fi.vm.sade.generic</groupId>
+                <artifactId>generic-common</artifactId>
+                <version>9.6-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>fi.vm.sade.java-utils</groupId>
                 <artifactId>java-ldap</artifactId>
                 <version>0.1.0-SNAPSHOT</version>
@@ -93,8 +104,19 @@
                 <version>1.0.0-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>javax.validation</groupId>
-                        <artifactId>validation-api</artifactId>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>fi.vm.sade.koodisto</groupId>
+                <artifactId>koodisto-api</artifactId>
+                <version>2016-04-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-lang</groupId>
+                        <artifactId>commons-lang</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
