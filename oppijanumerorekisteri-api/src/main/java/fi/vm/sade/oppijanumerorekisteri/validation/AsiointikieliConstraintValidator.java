@@ -14,7 +14,7 @@ class AsiointikieliConstraintValidator implements ConstraintValidator<ValidateAs
     public boolean isValid(KielisyysDto kielisyysDto, ConstraintValidatorContext constraintValidatorContext) {
         String pattern = "fi|sv|en";
         // Asiointikieli can be null but if it's not it has to be fi, sv or en.
-        return kielisyysDto.getKielikoodi() == null
+        return kielisyysDto == null || kielisyysDto.getKielikoodi() == null
                 || kielisyysDto.getKielikoodi().matches(pattern);
     }
 }

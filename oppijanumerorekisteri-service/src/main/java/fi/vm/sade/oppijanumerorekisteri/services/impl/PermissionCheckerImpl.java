@@ -1,27 +1,45 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("permissionChecker")
-public class PermissionCheckerImpl {
+public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
 
-    public boolean isAllowedToAccessPerson(String personOid, List<String> allowedRoles,
-                                           ExternalPermissionService permissionCheckService) {
-        Set<String> casRoles = getCasRoles();
-        if(isSuperUser(casRoles)) {
+    private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
+
+    private KayttooikeusClient kayttooikeusClient;
+
+    @Autowired
+    public PermissionCheckerImpl(KayttooikeusClient kayttooikeusClient) {
+        this.kayttooikeusClient = kayttooikeusClient;
+    }
+
+    @Override
+    public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
+                                           ExternalPermissionService externalPermissionService) throws IOException {
+        Set<String> callingUserRoles = getCasRoles();
+        if(isSuperUser(callingUserRoles)) {
             return true;
         }
         else {
-            return false;
+            String callingUserOid = SecurityContextHolder.getContext().getAuthentication().getName();
+            return kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles,
+                    externalPermissionService, callingUserRoles);
         }
     }
 

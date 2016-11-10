@@ -27,9 +27,9 @@ public class KoodistoServiceImpl implements KoodistoService {
         List<KoodiType> koodiTypeList = koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
 
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
-        Stream<String> kansalaisuuskoodiSet = kansalaisuusSet.stream().map(Kansalaisuus::getKansalaisuuskoodi);
-        Set<String> koodiArvoSet = koodiTypeList.stream().map(KoodiType::getKoodiArvo).collect(Collectors.toSet());
-        if(!kansalaisuuskoodiSet.allMatch(k -> koodiArvoSet.stream().anyMatch(k::equals))) {
+        if(!kansalaisuusSet.stream().map(Kansalaisuus::getKansalaisuuskoodi)
+                .allMatch(kansalaisuus -> koodiTypeList.stream()
+                        .anyMatch(koodi -> koodi.getKoodiArvo().equals(kansalaisuus)))) {
             throw new ValidationException("invalid_kansalaisuuskoodi");
         }
     }

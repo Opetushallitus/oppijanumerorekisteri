@@ -1,10 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -61,26 +64,22 @@ public class HenkiloController {
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    // TODO: use proper organization related checks when implemented, used to be:
-    // @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}/yhteystiedot", method = RequestMethod.GET)
     public HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(
-            @ApiParam("Henkilön OID") @PathVariable("oid") String oid
-            /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
-             PermissionChecker.ExternalPermissionService permissionService */) {
+            @PathVariable("oid") String oid,
+            @RequestHeader(value = "External-Permission-Service", required = false)
+                    ExternalPermissionService permissionService) {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
     @ApiOperation("Hakee annetun henkilön yhteystietoryhmän yhteystiedot")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    // TODO: use proper organization related checks when implemented, used to be:
-    // @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}/yhteystiedot/{ryhma}", method = RequestMethod.GET)
     public YhteystiedotDto getHenkiloYhteystiedot(@ApiParam("Henkilön OID") @PathVariable("oid") String oid,
-                                                  @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma
-                                                  /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
-                                                   PermissionChecker.ExternalPermissionService permissionService */) {
+                                                  @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma,
+                                                  @RequestHeader(value = "External-Permission-Service", required = false)
+                                                   ExternalPermissionService permissionService ) {
         return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhma.forValue(ryhma))
                 .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by ryhma="+ryhma));
     }
