@@ -20,5 +20,10 @@
   "oidhenkilo": "1.2.3.4.5",
   "sukunimi": "kuutio",
   "passivoitu": false,
-  "henkilotyyppi": "VIRKAILIJA"
+  "henkilotyyppi": "VIRKAILIJA",
+  "kasittelijaOid": "1.2.3.4.1",
+  "asiointikieli": {
+    "kielikoodi": "fi",
+    "kielityyppi": "suomi"
+  }
 }

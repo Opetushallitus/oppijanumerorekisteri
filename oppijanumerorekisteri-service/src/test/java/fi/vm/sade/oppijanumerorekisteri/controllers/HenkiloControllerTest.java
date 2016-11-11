@@ -75,7 +75,7 @@ public class HenkiloControllerTest extends AbstractTest {
     @WithMockUser
     public void henkilotByHenkiloOidListTest() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246");
+                "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1");
         String inputOidList = "[\"1.2.3.4.5\"]";
         String returnContent = "[" +
                 "  {" +
@@ -103,7 +103,7 @@ public class HenkiloControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser
-    public void createHenkiloTest() throws Exception {
+    public void createHenkiloFromPerustietoDtoTest() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
         .hetu("123456-9999").oidhenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
         String content = "{\"etunimet\": \"arpa\"," +

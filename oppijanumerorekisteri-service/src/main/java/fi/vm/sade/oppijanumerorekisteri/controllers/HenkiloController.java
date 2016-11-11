@@ -7,12 +7,18 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @Api(tags = "Henkilot")
 @RestController
@@ -24,6 +30,7 @@ public class HenkiloController {
         this.henkiloService = henkiloService;
     }
 
+    // PROXY
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {
@@ -83,4 +90,39 @@ public class HenkiloController {
         return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhma.forValue(ryhma))
                 .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by ryhma="+ryhma));
     }
+
+    // PROXY
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiOperation(value = "Henkilön haku OID:n perusteella.",
+            notes = "Hakee henkilön tiedot annetun OID:n pohjalta, sisältään kaikki henkilön tiedot.")
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "Not Found or internal error")})
+    @RequestMapping(value = "/{oid}", method = RequestMethod.GET)
+    public ResponseEntity findByOid(@PathVariable String oid,
+                                    @RequestHeader("External-Permission-Service")
+                                      ExternalPermissionService permissionService) {
+        try {
+            return new ResponseEntity<>(henkiloService.getHenkiloByOids(Collections.singletonList(oid)), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            // Returns 500 for backward compability
+            Map<String, String> entity = new HashMap<>();
+            entity.put("error", e.getMessage());
+            return new ResponseEntity<>(entity, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // PROXY
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Henkilö luonti",
+            notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal error"), @ApiResponse(code = 400, message = "bad input")})
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<String> createHenkilo(@RequestBody @Validated HenkiloDto henkilo) {
+        ResponseEntity<String> response;
+        HenkiloDto result = this.henkiloService.createHenkiloFromHenkiloDTo(henkilo);
+        response = new ResponseEntity<>(result.getOidhenkilo(), HttpStatus.OK);
+        return response;
+    }
+
+
 }

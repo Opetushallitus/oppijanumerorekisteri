@@ -41,4 +41,7 @@ public class HenkiloPerustietoDto implements Serializable {
 
     @NotNull
     private HenkiloTyyppi henkilotyyppi;
+
+    private String kasittelijaOid;
+
 }

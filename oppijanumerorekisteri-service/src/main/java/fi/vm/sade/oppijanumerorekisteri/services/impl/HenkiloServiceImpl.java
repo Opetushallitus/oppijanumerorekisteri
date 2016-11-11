@@ -89,7 +89,16 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
         List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
-        return mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
+        return this.mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
+    }
+
+    @Override
+    public List<HenkiloDto> getHenkiloByOids(List<String> oids) {
+        List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
+        if(henkilos.isEmpty()) {
+            throw new NotFoundException();
+        }
+        return this.mapper.mapAsList(henkilos, HenkiloDto.class);
     }
 
 
@@ -113,6 +122,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     public HenkiloPerustietoDto createHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
         Henkilo henkilo = mapper.map(henkiloPerustietoDto, Henkilo.class);
         return mapper.map(this.createHenkilo(henkilo), HenkiloPerustietoDto.class);
+    }
+
+    @Override
+    public HenkiloDto createHenkiloFromHenkiloDTo(HenkiloDto henkiloDto) {
+        Henkilo henkilo = mapper.map(henkiloDto, Henkilo.class);
+        return mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
     }
 
 
@@ -145,6 +160,8 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkilo.setOidhenkilo(getFreePersonOid());
         henkilo.setLuontiPvm(new Date());
         henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
+        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
+                .orElseThrow(UserHasNoOidException::new));
 
         if(henkilo.getAidinkieli() != null && henkilo.getAidinkieli().getKielikoodi() != null) {
             henkilo.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkilo.getAidinkieli().getKielikoodi())

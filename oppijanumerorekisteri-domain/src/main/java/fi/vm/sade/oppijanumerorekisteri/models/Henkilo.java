@@ -104,4 +104,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     private Set<YhteystiedotRyhma> yhteystiedotRyhmas = new HashSet<>();
+
+    @Column(name = "kasittelija")
+    private String kasittelijaOid;
 }
