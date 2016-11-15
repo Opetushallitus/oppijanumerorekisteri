@@ -107,4 +107,26 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(name = "kasittelija")
     private String kasittelijaOid;
+
+    private String sukupuoli;
+
+    @Temporal(TemporalType.DATE)
+    private Date syntymaaika;
+
+    private String passinnumero;
+
+    private String oppijanumero;
+
+    @ManyToOne
+    @JoinColumn(name = "huoltaja_id")
+    private Henkilo huoltaja;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH })
+    private Set<Identification> identifications = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH })
+    private Set<ExternalId> externalIds = new HashSet<>();
+
 }

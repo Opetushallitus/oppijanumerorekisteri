@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ import java.util.Set;
 public class HenkiloDto implements Serializable {
     private static final long serialVersionUID = -8509596443256973893L;
 
+    @Null
     private String oidhenkilo;
 
     @NotNull
@@ -49,5 +52,9 @@ public class HenkiloDto implements Serializable {
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
 
     private String kasittelijaOid;
+
+    private Date syntymaaika;
+
+    private String sukupuoli;
 
 }

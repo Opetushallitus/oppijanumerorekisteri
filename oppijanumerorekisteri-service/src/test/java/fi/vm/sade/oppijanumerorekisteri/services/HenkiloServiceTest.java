@@ -7,10 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -41,6 +38,7 @@ public class HenkiloServiceTest {
     private HenkiloService service;
     private OrikaSpringMapper mapperMock;
     private UserDetailsHelper userDetailsHelperMock;
+    private PermissionChecker permissionCheckerMock;
 
     @Before
     public void setup() {
@@ -52,9 +50,12 @@ public class HenkiloServiceTest {
         KielisyysRepository kielisyysRepositoryMock = Mockito.mock(KielisyysRepository.class);
         KoodistoService koodistoServiceMock = Mockito.mock(KoodistoService.class);
         KansalaisuusRepository kansalaisuusRepositoryMock = Mockito.mock(KansalaisuusRepository.class);
+        IdentificationRepository identificationRepositoryMock = Mockito.mock(IdentificationRepository.class);
+        this.permissionCheckerMock = Mockito.mock(PermissionChecker.class);
+
         this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, mapperMock,
                 new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, kielisyysRepositoryMock,
-                koodistoServiceMock, kansalaisuusRepositoryMock);
+                koodistoServiceMock, kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock);
     }
 
     @Test
@@ -215,5 +216,25 @@ public class HenkiloServiceTest {
     public void getHenkiloOidHetuNimiByHetuNotFoundTest() {
         given(this.henkiloDataRepositoryMock.findByHetu("123456-9999")).willReturn(Optional.empty());
         this.service.getHenkiloOidHetuNimiByHetu("123456-9999");
+    }
+
+    @Test
+    public void listPossibleHenkiloTypesAccessibleSuperUser() {
+        given(this.permissionCheckerMock.isSuperUser()).willReturn(true);
+        List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible()
+                .stream().sorted(String::compareToIgnoreCase).collect(Collectors.toList());
+        assertThat(henkiloTyypit.size()).isEqualTo(3);
+        assertThat(henkiloTyypit.get(0)).isEqualTo("OPPIJA");
+        assertThat(henkiloTyypit.get(1)).isEqualTo("PALVELU");
+        assertThat(henkiloTyypit.get(2)).isEqualTo("VIRKAILIJA");
+    }
+
+    @Test
+    public void listPossibleHenkiloTypesAccessibleNormalUser() {
+        given(this.permissionCheckerMock.isSuperUser()).willReturn(false);
+        List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible();
+        assertThat(henkiloTyypit.size()).isEqualTo(1);
+        assertThat(henkiloTyypit.get(0)).isEqualTo("VIRKAILIJA");
+
     }
 }

@@ -18,5 +18,6 @@
   "oidhenkilo": "1.2.3.4.5",
   "sukunimi": "kuutio",
   "henkilotyyppi": "VIRKAILIJA",
-  "kasittelijaOid": "1.2.3.4.1"
+  "kasittelijaOid": "1.2.3.4.1",
+  "sukupuoli": "1"
 }

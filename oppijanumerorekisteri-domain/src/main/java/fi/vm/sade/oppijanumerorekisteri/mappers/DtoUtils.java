@@ -27,7 +27,7 @@ public class DtoUtils {
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
         return new HenkiloPerustietoDto(henkiloOid, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli, asiointikieli,
-                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, kasittelija);
+                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, kasittelija, "1");
     }
 
     public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
@@ -50,9 +50,11 @@ public class DtoUtils {
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
+        Date syntymaAika = new Date(24364800000L);
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
-                 aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija);
+                 aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
+                syntymaAika, "1");
     }
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {

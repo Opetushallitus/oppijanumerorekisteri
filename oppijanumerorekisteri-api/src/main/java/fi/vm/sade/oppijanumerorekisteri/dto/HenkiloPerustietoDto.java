@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.Set;
 public class HenkiloPerustietoDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
+    @Null
     private String oidhenkilo;
 
     @NotNull @Size(min = 1)
@@ -43,5 +45,8 @@ public class HenkiloPerustietoDto implements Serializable {
     private HenkiloTyyppi henkilotyyppi;
 
     private String kasittelijaOid;
+
+    private String sukupuoli;
+
 
 }

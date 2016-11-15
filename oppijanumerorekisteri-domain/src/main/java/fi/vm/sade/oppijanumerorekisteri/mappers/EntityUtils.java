@@ -27,8 +27,11 @@ public class EntityUtils {
         Kansalaisuus kansalaisuus = new Kansalaisuus();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
 
+        Date syntymaAika = new Date(24364800000L); // 10.10.1970
+
         return new Henkilo(oidHenkilo, hetu, henkiloTyyppi, etunimet, kutsumanimi, sukunimi, aidinkieli, aidinkieli,
         luontiMuokkausSyncedPvm, luontiMuokkausSyncedPvm, lastVtjSynced, passivoitu, false, false, false, false, false,
-                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), null, kasittelija);
+                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), null, kasittelija, "1", syntymaAika,
+                null, null, null, null, null);
     }
 }

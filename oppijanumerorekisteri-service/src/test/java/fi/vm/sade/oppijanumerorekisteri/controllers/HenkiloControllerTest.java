@@ -1,10 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.AbstractTest;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +42,12 @@ public class HenkiloControllerTest extends AbstractTest {
 
     @MockBean
     private HenkiloService service;
+
+    @MockBean
+    private PermissionChecker permissionChecker;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @WithMockUser(username = "1.2.3.4.5")
@@ -104,17 +113,17 @@ public class HenkiloControllerTest extends AbstractTest {
     @Test
     @WithMockUser
     public void createHenkiloFromPerustietoDtoTest() throws Exception {
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
         .hetu("123456-9999").oidhenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
-        String content = "{\"etunimet\": \"arpa\"," +
+        String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
-                "\"henkilotyyppi\": \"VIRKAILIJA\"," +
-                "\"oidhenkilo\": \"1.2.3.4.5\"}";
+                "\"henkilotyyppi\": \"VIRKAILIJA\"}";
         given(this.service.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
-        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated()).andExpect(content().json(content));
+        this.mvc.perform(post("/henkilo/createHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
 
     @Test

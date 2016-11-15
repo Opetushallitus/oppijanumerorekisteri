@@ -5,17 +5,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +30,13 @@ public class HenkiloServiceImpl implements HenkiloService {
     private HenkiloRepository henkiloDataRepository;
     private KielisyysRepository kielisyysRepository;
     private KansalaisuusRepository kansalaisuusRepository;
+    private IdentificationRepository identificationRepository;
 
     private YhteystietoConverter yhteystietoConverter;
     private OrikaSpringMapper mapper;
     private OidGenerator oidGenerator;
     private UserDetailsHelper userDetailsHelper;
+    private PermissionChecker permissionChecker;
 
     private KoodistoService koodistoService;
 
@@ -52,7 +49,9 @@ public class HenkiloServiceImpl implements HenkiloService {
                               UserDetailsHelper userDetailsHelper,
                               KielisyysRepository kielisyysRepository,
                               KoodistoService koodistoService,
-                              KansalaisuusRepository kansalaisuusRepository) {
+                              KansalaisuusRepository kansalaisuusRepository,
+                              IdentificationRepository identificationRepository,
+                              PermissionChecker permissionChecker) {
         this.henkiloHibernateRepository = henkiloHibernateRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.yhteystietoConverter = yhteystietoConverter;
@@ -62,6 +61,8 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.kielisyysRepository = kielisyysRepository;
         this.koodistoService = koodistoService;
         this.kansalaisuusRepository = kansalaisuusRepository;
+        this.identificationRepository = identificationRepository;
+        this.permissionChecker = permissionChecker;
     }
 
     @Override
@@ -154,6 +155,22 @@ public class HenkiloServiceImpl implements HenkiloService {
     public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
         List<Henkilo> hetusAndOids = henkiloHibernateRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
         return mapper.mapAsList(hetusAndOids, HenkiloHetuAndOidDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier) {
+        Identification identification = this.identificationRepository.findByidpentityidAndIdentifier(idp, identifier)
+                .orElseThrow(NotFoundException::new);
+        return this.mapper.map(identification.getHenkilo(), HenkiloDto.class);
+    }
+
+    @Override
+    public List<String> listPossibleHenkiloTypesAccessible() {
+        if(this.permissionChecker.isSuperUser()) {
+            return Arrays.stream(HenkiloTyyppi.values()).map(HenkiloTyyppi::toString).collect(Collectors.toList());
+        }
+        return Collections.singletonList(HenkiloTyyppi.VIRKAILIJA.toString());
     }
 
     private Henkilo createHenkilo(Henkilo henkilo) {

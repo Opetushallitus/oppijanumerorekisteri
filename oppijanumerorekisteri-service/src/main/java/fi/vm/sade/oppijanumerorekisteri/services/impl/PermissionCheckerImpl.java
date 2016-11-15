@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +31,29 @@ public class PermissionCheckerImpl implements PermissionChecker {
         this.kayttooikeusClient = kayttooikeusClient;
     }
 
+    public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
+                                                         ExternalPermissionService permissionCheckService) throws IOException {
+        List<HenkiloDto> permissionCheckedPersons = new ArrayList<>();
+
+        if (persons == null || persons.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        for (HenkiloDto person : persons) {
+            if (person != null && this.isAllowedToAccessPerson(person.getOidhenkilo(), allowedRoles, permissionCheckService)) {
+                permissionCheckedPersons.add(person);
+            }
+        }
+
+        return permissionCheckedPersons;
+    }
+
+
     @Override
     public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
                                            ExternalPermissionService externalPermissionService) throws IOException {
-        Set<String> callingUserRoles = getCasRoles();
-        if(isSuperUser(callingUserRoles)) {
+        Set<String> callingUserRoles = this.getCasRoles();
+        if(this.isSuperUser(callingUserRoles)) {
             return true;
         }
         else {
@@ -43,7 +63,12 @@ public class PermissionCheckerImpl implements PermissionChecker {
         }
     }
 
-    private static boolean isSuperUser(Set<String> roles) {
+    @Override
+    public boolean isSuperUser() {
+        return this.isSuperUser(this.getCasRoles());
+    }
+
+    private boolean isSuperUser(Set<String> roles) {
         return roles.contains(ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI");
     }
 
