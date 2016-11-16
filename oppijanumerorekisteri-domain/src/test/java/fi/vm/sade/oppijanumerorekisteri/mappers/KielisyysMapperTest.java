@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;

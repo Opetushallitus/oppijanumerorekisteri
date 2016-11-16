@@ -3,9 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.AbstractTest;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
+import fi.vm.sade.oppijanumerorekisteri.mappers.JsonUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import org.junit.Test;
@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.validation.ConstraintViolationException;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
@@ -36,12 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(HenkiloController.class)
-public class HenkiloControllerTest extends AbstractTest {
+public class HenkiloControllerTest {
     @Autowired
     private MockMvc mvc;
 
     @MockBean
-    private HenkiloService service;
+    private HenkiloService henkiloService;
 
     @MockBean
     private PermissionChecker permissionChecker;
@@ -51,15 +52,15 @@ public class HenkiloControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "1.2.3.4.5")
-    public void hasHetuTest() throws Exception {
-        given(this.service.getHasHetu()).willReturn(true);
+    public void hasHetu() throws Exception {
+        given(this.henkiloService.getHasHetu()).willReturn(true);
         this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().string("true"));
     }
 
     @Test
     @WithMockUser
-    public void henkiloOidHetuNimiByHetuTest() throws Exception {
+    public void henkiloOidHetuNimiByHetu() throws Exception {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5");
         String content = "{\"etunimet\": \"arpa\"," +
@@ -67,22 +68,22 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
-        given(this.service.getHenkiloOidHetuNimiByHetu("123456-9999")).willReturn(henkiloOidHetuNimiDto);
+        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willReturn(henkiloOidHetuNimiDto);
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(content));
     }
 
     @Test
     @WithMockUser
-    public void henkiloOidHetuNimiByHetuNotFoundTest() throws Exception {
-        given(this.service.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new NotFoundException());
+    public void henkiloOidHetuNimiByHetuNotFound() throws Exception {
+        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new NotFoundException());
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser
-    public void henkilotByHenkiloOidListTest() throws Exception {
+    public void findHenkilotByOidList() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1");
         String inputOidList = "[\"1.2.3.4.5\"]";
@@ -103,7 +104,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "    \"sukunimi\": \"kuutio\"" +
                 "  }" +
                 "]";
-        given(this.service.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5")))
+        given(this.henkiloService.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloPerustietoDto));
         this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloOidList").content(inputOidList)
                 .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
@@ -112,7 +113,7 @@ public class HenkiloControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser
-    public void createHenkiloFromPerustietoDtoTest() throws Exception {
+    public void createNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
         .hetu("123456-9999").oidhenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
@@ -121,31 +122,31 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
                 "\"henkilotyyppi\": \"VIRKAILIJA\"}";
-        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
+        given(this.henkiloService.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
 
     @Test
     @WithMockUser
-    public void createHenkiloConstraintViolationExceptionTest() throws Exception {
+    public void createHenkiloConstraintViolationException() throws Exception {
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
-        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willThrow(new ConstraintViolationException("message", null));
+        given(this.henkiloService.createHenkiloFromPerustietoDto(anyObject())).willThrow(new ConstraintViolationException("message", null));
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @WithMockUser
-    public void createHenkiloDataIntegrityViolationExceptionTest() throws Exception {
+    public void createHenkiloDataIntegrityViolationException() throws Exception {
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
-        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willThrow(new DataIntegrityViolationException("message"));
+        given(this.henkiloService.createHenkiloFromPerustietoDto(anyObject())).willThrow(new DataIntegrityViolationException("message"));
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -159,7 +160,7 @@ public class HenkiloControllerTest extends AbstractTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"oidhenkilo\": \"1.2.3.4.5\"}";
-        given(this.service.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
+        given(this.henkiloService.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -167,37 +168,45 @@ public class HenkiloControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "1.2.3.4.5")
     public void getHenkiloYhteystiedot() throws Exception {
-        given(this.service.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
+        String content = "{" +
+                "  \"kotiosoite\": {" +
+                "    \"sahkoposti\": \"testi@test.com\"," +
+                "  }" +
+                "}";
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
             .put(YhteystietoRyhma.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonResource("classpath:henkilo/simpleTestYhteystiedot.json")));
+                .andExpect(content().json(content));
         
-        given(this.service.getHenkiloYhteystiedot("1.2.3.4.6")).willReturn(new HenkilonYhteystiedotViewDto());
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6")).willReturn(new HenkilonYhteystiedotViewDto());
         this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("{}"));
     }
     
     @Test
     @WithMockUser(username = "1.2.3.4.5")
-    public void getHenkiloYhteystiedotByRyhma() throws Exception {
-        given(this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE)).willReturn(
+    public void getAllHenkiloYhteystiedot() throws Exception {
+        String content = "{" +
+                "  \"sahkoposti\": \"testi@test.com\"" +
+                "}";
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE)).willReturn(
                 of(YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonResource("classpath:henkilo/simpleYhteystieto.json")));
+                .andExpect(content().json(content));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/yhteystietotyyppi1").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonResource("classpath:henkilo/simpleYhteystieto.json")));
+                .andExpect(content().json(content));
 
-        given(this.service.getHenkiloYhteystiedot("1.2.3.4.5", TYOOSOITE)).willReturn(empty());
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", TYOOSOITE)).willReturn(empty());
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tyoosoite").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
-        
-        given(this.service.getHenkiloYhteystiedot("1.2.3.4.6", KOTIOSOITE)).willReturn(empty());
+
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6", KOTIOSOITE)).willReturn(empty());
         this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
-        
+
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tuntematon_tyyppi").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -208,4 +217,89 @@ public class HenkiloControllerTest extends AbstractTest {
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser
+    public void henkiloOidHetuNimisByName() throws Exception {
+        String returnContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"hetu\": \"123456-9999\"," +
+                "\"oidhenkilo\": \"1.2.3.4.5\"}]";
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa","kuutio",
+                "123456-9999", "1.2.3.4.5");
+        given(this.henkiloService.getHenkiloOidHetuNimiByName("arpa", "kuutio")).willReturn(Collections.singletonList(henkiloOidHetuNimiDto));
+        this.mvc.perform(get("/henkilo/henkiloPerusByName").param("etunimet", "arpa").param("sukunimi", "kuutio")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json(returnContent));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void updateHenkilo() throws Exception {
+        //TODO when rdy
+    }
+
+    @Test
+    @WithMockUser
+    public void findByOid() throws Exception {
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246", "1.2.3.4.1");
+        String returnContent = JsonUtils.getDefaultHenkiloDtoAsJson();
+        given(this.henkiloService.getHenkilosByOids(Collections.singletonList("1.2.3.4.5")))
+                .willReturn(Collections.singletonList(henkiloDto));
+        this.mvc.perform(get("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json(returnContent));
+    }
+
+    @Test
+    @WithMockUser
+    public void findByOidNotFound() throws Exception {
+        given(this.henkiloService.getHenkilosByOids(Collections.singletonList("1.2.3.4.5")))
+                .willThrow(new NotFoundException());
+        this.mvc.perform(get("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void createHenkiloFromHenkiloDto() throws Exception {
+        HenkiloDto henkiloDtoInput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", null,
+                false, "fi", "suomi", "246", "1.2.3.4.1");
+        HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246", "1.2.3.4.1");
+        given(this.henkiloService.createHenkiloFromHenkiloDto(anyObject())).willReturn(henkiloDtoOutput);
+        this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated()).andExpect(content().string("1.2.3.4.5"));
+    }
+
+    @Test
+    @WithMockUser
+    public void createHenkiloFromHenkiloDtoInvalidInput() throws Exception {
+        HenkiloDto henkiloDtoInput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246", "1.2.3.4.1");
+        this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    public void findByIDPAndIdentifier() throws Exception {
+        //TODO after refactoring
+    }
+
+    @Test
+    @WithMockUser
+    public void findPossibleHenkiloTypes() throws Exception {
+        String resultContent = "[\"VIRKAILIJA\", \"PALVELU\", \"OPPIJA\"]";
+        given(this.henkiloService.listPossibleHenkiloTypesAccessible())
+                .willReturn(Arrays.asList("VIRKAILIJA", "PALVELU", "OPPIJA"));
+        this.mvc.perform(get("/henkilo/henkilotypes").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json(resultContent));
+    }
+
+
 }

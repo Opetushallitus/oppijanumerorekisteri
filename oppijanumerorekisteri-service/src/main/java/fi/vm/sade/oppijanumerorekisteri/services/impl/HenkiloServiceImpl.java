@@ -94,7 +94,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
-    public List<HenkiloDto> getHenkiloByOids(List<String> oids) {
+    public List<HenkiloDto> getHenkilosByOids(List<String> oids) {
         List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
         if(henkilos.isEmpty()) {
             throw new NotFoundException();
@@ -126,7 +126,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
-    public HenkiloDto createHenkiloFromHenkiloDTo(HenkiloDto henkiloDto) {
+    public HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto) {
         Henkilo henkilo = mapper.map(henkiloDto, Henkilo.class);
         return mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
     }

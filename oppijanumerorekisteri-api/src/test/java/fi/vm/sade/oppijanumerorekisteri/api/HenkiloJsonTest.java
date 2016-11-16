@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.api;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -13,7 +13,6 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// Probably not necessary if we don't want to return Henkilo objects through api. Serves as sample for API module.
 @RunWith(SpringRunner.class)
 @JsonTest
 public class HenkiloJsonTest {
@@ -59,17 +58,17 @@ public class HenkiloJsonTest {
 
     @Test
     public void testHenkiloDtoSerialize() throws Exception {
-        HenkiloDto henkiloPerustietoDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1");
-        assertThat(this.henkiloDtoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloDto.json");
+        assertThat(this.henkiloDtoJson.write(henkiloDto)).isEqualToJson("/henkilo/testHenkiloDto.json");
     }
 
     @Test
     public void testHenkiloDtoDeserialize() throws Exception {
-        HenkiloDto henkiloPerustietoDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1");
         assertThat(this.henkiloDtoJson.read("/henkilo/testHenkiloDto.json").getObject())
-                .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
+                .isEqualToComparingFieldByFieldRecursively(henkiloDto);
     }
 
     @Test
@@ -94,6 +93,6 @@ public class HenkiloJsonTest {
                         .kaupunki("Vilppula")
                     .build());
         assertThat(this.yhteystiedotJson.write(dto))
-                .isEqualToJson("/henkilo/testYhteystiedot.json");
+                .isEqualToJson("/henkilo/testYhteystiedotViewDto.json");
     }
 }

@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,4 +113,5 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
         assertThat(henkilo.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
+
 }

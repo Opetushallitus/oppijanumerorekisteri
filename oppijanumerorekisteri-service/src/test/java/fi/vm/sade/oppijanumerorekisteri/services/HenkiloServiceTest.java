@@ -4,7 +4,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.DtoUtils;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;

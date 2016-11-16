@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.mappers;
+package fi.vm.sade.oppijanumerorekisteri.utils;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 

@@ -3,13 +3,12 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -17,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Api(tags = "Henkilot")
@@ -114,31 +111,25 @@ public class HenkiloController {
     // PROXY
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Hakee henkilön tiedot annetun OID:n pohjalta, sisältään kaikki henkilön tiedot.")
-    @ApiResponses(value = {@ApiResponse(code = 500, message = "Not Found or internal error")})
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}", method = RequestMethod.GET)
-    public ResponseEntity findByOid(@PathVariable String oid,
-                                    @RequestHeader("External-Permission-Service")
+    public HenkiloDto findByOid(@PathVariable String oid,
+                                    @RequestHeader(value = "External-Permission-Service", required = false)
                                       ExternalPermissionService permissionService) {
-        try {
-            return new ResponseEntity<>(henkiloService.getHenkiloByOids(Collections.singletonList(oid)), HttpStatus.OK);
-        } catch (NotFoundException e) {
-            // Returns 500 for backward compability
-            Map<String, String> entity = new HashMap<>();
-            entity.put("error", e.getMessage());
-            return new ResponseEntity<>(entity, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return henkiloService.getHenkilosByOids(Collections.singletonList(oid)).get(0);
     }
 
     // PROXY
     @ApiOperation(value = "Henkilö luonti",
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
-    @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal error"), @ApiResponse(code = 400, message = "bad input")})
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "bad input")})
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createHenkilo(@RequestBody @Validated HenkiloDto henkilo) {
-        return this.henkiloService.createHenkiloFromHenkiloDTo(henkilo).getOidhenkilo();
+    public String createHenkiloFromHenkiloDto(@RequestBody @Validated(NewHenkilo.class) HenkiloDto henkilo) {
+        return this.henkiloService.createHenkiloFromHenkiloDto(henkilo).getOidhenkilo();
     }
 
     // PROXY, probably slower than the original
@@ -153,7 +144,7 @@ public class HenkiloController {
                                                   @RequestHeader("External-Permission-Service")
                                                           ExternalPermissionService permissionService) throws IOException {
         return permissionChecker.getPermissionCheckedHenkilos(
-                this.henkiloService.getHenkiloByOids(oids),
+                this.henkiloService.getHenkilosByOids(oids),
                 Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),
                 permissionService
         );

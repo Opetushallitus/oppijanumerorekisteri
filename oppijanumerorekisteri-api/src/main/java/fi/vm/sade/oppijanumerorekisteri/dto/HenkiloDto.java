@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import fi.vm.sade.oppijanumerorekisteri.validation.ExistingHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +23,8 @@ import java.util.Set;
 public class HenkiloDto implements Serializable {
     private static final long serialVersionUID = -8509596443256973893L;
 
-    @Null
+    @Null(groups = NewHenkilo.class)
+    @NotNull(groups = ExistingHenkilo.class)
     private String oidhenkilo;
 
     @NotNull
