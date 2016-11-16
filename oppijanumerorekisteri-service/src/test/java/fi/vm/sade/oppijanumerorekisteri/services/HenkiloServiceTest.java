@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 
 import com.querydsl.core.types.Predicate;
-import fi.vm.sade.oppijanumerorekisteri.configurations.OrikaConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;

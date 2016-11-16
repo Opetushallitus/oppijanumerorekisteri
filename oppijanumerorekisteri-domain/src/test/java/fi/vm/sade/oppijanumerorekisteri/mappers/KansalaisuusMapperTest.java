@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import fi.vm.sade.oppijanumerorekisteri.configurations.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;

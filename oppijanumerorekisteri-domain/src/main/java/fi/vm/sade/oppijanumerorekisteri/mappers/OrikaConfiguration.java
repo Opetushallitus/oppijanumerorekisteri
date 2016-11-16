@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.configurations;
+package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.jresearch.orika.spring.OrikaSpringMapper;
