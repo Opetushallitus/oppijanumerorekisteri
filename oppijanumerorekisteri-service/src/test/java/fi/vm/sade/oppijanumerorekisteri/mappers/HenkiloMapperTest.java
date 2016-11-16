@@ -4,22 +4,22 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
-import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import fi.vm.sade.oppijanumerorekisteri.configurations.OrikaConfiguration;
 
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = OrikaSpringMapper.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = OrikaConfiguration.class)
 public class HenkiloMapperTest {
     @Autowired
-    private OrikaSpringMapper modelmapper;
+    private OrikaConfiguration modelmapper;
 
     @Test
     public void henkiloToHenkiloPerustietoDto() {
@@ -114,4 +114,14 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
+    @Test
+    public void henkiloDtoNullFieldsAreNotMapped() {
+        HenkiloDto henkiloDtosour = DtoUtils.createHenkiloDto(null, "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", "1.2.3.4.1");
+        HenkiloDto henkiloDtodest = DtoUtils.createHenkiloDto("arpa", null, "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", "1.2.3.4.1");
+        this.modelmapper.map(henkiloDtosour, henkiloDtodest);
+        assertThat(henkiloDtodest.getEtunimet()).isNotNull();
+        assertThat(henkiloDtodest.getKutsumanimi()).isNotNull();
+    }
 }

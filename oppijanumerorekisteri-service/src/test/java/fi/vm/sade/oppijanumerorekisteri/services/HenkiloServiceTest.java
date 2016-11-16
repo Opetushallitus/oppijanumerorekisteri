@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.configurations.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
@@ -12,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
-import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,7 +36,7 @@ public class HenkiloServiceTest {
     private HenkiloHibernateRepository henkiloJpaRepositoryMock;
     private HenkiloRepository henkiloDataRepositoryMock;
     private HenkiloService service;
-    private OrikaSpringMapper mapperMock;
+    private OrikaConfiguration mapperMock;
     private UserDetailsHelper userDetailsHelperMock;
     private PermissionChecker permissionCheckerMock;
 
@@ -44,7 +44,7 @@ public class HenkiloServiceTest {
     public void setup() {
         this.henkiloJpaRepositoryMock = Mockito.mock(HenkiloHibernateRepository.class);
         this.henkiloDataRepositoryMock = Mockito.mock(HenkiloRepository.class);
-        this.mapperMock = Mockito.mock(OrikaSpringMapper.class);
+        this.mapperMock = Mockito.mock(OrikaConfiguration.class);
         MockOidGenerator mockOidGenerator = new MockOidGenerator();
         this.userDetailsHelperMock = Mockito.mock(UserDetailsHelper.class);
         KielisyysRepository kielisyysRepositoryMock = Mockito.mock(KielisyysRepository.class);

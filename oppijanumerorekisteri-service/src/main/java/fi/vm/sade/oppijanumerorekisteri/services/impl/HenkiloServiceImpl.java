@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.configurations.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
@@ -12,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
-import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     private IdentificationRepository identificationRepository;
 
     private YhteystietoConverter yhteystietoConverter;
-    private OrikaSpringMapper mapper;
+    private OrikaConfiguration mapper;
     private OidGenerator oidGenerator;
     private UserDetailsHelper userDetailsHelper;
     private PermissionChecker permissionChecker;
@@ -43,7 +43,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Autowired
     public HenkiloServiceImpl(HenkiloHibernateRepository henkiloHibernateRepository,
                               HenkiloRepository henkiloDataRepository,
-                              OrikaSpringMapper mapper,
+                              OrikaConfiguration mapper,
                               YhteystietoConverter yhteystietoConverter,
                               OidGenerator oidGenerator,
                               UserDetailsHelper userDetailsHelper,

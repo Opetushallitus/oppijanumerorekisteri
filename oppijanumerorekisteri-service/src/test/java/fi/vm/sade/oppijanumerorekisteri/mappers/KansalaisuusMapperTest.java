@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
-import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = OrikaSpringMapper.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = OrikaConfiguration.class)
 public class KansalaisuusMapperTest {
     @Autowired
-    private OrikaSpringMapper modelmapper;
+    private OrikaConfiguration modelmapper;
 
     @Test
     public void KansalaisuusToKansalaisuusDto() {

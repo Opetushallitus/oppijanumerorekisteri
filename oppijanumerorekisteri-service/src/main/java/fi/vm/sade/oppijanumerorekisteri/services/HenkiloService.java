@@ -24,6 +24,8 @@ public interface HenkiloService {
 
     HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto);
 
+//    HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloDto);
+
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
     Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhma ryhma);
