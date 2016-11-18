@@ -1,12 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
-
-import static com.querydsl.core.types.dsl.Expressions.TRUE;
 
 public class YhteystietoCriteria {
     private String henkiloOidEquals;
@@ -23,7 +22,7 @@ public class YhteystietoCriteria {
     }
     
     public BooleanExpression condition(QHenkilo henkilo, QYhteystiedotRyhma ryhma, QYhteystieto yhteystieto) {
-        BooleanExpression condition = TRUE.eq(true);
+        BooleanExpression condition = Expressions.TRUE.eq(true);
         if (henkiloOidEquals != null) {
             condition = condition.and(henkilo.oidhenkilo.eq(henkiloOidEquals));
         }

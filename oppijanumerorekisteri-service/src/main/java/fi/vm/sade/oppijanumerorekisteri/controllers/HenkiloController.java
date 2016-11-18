@@ -6,11 +6,13 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +28,15 @@ public class HenkiloController {
     private HenkiloService henkiloService;
 
     private PermissionChecker permissionChecker;
+    private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
 
     @Autowired
-    public HenkiloController(HenkiloService henkiloService, PermissionChecker permissionChecker) {
+    public HenkiloController(HenkiloService henkiloService,
+                             PermissionChecker permissionChecker,
+                             HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
         this.henkiloService = henkiloService;
         this.permissionChecker = permissionChecker;
+        this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
     }
 
     // PROXY
@@ -75,16 +81,16 @@ public class HenkiloController {
 
     @ApiOperation(value = "Henkilötietojen päivitys",
             notes = "Päivittää kutsussa annetuun OID:n täsmäävän henkilön tiedot")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
-    public String updateHenkilo(@RequestParam("oid") String oid, HenkiloDto henkilo,
-                                  @RequestHeader("External-Permission-Service")
-                                          ExternalPermissionService permissionService) {
-//        henkilo.setKasittelijaOid(getCurrentUserOid());
-//
-//        HenkiloDto result = userManagementBusinessService.updateHenkilo(henkilo, true, LdapSynchronization.ASAP_PRIORITY);
-//        response = Response.ok(result.getOidHenkilo()).build();
-
-        return null;
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloUpdateDto.oidhenkilo, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
+                                  @RequestHeader(value = "External-Permission-Service", required = false)
+                                          ExternalPermissionService permissionService) throws BindException {
+        BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
+        this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
+        if(errors.hasErrors()) {
+            throw errors;
+        }
+        return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidhenkilo();
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")

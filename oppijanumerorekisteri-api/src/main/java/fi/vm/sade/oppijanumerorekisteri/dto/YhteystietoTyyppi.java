@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.models;
+package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.ReadableYhteystiedot;
 import fi.vm.sade.oppijanumerorekisteri.dto.Setter;

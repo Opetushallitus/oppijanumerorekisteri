@@ -23,7 +23,7 @@ public class KoodistoServiceImpl implements KoodistoService {
     }
 
     @Override
-    public void validateKansalaisuus(Set<Kansalaisuus> kansalaisuusSet) throws ValidationException {
+    public void postvalidateKansalaisuus(Set<Kansalaisuus> kansalaisuusSet) throws ValidationException {
         List<KoodiType> koodiTypeList = koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
 
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.

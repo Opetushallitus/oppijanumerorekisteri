@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import lombok.*;
 
 import javax.persistence.*;

@@ -40,7 +40,7 @@ public class KoodistoServiceTest {
             koodiTypeList.add(koodiType);
         }
         given(this.koodistoClientMock.getKoodisForKoodisto("maatjavaltiot2", 1, true)).willReturn(koodiTypeList);
-        this.koodistoService.validateKansalaisuus(kansalaisuusSet);
+        this.koodistoService.postvalidateKansalaisuus(kansalaisuusSet);
     }
 
     @Test(expected = ValidationException.class)
@@ -55,7 +55,7 @@ public class KoodistoServiceTest {
             koodiTypeList.add(koodiType);
         }
         given(this.koodistoClientMock.getKoodisForKoodisto("maatjavaltiot2", 1, true)).willReturn(koodiTypeList);
-        this.koodistoService.validateKansalaisuus(kansalaisuusSet);
+        this.koodistoService.postvalidateKansalaisuus(kansalaisuusSet);
     }
 
 }

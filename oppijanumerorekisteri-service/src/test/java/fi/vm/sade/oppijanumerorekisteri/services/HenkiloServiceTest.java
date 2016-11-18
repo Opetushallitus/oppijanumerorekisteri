@@ -5,10 +5,10 @@ import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
-import static fi.vm.sade.oppijanumerorekisteri.models.YhteystietoTyyppi.*;
+import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
@@ -33,7 +33,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 
 public class HenkiloServiceTest {
-    private HenkiloHibernateRepository henkiloJpaRepositoryMock;
+    private HenkiloJpaRepository henkiloJpaRepositoryMock;
     private HenkiloRepository henkiloDataRepositoryMock;
     private HenkiloService service;
     private OrikaConfiguration mapperMock;
@@ -42,7 +42,7 @@ public class HenkiloServiceTest {
 
     @Before
     public void setup() {
-        this.henkiloJpaRepositoryMock = Mockito.mock(HenkiloHibernateRepository.class);
+        this.henkiloJpaRepositoryMock = Mockito.mock(HenkiloJpaRepository.class);
         this.henkiloDataRepositoryMock = Mockito.mock(HenkiloRepository.class);
         this.mapperMock = Mockito.mock(OrikaConfiguration.class);
         MockOidGenerator mockOidGenerator = new MockOidGenerator();

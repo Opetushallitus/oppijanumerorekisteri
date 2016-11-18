@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public interface HenkiloService {
 
     HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto);
 
-//    HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloDto);
+    HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException;
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 

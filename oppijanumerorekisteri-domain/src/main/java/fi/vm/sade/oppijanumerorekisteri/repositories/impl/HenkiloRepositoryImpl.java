@@ -5,7 +5,9 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloHibernateRepository;
+import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import org.springframework.transaction.annotation.Propagation;
@@ -15,16 +17,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
-import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
-import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
-
 @Transactional(propagation = Propagation.MANDATORY)
-public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloHibernateRepository {
+public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
 
     @Override
     public Optional<String> findHetuByOid(String henkiloOid) {
-        QHenkilo qHenkilo = henkilo;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
         return Optional.ofNullable(jpa().select(qHenkilo.hetu).from(qHenkilo)
                 .where(qHenkilo.oidhenkilo.eq(henkiloOid))
                 .fetchOne());
@@ -32,7 +30,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
 
     @Override
     public Optional<String> findOidByHetu(String hetu) {
-        QHenkilo qHenkilo = henkilo;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
         return Optional.ofNullable(jpa().select(qHenkilo.oidhenkilo).from(qHenkilo)
                 .where(qHenkilo.hetu.eq(hetu))
                 .fetchOne());
@@ -55,16 +53,16 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
 
     @Override
     public List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria) {
-        return jpa().from(henkilo)
-                .innerJoin(henkilo.yhteystiedotRyhmas, yhteystiedotRyhma)
-                .innerJoin(yhteystiedotRyhma.yhteystieto, yhteystieto)
-                .where(criteria.condition(henkilo, yhteystiedotRyhma, yhteystieto))
+        return jpa().from(QHenkilo.henkilo)
+                .innerJoin(QHenkilo.henkilo.yhteystiedotRyhmas, QYhteystiedotRyhma.yhteystiedotRyhma)
+                .innerJoin(QYhteystiedotRyhma.yhteystiedotRyhma.yhteystieto, QYhteystieto.yhteystieto)
+                .where(criteria.condition(QHenkilo.henkilo, QYhteystiedotRyhma.yhteystiedotRyhma, QYhteystieto.yhteystieto))
                 .select(Projections.bean(YhteystietoHakuDto.class,
-                        henkilo.oidhenkilo.as("henkiloOid"),
-                        yhteystiedotRyhma.ryhmaKuvaus.as("ryhmaKuvaus"),
-                        yhteystiedotRyhma.ryhmaAlkuperaTieto.as("ryhmaAlkuperaTieto"),
-                        yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
-                        yhteystieto.yhteystietoArvo.as("arvo")
+                        QHenkilo.henkilo.oidhenkilo.as("henkiloOid"),
+                        QYhteystiedotRyhma.yhteystiedotRyhma.ryhmaKuvaus.as("ryhmaKuvaus"),
+                        QYhteystiedotRyhma.yhteystiedotRyhma.ryhmaAlkuperaTieto.as("ryhmaAlkuperaTieto"),
+                        QYhteystieto.yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
+                        QYhteystieto.yhteystieto.yhteystietoArvo.as("arvo")
                 )).fetch();
     }
 

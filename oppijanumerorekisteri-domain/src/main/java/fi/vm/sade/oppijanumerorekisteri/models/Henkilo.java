@@ -50,6 +50,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String sukunimi;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aidinkieli_id")
     private Kielisyys aidinkieli;
@@ -128,5 +129,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.REFRESH })
     private Set<ExternalId> externalIds = new HashSet<>();
+
 
 }

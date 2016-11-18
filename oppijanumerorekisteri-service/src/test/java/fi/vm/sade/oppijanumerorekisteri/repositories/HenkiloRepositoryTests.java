@@ -19,7 +19,7 @@ import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
-import static fi.vm.sade.oppijanumerorekisteri.models.YhteystietoTyyppi.*;
+import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional(readOnly = true)
 public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     @Autowired
-    private HenkiloHibernateRepository jpaRepository;
+    private HenkiloJpaRepository jpaRepository;
 
     @Autowired
     private HenkiloRepository dataRepository;

@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.JsonUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class HenkiloControllerTest {
 
     @MockBean
     private PermissionChecker permissionChecker;
+
+    @MockBean
+    private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
 
     @Autowired
     private ObjectMapper objectMapper;

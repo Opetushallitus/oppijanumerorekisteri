@@ -66,6 +66,7 @@
                 <version>${apt-maven-plugin.version}</version>
                 <executions>
                     <execution>
+                        <!--<phase>process-resources</phase>-->
                         <goals>
                             <goal>process</goal>
                         </goals>

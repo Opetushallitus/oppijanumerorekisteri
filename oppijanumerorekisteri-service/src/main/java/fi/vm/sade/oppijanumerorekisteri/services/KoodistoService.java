@@ -7,5 +7,5 @@ import javax.validation.ValidationException;
 import java.util.Set;
 
 public interface KoodistoService {
-    void validateKansalaisuus(Set<Kansalaisuus> kansalaisuusSet) throws ValidationException;
+    void postvalidateKansalaisuus(Set<Kansalaisuus> kansalaisuusSet) throws ValidationException;
 }

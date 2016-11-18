@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.dto;
 
-import fi.vm.sade.oppijanumerorekisteri.models.YhteystietoTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import lombok.*;
 
 import java.io.Serializable;
