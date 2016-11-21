@@ -21,8 +21,7 @@ public class MockedUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(s -> s.replaceAll("^ROLE_", ""))
-                .map(r -> (GrantedAuthority) () -> r).collect(toList());
+        return roles.stream().map(r -> (GrantedAuthority) () -> r).collect(toList());
     }
 
     @Override
