@@ -19,7 +19,7 @@ public class EntityUtils {
 
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
-                                       String kansalaisuuskoodi, Date luontiMuokkausPvm) {
+                                       String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm) {
         Kielisyys aidinkieli = new Kielisyys();
         aidinkieli.setKielityyppi(kielityyppi);
         aidinkieli.setKielikoodi(kielikoodi);
@@ -28,7 +28,7 @@ public class EntityUtils {
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
 
         return new Henkilo(oidHenkilo, hetu, henkiloTyyppi, etunimet, kutsumanimi, sukunimi, aidinkieli, aidinkieli,
-                luontiMuokkausPvm, luontiMuokkausPvm, passivoitu, false, false, false, false, false,
+                luontiMuokkausSyncedPvm, luontiMuokkausSyncedPvm, luontiMuokkausSyncedPvm, passivoitu, false, false, false, false, false,
                 Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), null);
     }
 }

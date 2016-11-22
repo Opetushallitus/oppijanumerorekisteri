@@ -121,6 +121,13 @@ public class HenkiloServiceImpl implements HenkiloService {
         ).get(ryhma));
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp) {
+        List<Henkilo> hetusAndOids = henkiloHibernateRepository.findHetusAndOids(syncedBeforeTimestamp);
+        return mapper.mapAsList(hetusAndOids, HenkiloHetuAndOidDto.class);
+    }
+
     private Henkilo createHenkilo(Henkilo henkilo) {
         henkilo.setOidhenkilo(getFreePersonOid());
         henkilo.setLuontiPvm(new Date());
