@@ -1,12 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
+import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 class AsiointikieliConstraintValidator implements ConstraintValidator<ValidateAsiointikieli, KielisyysDto> {
-
     @Override
     public void initialize(ValidateAsiointikieli validateAsiointikieli) { }
 

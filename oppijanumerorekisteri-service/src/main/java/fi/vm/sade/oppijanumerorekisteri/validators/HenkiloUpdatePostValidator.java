@@ -69,13 +69,5 @@ public class HenkiloUpdatePostValidator implements Validator {
             errors.rejectValue("", "invalid.kansalaisuuskoodi");
         }
 
-        if(!this.kielisyysRepository.findByKielikoodi(henkiloDto.getAidinkieli().getKielikoodi()).isPresent()) {
-            errors.rejectValue("aidinkieli", "invalid.aidinkieli");
-        }
-
-        if(!this.kielisyysRepository.findByKielikoodi(henkiloDto.getAsiointikieli().getKielikoodi()).isPresent()) {
-            errors.rejectValue("asiointikieli", "invalid.asiointikieli");
-        }
-
     }
 }

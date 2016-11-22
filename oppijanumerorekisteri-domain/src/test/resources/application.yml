@@ -1,0 +1,13 @@
+flyway:
+  enabled: false
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:bootexample;MODE=MySQL
+# Disable model validation for DataJpaTest and test it in unit tests instead.
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: None

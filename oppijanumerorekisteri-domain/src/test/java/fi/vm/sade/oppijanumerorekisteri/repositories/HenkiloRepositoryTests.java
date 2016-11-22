@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
 import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
@@ -24,10 +28,12 @@ import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPop
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
 import static org.assertj.core.api.Assertions.assertThat;
 
+// NOTE: Model validators have separate test.
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Transactional(readOnly = true)
 public class HenkiloRepositoryTests extends AbstractRepositoryTest {
+
     @Autowired
     private HenkiloJpaRepository jpaRepository;
 
@@ -75,14 +81,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         Henkilo henkiloWithNullOid = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", null, false,
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1");
         this.dataRepository.save(henkiloWithNullOid);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void createUserWithNullLuontiPvmTest() {
-        Henkilo henkiloWithNullLuontiPvm = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1");
-        henkiloWithNullLuontiPvm.setLuontiPvm(null);
-        testEntityManager.persist(henkiloWithNullLuontiPvm);
     }
 
     @Test
@@ -136,7 +134,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
             )
         );
-        
+
         List<YhteystietoHakuDto> tiedot = this.jpaRepository.findYhteystiedot(new YhteystietoCriteria());
         assertThat(tiedot.size()).isEqualTo(4);
 

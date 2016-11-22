@@ -1,10 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.utils;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
 
+@Component
 public class DtoUtils {
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
