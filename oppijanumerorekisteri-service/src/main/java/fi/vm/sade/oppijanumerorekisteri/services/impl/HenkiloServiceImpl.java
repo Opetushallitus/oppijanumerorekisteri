@@ -123,8 +123,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp) {
-        List<Henkilo> hetusAndOids = henkiloHibernateRepository.findHetusAndOids(syncedBeforeTimestamp);
+    public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
+        List<Henkilo> hetusAndOids = henkiloHibernateRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
         return mapper.mapAsList(hetusAndOids, HenkiloHetuAndOidDto.class);
     }
 
