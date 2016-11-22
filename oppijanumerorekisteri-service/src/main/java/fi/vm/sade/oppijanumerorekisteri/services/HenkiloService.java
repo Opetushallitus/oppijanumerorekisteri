@@ -15,5 +15,5 @@ public interface HenkiloService {
     HenkiloPerustietoDto createHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
     Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhma ryhma);
-    List<HenkiloHetuAndOidDto> getHetusAndOids(Long sinceVtjUpdated);
+    List<HenkiloHetuAndOidDto> getHetusAndOids(Long sinceVtjUpdated, long offset, long limit);
 }

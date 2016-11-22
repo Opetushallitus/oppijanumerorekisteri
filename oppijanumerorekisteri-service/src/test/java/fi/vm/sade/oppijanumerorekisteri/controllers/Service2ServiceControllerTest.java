@@ -49,7 +49,7 @@ public class Service2ServiceControllerTest extends AbstractTest {
     @Test
     @WithMockUser
     public void getHetusAndOidsTest() throws Exception{
-        given(this.service.getHetusAndOids(null)).willReturn(Arrays.asList(
+        given(this.service.getHetusAndOids(null, 0, 100)).willReturn(Arrays.asList(
                 new HenkiloHetuAndOidDto("0.0.0.0.1", "111111-111", new Date(1420063200000L)),
                 new HenkiloHetuAndOidDto("0.0.0.0.2", "111111-112", new Date(0L)),
                 new HenkiloHetuAndOidDto("0.0.0.0.3", "111111-113", new Date(0L))));

@@ -69,7 +69,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
-    public List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp) {
+    public List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
         JPAQuery<Henkilo> query = jpa()
             .select(Projections.bean(Henkilo.class,
                 henkilo.oidhenkilo,
@@ -78,10 +78,21 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
             )
             .from(henkilo);
 
+        // always select all identities that have never been synced. also, select those that have been synced earlier
+        // than syncedBeforeTimestamp (if given, otherwise select everything)
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.or(henkilo.vtjsynced.isNull());
         if (syncedBeforeTimestamp != null) {
-            query = query.where(henkilo.vtjsynced.before(new Date(syncedBeforeTimestamp)));
+            builder.or(henkilo.vtjsynced.before(new Date(syncedBeforeTimestamp)));
+        } else {
+            builder.or(henkilo.vtjsynced.isNotNull());
         }
+        query = query.where(builder);
 
+        // paginate
+        query = query.offset(offset).limit(limit);
+
+        // sort
         query = query.orderBy(henkilo.vtjsynced.asc());
 
         return query.fetch();

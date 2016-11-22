@@ -42,7 +42,11 @@ public class Service2ServiceController {
     public List<HenkiloHetuAndOidDto> hetusAndOidsOrderedByLastVtjSyncTimestamp(
             @ApiParam(value = "Hakee vain ne identiteetit, jotka on päivitetty VTJ:stä ennen annettua ajanhetkeä")
             @RequestParam(value = "syncedBeforeTimestamp", required = false)
-            Long syncedBeforeTimestamp) {
-        return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp);
+            Long syncedBeforeTimestamp,
+            @RequestParam(value = "offset", required = false, defaultValue = "0")
+            long offset,
+            @RequestParam(value = "limit", required = false, defaultValue = "100")
+            long limit) {
+        return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp, offset, limit);
     }
 }

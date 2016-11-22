@@ -20,5 +20,5 @@ public interface HenkiloHibernateRepository {
 
     List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
 
-    List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp);
+    List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
 }
