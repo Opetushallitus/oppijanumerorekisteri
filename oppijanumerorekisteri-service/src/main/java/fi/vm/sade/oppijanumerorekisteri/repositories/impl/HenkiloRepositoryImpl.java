@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,5 +66,24 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
                         yhteystieto.yhteystietoArvo.as("arvo")
                 )).fetch();
+    }
+
+    @Override
+    public List<Henkilo> findHetusAndOids(long syncedBeforeTimestamp) {
+        JPAQuery<Henkilo> query = jpa()
+            .select(Projections.bean(Henkilo.class,
+                henkilo.oidhenkilo,
+                henkilo.hetu,
+                henkilo.vtjsynced)
+            )
+            .from(henkilo);
+
+        if (syncedBeforeTimestamp > -1) {
+            query = query.where(henkilo.vtjsynced.before(new Date(syncedBeforeTimestamp)));
+        }
+
+        query = query.orderBy(henkilo.vtjsynced.asc());
+
+        return query.fetch();
     }
 }

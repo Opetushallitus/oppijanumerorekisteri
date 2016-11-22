@@ -1,11 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,4 +36,14 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
+    @ApiOperation(value = "Hakee hetu & oid -yhdistelmät")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/hetusAndOids", method = RequestMethod.GET)
+    public List<HenkiloHetuAndOidDto> hetusAndOidsOrderedByLastVtjSyncTimestamp(
+            @ApiParam(value = "Retrieve only those identities last synced with VTJ before the given instant")
+            @RequestParam(value = "syncedBeforeTimestamp", defaultValue = "-1")
+            long syncedBeforeTimestamp) {
+        return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp);
+    }
 }

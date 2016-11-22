@@ -77,6 +77,21 @@ public class HenkiloServiceTest {
         assertThat(this.service.getOidByHetu("1.2.3.4.5")).isEqualTo("123456-9999");
     }
 
+    @Test
+    public void getHetusAndOidsTest() {
+        Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date());
+        HenkiloHetuAndOidDto henkiloHetuAndOidDto = DtoUtils.createHenkiloHetuAndOidDto("1.2.3.4.5", "123456-9999",
+                new Date(0L));
+
+        given(this.henkiloJpaRepositoryMock.findHetusAndOids(-1L))
+                .willReturn(Collections.singletonList(henkiloMock));
+        given(this.mapperMock.mapAsList(Collections.singletonList(henkiloMock), HenkiloHetuAndOidDto.class))
+                .willReturn(Collections.singletonList(henkiloHetuAndOidDto));
+
+        assertThat(this.service.getHetusAndOids(-1L).get(0)).isEqualTo(henkiloHetuAndOidDto);
+    }
+
     @Test(expected = NotFoundException.class)
     public void getOidByHetuNotFoundTest() {
         given(this.henkiloJpaRepositoryMock.findOidByHetu("1.2.3.4.5")).willReturn(Optional.empty());

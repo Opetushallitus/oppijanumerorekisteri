@@ -15,10 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
@@ -127,8 +124,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 "oidhenkilo", "hetu");
     }
 
-
-
     @Test
     public void findYhteystiedotTest() {
         populate(henkilo("1.2.3.4.5")
@@ -161,5 +156,44 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
     }
 
+    @Test
+    public void findHetusAndOidsTest() {
+        Date vtjSyncedDate = new Date();
+        Henkilo henkilo = EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
+                HenkiloTyyppi.OPPIJA, "", "", "", vtjSyncedDate);
+        Henkilo persistedHenkilo = EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
+                HenkiloTyyppi.OPPIJA, "", "", "", vtjSyncedDate);
+        this.testEntityManager.persist(persistedHenkilo);
+
+        Henkilo retrievedHenkilo = this.jpaRepository.findHetusAndOids(-1L).get(0);
+
+        assertThat(retrievedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "oidhenkilo", "hetu");
+        assertThat(henkilo.getVtjsynced()).hasSameTimeAs(retrievedHenkilo.getVtjsynced());
+    }
+
+    @Test
+    public void findHetusAndOidsSyncedBeforeTest() {
+        List<Henkilo> persistentHenkilos = Arrays.asList(
+                EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(99L)),
+                EntityUtils.createHenkilo("", "", "", "123456-9998", "1.2.3.4.6", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(100L)),
+                EntityUtils.createHenkilo("", "", "", "123456-9997", "1.2.3.4.7", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(101L))
+        );
+
+        for (Henkilo persistentHenkilo : persistentHenkilos) {
+            this.testEntityManager.persist(persistentHenkilo);
+        }
+
+        List<Henkilo> retrievedHenkilos = this.jpaRepository.findHetusAndOids(101L);
+        assertThat(retrievedHenkilos.size()).isEqualTo(2);
+
+        retrievedHenkilos = this.jpaRepository.findHetusAndOids(99L);
+        assertThat(retrievedHenkilos.size()).isEqualTo(0);
+
+        retrievedHenkilos = this.jpaRepository.findHetusAndOids(102L);
+        assertThat(retrievedHenkilos.size()).isEqualTo(3);
+    }
 
 }

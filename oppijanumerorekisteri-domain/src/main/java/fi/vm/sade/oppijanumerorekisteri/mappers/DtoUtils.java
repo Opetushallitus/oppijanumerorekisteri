@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 
 import java.util.Collections;
+import java.util.Date;
 
 public class DtoUtils {
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
@@ -50,5 +51,13 @@ public class DtoUtils {
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus));
+    }
+
+    public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {
+        HenkiloHetuAndOidDto henkiloHetuAndOidDto = new HenkiloHetuAndOidDto();
+        henkiloHetuAndOidDto.setOidhenkilo(henkiloOid);
+        henkiloHetuAndOidDto.setHetu(hetu);
+        henkiloHetuAndOidDto.setVtjsynced(vtjsynced);
+        return henkiloHetuAndOidDto;
     }
 }
