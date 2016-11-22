@@ -165,7 +165,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 HenkiloTyyppi.OPPIJA, "", "", "", vtjSyncedDate);
         this.testEntityManager.persist(persistedHenkilo);
 
-        Henkilo retrievedHenkilo = this.jpaRepository.findHetusAndOids(-1L).get(0);
+        Henkilo retrievedHenkilo = this.jpaRepository.findHetusAndOids(null).get(0);
 
         assertThat(retrievedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "oidhenkilo", "hetu");
         assertThat(henkilo.getVtjsynced()).hasSameTimeAs(retrievedHenkilo.getVtjsynced());

@@ -49,13 +49,29 @@ public class Service2ServiceControllerTest extends AbstractTest {
     @Test
     @WithMockUser
     public void getHetusAndOidsTest() throws Exception{
-        given(this.service.getHetusAndOids(-1L)).willReturn(Arrays.asList(
+        given(this.service.getHetusAndOids(null)).willReturn(Arrays.asList(
                 new HenkiloHetuAndOidDto("0.0.0.0.1", "111111-111", new Date(1420063200000L)),
                 new HenkiloHetuAndOidDto("0.0.0.0.2", "111111-112", new Date(0L)),
                 new HenkiloHetuAndOidDto("0.0.0.0.3", "111111-113", new Date(0L))));
         this.mvc.perform(get("/s2s/hetusAndOids?sinceVtjUpdated=-1").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonResource("classpath:henkilo/oidsAndHetus.json")));
+                .andExpect(content().json("[\n" +
+                        "  {\n" +
+                        "    \"oidhenkilo\": \"0.0.0.0.1\",\n" +
+                        "    \"hetu\": \"111111-111\",\n" +
+                        "    \"vtjsynced\": 1420063200000\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    \"oidhenkilo\": \"0.0.0.0.2\",\n" +
+                        "    \"hetu\": \"111111-112\",\n" +
+                        "    \"vtjsynced\": 0\n" +
+                        "  },\n" +
+                        "  {\n" +
+                        "    \"oidhenkilo\": \"0.0.0.0.3\",\n" +
+                        "    \"hetu\": \"111111-113\",\n" +
+                        "    \"vtjsynced\": 0\n" +
+                        "  }\n" +
+                        "]"));
     }
 
 }

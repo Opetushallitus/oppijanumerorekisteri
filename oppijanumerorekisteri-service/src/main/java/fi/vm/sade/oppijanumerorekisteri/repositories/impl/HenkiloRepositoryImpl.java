@@ -69,7 +69,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
-    public List<Henkilo> findHetusAndOids(long syncedBeforeTimestamp) {
+    public List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp) {
         JPAQuery<Henkilo> query = jpa()
             .select(Projections.bean(Henkilo.class,
                 henkilo.oidhenkilo,
@@ -78,7 +78,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
             )
             .from(henkilo);
 
-        if (syncedBeforeTimestamp > -1) {
+        if (syncedBeforeTimestamp != null) {
             query = query.where(henkilo.vtjsynced.before(new Date(syncedBeforeTimestamp)));
         }
 

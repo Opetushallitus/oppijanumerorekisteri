@@ -37,13 +37,12 @@ public class Service2ServiceController {
     }
 
     @ApiOperation(value = "Hakee hetu & oid -yhdistelmät")
-    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/hetusAndOids", method = RequestMethod.GET)
     public List<HenkiloHetuAndOidDto> hetusAndOidsOrderedByLastVtjSyncTimestamp(
-            @ApiParam(value = "Retrieve only those identities last synced with VTJ before the given instant")
-            @RequestParam(value = "syncedBeforeTimestamp", defaultValue = "-1")
-            long syncedBeforeTimestamp) {
+            @ApiParam(value = "Hakee vain ne identiteetit, jotka on päivitetty VTJ:stä ennen annettua ajanhetkeä")
+            @RequestParam(value = "syncedBeforeTimestamp", required = false)
+            Long syncedBeforeTimestamp) {
         return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp);
     }
 }
