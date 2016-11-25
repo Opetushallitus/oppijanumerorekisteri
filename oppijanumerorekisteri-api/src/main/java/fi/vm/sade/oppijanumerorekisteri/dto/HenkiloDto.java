@@ -59,5 +59,4 @@ public class HenkiloDto implements Serializable {
     private Date syntymaaika;
 
     private String sukupuoli;
-
 }

@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidateKielisyys {
-    String message() default "message";
+    String message() default "invalid.kielisyys";
 
     Class<?>[] groups() default {};
 

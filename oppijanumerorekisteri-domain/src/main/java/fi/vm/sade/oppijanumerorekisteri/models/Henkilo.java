@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @Getter
 @Setter
@@ -37,7 +38,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private String oidhenkilo;
 
-    // This constraint is actually not in db level
+    // This constraint is actually not set in db level
     @Column(unique = true)
     private String hetu;
 
@@ -97,7 +98,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "kielisyys_id",
             referencedColumnName = "id"))
-    private Set<Kielisyys> kielisyys = new HashSet<>();
+    private Set<Kielisyys> kielisyys = new CopyOnWriteArraySet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kansalaisuus", joinColumns = @JoinColumn(name = "henkilo_id",

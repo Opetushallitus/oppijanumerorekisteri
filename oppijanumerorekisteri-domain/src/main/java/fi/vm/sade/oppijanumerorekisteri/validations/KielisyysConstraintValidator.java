@@ -22,6 +22,6 @@ public class KielisyysConstraintValidator implements ConstraintValidator<Validat
 
     @Override
     public boolean isValid(Kielisyys kielisyys, ConstraintValidatorContext constraintValidatorContext) {
-        return this.kielisyysRepository.findByKielikoodi(kielisyys.getKielikoodi()).isPresent();
+        return kielisyys == null || this.kielisyysRepository.findByKielikoodi(kielisyys.getKielikoodi()).isPresent();
     }
 }

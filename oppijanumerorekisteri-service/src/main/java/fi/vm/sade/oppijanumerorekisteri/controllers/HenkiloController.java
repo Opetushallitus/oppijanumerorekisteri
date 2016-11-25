@@ -82,14 +82,10 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilötietojen päivitys",
             notes = "Päivittää kutsussa annetuun OID:n täsmäävän henkilön tiedot")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloUpdateDto.oidhenkilo, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/updateHenkilo", method = RequestMethod.PUT)
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                           ExternalPermissionService permissionService) throws BindException {
-        BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
-        this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
-        if(errors.hasErrors()) {
-            throw errors;
-        }
         return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidhenkilo();
     }
 

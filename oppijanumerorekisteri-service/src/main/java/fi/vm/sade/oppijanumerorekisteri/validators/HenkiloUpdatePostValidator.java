@@ -21,20 +21,13 @@ import java.util.Set;
 public class HenkiloUpdatePostValidator implements Validator {
     private UserDetailsHelper userDetailsHelper;
 
-    private HenkiloJpaRepository henkiloJpaRepository;
-    private KielisyysRepository kielisyysRepository;
-
     private KoodistoClient koodistoClient;
 
     @Autowired
     public HenkiloUpdatePostValidator(UserDetailsHelper userDetailsHelper,
-                                      HenkiloJpaRepository henkiloJpaRepository,
-                                      KoodistoClient koodistoClient,
-                                      KielisyysRepository kielisyysRepository) {
+                                      KoodistoClient koodistoClient) {
         this.userDetailsHelper = userDetailsHelper;
-        this.henkiloJpaRepository = henkiloJpaRepository;
         this.koodistoClient = koodistoClient;
-        this.kielisyysRepository = kielisyysRepository;
     }
 
     @Override
@@ -44,15 +37,11 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        HenkiloDto henkiloDto = (HenkiloDto) o;
+        HenkiloUpdateDto henkiloDto = (HenkiloUpdateDto) o;
         String kasittelijaOid = userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new);
         if(kasittelijaOid.equals(henkiloDto.getOidhenkilo())) {
             errors.reject("cant.modify.own.data");
-        }
-
-        if(henkiloJpaRepository.findOidByHetu(henkiloDto.getHetu()).isPresent()) {
-            errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
         if(!HetuUtils.hetuIsValid(henkiloDto.getHetu())) {
@@ -66,7 +55,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         if(kansalaisuusDtoSet != null && !kansalaisuusDtoSet.stream().map(KansalaisuusDto::getKansalaisuuskoodi)
                 .allMatch(kansalaisuus -> koodiTypeList.stream()
                         .anyMatch(koodi -> koodi.getKoodiArvo().equals(kansalaisuus)))) {
-            errors.rejectValue("", "invalid.kansalaisuuskoodi");
+            errors.rejectValue("kansalaisuudet", "invalid.kansalaisuuskoodi");
         }
 
     }
