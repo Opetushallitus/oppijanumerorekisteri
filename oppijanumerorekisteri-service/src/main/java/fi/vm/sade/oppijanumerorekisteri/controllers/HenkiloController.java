@@ -17,6 +17,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -76,7 +77,7 @@ public class HenkiloController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/createHenkilo", method = RequestMethod.POST)
-    public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
+    public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) throws ValidationException {
         return this.henkiloService.createHenkiloFromPerustietoDto(henkiloPerustietoDto);
     }
 
@@ -86,7 +87,7 @@ public class HenkiloController {
     @RequestMapping(value = "/updateHenkilo", method = RequestMethod.PUT)
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
-                                          ExternalPermissionService permissionService) throws BindException {
+                                          ExternalPermissionService permissionService) throws BindException, ValidationException {
         return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidhenkilo();
     }
 
@@ -131,7 +132,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createHenkiloFromHenkiloDto(@RequestBody @Validated(NewHenkilo.class) HenkiloDto henkilo) {
+    public String createHenkiloFromHenkiloDto(@RequestBody @Validated(NewHenkilo.class) HenkiloDto henkilo) throws ValidationException {
         return this.henkiloService.createHenkiloFromHenkiloDto(henkilo).getOidhenkilo();
     }
 
