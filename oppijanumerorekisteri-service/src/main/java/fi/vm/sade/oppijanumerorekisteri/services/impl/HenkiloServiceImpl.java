@@ -124,14 +124,14 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public HenkiloPerustietoDto createHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) throws ValidationException {
+    public HenkiloPerustietoDto createHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
         Henkilo henkilo = this.mapper.map(henkiloPerustietoDto, Henkilo.class);
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloPerustietoDto.class);
     }
 
     @Override
     @Transactional
-    public HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto) throws ValidationException {
+    public HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto) {
         Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
     }
@@ -141,8 +141,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     // call the validator.
     @Override
     @Transactional
-    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto)
-            throws BindException, ValidationException {
+    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException {
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if(errors.hasErrors()) {
@@ -254,7 +253,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         return Collections.singletonList(HenkiloTyyppi.VIRKAILIJA.toString());
     }
 
-    private Henkilo createHenkilo(Henkilo henkiloCreate) throws ValidationException {
+    private Henkilo createHenkilo(Henkilo henkiloCreate) {
         henkiloCreate.setOidhenkilo(getFreePersonOid());
         henkiloCreate.setLuontiPvm(new Date());
         henkiloCreate.setMuokkausPvm(henkiloCreate.getLuontiPvm());
