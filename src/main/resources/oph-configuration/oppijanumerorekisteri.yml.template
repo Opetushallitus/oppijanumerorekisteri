@@ -54,6 +54,6 @@ host:
 authentication:
   kayttooikeus:
     username: {{oppijanumerorekisteri_kayttooikeus_username}}
-    password: {{oppijanumerorekisteri_kayttooikeus_password}}
+    password: '{{oppijanumerorekisteri_kayttooikeus_password}}'
 oppijanumerorekisteri:
   uses-ssl-proxy: true
