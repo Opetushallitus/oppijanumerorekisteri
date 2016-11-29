@@ -74,7 +74,7 @@ public class HenkiloJsonTest {
     @Test
     public void testSerializeYhteystiedot() throws IOException {
         HenkilonYhteystiedotViewDto dto = new HenkilonYhteystiedotViewDto()
-                .put(YhteystietoRyhma.KOTIOSOITE, YhteystiedotDto.builder()
+                .put(YhteystietoRyhmaKuvaus.KOTIOSOITE, YhteystiedotDto.builder()
                         .sahkoposti("testi@test.com")
                         .matkapuhelinnumero("+358451234567")
                         .katuosoite("Testikatu 2")
@@ -83,7 +83,7 @@ public class HenkiloJsonTest {
                         .kaupunki("Toijala")
                         .maa("Suomi")
                     .build())
-                .put(YhteystietoRyhma.TYOOSOITE, YhteystiedotDto.builder()
+                .put(YhteystietoRyhmaKuvaus.TYOOSOITE, YhteystiedotDto.builder()
                         .sahkoposti("tyo@osoite.fi")
                         .puhelinnumero("01234567")
                         .matkapuhelinnumero("+3584040404")

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.stream.Stream;
 
-public enum YhteystietoRyhma {
+public enum YhteystietoRyhmaKuvaus {
     KOTIOSOITE("yhteystietotyyppi1", "kotiosoite"),
     TYOOSOITE("yhteystietotyyppi2", "tyoosoite"),
     VAPAA_AJAN_OSOITE("yhteystietotyyppi3", "vapaaAjanOsoite"),
@@ -15,11 +15,11 @@ public enum YhteystietoRyhma {
     MUU_OSOITE("yhteystietotyyppi7", "muuOsoite"),
     VTJ_SAHKOINEN_OSOITE("yhteystietotyyppi8", "vtjSahkoinenOsoite");
     
-    public static final YhteystietoRyhma[] PRIORITY_ORDER = {TYOOSOITE, KOTIOSOITE, MUU_OSOITE, VAPAA_AJAN_OSOITE};
+    public static final YhteystietoRyhmaKuvaus[] PRIORITY_ORDER = {TYOOSOITE, KOTIOSOITE, MUU_OSOITE, VAPAA_AJAN_OSOITE};
     private final String ryhmanKuvaus;
     private final String alias;
 
-    YhteystietoRyhma(String ryhmanKuvaus, String alias) {
+    YhteystietoRyhmaKuvaus(String ryhmanKuvaus, String alias) {
         this.ryhmanKuvaus = ryhmanKuvaus;
         this.alias = alias;
     }
@@ -34,13 +34,13 @@ public enum YhteystietoRyhma {
     }
 
     @JsonCreator
-    public static YhteystietoRyhma forValue(String str) {
+    public static YhteystietoRyhmaKuvaus forValue(String str) {
         if (str == null) {
             return null;
         }
         return Stream.of(values()).filter(v -> str.equalsIgnoreCase(v.name())
                     || str.equalsIgnoreCase(v.getAlias())
                     || str.equalsIgnoreCase(v.getRyhmanKuvaus()))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("Can not find YhteystietoRyhma for " + str));
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Can not find YhteystietoRyhmaKuvaus for " + str));
     }
 }

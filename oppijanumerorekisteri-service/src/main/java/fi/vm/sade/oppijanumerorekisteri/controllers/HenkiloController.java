@@ -3,7 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
@@ -87,12 +87,6 @@ public class HenkiloController {
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                           ExternalPermissionService permissionService) throws BindException {
-        henkiloUpdateDto.getYhteystiedotRyhmas().stream().map(yhteystiedotRyhmaDto -> {
-            yhteystiedotRyhmaDto.setRyhmaKuvaus(YhteystietoRyhma.forValue(yhteystiedotRyhmaDto.getRyhmaKuvaus()).getAlias());
-            yhteystiedotRyhmaDto.getYhteystieto().stream().map(yhteystietoDto -> {
-
-            });
-        });
         return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidhenkilo();
     }
 
@@ -113,7 +107,7 @@ public class HenkiloController {
                                                   @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma,
                                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                                    ExternalPermissionService permissionService ) {
-        return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhma.forValue(ryhma))
+        return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhmaKuvaus.forValue(ryhma))
                 .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by ryhma="+ryhma));
     }
 

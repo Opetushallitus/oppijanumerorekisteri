@@ -8,36 +8,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HenkilonYhteystiedotViewDto implements Serializable {
-    private final Map<YhteystietoRyhma, YhteystiedotDto> yhteystiedot;
+    private final Map<YhteystietoRyhmaKuvaus, YhteystiedotDto> yhteystiedot;
 
     public HenkilonYhteystiedotViewDto() {
         this.yhteystiedot= new HashMap<>();
     }
     
     @JsonCreator
-    public HenkilonYhteystiedotViewDto(Map<YhteystietoRyhma, YhteystiedotDto> yhteystiedot) {
+    public HenkilonYhteystiedotViewDto(Map<YhteystietoRyhmaKuvaus, YhteystiedotDto> yhteystiedot) {
         this.yhteystiedot = yhteystiedot;
     }
     
-    public HenkilonYhteystiedotViewDto put(YhteystietoRyhma ryhma, YhteystiedotDto yhteystiedot) {
+    public HenkilonYhteystiedotViewDto put(YhteystietoRyhmaKuvaus ryhma, YhteystiedotDto yhteystiedot) {
         this.yhteystiedot.put(ryhma, yhteystiedot);
         return this;
     }
 
-    public YhteystiedotDto get(YhteystietoRyhma ryhma) {
+    public YhteystiedotDto get(YhteystietoRyhmaKuvaus ryhma) {
         return this.yhteystiedot.get(ryhma);
     }
 
     @JsonValue
-    public Map<YhteystietoRyhma, YhteystiedotDto> asMap() {
+    public Map<YhteystietoRyhmaKuvaus, YhteystiedotDto> asMap() {
         return yhteystiedot;
     }
     
-    public ReadableYhteystiedot get(YhteystietoRyhma ...ryhmatInPriorityOrder) {
+    public ReadableYhteystiedot get(YhteystietoRyhmaKuvaus...ryhmatInPriorityOrder) {
         return new HenkilonYhteystiedotByPriorityOrderDto(yhteystiedot, true, ryhmatInPriorityOrder);
     }
     
-    public ReadableYhteystiedot getExclusively(YhteystietoRyhma ...ryhmatInPriorityOrder) {
+    public ReadableYhteystiedot getExclusively(YhteystietoRyhmaKuvaus...ryhmatInPriorityOrder) {
         return new HenkilonYhteystiedotByPriorityOrderDto(yhteystiedot, false, ryhmatInPriorityOrder);
     }
 }

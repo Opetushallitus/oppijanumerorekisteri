@@ -12,9 +12,9 @@ import java.util.Set;
 public class YhteystiedotRyhmaDto implements Serializable {
     private static final long serialVersionUID = 7820975061439666995L;
 
-    private String ryhmaKuvaus;
+    private YhteystietoRyhmaKuvaus ryhmaKuvaus;
 
-    private String ryhmaAlkuperaTieto;
+    private YhteystietoRyhmaAlkuperatieto ryhmaAlkuperaTieto;
 
     private boolean readOnly;
 

@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -15,7 +14,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 
@@ -172,6 +170,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloSaved.clearYhteystiedotRyhmas();
             henkiloUpdateDto.getYhteystiedotRyhmas().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
+                yhteystiedotRyhma.setRyhmaKuvaus(yhteystiedotRyhmaDto.getRyhmaKuvaus().getRyhmanKuvaus());
+                yhteystiedotRyhma.setRyhmaAlkuperaTieto(yhteystiedotRyhmaDto.getRyhmaAlkuperaTieto().getAlkuperatieto());
                 yhteystiedotRyhma.setHenkilo(henkiloSaved);
                 yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
                 henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
@@ -222,7 +222,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull YhteystietoRyhma ryhma) {
+    public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull YhteystietoRyhmaKuvaus ryhma) {
         return ofNullable(yhteystietoConverter.toHenkiloYhteystiedot(
                 this.henkiloJpaRepository.findYhteystiedot(new YhteystietoCriteria()
                         .withHenkiloOid(henkiloOid)

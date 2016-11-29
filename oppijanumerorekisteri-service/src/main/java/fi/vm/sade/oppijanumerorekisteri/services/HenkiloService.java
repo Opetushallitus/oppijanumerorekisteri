@@ -29,7 +29,7 @@ public interface HenkiloService {
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
-    Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhma ryhma);
+    Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhmaKuvaus ryhma);
 
     List<HenkiloHetuAndOidDto> getHetusAndOids(Long sinceVtjUpdated);
 

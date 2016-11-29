@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma;
+import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
@@ -12,15 +12,15 @@ import java.util.List;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystietoPopulator.yhteystieto;
 
 public class YhteystiedotRyhmaPopulator implements Populator<YhteystiedotRyhma> {
-    private final YhteystietoRyhma ryhma;
+    private final YhteystietoRyhmaKuvaus ryhma;
     private final List<Populator<Yhteystieto>> yhteystiedot = new ArrayList<>();
     private String alkuperaTieto;
 
-    public YhteystiedotRyhmaPopulator(YhteystietoRyhma ryhma) {
+    public YhteystiedotRyhmaPopulator(YhteystietoRyhmaKuvaus ryhma) {
         this.ryhma = ryhma;
     }
     
-    public static YhteystiedotRyhmaPopulator ryhma(YhteystietoRyhma ryhma) {
+    public static YhteystiedotRyhmaPopulator ryhma(YhteystietoRyhmaKuvaus ryhma) {
         return new YhteystiedotRyhmaPopulator(ryhma);
     }
     

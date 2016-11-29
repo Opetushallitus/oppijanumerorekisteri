@@ -25,8 +25,8 @@ import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.KOTIOSOITE;
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhma.TYOOSOITE;
+import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.KOTIOSOITE;
+import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSOITE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.mockito.BDDMockito.given;
@@ -178,7 +178,7 @@ public class HenkiloControllerTest {
                 "  }" +
                 "}";
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-            .put(YhteystietoRyhma.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+            .put(YhteystietoRyhmaKuvaus.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
