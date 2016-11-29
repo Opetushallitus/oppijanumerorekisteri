@@ -199,7 +199,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         if(henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                            .orElseThrow(ValidationException::new))
+                            .orElseThrow(() -> new ValidationException("invalid_kansalaisuus")))
                     .collect(Collectors.toCollection(HashSet::new));
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
             henkiloUpdateDto.setKansalaisuus(null);
@@ -272,7 +272,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                            .orElseThrow(ValidationException::new))
+                            .orElseThrow(() -> new ValidationException("invalid_kansalaisuus")))
                     .collect(Collectors.toSet());
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }
