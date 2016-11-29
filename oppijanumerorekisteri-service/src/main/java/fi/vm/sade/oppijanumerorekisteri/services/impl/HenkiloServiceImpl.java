@@ -15,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 
@@ -138,7 +139,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     // Mapper is configured to ignore null values so setting henkiloUpdateDto field to null is same as skipping the field.
-    // TODO: To enable validation groups with hibernate one needs to disable automatic validation and manually call the validator.
+    // If one wishes to enable validation groups with hibernate one needs to disable automatic validation and manually
+    // call the validator.
     @Override
     @Transactional
     public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException {
@@ -151,7 +153,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidhenkiloIsIn(
                     Lists.newArrayList(henkiloUpdateDto.getOidhenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
-        henkiloUpdateDto.setOidhenkilo(null);
 
         henkiloUpdateDto.setMuokkausPvm(new Date());
         henkiloUpdateDto.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
@@ -168,21 +169,33 @@ public class HenkiloServiceImpl implements HenkiloService {
             // validate yhteystiedot
 
             // update yhteystiedot
+            henkiloSaved.clearYhteystiedotRyhmas();
+            henkiloUpdateDto.getYhteystiedotRyhmas().forEach(yhteystiedotRyhmaDto -> {
+                YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
+                yhteystiedotRyhma.setHenkilo(henkiloSaved);
+                yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
+                henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
+            });
+            henkiloUpdateDto.setYhteystiedotRyhmas(null);
         }
 
         if(henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKielikoodi() != null) {
-//            henkiloSaved.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAidinkieli().getKielikoodi())
-//                    .orElse(null));
+            henkiloSaved.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAidinkieli().getKielikoodi())
+                    .orElse(null));
             henkiloUpdateDto.setAidinkieli(null);
-//            henkiloSaved.getAidinkieli().addHenkilo(henkiloSaved);
-//            henkiloSaved.setKielisyys(Sets.newHashSet(henkiloSaved.getAidinkieli()));
         }
         if(henkiloUpdateDto.getAsiointikieli() != null && henkiloUpdateDto.getAsiointikieli().getKielikoodi() != null) {
             henkiloSaved.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAsiointikieli().getKielikoodi())
                     .orElse(null));
             henkiloUpdateDto.setAsiointikieli(null);
         }
-        // TODO: täytyykö kielisyydet voida erikseen päivittää jostain syystä?
+        if(henkiloUpdateDto.getKielisyys() != null) {
+            henkiloSaved.clearKielisyys();
+            henkiloUpdateDto.getKielisyys().forEach(kielisyysDto -> henkiloSaved.addKielisyys(this.kielisyysRepository.findByKielikoodi(kielisyysDto.getKielikoodi())
+                    .orElse(null)));
+            henkiloUpdateDto.setKielisyys(null);
+        }
+
         if(henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
@@ -192,12 +205,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setKansalaisuus(null);
         }
 
-        // TODO: ldap sync tarvitaan johonkin?
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
-        henkiloSaved.getYhteystiedotRyhmas().forEach(yhteystiedotRyhma -> {
-            yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
-            yhteystiedotRyhma.setHenkilo(henkiloSaved);
-        });
+        // This needs to be called in order to persist new yhteystiedotryhmas.
         this.henkiloDataRepository.save(henkiloSaved);
         return henkiloUpdateDto;
     }

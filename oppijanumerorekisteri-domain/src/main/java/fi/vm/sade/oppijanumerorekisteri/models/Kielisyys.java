@@ -1,10 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @EqualsAndHashCode(callSuper = false, exclude = "henkilos")
 @Getter
@@ -23,4 +27,5 @@ public class Kielisyys extends IdentifiableAndVersionedEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "kielisyys")
     private Set<Henkilo> henkilos = new HashSet<>();
+
 }

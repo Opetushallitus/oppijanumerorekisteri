@@ -10,9 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Getter
@@ -58,7 +56,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Kielisyys aidinkieli;
 
     @ValidateKielisyys
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "asiointikieli_id")
     private Kielisyys asiointikieli;
 
@@ -98,7 +96,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "kielisyys_id",
             referencedColumnName = "id"))
-    private Set<Kielisyys> kielisyys = new CopyOnWriteArraySet<>();
+    private Set<Kielisyys> kielisyys = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kansalaisuus", joinColumns = @JoinColumn(name = "henkilo_id",
@@ -106,7 +104,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             name = "kansalaisuus_id", referencedColumnName = "id"))
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
-    @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
     private Set<YhteystiedotRyhma> yhteystiedotRyhmas = new HashSet<>();
 
     @Column(name = "kasittelija")
@@ -133,5 +131,19 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             CascadeType.REFRESH })
     private Set<ExternalId> externalIds = new HashSet<>();
 
+    public void clearYhteystiedotRyhmas() {
+        this.yhteystiedotRyhmas.clear();
+    }
 
+    public void addYhteystiedotRyhma(YhteystiedotRyhma yhteystiedotRyhma) {
+        this.yhteystiedotRyhmas.add(yhteystiedotRyhma);
+    }
+
+    public void clearKielisyys() {
+        this.kielisyys.clear();
+    }
+
+    public void addKielisyys(Kielisyys kielisyys) {
+        this.kielisyys.add(kielisyys);
+    }
 }

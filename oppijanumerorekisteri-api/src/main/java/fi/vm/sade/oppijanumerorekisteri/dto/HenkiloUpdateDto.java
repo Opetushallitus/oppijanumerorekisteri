@@ -43,8 +43,8 @@ public class HenkiloUpdateDto {
 
     private KielisyysDto aidinkieli;
 
-//    private Set<KielisyysDto> kielisyys = new HashSet<>();
-//
+    private Set<KielisyysDto> kielisyys = new HashSet<>();
+
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhmas = new HashSet<>();
