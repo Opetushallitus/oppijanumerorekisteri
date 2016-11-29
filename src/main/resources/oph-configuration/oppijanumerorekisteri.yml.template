@@ -53,7 +53,7 @@ host:
   host-cas: {{host_cas}}
 authentication:
   kayttooikeus:
-    username: notusername
-    password: notpassword
+    username: {{oppijanumerorekisteri_kayttooikeus_username}}
+    password: {{oppijanumerorekisteri_kayttooikeus_password}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
