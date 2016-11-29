@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_argument_value") // 400 Bad Request
-    @ExceptionHandler({ValidationException.class, fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException.class})
+    @ExceptionHandler(ValidationException.class)
     public void badRequestValidationException() {
     }
 
