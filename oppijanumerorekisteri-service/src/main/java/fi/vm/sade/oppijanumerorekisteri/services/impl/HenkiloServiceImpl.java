@@ -233,7 +233,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
-        List<Henkilo> hetusAndOids = henkiloHibernateRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
+        List<Henkilo> hetusAndOids = this.henkiloJpaRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
         return mapper.mapAsList(hetusAndOids, HenkiloHetuAndOidDto.class);
     }
 
@@ -264,10 +264,10 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAidinkieli().getKielikoodi())
                     .orElseThrow(() -> new ValidationException("invalid_aidinkieli")));
         }
-//        if(henkiloCreate.getAsiointikieli() != null && henkiloCreate.getAsiointikieli().getKielikoodi() != null) {
-//            henkiloCreate.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAsiointikieli().getKielikoodi())
-//                    .orElseThrow(() -> new ValidationException("invalid_asiointikieli")));
-//        }
+        if(henkiloCreate.getAsiointikieli() != null && henkiloCreate.getAsiointikieli().getKielikoodi() != null) {
+            henkiloCreate.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAsiointikieli().getKielikoodi())
+                    .orElseThrow(() -> new ValidationException("invalid_asiointikieli")));
+        }
         if(henkiloCreate.getKansalaisuus() != null) {
             this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()

@@ -68,6 +68,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
 
     @Override
     public List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
+        QHenkilo henkilo = QHenkilo.henkilo;
         JPAQuery<Henkilo> query = jpa()
             .select(Projections.bean(Henkilo.class,
                 henkilo.oidhenkilo,

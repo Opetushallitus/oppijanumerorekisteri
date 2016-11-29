@@ -31,7 +31,7 @@ public interface HenkiloService {
 
     Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhmaKuvaus ryhma);
 
-    List<HenkiloHetuAndOidDto> getHetusAndOids(Long sinceVtjUpdated);
+    List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
 
     HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier);
 
