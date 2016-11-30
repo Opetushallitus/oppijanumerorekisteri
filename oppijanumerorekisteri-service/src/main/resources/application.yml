@@ -1,5 +1,6 @@
 server:
   contextPath: /oppijanumerorekisteri-service
+  use-forward-headers: true
 flyway:
   out-of-order: true
   enabled: false
