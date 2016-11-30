@@ -1,5 +1,9 @@
 # Oppijanumerorekisteri
 
+## Vaatimukset
+- Java 1.8.0_92 (ei toiminut 1.8.0_60)
+- Maven 3.3
+
 ## Rakenne
 ### oppijanumerorekisteri
 Main

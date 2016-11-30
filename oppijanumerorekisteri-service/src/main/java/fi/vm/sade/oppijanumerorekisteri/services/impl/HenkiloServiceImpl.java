@@ -164,9 +164,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
 
         if(henkiloUpdateDto.getYhteystiedotRyhmas() != null) {
-            // validate yhteystiedot
-
-            // update yhteystiedot
             henkiloSaved.clearYhteystiedotRyhmas();
             henkiloUpdateDto.getYhteystiedotRyhmas().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);

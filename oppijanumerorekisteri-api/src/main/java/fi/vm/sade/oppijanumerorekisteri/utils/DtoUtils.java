@@ -46,9 +46,7 @@ public class DtoUtils {
     public static HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, String kasittelija) {
-        KielisyysDto aidinkieli = new KielisyysDto();
-        aidinkieli.setKielityyppi(kielityyppi);
-        aidinkieli.setKielikoodi(kielikoodi);
+        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
@@ -65,5 +63,28 @@ public class DtoUtils {
         henkiloHetuAndOidDto.setHetu(hetu);
         henkiloHetuAndOidDto.setVtjsynced(vtjsynced);
         return henkiloHetuAndOidDto;
+    }
+
+    public static HenkiloUpdateDto createHenkiloUpdateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
+                                                          String oidHenkilo, String kielikoodi, String kielityyppi,
+                                                          String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
+        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielityyppi, kielikoodi);
+        KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielityyppi, kielikoodi);
+        KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
+        YhteystiedotRyhmaDto yhteystiedotRyhma = DtoUtils.createYhteystiedotRyhmaDto(yhteystietoArvo);
+
+        return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu, HenkiloTyyppi.VIRKAILIJA,
+                new Date(24364800000L), "1", false, new Date(), kasittelija, asiointikieli, aidinkieli,
+                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), Collections.singleton(yhteystiedotRyhma));
+    }
+
+    public static YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(String yhteystietoArvo) {
+        YhteystietoDto yhteystieto = DtoUtils.createYhteystietoDto(yhteystietoArvo);
+        return new YhteystiedotRyhmaDto(YhteystietoRyhmaKuvaus.MUU_OSOITE, YhteystietoRyhmaAlkuperatieto.RYHMAALKUPERA_VIRKAILIJA,
+                true, Collections.singleton(yhteystieto));
+    }
+
+    public static YhteystietoDto createYhteystietoDto(String yhteystietoArvo) {
+        return new YhteystietoDto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo);
     }
 }

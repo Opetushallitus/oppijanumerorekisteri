@@ -19,8 +19,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResultUtils;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +36,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -242,7 +246,49 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser
     public void updateHenkilo() throws Exception {
-        //TODO when rdy
+        String inputContent = JsonUtils.getDefaultHenkiloUpdateAsJson();
+        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "arpa@kuutio.fi");
+        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(anyObject())).willReturn(henkiloUpdateDto);
+        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
+    }
+
+    @Test
+    @WithMockUser
+    public void updateHenkiloBindingException() throws Exception {
+        String inputContent = JsonUtils.getDefaultHenkiloUpdateAsJson();
+        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "arpa@kuutio.fi");
+        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(anyObject())).willThrow(new BindException(henkiloUpdateDto, "henkiloUpdateDTo"));
+        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    public void updateHenkiloNotFoundException() throws Exception {
+        String inputContent = JsonUtils.getDefaultHenkiloUpdateAsJson();
+        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "arpa@kuutio.fi");
+        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(anyObject())).willThrow(new NotFoundException());
+        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void updateHenkiloValidationException() throws Exception {
+        String inputContent = JsonUtils.getDefaultHenkiloUpdateAsJson();
+        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "arpa@kuutio.fi");
+        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(anyObject())).willThrow(new ValidationException());
+        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isBadRequest());
     }
 
     @Test
