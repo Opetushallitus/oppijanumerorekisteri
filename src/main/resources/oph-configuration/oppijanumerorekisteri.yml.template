@@ -50,3 +50,5 @@ cas:
   url: https://{{host_cas}}/cas
 host:
   host-virkailija: {{host_virkailija}}
+oppijanumerorekisteri:
+  uses-ssl-proxy: true
