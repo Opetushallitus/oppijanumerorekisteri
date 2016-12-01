@@ -9,9 +9,22 @@ import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletCon
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Servlet containeriin liittyvät konfiguraatiot.
+ */
 @Configuration
 public class ServletContainerConfiguration {
 
+    /**
+     * Konfiguraatio kun palvelua ajetaan HTTPS proxyn läpi. Käytännössä tämä
+     * muuttaa {@link javax.servlet.ServletRequest#getScheme()} palauttamaan
+     * `https` jolloin palvelun kautta luodut urlit muodostuvat oikein.
+     *
+     * Aktivointi: `oppijanumerorekisteri.uses-ssl-proxy` arvoon `true`.
+     *
+     * @return EmbeddedServletContainerCustomizer jonka Spring automaattisesti
+     * tunnistaa ja lisää servlet containerin konfigurointiin
+     */
     @Bean
     @ConditionalOnProperty("oppijanumerorekisteri.uses-ssl-proxy")
     public EmbeddedServletContainerCustomizer sslProxyCustomizer() {
