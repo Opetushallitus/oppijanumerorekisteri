@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -82,6 +82,6 @@ public class HenkiloController {
                                                   /** Used to be: @P("permissionService") @RequestHeader("External-Permission-Service")
                                                    PermissionChecker.ExternalPermissionService permissionService */) {
         return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhma.forValue(ryhma))
-                .orElseThrow(() -> new ResourceNotFoundException("Yhteystiedot not found by ryhma="+ryhma));
+                .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by ryhma="+ryhma));
     }
 }
