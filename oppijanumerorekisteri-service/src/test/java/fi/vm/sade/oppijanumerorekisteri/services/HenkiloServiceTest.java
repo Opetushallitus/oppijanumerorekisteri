@@ -1,10 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 
+import com.google.common.collect.Sets;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
@@ -16,6 +19,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -31,7 +35,8 @@ import static java.util.Collections.emptyList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.verify;
 
 public class HenkiloServiceTest {
     private HenkiloJpaRepository henkiloJpaRepositoryMock;
@@ -40,6 +45,8 @@ public class HenkiloServiceTest {
     private OrikaConfiguration mapperMock;
     private UserDetailsHelper userDetailsHelperMock;
     private PermissionChecker permissionCheckerMock;
+    private KielisyysRepository kielisyysRepositoryMock;
+    private KansalaisuusRepository kansalaisuusRepositoryMock;
 
     @Before
     public void setup() {
@@ -48,16 +55,16 @@ public class HenkiloServiceTest {
         this.mapperMock = Mockito.mock(OrikaConfiguration.class);
         MockOidGenerator mockOidGenerator = new MockOidGenerator();
         this.userDetailsHelperMock = Mockito.mock(UserDetailsHelper.class);
-        KielisyysRepository kielisyysRepositoryMock = Mockito.mock(KielisyysRepository.class);
+        this.kielisyysRepositoryMock = Mockito.mock(KielisyysRepository.class);
         KoodistoService koodistoServiceMock = Mockito.mock(KoodistoService.class);
-        KansalaisuusRepository kansalaisuusRepositoryMock = Mockito.mock(KansalaisuusRepository.class);
+        this.kansalaisuusRepositoryMock = Mockito.mock(KansalaisuusRepository.class);
         IdentificationRepository identificationRepositoryMock = Mockito.mock(IdentificationRepository.class);
         this.permissionCheckerMock = Mockito.mock(PermissionChecker.class);
         HenkiloUpdatePostValidator henkiloUpdatePostValidatorMock = Mockito.mock(HenkiloUpdatePostValidator.class);
 
         this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, mapperMock,
-                new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, kielisyysRepositoryMock,
-                koodistoServiceMock, kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
+                new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
+                koodistoServiceMock, this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
                 henkiloUpdatePostValidatorMock);
     }
 
@@ -90,7 +97,7 @@ public class HenkiloServiceTest {
     @Test
     public void getHetusAndOidsTest() {
         Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         HenkiloHetuAndOidDto henkiloHetuAndOidDto = DtoUtils.createHenkiloHetuAndOidDto("1.2.3.4.5", "123456-9999",
                 new Date(0L));
 
@@ -184,7 +191,7 @@ public class HenkiloServiceTest {
     @Test
     public void getHenkiloPerustietoByOidsTest() {
         Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1");
         given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList("1.2.3.4.5")))
@@ -200,7 +207,7 @@ public class HenkiloServiceTest {
     @Test
     public void getHenkiloOidHetuNimiByNameTest() {
         Henkilo henkiloMock = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         List<Henkilo> henkiloMockList = Collections.singletonList(henkiloMock);
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDtoMock = DtoUtils.createHenkiloOidHetuNimiDto("arpa noppa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5");
@@ -238,6 +245,57 @@ public class HenkiloServiceTest {
         List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible();
         assertThat(henkiloTyypit.size()).isEqualTo(1);
         assertThat(henkiloTyypit.get(0)).isEqualTo("VIRKAILIJA");
+
+    }
+
+    @Test
+    public void updateHenkiloFromHenkiloUpdateDto() throws Exception {
+        Henkilo henkilo = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999",
+                "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246",
+                new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "arpa@kuutio.fi");
+        YhteystiedotRyhma mappedYhteydstiedotRyhma = new YhteystiedotRyhma();
+        mappedYhteydstiedotRyhma.setYhteystieto(Sets.newHashSet(new Yhteystieto(null,
+                henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
+                henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
+        ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
+        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidhenkilo())))
+        .willReturn(Collections.singletonList(henkilo));
+        given(userDetailsHelperMock.getCurrentUserOid()).willReturn(Optional.of("1.2.3.4.1"));
+        given(this.mapperMock.map(anyObject(), eq(YhteystiedotRyhma.class))).willReturn(mappedYhteydstiedotRyhma);
+        given(this.kielisyysRepositoryMock.findByKielikoodi(anyString()))
+                .willReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
+        given(this.kansalaisuusRepositoryMock.findByKansalaisuuskoodi(anyString()))
+                .willReturn(Optional.of(EntityUtils.createKansalaisuus("246")));
+
+        HenkiloUpdateDto result = this.service.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto);
+        verify(this.henkiloDataRepositoryMock).save(argument.capture());
+
+        assertThat(argument.getValue().getAidinkieli().getKielikoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getAidinkieli().getKielityyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getAsiointikieli().getKielikoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getAsiointikieli().getKielityyppi()).isEqualTo("suomi");
+
+        assertThat(argument.getValue().getKielisyys().size()).isEqualTo(1);
+        assertThat(argument.getValue().getKielisyys().iterator().next().getKielikoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getKielisyys().iterator().next().getKielityyppi()).isEqualTo("suomi");
+
+        assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
+        assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+
+        assertThat(argument.getValue().getYhteystiedotRyhmas().size()).isEqualTo(1);
+        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaAlkuperaTieto())
+                .isEqualTo(YhteystietoRyhmaAlkuperatieto.RYHMAALKUPERA_VIRKAILIJA.getAlkuperatieto());
+        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaKuvaus())
+                .isEqualTo(YhteystietoRyhmaKuvaus.MUU_OSOITE.getRyhmanKuvaus());
+
+        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().size()).isEqualTo(1);
+        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())
+                .isEqualTo(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO);
+        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
+                .isEqualTo("arpa@kuutio.fi");
 
     }
 }
