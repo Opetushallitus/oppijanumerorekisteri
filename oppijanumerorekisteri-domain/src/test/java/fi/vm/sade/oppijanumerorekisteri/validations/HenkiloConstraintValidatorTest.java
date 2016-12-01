@@ -59,7 +59,7 @@ public class HenkiloConstraintValidatorTest implements ConstraintValidatorFactor
     @Test
     public void HenkiloValidation() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         Mockito.when(this.kielisyysRepository.findByKielikoodi(any())).thenReturn(Optional.of(new Kielisyys()));
         Set<ConstraintViolation<Henkilo>> constraintViolations = validator.validate(henkilo);
         assertThat(constraintViolations).isEmpty();
@@ -68,7 +68,7 @@ public class HenkiloConstraintValidatorTest implements ConstraintValidatorFactor
     @Test
     public void HenkiloValidationInvalidKielisyys() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         Mockito.when(this.kielisyysRepository.findByKielikoodi(any())).thenReturn(Optional.empty());
         List<ConstraintViolation<Henkilo>> constraintViolations = validator.validate(henkilo)
                 .stream().sorted((c1, c2) -> c1.getPropertyPath().toString().compareTo(c2.getPropertyPath().toString()))
@@ -81,7 +81,7 @@ public class HenkiloConstraintValidatorTest implements ConstraintValidatorFactor
     @Test
     public void HenkiloValidationInvalidLuontipvmAndMuokkausPvm() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", null, "1.2.3.4.1", "arpa@kuutio.fi");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", null, null, "1.2.3.4.1", "arpa@kuutio.fi");
         Mockito.when(this.kielisyysRepository.findByKielikoodi(any())).thenReturn(Optional.of(new Kielisyys()));
         List<ConstraintViolation<Henkilo>> constraintViolations = validator.validate(henkilo)
                 .stream().sorted((c1, c2) -> c1.getPropertyPath().toString().compareTo(c2.getPropertyPath().toString()))

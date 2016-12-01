@@ -30,7 +30,7 @@ public class IdentificationRepositoryTest {
     @Test
     public void findByidpentityidAndIdentifier() throws Exception {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         this.testEntityManager.persist(henkilo);
         Identification identification = new Identification(henkilo, "oppijaToken", "testikayttaja@posti.fi", null, null, new Date());
         this.testEntityManager.persist(identification);
