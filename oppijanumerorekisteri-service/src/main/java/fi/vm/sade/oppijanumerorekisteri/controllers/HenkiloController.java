@@ -64,10 +64,14 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
+    public abstract class StringList implements List<String> {
+
+    }
+
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
-    public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@RequestBody List<String> henkiloOids) {
+    public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
         return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
     }
 
@@ -143,10 +147,10 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilotByHenkiloOidList", method = RequestMethod.POST)
-    public List<HenkiloDto> findHenkilotByOidList(List<String> oids,
-                                                  @RequestHeader("External-Permission-Service")
+    public List<HenkiloDto> findHenkilotByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
+                                                  @RequestHeader(value = "External-Permission-Service", required = false)
                                                           ExternalPermissionService permissionService) throws IOException {
-        return permissionChecker.getPermissionCheckedHenkilos(
+        return this.permissionChecker.getPermissionCheckedHenkilos(
                 this.henkiloService.getHenkilosByOids(oids),
                 Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),
                 permissionService
