@@ -227,4 +227,31 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         retrievedHenkilos = this.jpaRepository.findHetusAndOids(102L, 1, 100);
         assertThat(retrievedHenkilos.size()).isEqualTo(3);
     }
+
+    @Test
+    public void findHetusAndOidsSortingTest() {
+        List<Henkilo> persistentHenkilos = Arrays.asList(
+                EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), new Date()),  // should be 4th
+                EntityUtils.createHenkilo("", "", "", "123456-9998", "1.2.3.4.6", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null),        // should be 1st or 2nd
+                EntityUtils.createHenkilo("", "", "", "123456-9997", "1.2.3.4.7", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), new Date(1)), // should be 3rd
+                EntityUtils.createHenkilo("", "", "", "123456-9996", "1.2.3.4.8", false,
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null)         // should be 1st or 2nd
+        );
+
+        for (Henkilo persistentHenkilo : persistentHenkilos) {
+            this.testEntityManager.persist(persistentHenkilo);
+        }
+
+        List<Henkilo> retrievedHenkilos = this.jpaRepository.findHetusAndOids(null, 0, 100);
+
+        // null vtjsync first
+        assertThat(retrievedHenkilos.get(0).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
+        assertThat(retrievedHenkilos.get(1).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
+        // then by date
+        assertThat(retrievedHenkilos.get(2).getOidhenkilo()).isEqualTo("1.2.3.4.7");
+        assertThat(retrievedHenkilos.get(3).getOidhenkilo()).isEqualTo("1.2.3.4.5");
+    }
 }
