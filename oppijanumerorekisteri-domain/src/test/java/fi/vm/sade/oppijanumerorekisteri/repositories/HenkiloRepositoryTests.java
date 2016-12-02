@@ -94,7 +94,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         this.testEntityManager.persist(persistedHenkilo);
         List<Henkilo> resultHenkiloList = this.dataRepository.findByOidhenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
         persistedHenkilo = resultHenkiloList.get(0);
-        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhmas");
+        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhmas", "vtjsynced");
         assertThat(persistedHenkilo.getYhteystiedotRyhmas().size()).isEqualTo(henkilo.getYhteystiedotRyhmas().size()).isEqualTo(1);
         assertThat(persistedHenkilo.getYhteystiedotRyhmas().iterator().next())
                 .isEqualToIgnoringGivenFields(henkilo.getYhteystiedotRyhmas().iterator().next(), "id", "version", "henkilo", "yhteystieto");

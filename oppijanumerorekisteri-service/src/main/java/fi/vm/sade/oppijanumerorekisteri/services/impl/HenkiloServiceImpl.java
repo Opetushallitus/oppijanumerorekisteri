@@ -155,6 +155,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloUpdateDto.setMuokkausPvm(new Date());
         henkiloUpdateDto.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new));
+
         // Do not update all values if henkilo is already vtj yksiloity
         if(henkiloSaved.isYksiloityvtj()) {
             henkiloUpdateDto.setEtunimet(null);
@@ -163,6 +164,15 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setHetu(null);
         }
 
+        henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
+
+        this.mapper.map(henkiloUpdateDto, henkiloSaved);
+        // This needs to be called in order to persist new yhteystiedotryhmas.
+        this.henkiloDataRepository.save(henkiloSaved);
+        return henkiloUpdateDto;
+    }
+
+    private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         if(henkiloUpdateDto.getYhteystiedotRyhmas() != null) {
             henkiloSaved.clearYhteystiedotRyhmas();
             henkiloUpdateDto.getYhteystiedotRyhmas().forEach(yhteystiedotRyhmaDto -> {
@@ -201,11 +211,6 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
             henkiloUpdateDto.setKansalaisuus(null);
         }
-
-        this.mapper.map(henkiloUpdateDto, henkiloSaved);
-        // This needs to be called in order to persist new yhteystiedotryhmas.
-        this.henkiloDataRepository.save(henkiloSaved);
-        return henkiloUpdateDto;
     }
 
 
