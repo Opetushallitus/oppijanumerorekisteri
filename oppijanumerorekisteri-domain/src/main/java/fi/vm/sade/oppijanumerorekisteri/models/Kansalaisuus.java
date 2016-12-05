@@ -12,7 +12,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = "henkilos")
 @Entity
 public class Kansalaisuus extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1807970088588578536L;
