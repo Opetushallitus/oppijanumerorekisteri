@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -91,7 +92,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void findHenkilotByOidList() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1");
+                "1.2.3.4.5", "fi", "suomi", "246");
         String inputOidList = "[\"1.2.3.4.5\"]";
         String returnContent = "[" +
                 "  {" +
@@ -119,7 +120,7 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void createNewHenkilo() throws Exception {
+    public void findOrCreateNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
         .hetu("123456-9999").oidHenkilo("1.2.3.4.5").henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA).build();
@@ -135,26 +136,29 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void createHenkiloConstraintViolationException() throws Exception {
+    public void findOrCreateHenkiloConstraintViolationException() throws Exception {
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
         given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
         this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("bad_request_method_argument"));
     }
 
     @Test
     @WithMockUser
-    public void createHenkiloDataIntegrityViolationException() throws Exception {
+    public void findOrCreateHenkiloDataIntegrityViolationException() throws Exception {
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"123456-9999\"}";
+                "\"hetu\": \"123456-9999\"," +
+                "\"henkilotyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
         this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("bad_request_persistence"));
     }
 
     @Test
@@ -168,7 +172,8 @@ public class HenkiloControllerTest {
                 "\"oidHenkilo\": \"1.2.3.4.5\"}";
         given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("bad_request_method_argument"));
     }
 
     @Test
@@ -214,12 +219,13 @@ public class HenkiloControllerTest {
                 .andExpect(status().isNotFound());
 
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tuntematon_tyyppi").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("bad_request_illegal_argument"));
     }
 
     @Test
     @WithMockUser(roles = {"INAPPROPRIATE_ROLE"})
-    public void unauthorizedTest() throws Exception {
+    public void unauthorized() throws Exception {
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isForbidden());
     }
@@ -261,8 +267,9 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new BindException(henkiloUpdateDto, "henkiloUpdateDTo"));
-        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isBadRequest());
+        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("illegal_service_argument_value"));
     }
 
     @Test
@@ -285,8 +292,9 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
-        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isBadRequest());
+        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("illegal_argument_value"));
     }
 
     @Test
@@ -330,7 +338,8 @@ public class HenkiloControllerTest {
                 false, "fi", "suomi", "246", "1.2.3.4.1");
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("bad_request_method_argument"));
     }
 
     @Test
@@ -360,6 +369,5 @@ public class HenkiloControllerTest {
         this.mvc.perform(get("/henkilo/henkilotypes").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(resultContent));
     }
-
 
 }

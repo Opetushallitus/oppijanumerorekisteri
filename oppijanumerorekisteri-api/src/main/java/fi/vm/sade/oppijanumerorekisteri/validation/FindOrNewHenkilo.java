@@ -1,4 +1,4 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
-public interface NewHenkilo {
+public interface FindOrNewHenkilo {
 }
