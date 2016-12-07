@@ -1,10 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.vm.sade.oppijanumerorekisteri.validation.FindOrNewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.*;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
@@ -45,9 +49,33 @@ public class HenkiloPerustietoDto implements Serializable {
     @NotNull
     private HenkiloTyyppi henkiloTyyppi;
 
-    private String kasittelijaOid;
-
     private String sukupuoli;
 
+    @JsonIgnore
+    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.etunimet")
+    public boolean isEtunimetValidIfCreate() {
+        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+                (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getEtunimet()));
+    }
 
+    @JsonIgnore
+    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.kutsumanimi")
+    public boolean isKutsumanimiValidIfCreate() {
+        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+                (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getKutsumanimi()));
+    }
+
+    @JsonIgnore
+    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.sukunimi")
+    public boolean isSukunimiValidIfCreate() {
+        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+                (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getSukunimi()));
+    }
+
+    @JsonIgnore
+    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.henkilotyyppi")
+    public boolean isHenkilotyyppiValidIfCreate() {
+        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+                (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getHenkilotyyppi()));
+    }
 }

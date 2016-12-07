@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.validation.FindOrNewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
@@ -77,7 +78,7 @@ public class HenkiloController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
-    public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
+    public HenkiloPerustietoDto createNewHenkilo(@Validated(FindOrNewHenkilo.class) @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
         return this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
     }
 
