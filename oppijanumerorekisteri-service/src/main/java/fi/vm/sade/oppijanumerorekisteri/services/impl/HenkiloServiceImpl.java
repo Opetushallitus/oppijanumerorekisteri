@@ -122,7 +122,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private Optional<Henkilo> getHenkiloByHetu(String hetu) {
-        return this.henkiloDataRepository.findByHetu(hetu);
+        return this.henkiloDataRepository.findFirstByHetu(hetu);
     }
 
     @Override

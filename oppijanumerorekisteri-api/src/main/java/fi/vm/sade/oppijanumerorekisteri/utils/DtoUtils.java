@@ -23,13 +23,12 @@ public class DtoUtils {
 
     public static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi,
                                                                   String hetu, String henkiloOid, String kielikoodi,
-                                                                  String kielityyppi, String kansalaisuusKoodi,
-                                                                  String kasittelija) {
+                                                                  String kielityyppi, String kansalaisuusKoodi) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
         return new HenkiloPerustietoDto(henkiloOid, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli, asiointikieli,
-                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, kasittelija, "1");
+                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, "1");
     }
 
     public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,

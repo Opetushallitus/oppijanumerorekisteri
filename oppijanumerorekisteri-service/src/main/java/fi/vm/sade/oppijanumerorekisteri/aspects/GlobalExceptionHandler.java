@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,6 +57,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_argument_value") // 400 Bad Request
     @ExceptionHandler(ValidationException.class)
     public void badRequestValidationException() {
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_service_argument_value") // 400 Bad Request
+    @ExceptionHandler(BindException.class)
+    public void badRequestSeriviceValidationException() {
     }
 
 }
