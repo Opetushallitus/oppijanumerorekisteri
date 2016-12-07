@@ -50,9 +50,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 henkilo.kutsumanimi, henkilo.sukunimi, henkilo.hetu))
                 .from(henkilo);
         BooleanBuilder builder = new BooleanBuilder();
-        for (String etunimi : etunimet) {
-            builder.or(henkilo.etunimet.containsIgnoreCase(etunimi));
-        }
+        etunimet.forEach(etunimi -> builder.or(henkilo.etunimet.containsIgnoreCase(etunimi)));
+
         builder.and(henkilo.sukunimi.containsIgnoreCase(sukunimi));
         query = query.where(builder);
         return query.fetch();
