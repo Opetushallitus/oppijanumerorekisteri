@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.validation.BindException;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface HenkiloService {
 
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
 
-    HenkiloPerustietoDto createHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
+    HenkiloPerustietoDto findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
 
     HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto);
 
@@ -41,4 +42,5 @@ public interface HenkiloService {
 
     HenkiloReadDto getByHetu(String hetu);
 
+    Henkilo createHenkilo(Henkilo henkiloCreate);
 }
