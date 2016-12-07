@@ -16,6 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
@@ -117,15 +118,28 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
-        Optional<Henkilo> henkilo = this.henkiloDataRepository.findByHetu(hetu);
-        return this.mapper.map(henkilo.orElseThrow(NotFoundException::new), HenkiloOidHetuNimiDto.class);
+        return this.mapper.map(getHenkiloByHetu(hetu).orElseThrow(NotFoundException::new), HenkiloOidHetuNimiDto.class);
+    }
+
+    private Optional<Henkilo> getHenkiloByHetu(String hetu) {
+        return this.henkiloDataRepository.findByHetu(hetu);
     }
 
     @Override
     @Transactional
-    public HenkiloPerustietoDto createHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
-        Henkilo henkilo = this.mapper.map(henkiloPerustietoDto, Henkilo.class);
-        return this.mapper.map(this.createHenkilo(henkilo), HenkiloPerustietoDto.class);
+    public HenkiloPerustietoDto findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
+        if(!StringUtils.isEmpty(henkiloPerustietoDto.getOidhenkilo())) {
+            return this.mapper.map(this.getHenkilosByOids(Collections.singletonList(henkiloPerustietoDto.getOidhenkilo()))
+                            .stream().findFirst().orElseThrow(NotFoundException::new),
+                    HenkiloPerustietoDto.class);
+        }
+        Optional<Henkilo> henkilo = this.getHenkiloByHetu(henkiloPerustietoDto.getHetu());
+        if(henkilo.isPresent()) {
+            return this.mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
+        }
+
+        return this.mapper.map(this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class)),
+                HenkiloPerustietoDto.class);
     }
 
     @Override
@@ -261,10 +275,11 @@ public class HenkiloServiceImpl implements HenkiloService {
         return this.henkiloViiteRepository.findBy(criteria);
     }
 
-    private Henkilo createHenkilo(Henkilo henkiloCreate) {
+    @Transactional
+    public Henkilo createHenkilo(Henkilo henkiloCreate) {
         henkiloCreate.setOidHenkilo(getFreePersonOid());
-        henkiloCreate.setCreated(new Date());
-        henkiloCreate.setModified(henkiloCreate.getCreated());
+            henkiloCreate.setCreated(new Date());
+            henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new));
 

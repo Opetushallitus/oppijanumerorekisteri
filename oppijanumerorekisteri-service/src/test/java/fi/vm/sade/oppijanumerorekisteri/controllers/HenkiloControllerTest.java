@@ -128,8 +128,8 @@ public class HenkiloControllerTest {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.createHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
-        this.mvc.perform(post("/henkilo/createHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
+        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
 
@@ -140,8 +140,8 @@ public class HenkiloControllerTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
-        given(this.henkiloService.createHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
-        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
+        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -152,8 +152,8 @@ public class HenkiloControllerTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"}";
-        given(this.henkiloService.createHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
-        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
+        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -166,8 +166,8 @@ public class HenkiloControllerTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"oidHenkilo\": \"1.2.3.4.5\"}";
-        given(this.henkiloService.createHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
-        this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
+        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 

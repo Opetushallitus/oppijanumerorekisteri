@@ -20,7 +20,6 @@ import java.util.Set;
 public class HenkiloPerustietoDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
-    @Null
     private String oidHenkilo;
 
     @NotNull @Size(min = 1)

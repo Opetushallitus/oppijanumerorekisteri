@@ -65,10 +65,6 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
-    public abstract class StringList implements List<String> {
-
-    }
-
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
@@ -80,9 +76,9 @@ public class HenkiloController {
     @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/createHenkilo", method = RequestMethod.POST)
+    @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        return this.henkiloService.createHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        return this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
     }
 
     @ApiOperation(value = "Henkilötietojen päivitys",
