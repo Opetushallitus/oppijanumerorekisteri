@@ -110,6 +110,7 @@
                 <artifactId>annotations</artifactId>
                 <version>${intellij.annoatations.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
