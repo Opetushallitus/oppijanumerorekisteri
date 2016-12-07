@@ -264,7 +264,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(retrievedHenkilos.get(0).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
         assertThat(retrievedHenkilos.get(1).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
         // then by date
-        assertThat(retrievedHenkilos.get(2).getOidhenkilo()).isEqualTo("1.2.3.4.7");
-        assertThat(retrievedHenkilos.get(3).getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(retrievedHenkilos.get(2).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.7", "1.2.3.4.5"));
+        assertThat(retrievedHenkilos.get(3).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.7", "1.2.3.4.5"));
     }
 }
