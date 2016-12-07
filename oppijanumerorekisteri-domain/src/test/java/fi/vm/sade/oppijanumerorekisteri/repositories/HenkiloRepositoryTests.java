@@ -245,13 +245,13 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findHetusAndOidsSortingTest() {
         List<Henkilo> persistentHenkilos = Arrays.asList(
                 EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
-                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", "arpa@kuutio.fi"),
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), new Date(), "1.2.3.4.1", null), // should be 4th
                 EntityUtils.createHenkilo("", "", "", "123456-9998", "1.2.3.4.6", false,
-                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", "arpa@kuutio.fi"),
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", null),        // should be 1st or 2nd
                 EntityUtils.createHenkilo("", "", "", "123456-9997", "1.2.3.4.7", false,
-                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", "arpa@kuutio.fi"),
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), new Date(1), "1.2.3.4.1", null), // should be 3rd
                 EntityUtils.createHenkilo("", "", "", "123456-9996", "1.2.3.4.8", false,
-                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", "arpa@kuutio.fi")
+                        HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", null)         // should be 1st or 2nd
         );
 
         for (Henkilo persistentHenkilo : persistentHenkilos) {
