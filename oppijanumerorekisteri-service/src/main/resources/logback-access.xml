@@ -1,4 +1,3 @@
-<!-- Managed by Chef -->
 <configuration>
     <appender name="AccessLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <append>true</append>
