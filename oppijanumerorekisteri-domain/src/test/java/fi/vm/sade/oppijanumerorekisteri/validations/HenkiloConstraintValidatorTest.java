@@ -35,7 +35,7 @@ public class HenkiloConstraintValidatorTest implements ConstraintValidatorFactor
         if (key == KielisyysConstraintValidator.class) {
             return (T) new KielisyysConstraintValidator(this.kielisyysRepository);
         }
-        if(key == NotNullValidator.class) {
+        if (key == NotNullValidator.class) {
             return (T) new NotNullValidator();
         }
         throw new IllegalArgumentException("expecting KielisyysConstraintValidator!");

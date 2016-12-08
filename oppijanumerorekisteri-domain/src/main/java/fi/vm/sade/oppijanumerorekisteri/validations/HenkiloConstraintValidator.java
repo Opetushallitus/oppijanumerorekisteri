@@ -15,7 +15,7 @@ public class HenkiloConstraintValidator implements ConstraintValidator<ValidateH
 
     @Override
     public boolean isValid(Henkilo henkilo, ConstraintValidatorContext constraintValidatorContext) {
-        if(!henkilo.getKasittelijaOid().equals(henkilo.getOidhenkilo())) {
+        if (!henkilo.getKasittelijaOid().equals(henkilo.getOidhenkilo())) {
 //            errors.reject("cant.modify.own.data");
             return false;
         }

@@ -28,7 +28,7 @@ public class AuditlogAspectHelper {
                                  Object returnHenkiloPerustietoDto) {
         LogMessage.LogMessageBuilder logMessage = builder()
                 .setOperaatio(operation);
-        if(returnHenkiloPerustietoDto instanceof HenkiloPerustietoDto) {
+        if (returnHenkiloPerustietoDto instanceof HenkiloPerustietoDto) {
             logMessage.kohdehenkiloOid(((HenkiloPerustietoDto)returnHenkiloPerustietoDto).getOidhenkilo());
         }
         this.finishLogging(logMessage);

@@ -53,7 +53,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
     public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
                                            ExternalPermissionService externalPermissionService) throws IOException {
         Set<String> callingUserRoles = this.getCasRoles();
-        if(this.isSuperUser(callingUserRoles)) {
+        if (this.isSuperUser(callingUserRoles)) {
             return true;
         }
         else {

@@ -40,11 +40,11 @@ public class HenkiloUpdatePostValidator implements Validator {
         HenkiloUpdateDto henkiloDto = (HenkiloUpdateDto) o;
         String kasittelijaOid = userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new);
-        if(kasittelijaOid.equals(henkiloDto.getOidhenkilo())) {
+        if (kasittelijaOid.equals(henkiloDto.getOidhenkilo())) {
             errors.reject("cant.modify.own.data");
         }
 
-        if(!HetuUtils.hetuIsValid(henkiloDto.getHetu())) {
+        if (!HetuUtils.hetuIsValid(henkiloDto.getHetu())) {
             errors.rejectValue("hetu", "security.number.format.illegal");
         }
 
@@ -52,7 +52,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         List<KoodiType> koodiTypeList = koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
 
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
-        if(kansalaisuusDtoSet != null && !kansalaisuusDtoSet.stream().map(KansalaisuusDto::getKansalaisuuskoodi)
+        if (kansalaisuusDtoSet != null && !kansalaisuusDtoSet.stream().map(KansalaisuusDto::getKansalaisuuskoodi)
                 .allMatch(kansalaisuus -> koodiTypeList.stream()
                         .anyMatch(koodi -> koodi.getKoodiArvo().equals(kansalaisuus)))) {
             errors.rejectValue("kansalaisuudet", "invalid.kansalaisuuskoodi");
