@@ -264,17 +264,17 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         if(henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKielikoodi() != null) {
             henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAidinkieli().getKielikoodi())
-                    .orElseThrow(() -> new ValidationException("invalid_aidinkieli")));
+                    .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
         }
         if(henkiloCreate.getAsiointikieli() != null && henkiloCreate.getAsiointikieli().getKielikoodi() != null) {
             henkiloCreate.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAsiointikieli().getKielikoodi())
-                    .orElseThrow(() -> new ValidationException("invalid_asiointikieli")));
+                    .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
         }
         if(henkiloCreate.getKansalaisuus() != null) {
             this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                            .orElseThrow(ValidationException::new))
+                            .orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toSet());
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }

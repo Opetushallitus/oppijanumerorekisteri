@@ -56,7 +56,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Kielisyys aidinkieli;
 
     @ValidateKielisyys
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asiointikieli_id")
     private Kielisyys asiointikieli;
 
