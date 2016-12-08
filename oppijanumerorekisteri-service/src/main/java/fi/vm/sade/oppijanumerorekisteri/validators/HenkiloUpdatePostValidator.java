@@ -44,10 +44,6 @@ public class HenkiloUpdatePostValidator implements Validator {
             errors.reject("cant.modify.own.data");
         }
 
-        if (!HetuUtils.hetuIsValid(henkiloDto.getHetu())) {
-            errors.rejectValue("hetu", "security.number.format.illegal");
-        }
-
         Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloDto.getKansalaisuus();
         List<KoodiType> koodiTypeList = koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
 

@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.*;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private String oidhenkilo;
 
     @NotNull @Size(min = 1)
+    @ValidateHetu
     private String hetu;
 
     @NotNull @Size(min = 1)

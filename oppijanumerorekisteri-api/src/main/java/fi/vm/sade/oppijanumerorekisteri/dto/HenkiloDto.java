@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 import fi.vm.sade.oppijanumerorekisteri.validation.ExistingHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class HenkiloDto implements Serializable {
 
     @NotNull
     @Size(min = 1)
+    @ValidateHetu
     private String hetu;
 
     private boolean passivoitu;

@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class HenkiloOidHetuNimiDto implements Serializable {
 
     private String oidhenkilo;
 
+    @ValidateHetu
     private String hetu;
 
     private String etunimet;

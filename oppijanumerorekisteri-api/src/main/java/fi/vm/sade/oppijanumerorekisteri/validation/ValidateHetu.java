@@ -5,11 +5,11 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = AsiointikieliConstraintValidator.class)
+@Constraint(validatedBy = HetuConstraintValidator.class)
 @Target( { ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidateAsiointikieli {
-    String message() default "invalid.asiointikieli";
+public @interface ValidateHetu {
+    String message() default "invalid.hetu";
 
     Class<?>[] groups() default {};
 

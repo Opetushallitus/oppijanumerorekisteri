@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class HenkiloUpdateDto {
 
     @NotNull
     @Size(min = 1)
+    @ValidateHetu
     private String hetu;
 
     @NotNull

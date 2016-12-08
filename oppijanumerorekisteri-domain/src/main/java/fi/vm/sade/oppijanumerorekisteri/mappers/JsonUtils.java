@@ -6,7 +6,7 @@ public class JsonUtils {
                 "  \"kielisyys\": [ { \"kielikoodi\": \"fi\", \"kielityyppi\": \"suomi\" } ]," +
                 "  \"kansalaisuus\": [ { \"kansalaisuuskoodi\": \"246\" } ]," +
                 "  \"etunimet\": \"arpa\"," +
-                "  \"hetu\": \"123456-9999\"," +
+                "  \"hetu\": \"081296-967T\"," +
                 "  \"kutsumanimi\": \"arpa\"," +
                 "  \"oidhenkilo\": \"1.2.3.4.5\"," +
                 "  \"sukunimi\": \"kuutio\"," +
@@ -24,7 +24,7 @@ public class JsonUtils {
                 "  \"eiSuomalaistaHetua\": false," +
                 "  \"etunimet\": \"arpa\"," +
                 "  \"henkilotyyppi\": \"OPPIJA\"," +
-                "  \"hetu\": \"123456-9999\"," +
+                "  \"hetu\": \"081296-967T\"," +
                 "  \"kansalaisuus\": [ { \"kansalaisuuskoodi\": \"246\" } ]," +
                 "  \"kasittelijaOid\": \"1.2.3.4.1\"," +
                 "  \"kutsumanimi\": \"arpa\"," +

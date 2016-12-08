@@ -128,7 +128,7 @@ public class HenkiloControllerTest {
         String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"123456-9999\"," +
+                "\"hetu\": \"081296-967T\"," +
                 "\"henkilotyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloService.createHenkiloFromPerustietoDto(anyObject())).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
@@ -248,7 +248,7 @@ public class HenkiloControllerTest {
     public void updateHenkilo() throws Exception {
         String inputContent = JsonUtils.getDefaultHenkiloUpdateAsJson();
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
                 "arpa@kuutio.fi");
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(anyObject())).willReturn(henkiloUpdateDto);
         this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -272,7 +272,7 @@ public class HenkiloControllerTest {
     public void updateHenkiloNotFoundException() throws Exception {
         String inputContent = JsonUtils.getDefaultHenkiloUpdateAsJson();
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
                 "arpa@kuutio.fi");
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(anyObject())).willThrow(new NotFoundException());
         this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -294,7 +294,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser
     public void findByOid() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1");
         String returnContent = JsonUtils.getDefaultHenkiloDtoAsJson();
         given(this.henkiloService.getHenkilosByOids(Collections.singletonList("1.2.3.4.5")))

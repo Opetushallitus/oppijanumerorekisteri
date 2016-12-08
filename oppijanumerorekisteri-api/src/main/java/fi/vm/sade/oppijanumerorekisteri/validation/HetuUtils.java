@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.validators;
+package fi.vm.sade.oppijanumerorekisteri.validation;
 
 import java.text.SimpleDateFormat;
 
