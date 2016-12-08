@@ -68,8 +68,8 @@ public class DtoUtils {
     public static HenkiloUpdateDto createHenkiloUpdateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
                                                           String oidHenkilo, String kielikoodi, String kielityyppi,
                                                           String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
-        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielityyppi, kielikoodi);
-        KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielityyppi, kielikoodi);
+        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
+        KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
         YhteystiedotRyhmaDto yhteystiedotRyhma = DtoUtils.createYhteystiedotRyhmaDto(yhteystietoArvo);
 

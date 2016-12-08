@@ -99,11 +99,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloDto> getHenkilosByOids(List<String> oids) {
-        List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
-        if (henkilos.isEmpty()) {
-            throw new NotFoundException();
-        }
-        return this.mapper.mapAsList(henkilos, HenkiloDto.class);
+        return this.mapper.mapAsList(this.henkiloDataRepository.findByOidhenkiloIsIn(oids), HenkiloDto.class);
     }
 
 
