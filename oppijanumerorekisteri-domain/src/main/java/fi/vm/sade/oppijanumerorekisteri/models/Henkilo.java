@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.validations.ValidateKielisyys;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 @Getter
 @Setter
@@ -50,12 +48,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String sukunimi;
 
-    @ValidateKielisyys
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aidinkieli_id")
     private Kielisyys aidinkieli;
 
-    @ValidateKielisyys
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asiointikieli_id")
     private Kielisyys asiointikieli;

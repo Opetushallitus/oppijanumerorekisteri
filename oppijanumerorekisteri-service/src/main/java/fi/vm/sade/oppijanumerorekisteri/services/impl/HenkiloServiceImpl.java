@@ -184,25 +184,25 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKielikoodi() != null) {
             henkiloSaved.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAidinkieli().getKielikoodi())
-                    .orElse(null));
+                    .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
             henkiloUpdateDto.setAidinkieli(null);
         }
         if (henkiloUpdateDto.getAsiointikieli() != null && henkiloUpdateDto.getAsiointikieli().getKielikoodi() != null) {
             henkiloSaved.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAsiointikieli().getKielikoodi())
-                    .orElse(null));
+                    .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
             henkiloUpdateDto.setAsiointikieli(null);
         }
         if (henkiloUpdateDto.getKielisyys() != null) {
             henkiloSaved.clearKielisyys();
             henkiloUpdateDto.getKielisyys().forEach(kielisyysDto -> henkiloSaved.addKielisyys(this.kielisyysRepository.findByKielikoodi(kielisyysDto.getKielikoodi())
-                    .orElse(null)));
+                    .orElseThrow(() -> new ValidationException("invalid.kielisyys"))));
             henkiloUpdateDto.setKielisyys(null);
         }
 
         if (henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                            .orElseThrow(ValidationException::new))
+                            .orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toCollection(HashSet::new));
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
             henkiloUpdateDto.setKansalaisuus(null);
