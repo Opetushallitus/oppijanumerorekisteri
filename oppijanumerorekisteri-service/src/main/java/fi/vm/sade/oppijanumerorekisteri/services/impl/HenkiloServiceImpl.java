@@ -92,8 +92,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
-        List<Henkilo> henkilos = this.henkiloDataRepository.findByOidhenkiloIsIn(oids);
-        return this.mapper.mapAsList(henkilos, HenkiloPerustietoDto.class);
+        return this.henkiloJpaRepository.findByOidIn(oids);
     }
 
     @Override
