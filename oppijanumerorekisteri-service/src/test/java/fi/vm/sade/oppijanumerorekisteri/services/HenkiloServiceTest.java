@@ -190,18 +190,18 @@ public class HenkiloServiceTest {
 
     @Test
     public void getHenkiloPerustietoByOidsTest() {
-        Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        HenkiloPerustietoDto henkiloMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                "fi", "suomi", "246", "1.2.3.4.1");
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1");
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList("1.2.3.4.5")))
+        given(this.henkiloJpaRepositoryMock.findByOidIn(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloMock));
         given(this.mapperMock.mapAsList(Collections.singletonList(henkiloMock), HenkiloPerustietoDto.class))
                 .willReturn(Collections.singletonList(henkiloPerustietoDtoMock));
 
         List<HenkiloPerustietoDto> henkiloPerustietoDtoList = this.service.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5"));
         HenkiloPerustietoDto henkiloPerustietoDto = henkiloPerustietoDtoList.get(0);
-        assertThat(henkiloPerustietoDto).isEqualTo(henkiloPerustietoDtoMock);
+        assertThat(henkiloPerustietoDto).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
     }
 
     @Test
