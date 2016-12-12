@@ -26,17 +26,17 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private String oidHenkilo;
 
-    @NotNull @Size(min = 1)
+    @Size(min = 1)
     @ValidateHetu
     private String hetu;
 
-    @NotNull @Size(min = 1)
+    @Size(min = 1)
     private String etunimet;
 
-    @NotNull @Size(min = 1)
+    @Size(min = 1)
     private String kutsumanimi;
 
-    @NotNull @Size(min = 1)
+    @Size(min = 1)
     private String sukunimi;
 
     private KielisyysDto aidinkieli;
@@ -46,34 +46,42 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private Set<KansalaisuusDto> kansalaisuus;
 
-    @NotNull
     private HenkiloTyyppi henkiloTyyppi;
 
     private String sukupuoli;
 
     @JsonIgnore
-    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.etunimet")
+    private boolean created;
+
+    @JsonIgnore
+    @AssertTrue(message = "invalid.hetu.empty")
+    public boolean isOidExistsIfHetuEmpty() {
+        return !StringUtils.isEmpty(this.getOidhenkilo()) || (!StringUtils.isEmpty(this.getHetu()));
+    }
+
+    @JsonIgnore
+    @AssertTrue(message = "invalid.etunimet.empty")
     public boolean isEtunimetValidIfCreate() {
         return !StringUtils.isEmpty(this.getOidhenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getEtunimet()));
     }
 
     @JsonIgnore
-    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.kutsumanimi")
+    @AssertTrue(message = "invalid.kutsumanimi.empty")
     public boolean isKutsumanimiValidIfCreate() {
         return !StringUtils.isEmpty(this.getOidhenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getKutsumanimi()));
     }
 
     @JsonIgnore
-    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.sukunimi")
+    @AssertTrue(message = "invalid.sukunimi.empty")
     public boolean isSukunimiValidIfCreate() {
         return !StringUtils.isEmpty(this.getOidhenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getSukunimi()));
     }
 
     @JsonIgnore
-    @AssertTrue(groups = FindOrNewHenkilo.class, message = "invalid.henkilotyyppi")
+    @AssertTrue(message = "invalid.henkilotyyppi.empty")
     public boolean isHenkilotyyppiValidIfCreate() {
         return !StringUtils.isEmpty(this.getOidhenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getHenkilotyyppi()));

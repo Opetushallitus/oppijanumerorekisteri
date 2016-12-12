@@ -138,7 +138,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         henkiloDtoList.forEach(henkiloDto -> {
             henkiloDto.setAsiointiKieli(stringAsiointikieliMap.get(henkiloDto.getOidHenkilo()));
             henkiloDto.setAidinkieli(stringAidinkieliMap.get(henkiloDto.getOidHenkilo()));
-            if(stringKansalaisuusMap.get(henkiloDto.getOidHenkilo()) != null) {
+            if (stringKansalaisuusMap.get(henkiloDto.getOidHenkilo()) != null) {
                 henkiloDto.setKansalaisuus(stringKansalaisuusMap.get(henkiloDto.getOidHenkilo()).stream().collect(Collectors.toSet()));
             }
         });
