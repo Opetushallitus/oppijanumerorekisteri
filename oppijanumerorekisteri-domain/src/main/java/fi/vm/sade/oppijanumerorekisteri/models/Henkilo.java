@@ -19,10 +19,11 @@ import java.util.*;
 @Table(name = "henkilo", schema = "public")
 @NamedEntityGraphs({
         @NamedEntityGraph(
-                name = "henkiloWithPerustiedot",
+                name = "henkiloDto",
                 attributeNodes = {
                         @NamedAttributeNode("asiointikieli"),
                         @NamedAttributeNode("aidinkieli"),
+                        @NamedAttributeNode("kielisyys"),
                         @NamedAttributeNode("kansalaisuus")
                 }
         )

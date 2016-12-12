@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional(propagation = Propagation.MANDATORY)
 @Repository
 public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaRepository<Henkilo, Long> {
-    @EntityGraph("henkiloWithPerustiedot")
+    @EntityGraph("henkiloDto")
     List<Henkilo> findByOidhenkiloIsIn(List<String> oidhenkilo);
 
     Optional<Henkilo> findByHetu(String hetu);
