@@ -3,11 +3,18 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.validation.FindOrNewHenkilo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @Api(tags = "Service To Service")
@@ -15,6 +22,9 @@ import java.util.List;
 @RequestMapping("/s2s")
 public class Service2ServiceController {
     private HenkiloService henkiloService;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     public Service2ServiceController(HenkiloService henkiloService) {
@@ -49,4 +59,20 @@ public class Service2ServiceController {
             long limit) {
         return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp, offset, limit);
     }
+
+    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilon perustiedoista")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
+    public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
+        HenkiloPerustietoDto returnDto = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        if(returnDto.isCreated()) {
+            return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
+                    + returnDto.getOidhenkilo())).body(returnDto);
+        }
+        else {
+            return ResponseEntity.ok(returnDto);
+        }
+    }
+
 }
