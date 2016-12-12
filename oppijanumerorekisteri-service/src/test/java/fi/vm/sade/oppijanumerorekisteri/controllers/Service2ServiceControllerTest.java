@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.AbstractTest;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.junit.Test;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(Service2ServiceController.class)
-public class Service2ServiceControllerTest extends AbstractTest {
+public class Service2ServiceControllerTest  {
     @Autowired
     private MockMvc mvc;
 

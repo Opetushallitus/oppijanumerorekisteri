@@ -11,18 +11,18 @@ import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 
 public class HenkilonYhteystiedotByPriorityOrderDto implements ReadableYhteystiedot {
-    private final Predicate<YhteystietoRyhma> predicate;
-    private final List<YhteystietoRyhma> ryhmat;
-    private final Map<YhteystietoRyhma, YhteystiedotDto> yhteystiedot;
-    private final Comparator<YhteystietoRyhma> comparator;
+    private final Predicate<YhteystietoRyhmaKuvaus> predicate;
+    private final List<YhteystietoRyhmaKuvaus> ryhmat;
+    private final Map<YhteystietoRyhmaKuvaus, YhteystiedotDto> yhteystiedot;
+    private final Comparator<YhteystietoRyhmaKuvaus> comparator;
 
-    public HenkilonYhteystiedotByPriorityOrderDto(Map<YhteystietoRyhma, YhteystiedotDto> yhteystiedot,
-                                                  boolean includeNonListed, YhteystietoRyhma... ryhmat) {
+    public HenkilonYhteystiedotByPriorityOrderDto(Map<YhteystietoRyhmaKuvaus, YhteystiedotDto> yhteystiedot,
+                                                  boolean includeNonListed, YhteystietoRyhmaKuvaus... ryhmat) {
         this.yhteystiedot = yhteystiedot;
         this.ryhmat = asList(ryhmat);
         this.predicate = includeNonListed ? any -> true : this.ryhmat::contains;
         if (ryhmat.length < 1) {
-            this.comparator = comparing(YhteystietoRyhma::ordinal);
+            this.comparator = comparing(YhteystietoRyhmaKuvaus::ordinal);
         } else {
             this.comparator = comparing(t -> {
                 int index = this.ryhmat.indexOf(t);

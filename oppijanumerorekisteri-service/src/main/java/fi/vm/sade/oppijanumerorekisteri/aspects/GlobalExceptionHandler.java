@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -51,4 +52,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public void badRequestIllegalArgumentException() {
     }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_argument_value") // 400 Bad Request
+    @ExceptionHandler(ValidationException.class)
+    public void badRequestValidationException() {
+    }
+
 }

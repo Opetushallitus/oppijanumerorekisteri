@@ -9,9 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -21,10 +19,11 @@ import java.util.Set;
 @Table(name = "henkilo", schema = "public")
 @NamedEntityGraphs({
         @NamedEntityGraph(
-                name = "henkiloWithPerustiedot",
+                name = "henkiloDto",
                 attributeNodes = {
                         @NamedAttributeNode("asiointikieli"),
                         @NamedAttributeNode("aidinkieli"),
+                        @NamedAttributeNode("kielisyys"),
                         @NamedAttributeNode("kansalaisuus")
                 }
         )
@@ -36,7 +35,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private String oidhenkilo;
 
-    // This constraint is actually not in db level
+    // This constraint is actually not set in db level
     @Column(unique = true)
     private String hetu;
 
@@ -102,6 +101,46 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             name = "kansalaisuus_id", referencedColumnName = "id"))
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
-    @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
     private Set<YhteystiedotRyhma> yhteystiedotRyhmas = new HashSet<>();
+
+    @Column(name = "kasittelija")
+    private String kasittelijaOid;
+
+    private String sukupuoli;
+
+    @Temporal(TemporalType.DATE)
+    private Date syntymaaika;
+
+    private String passinnumero;
+
+    private String oppijanumero;
+
+    @ManyToOne
+    @JoinColumn(name = "huoltaja_id")
+    private Henkilo huoltaja;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH })
+    private Set<Identification> identifications = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.REFRESH })
+    private Set<ExternalId> externalIds = new HashSet<>();
+
+    public void clearYhteystiedotRyhmas() {
+        this.yhteystiedotRyhmas.clear();
+    }
+
+    public void addYhteystiedotRyhma(YhteystiedotRyhma yhteystiedotRyhma) {
+        this.yhteystiedotRyhmas.add(yhteystiedotRyhma);
+    }
+
+    public void clearKielisyys() {
+        this.kielisyys.clear();
+    }
+
+    public void addKielisyys(Kielisyys kielisyys) {
+        this.kielisyys.add(kielisyys);
+    }
 }

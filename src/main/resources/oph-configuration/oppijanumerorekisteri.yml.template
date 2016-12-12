@@ -50,5 +50,10 @@ cas:
   url: https://{{host_cas}}/cas
 host:
   host-virkailija: {{host_virkailija}}
+  host-cas: {{host_cas}}
+authentication:
+  kayttooikeus:
+    username: {{oppijanumerorekisteri_kayttooikeus_username}}
+    password: '{{oppijanumerorekisteri_kayttooikeus_password}}'
 oppijanumerorekisteri:
   uses-ssl-proxy: true

@@ -1,0 +1,6 @@
+flyway:
+  enabled: false
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:bootexample;MODE=PostgreSQL

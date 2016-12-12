@@ -1,0 +1,23 @@
+{
+  "aidinkieli": {
+    "kielikoodi": "fi",
+    "kielityyppi": "suomi"
+  },
+  "asiointikieli": {
+    "kielikoodi": "fi",
+    "kielityyppi": "suomi"
+  },
+  "kansalaisuus": [
+    {
+      "kansalaisuuskoodi": "246"
+    }
+  ],
+  "etunimet": "arpa",
+  "hetu": "123456-9999",
+  "kutsumanimi": "arpa",
+  "oidhenkilo": "1.2.3.4.5",
+  "sukunimi": "kuutio",
+  "henkilotyyppi": "VIRKAILIJA",
+  "kasittelijaOid": "1.2.3.4.1",
+  "sukupuoli": "1"
+}
