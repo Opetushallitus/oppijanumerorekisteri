@@ -164,7 +164,7 @@ public class HenkiloController {
     @PostAuthorize("returnObject == null || @permissionChecker.isAllowedToAccessPerson(returnObject.getOidhenkilo(), " +
             "{'READ', 'READ_UPDATE', 'CRUD'}, null)")
     @RequestMapping(value = "/identification", method = RequestMethod.GET)
-    public HenkiloDto findByIDPAndIdentifier(@ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
+    public HenkiloDto findByIdpAndIdentifier(@ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
                                           @ApiParam(value = "Varsinainen tunniste", required = true) @RequestParam("id") String identifier) {
         return this.henkiloService.getHenkiloByIDPAndIdentifier(idp, identifier);
     }

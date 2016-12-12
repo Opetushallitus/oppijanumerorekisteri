@@ -335,8 +335,20 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void findByIDPAndIdentifier() throws Exception {
-        //TODO after refactoring
+    public void findByIdpAndIdentifier() throws Exception {
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                false, "fi", "suomi", "246", "1.2.3.4.1");
+        given(this.henkiloService.getHenkiloByIDPAndIdentifier("email", "arpa@kuutio.fi")).willReturn(henkiloDto);
+        this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
+                .andExpect(status().isOk()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloDto)));
+    }
+
+    @Test
+    @WithMockUser
+    public void findByIdpAndIdentifierNotFound() throws Exception {
+        given(this.henkiloService.getHenkiloByIDPAndIdentifier("email", "arpa@kuutio.fi")).willThrow(new NotFoundException());
+        this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
