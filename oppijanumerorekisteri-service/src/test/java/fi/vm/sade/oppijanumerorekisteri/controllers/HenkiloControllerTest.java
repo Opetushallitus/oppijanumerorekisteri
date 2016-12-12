@@ -263,7 +263,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void updateHenkiloBindingException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new BindException(henkiloUpdateDto, "henkiloUpdateDTo"));
@@ -288,7 +288,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void updateHenkiloValidationException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
