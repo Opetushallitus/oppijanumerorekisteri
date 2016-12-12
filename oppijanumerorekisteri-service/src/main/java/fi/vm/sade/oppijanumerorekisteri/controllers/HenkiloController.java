@@ -13,7 +13,6 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
@@ -71,15 +70,6 @@ public class HenkiloController {
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
         return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
-    }
-
-    @ApiOperation(value = "Luo uuden henkilön annetuista henkilon perustiedoista")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
-    public HenkiloPerustietoDto createNewHenkilo(@Validated(FindOrNewHenkilo.class) @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        return this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
     }
 
     @ApiOperation(value = "Henkilötietojen päivitys",

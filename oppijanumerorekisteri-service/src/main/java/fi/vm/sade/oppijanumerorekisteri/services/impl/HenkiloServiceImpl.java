@@ -128,18 +128,21 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional
     public HenkiloPerustietoDto findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
-        if(!StringUtils.isEmpty(henkiloPerustietoDto.getOidhenkilo())) {
+        HenkiloPerustietoDto returnHenkiloPerustietoDto = null;
+        if (!StringUtils.isEmpty(henkiloPerustietoDto.getOidhenkilo())) {
             return this.mapper.map(this.getHenkilosByOids(Collections.singletonList(henkiloPerustietoDto.getOidhenkilo()))
                             .stream().findFirst().orElseThrow(NotFoundException::new),
                     HenkiloPerustietoDto.class);
         }
         Optional<Henkilo> henkilo = this.getHenkiloByHetu(henkiloPerustietoDto.getHetu());
-        if(henkilo.isPresent()) {
+        if (henkilo.isPresent()) {
             return this.mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
         }
 
-        return this.mapper.map(this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class)),
+        returnHenkiloPerustietoDto = this.mapper.map(this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class)),
                 HenkiloPerustietoDto.class);
+        returnHenkiloPerustietoDto.setCreated(true);
+        return returnHenkiloPerustietoDto;
     }
 
     @Override
