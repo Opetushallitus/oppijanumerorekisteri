@@ -23,8 +23,8 @@ public class EntityUtils {
                                        boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo) {
         Kielisyys aidinkieli = new Kielisyys();
-        aidinkieli.setKielityyppi(kielityyppi);
-        aidinkieli.setKielikoodi(kielikoodi);
+        aidinkieli.setKieliTyyppi(kielityyppi);
+        aidinkieli.setKieliKoodi(kielikoodi);
 
         Kansalaisuus kansalaisuus = new Kansalaisuus();
         kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);

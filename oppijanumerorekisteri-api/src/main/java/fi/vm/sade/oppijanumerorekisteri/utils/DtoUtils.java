@@ -10,8 +10,8 @@ import java.util.Date;
 public class DtoUtils {
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
-        kielisyysDto.setKielikoodi(kielikoodi);
-        kielisyysDto.setKielityyppi(kielityyppi);
+        kielisyysDto.setKieliKoodi(kielikoodi);
+        kielisyysDto.setKieliTyyppi(kielityyppi);
         return kielisyysDto;
     }
 

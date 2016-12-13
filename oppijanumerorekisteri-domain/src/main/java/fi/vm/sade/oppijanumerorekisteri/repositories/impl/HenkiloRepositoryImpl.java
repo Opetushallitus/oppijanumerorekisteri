@@ -112,14 +112,14 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
 
         Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)
                 .select(henkilo.oidhenkilo, Projections.bean(KielisyysDto.class,
-                        henkilo.asiointikieli.kielikoodi, henkilo.asiointikieli.kielityyppi))
+                        henkilo.asiointikieli.kieliKoodi, henkilo.asiointikieli.kieliTyyppi))
                 .where(henkilo.oidhenkilo.in(oidList))
                 .fetch().stream().collect(Collectors.toMap(tuple ->
                         tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
 
         Map<String, KielisyysDto> stringAidinkieliMap = jpa().from(henkilo)
                 .select(henkilo.oidhenkilo, Projections.bean(KielisyysDto.class,
-                        henkilo.aidinkieli.kielikoodi, henkilo.aidinkieli.kielityyppi))
+                        henkilo.aidinkieli.kieliKoodi, henkilo.aidinkieli.kieliTyyppi))
                 .where(henkilo.oidhenkilo.in(oidList))
                 .fetch().stream().collect(Collectors.toMap(tuple ->
                         tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));

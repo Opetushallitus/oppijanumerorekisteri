@@ -1,11 +1,11 @@
 {
   "aidinkieli": {
-    "kielikoodi": "fi",
-    "kielityyppi": "suomi"
+    "kieliKoodi": "fi",
+    "kieliTyyppi": "suomi"
   },
   "asiointikieli": {
-    "kielikoodi": "fi",
-    "kielityyppi": "suomi"
+    "kieliKoodi": "fi",
+    "kieliTyyppi": "suomi"
   },
   "kansalaisuus": [
     {

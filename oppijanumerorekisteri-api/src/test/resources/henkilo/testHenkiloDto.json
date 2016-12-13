@@ -1,12 +1,12 @@
 {
   "aidinkieli": {
-    "kielikoodi": "fi",
-    "kielityyppi": "suomi"
+    "kieliKoodi": "fi",
+    "kieliTyyppi": "suomi"
   },
   "kielisyys": [
     {
-      "kielikoodi": "fi",
-      "kielityyppi": "suomi"
+      "kieliKoodi": "fi",
+      "kieliTyyppi": "suomi"
     }
   ],
   "kansalaisuus": [
@@ -23,8 +23,8 @@
   "henkilotyyppi": "VIRKAILIJA",
   "kasittelijaOid": "1.2.3.4.1",
   "asiointikieli": {
-    "kielikoodi": "fi",
-    "kielityyppi": "suomi"
+    "kieliKoodi": "fi",
+    "kieliTyyppi": "suomi"
   },
   "sukupuoli": "1",
   "syntymaaika": 24364800000

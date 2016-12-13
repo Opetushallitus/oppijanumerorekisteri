@@ -96,12 +96,12 @@ public class HenkiloControllerTest {
         String returnContent = "[" +
                 "  {" +
                 "    \"aidinkieli\": {" +
-                "      \"kielikoodi\": \"fi\"," +
-                "      \"kielityyppi\": \"suomi\"" +
+                "      \"kieliKoodi\": \"fi\"," +
+                "      \"kieliTyyppi\": \"suomi\"" +
                 "    }," +
                 "    \"asiointikieli\": {" +
-                "      \"kielikoodi\": \"fi\"," +
-                "      \"kielityyppi\": \"suomi\"" +
+                "      \"kieliKoodi\": \"fi\"," +
+                "      \"kieliTyyppi\": \"suomi\"" +
                 "    }," +
                 "    \"etunimet\": \"arpa\"," +
                 "    \"hetu\": \"123456-9999\"," +
