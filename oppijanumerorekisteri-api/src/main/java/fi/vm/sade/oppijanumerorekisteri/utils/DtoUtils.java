@@ -10,14 +10,14 @@ import java.util.Date;
 public class DtoUtils {
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
-        kielisyysDto.setKielikoodi(kielikoodi);
-        kielisyysDto.setKielityyppi(kielityyppi);
+        kielisyysDto.setKieliKoodi(kielikoodi);
+        kielisyysDto.setKieliTyyppi(kielityyppi);
         return kielisyysDto;
     }
 
     public static KansalaisuusDto createKansalaisuusDto(String kansalaisuuskoodi) {
         KansalaisuusDto kansalaisuusDto = new KansalaisuusDto();
-        kansalaisuusDto.setKansalaisuuskoodi(kansalaisuuskoodi);
+        kansalaisuusDto.setKansalaisuusKoodi(kansalaisuuskoodi);
         return kansalaisuusDto;
     }
 
@@ -39,7 +39,7 @@ public class DtoUtils {
         henkiloOidHetuNimiDto.setKutsumanimi(kutsumanimi);
         henkiloOidHetuNimiDto.setSukunimi(sukunimi);
         henkiloOidHetuNimiDto.setHetu(hetu);
-        henkiloOidHetuNimiDto.setOidhenkilo(oidHenkilo);
+        henkiloOidHetuNimiDto.setOidHenkilo(oidHenkilo);
         return henkiloOidHetuNimiDto;
     }
 
@@ -49,7 +49,7 @@ public class DtoUtils {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
-        kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
+        kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
         Date syntymaAika = new Date(24364800000L);
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
@@ -59,7 +59,7 @@ public class DtoUtils {
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {
         HenkiloHetuAndOidDto henkiloHetuAndOidDto = new HenkiloHetuAndOidDto();
-        henkiloHetuAndOidDto.setOidhenkilo(henkiloOid);
+        henkiloHetuAndOidDto.setOidHenkilo(henkiloOid);
         henkiloHetuAndOidDto.setHetu(hetu);
         henkiloHetuAndOidDto.setVtjsynced(vtjsynced);
         return henkiloHetuAndOidDto;

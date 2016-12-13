@@ -21,7 +21,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
     @Null
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     @NotNull @Size(min = 1)
     @ValidateHetu
@@ -39,12 +39,12 @@ public class HenkiloPerustietoDto implements Serializable {
     private KielisyysDto aidinkieli;
 
     @ValidateAsiointikieli
-    private KielisyysDto asiointikieli;
+    private KielisyysDto asiointiKieli;
 
     private Set<KansalaisuusDto> kansalaisuus;
 
     @NotNull
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     private String kasittelijaOid;
 

@@ -1,30 +1,30 @@
 {
   "aidinkieli": {
-    "kielikoodi": "fi",
-    "kielityyppi": "suomi"
+    "kieliKoodi": "fi",
+    "kieliTyyppi": "suomi"
   },
   "kielisyys": [
     {
-      "kielikoodi": "fi",
-      "kielityyppi": "suomi"
+      "kieliKoodi": "fi",
+      "kieliTyyppi": "suomi"
     }
   ],
   "kansalaisuus": [
     {
-      "kansalaisuuskoodi": "246"
+      "kansalaisuusKoodi": "246"
     }
   ],
   "etunimet": "arpa",
   "hetu": "123456-9999",
   "kutsumanimi": "arpa",
-  "oidhenkilo": "1.2.3.4.5",
+  "oidHenkilo": "1.2.3.4.5",
   "sukunimi": "kuutio",
   "passivoitu": false,
-  "henkilotyyppi": "VIRKAILIJA",
+  "henkiloTyyppi": "VIRKAILIJA",
   "kasittelijaOid": "1.2.3.4.1",
-  "asiointikieli": {
-    "kielikoodi": "fi",
-    "kielityyppi": "suomi"
+  "asiointiKieli": {
+    "kieliKoodi": "fi",
+    "kieliTyyppi": "suomi"
   },
   "sukupuoli": "1",
   "syntymaaika": 24364800000

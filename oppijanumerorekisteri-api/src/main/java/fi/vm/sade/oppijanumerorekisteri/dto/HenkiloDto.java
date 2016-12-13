@@ -26,7 +26,7 @@ public class HenkiloDto implements Serializable {
 
     @Null(groups = NewHenkilo.class)
     @NotNull(groups = ExistingHenkilo.class)
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     @NotNull
     @Size(min = 1)
@@ -36,7 +36,7 @@ public class HenkiloDto implements Serializable {
     private boolean passivoitu;
 
     @NotNull
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     @NotNull @Size(min = 1)
     private String etunimet;
@@ -50,7 +50,7 @@ public class HenkiloDto implements Serializable {
     private KielisyysDto aidinkieli;
 
     @ValidateAsiointikieli
-    private KielisyysDto asiointikieli;
+    private KielisyysDto asiointiKieli;
 
     private Set<KielisyysDto> kielisyys = new HashSet<>();
 

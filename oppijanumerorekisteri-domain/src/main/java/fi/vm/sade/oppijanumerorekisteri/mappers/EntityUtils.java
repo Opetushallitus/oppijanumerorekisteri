@@ -23,11 +23,11 @@ public class EntityUtils {
                                        boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo) {
         Kielisyys aidinkieli = new Kielisyys();
-        aidinkieli.setKielityyppi(kielityyppi);
-        aidinkieli.setKielikoodi(kielikoodi);
+        aidinkieli.setKieliTyyppi(kielityyppi);
+        aidinkieli.setKieliKoodi(kielikoodi);
 
         Kansalaisuus kansalaisuus = new Kansalaisuus();
-        kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
+        kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
 
         YhteystiedotRyhma yhteystiedotRyhma = EntityUtils.createYhteystiedotRyhma(null, yhteystietoArvo);
 
@@ -38,7 +38,7 @@ public class EntityUtils {
                 Sets.newHashSet(aidinkieli), Sets.newHashSet(kansalaisuus), null, kasittelija, "1", syntymaAika,
                 null, null, null, null, null);
         yhteystiedotRyhma.setHenkilo(henkilo);
-        henkilo.setYhteystiedotRyhmas(Sets.newHashSet(yhteystiedotRyhma));
+        henkilo.setYhteystiedotRyhma(Sets.newHashSet(yhteystiedotRyhma));
         return henkilo;
     }
 

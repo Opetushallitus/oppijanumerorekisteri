@@ -40,7 +40,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
         }
 
         for (HenkiloDto person : persons) {
-            if (person != null && this.isAllowedToAccessPerson(person.getOidhenkilo(), allowedRoles, permissionCheckService)) {
+            if (person != null && this.isAllowedToAccessPerson(person.getOidHenkilo(), allowedRoles, permissionCheckService)) {
                 permissionCheckedPersons.add(person);
             }
         }

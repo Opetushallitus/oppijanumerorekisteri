@@ -261,40 +261,40 @@ public class HenkiloServiceTest {
                 henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
                 henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
         ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidhenkilo())))
+        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
         .willReturn(Collections.singletonList(henkilo));
         given(userDetailsHelperMock.getCurrentUserOid()).willReturn(Optional.of("1.2.3.4.1"));
         given(this.mapperMock.map(anyObject(), eq(YhteystiedotRyhma.class))).willReturn(mappedYhteydstiedotRyhma);
-        given(this.kielisyysRepositoryMock.findByKielikoodi(anyString()))
+        given(this.kielisyysRepositoryMock.findByKieliKoodi(anyString()))
                 .willReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
-        given(this.kansalaisuusRepositoryMock.findByKansalaisuuskoodi(anyString()))
+        given(this.kansalaisuusRepositoryMock.findByKansalaisuusKoodi(anyString()))
                 .willReturn(Optional.of(EntityUtils.createKansalaisuus("246")));
 
         HenkiloUpdateDto result = this.service.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto);
         verify(this.henkiloDataRepositoryMock).save(argument.capture());
 
-        assertThat(argument.getValue().getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getAidinkieli().getKielityyppi()).isEqualTo("suomi");
-        assertThat(argument.getValue().getAsiointikieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getAsiointikieli().getKielityyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getAsiointiKieli().getKieliTyyppi()).isEqualTo("suomi");
 
         assertThat(argument.getValue().getKielisyys().size()).isEqualTo(1);
-        assertThat(argument.getValue().getKielisyys().iterator().next().getKielikoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getKielisyys().iterator().next().getKielityyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getKielisyys().iterator().next().getKieliTyyppi()).isEqualTo("suomi");
 
         assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
-        assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
 
-        assertThat(argument.getValue().getYhteystiedotRyhmas().size()).isEqualTo(1);
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaAlkuperaTieto())
+        assertThat(argument.getValue().getYhteystiedotRyhma().size()).isEqualTo(1);
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
                 .isEqualTo(YhteystietoRyhmaAlkuperatieto.RYHMAALKUPERA_VIRKAILIJA.getAlkuperatieto());
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaKuvaus())
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus())
                 .isEqualTo(YhteystietoRyhmaKuvaus.MUU_OSOITE.getRyhmanKuvaus());
 
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().size()).isEqualTo(1);
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())
                 .isEqualTo(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO);
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
                 .isEqualTo("arpa@kuutio.fi");
 
     }
