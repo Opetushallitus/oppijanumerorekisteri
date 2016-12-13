@@ -17,7 +17,7 @@ import java.util.Date;
 public class Identification extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = -2726844344901551508L;
 
-    @ManyToOne( cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToOne( cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "henkilo_id", nullable = false)
     private Henkilo henkilo;
 

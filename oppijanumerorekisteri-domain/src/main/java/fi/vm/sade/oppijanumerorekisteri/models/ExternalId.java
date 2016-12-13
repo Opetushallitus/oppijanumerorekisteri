@@ -16,7 +16,7 @@ public class ExternalId extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private String externalid;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "henkilo_id", nullable = false)
     private Henkilo henkilo;
 

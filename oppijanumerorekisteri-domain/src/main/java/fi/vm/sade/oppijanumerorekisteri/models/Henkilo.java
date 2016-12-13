@@ -116,7 +116,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String oppijanumero;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "huoltaja_id")
     private Henkilo huoltaja;
 
