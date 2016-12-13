@@ -127,7 +127,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         List<Tuple> kansaTuples = jpa().from(henkilo)
                 .innerJoin(henkilo.kansalaisuus, kansalaisuus)
                 .select(henkilo.oidhenkilo, Projections.list(Projections.bean(KansalaisuusDto.class,
-                        kansalaisuus.kansalaisuuskoodi)))
+                        kansalaisuus.kansalaisuusKoodi)))
                 .where(henkilo.oidhenkilo.in(oidList))
                 .fetch();
         @SuppressWarnings("unchecked")

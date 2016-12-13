@@ -267,7 +267,7 @@ public class HenkiloServiceTest {
         given(this.mapperMock.map(anyObject(), eq(YhteystiedotRyhma.class))).willReturn(mappedYhteydstiedotRyhma);
         given(this.kielisyysRepositoryMock.findByKieliKoodi(anyString()))
                 .willReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
-        given(this.kansalaisuusRepositoryMock.findByKansalaisuuskoodi(anyString()))
+        given(this.kansalaisuusRepositoryMock.findByKansalaisuusKoodi(anyString()))
                 .willReturn(Optional.of(EntityUtils.createKansalaisuus("246")));
 
         HenkiloUpdateDto result = this.service.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto);
@@ -283,7 +283,7 @@ public class HenkiloServiceTest {
         assertThat(argument.getValue().getKielisyys().iterator().next().getKieliTyyppi()).isEqualTo("suomi");
 
         assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
-        assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
 
         assertThat(argument.getValue().getYhteystiedotRyhmas().size()).isEqualTo(1);
         assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaAlkuperaTieto())

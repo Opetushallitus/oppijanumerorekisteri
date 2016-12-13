@@ -17,7 +17,7 @@ public class DtoUtils {
 
     public static KansalaisuusDto createKansalaisuusDto(String kansalaisuuskoodi) {
         KansalaisuusDto kansalaisuusDto = new KansalaisuusDto();
-        kansalaisuusDto.setKansalaisuuskoodi(kansalaisuuskoodi);
+        kansalaisuusDto.setKansalaisuusKoodi(kansalaisuuskoodi);
         return kansalaisuusDto;
     }
 
@@ -49,7 +49,7 @@ public class DtoUtils {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
-        kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
+        kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
         Date syntymaAika = new Date(24364800000L);
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,

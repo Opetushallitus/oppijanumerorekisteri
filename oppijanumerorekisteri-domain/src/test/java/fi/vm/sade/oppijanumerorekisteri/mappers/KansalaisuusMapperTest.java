@@ -21,13 +21,13 @@ public class KansalaisuusMapperTest {
     public void KansalaisuusToKansalaisuusDto() {
         Kansalaisuus kansalaisuus = EntityUtils.createKansalaisuus("246");
         KansalaisuusDto kansalaisuusDto = modelmapper.map(kansalaisuus, KansalaisuusDto.class);
-        assertThat(kansalaisuusDto.getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(kansalaisuusDto.getKansalaisuusKoodi()).isEqualTo("246");
     }
 
     @Test
     public void KansalaisuusDtoToKansalaisuus() {
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto("246");
         Kansalaisuus kansalaisuus = modelmapper.map(kansalaisuusDto, Kansalaisuus.class);
-        assertThat(kansalaisuus.getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(kansalaisuus.getKansalaisuusKoodi()).isEqualTo("246");
     }
 }

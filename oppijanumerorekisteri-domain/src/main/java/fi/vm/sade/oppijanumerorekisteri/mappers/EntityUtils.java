@@ -27,7 +27,7 @@ public class EntityUtils {
         aidinkieli.setKieliKoodi(kielikoodi);
 
         Kansalaisuus kansalaisuus = new Kansalaisuus();
-        kansalaisuus.setKansalaisuuskoodi(kansalaisuuskoodi);
+        kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
 
         YhteystiedotRyhma yhteystiedotRyhma = EntityUtils.createYhteystiedotRyhma(null, yhteystietoArvo);
 

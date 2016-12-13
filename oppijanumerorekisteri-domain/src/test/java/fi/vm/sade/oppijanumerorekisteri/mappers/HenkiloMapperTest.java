@@ -90,7 +90,7 @@ public class HenkiloMapperTest {
         assertThat(henkiloDto.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
         assertThat(henkiloDto.getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("fi");
         assertThat(henkiloDto.getKielisyys().iterator().next().getKieliTyyppi()).isEqualTo("suomi");
-        assertThat(henkiloDto.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(henkiloDto.getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
         assertThat(henkiloDto.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
@@ -107,7 +107,7 @@ public class HenkiloMapperTest {
         assertThat(henkilo.isPassivoitu()).isFalse();
         assertThat(henkilo.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(henkilo.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
-        assertThat(henkilo.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(henkilo.getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
         assertThat(henkilo.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
