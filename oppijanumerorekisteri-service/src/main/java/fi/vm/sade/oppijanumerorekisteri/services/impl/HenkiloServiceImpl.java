@@ -79,7 +79,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public boolean getOidExists(String oid) {
-        Predicate searchPredicate = QHenkilo.henkilo.oidhenkilo.eq(oid);
+        Predicate searchPredicate = QHenkilo.henkilo.oidHenkilo.eq(oid);
         return this.henkiloDataRepository.exists(searchPredicate);
     }
 
@@ -98,7 +98,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloDto> getHenkilosByOids(List<String> oids) {
-        return this.mapper.mapAsList(this.henkiloDataRepository.findByOidhenkiloIsIn(oids), HenkiloDto.class);
+        return this.mapper.mapAsList(this.henkiloDataRepository.findByOidHenkiloIsIn(oids), HenkiloDto.class);
     }
 
 
@@ -143,8 +143,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw errors;
         }
 
-        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidhenkiloIsIn(
-                    Lists.newArrayList(henkiloUpdateDto.getOidhenkilo()))
+        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
+                    Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
         henkiloUpdateDto.setMuokkausPvm(new Date());
@@ -251,7 +251,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {
-        henkiloCreate.setOidhenkilo(getFreePersonOid());
+        henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setLuontiPvm(new Date());
         henkiloCreate.setMuokkausPvm(henkiloCreate.getLuontiPvm());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()

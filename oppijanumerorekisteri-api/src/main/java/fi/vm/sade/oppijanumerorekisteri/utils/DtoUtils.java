@@ -39,7 +39,7 @@ public class DtoUtils {
         henkiloOidHetuNimiDto.setKutsumanimi(kutsumanimi);
         henkiloOidHetuNimiDto.setSukunimi(sukunimi);
         henkiloOidHetuNimiDto.setHetu(hetu);
-        henkiloOidHetuNimiDto.setOidhenkilo(oidHenkilo);
+        henkiloOidHetuNimiDto.setOidHenkilo(oidHenkilo);
         return henkiloOidHetuNimiDto;
     }
 
@@ -59,7 +59,7 @@ public class DtoUtils {
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {
         HenkiloHetuAndOidDto henkiloHetuAndOidDto = new HenkiloHetuAndOidDto();
-        henkiloHetuAndOidDto.setOidhenkilo(henkiloOid);
+        henkiloHetuAndOidDto.setOidHenkilo(henkiloOid);
         henkiloHetuAndOidDto.setHetu(hetu);
         henkiloHetuAndOidDto.setVtjsynced(vtjsynced);
         return henkiloHetuAndOidDto;

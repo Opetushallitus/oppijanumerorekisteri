@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaRepository<Henkilo, Long> {
     @EntityGraph("henkiloDto")
-    List<Henkilo> findByOidhenkiloIsIn(List<String> oidhenkilo);
+    List<Henkilo> findByOidHenkiloIsIn(List<String> oidhenkilo);
 
     Optional<Henkilo> findByHetu(String hetu);
 

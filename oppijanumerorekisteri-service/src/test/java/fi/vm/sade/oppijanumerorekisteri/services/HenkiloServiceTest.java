@@ -261,7 +261,7 @@ public class HenkiloServiceTest {
                 henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
                 henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
         ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidhenkilo())))
+        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
         .willReturn(Collections.singletonList(henkilo));
         given(userDetailsHelperMock.getCurrentUserOid()).willReturn(Optional.of("1.2.3.4.1"));
         given(this.mapperMock.map(anyObject(), eq(YhteystiedotRyhma.class))).willReturn(mappedYhteydstiedotRyhma);

@@ -14,7 +14,7 @@ import java.util.Date;
 public class HenkiloHetuAndOidDto implements Serializable {
     private static final long serialVersionUID = 813852020644110186L;
 
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     @ValidateHetu
     private String hetu;

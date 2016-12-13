@@ -26,7 +26,7 @@ public class HenkiloDto implements Serializable {
 
     @Null(groups = NewHenkilo.class)
     @NotNull(groups = ExistingHenkilo.class)
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     @NotNull
     @Size(min = 1)

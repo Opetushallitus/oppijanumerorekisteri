@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HenkiloUpdateDto {
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     private String etunimet;
 

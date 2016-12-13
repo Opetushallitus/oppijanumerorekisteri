@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import com.google.common.collect.Sets;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
@@ -19,7 +18,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.Collections;
 import java.util.Date;
@@ -96,7 +94,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         this.testEntityManager.persist(persistedHenkilo);
-        List<Henkilo> resultHenkiloList = this.dataRepository.findByOidhenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
+        List<Henkilo> resultHenkiloList = this.dataRepository.findByOidHenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
         persistedHenkilo = resultHenkiloList.get(0);
         assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(assertHenkilo, "id", "version", "yhteystiedotRyhmas", "vtjsynced");
         assertThat(persistedHenkilo.getYhteystiedotRyhmas().size()).isEqualTo(assertHenkilo.getYhteystiedotRyhmas().size()).isEqualTo(1);
@@ -155,7 +153,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         List<Henkilo> persistedHenkiloList = this.jpaRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(Collections.singletonList("arpa"), "kuutio");
         persistedHenkilo = persistedHenkiloList.get(0);
         assertThat(persistedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "etunimet", "kutsumanimi", "sukunimi",
-                "oidhenkilo", "hetu");
+                "oidHenkilo", "hetu");
     }
 
     @Test
@@ -201,7 +199,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
         Henkilo retrievedHenkilo = this.jpaRepository.findHetusAndOids(null, 0, 100).get(0);
 
-        assertThat(retrievedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "oidhenkilo", "hetu");
+        assertThat(retrievedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "oidHenkilo", "hetu");
         assertThat(henkilo.getVtjsynced()).hasSameTimeAs(retrievedHenkilo.getVtjsynced());
     }
 
@@ -282,10 +280,10 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         List<Henkilo> retrievedHenkilos = this.jpaRepository.findHetusAndOids(null, 0, 100);
 
         // null vtjsync first
-        assertThat(retrievedHenkilos.get(0).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
-        assertThat(retrievedHenkilos.get(1).getOidhenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
+        assertThat(retrievedHenkilos.get(0).getOidHenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
+        assertThat(retrievedHenkilos.get(1).getOidHenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
         // then by date
-        assertThat(retrievedHenkilos.get(2).getOidhenkilo()).isEqualTo("1.2.3.4.7");
-        assertThat(retrievedHenkilos.get(3).getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(retrievedHenkilos.get(2).getOidHenkilo()).isEqualTo("1.2.3.4.7");
+        assertThat(retrievedHenkilos.get(3).getOidHenkilo()).isEqualTo("1.2.3.4.5");
     }
 }

@@ -21,7 +21,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
     @Null
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     @NotNull @Size(min = 1)
     @ValidateHetu

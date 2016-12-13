@@ -32,8 +32,8 @@ import java.util.*;
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
 
-    @Column(nullable = false)
-    private String oidhenkilo;
+    @Column(name = "oidhenkilo", nullable = false)
+    private String oidHenkilo;
 
     // This constraint is actually not set in db level
     @Column(unique = true)

@@ -41,9 +41,9 @@ public class HenkiloPopulator implements Populator<Henkilo> {
     @Override
     public Henkilo apply(EntityManager entityManager) {
         return Populator.<Henkilo>firstOptional(entityManager.createQuery("select h from Henkilo h " +
-                "   where h.oidhenkilo = :oid").setParameter("oid", oid)).orElseGet(() -> {
+                "   where h.oidHenkilo = :oid").setParameter("oid", oid)).orElseGet(() -> {
             Henkilo henkilo = new Henkilo();
-            henkilo.setOidhenkilo(oid);
+            henkilo.setOidHenkilo(oid);
             henkilo.setHetu(hetu);
             henkilo.setLuontiPvm(new Date());
             henkilo.setMuokkausPvm(henkilo.getLuontiPvm());

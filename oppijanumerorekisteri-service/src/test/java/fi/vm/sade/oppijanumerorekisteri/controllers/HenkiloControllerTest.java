@@ -73,7 +73,7 @@ public class HenkiloControllerTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
-                "\"oidhenkilo\": \"1.2.3.4.5\"}";
+                "\"oidHenkilo\": \"1.2.3.4.5\"}";
         given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willReturn(henkiloOidHetuNimiDto);
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(content));
@@ -106,7 +106,7 @@ public class HenkiloControllerTest {
                 "    \"etunimet\": \"arpa\"," +
                 "    \"hetu\": \"123456-9999\"," +
                 "    \"kutsumanimi\": \"arpa\"," +
-                "    \"oidhenkilo\": \"1.2.3.4.5\"," +
+                "    \"oidHenkilo\": \"1.2.3.4.5\"," +
                 "    \"sukunimi\": \"kuutio\"" +
                 "  }" +
                 "]";
@@ -122,7 +122,7 @@ public class HenkiloControllerTest {
     public void createNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-        .hetu("123456-9999").oidhenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
+        .hetu("123456-9999").oidHenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
         String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
@@ -161,11 +161,11 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void createHenkiloNullHetuTest() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .oidhenkilo("1.2.3.4.5").build();
+                .oidHenkilo("1.2.3.4.5").build();
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
-                "\"oidhenkilo\": \"1.2.3.4.5\"}";
+                "\"oidHenkilo\": \"1.2.3.4.5\"}";
         given(this.henkiloService.createHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
@@ -231,7 +231,7 @@ public class HenkiloControllerTest {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"123456-9999\"," +
-                "\"oidhenkilo\": \"1.2.3.4.5\"}]";
+                "\"oidHenkilo\": \"1.2.3.4.5\"}]";
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa","kuutio",
                 "123456-9999", "1.2.3.4.5");
         given(this.henkiloService.getHenkiloOidHetuNimiByName("arpa", "kuutio")).willReturn(Collections.singletonList(henkiloOidHetuNimiDto));
