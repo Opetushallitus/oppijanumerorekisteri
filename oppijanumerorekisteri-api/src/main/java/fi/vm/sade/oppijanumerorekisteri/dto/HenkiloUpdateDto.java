@@ -45,7 +45,7 @@ public class HenkiloUpdateDto {
     private String kasittelijaOid;
 
     @ValidateAsiointikieli
-    private KielisyysDto asiointikieli;
+    private KielisyysDto asiointiKieli;
 
     private KielisyysDto aidinkieli;
 

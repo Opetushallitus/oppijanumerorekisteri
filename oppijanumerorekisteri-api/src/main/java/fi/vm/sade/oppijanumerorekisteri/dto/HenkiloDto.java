@@ -50,7 +50,7 @@ public class HenkiloDto implements Serializable {
     private KielisyysDto aidinkieli;
 
     @ValidateAsiointikieli
-    private KielisyysDto asiointikieli;
+    private KielisyysDto asiointiKieli;
 
     private Set<KielisyysDto> kielisyys = new HashSet<>();
 

@@ -39,7 +39,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private KielisyysDto aidinkieli;
 
     @ValidateAsiointikieli
-    private KielisyysDto asiointikieli;
+    private KielisyysDto asiointiKieli;
 
     private Set<KansalaisuusDto> kansalaisuus;
 

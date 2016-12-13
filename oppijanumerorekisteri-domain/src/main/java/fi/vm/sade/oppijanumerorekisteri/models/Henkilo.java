@@ -21,7 +21,7 @@ import java.util.*;
         @NamedEntityGraph(
                 name = "henkiloDto",
                 attributeNodes = {
-                        @NamedAttributeNode("asiointikieli"),
+                        @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
                         @NamedAttributeNode("kielisyys"),
                         @NamedAttributeNode("kansalaisuus")
@@ -55,7 +55,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asiointikieli_id")
-    private Kielisyys asiointikieli;
+    private Kielisyys asiointiKieli;
 
     @NotNull
     @Column(name = "created")

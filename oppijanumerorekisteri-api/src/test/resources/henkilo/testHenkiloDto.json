@@ -22,7 +22,7 @@
   "passivoitu": false,
   "henkiloTyyppi": "VIRKAILIJA",
   "kasittelijaOid": "1.2.3.4.1",
-  "asiointikieli": {
+  "asiointiKieli": {
     "kieliKoodi": "fi",
     "kieliTyyppi": "suomi"
   },

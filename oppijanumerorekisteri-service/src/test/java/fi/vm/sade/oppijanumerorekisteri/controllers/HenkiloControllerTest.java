@@ -99,7 +99,7 @@ public class HenkiloControllerTest {
                 "      \"kieliKoodi\": \"fi\"," +
                 "      \"kieliTyyppi\": \"suomi\"" +
                 "    }," +
-                "    \"asiointikieli\": {" +
+                "    \"asiointiKieli\": {" +
                 "      \"kieliKoodi\": \"fi\"," +
                 "      \"kieliTyyppi\": \"suomi\"" +
                 "    }," +

@@ -275,8 +275,8 @@ public class HenkiloServiceTest {
 
         assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(argument.getValue().getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
-        assertThat(argument.getValue().getAsiointikieli().getKieliKoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getAsiointikieli().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(argument.getValue().getAsiointiKieli().getKieliTyyppi()).isEqualTo("suomi");
 
         assertThat(argument.getValue().getKielisyys().size()).isEqualTo(1);
         assertThat(argument.getValue().getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("fi");

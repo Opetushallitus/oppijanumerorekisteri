@@ -186,10 +186,10 @@ public class HenkiloServiceImpl implements HenkiloService {
                     .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
             henkiloUpdateDto.setAidinkieli(null);
         }
-        if (henkiloUpdateDto.getAsiointikieli() != null && henkiloUpdateDto.getAsiointikieli().getKieliKoodi() != null) {
-            henkiloSaved.setAsiointikieli(this.kielisyysRepository.findByKieliKoodi(henkiloUpdateDto.getAsiointikieli().getKieliKoodi())
+        if (henkiloUpdateDto.getAsiointiKieli() != null && henkiloUpdateDto.getAsiointiKieli().getKieliKoodi() != null) {
+            henkiloSaved.setAsiointiKieli(this.kielisyysRepository.findByKieliKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
-            henkiloUpdateDto.setAsiointikieli(null);
+            henkiloUpdateDto.setAsiointiKieli(null);
         }
         if (henkiloUpdateDto.getKielisyys() != null) {
             henkiloSaved.clearKielisyys();
@@ -261,8 +261,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAidinkieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
         }
-        if (henkiloCreate.getAsiointikieli() != null && henkiloCreate.getAsiointikieli().getKieliKoodi() != null) {
-            henkiloCreate.setAsiointikieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAsiointikieli().getKieliKoodi())
+        if (henkiloCreate.getAsiointiKieli() != null && henkiloCreate.getAsiointiKieli().getKieliKoodi() != null) {
+            henkiloCreate.setAsiointiKieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAsiointiKieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
         }
         if (henkiloCreate.getKansalaisuus() != null) {
