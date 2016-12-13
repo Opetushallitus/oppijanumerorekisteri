@@ -47,7 +47,7 @@ public class HenkiloPopulator implements Populator<Henkilo> {
             henkilo.setHetu(hetu);
             henkilo.setLuontiPvm(new Date());
             henkilo.setMuokkausPvm(henkilo.getLuontiPvm());
-            henkilo.setHenkilotyyppi(tyyppi);
+            henkilo.setHenkiloTyyppi(tyyppi);
             entityManager.persist(henkilo);
 
             yhteystietoRyhmas.forEach(ryhmaPopulator -> {

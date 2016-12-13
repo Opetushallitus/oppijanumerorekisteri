@@ -39,9 +39,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(unique = true)
     private String hetu;
 
-    @Column(nullable = false)
+    @Column(name = "henkilotyyppi", nullable = false)
     @Enumerated(EnumType.STRING)
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     private String etunimet;
 

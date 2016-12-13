@@ -44,7 +44,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private Set<KansalaisuusDto> kansalaisuus;
 
     @NotNull
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     private String kasittelijaOid;
 

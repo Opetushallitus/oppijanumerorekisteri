@@ -32,7 +32,7 @@ public class HenkiloUpdateDto {
     private String hetu;
 
     @NotNull
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     private Date syntymaaika;
 

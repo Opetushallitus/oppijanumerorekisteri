@@ -85,7 +85,7 @@ public class HenkiloMapperTest {
         assertThat(henkiloDto.getHetu()).isEqualTo("123456-9999");
         assertThat(henkiloDto.getOidHenkilo()).isEqualTo("1.2.3.4.5");
         assertThat(henkiloDto.isPassivoitu()).isFalse();
-        assertThat(henkiloDto.getHenkilotyyppi()).isEqualTo(HenkiloTyyppi.OPPIJA);
+        assertThat(henkiloDto.getHenkiloTyyppi()).isEqualTo(HenkiloTyyppi.OPPIJA);
         assertThat(henkiloDto.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(henkiloDto.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
         assertThat(henkiloDto.getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("fi");

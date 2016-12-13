@@ -122,12 +122,12 @@ public class HenkiloControllerTest {
     public void createNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-        .hetu("123456-9999").oidHenkilo("1.2.3.4.5").henkilotyyppi(HenkiloTyyppi.VIRKAILIJA).build();
+        .hetu("123456-9999").oidHenkilo("1.2.3.4.5").henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA).build();
         String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"," +
-                "\"henkilotyyppi\": \"VIRKAILIJA\"}";
+                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloService.createHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
         this.mvc.perform(post("/henkilo/createHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));

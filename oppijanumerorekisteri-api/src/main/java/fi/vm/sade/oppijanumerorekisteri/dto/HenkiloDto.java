@@ -36,7 +36,7 @@ public class HenkiloDto implements Serializable {
     private boolean passivoitu;
 
     @NotNull
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     @NotNull @Size(min = 1)
     private String etunimet;
