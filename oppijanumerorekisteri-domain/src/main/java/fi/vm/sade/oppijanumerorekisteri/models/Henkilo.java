@@ -60,12 +60,12 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @NotNull
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date luontiPvm;
+    private Date created;
 
     @NotNull
     @Column(name = "modified")
     @Temporal(TemporalType.TIMESTAMP) 
-    private Date muokkausPvm;
+    private Date modified;
 
     @Column(name = "vtjsync_timestamp")
     @Temporal(TemporalType.TIMESTAMP)

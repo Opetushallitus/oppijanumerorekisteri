@@ -252,8 +252,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {
         henkiloCreate.setOidHenkilo(getFreePersonOid());
-        henkiloCreate.setLuontiPvm(new Date());
-        henkiloCreate.setMuokkausPvm(henkiloCreate.getLuontiPvm());
+        henkiloCreate.setCreated(new Date());
+        henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new));
 
