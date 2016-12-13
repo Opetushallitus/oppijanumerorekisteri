@@ -1,9 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,8 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.Date;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,5 +79,29 @@ public class Service2ServiceControllerTest  {
                         "  }\n" +
                         "]"));
     }
+    
+    @Test
+    @WithMockUser
+    public void findDuplicateHenkilosTest() throws Exception {
+        this.mvc.perform(post("/s2s/duplicateHenkilos").content("{}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        
+        given(this.service.findHenkiloViittees(Matchers.any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
+        this.mvc.perform(post("/s2s/duplicateHenkilos").content("{\"henkiloOids\": [\"CHILD\"]}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content()
+                .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
 
+        DateTime now = new DateTime();
+        given(this.service.findHenkiloViittees(Matchers.eq(HenkiloCriteria.builder()
+            .modifiedSince(now)
+        .build()))).willReturn(emptyList());
+        this.mvc.perform(post("/s2s/duplicateHenkilos").content("{\"modifiedSince\": "+now.toDate().getTime()+"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json("[]"));
+    }
 }

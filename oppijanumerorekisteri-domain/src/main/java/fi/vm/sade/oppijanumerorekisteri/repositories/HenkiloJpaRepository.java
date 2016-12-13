@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -24,4 +26,6 @@ public interface HenkiloJpaRepository {
     List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
 
     List<HenkiloPerustietoDto> findByOidIn(List<String> oidList);
+    
+    List<HenkiloViiteDto> findHenkiloViitteesByHenkilo(HenkiloCriteria query);
 }

@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -33,6 +34,7 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.*;
@@ -296,6 +298,19 @@ public class HenkiloServiceTest {
                 .isEqualTo(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO);
         assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
                 .isEqualTo("arpa@kuutio.fi");
+    }
 
+    @Test
+    public void findHenkiloViitteesTest() {
+        given(this.henkiloJpaRepositoryMock.findHenkiloViitteesByHenkilo(any())).willReturn(singletonList(
+                new HenkiloViiteDto("OID", "MASTER")));
+        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
+        assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
+        
+        given(this.henkiloJpaRepositoryMock.findHenkiloViitteesByHenkilo(any())).willReturn(emptyList());
+        results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        assertThat(results.size()).isEqualTo(0);
     }
 }

@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -201,7 +202,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         if (henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                            .orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
+                            .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toCollection(HashSet::new));
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
             henkiloUpdateDto.setKansalaisuus(null);
@@ -243,11 +244,18 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> listPossibleHenkiloTypesAccessible() {
         if (this.permissionChecker.isSuperUser()) {
             return Arrays.stream(HenkiloTyyppi.values()).map(HenkiloTyyppi::toString).collect(Collectors.toList());
         }
         return Collections.singletonList(HenkiloTyyppi.VIRKAILIJA.toString());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria query) {
+        return this.henkiloJpaRepository.findHenkiloViitteesByHenkilo(query);
     }
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {
@@ -269,7 +277,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                            .orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
+                        .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toSet());
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }
