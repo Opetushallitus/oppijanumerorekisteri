@@ -86,7 +86,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean duplicate;
 
-    @Column(nullable = false)
+    @Column(name = "eisuomalaistahetua", nullable = false)
     private boolean eiSuomalaistaHetua;
 
     @ManyToMany(fetch = FetchType.LAZY)
