@@ -96,12 +96,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         this.testEntityManager.persist(persistedHenkilo);
         List<Henkilo> resultHenkiloList = this.dataRepository.findByOidHenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
         persistedHenkilo = resultHenkiloList.get(0);
-        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(assertHenkilo, "id", "version", "yhteystiedotRyhmas", "vtjsynced");
-        assertThat(persistedHenkilo.getYhteystiedotRyhmas().size()).isEqualTo(assertHenkilo.getYhteystiedotRyhmas().size()).isEqualTo(1);
-        assertThat(persistedHenkilo.getYhteystiedotRyhmas().iterator().next())
-                .isEqualToIgnoringGivenFields(assertHenkilo.getYhteystiedotRyhmas().iterator().next(), "id", "version", "henkilo", "yhteystieto");
-        Set<Yhteystieto> persistedYhteystieto = persistedHenkilo.getYhteystiedotRyhmas().iterator().next().getYhteystieto();
-        Set<Yhteystieto> yhteystieto = assertHenkilo.getYhteystiedotRyhmas().iterator().next().getYhteystieto();
+        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(assertHenkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
+        assertThat(persistedHenkilo.getYhteystiedotRyhma().size()).isEqualTo(assertHenkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
+        assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next())
+                .isEqualToIgnoringGivenFields(assertHenkilo.getYhteystiedotRyhma().iterator().next(), "id", "version", "henkilo", "yhteystieto");
+        Set<Yhteystieto> persistedYhteystieto = persistedHenkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
+        Set<Yhteystieto> yhteystieto = assertHenkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
         assertThat(persistedYhteystieto.size()).isEqualTo(yhteystieto.size()).isEqualTo(1);
         assertThat(persistedYhteystieto.iterator().next()).isEqualToIgnoringGivenFields(yhteystieto.iterator().next(), "id", "version", "yhteystiedotRyhma");
     }
@@ -132,12 +132,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         this.testEntityManager.persist(persistedHenkilo);
         persistedHenkilo = this.dataRepository.findByHetu("123456-9999").orElse(null);
-        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhmas", "vtjsynced");
-        assertThat(persistedHenkilo.getYhteystiedotRyhmas().size()).isEqualTo(henkilo.getYhteystiedotRyhmas().size()).isEqualTo(1);
-        assertThat(persistedHenkilo.getYhteystiedotRyhmas().iterator().next())
-                .isEqualToIgnoringGivenFields(henkilo.getYhteystiedotRyhmas().iterator().next(), "id", "version", "henkilo", "yhteystieto");
-        Set<Yhteystieto> persistedYhteystieto = persistedHenkilo.getYhteystiedotRyhmas().iterator().next().getYhteystieto();
-        Set<Yhteystieto> yhteystieto = henkilo.getYhteystiedotRyhmas().iterator().next().getYhteystieto();
+        assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
+        assertThat(persistedHenkilo.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
+        assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next())
+                .isEqualToIgnoringGivenFields(henkilo.getYhteystiedotRyhma().iterator().next(), "id", "version", "henkilo", "yhteystieto");
+        Set<Yhteystieto> persistedYhteystieto = persistedHenkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
+        Set<Yhteystieto> yhteystieto = henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto();
         assertThat(persistedYhteystieto.size()).isEqualTo(yhteystieto.size()).isEqualTo(1);
         assertThat(persistedYhteystieto.iterator().next()).isEqualToIgnoringGivenFields(yhteystieto.iterator().next(), "id", "version", "yhteystiedotRyhma");
     }

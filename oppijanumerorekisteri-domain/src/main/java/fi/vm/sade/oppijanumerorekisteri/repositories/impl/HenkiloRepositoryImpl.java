@@ -56,7 +56,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria) {
         return jpa().from(henkilo)
-                .innerJoin(henkilo.yhteystiedotRyhmas, yhteystiedotRyhma)
+                .innerJoin(henkilo.yhteystiedotRyhma, yhteystiedotRyhma)
                 .innerJoin(yhteystiedotRyhma.yhteystieto, yhteystieto)
                 .where(criteria.condition(henkilo, yhteystiedotRyhma, yhteystieto))
                 .select(Projections.bean(YhteystietoHakuDto.class,

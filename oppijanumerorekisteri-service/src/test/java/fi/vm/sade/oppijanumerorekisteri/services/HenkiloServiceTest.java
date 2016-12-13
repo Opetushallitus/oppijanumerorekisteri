@@ -285,16 +285,16 @@ public class HenkiloServiceTest {
         assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
         assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
 
-        assertThat(argument.getValue().getYhteystiedotRyhmas().size()).isEqualTo(1);
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaAlkuperaTieto())
+        assertThat(argument.getValue().getYhteystiedotRyhma().size()).isEqualTo(1);
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
                 .isEqualTo(YhteystietoRyhmaAlkuperatieto.RYHMAALKUPERA_VIRKAILIJA.getAlkuperatieto());
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getRyhmaKuvaus())
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus())
                 .isEqualTo(YhteystietoRyhmaKuvaus.MUU_OSOITE.getRyhmanKuvaus());
 
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().size()).isEqualTo(1);
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())
                 .isEqualTo(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO);
-        assertThat(argument.getValue().getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
+        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
                 .isEqualTo("arpa@kuutio.fi");
 
     }

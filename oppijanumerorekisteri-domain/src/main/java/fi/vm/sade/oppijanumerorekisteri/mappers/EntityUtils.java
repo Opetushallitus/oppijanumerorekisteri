@@ -38,7 +38,7 @@ public class EntityUtils {
                 Sets.newHashSet(aidinkieli), Sets.newHashSet(kansalaisuus), null, kasittelija, "1", syntymaAika,
                 null, null, null, null, null);
         yhteystiedotRyhma.setHenkilo(henkilo);
-        henkilo.setYhteystiedotRyhmas(Sets.newHashSet(yhteystiedotRyhma));
+        henkilo.setYhteystiedotRyhma(Sets.newHashSet(yhteystiedotRyhma));
         return henkilo;
     }
 

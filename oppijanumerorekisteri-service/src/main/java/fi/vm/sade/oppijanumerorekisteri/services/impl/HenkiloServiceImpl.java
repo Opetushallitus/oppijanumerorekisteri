@@ -152,7 +152,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .orElseThrow(UserHasNoOidException::new));
 
         // Do not update all values if henkilo is already vtj yksiloity
-        if (henkiloSaved.isYksiloityvtj()) {
+        if (henkiloSaved.isYksiloityVTJ()) {
             henkiloUpdateDto.setEtunimet(null);
             henkiloUpdateDto.setSukunimi(null);
             henkiloUpdateDto.setSukupuoli(null);

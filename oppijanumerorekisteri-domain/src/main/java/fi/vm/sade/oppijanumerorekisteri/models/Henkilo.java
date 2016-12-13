@@ -78,7 +78,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private boolean yksiloity;
 
     @Column(nullable = false)
-    private boolean yksiloityvtj;
+    private boolean yksiloityVTJ;
 
     @Column(nullable = false)
     private boolean yksilointiYritetty;
@@ -87,7 +87,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private boolean duplicate;
 
     @Column(nullable = false)
-    private boolean eisuomalaistahetua;
+    private boolean eiSuomalaistaHetua;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
@@ -102,7 +102,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
     @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
-    private Set<YhteystiedotRyhma> yhteystiedotRyhmas = new HashSet<>();
+    private Set<YhteystiedotRyhma> yhteystiedotRyhma = new HashSet<>();
 
     @Column(name = "kasittelija")
     private String kasittelijaOid;
@@ -129,11 +129,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Set<ExternalId> externalIds = new HashSet<>();
 
     public void clearYhteystiedotRyhmas() {
-        this.yhteystiedotRyhmas.clear();
+        this.yhteystiedotRyhma.clear();
     }
 
     public void addYhteystiedotRyhma(YhteystiedotRyhma yhteystiedotRyhma) {
-        this.yhteystiedotRyhmas.add(yhteystiedotRyhma);
+        this.yhteystiedotRyhma.add(yhteystiedotRyhma);
     }
 
     public void clearKielisyys() {
