@@ -17,10 +17,10 @@ public class HenkiloViite extends IdentifiableAndVersionedEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "master_oid", nullable = false)
+    @Column(nullable = false)
     private String masterOid;
 
-    @Column(name = "slave_oid", nullable = false)
+    @Column(nullable = false)
     private String slaveOid;
 
 }
