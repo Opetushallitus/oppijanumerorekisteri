@@ -322,7 +322,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloReadDto getByHetu(String hetu) {
-        Henkilo henkilo = henkiloDataRepository.findByHetu(hetu)
+        Henkilo henkilo = henkiloDataRepository.findFirstByHetu(hetu)
                 .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
         return mapper.map(henkilo, HenkiloReadDto.class);
     }
