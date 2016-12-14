@@ -55,9 +55,6 @@ public class Service2ServiceController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/duplicateHenkilos", method = RequestMethod.POST) 
     public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria query) {
-        if (query.isEmpty()) {
-            throw new IllegalArgumentException("No query conditions.");
-        }
         return this.henkiloService.findHenkiloViittees(query);
     }
 }

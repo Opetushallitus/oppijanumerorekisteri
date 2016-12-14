@@ -42,6 +42,7 @@ import static org.mockito.Mockito.verify;
 
 public class HenkiloServiceTest {
     private HenkiloJpaRepository henkiloJpaRepositoryMock;
+    private HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepositoryMock;
     private HenkiloRepository henkiloDataRepositoryMock;
     private HenkiloService service;
     private OrikaConfiguration mapperMock;
@@ -64,7 +65,8 @@ public class HenkiloServiceTest {
         this.permissionCheckerMock = Mockito.mock(PermissionChecker.class);
         HenkiloUpdatePostValidator henkiloUpdatePostValidatorMock = Mockito.mock(HenkiloUpdatePostValidator.class);
 
-        this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, mapperMock,
+        this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock,
+                this.henkiloHenkiloViiteJpaRepositoryMock, mapperMock,
                 new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
                 koodistoServiceMock, this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
                 henkiloUpdatePostValidatorMock);
@@ -302,14 +304,14 @@ public class HenkiloServiceTest {
 
     @Test
     public void findHenkiloViitteesTest() {
-        given(this.henkiloJpaRepositoryMock.findHenkiloViitteesByHenkilo(any())).willReturn(singletonList(
+        given(this.henkiloHenkiloViiteJpaRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
         List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
         assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
         
-        given(this.henkiloJpaRepositoryMock.findHenkiloViitteesByHenkilo(any())).willReturn(emptyList());
+        given(this.henkiloHenkiloViiteJpaRepositoryMock.findBy(any())).willReturn(emptyList());
         results = this.service.findHenkiloViittees(new HenkiloCriteria());
         assertThat(results.size()).isEqualTo(0);
     }

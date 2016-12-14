@@ -4,7 +4,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import lombok.*;
-import org.joda.time.DateTime;
 
 import java.util.Set;
 
@@ -16,11 +15,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class HenkiloCriteria {
     private Set<String> henkiloOids;
-    private DateTime modifiedSince;
-    
-    public boolean isEmpty() {
-        return henkiloOids == null && modifiedSince == null;
-    }
     
     public BooleanExpression condition(QHenkilo henkilo) {
         BooleanExpression condition = Expressions.TRUE.eq(true);
@@ -28,11 +22,7 @@ public class HenkiloCriteria {
             if (henkiloOids.isEmpty()) {
                 return Expressions.FALSE;
             }
-            condition = condition.and(henkilo.oidhenkilo.in(henkiloOids));
-        }
-        if (modifiedSince != null) {
-            condition = condition.and(henkilo.muokkausPvm.goe(modifiedSince.toDate())
-                .or(henkilo.luontiPvm.goe(modifiedSince.toDate())));
+            condition = condition.and(henkilo.oidHenkilo.in(henkiloOids));
         }
         return condition;
     }

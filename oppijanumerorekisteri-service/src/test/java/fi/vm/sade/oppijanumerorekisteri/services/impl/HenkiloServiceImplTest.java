@@ -4,31 +4,26 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
-import java.util.Optional;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import org.mockito.Mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import org.mockito.runners.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HenkiloServiceImplTest {
@@ -37,6 +32,8 @@ public class HenkiloServiceImplTest {
 
     @Mock
     private HenkiloJpaRepository henkiloJpaRepository;
+    @Mock
+    private HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepository;
     @Mock
     private HenkiloRepository henkiloRepository;
     @Mock
@@ -62,7 +59,7 @@ public class HenkiloServiceImplTest {
 
     @Before
     public void setup() {
-        impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository,
+        impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloHenkiloViiteJpaRepository,
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
                 userDetailsHelper, kielisyysRepository, koodistoService,
                 kansalaisuusRepository, identificationRepository,

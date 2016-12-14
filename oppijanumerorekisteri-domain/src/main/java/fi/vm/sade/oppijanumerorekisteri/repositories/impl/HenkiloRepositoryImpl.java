@@ -5,20 +5,14 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StringType;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -160,61 +154,5 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .where(qHenkiloViite.masterOid.eq(qHenkilo.oidHenkilo))
                 .where(qHenkiloViite.slaveOid.eq(henkiloOid))
                 .select(qHenkilo).fetchFirst());
-    }
-
-    @Override
-    public List<HenkiloViiteDto> findHenkiloViitteesByHenkilo(HenkiloCriteria query) {
-        Where where = buildSqlConditions(query, "h");
-        SQLQuery q = em.unwrap(Session.class)
-            .createSQLQuery("WITH RECURSIVE hierarchy(root, masterOid, slaveOid) AS (\n" +
-                    "    WITH RECURSIVE masters(depth, masterOid, slaveOid) AS (\n" +
-                    "        -- select matching henkilos with viittees to any direction\n" +
-                    "        SELECT 0 as depth,\n" +
-                    "               v.master_oid as masterOid,\n" +
-                    "               v.slave_oid as slaveOid\n" +
-                    "        FROM henkilo h INNER JOIN henkiloviite v ON v.master_oid = h.oidhenkilo\n" +
-                    "              OR v.slave_oid = h.oidhenkilo\n" +
-                    "        " + where + "\n" +
-                    "        -- and union to their masters...\n" +
-                    "        UNION ALL SELECT h.depth+1 as depth,\n" +
-                    "                          v.master_oid as masterOid,\n" +
-                    "                          v.slave_oid as slaveOid\n" +
-                    "           FROM masters h INNER JOIN henkiloviite v ON h.masterOid = v.slave_oid\n" +
-                    "          WHERE h.depth < 20 -- prevent infinite loops if present in db\n" +
-                    "    ) -- selecting the masters that...\n" +
-                    "    SELECT DISTINCT true as root, m.masterOid, m.slaveOid FROM masters m\n" +
-                    "      -- do not have any more masters themselves:\n" +
-                    "      WHERE NOT EXISTS(SELECT m2.* FROM henkiloviite m2 WHERE m2.slave_oid = m.masterOid)\n" +
-                    "    -- ...and then to the slave direction all the way down:\n" +
-                    "    UNION ALL SELECT false as root,\n" +
-                    "                v.master_oid as masterOid, \n" +
-                    "                v.slave_oid as slaveOid\n" +
-                    "    FROM hierarchy h, henkiloviite v \n" +
-                    "        WHERE (-- cause we possibly have one matching branch, allow navigation to different one from root\n" +
-                    "             (h.masterOid = v.master_oid AND h.slaveOid != v.slave_oid AND h.root))\n" +
-                    "        OR (h.slaveOid = v.master_oid)\n" +
-                    ") SELECT DISTINCT hierarchy.masterOid as \"masterOid\", \n" +
-                    "        hierarchy.slaveOid as \"henkiloOid\"\n" +
-                    " FROM hierarchy \n" +
-                    "  ORDER BY hierarchy.masterOid, hierarchy.slaveOid ");
-        q.setResultTransformer(new AliasToBeanResultTransformer(HenkiloViiteDto.class));
-        return (List<HenkiloViiteDto>) where.apply(q).list();
-    }
-    
-    private Where buildSqlConditions(HenkiloCriteria query, String h) {
-        Where where = new Where();
-        if (query.getHenkiloOids() != null) {
-            if (query.getHenkiloOids().isEmpty()) {
-                where.conditions.add("(TRUE = FALSE)"); // Hibernate does not support Postgre's plain FALSE
-            } else {
-                where.conditions.add(h+".oidhenkilo in (:oids)");
-                where.parameterSetters.add(q -> q.setParameterList("oids", query.getHenkiloOids(), StringType.INSTANCE));
-            }
-        }
-        if (query.getModifiedSince() != null) {
-            where.conditions.add("("+h+".created >= :modifiedSince OR "+h+".modified >= :modifiedSince)");
-            where.parameterSetters.add(q -> q.setTimestamp("modifiedSince", query.getModifiedSince().toDate()));
-        }
-        return where;
     }
 }

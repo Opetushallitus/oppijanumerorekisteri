@@ -2,10 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
@@ -27,24 +27,26 @@ import static java.util.Optional.ofNullable;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
-    private HenkiloJpaRepository henkiloJpaRepository;
-    private HenkiloRepository henkiloDataRepository;
-    private KielisyysRepository kielisyysRepository;
-    private KansalaisuusRepository kansalaisuusRepository;
-    private IdentificationRepository identificationRepository;
+    private final HenkiloJpaRepository henkiloJpaRepository;
+    private final HenkiloRepository henkiloDataRepository;
+    private final HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepository;
+    private final KielisyysRepository kielisyysRepository;
+    private final KansalaisuusRepository kansalaisuusRepository;
+    private final IdentificationRepository identificationRepository;
 
-    private YhteystietoConverter yhteystietoConverter;
-    private OrikaConfiguration mapper;
-    private OidGenerator oidGenerator;
-    private UserDetailsHelper userDetailsHelper;
-    private PermissionChecker permissionChecker;
-    private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
+    private final YhteystietoConverter yhteystietoConverter;
+    private final OrikaConfiguration mapper;
+    private final OidGenerator oidGenerator;
+    private final UserDetailsHelper userDetailsHelper;
+    private final PermissionChecker permissionChecker;
+    private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
 
-    private KoodistoService koodistoService;
+    private final KoodistoService koodistoService;
 
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
                               HenkiloRepository henkiloDataRepository,
+                              HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepository,
                               OrikaConfiguration mapper,
                               YhteystietoConverter yhteystietoConverter,
                               OidGenerator oidGenerator,
@@ -57,6 +59,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
+        this.henkiloHenkiloViiteJpaRepository = henkiloHenkiloViiteJpaRepository;
         this.yhteystietoConverter = yhteystietoConverter;
         this.mapper = mapper;
         this.oidGenerator = oidGenerator;
@@ -254,8 +257,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria query) {
-        return this.henkiloJpaRepository.findHenkiloViitteesByHenkilo(query);
+    public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria) {
+        return this.henkiloHenkiloViiteJpaRepository.findBy(criteria);
     }
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {

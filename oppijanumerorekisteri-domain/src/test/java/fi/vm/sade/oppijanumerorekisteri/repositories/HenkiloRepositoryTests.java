@@ -3,16 +3,12 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +25,6 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSO
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // NOTE: Model validators have separate test.
@@ -289,98 +281,5 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         // then by date
         assertThat(retrievedHenkilos.get(2).getOidHenkilo()).isEqualTo("1.2.3.4.7");
         assertThat(retrievedHenkilos.get(3).getOidHenkilo()).isEqualTo("1.2.3.4.5");
-    }
-
-    @Test
-    public void findHenkiloViitteesByHenkilo() {
-        DateTime inHistory = new DateTime().minusYears(1),
-            lastWeek = new DateTime().minusWeeks(1),
-            yesterday = new DateTime().minusDays(1);
-        
-        populate(henkilo("CHILD1").created(inHistory).withMaster(henkilo("ROOT").created(inHistory)));
-        populate(henkilo("LEAF1").created(inHistory).withMaster(henkilo("CHILD2").created(inHistory).withMaster(henkilo("ROOT"))));
-        populate(henkilo("UNRELATED_CHILD").created(inHistory).modified(lastWeek).withMaster(henkilo("ROOT2").created(inHistory)));
-        populate(henkilo("CHILD3").created(yesterday).withMaster(henkilo("ROOT3").created(inHistory)));
-        
-        // Search by second child:
-        List<HenkiloViiteDto> results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("LEAF1"))).build());
-        assertThat(results).hasSize(3);
-        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "LEAF1");
-        assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
-                .contains("ROOT", "CHILD2");
-
-        // Search by root:
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("ROOT"))).build());
-        assertThat(results).hasSize(3);
-        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "LEAF1");
-        
-        // Search by middle child:
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("CHILD1"))).build());
-        assertThat(results).hasSize(3);
-        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "LEAF1");
-        
-        // Search by creation date:
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .modifiedSince(yesterday).build());
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0)).matches(r -> "ROOT3".equals(r.getMasterOid())
-                && "CHILD3".equals(r.getHenkiloOid()));
-        // and modification date (combined with last one):
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .modifiedSince(lastWeek).build());
-        assertThat(results).hasSize(2);
-        // also ensure predictable order of results:
-        assertThat(results.get(0)).matches(r -> "ROOT2".equals(r.getMasterOid())
-                && "UNRELATED_CHILD".equals(r.getHenkiloOid()));
-        assertThat(results.get(1)).matches(r -> "ROOT3".equals(r.getMasterOid())
-                && "CHILD3".equals(r.getHenkiloOid()));
-        
-        // Search by both:
-        assertThat(this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("UNRELATED_CHILD"))).modifiedSince(yesterday).build())).hasSize(0);
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("UNRELATED_CHILD"))).modifiedSince(lastWeek).build());
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0)).matches(r -> "ROOT2".equals(r.getMasterOid())
-                && "UNRELATED_CHILD".equals(r.getHenkiloOid()));
-        
-        // Search without search terms (returns all graphs):
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(new HenkiloCriteria());
-        assertThat(results).hasSize(5);
-        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "LEAF1", "UNRELATED_CHILD", "CHILD3");
-        
-        // Cause CHILD2 to have two masters (ROOT and ROOT3):
-        HenkiloViite doubleParent = new HenkiloViite();
-        doubleParent.setMasterOid("CHILD2");
-        doubleParent.setSlaveOid("ROOT3");
-        em.persist(doubleParent);
-        
-        // This would work as well:
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("LEAF1"))).build());
-        assertThat(results).hasSize(5);
-        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "LEAF1", "CHILD3");
-        assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
-                .contains("ROOT", "ROOT3");
-        
-        // Cause an invalid loop in the graph:
-        HenkiloViite invalidViite = new HenkiloViite();
-        invalidViite.setMasterOid("LEAF1");
-        invalidViite.setSlaveOid("ROOT");
-        em.persist(invalidViite);
-        
-        // This query will still not hang but only return graphs without the loop containing graph:
-        results = this.jpaRepository.findHenkiloViitteesByHenkilo(new HenkiloCriteria());
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0)).matches(r -> "ROOT2".equals(r.getMasterOid())
-                        && "UNRELATED_CHILD".equals(r.getHenkiloOid()));
     }
 }

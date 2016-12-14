@@ -85,11 +85,11 @@ public class HenkiloPopulator implements Populator<Henkilo> {
         if (masterHenkilo.isPresent()) {
             Populator.firstOptional(entityManager.createQuery("select v from HenkiloViite v " +
                     "   where v.masterOid = :masterOid and v.slaveOid = :slaveOid")
-                            .setParameter("masterOid", masterHenkilo.get().getOidhenkilo())
-                            .setParameter("slaveOid", result.getOidhenkilo())).orElseGet(() -> {
+                            .setParameter("masterOid", masterHenkilo.get().getOidHenkilo())
+                            .setParameter("slaveOid", result.getOidHenkilo())).orElseGet(() -> {
                 HenkiloViite viite = new HenkiloViite();
-                viite.setMasterOid(masterHenkilo.get().getOidhenkilo());
-                viite.setSlaveOid(result.getOidhenkilo());
+                viite.setMasterOid(masterHenkilo.get().getOidHenkilo());
+                viite.setSlaveOid(result.getOidHenkilo());
                 entityManager.persist(viite);
                 return viite;
             });

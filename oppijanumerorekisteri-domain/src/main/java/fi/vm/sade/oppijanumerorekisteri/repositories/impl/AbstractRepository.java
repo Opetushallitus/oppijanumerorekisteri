@@ -36,6 +36,7 @@ public class AbstractRepository {
         }
 
         public String toConditionString() {
+            // plain TRUE would not work in JPA query
             return conditions.isEmpty() ? "(1=1)" : "("+conditionsString()+")";
         }
 
