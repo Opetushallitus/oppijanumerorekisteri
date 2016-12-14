@@ -76,7 +76,7 @@ public class Service2ServiceController {
         HenkiloPerustietoDto returnDto = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
         if(returnDto.isCreated()) {
             return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
-                    + returnDto.getOidhenkilo())).body(returnDto);
+                    + returnDto.getOidHenkilo())).body(returnDto);
         }
         else {
             return ResponseEntity.ok(returnDto);

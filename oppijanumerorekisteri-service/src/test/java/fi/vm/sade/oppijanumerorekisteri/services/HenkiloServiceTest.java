@@ -337,7 +337,7 @@ public class HenkiloServiceTest {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.singletonList(henkiloPerustietoDtoMock.getOidhenkilo())))
+        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloPerustietoDtoMock.getOidHenkilo())))
                 .willReturn(Collections.singletonList(henkilo));
         assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock))
                 .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
@@ -350,7 +350,7 @@ public class HenkiloServiceTest {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
-        given(this.henkiloDataRepositoryMock.findByOidhenkiloIsIn(Collections.emptyList()))
+        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.emptyList()))
                 .willReturn(Collections.singletonList(henkilo));
         this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock);
     }

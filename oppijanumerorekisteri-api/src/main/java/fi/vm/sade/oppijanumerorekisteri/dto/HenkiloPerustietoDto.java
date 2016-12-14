@@ -56,34 +56,34 @@ public class HenkiloPerustietoDto implements Serializable {
     @JsonIgnore
     @AssertTrue(message = "invalid.hetu.empty")
     public boolean isOidExistsIfHetuEmpty() {
-        return !StringUtils.isEmpty(this.getOidhenkilo()) || (!StringUtils.isEmpty(this.getHetu()));
+        return !StringUtils.isEmpty(this.getOidHenkilo()) || (!StringUtils.isEmpty(this.getHetu()));
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.etunimet.empty")
     public boolean isEtunimetValidIfCreate() {
-        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+        return !StringUtils.isEmpty(this.getOidHenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getEtunimet()));
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.kutsumanimi.empty")
     public boolean isKutsumanimiValidIfCreate() {
-        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+        return !StringUtils.isEmpty(this.getOidHenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getKutsumanimi()));
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.sukunimi.empty")
     public boolean isSukunimiValidIfCreate() {
-        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
+        return !StringUtils.isEmpty(this.getOidHenkilo()) ||
                 (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getSukunimi()));
     }
 
     @JsonIgnore
     @AssertTrue(message = "invalid.henkilotyyppi.empty")
     public boolean isHenkilotyyppiValidIfCreate() {
-        return !StringUtils.isEmpty(this.getOidhenkilo()) ||
-                (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getHenkilotyyppi()));
+        return !StringUtils.isEmpty(this.getOidHenkilo()) ||
+                (!StringUtils.isEmpty(this.getHetu()) && !StringUtils.isEmpty(this.getHenkiloTyyppi()));
     }
 }
