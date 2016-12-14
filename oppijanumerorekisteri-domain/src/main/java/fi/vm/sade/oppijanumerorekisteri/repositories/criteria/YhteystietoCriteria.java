@@ -24,7 +24,7 @@ public class YhteystietoCriteria {
     public BooleanExpression condition(QHenkilo henkilo, QYhteystiedotRyhma ryhma, QYhteystieto yhteystieto) {
         BooleanExpression condition = Expressions.TRUE.eq(true);
         if (henkiloOidEquals != null) {
-            condition = condition.and(henkilo.oidhenkilo.eq(henkiloOidEquals));
+            condition = condition.and(henkilo.oidHenkilo.eq(henkiloOidEquals));
         }
         if (ryhmaKuvausEquals != null) {
             condition = condition.and(ryhma.ryhmaKuvaus.eq(ryhmaKuvausEquals));

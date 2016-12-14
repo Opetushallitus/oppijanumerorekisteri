@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HenkiloUpdateDto {
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     private String etunimet;
 
@@ -32,7 +32,7 @@ public class HenkiloUpdateDto {
     private String hetu;
 
     @NotNull
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     private Date syntymaaika;
 
@@ -45,7 +45,7 @@ public class HenkiloUpdateDto {
     private String kasittelijaOid;
 
     @ValidateAsiointikieli
-    private KielisyysDto asiointikieli;
+    private KielisyysDto asiointiKieli;
 
     private KielisyysDto aidinkieli;
 

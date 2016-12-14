@@ -21,15 +21,15 @@ public class KielisyysMapperTest {
     public void KielisyysToKielisyysDto() {
         Kielisyys kielisyys = EntityUtils.createKielisyys("fi", "suomi");
         KielisyysDto kielisyysDto = modelmapper.map(kielisyys, KielisyysDto.class);
-        assertThat(kielisyysDto.getKielikoodi()).isEqualTo("fi");
-        assertThat(kielisyysDto.getKielityyppi()).isEqualTo("suomi");
+        assertThat(kielisyysDto.getKieliKoodi()).isEqualTo("fi");
+        assertThat(kielisyysDto.getKieliTyyppi()).isEqualTo("suomi");
     }
 
     @Test
     public void KielisyysDtoToKielisyys() {
         KielisyysDto kielisyysDto = DtoUtils.createKielisyysDto("fi", "suomi");
         Kielisyys kielisyys = modelmapper.map(kielisyysDto, Kielisyys.class);
-        assertThat(kielisyys.getKielikoodi()).isEqualTo("fi");
-        assertThat(kielisyys.getKielityyppi()).isEqualTo("suomi");
+        assertThat(kielisyys.getKieliKoodi()).isEqualTo("fi");
+        assertThat(kielisyys.getKieliTyyppi()).isEqualTo("suomi");
     }
 }

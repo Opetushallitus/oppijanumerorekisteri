@@ -1,20 +1,26 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * Duplikaattien henkilöiden tunnistamiseen.
+ */
+@Entity
+@Table(name = "henkiloviite", schema = "public")
 @Getter
 @Setter
-@Entity
-@Table(name = "henkiloviite")
 public class HenkiloViite extends IdentifiableAndVersionedEntity {
-    @Column(name = "master_oid", nullable = false)
+
+    private static final long serialVersionUID = 1L;
+
+    @Column(nullable = false)
     private String masterOid;
-    
-    @Column(name = "slave_oid", nullable = false)
+
+    @Column(nullable = false)
     private String slaveOid;
+
 }

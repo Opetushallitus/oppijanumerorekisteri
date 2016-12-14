@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class HenkiloOidHetuNimiDto implements Serializable {
     private static final long serialVersionUID = -1898692955251746384L;
 
-    private String oidhenkilo;
+    private String oidHenkilo;
 
     @ValidateHetu
     private String hetu;

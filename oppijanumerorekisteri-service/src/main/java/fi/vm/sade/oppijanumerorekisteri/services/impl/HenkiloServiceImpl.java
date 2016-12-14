@@ -80,7 +80,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public boolean getOidExists(String oid) {
-        Predicate searchPredicate = QHenkilo.henkilo.oidhenkilo.eq(oid);
+        Predicate searchPredicate = QHenkilo.henkilo.oidHenkilo.eq(oid);
         return this.henkiloDataRepository.exists(searchPredicate);
     }
 
@@ -99,7 +99,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloDto> getHenkilosByOids(List<String> oids) {
-        return this.mapper.mapAsList(this.henkiloDataRepository.findByOidhenkiloIsIn(oids), HenkiloDto.class);
+        return this.mapper.mapAsList(this.henkiloDataRepository.findByOidHenkiloIsIn(oids), HenkiloDto.class);
     }
 
 
@@ -144,8 +144,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw errors;
         }
 
-        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidhenkiloIsIn(
-                    Lists.newArrayList(henkiloUpdateDto.getOidhenkilo()))
+        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
+                    Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
         henkiloUpdateDto.setMuokkausPvm(new Date());
@@ -153,7 +153,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .orElseThrow(UserHasNoOidException::new));
 
         // Do not update all values if henkilo is already vtj yksiloity
-        if (henkiloSaved.isYksiloityvtj()) {
+        if (henkiloSaved.isYksiloityVTJ()) {
             henkiloUpdateDto.setEtunimet(null);
             henkiloUpdateDto.setSukunimi(null);
             henkiloUpdateDto.setSukupuoli(null);
@@ -182,26 +182,26 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setYhteystiedotRyhmas(null);
         }
 
-        if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKielikoodi() != null) {
-            henkiloSaved.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAidinkieli().getKielikoodi())
+        if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKieliKoodi() != null) {
+            henkiloSaved.setAidinkieli(this.kielisyysRepository.findByKieliKoodi(henkiloUpdateDto.getAidinkieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
             henkiloUpdateDto.setAidinkieli(null);
         }
-        if (henkiloUpdateDto.getAsiointikieli() != null && henkiloUpdateDto.getAsiointikieli().getKielikoodi() != null) {
-            henkiloSaved.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloUpdateDto.getAsiointikieli().getKielikoodi())
+        if (henkiloUpdateDto.getAsiointiKieli() != null && henkiloUpdateDto.getAsiointiKieli().getKieliKoodi() != null) {
+            henkiloSaved.setAsiointiKieli(this.kielisyysRepository.findByKieliKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
-            henkiloUpdateDto.setAsiointikieli(null);
+            henkiloUpdateDto.setAsiointiKieli(null);
         }
         if (henkiloUpdateDto.getKielisyys() != null) {
             henkiloSaved.clearKielisyys();
-            henkiloUpdateDto.getKielisyys().forEach(kielisyysDto -> henkiloSaved.addKielisyys(this.kielisyysRepository.findByKielikoodi(kielisyysDto.getKielikoodi())
+            henkiloUpdateDto.getKielisyys().forEach(kielisyysDto -> henkiloSaved.addKielisyys(this.kielisyysRepository.findByKieliKoodi(kielisyysDto.getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.kielisyys"))));
             henkiloUpdateDto.setKielisyys(null);
         }
 
         if (henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
-                    .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
+                    .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
                             .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toCollection(HashSet::new));
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
@@ -259,25 +259,25 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {
-        henkiloCreate.setOidhenkilo(getFreePersonOid());
-        henkiloCreate.setLuontiPvm(new Date());
-        henkiloCreate.setMuokkausPvm(henkiloCreate.getLuontiPvm());
+        henkiloCreate.setOidHenkilo(getFreePersonOid());
+        henkiloCreate.setCreated(new Date());
+        henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new));
 
-        if (henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKielikoodi() != null) {
-            henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAidinkieli().getKielikoodi())
+        if (henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKieliKoodi() != null) {
+            henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAidinkieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
         }
-        if (henkiloCreate.getAsiointikieli() != null && henkiloCreate.getAsiointikieli().getKielikoodi() != null) {
-            henkiloCreate.setAsiointikieli(this.kielisyysRepository.findByKielikoodi(henkiloCreate.getAsiointikieli().getKielikoodi())
+        if (henkiloCreate.getAsiointiKieli() != null && henkiloCreate.getAsiointiKieli().getKieliKoodi() != null) {
+            henkiloCreate.setAsiointiKieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAsiointiKieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
         }
         if (henkiloCreate.getKansalaisuus() != null) {
             this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
-                    .map(k -> this.kansalaisuusRepository.findByKansalaisuuskoodi(k.getKansalaisuuskoodi())
-                        .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
+                    .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
+                            .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toSet());
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }
@@ -291,6 +291,29 @@ public class HenkiloServiceImpl implements HenkiloService {
             return getFreePersonOid();
         }
         return newOid;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloReadDto getMasterByOid(String henkiloOid) {
+        Henkilo henkilo = henkiloJpaRepository
+                .findMasterBySlaveOid(henkiloOid)
+                .orElseGet(() -> getEntityByOid(henkiloOid));
+        return mapper.map(henkilo, HenkiloReadDto.class);
+    }
+
+    private Henkilo getEntityByOid(String henkiloOid) {
+        return henkiloDataRepository
+                .findByOidHenkilo(henkiloOid)
+                .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt OID:lla " + henkiloOid));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloReadDto getByHetu(String hetu) {
+        Henkilo henkilo = henkiloDataRepository.findByHetu(hetu)
+                .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
+        return mapper.map(henkilo, HenkiloReadDto.class);
     }
 
 }

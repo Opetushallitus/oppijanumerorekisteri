@@ -21,9 +21,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class Kielisyys extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = -2129513559888443220L;
 
-    private String kielikoodi;
+    @Column(name = "kielikoodi")
+    private String kieliKoodi;
 
-    private String kielityyppi;
+    @Column(name = "kielityyppi")
+    private String kieliTyyppi;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "kielisyys")
     private Set<Henkilo> henkilos = new HashSet<>();

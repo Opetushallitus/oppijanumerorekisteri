@@ -21,7 +21,7 @@ import java.util.*;
         @NamedEntityGraph(
                 name = "henkiloDto",
                 attributeNodes = {
-                        @NamedAttributeNode("asiointikieli"),
+                        @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
                         @NamedAttributeNode("kielisyys"),
                         @NamedAttributeNode("kansalaisuus")
@@ -32,16 +32,16 @@ import java.util.*;
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
 
-    @Column(nullable = false)
-    private String oidhenkilo;
+    @Column(name = "oidhenkilo", nullable = false)
+    private String oidHenkilo;
 
     // This constraint is actually not set in db level
     @Column(unique = true)
     private String hetu;
 
-    @Column(nullable = false)
+    @Column(name = "henkilotyyppi", nullable = false)
     @Enumerated(EnumType.STRING)
-    private HenkiloTyyppi henkilotyyppi;
+    private HenkiloTyyppi henkiloTyyppi;
 
     private String etunimet;
 
@@ -55,17 +55,17 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asiointikieli_id")
-    private Kielisyys asiointikieli;
+    private Kielisyys asiointiKieli;
 
     @NotNull
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date luontiPvm;
+    private Date created;
 
     @NotNull
     @Column(name = "modified")
     @Temporal(TemporalType.TIMESTAMP) 
-    private Date muokkausPvm;
+    private Date modified;
 
     @Column(name = "vtjsync_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -78,7 +78,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private boolean yksiloity;
 
     @Column(nullable = false)
-    private boolean yksiloityvtj;
+    private boolean yksiloityVTJ;
 
     @Column(nullable = false)
     private boolean yksilointiYritetty;
@@ -86,8 +86,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean duplicate;
 
-    @Column(nullable = false)
-    private boolean eisuomalaistahetua;
+    @Column(name = "eisuomalaistahetua", nullable = false)
+    private boolean eiSuomalaistaHetua;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
@@ -102,7 +102,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
     @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
-    private Set<YhteystiedotRyhma> yhteystiedotRyhmas = new HashSet<>();
+    private Set<YhteystiedotRyhma> yhteystiedotRyhma = new HashSet<>();
 
     @Column(name = "kasittelija")
     private String kasittelijaOid;
@@ -129,11 +129,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Set<ExternalId> externalIds = new HashSet<>();
 
     public void clearYhteystiedotRyhmas() {
-        this.yhteystiedotRyhmas.clear();
+        this.yhteystiedotRyhma.clear();
     }
 
     public void addYhteystiedotRyhma(YhteystiedotRyhma yhteystiedotRyhma) {
-        this.yhteystiedotRyhmas.add(yhteystiedotRyhma);
+        this.yhteystiedotRyhma.add(yhteystiedotRyhma);
     }
 
     public void clearKielisyys() {

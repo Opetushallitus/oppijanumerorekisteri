@@ -63,17 +63,17 @@ public class Service2ServiceControllerTest  {
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                         "  {\n" +
-                        "    \"oidhenkilo\": \"0.0.0.0.1\",\n" +
+                        "    \"oidHenkilo\": \"0.0.0.0.1\",\n" +
                         "    \"hetu\": \"111111-111\",\n" +
                         "    \"vtjsynced\": 1420063200000\n" +
                         "  },\n" +
                         "  {\n" +
-                        "    \"oidhenkilo\": \"0.0.0.0.2\",\n" +
+                        "    \"oidHenkilo\": \"0.0.0.0.2\",\n" +
                         "    \"hetu\": \"111111-112\",\n" +
                         "    \"vtjsynced\": 0\n" +
                         "  },\n" +
                         "  {\n" +
-                        "    \"oidhenkilo\": \"0.0.0.0.3\",\n" +
+                        "    \"oidHenkilo\": \"0.0.0.0.3\",\n" +
                         "    \"hetu\": \"111111-113\",\n" +
                         "    \"vtjsynced\": 0\n" +
                         "  }\n" +

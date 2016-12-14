@@ -30,9 +30,9 @@ public class HenkiloMapperTest {
         assertThat(henkiloPerustietoDto.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkiloPerustietoDto.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkiloPerustietoDto.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkiloPerustietoDto.getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(henkiloPerustietoDto.getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkiloPerustietoDto.getAidinkieli().getKielityyppi()).isEqualTo("suomi");
+        assertThat(henkiloPerustietoDto.getOidHenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(henkiloPerustietoDto.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(henkiloPerustietoDto.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
         assertThat(henkiloPerustietoDto.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
@@ -45,9 +45,9 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkilo.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkilo.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkilo.getOidhenkilo()).isEqualTo("1.2.3.4.5");
-        assertThat(henkilo.getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkilo.getAidinkieli().getKielityyppi()).isEqualTo("suomi");
+        assertThat(henkilo.getOidHenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(henkilo.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(henkilo.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
         assertThat(henkilo.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
@@ -60,7 +60,7 @@ public class HenkiloMapperTest {
         assertThat(henkiloOidHetuNimiDto.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkiloOidHetuNimiDto.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkiloOidHetuNimiDto.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkiloOidHetuNimiDto.getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(henkiloOidHetuNimiDto.getOidHenkilo()).isEqualTo("1.2.3.4.5");
     }
 
     @Test
@@ -71,7 +71,7 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkilo.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkilo.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkilo.getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(henkilo.getOidHenkilo()).isEqualTo("1.2.3.4.5");
     }
 
     @Test
@@ -83,14 +83,14 @@ public class HenkiloMapperTest {
         assertThat(henkiloDto.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkiloDto.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkiloDto.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkiloDto.getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(henkiloDto.getOidHenkilo()).isEqualTo("1.2.3.4.5");
         assertThat(henkiloDto.isPassivoitu()).isFalse();
-        assertThat(henkiloDto.getHenkilotyyppi()).isEqualTo(HenkiloTyyppi.OPPIJA);
-        assertThat(henkiloDto.getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkiloDto.getAidinkieli().getKielityyppi()).isEqualTo("suomi");
-        assertThat(henkiloDto.getKielisyys().iterator().next().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkiloDto.getKielisyys().iterator().next().getKielityyppi()).isEqualTo("suomi");
-        assertThat(henkiloDto.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(henkiloDto.getHenkiloTyyppi()).isEqualTo(HenkiloTyyppi.OPPIJA);
+        assertThat(henkiloDto.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(henkiloDto.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(henkiloDto.getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("fi");
+        assertThat(henkiloDto.getKielisyys().iterator().next().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(henkiloDto.getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
         assertThat(henkiloDto.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
@@ -103,13 +103,11 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
         assertThat(henkilo.getSukunimi()).isEqualTo("kuutio");
         assertThat(henkilo.getHetu()).isEqualTo("123456-9999");
-        assertThat(henkilo.getOidhenkilo()).isEqualTo("1.2.3.4.5");
+        assertThat(henkilo.getOidHenkilo()).isEqualTo("1.2.3.4.5");
         assertThat(henkilo.isPassivoitu()).isFalse();
-        assertThat(henkilo.getAidinkieli().getKielikoodi()).isEqualTo("fi");
-        assertThat(henkilo.getAidinkieli().getKielityyppi()).isEqualTo("suomi");
-//        assertThat(henkilo.getKielisyys().iterator().next().getKielikoodi()).isEqualTo("fi");
-//        assertThat(henkilo.getKielisyys().iterator().next().getKielityyppi()).isEqualTo("suomi");
-        assertThat(henkilo.getKansalaisuus().iterator().next().getKansalaisuuskoodi()).isEqualTo("246");
+        assertThat(henkilo.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(henkilo.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(henkilo.getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
         assertThat(henkilo.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 

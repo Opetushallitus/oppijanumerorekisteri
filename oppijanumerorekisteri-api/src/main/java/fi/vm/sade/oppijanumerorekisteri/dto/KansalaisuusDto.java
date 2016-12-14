@@ -10,5 +10,5 @@ import java.io.Serializable;
 public class KansalaisuusDto implements Serializable {
     private static final long serialVersionUID = -1616181528688301217L;
 
-    private String kansalaisuuskoodi;
+    private String kansalaisuusKoodi;
 }

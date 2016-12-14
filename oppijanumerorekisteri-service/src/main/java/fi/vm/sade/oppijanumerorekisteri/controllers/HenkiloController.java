@@ -91,7 +91,7 @@ public class HenkiloController {
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                           ExternalPermissionService permissionService) throws BindException {
-        return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidhenkilo();
+        return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidHenkilo();
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
@@ -127,6 +127,25 @@ public class HenkiloController {
         return henkiloService.getHenkilosByOids(Collections.singletonList(oid)).get(0);
     }
 
+    @ApiOperation(value = "Henkilön haku OID:n perusteella.",
+            notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/{oid}/master", method = RequestMethod.GET)
+    public HenkiloReadDto getMasterByOid(@PathVariable String oid,
+            @RequestHeader(value = "External-Permission-Service", required = false)
+                    ExternalPermissionService permissionService) {
+        return henkiloService.getMasterByOid(oid);
+    }
+
+    @ApiOperation("Henkilön haku henkilötunnuksen perusteella.")
+    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/hetu={hetu}", method = RequestMethod.GET)
+    public HenkiloReadDto getByHetu(@PathVariable String hetu,
+            @RequestHeader(value = "External-Permission-Service", required = false)
+                    ExternalPermissionService permissionService) {
+        return henkiloService.getByHetu(hetu);
+    }
+
     // PROXY
     @ApiOperation(value = "Henkilö luonti",
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
@@ -136,7 +155,7 @@ public class HenkiloController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createHenkiloFromHenkiloDto(@RequestBody @Validated(NewHenkilo.class) HenkiloDto henkilo) {
-        return this.henkiloService.createHenkiloFromHenkiloDto(henkilo).getOidhenkilo();
+        return this.henkiloService.createHenkiloFromHenkiloDto(henkilo).getOidHenkilo();
     }
 
     // PROXY, probably slower than the original
@@ -161,7 +180,7 @@ public class HenkiloController {
     @ApiOperation(value = "Hakee henkilön tiedot annetun tunnistetiedon avulla.",
             notes = "Hakee henkilön tiedot annetun tunnistetiedon avulla.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PostAuthorize("returnObject == null || @permissionChecker.isAllowedToAccessPerson(returnObject.getOidhenkilo(), " +
+    @PostAuthorize("returnObject == null || @permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo(), " +
             "{'READ', 'READ_UPDATE', 'CRUD'}, null)")
     @RequestMapping(value = "/identification", method = RequestMethod.GET)
     public HenkiloDto findByIdpAndIdentifier(@ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
@@ -180,6 +199,5 @@ public class HenkiloController {
     public List<String> findPossibleHenkiloTypes() {
         return this.henkiloService.listPossibleHenkiloTypesAccessible();
     }
-
 
 }

@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class KoodistoServiceImpl implements KoodistoService {
@@ -27,7 +25,7 @@ public class KoodistoServiceImpl implements KoodistoService {
         List<KoodiType> koodiTypeList = koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
 
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
-        if (!kansalaisuusSet.stream().map(Kansalaisuus::getKansalaisuuskoodi)
+        if (!kansalaisuusSet.stream().map(Kansalaisuus::getKansalaisuusKoodi)
                 .allMatch(kansalaisuus -> koodiTypeList.stream()
                         .anyMatch(koodi -> koodi.getKoodiArvo().equals(kansalaisuus)))) {
             throw new ValidationException("invalid_kansalaisuuskoodi");

@@ -38,5 +38,9 @@ public interface HenkiloService {
 
     List<String> listPossibleHenkiloTypesAccessible();
 
+    HenkiloReadDto getMasterByOid(String henkiloOid);
+
+    HenkiloReadDto getByHetu(String hetu);
+    
     List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria query);
 }

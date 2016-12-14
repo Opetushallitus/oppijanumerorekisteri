@@ -28,4 +28,15 @@ public interface HenkiloJpaRepository {
     List<HenkiloPerustietoDto> findByOidIn(List<String> oidList);
     
     List<HenkiloViiteDto> findHenkiloViitteesByHenkilo(HenkiloCriteria query);
+
+    /**
+     * Palauttaa henkilön master datan
+     * {@link fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite#slaveOid}:n
+     * perusteella (jos sellainen löytyy).
+     *
+     * @param henkiloOid henkilö oid
+     * @return henkilo optional
+     */
+    Optional<Henkilo> findMasterBySlaveOid(String henkiloOid);
+
 }

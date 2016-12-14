@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class KielisyysDto implements Serializable {
     private static final long serialVersionUID = 7217945009330980201L;
 
-    private String kielikoodi;
+    private String kieliKoodi;
 
-    private String kielityyppi;
+    private String kieliTyyppi;
 }
