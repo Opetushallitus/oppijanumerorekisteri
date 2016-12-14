@@ -18,6 +18,8 @@ public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaReposit
     @EntityGraph("henkiloDto")
     List<Henkilo> findByOidHenkiloIsIn(List<String> oidhenkilo);
 
+    Optional<Henkilo> findByOidHenkilo(String henkiloOid);
+
     Optional<Henkilo> findByHetu(String hetu);
 
 }

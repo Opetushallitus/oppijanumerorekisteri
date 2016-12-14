@@ -127,6 +127,25 @@ public class HenkiloController {
         return henkiloService.getHenkilosByOids(Collections.singletonList(oid)).get(0);
     }
 
+    @ApiOperation(value = "Henkilön haku OID:n perusteella.",
+            notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/{oid}/master", method = RequestMethod.GET)
+    public HenkiloReadDto getMasterByOid(@PathVariable String oid,
+            @RequestHeader(value = "External-Permission-Service", required = false)
+                    ExternalPermissionService permissionService) {
+        return henkiloService.getMasterByOid(oid);
+    }
+
+    @ApiOperation("Henkilön haku henkilötunnuksen perusteella.")
+    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/hetu={hetu}", method = RequestMethod.GET)
+    public HenkiloReadDto getByHetu(@PathVariable String hetu,
+            @RequestHeader(value = "External-Permission-Service", required = false)
+                    ExternalPermissionService permissionService) {
+        return henkiloService.getByHetu(hetu);
+    }
+
     // PROXY
     @ApiOperation(value = "Henkilö luonti",
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
@@ -180,6 +199,5 @@ public class HenkiloController {
     public List<String> findPossibleHenkiloTypes() {
         return this.henkiloService.listPossibleHenkiloTypesAccessible();
     }
-
 
 }

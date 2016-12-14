@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
@@ -138,5 +140,16 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
             }
         });
         return henkiloDtoList;
+    }
+
+    @Override
+    public Optional<Henkilo> findMasterBySlaveOid(String henkiloOid) {
+        QHenkiloViite qHenkiloViite = QHenkiloViite.henkiloViite;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        return Optional.ofNullable(jpa().from(qHenkiloViite, qHenkilo)
+                .where(qHenkiloViite.masterOid.eq(qHenkilo.oidHenkilo))
+                .where(qHenkiloViite.slaveOid.eq(henkiloOid))
+                .select(qHenkilo).fetchFirst());
     }
 }

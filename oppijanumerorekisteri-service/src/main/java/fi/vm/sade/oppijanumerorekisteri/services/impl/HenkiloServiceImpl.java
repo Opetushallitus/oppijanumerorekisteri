@@ -285,4 +285,27 @@ public class HenkiloServiceImpl implements HenkiloService {
         return newOid;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloReadDto getMasterByOid(String henkiloOid) {
+        Henkilo henkilo = henkiloJpaRepository
+                .findMasterBySlaveOid(henkiloOid)
+                .orElseGet(() -> getEntityByOid(henkiloOid));
+        return mapper.map(henkilo, HenkiloReadDto.class);
+    }
+
+    private Henkilo getEntityByOid(String henkiloOid) {
+        return henkiloDataRepository
+                .findByOidHenkilo(henkiloOid)
+                .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt OID:lla " + henkiloOid));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloReadDto getByHetu(String hetu) {
+        Henkilo henkilo = henkiloDataRepository.findByHetu(hetu)
+                .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
+        return mapper.map(henkilo, HenkiloReadDto.class);
+    }
+
 }
