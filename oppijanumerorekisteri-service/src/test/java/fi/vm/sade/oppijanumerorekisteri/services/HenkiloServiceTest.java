@@ -305,7 +305,7 @@ public class HenkiloServiceTest {
     public void findOrCreateHenkiloFromPerustietoDto() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "", "fi", "suomi", "246");
-        henkiloPerustietoDtoMock.setCreated(true);
+        henkiloPerustietoDtoMock.setCreatedOnService(true);
 
         given(this.henkiloDataRepositoryMock.findFirstByHetu(henkiloPerustietoDtoMock.getHetu())).willReturn(Optional.empty());
         doAnswer(returnsFirstArg()).when(this.service).createHenkilo(any(Henkilo.class));
