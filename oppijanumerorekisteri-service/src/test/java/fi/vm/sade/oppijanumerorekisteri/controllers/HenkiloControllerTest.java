@@ -118,64 +118,6 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
-    public void findOrCreateNewHenkilo() throws Exception {
-        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-        .hetu("123456-9999").oidHenkilo("1.2.3.4.5").henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA).build();
-        String inputContent = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"081296-967T\"," +
-                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
-        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isCreated()).andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateHenkiloConstraintViolationException() throws Exception {
-        String content = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"123456-9999\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
-        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_method_argument"));
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateHenkiloDataIntegrityViolationException() throws Exception {
-        String content = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"123456-9999\"," +
-                "\"henkilotyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
-        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_persistence"));
-    }
-
-    @Test
-    @WithMockUser
-    public void createHenkiloNullHetuTest() throws Exception {
-        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .oidHenkilo("1.2.3.4.5").build();
-        String content = "{\"etunimet\": \"arpa\"," +
-                "\"kutsumanimi\": \"arpa\"," +
-                "\"sukunimi\": \"kuutio\"," +
-                "\"oidHenkilo\": \"1.2.3.4.5\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
-        this.mvc.perform(post("/henkilo/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_method_argument"));
-    }
-
-    @Test
     @WithMockUser(username = "1.2.3.4.5")
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{" +
