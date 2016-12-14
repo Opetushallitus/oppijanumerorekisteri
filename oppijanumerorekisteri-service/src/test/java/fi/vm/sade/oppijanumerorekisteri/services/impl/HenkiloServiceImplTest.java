@@ -33,7 +33,7 @@ public class HenkiloServiceImplTest {
     @Mock
     private HenkiloJpaRepository henkiloJpaRepository;
     @Mock
-    private HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepository;
+    private HenkiloViiteRepository henkiloViiteRepository;
     @Mock
     private HenkiloRepository henkiloRepository;
     @Mock
@@ -59,7 +59,7 @@ public class HenkiloServiceImplTest {
 
     @Before
     public void setup() {
-        impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloHenkiloViiteJpaRepository,
+        impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
                 userDetailsHelper, kielisyysRepository, koodistoService,
                 kansalaisuusRepository, identificationRepository,

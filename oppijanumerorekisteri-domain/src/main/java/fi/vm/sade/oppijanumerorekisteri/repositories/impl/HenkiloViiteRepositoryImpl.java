@@ -1,19 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StringType;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
 
-@Transactional(propagation = Propagation.MANDATORY)
-public class HenkiloViiteJpaRepositoryImpl extends AbstractRepository implements HenkiloViiteJpaRepository {
+public class HenkiloViiteRepositoryImpl extends AbstractRepository implements HenkiloViiteRepositoryCustom {
 
     @Override
     public List<HenkiloViiteDto> findBy(HenkiloCriteria criteria) {

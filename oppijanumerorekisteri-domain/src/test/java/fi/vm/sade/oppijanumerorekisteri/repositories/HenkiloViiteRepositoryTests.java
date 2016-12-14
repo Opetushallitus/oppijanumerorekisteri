@@ -26,10 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
 
     @Autowired
-    private HenkiloViiteJpaRepository jpaRepository;
-    
-    @Autowired
-    private HenkiloViiteRepository dataRepository;
+    private HenkiloViiteRepository henkiloViiteRepository;
     
     @Autowired
     private TestEntityManager testEntityManager;
@@ -42,7 +39,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         populate(henkilo("CHILD3").withMaster(henkilo("ROOT3")));
 
         // Search by root:
-        List<HenkiloViiteDto> results = this.jpaRepository.findBy(HenkiloCriteria.builder()
+        List<HenkiloViiteDto> results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(singletonList("ROOT"))).build());
         assertThat(results).hasSize(2);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
@@ -51,7 +48,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
                 .allMatch(isEqual("ROOT"));
 
         // Search by child:
-        results = this.jpaRepository.findBy(HenkiloCriteria.builder()
+        results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(singletonList("CHILD1"))).build());
         assertThat(results).hasSize(2);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
@@ -60,7 +57,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
                 .allMatch(isEqual("ROOT"));
 
         // Search without search terms (returns all graphs):
-        results = this.jpaRepository.findBy(new HenkiloCriteria());
+        results = this.henkiloViiteRepository.findBy(new HenkiloCriteria());
         assertThat(results).hasSize(4);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
                 .contains("CHILD1", "CHILD2", "UNRELATED_CHILD", "CHILD3");
@@ -72,7 +69,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         em.persist(doubleParent);
 
         // This would not cause errors in query:
-        results = this.jpaRepository.findBy(HenkiloCriteria.builder()
+        results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(singletonList("LEAF1"))).build());
         assertThat(results).hasSize(4);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
@@ -87,7 +84,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         em.persist(invalidViite);
 
         // This query will still not hang:
-        results = this.jpaRepository.findBy(new HenkiloCriteria());
+        results = this.henkiloViiteRepository.findBy(new HenkiloCriteria());
         assertThat(results).hasSize(4);
     }
 }

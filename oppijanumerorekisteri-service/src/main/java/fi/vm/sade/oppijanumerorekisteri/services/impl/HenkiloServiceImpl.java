@@ -29,7 +29,7 @@ import static java.util.Optional.ofNullable;
 public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloJpaRepository henkiloJpaRepository;
     private final HenkiloRepository henkiloDataRepository;
-    private final HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepository;
+    private final HenkiloViiteRepository henkiloViiteRepository;
     private final KielisyysRepository kielisyysRepository;
     private final KansalaisuusRepository kansalaisuusRepository;
     private final IdentificationRepository identificationRepository;
@@ -46,7 +46,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
                               HenkiloRepository henkiloDataRepository,
-                              HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepository,
+                              HenkiloViiteRepository henkiloViiteRepository,
                               OrikaConfiguration mapper,
                               YhteystietoConverter yhteystietoConverter,
                               OidGenerator oidGenerator,
@@ -59,7 +59,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
-        this.henkiloHenkiloViiteJpaRepository = henkiloHenkiloViiteJpaRepository;
+        this.henkiloViiteRepository = henkiloViiteRepository;
         this.yhteystietoConverter = yhteystietoConverter;
         this.mapper = mapper;
         this.oidGenerator = oidGenerator;
@@ -258,7 +258,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria) {
-        return this.henkiloHenkiloViiteJpaRepository.findBy(criteria);
+        return this.henkiloViiteRepository.findBy(criteria);
     }
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {

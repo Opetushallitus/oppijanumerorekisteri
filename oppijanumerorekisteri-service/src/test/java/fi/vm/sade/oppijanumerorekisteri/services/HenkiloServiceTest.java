@@ -42,7 +42,7 @@ import static org.mockito.Mockito.verify;
 
 public class HenkiloServiceTest {
     private HenkiloJpaRepository henkiloJpaRepositoryMock;
-    private HenkiloViiteJpaRepository henkiloHenkiloViiteJpaRepositoryMock;
+    private HenkiloViiteRepository henkiloViiteRepositoryMock;
     private HenkiloRepository henkiloDataRepositoryMock;
     private HenkiloService service;
     private OrikaConfiguration mapperMock;
@@ -66,7 +66,7 @@ public class HenkiloServiceTest {
         HenkiloUpdatePostValidator henkiloUpdatePostValidatorMock = Mockito.mock(HenkiloUpdatePostValidator.class);
 
         this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock,
-                this.henkiloHenkiloViiteJpaRepositoryMock, mapperMock,
+                this.henkiloViiteRepositoryMock, mapperMock,
                 new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
                 koodistoServiceMock, this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
                 henkiloUpdatePostValidatorMock);
@@ -304,14 +304,14 @@ public class HenkiloServiceTest {
 
     @Test
     public void findHenkiloViitteesTest() {
-        given(this.henkiloHenkiloViiteJpaRepositoryMock.findBy(any())).willReturn(singletonList(
+        given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
         List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
         assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
         
-        given(this.henkiloHenkiloViiteJpaRepositoryMock.findBy(any())).willReturn(emptyList());
+        given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(emptyList());
         results = this.service.findHenkiloViittees(new HenkiloCriteria());
         assertThat(results.size()).isEqualTo(0);
     }
