@@ -17,27 +17,26 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         // With QueryDSL's JPA version, we can't make unions :/
         Where where = buildSqlConditions(criteria, "h");
         SQLQuery query = where.apply(em.unwrap(Session.class)
-                .createSQLQuery("WITH relations AS (\n" +
-                        "  -- Select the \"main\" viite to matching henkilo (to any direction)\n" +
+                .createSQLQuery("-- Select the \"main\" viite to matching henkilo (to any direction)\n" +
                         "  SELECT DISTINCT v.master_oid as \"masterOid\",\n" +
-                        "         v.slave_oid as \"slaveOid\"\n" +
+                        "         v.slave_oid as \"henkiloOid\"\n" +
                         "  FROM henkilo h INNER JOIN henkiloviite v ON v.master_oid = h.oidhenkilo\n" +
                         "                                              OR v.slave_oid = h.oidhenkilo\n" +
+                        "      -- make sure both master and slave exist (no foreign references and non existing references do exist)\n" +
+                        "      INNER JOIN henkilo hm ON v.master_oid = hm.oidhenkilo\n" +
+                        "      INNER JOIN henkilo hs ON v.slave_oid = hs.oidhenkilo\n" +
                         "      " + where + "\n" +
                         "  -- Union with all other viittees with the same master than previous (needed given that the henkilo given matched to slave):\n" +
                         "  UNION SELECT DISTINCT v2.master_oid as \"masterOid\",\n" +
-                        "               v2.slave_oid as \"slaveOid\"\n" +
-                        "        FROM henkilo h INNER JOIN henkiloviite v ON v.master_oid = h.oidhenkilo\n" +
-                        "                                                    OR v.slave_oid = h.oidhenkilo\n" +
-                        "        INNER JOIN henkiloviite v2 ON v2.master_oid = v.master_oid AND v2.slave_oid != v.slave_oid\n" +
-                        "        " + where + "\n" +
-                        ") SELECT r.\"masterOid\" as \"masterOid\",\n" +
-                        "         r.\"slaveOid\" as \"slaveOid\"\n" +
-                        "  -- Lastly inner join to henkilös to make sure they exists (otherwise missing foreign key references make \n" +
-                        "  -- it possible for the result to contain references non existing henkilos)\n" +
-                        "  FROM relations r INNER JOIN henkilo hm ON r.\"masterOid\" = hm.oidhenkilo\n" +
-                        "    INNER JOIN henkilo hs ON r.\"slaveOid\" = hs.oidhenkilo;\n" +
-                        "ORDER BY \"masterOid\", \"slaveOid\";"));
+                        "               v2.slave_oid as \"henkiloOid\"\n" +
+                        "  FROM henkilo h INNER JOIN henkiloviite v ON v.master_oid = h.oidhenkilo\n" +
+                        "                                              OR v.slave_oid = h.oidhenkilo\n" +
+                        "      INNER JOIN henkiloviite v2 ON v2.master_oid = v.master_oid AND v2.slave_oid != v.slave_oid\n" +
+                        "      -- make sure both master and slave exist (no foreign references and non existing references do exist)\n" +
+                        "      INNER JOIN henkilo hm ON v2.master_oid = hm.oidhenkilo\n" +
+                        "      INNER JOIN henkilo hs ON v2.slave_oid = hs.oidhenkilo\n" +
+                        "      " + where + "\n" +
+                        "ORDER BY \"masterOid\", \"henkiloOid\""));
         query.setResultTransformer(new AliasToBeanResultTransformer(HenkiloViiteDto.class));
         return (List<HenkiloViiteDto>) query.list();
     }

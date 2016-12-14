@@ -80,12 +80,12 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser
     public void findDuplicateHenkilosTest() throws Exception {
+        given(this.service.findHenkiloViittees(Matchers.any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest());
-        
-        given(this.service.findHenkiloViittees(Matchers.any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
+                .andExpect(status().isOk()).andExpect(content()
+                .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{\"henkiloOids\": [\"CHILD\"]}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))

@@ -70,14 +70,14 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
 
         // This would not cause errors in query:
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("LEAF1"))).build());
-        assertThat(results).hasSize(4);
+                .henkiloOids(new HashSet<>(singletonList("CHILD2"))).build());
+        assertThat(results).hasSize(3); // just one extra row
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "CHILD3");
+                .contains("CHILD1", "CHILD2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
-                .contains("ROOT", "ROOT3");
+                .contains("ROOT");
 
-        // Cause an invalid loop in the graph:
+        // Cause an invalid loop in the graph (error in db):
         HenkiloViite invalidViite = new HenkiloViite();
         invalidViite.setMasterOid("CHILD2");
         invalidViite.setSlaveOid("ROOT");
@@ -85,6 +85,6 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
 
         // This query will still not hang:
         results = this.henkiloViiteRepository.findBy(new HenkiloCriteria());
-        assertThat(results).hasSize(4);
+        assertThat(results).hasSize(6); // just some extra rows
     }
 }
