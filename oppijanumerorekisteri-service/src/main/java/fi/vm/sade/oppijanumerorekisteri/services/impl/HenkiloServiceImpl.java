@@ -125,8 +125,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional
     public HenkiloPerustietoDto findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
         HenkiloPerustietoDto returnHenkiloPerustietoDto = null;
-        if (!StringUtils.isEmpty(henkiloPerustietoDto.getOidhenkilo())) {
-            return this.mapper.map(this.getHenkilosByOids(Collections.singletonList(henkiloPerustietoDto.getOidhenkilo()))
+        if (!StringUtils.isEmpty(henkiloPerustietoDto.getOidHenkilo())) {
+            return this.mapper.map(this.getHenkilosByOids(Collections.singletonList(henkiloPerustietoDto.getOidHenkilo()))
                             .stream().findFirst().orElseThrow(NotFoundException::new),
                     HenkiloPerustietoDto.class);
         }
