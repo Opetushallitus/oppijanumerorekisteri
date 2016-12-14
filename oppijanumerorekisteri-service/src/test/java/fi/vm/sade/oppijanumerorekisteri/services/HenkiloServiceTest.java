@@ -64,6 +64,7 @@ public class HenkiloServiceTest {
         IdentificationRepository identificationRepositoryMock = Mockito.mock(IdentificationRepository.class);
         this.permissionCheckerMock = Mockito.mock(PermissionChecker.class);
         HenkiloUpdatePostValidator henkiloUpdatePostValidatorMock = Mockito.mock(HenkiloUpdatePostValidator.class);
+        this.henkiloViiteRepositoryMock = Mockito.mock(HenkiloViiteRepository.class);
 
         this.service = new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock,
                 this.henkiloViiteRepositoryMock, mapperMock,
@@ -249,7 +250,6 @@ public class HenkiloServiceTest {
         List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible();
         assertThat(henkiloTyypit.size()).isEqualTo(1);
         assertThat(henkiloTyypit.get(0)).isEqualTo("VIRKAILIJA");
-
     }
 
     @Test
