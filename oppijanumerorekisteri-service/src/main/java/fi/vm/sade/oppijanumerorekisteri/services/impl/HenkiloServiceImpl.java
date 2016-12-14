@@ -141,7 +141,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         returnHenkiloPerustietoDto = this.mapper.map(this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class)),
                 HenkiloPerustietoDto.class);
-        returnHenkiloPerustietoDto.setCreated(true);
+        returnHenkiloPerustietoDto.setCreatedOnService(true);
         return returnHenkiloPerustietoDto;
     }
 

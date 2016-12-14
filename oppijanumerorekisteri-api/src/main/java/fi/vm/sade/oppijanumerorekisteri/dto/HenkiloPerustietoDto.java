@@ -26,7 +26,6 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private String oidHenkilo;
 
-    @Size(min = 1)
     @ValidateHetu
     private String hetu;
 
@@ -51,7 +50,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private String sukupuoli;
 
     @JsonIgnore
-    private boolean created;
+    private boolean createdOnService;
 
     @JsonIgnore
     @AssertTrue(message = "invalid.hetu.empty")
