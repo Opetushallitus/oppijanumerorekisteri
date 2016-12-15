@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
@@ -84,6 +85,15 @@ public class HenkiloControllerTest {
         given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new NotFoundException());
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void henkiloOidHetuNimiByHetuDuplicateHetus() throws Exception {
+        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new DuplicateHetuException());
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isInternalServerError())
+                .andExpect(status().reason("duplicate_hetu_undeterministic_behaviour"));
     }
 
     @Test
