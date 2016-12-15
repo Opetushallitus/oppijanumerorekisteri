@@ -113,7 +113,8 @@ public class HenkiloController {
     public HenkiloDto findByOid(@PathVariable String oid,
                                 @RequestHeader(value = "External-Permission-Service", required = false)
                                         ExternalPermissionService permissionService) {
-        return henkiloService.getHenkilosByOids(Collections.singletonList(oid)).get(0);
+        return henkiloService.getHenkilosByOids(Collections.singletonList(oid))
+                .stream().findFirst().orElseThrow(NotFoundException::new);
     }
 
     @ApiOperation(value = "Palauttaa, onko annettu henkilö OID järjestelmässä",

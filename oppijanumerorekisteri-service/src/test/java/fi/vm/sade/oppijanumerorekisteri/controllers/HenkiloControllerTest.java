@@ -23,6 +23,7 @@ import org.springframework.validation.BindException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -252,7 +253,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void findByOidNotFound() throws Exception {
         given(this.henkiloService.getHenkilosByOids(Collections.singletonList("1.2.3.4.5")))
-                .willThrow(new NotFoundException());
+                .willReturn(new ArrayList<>());
         this.mvc.perform(get("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }

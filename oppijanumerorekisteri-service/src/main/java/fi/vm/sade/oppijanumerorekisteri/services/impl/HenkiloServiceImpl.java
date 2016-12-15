@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -122,7 +123,11 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private Optional<Henkilo> getHenkiloByHetu(String hetu) {
-        return this.henkiloDataRepository.findFirstByHetu(hetu);
+        List<Henkilo> henkiloListByHetu = this.henkiloDataRepository.findByHetu(hetu);
+        if(henkiloListByHetu.size() > 1) {
+            throw new DuplicateHetuException("Duplicate hetus found. Result would be undeterministic.");
+        }
+        return henkiloListByHetu.stream().findFirst();
     }
 
     @Override
@@ -332,7 +337,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloReadDto getByHetu(String hetu) {
-        Henkilo henkilo = henkiloDataRepository.findFirstByHetu(hetu)
+        Henkilo henkilo = this.getHenkiloByHetu(hetu)
                 .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
         return mapper.map(henkilo, HenkiloReadDto.class);
     }

@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,12 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_service_argument_value") // 400 Bad Request
     @ExceptionHandler(BindException.class)
-    public void badRequestSeriviceValidationException() {
+    public void badRequestServiceValidationException() {
+    }
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "duplicate_hetu_undeterministic_behaviour")
+    @ExceptionHandler(DuplicateHetuException.class)
+    public void internalErrorDuplicateHetuException() {
     }
 
 }
