@@ -117,7 +117,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Palauttaa, onko annettu henkilö OID järjestelmässä",
-            notes = "Jos henkilö löytyy, palautuu ok (202), muuten not found (404)")
+            notes = "Jos henkilö löytyy, palautuu ok (200), muuten not found (404)")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @RequestMapping(value = "/{oid}", method = RequestMethod.HEAD)
