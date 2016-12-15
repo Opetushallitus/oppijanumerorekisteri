@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.springframework.validation.BindException;
 
 import java.util.List;
@@ -40,5 +41,6 @@ public interface HenkiloService {
     HenkiloReadDto getMasterByOid(String henkiloOid);
 
     HenkiloReadDto getByHetu(String hetu);
-
+    
+    List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria query);
 }

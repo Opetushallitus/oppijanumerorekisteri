@@ -1,12 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,5 +33,4 @@ public interface HenkiloJpaRepository {
      * @return henkilo optional
      */
     Optional<Henkilo> findMasterBySlaveOid(String henkiloOid);
-
 }

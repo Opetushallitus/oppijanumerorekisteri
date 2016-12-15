@@ -1,7 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +49,12 @@ public class Service2ServiceController {
             @RequestParam(value = "limit", required = false, defaultValue = "100")
             long limit) {
         return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp, offset, limit);
+    }
+
+    @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla (vähintään yksi rajausehto tarvitaan)")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/duplicateHenkilos", method = RequestMethod.POST) 
+    public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria query) {
+        return this.henkiloService.findHenkiloViittees(query);
     }
 }

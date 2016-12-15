@@ -2,12 +2,13 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -26,24 +27,26 @@ import static java.util.Optional.ofNullable;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
-    private HenkiloJpaRepository henkiloJpaRepository;
-    private HenkiloRepository henkiloDataRepository;
-    private KielisyysRepository kielisyysRepository;
-    private KansalaisuusRepository kansalaisuusRepository;
-    private IdentificationRepository identificationRepository;
+    private final HenkiloJpaRepository henkiloJpaRepository;
+    private final HenkiloRepository henkiloDataRepository;
+    private final HenkiloViiteRepository henkiloViiteRepository;
+    private final KielisyysRepository kielisyysRepository;
+    private final KansalaisuusRepository kansalaisuusRepository;
+    private final IdentificationRepository identificationRepository;
 
-    private YhteystietoConverter yhteystietoConverter;
-    private OrikaConfiguration mapper;
-    private OidGenerator oidGenerator;
-    private UserDetailsHelper userDetailsHelper;
-    private PermissionChecker permissionChecker;
-    private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
+    private final YhteystietoConverter yhteystietoConverter;
+    private final OrikaConfiguration mapper;
+    private final OidGenerator oidGenerator;
+    private final UserDetailsHelper userDetailsHelper;
+    private final PermissionChecker permissionChecker;
+    private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
 
-    private KoodistoService koodistoService;
+    private final KoodistoService koodistoService;
 
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
                               HenkiloRepository henkiloDataRepository,
+                              HenkiloViiteRepository henkiloViiteRepository,
                               OrikaConfiguration mapper,
                               YhteystietoConverter yhteystietoConverter,
                               OidGenerator oidGenerator,
@@ -56,6 +59,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
+        this.henkiloViiteRepository = henkiloViiteRepository;
         this.yhteystietoConverter = yhteystietoConverter;
         this.mapper = mapper;
         this.oidGenerator = oidGenerator;
@@ -201,7 +205,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         if (henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
-                            .orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
+                            .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toCollection(HashSet::new));
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
             henkiloUpdateDto.setKansalaisuus(null);
@@ -243,11 +247,18 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> listPossibleHenkiloTypesAccessible() {
         if (this.permissionChecker.isSuperUser()) {
             return Arrays.stream(HenkiloTyyppi.values()).map(HenkiloTyyppi::toString).collect(Collectors.toList());
         }
         return Collections.singletonList(HenkiloTyyppi.VIRKAILIJA.toString());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria) {
+        return this.henkiloViiteRepository.findBy(criteria);
     }
 
     private Henkilo createHenkilo(Henkilo henkiloCreate) {
@@ -269,7 +280,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
-                            .orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
+                            .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
                     .collect(Collectors.toSet());
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }
