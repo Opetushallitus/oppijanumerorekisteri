@@ -81,7 +81,7 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser
     public void findDuplicateHenkilosTest() throws Exception {
-        given(this.service.findHenkiloViittees(Matchers.any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
+        given(this.henkiloService.findHenkiloViittees(Matchers.any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))

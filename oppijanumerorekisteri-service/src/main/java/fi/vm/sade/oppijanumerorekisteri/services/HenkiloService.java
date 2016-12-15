@@ -42,11 +42,8 @@ public interface HenkiloService {
     HenkiloReadDto getMasterByOid(String henkiloOid);
 
     HenkiloReadDto getByHetu(String hetu);
-<<<<<<< b315e5a979a8f85d276a6f9cbeab64fabec1eae8
-    
+
     List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria query);
-=======
 
     Henkilo createHenkilo(Henkilo henkiloCreate);
->>>>>>> Change createHenkilo(PerustietoDto) to findOrCreate(PerustietoDto). Add tests.
 }
