@@ -68,6 +68,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         henkilo.oidHenkilo.as("henkiloOid"),
                         yhteystiedotRyhma.ryhmaKuvaus.as("ryhmaKuvaus"),
                         yhteystiedotRyhma.ryhmaAlkuperaTieto.as("ryhmaAlkuperaTieto"),
+                        yhteystiedotRyhma.readOnly.as("readOnly"),
                         yhteystieto.yhteystietoTyyppi.as("yhteystietoTyyppi"),
                         yhteystieto.yhteystietoArvo.as("arvo")
                 )).fetch();

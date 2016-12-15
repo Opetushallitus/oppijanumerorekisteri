@@ -8,9 +8,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class YhteystiedotDto implements Serializable, WritableYhteystiedot, ReadableYhteystiedot {
+    private final String alkupera;
+    private final Boolean readOnly;
     private String sahkoposti;
     private String puhelinnumero;
     private String matkapuhelinnumero;

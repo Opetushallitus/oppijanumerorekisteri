@@ -18,7 +18,7 @@ public class YhteystietoConverter {
             YhteystietoRyhmaKuvaus ryhma = YhteystietoRyhmaKuvaus.forValue(yt.getRyhmaKuvaus());
             YhteystiedotDto tiedot = grouped.get(ryhma);
             if (tiedot == null) {
-                tiedot = new YhteystiedotDto();
+                tiedot = new YhteystiedotDto(yt.getRyhmaAlkuperaTieto(), yt.getReadOnly());
                 grouped.put(ryhma, tiedot);
             }
             yt.getYhteystietoTyyppi().getSetter().set(tiedot, yt.getArvo());
