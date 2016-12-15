@@ -311,10 +311,18 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void oidExistsTest() throws Exception{
+    public void oidExists() throws Exception{
         given(this.henkiloService.getOidExists("1.2.3.4.5")).willReturn(true);
         this.mvc.perform(head("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void oidExistsNotFound() throws Exception{
+        given(this.henkiloService.getOidExists("1.2.3.4.5")).willReturn(false);
+        this.mvc.perform(head("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
     }
 
 }
