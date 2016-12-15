@@ -6,11 +6,13 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.validation.FindOrNewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindException;
@@ -64,24 +66,11 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
-    public abstract class StringList implements List<String> {
-
-    }
-
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
         return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
-    }
-
-    @ApiOperation(value = "Luo uuden henkilön annetuista henkilon perustiedoista")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/createHenkilo", method = RequestMethod.POST)
-    public HenkiloPerustietoDto createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        return this.henkiloService.createHenkiloFromPerustietoDto(henkiloPerustietoDto);
     }
 
     @ApiOperation(value = "Henkilötietojen päivitys",
@@ -122,10 +111,28 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}", method = RequestMethod.GET)
     public HenkiloDto findByOid(@PathVariable String oid,
-                                    @RequestHeader(value = "External-Permission-Service", required = false)
-                                      ExternalPermissionService permissionService) {
-        return henkiloService.getHenkilosByOids(Collections.singletonList(oid)).get(0);
+                                @RequestHeader(value = "External-Permission-Service", required = false)
+                                        ExternalPermissionService permissionService) {
+        return henkiloService.getHenkilosByOids(Collections.singletonList(oid))
+                .stream().findFirst().orElseThrow(NotFoundException::new);
     }
+
+    @ApiOperation(value = "Palauttaa, onko annettu henkilö OID järjestelmässä",
+            notes = "Jos henkilö löytyy, palautuu ok (200), muuten not found (404)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
+    @RequestMapping(value = "/{oid}", method = RequestMethod.HEAD)
+    public ResponseEntity oidExists(@PathVariable String oid,
+                                    @RequestHeader(value = "External-Permission-Service", required = false)
+                                            ExternalPermissionService permissionService) {
+        if(this.henkiloService.getOidExists(oid)) {
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")

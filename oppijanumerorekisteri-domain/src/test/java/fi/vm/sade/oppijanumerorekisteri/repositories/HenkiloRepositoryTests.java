@@ -106,7 +106,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findByOidIn() {
         Date luontiMuokkausPvm = new Date();
         HenkiloPerustietoDto assertHenkilo = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                "fi", "suomi", "246", "1.2.3.4.1");
+                "fi", "suomi", "246");
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         persistedHenkilo.getAidinkieli().setHenkilos(Collections.singleton(persistedHenkilo));
@@ -127,7 +127,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         this.testEntityManager.persist(persistedHenkilo);
-        persistedHenkilo = this.dataRepository.findByHetu("123456-9999").orElse(null);
+        persistedHenkilo = this.dataRepository.findByHetu("123456-9999").stream().findFirst().orElse(null);
         assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
         assertThat(persistedHenkilo.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
         assertThat(persistedHenkilo.getYhteystiedotRyhma().iterator().next())

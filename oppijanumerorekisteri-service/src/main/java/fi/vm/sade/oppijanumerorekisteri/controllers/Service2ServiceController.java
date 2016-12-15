@@ -1,14 +1,19 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @Api(tags = "Service To Service")
@@ -17,16 +22,12 @@ import java.util.List;
 public class Service2ServiceController {
     private HenkiloService henkiloService;
 
-    @Autowired
-    public Service2ServiceController(HenkiloService henkiloService) {
-        this.henkiloService = henkiloService;
-    }
+    private Environment environment;
 
-    @ApiOperation("Palauttaa, onko annettu henkilö OID järjestelmässä")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/oidExists/{oid}", method = RequestMethod.GET)
-    public boolean oidExists(@PathVariable String oid) {
-        return this.henkiloService.getOidExists(oid);
+    @Autowired
+    public Service2ServiceController(HenkiloService henkiloService, Environment environment) {
+        this.henkiloService = henkiloService;
+        this.environment = environment;
     }
 
     @ApiOperation("Hakee annettua henkilötunnusta vastaavan henkilö OID:n")
@@ -57,4 +58,20 @@ public class Service2ServiceController {
     public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria query) {
         return this.henkiloService.findHenkiloViittees(query);
     }
+
+    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilon perustiedoista")
+    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
+    public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
+        HenkiloPerustietoDto returnDto = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        if(returnDto.isCreatedOnService()) {
+            return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
+                    + returnDto.getOidHenkilo())).body(returnDto);
+        }
+        else {
+            return ResponseEntity.ok(returnDto);
+        }
+    }
+
 }

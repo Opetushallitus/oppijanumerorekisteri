@@ -33,13 +33,12 @@ public class HenkiloMapperTest {
         assertThat(henkiloPerustietoDto.getOidHenkilo()).isEqualTo("1.2.3.4.5");
         assertThat(henkiloPerustietoDto.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(henkiloPerustietoDto.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
-        assertThat(henkiloPerustietoDto.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
     @Test
     public void henkiloPerustietoDtoToHenkilo() {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1");
+                "1.2.3.4.5", "fi", "suomi", "246");
         Henkilo henkilo = modelmapper.map(henkiloPerustietoDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
@@ -48,7 +47,6 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getOidHenkilo()).isEqualTo("1.2.3.4.5");
         assertThat(henkilo.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(henkilo.getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
-        assertThat(henkilo.getKasittelijaOid()).isEqualTo("1.2.3.4.1");
     }
 
     @Test
