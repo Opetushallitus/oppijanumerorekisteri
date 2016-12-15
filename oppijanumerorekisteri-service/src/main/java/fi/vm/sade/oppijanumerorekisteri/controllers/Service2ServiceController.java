@@ -21,19 +21,12 @@ import java.util.List;
 public class Service2ServiceController {
     private HenkiloService henkiloService;
 
-    @Autowired
     private Environment environment;
 
     @Autowired
-    public Service2ServiceController(HenkiloService henkiloService) {
+    public Service2ServiceController(HenkiloService henkiloService, Environment environment) {
         this.henkiloService = henkiloService;
-    }
-
-    @ApiOperation("Palauttaa, onko annettu henkilö OID järjestelmässä")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
-    @RequestMapping(value = "/oidExists/{oid}", method = RequestMethod.GET)
-    public boolean oidExists(@PathVariable String oid) {
-        return this.henkiloService.getOidExists(oid);
+        this.environment = environment;
     }
 
     @ApiOperation("Hakee annettua henkilötunnusta vastaavan henkilö OID:n")

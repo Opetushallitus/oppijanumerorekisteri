@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindException;
@@ -110,10 +111,27 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}", method = RequestMethod.GET)
     public HenkiloDto findByOid(@PathVariable String oid,
-                                    @RequestHeader(value = "External-Permission-Service", required = false)
-                                      ExternalPermissionService permissionService) {
+                                @RequestHeader(value = "External-Permission-Service", required = false)
+                                        ExternalPermissionService permissionService) {
         return henkiloService.getHenkilosByOids(Collections.singletonList(oid)).get(0);
     }
+
+    @ApiOperation(value = "Palauttaa, onko annettu henkilö OID järjestelmässä",
+            notes = "Jos henkilö löytyy, palautuu ok (202), muuten not found (404)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
+    @RequestMapping(value = "/{oid}", method = RequestMethod.HEAD)
+    public ResponseEntity oidExists(@PathVariable String oid,
+                                    @RequestHeader(value = "External-Permission-Service", required = false)
+                                            ExternalPermissionService permissionService) {
+        if(this.henkiloService.getOidExists(oid)) {
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")

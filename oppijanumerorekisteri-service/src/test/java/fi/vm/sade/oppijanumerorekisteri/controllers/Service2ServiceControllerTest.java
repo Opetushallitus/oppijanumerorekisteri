@@ -52,14 +52,6 @@ public class Service2ServiceControllerTest  {
 
     @Test
     @WithMockUser
-    public void oidExistsTest() throws Exception{
-        given(this.henkiloService.getOidExists("1.2.3.4.5")).willReturn(true);
-        this.mvc.perform(get("/s2s/oidExists/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk()).andExpect(content().string("true"));
-    }
-
-    @Test
-    @WithMockUser
     public void getHetusAndOidsTest() throws Exception{
         given(this.henkiloService.getHetusAndOids(null, 0, 100)).willReturn(Arrays.asList(
                 new HenkiloHetuAndOidDto("0.0.0.0.1", "111111-111", new Date(1420063200000L)),
