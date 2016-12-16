@@ -14,6 +14,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -283,11 +284,18 @@ public class HenkiloServiceImpl implements HenkiloService {
         return this.henkiloViiteRepository.findBy(criteria);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince) {
+        return this.henkiloJpaRepository.findOidsModifiedSince(criteria, modifiedSince);
+    }
+
+    @Override
     @Transactional
     public Henkilo createHenkilo(Henkilo henkiloCreate) {
         henkiloCreate.setOidHenkilo(getFreePersonOid());
-            henkiloCreate.setCreated(new Date());
-            henkiloCreate.setModified(henkiloCreate.getCreated());
+        henkiloCreate.setCreated(new Date());
+        henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new));
 

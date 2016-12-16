@@ -5,20 +5,27 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Matchers.any;
@@ -106,6 +113,23 @@ public class HenkiloServiceImplTest {
         verify(henkiloJpaRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository).findByOidHenkilo(eq(oid));
         verifyZeroInteractions(orikaConfiguration);
+    }
+
+    @Test
+    public void findHenkiloOidsModifiedSinceTest() {
+        when(henkiloJpaRepository.findOidsModifiedSince(any(), any())).thenReturn(singletonList("1.2.3"));
+
+        HenkiloCriteria criteria = HenkiloCriteria.builder()
+                .henkiloOids(new HashSet<>(asList("1.2.3", "4.5.6"))).build();
+        DateTime dt = new DateTime();
+        List<String> result = impl.findHenkiloOidsModifiedSince(criteria, dt);
+        
+        assertThat(result).isEqualTo(singletonList("1.2.3"));
+        verify(henkiloJpaRepository).findOidsModifiedSince(eq(criteria), eq(dt));
+
+        when(henkiloJpaRepository.findOidsModifiedSince(any(), any())).thenReturn(emptyList());
+        result = impl.findHenkiloOidsModifiedSince(criteria, dt);
+        assertThat(result).hasSize(0);
     }
 
 }

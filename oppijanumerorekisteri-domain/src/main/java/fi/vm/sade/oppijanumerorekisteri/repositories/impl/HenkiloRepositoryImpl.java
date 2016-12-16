@@ -11,8 +11,10 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -154,5 +156,13 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .where(qHenkiloViite.masterOid.eq(qHenkilo.oidHenkilo))
                 .where(qHenkiloViite.slaveOid.eq(henkiloOid))
                 .select(qHenkilo).fetchFirst());
+    }
+
+    @Override
+    public List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince) {
+        return jpa().from(henkilo).where(criteria.condition(henkilo)
+                    .and(henkilo.modified.goe(modifiedSince.toDate())))
+                .select(henkilo.oidHenkilo)
+                .orderBy(henkilo.oidHenkilo.asc()).fetch();
     }
 }

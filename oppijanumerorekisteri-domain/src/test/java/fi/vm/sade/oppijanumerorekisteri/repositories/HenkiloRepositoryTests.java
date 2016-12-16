@@ -6,9 +6,11 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSO
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // NOTE: Model validators have separate test.
@@ -201,7 +204,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findHetusAndOidsSyncedBefore() {
-        List<Henkilo> persistentHenkilos = Arrays.asList(
+        List<Henkilo> persistentHenkilos = asList(
                 EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
                         HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", "arpa@kuutio.fi"),
                 EntityUtils.createHenkilo("", "", "", "123456-9998", "1.2.3.4.6", false,
@@ -231,7 +234,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findHetusAndOidsPagination() {
-        List<Henkilo> persistentHenkilos = Arrays.asList(
+        List<Henkilo> persistentHenkilos = asList(
                 EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
                         HenkiloTyyppi.OPPIJA, "", "", "", new Date(), null, "1.2.3.4.1", "arpa@kuutio.fi"),
                 EntityUtils.createHenkilo("", "", "", "123456-9998", "1.2.3.4.6", false,
@@ -258,7 +261,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findHetusAndOidsSorting() {
-        List<Henkilo> persistentHenkilos = Arrays.asList(
+        List<Henkilo> persistentHenkilos = asList(
                 EntityUtils.createHenkilo("", "", "", "123456-9999", "1.2.3.4.5", false,
                         HenkiloTyyppi.OPPIJA, "", "", "", new Date(), new Date(), "1.2.3.4.1", null), // should be 4th
                 EntityUtils.createHenkilo("", "", "", "123456-9998", "1.2.3.4.6", false,
@@ -276,10 +279,35 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         List<Henkilo> retrievedHenkilos = this.jpaRepository.findHetusAndOids(null, 0, 100);
 
         // null vtjsync first
-        assertThat(retrievedHenkilos.get(0).getOidHenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
-        assertThat(retrievedHenkilos.get(1).getOidHenkilo()).isIn(Arrays.asList("1.2.3.4.6", "1.2.3.4.8"));
+        assertThat(retrievedHenkilos.get(0).getOidHenkilo()).isIn(asList("1.2.3.4.6", "1.2.3.4.8"));
+        assertThat(retrievedHenkilos.get(1).getOidHenkilo()).isIn(asList("1.2.3.4.6", "1.2.3.4.8"));
         // then by date
         assertThat(retrievedHenkilos.get(2).getOidHenkilo()).isEqualTo("1.2.3.4.7");
         assertThat(retrievedHenkilos.get(3).getOidHenkilo()).isEqualTo("1.2.3.4.5");
+    }
+
+    @Test
+    public void findOidsModifiedSince() {
+        DateTime now = new DateTime(),
+                yesterday = now.minusDays(1),
+                lastWeek = now.minusWeeks(1);
+        populate(henkilo("YESTERDAY").modified(yesterday));
+        populate(henkilo("LAST_WEEK").modified(lastWeek));
+        populate(henkilo("MOMENT_AGO").modified(now.minusMinutes(1)));
+
+        List<String> results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now);
+        assertThat(results).hasSize(0);
+
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1));
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo("MOMENT_AGO");
+        
+        results = this.jpaRepository.findOidsModifiedSince(HenkiloCriteria.builder()
+                .henkiloOids(new HashSet<>(asList("YESTERDAY", "LAST_WEEK"))).build(), yesterday);
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo("YESTERDAY");
+        
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), lastWeek);
+        assertThat(results).hasSize(3);
     }
 }

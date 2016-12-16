@@ -1,11 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -52,11 +53,25 @@ public class Service2ServiceController {
         return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp, offset, limit);
     }
 
-    @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla (vähintään yksi rajausehto tarvitaan)")
+    @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/duplicateHenkilos", method = RequestMethod.POST) 
-    public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria query) {
-        return this.henkiloService.findHenkiloViittees(query);
+    public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria criteria) {
+        return this.henkiloService.findHenkiloViittees(criteria);
+    }
+
+    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/changedSince/{at}", method = RequestMethod.GET)
+    public List<String> findChangedPersons(@PathVariable DateTime at) {
+        return this.henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), at);
+    }
+
+    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä hakuehdoilla")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/changedSince/{at}", method = RequestMethod.POST)
+    public List<String> findChangedPersons(@RequestBody HenkiloCriteria criteria, @PathVariable DateTime at) {
+        return this.henkiloService.findHenkiloOidsModifiedSince(criteria, at);
     }
 
     @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilon perustiedoista")
@@ -73,5 +88,4 @@ public class Service2ServiceController {
             return ResponseEntity.ok(returnDto);
         }
     }
-
 }
