@@ -8,11 +8,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class YhteystiedotDto implements Serializable, WritableYhteystiedot, ReadableYhteystiedot {
-    private final String alkupera;
-    private final Boolean readOnly;
+    private String alkupera;
+    private Boolean readOnly;
     private String sahkoposti;
     private String puhelinnumero;
     private String matkapuhelinnumero;
@@ -21,4 +21,10 @@ public class YhteystiedotDto implements Serializable, WritableYhteystiedot, Read
     private String postinumero;
     private String kaupunki;
     private String maa;
+
+    public YhteystiedotDto(String alkupera, Boolean readOnly) {
+        this.alkupera = alkupera;
+        this.readOnly = readOnly;
+    }
+
 }
