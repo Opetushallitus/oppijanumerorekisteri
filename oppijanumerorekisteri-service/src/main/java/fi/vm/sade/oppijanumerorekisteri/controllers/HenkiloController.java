@@ -187,8 +187,7 @@ public class HenkiloController {
     @ApiOperation(value = "Hakee henkilön tiedot annetun tunnistetiedon avulla.",
             notes = "Hakee henkilön tiedot annetun tunnistetiedon avulla.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PostAuthorize("returnObject == null || @permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo(), " +
-            "{'READ', 'READ_UPDATE', 'CRUD'}, null)")
+    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'READ', 'READ_UPDATE', 'CRUD'}, null)")
     @RequestMapping(value = "/identification", method = RequestMethod.GET)
     public HenkiloDto findByIdpAndIdentifier(@ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
                                           @ApiParam(value = "Varsinainen tunniste", required = true) @RequestParam("id") String identifier) {
