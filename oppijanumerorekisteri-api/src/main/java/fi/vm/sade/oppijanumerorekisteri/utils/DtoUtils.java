@@ -51,9 +51,12 @@ public class DtoUtils {
         kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
         Date syntymaAika = new Date(24364800000L);
 
+        Date createdModified = new Date(29364800000L);
+
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
-                syntymaAika, "1");
+                syntymaAika, "1", "passinro", "1.2.3.4.5", false, false, false, false, false, false, createdModified,
+                createdModified, null, null);
     }
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {

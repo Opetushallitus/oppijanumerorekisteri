@@ -61,4 +61,29 @@ public class HenkiloDto implements Serializable {
     private Date syntymaaika;
 
     private String sukupuoli;
+
+    private String passinnumero;
+
+    private String oppijanumero;
+
+    private boolean turvakielto;
+
+    private boolean eiSuomalaistaHetua;
+
+    private boolean yksiloity;
+
+    private boolean yksiloityVTJ;
+
+    private boolean yksilointiYritetty;
+
+    private boolean duplicate;
+
+    private Date created;
+
+    private Date modified;
+
+    private Date vtjsynced;
+
+    private HenkiloDto huoltaja;
+
 }

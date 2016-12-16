@@ -128,6 +128,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             CascadeType.REFRESH })
     private Set<ExternalId> externalIds = new HashSet<>();
 
+    private boolean turvakielto;
+
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
     }
