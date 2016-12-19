@@ -1,8 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import org.joda.time.DateTime;
 import org.springframework.validation.BindException;
 
 import java.util.List;
@@ -42,8 +43,10 @@ public interface HenkiloService {
     HenkiloReadDto getMasterByOid(String henkiloOid);
 
     HenkiloReadDto getByHetu(String hetu);
+    
+    List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
 
-    List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria query);
+    List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);
 
     Henkilo createHenkilo(Henkilo henkiloCreate);
 }

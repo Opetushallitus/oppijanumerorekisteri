@@ -3,13 +3,14 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,10 +23,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -77,11 +81,11 @@ public class Service2ServiceControllerTest  {
                         "  }\n" +
                         "]"));
     }
-
+    
     @Test
     @WithMockUser
     public void findDuplicateHenkilosTest() throws Exception {
-        given(this.henkiloService.findHenkiloViittees(Matchers.any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
+        given(this.henkiloService.findHenkiloViittees(any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
@@ -92,6 +96,47 @@ public class Service2ServiceControllerTest  {
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
+    }
+
+    @Test
+    @WithMockUser
+    public void findChangedPersonsGet() throws Exception {
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(singletonList("1.2.3"));
+        this.mvc.perform(get("/s2s/changedSince/2015-10-12T10:10:10")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content()
+                .json("[\"1.2.3\"]"));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,10,10,10));
+        
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(emptyList());
+        this.mvc.perform(get("/s2s/changedSince/2015-10-12")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json("[]"));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,0,0,0));
+    }
+    
+    @Test
+    @WithMockUser
+    public void findChangedPersonsGetByTimestamp() throws Exception {
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(emptyList());
+        DateTime dt = new DateTime(2015,10,12,0,0,0);
+        this.mvc.perform(get("/s2s/changedSince/" + dt.toDate().getTime())
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json("[]"));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), dt);
+    }
+
+    @Test
+    @WithMockUser
+    public void findChangedPersonsPost() throws Exception {
+        HenkiloCriteria criteria = HenkiloCriteria.builder().henkiloOids(new HashSet<>(singletonList("1.2.3"))).build();
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(singletonList("1.2.3"));
+        this.mvc.perform(post("/s2s/changedSince/2015-10-12T10:10:10").content("{\"henkiloOids\": [\"1.2.3\"]}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content()
+                .json("[\"1.2.3\"]"));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(criteria, new DateTime(2015,10,12,10,10,10));
     }
 
     @Test

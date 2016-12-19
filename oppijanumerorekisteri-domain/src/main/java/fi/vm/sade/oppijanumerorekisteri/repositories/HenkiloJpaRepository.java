@@ -2,8 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,4 +35,7 @@ public interface HenkiloJpaRepository {
      * @return henkilo optional
      */
     Optional<Henkilo> findMasterBySlaveOid(String henkiloOid);
+
+    List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);
+
 }
