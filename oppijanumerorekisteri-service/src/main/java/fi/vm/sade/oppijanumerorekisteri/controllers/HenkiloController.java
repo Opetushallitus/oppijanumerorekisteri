@@ -76,7 +76,7 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilötietojen päivitys",
             notes = "Päivittää kutsussa annetuun OID:n täsmäävän henkilön tiedot")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloUpdateDto.oidhenkilo, {'READ_UPDATE', 'CRUD'}, #permissionService)")
-    @RequestMapping(value = "/updateHenkilo", method = RequestMethod.PUT)
+    @RequestMapping(value = "", method = RequestMethod.PUT)
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                           ExternalPermissionService permissionService) throws BindException {

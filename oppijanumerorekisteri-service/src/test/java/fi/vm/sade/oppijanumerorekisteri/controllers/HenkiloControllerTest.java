@@ -202,7 +202,7 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
-        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
     }
 
@@ -214,7 +214,7 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new BindException(henkiloUpdateDto, "henkiloUpdateDTo"));
-        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(status().reason("illegal_service_argument_value"));
     }
@@ -227,7 +227,7 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new NotFoundException());
-        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
     }
 
@@ -239,7 +239,7 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
-        this.mvc.perform(put("/henkilo/updateHenkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(status().reason("illegal_argument_value"));
     }
