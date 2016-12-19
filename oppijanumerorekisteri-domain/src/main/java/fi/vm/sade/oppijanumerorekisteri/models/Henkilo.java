@@ -146,4 +146,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         this.kielisyys.add(kielisyys);
     }
 
+    public boolean isTurvakielto() {
+        return Boolean.TRUE.equals(turvakielto);
+    }
+
+    public void setTurvakielto(boolean turvakielto) {
+        this.turvakielto = turvakielto;
+    }
 }
