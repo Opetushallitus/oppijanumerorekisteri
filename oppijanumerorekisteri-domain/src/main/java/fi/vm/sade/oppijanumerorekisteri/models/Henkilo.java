@@ -128,7 +128,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             CascadeType.REFRESH })
     private Set<ExternalId> externalIds = new HashSet<>();
 
-    private boolean turvakielto;
+    private Boolean turvakielto = false;
 
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
@@ -144,5 +144,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public void addKielisyys(Kielisyys kielisyys) {
         this.kielisyys.add(kielisyys);
+    }
+
+    public boolean isTurvakielto() {
+        return turvakielto;
+    }
+
+    public void setTurvakielto(boolean turvakielto) {
+        this.turvakielto = turvakielto;
     }
 }
