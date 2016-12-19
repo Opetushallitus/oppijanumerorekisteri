@@ -28,7 +28,7 @@ public interface HenkiloService {
 
     List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
 
-    HenkiloDto createHenkiloFromHenkiloDto(HenkiloDto henkiloDto);
+    HenkiloDto createHenkiloFromHenkiloCreateDto(HenkiloCreateDto henkiloDto);
 
     HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException;
 

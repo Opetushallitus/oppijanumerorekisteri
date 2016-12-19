@@ -267,12 +267,12 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void createHenkiloFromHenkiloDto() throws Exception {
+    public void createHenkiloFromHenkiloCreateDto() throws Exception {
         HenkiloDto henkiloDtoInput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", null,
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        given(this.henkiloService.createHenkiloFromHenkiloDto(any(HenkiloDto.class))).willReturn(henkiloDtoOutput);
+        given(this.henkiloService.createHenkiloFromHenkiloCreateDto(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().string("1.2.3.4.5"));
@@ -280,7 +280,7 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void createHenkiloFromHenkiloDtoInvalidInput() throws Exception {
+    public void createHenkiloFromHenkiloCreateDtoInvalidInput() throws Exception {
         HenkiloDto henkiloDtoInput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))

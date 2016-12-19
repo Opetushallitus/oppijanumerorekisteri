@@ -1,10 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -14,32 +18,35 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HenkiloDto implements Serializable {
+public class HenkiloCreateDto implements Serializable {
     private static final long serialVersionUID = -8509596443256973893L;
 
-    private String oidHenkilo;
-
+    @Size(min = 1)
+    @ValidateHetu
     private String hetu;
 
     private boolean passivoitu;
 
+    @NotNull
     private HenkiloTyyppi henkiloTyyppi;
 
+    @NotNull @Size(min = 1)
     private String etunimet;
 
+    @NotNull @Size(min = 1)
     private String kutsumanimi;
 
+    @NotNull @Size(min = 1)
     private String sukunimi;
 
     private KielisyysDto aidinkieli;
 
+    @ValidateAsiointikieli
     private KielisyysDto asiointiKieli;
 
     private Set<KielisyysDto> kielisyys = new HashSet<>();
 
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
-
-    private String kasittelijaOid;
 
     private Date syntymaaika;
 
@@ -51,23 +58,19 @@ public class HenkiloDto implements Serializable {
 
     private Boolean turvakielto;
 
-    private boolean eiSuomalaistaHetua;
+    private Boolean eiSuomalaistaHetua;
 
-    private boolean yksiloity;
+    private Boolean yksiloity;
 
-    private boolean yksiloityVTJ;
+    private Boolean yksiloityVTJ;
 
-    private boolean yksilointiYritetty;
+    private Boolean yksilointiYritetty;
 
-    private boolean duplicate;
-
-    private Date created;
-
-    private Date modified;
+    private Boolean duplicate;
 
     private Date vtjsynced;
 
-    private HenkiloDto huoltaja;
+    private HenkiloCreateDto huoltaja;
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 

@@ -6,8 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
-import fi.vm.sade.oppijanumerorekisteri.validation.FindOrNewHenkilo;
-import fi.vm.sade.oppijanumerorekisteri.validation.NewHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +73,7 @@ public class HenkiloController {
 
     @ApiOperation(value = "Henkilötietojen päivitys",
             notes = "Päivittää kutsussa annetuun OID:n täsmäävän henkilön tiedot")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloUpdateDto.oidhenkilo, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloUpdateDto.oidHenkilo, {'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
@@ -161,8 +159,8 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createHenkiloFromHenkiloDto(@RequestBody @Validated(NewHenkilo.class) HenkiloDto henkilo) {
-        return this.henkiloService.createHenkiloFromHenkiloDto(henkilo).getOidHenkilo();
+    public String createHenkiloFromHenkiloCreateDto(@RequestBody @Validated HenkiloCreateDto henkilo) {
+        return this.henkiloService.createHenkiloFromHenkiloCreateDto(henkilo).getOidHenkilo();
     }
 
     // PROXY, probably slower than the original
