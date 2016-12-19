@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 
 @Component
 public class DtoUtils {
@@ -44,7 +45,7 @@ public class DtoUtils {
 
     public static HenkiloDto createHenkiloDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, String kielikoodi, String kielityyppi,
-                                       String kansalaisuuskoodi, String kasittelija) {
+                                       String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
@@ -52,11 +53,12 @@ public class DtoUtils {
         Date syntymaAika = new Date(24364800000L);
 
         Date createdModified = new Date(29364800000L);
+        YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
                 syntymaAika, "1", "passinro", "1.2.3.4.5", false, false, false, false, false, false, createdModified,
-                createdModified, null, null);
+                createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
     }
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {

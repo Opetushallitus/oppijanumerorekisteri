@@ -86,4 +86,6 @@ public class HenkiloDto implements Serializable {
 
     private HenkiloDto huoltaja;
 
+    private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
+
 }

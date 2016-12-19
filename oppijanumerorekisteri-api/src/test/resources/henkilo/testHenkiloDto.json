@@ -37,5 +37,18 @@
   "yksilointiYritetty": false,
   "duplicate": false,
   "created": 29364800000,
-  "modified": 29364800000
+  "modified": 29364800000,
+  "yhteystiedotRyhma": [
+    {
+      "ryhmaKuvaus": "muuOsoite",
+      "ryhmaAlkuperaTieto": "ryhmaalkuperaVirkailija",
+      "readOnly": true,
+      "yhteystieto": [
+        {
+          "yhteystietoTyyppi": "YHTEYSTIETO_MATKAPUHELINNUMERO",
+          "yhteystietoArvo": "arpa@kuutio.fi"
+        }
+      ]
+    }
+  ]
 }

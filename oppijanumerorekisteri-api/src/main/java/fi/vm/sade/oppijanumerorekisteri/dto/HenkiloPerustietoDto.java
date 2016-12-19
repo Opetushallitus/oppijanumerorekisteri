@@ -49,6 +49,7 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private String sukupuoli;
 
+    // Helper value to recognise when henkilo is created on service layer.
     @JsonIgnore
     private boolean createdOnService;
 
