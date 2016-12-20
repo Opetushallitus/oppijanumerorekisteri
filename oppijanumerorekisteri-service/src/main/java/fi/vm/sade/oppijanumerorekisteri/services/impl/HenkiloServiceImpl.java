@@ -14,11 +14,9 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
@@ -27,6 +25,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
@@ -140,6 +141,11 @@ public class HenkiloServiceImpl implements HenkiloService {
                             .stream().findFirst().orElseThrow(NotFoundException::new),
                     HenkiloPerustietoDto.class);
         }
+        if (!StringUtils.isEmpty(henkiloPerustietoDto.getExternalId())) {
+            Henkilo entity = henkiloJpaRepository.findByExternalId(henkiloPerustietoDto.getExternalId())
+                    .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt externalId:llä " + henkiloPerustietoDto.getExternalId()));
+            return mapper.map(entity, HenkiloPerustietoDto.class);
+        }
         Optional<Henkilo> henkilo = this.getHenkiloByHetu(henkiloPerustietoDto.getHetu());
         if (henkilo.isPresent()) {
             return this.mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
@@ -149,6 +155,17 @@ public class HenkiloServiceImpl implements HenkiloService {
                 HenkiloPerustietoDto.class);
         returnHenkiloPerustietoDto.setCreatedOnService(true);
         return returnHenkiloPerustietoDto;
+    }
+
+    @Override
+    @Transactional
+    public List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot) {
+        // Suorituskyvyn kannalta olisi järkevämpää hakea henkilöt ensin
+        // tunnisteiden avulla ja vasta sitten luoda uudet henkilöt. Tässä
+        // tapauksessa tunnisteita on kuitenkin useita (oid, externalid, hetu),
+        // jolloin toteutuksesta tulisi tarpeettoman monimutkainen ylläpidon
+        // kannalta.
+        return henkilot.stream().map(this::findOrCreateHenkiloFromPerustietoDto).collect(toList());
     }
 
     @Override

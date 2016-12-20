@@ -109,7 +109,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findByOidIn() {
         Date luontiMuokkausPvm = new Date();
         HenkiloPerustietoDto assertHenkilo = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                "fi", "suomi", "246");
+                "fi", "suomi", "246", null);
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         persistedHenkilo.getAidinkieli().setHenkilos(Collections.singleton(persistedHenkilo));

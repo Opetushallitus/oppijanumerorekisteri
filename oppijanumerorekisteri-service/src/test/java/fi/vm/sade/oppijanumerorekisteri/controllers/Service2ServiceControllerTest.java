@@ -183,5 +183,16 @@ public class Service2ServiceControllerTest  {
                 .andExpect(status().reason("bad_request_persistence"));
     }
 
+    @Test
+    @WithMockUser
+    public void findOrCreateHenkiloShouldWorkWithExternalIdOnly() throws Exception {
+        String content = "{\"externalId\": \"externalid1\"}";
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class)))
+                .willReturn(new HenkiloPerustietoDto());
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
+                .content(content).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+    }
 
 }

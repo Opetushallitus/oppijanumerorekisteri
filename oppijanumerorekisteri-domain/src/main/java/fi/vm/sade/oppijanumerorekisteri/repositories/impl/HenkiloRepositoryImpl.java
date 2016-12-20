@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.QExternalId;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
@@ -164,5 +165,17 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                     .and(henkilo.modified.goe(modifiedSince.toDate())))
                 .select(henkilo.oidHenkilo)
                 .orderBy(henkilo.oidHenkilo.asc()).fetch();
+    }
+
+    @Override
+    public Optional<Henkilo> findByExternalId(String externalId) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QExternalId qExternalId = QExternalId.externalId;
+
+        return Optional.ofNullable(jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.externalIds, qExternalId)
+                .where(qExternalId.externalid.eq(externalId))
+                .select(qHenkilo).fetchOne());
     }
 }

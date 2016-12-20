@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -123,13 +124,26 @@ public class HenkiloServiceImplTest {
                 .henkiloOids(new HashSet<>(asList("1.2.3", "4.5.6"))).build();
         DateTime dt = new DateTime();
         List<String> result = impl.findHenkiloOidsModifiedSince(criteria, dt);
-        
+
         assertThat(result).isEqualTo(singletonList("1.2.3"));
         verify(henkiloJpaRepository).findOidsModifiedSince(eq(criteria), eq(dt));
 
         when(henkiloJpaRepository.findOidsModifiedSince(any(), any())).thenReturn(emptyList());
         result = impl.findHenkiloOidsModifiedSince(criteria, dt);
         assertThat(result).hasSize(0);
+    }
+
+    @Test
+    public void findOrCreateHenkiloFromPerustietoDtoShouldFindByExternalId() {
+        HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().externalId("externalid1").build();
+        Henkilo henkilo = new Henkilo();
+        when(henkiloJpaRepository.findByExternalId(any())).thenReturn(Optional.of(henkilo));
+
+        HenkiloPerustietoDto output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+
+        verify(henkiloJpaRepository).findByExternalId(eq("externalid1"));
+        verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
+        verify(henkiloRepository, never()).save(any(Henkilo.class));
     }
 
 }
