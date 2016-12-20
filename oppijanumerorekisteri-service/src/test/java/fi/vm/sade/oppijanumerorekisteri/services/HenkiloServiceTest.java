@@ -202,9 +202,9 @@ public class HenkiloServiceTest {
     @Test
     public void getHenkiloPerustietoByOidsTest() {
         HenkiloPerustietoDto henkiloMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
         given(this.henkiloJpaRepositoryMock.findByOidIn(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloMock));
 
@@ -321,7 +321,7 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDto() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "", "fi", "suomi", "246");
+                "123456-9999", "", "fi", "suomi", "246", null);
         henkiloPerustietoDtoMock.setCreatedOnService(true);
 
         given(this.henkiloDataRepositoryMock.findByHetu(henkiloPerustietoDtoMock.getHetu())).willReturn(new ArrayList<>());
@@ -333,7 +333,7 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByOid() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
@@ -346,7 +346,7 @@ public class HenkiloServiceTest {
     @Test(expected = NotFoundException.class)
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloNotFoundByOid() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246");
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
@@ -358,9 +358,9 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByHetu() {
         HenkiloPerustietoDto henkiloPerustietoDtoInput = DtoUtils.createHenkiloPerustietoDto(null, null, null,
-                "123456-9999", null, null, null, null);
+                "123456-9999", null, null, null, null, null);
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "", "fi", "suomi", "246");
+                "123456-9999", "", "fi", "suomi", "246", null);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 

@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
 import org.joda.time.DateTime;
@@ -88,4 +88,12 @@ public class Service2ServiceController {
             return ResponseEntity.ok(returnDto);
         }
     }
+
+    @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
+    public List<HenkiloPerustietoDto> findOrCreate(List<HenkiloPerustietoDto> henkilot) {
+        return henkiloService.findOrCreateHenkiloFromPerustietoDto(henkilot);
+    }
+
 }

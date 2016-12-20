@@ -38,4 +38,6 @@ public interface HenkiloJpaRepository {
 
     List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);
 
+    Optional<Henkilo> findByExternalId(String externalId);
+
 }
