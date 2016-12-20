@@ -160,6 +160,11 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional
     public List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot) {
+        // Suorituskyvyn kannalta olisi järkevämpää hakea henkilöt ensin
+        // tunnisteiden avulla ja vasta sitten luoda uudet henkilöt. Tässä
+        // tapauksessa tunnisteita on kuitenkin useita (oid, externalid, hetu),
+        // jolloin toteutuksesta tulisi tarpeettoman monimutkainen ylläpidon
+        // kannalta.
         return henkilot.stream().map(this::findOrCreateHenkiloFromPerustietoDto).collect(toList());
     }
 
