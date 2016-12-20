@@ -61,6 +61,24 @@ public class DtoUtils {
                 createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
     }
 
+    public static HenkiloCreateDto createHenkiloCreateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
+                                       String kansalaisuuskoodi, String yhteystietoArvo) {
+        KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
+
+        KansalaisuusDto kansalaisuus = new KansalaisuusDto();
+        kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
+        Date syntymaAika = new Date(24364800000L);
+
+        Date createdModified = new Date(29364800000L);
+        YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
+
+        return new HenkiloCreateDto(hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi, aidinkieli,
+                aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
+                "passinro", "1.2.3.4.5", null, false, false,
+                false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto));
+    }
+
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {
         HenkiloHetuAndOidDto henkiloHetuAndOidDto = new HenkiloHetuAndOidDto();
         henkiloHetuAndOidDto.setOidHenkilo(henkiloOid);

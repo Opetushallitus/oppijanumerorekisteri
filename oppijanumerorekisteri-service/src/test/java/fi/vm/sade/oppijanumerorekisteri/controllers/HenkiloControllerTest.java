@@ -64,31 +64,31 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser
     public void henkiloOidHetuNimiByHetu() throws Exception {
-        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "123456-9999",
+        HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "081296-967T",
                 "1.2.3.4.5");
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"123456-9999\"," +
+                "\"hetu\": \"081296-967T\"," +
                 "\"oidHenkilo\": \"1.2.3.4.5\"}";
-        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willReturn(henkiloOidHetuNimiDto);
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willReturn(henkiloOidHetuNimiDto);
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(content));
     }
 
     @Test
     @WithMockUser
     public void henkiloOidHetuNimiByHetuNotFound() throws Exception {
-        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new NotFoundException());
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willThrow(new NotFoundException());
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser
     public void henkiloOidHetuNimiByHetuDuplicateHetus() throws Exception {
-        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("123456-9999")).willThrow(new DuplicateHetuException());
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willThrow(new DuplicateHetuException());
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isInternalServerError())
                 .andExpect(status().reason("duplicate_hetu_undeterministic_behaviour"));
     }
@@ -96,7 +96,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser
     public void findHenkilotByOidList() throws Exception {
-        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
+        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
                 "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
         String inputOidList = "[\"1.2.3.4.5\"]";
         String returnContent = "[" +
@@ -110,7 +110,7 @@ public class HenkiloControllerTest {
                 "      \"kieliTyyppi\": \"suomi\"" +
                 "    }," +
                 "    \"etunimet\": \"arpa\"," +
-                "    \"hetu\": \"123456-9999\"," +
+                "    \"hetu\": \"081296-967T\"," +
                 "    \"kutsumanimi\": \"arpa\"," +
                 "    \"oidHenkilo\": \"1.2.3.4.5\"," +
                 "    \"sukunimi\": \"kuutio\"" +
@@ -173,7 +173,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = {"INAPPROPRIATE_ROLE"})
     public void unauthorized() throws Exception {
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isForbidden());
     }
 
@@ -183,10 +183,10 @@ public class HenkiloControllerTest {
         String returnContent = "[{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
-                "\"hetu\": \"123456-9999\"," +
+                "\"hetu\": \"081296-967T\"," +
                 "\"oidHenkilo\": \"1.2.3.4.5\"}]";
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa","kuutio",
-                "123456-9999", "1.2.3.4.5");
+                "081296-967T", "1.2.3.4.5");
         given(this.henkiloService.getHenkiloOidHetuNimiByName("arpa", "kuutio")).willReturn(Collections.singletonList(henkiloOidHetuNimiDto));
         this.mvc.perform(get("/henkilo/henkiloPerusByName").param("etunimet", "arpa").param("sukunimi", "kuutio")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
@@ -268,9 +268,9 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser
     public void createHenkiloFromHenkiloCreateDto() throws Exception {
-        HenkiloDto henkiloDtoInput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", null,
-                false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
+                false, "fi", "suomi", "246", "arpa@kuutio.fi");
+        HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         given(this.henkiloService.createHenkiloFromHenkiloCreateDto(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
@@ -280,9 +280,9 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser
-    public void createHenkiloFromHenkiloCreateDtoInvalidInput() throws Exception {
-        HenkiloDto henkiloDtoInput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
+    public void createHenkiloFromHenkiloCreateDtoInvalidInputHetu() throws Exception {
+        HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "bad_hetu", null,
+                false, "fi", "suomi", "246", "arpa@kuutio.fi");
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
@@ -292,7 +292,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser
     public void findByIdpAndIdentifier() throws Exception {
-        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+        HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         given(this.henkiloService.getHenkiloByIDPAndIdentifier("email", "arpa@kuutio.fi")).willReturn(henkiloDto);
         this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
