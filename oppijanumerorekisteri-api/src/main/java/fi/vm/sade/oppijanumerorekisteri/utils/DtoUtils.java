@@ -57,7 +57,7 @@ public class DtoUtils {
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
-                syntymaAika, "1", "passinro", "1.2.3.4.5", false, false, false, false, false, false, createdModified,
+                syntymaAika, "1", "passinro", "1.2.3.4.5", null, false, false, false, false, false, createdModified,
                 createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
     }
 

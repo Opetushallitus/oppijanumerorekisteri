@@ -30,7 +30,7 @@
   "syntymaaika": 24364800000,
   "passinnumero": "passinro",
   "oppijanumero": "1.2.3.4.5",
-  "turvakielto": false,
+  "turvakielto": null,
   "eiSuomalaistaHetua": false,
   "yksiloity": false,
   "yksiloityVTJ": false,

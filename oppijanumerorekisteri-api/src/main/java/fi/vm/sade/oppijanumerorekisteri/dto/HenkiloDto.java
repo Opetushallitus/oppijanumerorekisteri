@@ -66,7 +66,7 @@ public class HenkiloDto implements Serializable {
 
     private String oppijanumero;
 
-    private boolean turvakielto;
+    private Boolean turvakielto;
 
     private boolean eiSuomalaistaHetua;
 
