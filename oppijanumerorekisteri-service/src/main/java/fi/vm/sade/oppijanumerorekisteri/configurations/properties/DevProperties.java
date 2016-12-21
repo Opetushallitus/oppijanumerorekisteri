@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "dev", ignoreUnknownFields = false, ignoreInvalidFields = false)
+@ConfigurationProperties(prefix = "dev")
 public class DevProperties {
     private String username;
     private String password;
