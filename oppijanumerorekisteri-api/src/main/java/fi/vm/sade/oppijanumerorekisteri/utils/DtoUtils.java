@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.utils;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import java.time.LocalDate;
+import java.time.Month;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -24,7 +26,7 @@ public class DtoUtils {
     public static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi,
                                                                   String hetu, String henkiloOid, String kielikoodi,
                                                                   String kielityyppi, String kansalaisuusKoodi,
-                                                                  String externalId, Date syntymaaika) {
+                                                                  String externalId, LocalDate syntymaaika) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
@@ -50,7 +52,7 @@ public class DtoUtils {
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
         kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
-        Date syntymaAika = new Date(24364800000L);
+        LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
 
         Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
@@ -94,9 +96,10 @@ public class DtoUtils {
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
         YhteystiedotRyhmaDto yhteystiedotRyhma = DtoUtils.createYhteystiedotRyhmaDto(yhteystietoArvo);
+        LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
 
         return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu, HenkiloTyyppi.VIRKAILIJA,
-                new Date(24364800000L), "1", false, new Date(), kasittelija, asiointikieli, aidinkieli,
+                syntymaAika, "1", false, new Date(), kasittelija, asiointikieli, aidinkieli,
                 Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), Collections.singleton(yhteystiedotRyhma));
     }
 

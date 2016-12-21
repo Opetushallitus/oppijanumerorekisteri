@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class HenkiloDto implements Serializable {
 
     private String kasittelijaOid;
 
-    private Date syntymaaika;
+    private LocalDate syntymaaika;
 
     private String sukupuoli;
 

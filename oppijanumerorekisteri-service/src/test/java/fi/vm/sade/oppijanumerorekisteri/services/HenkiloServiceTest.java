@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.KOTIOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
+import java.time.LocalDate;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
@@ -332,7 +333,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByOid() {
-        Date syntymaaika = new Date();
+        LocalDate syntymaaika = LocalDate.now();
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, syntymaaika);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
@@ -358,7 +359,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByHetu() {
-        Date syntymaaika = new Date();
+        LocalDate syntymaaika = LocalDate.now();
         HenkiloPerustietoDto henkiloPerustietoDtoInput = DtoUtils.createHenkiloPerustietoDto(null, null, null,
                 "123456-9999", null, null, null, null, null, syntymaaika);
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",

@@ -11,10 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.Month;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,7 +48,7 @@ public class HenkiloJsonTest {
     public void testHenkiloPerustietoDtoSerialize() throws Exception {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", java.sql.Date.valueOf(syntymaaika));
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika);
         assertThat(this.perustietoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloPerustietoDto.json");
     }
 
@@ -59,7 +56,7 @@ public class HenkiloJsonTest {
     public void testHenkiloPerustietoDtoDeserialize() throws Exception {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", java.util.Date.from(ZonedDateTime.of(syntymaaika, LocalTime.MIN, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault()).toInstant()));
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika);
         assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
     }
 
