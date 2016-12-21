@@ -170,7 +170,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public HenkiloDto createHenkiloFromHenkiloCreateDto(HenkiloCreateDto henkiloDto) {
+    public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) {
         Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
     }

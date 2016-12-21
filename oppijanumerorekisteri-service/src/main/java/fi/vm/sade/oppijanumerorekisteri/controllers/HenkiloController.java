@@ -160,7 +160,7 @@ public class HenkiloController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createHenkiloFromHenkiloCreateDto(@RequestBody @Validated HenkiloCreateDto henkilo) {
-        return this.henkiloService.createHenkiloFromHenkiloCreateDto(henkilo).getOidHenkilo();
+        return this.henkiloService.createHenkilo(henkilo).getOidHenkilo();
     }
 
     // PROXY, probably slower than the original

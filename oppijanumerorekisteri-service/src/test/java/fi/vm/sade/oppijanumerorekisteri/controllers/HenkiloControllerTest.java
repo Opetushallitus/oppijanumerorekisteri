@@ -272,7 +272,7 @@ public class HenkiloControllerTest {
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
         HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
-        given(this.henkiloService.createHenkiloFromHenkiloCreateDto(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
+        given(this.henkiloService.createHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().string("1.2.3.4.5"));
