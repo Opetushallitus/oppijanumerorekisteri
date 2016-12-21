@@ -97,7 +97,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void findHenkilotByOidList() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", null);
         String inputOidList = "[\"1.2.3.4.5\"]";
         String returnContent = "[" +
                 "  {" +

@@ -5,6 +5,9 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +41,9 @@ public class HenkiloMapperTest {
 
     @Test
     public void henkiloPerustietoDtoToHenkilo() {
+        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", Date.from(syntymaaika.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         Henkilo henkilo = modelmapper.map(henkiloPerustietoDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");

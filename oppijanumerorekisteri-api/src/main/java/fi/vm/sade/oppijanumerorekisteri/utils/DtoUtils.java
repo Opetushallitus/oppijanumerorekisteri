@@ -24,11 +24,11 @@ public class DtoUtils {
     public static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi,
                                                                   String hetu, String henkiloOid, String kielikoodi,
                                                                   String kielityyppi, String kansalaisuusKoodi,
-                                                                  String externalId) {
+                                                                  String externalId, Date syntymaaika) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
-        return new HenkiloPerustietoDto(henkiloOid, externalId, hetu, etunimet, kutsumanimi, sukunimi, aidinkieli, asiointikieli,
+        return new HenkiloPerustietoDto(henkiloOid, externalId, hetu, etunimet, kutsumanimi, sukunimi, syntymaaika, aidinkieli, asiointikieli,
                 Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, "1", false);
     }
 
