@@ -5,6 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "hikari.datasource", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "hikari.datasource")
 public class HikariProperties extends HikariConfig {
 }
