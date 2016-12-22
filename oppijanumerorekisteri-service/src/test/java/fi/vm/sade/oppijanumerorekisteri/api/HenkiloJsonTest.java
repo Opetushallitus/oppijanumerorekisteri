@@ -10,6 +10,8 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,15 +46,17 @@ public class HenkiloJsonTest {
 
     @Test
     public void testHenkiloPerustietoDtoSerialize() throws Exception {
+        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika);
         assertThat(this.perustietoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloPerustietoDto.json");
     }
 
     @Test
     public void testHenkiloPerustietoDtoDeserialize() throws Exception {
+        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1");
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika);
         assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
     }
 

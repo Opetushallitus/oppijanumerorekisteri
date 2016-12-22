@@ -27,6 +27,8 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSO
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
+import java.time.LocalDate;
+import java.time.Month;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -107,11 +109,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findByOidIn() {
+        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         Date luontiMuokkausPvm = new Date();
         HenkiloPerustietoDto assertHenkilo = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                "fi", "suomi", "246", null);
+                "fi", "suomi", "246", null, syntymaaika);
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
         persistedHenkilo.getAidinkieli().setHenkilos(Collections.singleton(persistedHenkilo));
         persistedHenkilo.getKansalaisuus().iterator().next().setHenkilos(Sets.newHashSet(persistedHenkilo));
         this.testEntityManager.persist(persistedHenkilo.getAsiointiKieli());
