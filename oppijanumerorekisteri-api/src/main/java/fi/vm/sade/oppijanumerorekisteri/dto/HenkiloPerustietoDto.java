@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Set;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -36,6 +37,8 @@ public class HenkiloPerustietoDto implements Serializable {
 
     @Size(min = 1)
     private String sukunimi;
+
+    private LocalDate syntymaaika;
 
     private KielisyysDto aidinkieli;
 
