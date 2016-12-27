@@ -125,7 +125,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private Optional<Henkilo> getHenkiloByHetu(String hetu) {
-        List<Henkilo> henkiloListByHetu = this.henkiloDataRepository.findByHetu(hetu);
+        List<Henkilo> henkiloListByHetu = this.henkiloDataRepository.findByQueryHetu(hetu);
         if(henkiloListByHetu.size() > 1) {
             throw new DuplicateHetuException("Duplicate hetus found. Result would be undeterministic.");
         }

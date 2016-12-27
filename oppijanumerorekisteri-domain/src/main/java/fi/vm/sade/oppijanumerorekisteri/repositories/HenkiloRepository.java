@@ -20,6 +20,5 @@ public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaReposit
 
     Optional<Henkilo> findByOidHenkilo(String henkiloOid);
 
-    List<Henkilo> findByHetu(String hetu);
-
+    List<Henkilo> findByQueryHetu(String hetu);
 }
