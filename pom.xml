@@ -217,4 +217,14 @@ buildTtime=${maven.build.timestamp}
             </build>
         </profile>
     </profiles>
+	<repositories>
+		<repository>
+		    <id>oph-sade-artifactory-snapshots</id>
+            <url>https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+		</repository>
+  </repositories>
+
 </project>
