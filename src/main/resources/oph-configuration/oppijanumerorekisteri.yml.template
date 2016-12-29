@@ -17,8 +17,6 @@ spring:
       charset: utf-8
     archive:
       autodetection: class,hbm
-    show-sql: true
-    format-sql: true
     current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 hikari:
