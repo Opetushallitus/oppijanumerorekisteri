@@ -39,7 +39,6 @@
     <!-- Standard logging -->
     <root level="info">
         <appender-ref ref="FILE" />
-        <appender-ref ref="CONSOLE" />
     </root>
     <logger name="org.springframework" level="warn" />
     <logger name="org.springframework.security" level="warn" />
