@@ -8,6 +8,8 @@
 # Aseta vähintään nämä ympäristökohtaiset arvot
 
 spring:
+  main:
+    banner-mode: "off"
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
