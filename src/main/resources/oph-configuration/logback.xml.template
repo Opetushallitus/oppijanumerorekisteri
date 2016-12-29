@@ -47,7 +47,7 @@
     <logger name="org.hibernate.SQL" level="error" />
 
     <!-- Auditlog -->
-    <logger name="fi.vm.sade.auditlog.Audit" level="INFO">
+    <logger name="fi.vm.sade.auditlog.Audit" level="INFO" additivity="false">
         <appender-ref ref="ROLLING" />
     </logger>
 
