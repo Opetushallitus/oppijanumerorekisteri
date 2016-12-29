@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -109,8 +110,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String sukupuoli;
 
-    @Temporal(TemporalType.DATE)
-    private Date syntymaaika;
+    private LocalDate syntymaaika;
 
     private String passinnumero;
 
@@ -146,4 +146,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         this.kielisyys.add(kielisyys);
     }
 
+    public Boolean isTurvakielto() {
+        return turvakielto;
+    }
+
+    public void setTurvakielto(Boolean turvakielto) {
+        this.turvakielto = turvakielto;
+    }
 }

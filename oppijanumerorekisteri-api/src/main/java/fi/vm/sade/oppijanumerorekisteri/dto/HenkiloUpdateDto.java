@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,6 @@ public class HenkiloUpdateDto {
 
     private String sukunimi;
 
-    @NotNull
     @Size(min = 1)
     @ValidateHetu
     private String hetu;
@@ -34,7 +34,7 @@ public class HenkiloUpdateDto {
     @NotNull
     private HenkiloTyyppi henkiloTyyppi;
 
-    private Date syntymaaika;
+    private LocalDate syntymaaika;
 
     private String sukupuoli;
 
