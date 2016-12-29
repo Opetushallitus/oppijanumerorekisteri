@@ -2,10 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.joda.time.DateTime;
@@ -194,5 +191,27 @@ public class Service2ServiceControllerTest  {
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @WithMockUser
+    public void getHenkiloYhteystiedot() throws Exception {
+        String content = "{\"tyoosoite\":" +
+                "{\"sahkoposti\":\"testi@tyo.com\"}," +
+                "\"muuOsoite\":{\"katuosoite\":\"katu 134\"}, " + "" +
+                "\"kotiosoite\":{\"sahkoposti\":\"testi@test.com\"}}";
+
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
+                .put(YhteystietoRyhmaKuvaus.MUU_OSOITE, YhteystiedotDto.builder().katuosoite("katu 134").build())
+                .put(YhteystietoRyhmaKuvaus.TYOOSOITE, YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
+                .put(YhteystietoRyhmaKuvaus.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().json(content));
+
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6")).willReturn(new HenkilonYhteystiedotViewDto());
+        this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.6").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json("{}"));
+    }
+
 
 }
