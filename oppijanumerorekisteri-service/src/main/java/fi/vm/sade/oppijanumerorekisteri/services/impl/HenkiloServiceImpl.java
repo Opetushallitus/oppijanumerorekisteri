@@ -142,17 +142,24 @@ public class HenkiloServiceImpl implements HenkiloService {
                     HenkiloPerustietoDto.class);
         }
         if (!StringUtils.isEmpty(henkiloPerustietoDto.getExternalId())) {
-            Henkilo entity = henkiloJpaRepository.findByExternalId(henkiloPerustietoDto.getExternalId())
-                    .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt externalId:llä " + henkiloPerustietoDto.getExternalId()));
-            return mapper.map(entity, HenkiloPerustietoDto.class);
+            Optional<Henkilo> henkilo = henkiloJpaRepository.findByExternalId(henkiloPerustietoDto.getExternalId());
+            if (henkilo.isPresent()) {
+                return mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
+            }
         }
         Optional<Henkilo> henkilo = this.getHenkiloByHetu(henkiloPerustietoDto.getHetu());
         if (henkilo.isPresent()) {
             return this.mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
         }
 
-        returnHenkiloPerustietoDto = this.mapper.map(this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class)),
-                HenkiloPerustietoDto.class);
+        Henkilo entity = this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class));
+        if (!StringUtils.isEmpty(henkiloPerustietoDto.getExternalId())) {
+            ExternalId externalId = new ExternalId();
+            externalId.setExternalid(henkiloPerustietoDto.getExternalId());
+            externalId.setHenkilo(entity);
+            entity.setExternalIds(Collections.singleton(externalId));
+        }
+        returnHenkiloPerustietoDto = this.mapper.map(entity, HenkiloPerustietoDto.class);
         returnHenkiloPerustietoDto.setCreatedOnService(true);
         return returnHenkiloPerustietoDto;
     }
