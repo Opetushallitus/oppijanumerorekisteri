@@ -123,7 +123,7 @@ public class HenkiloController {
     public ResponseEntity oidExists(@PathVariable String oid,
                                     @RequestHeader(value = "External-Permission-Service", required = false)
                                             ExternalPermissionService permissionService) {
-        if(this.henkiloService.getOidExists(oid)) {
+        if (this.henkiloService.getOidExists(oid)) {
             return ResponseEntity.ok().build();
         }
         else {

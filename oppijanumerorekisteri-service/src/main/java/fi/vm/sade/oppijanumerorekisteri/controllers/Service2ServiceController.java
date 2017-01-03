@@ -81,7 +81,7 @@ public class Service2ServiceController {
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
         HenkiloPerustietoDto returnDto = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
-        if(returnDto.isCreatedOnService()) {
+        if (returnDto.isCreatedOnService()) {
             return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
                     + returnDto.getOidHenkilo())).body(returnDto);
         }

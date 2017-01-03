@@ -126,7 +126,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private Optional<Henkilo> getHenkiloByHetu(String hetu) {
         List<Henkilo> henkiloListByHetu = this.henkiloDataRepository.findByHetu(hetu);
-        if(henkiloListByHetu.size() > 1) {
+        if (henkiloListByHetu.size() > 1) {
             throw new DuplicateHetuException("Duplicate hetus found. Result would be undeterministic.");
         }
         return henkiloListByHetu.stream().findFirst();
@@ -224,7 +224,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.getYhteystiedotRyhma().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
                 yhteystiedotRyhma.setHenkilo(henkiloSaved);
-                if(yhteystiedotRyhma.getYhteystieto() != null) {
+                if (yhteystiedotRyhma.getYhteystieto() != null) {
                     yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
                 }
                 henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);

@@ -51,11 +51,9 @@ public class HenkiloUpdatePostValidator implements Validator {
             errors.reject("cant.modify.own.data");
         }
 
-        if (!StringUtils.isEmpty(henkiloDto.getHetu())) {
-            Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloDto.getOidHenkilo());
-            if(hetu.isPresent() && hetu.get() != henkiloDto.getHetu()) {
-                errors.rejectValue("hetu", "socialsecuritynr.already.exists");
-            }
+        Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloDto.getOidHenkilo());
+        if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloDto.getHetu())) {
+            errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
         Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloDto.getKansalaisuus();
