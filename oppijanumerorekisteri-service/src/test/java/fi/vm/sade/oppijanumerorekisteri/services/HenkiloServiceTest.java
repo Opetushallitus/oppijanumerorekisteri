@@ -266,8 +266,8 @@ public class HenkiloServiceTest {
                 "arpa@kuutio.fi");
         YhteystiedotRyhma mappedYhteydstiedotRyhma = new YhteystiedotRyhma();
         mappedYhteydstiedotRyhma.setYhteystieto(Sets.newHashSet(new Yhteystieto(null,
-                henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
-                henkiloUpdateDto.getYhteystiedotRyhmas().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
+                henkiloUpdateDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
+                henkiloUpdateDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
         ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
         given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
         .willReturn(Collections.singletonList(henkilo));

@@ -219,9 +219,9 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
-        if (henkiloUpdateDto.getYhteystiedotRyhmas() != null) {
+        if (henkiloUpdateDto.getYhteystiedotRyhma() != null) {
             henkiloSaved.clearYhteystiedotRyhmas();
-            henkiloUpdateDto.getYhteystiedotRyhmas().forEach(yhteystiedotRyhmaDto -> {
+            henkiloUpdateDto.getYhteystiedotRyhma().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
                 yhteystiedotRyhma.setHenkilo(henkiloSaved);
                 if(yhteystiedotRyhma.getYhteystieto() != null) {
@@ -229,7 +229,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 }
                 henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
             });
-            henkiloUpdateDto.setYhteystiedotRyhmas(null);
+            henkiloUpdateDto.setYhteystiedotRyhma(null);
         }
 
         if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKieliKoodi() != null) {
