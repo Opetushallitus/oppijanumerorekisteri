@@ -223,10 +223,10 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloSaved.clearYhteystiedotRyhmas();
             henkiloUpdateDto.getYhteystiedotRyhmas().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
-                yhteystiedotRyhma.setRyhmaKuvaus(yhteystiedotRyhmaDto.getRyhmaKuvaus().getRyhmanKuvaus());
-                yhteystiedotRyhma.setRyhmaAlkuperaTieto(yhteystiedotRyhmaDto.getRyhmaAlkuperaTieto().getAlkuperatieto());
                 yhteystiedotRyhma.setHenkilo(henkiloSaved);
-                yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
+                if(yhteystiedotRyhma.getYhteystieto() != null) {
+                    yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
+                }
                 henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
             });
             henkiloUpdateDto.setYhteystiedotRyhmas(null);

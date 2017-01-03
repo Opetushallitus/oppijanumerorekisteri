@@ -25,16 +25,16 @@ public class YhteystiedotRyhmaConverter extends BidirectionalConverter<Yhteystie
         return new YhteystiedotRyhmaDto(YhteystietoRyhmaKuvaus.forValue(source.getRyhmaKuvaus()),
                 YhteystietoRyhmaAlkuperatieto.forValue(source.getRyhmaAlkuperaTieto()),
                 source.isReadOnly(),
-                this.mapper.mapAsSet(source.getYhteystieto(), YhteystietoDto.class));
+                source.getYhteystieto() == null ? null : this.mapper.mapAsSet(source.getYhteystieto(), YhteystietoDto.class));
 
     }
 
     @Override
     public YhteystiedotRyhma convertFrom(YhteystiedotRyhmaDto source, Type<YhteystiedotRyhma> destinationType) {
         return new YhteystiedotRyhma(null,
-                source.getRyhmaKuvaus().getRyhmanKuvaus(),
-                source.getRyhmaAlkuperaTieto().getAlkuperatieto(),
+                source.getRyhmaKuvaus() == null ? null : source.getRyhmaKuvaus().getRyhmanKuvaus(),
+                source.getRyhmaAlkuperaTieto() == null ? null : source.getRyhmaAlkuperaTieto().getAlkuperatieto(),
                 source.isReadOnly(),
-                this.mapper.mapAsSet(source.getYhteystieto(), Yhteystieto.class));
+                source.getYhteystieto() == null ? null : this.mapper.mapAsSet(source.getYhteystieto(), Yhteystieto.class));
     }
 }
