@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -24,15 +26,15 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     private KoodistoClient koodistoClient;
 
-    private HenkiloRepository henkiloRepository;
+    private HenkiloJpaRepository henkiloJpaRepository;
 
     @Autowired
     public HenkiloUpdatePostValidator(UserDetailsHelper userDetailsHelper,
                                       KoodistoClient koodistoClient,
-                                      HenkiloRepository henkiloRepository) {
+                                      HenkiloJpaRepository henkiloJpaRepository) {
         this.userDetailsHelper = userDetailsHelper;
         this.koodistoClient = koodistoClient;
-        this.henkiloRepository = henkiloRepository;
+        this.henkiloJpaRepository = henkiloJpaRepository;
     }
 
     @Override
@@ -50,8 +52,8 @@ public class HenkiloUpdatePostValidator implements Validator {
         }
 
         if (!StringUtils.isEmpty(henkiloDto.getHetu())) {
-            Predicate hetuExists = QHenkilo.henkilo.hetu.eq(henkiloDto.getHetu());
-            if(this.henkiloRepository.exists(hetuExists)) {
+            Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloDto.getOidHenkilo());
+            if(hetu.isPresent() && hetu.get() != henkiloDto.getHetu()) {
                 errors.rejectValue("hetu", "socialsecuritynr.already.exists");
             }
         }
