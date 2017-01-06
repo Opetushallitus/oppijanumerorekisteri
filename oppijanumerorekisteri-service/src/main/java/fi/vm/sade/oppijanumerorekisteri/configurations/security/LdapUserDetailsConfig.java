@@ -7,9 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.ldap.authentication.DefaultValuesAuthenticationSourceDecorator;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.security.ldap.authentication.SpringSecurityAuthenticationSource;
+import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
@@ -34,24 +33,10 @@ public class LdapUserDetailsConfig {
 
     @Bean
     public LdapContextSource ldapContextSource() {
-        LdapContextSource ldapContextSource = new LdapContextSource();
-        ldapContextSource.setUrl(casProperties.getLdap().getUrl());
-        ldapContextSource.setAuthenticationSource(authenticationSource());
+        LdapContextSource ldapContextSource = new DefaultSpringSecurityContextSource(casProperties.getLdap().getUrl());
+        ldapContextSource.setUserDn(casProperties.getLdap().getManagedDn());
+        ldapContextSource.setPassword(casProperties.getLdap().getPassword());
         return ldapContextSource;
-    }
-
-    @Bean
-    public DefaultValuesAuthenticationSourceDecorator authenticationSource() {
-        DefaultValuesAuthenticationSourceDecorator decorator = new DefaultValuesAuthenticationSourceDecorator();
-        decorator.setDefaultUser(casProperties.getLdap().getManagedDn());
-        decorator.setDefaultPassword(casProperties.getLdap().getPassword());
-        decorator.setTarget(springSecurityAuthenticationSource());
-        return decorator;
-    }
-
-    @Bean
-    public SpringSecurityAuthenticationSource springSecurityAuthenticationSource() {
-        return new SpringSecurityAuthenticationSource();
     }
 
     @Bean
