@@ -70,7 +70,7 @@ public class DtoUtils {
 
         KansalaisuusDto kansalaisuus = new KansalaisuusDto();
         kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
-        Date syntymaAika = new Date(24364800000L);
+        LocalDate syntymaAika = LocalDate.of(1970, 10, 14);
 
         Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
