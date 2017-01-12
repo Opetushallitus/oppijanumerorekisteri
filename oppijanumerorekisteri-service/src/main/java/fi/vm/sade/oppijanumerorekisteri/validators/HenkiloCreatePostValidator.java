@@ -39,8 +39,7 @@ public class HenkiloCreatePostValidator implements Validator {
         Henkilo henkilo = (Henkilo) o;
 
         String hetu = henkilo.getHetu();
-        Predicate hetuExists = QHenkilo.henkilo.hetu.eq(hetu);
-        if (!StringUtils.isEmpty(hetu) && this.henkiloRepository.exists(hetuExists)) {
+        if (!StringUtils.isEmpty(hetu) && this.henkiloRepository.exists(QHenkilo.henkilo.hetu.eq(hetu))) {
             errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
