@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -63,6 +64,8 @@ public class HenkiloServiceImplTest {
     @Mock
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     @Mock
+    private HenkiloCreatePostValidator henkiloCreatePostValidator;
+    @Mock
     private KoodistoService koodistoService;
 
     @Before
@@ -71,7 +74,7 @@ public class HenkiloServiceImplTest {
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
                 userDetailsHelper, kielisyysRepository, koodistoService,
                 kansalaisuusRepository, identificationRepository,
-                permissionChecker, henkiloUpdatePostValidator);
+                permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator);
     }
 
     @Test

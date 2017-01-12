@@ -17,6 +17,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,12 +74,13 @@ public class HenkiloServiceTest {
         IdentificationRepository identificationRepositoryMock = Mockito.mock(IdentificationRepository.class);
         this.permissionCheckerMock = Mockito.mock(PermissionChecker.class);
         HenkiloUpdatePostValidator henkiloUpdatePostValidatorMock = Mockito.mock(HenkiloUpdatePostValidator.class);
+        HenkiloCreatePostValidator henkiloCreatePostValidatorMock = Mockito.mock(HenkiloCreatePostValidator.class);
         this.henkiloViiteRepositoryMock = Mockito.mock(HenkiloViiteRepository.class);
 
         this.service = spy(new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, henkiloViiteRepositoryMock,
                 mapper, new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
                 koodistoServiceMock, this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
-                henkiloUpdatePostValidatorMock));
+                henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock));
     }
 
     @Test

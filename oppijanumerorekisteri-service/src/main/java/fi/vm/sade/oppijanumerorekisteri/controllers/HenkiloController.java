@@ -159,7 +159,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createHenkiloFromHenkiloCreateDto(@RequestBody @Validated HenkiloCreateDto henkilo) {
+    public String createHenkiloFromHenkiloCreateDto(@RequestBody @Validated HenkiloCreateDto henkilo) throws BindException {
         return this.henkiloService.createHenkilo(henkilo).getOidHenkilo();
     }
 

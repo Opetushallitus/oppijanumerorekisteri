@@ -28,7 +28,7 @@ public interface HenkiloService {
 
     List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
 
-    HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
+    HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) throws BindException;
 
     HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException;
 
@@ -45,7 +45,7 @@ public interface HenkiloService {
     HenkiloReadDto getMasterByOid(String henkiloOid);
 
     HenkiloReadDto getByHetu(String hetu);
-    
+
     List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
 
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);

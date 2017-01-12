@@ -45,7 +45,7 @@ public class HenkiloUpdatePostValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         HenkiloUpdateDto henkiloDto = (HenkiloUpdateDto) o;
-        String kasittelijaOid = userDetailsHelper.getCurrentUserOid()
+        String kasittelijaOid = this.userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new);
         if (kasittelijaOid.equals(henkiloDto.getOidHenkilo())) {
             errors.reject("cant.modify.own.data");
@@ -57,7 +57,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         }
 
         Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloDto.getKansalaisuus();
-        List<KoodiType> koodiTypeList = koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
+        List<KoodiType> koodiTypeList = this.koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
 
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
         if (kansalaisuusDtoSet != null && !kansalaisuusDtoSet.stream().map(KansalaisuusDto::getKansalaisuusKoodi)

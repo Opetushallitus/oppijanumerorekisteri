@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
+    private final HenkiloCreatePostValidator henkiloCreatePostValidator;
 
     private final KoodistoService koodistoService;
 
@@ -60,7 +62,8 @@ public class HenkiloServiceImpl implements HenkiloService {
                               KansalaisuusRepository kansalaisuusRepository,
                               IdentificationRepository identificationRepository,
                               PermissionChecker permissionChecker,
-                              HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
+                              HenkiloUpdatePostValidator henkiloUpdatePostValidator,
+                              HenkiloCreatePostValidator henkiloCreatePostValidator) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.henkiloViiteRepository = henkiloViiteRepository;
@@ -74,6 +77,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.identificationRepository = identificationRepository;
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
+        this.henkiloCreatePostValidator = henkiloCreatePostValidator;
     }
 
     @Override
@@ -177,8 +181,14 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) {
+    public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) throws BindException{
         Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
+        BindException errors = new BindException(henkilo, "henkiloCreate");
+        this.henkiloCreatePostValidator.validate(henkilo, errors);
+        if (errors.hasErrors()) {
+            throw errors;
+        }
+
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
     }
 
