@@ -43,10 +43,15 @@ public class HenkiloCreatePostValidator implements Validator {
             errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
+        if(henkilo.getSukupuoli() != null &&
+            this.koodistoClient.getKoodiValuesForKoodisto("sukupuoli", 1, true)
+                    .stream().noneMatch(koodiArvo -> koodiArvo.equals(henkilo.getSukupuoli())) ) {
+            errors.rejectValue("sukupuoli", "invalid.sukupuoli");
+        }
+
         Set<Kansalaisuus> kansalaisuusSet = henkilo.getKansalaisuus();
         List<KoodiType> koodiTypeList = this.koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1,
                 true);
-
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
         if (kansalaisuusSet != null && !kansalaisuusSet.stream().map(Kansalaisuus::getKansalaisuusKoodi)
                 .allMatch(kansalaisuus -> koodiTypeList.stream()

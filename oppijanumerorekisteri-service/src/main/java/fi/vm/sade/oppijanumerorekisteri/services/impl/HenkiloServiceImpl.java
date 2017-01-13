@@ -47,8 +47,6 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final HenkiloCreatePostValidator henkiloCreatePostValidator;
 
-    private final KoodistoService koodistoService;
-
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
                               HenkiloRepository henkiloDataRepository,
@@ -58,7 +56,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                               OidGenerator oidGenerator,
                               UserDetailsHelper userDetailsHelper,
                               KielisyysRepository kielisyysRepository,
-                              KoodistoService koodistoService,
                               KansalaisuusRepository kansalaisuusRepository,
                               IdentificationRepository identificationRepository,
                               PermissionChecker permissionChecker,
@@ -72,7 +69,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.oidGenerator = oidGenerator;
         this.userDetailsHelper = userDetailsHelper;
         this.kielisyysRepository = kielisyysRepository;
-        this.koodistoService = koodistoService;
         this.kansalaisuusRepository = kansalaisuusRepository;
         this.identificationRepository = identificationRepository;
         this.permissionChecker = permissionChecker;
@@ -342,7 +338,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
         }
         if (henkiloCreate.getKansalaisuus() != null) {
-            this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
                             .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))

@@ -7,7 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
-import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -65,15 +64,12 @@ public class HenkiloServiceImplTest {
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     @Mock
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
-    @Mock
-    private KoodistoService koodistoService;
 
     @Before
     public void setup() {
         impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
-                userDetailsHelper, kielisyysRepository, koodistoService,
-                kansalaisuusRepository, identificationRepository,
+                userDetailsHelper, kielisyysRepository, kansalaisuusRepository, identificationRepository,
                 permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator);
     }
 

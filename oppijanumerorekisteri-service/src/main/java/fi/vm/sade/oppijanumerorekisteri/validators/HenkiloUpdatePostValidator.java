@@ -44,25 +44,30 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        HenkiloUpdateDto henkiloDto = (HenkiloUpdateDto) o;
+        HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
         String kasittelijaOid = this.userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new);
-        if (kasittelijaOid.equals(henkiloDto.getOidHenkilo())) {
+        if (kasittelijaOid.equals(henkiloUpdateDto.getOidHenkilo())) {
             errors.reject("cant.modify.own.data");
         }
 
-        Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloDto.getOidHenkilo());
-        if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloDto.getHetu())) {
+        Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
+        if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloUpdateDto.getHetu())) {
             errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
-        Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloDto.getKansalaisuus();
-        List<KoodiType> koodiTypeList = this.koodistoClient.getKoodisForKoodisto("maatjavaltiot2", 1, true);
+        if(henkiloUpdateDto.getSukupuoli() != null &&
+                this.koodistoClient.getKoodiValuesForKoodisto("sukupuoli", 1, true)
+                        .stream().noneMatch(koodiArvo -> koodiArvo.equals(henkiloUpdateDto.getSukupuoli())) ) {
+            errors.rejectValue("sukupuoli", "invalid.sukupuoli");
+        }
 
+        Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloUpdateDto.getKansalaisuus();
+        List<String> koodiTypeList = this.koodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 1, true);
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
         if (kansalaisuusDtoSet != null && !kansalaisuusDtoSet.stream().map(KansalaisuusDto::getKansalaisuusKoodi)
                 .allMatch(kansalaisuus -> koodiTypeList.stream()
-                        .anyMatch(koodi -> koodi.getKoodiArvo().equals(kansalaisuus)))) {
+                        .anyMatch(koodi -> koodi.equals(kansalaisuus)))) {
             errors.rejectValue("kansalaisuudet", "invalid.kansalaisuusKoodi");
         }
 

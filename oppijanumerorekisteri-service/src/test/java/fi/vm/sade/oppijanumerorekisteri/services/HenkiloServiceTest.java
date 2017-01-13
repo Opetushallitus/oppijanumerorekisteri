@@ -69,7 +69,6 @@ public class HenkiloServiceTest {
         MockOidGenerator mockOidGenerator = new MockOidGenerator();
         this.userDetailsHelperMock = Mockito.mock(UserDetailsHelper.class);
         this.kielisyysRepositoryMock = Mockito.mock(KielisyysRepository.class);
-        KoodistoService koodistoServiceMock = Mockito.mock(KoodistoService.class);
         this.kansalaisuusRepositoryMock = Mockito.mock(KansalaisuusRepository.class);
         IdentificationRepository identificationRepositoryMock = Mockito.mock(IdentificationRepository.class);
         this.permissionCheckerMock = Mockito.mock(PermissionChecker.class);
@@ -79,7 +78,7 @@ public class HenkiloServiceTest {
 
         this.service = spy(new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, henkiloViiteRepositoryMock,
                 mapper, new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
-                koodistoServiceMock, this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
+                this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
                 henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock));
     }
 
