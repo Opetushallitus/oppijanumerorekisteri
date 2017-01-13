@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 
-import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -181,14 +181,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) throws BindException{
+    public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) {
         Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
-        BindException errors = new BindException(henkilo, "henkiloCreate");
-        this.henkiloCreatePostValidator.validate(henkilo, errors);
-        if (errors.hasErrors()) {
-            throw errors;
-        }
-
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
     }
 
@@ -197,11 +191,11 @@ public class HenkiloServiceImpl implements HenkiloService {
     // call the validator.
     @Override
     @Transactional
-    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException {
+    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) {
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
-            throw errors;
+            throw new ValidationException(errors);
         }
 
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
@@ -327,6 +321,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional
     public Henkilo createHenkilo(Henkilo henkiloCreate) {
+        BindException errors = new BindException(henkiloCreate, "henkiloCreate");
+        this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
+        if (errors.hasErrors()) {
+            throw new ValidationException(errors);
+        }
+
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());

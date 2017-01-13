@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -60,9 +61,11 @@ public class GlobalExceptionHandler {
     public void badRequestValidationException() {
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_service_argument_value") // 400 Bad Request
-    @ExceptionHandler(BindException.class)
-    public void badRequestServiceValidationException() {
+    // 400 Bad Request
+    @ExceptionHandler(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException.class)
+    public ResponseEntity badRequestServiceValidationException(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException ve) {
+        ve.setStackTrace(new StackTraceElement[0]);
+        return ResponseEntity.badRequest().body(ve);
     }
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "duplicate_hetu_undeterministic_behaviour")
