@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 
@@ -42,5 +43,11 @@ public class KoodistoClientImpl implements KoodistoClient {
                 .expectStatus(200).accept(JSON)
                 .execute(r -> objectMapper.readValue(r.asInputStream(), KoodiType[].class));
         return Arrays.asList(koodiCollectionType);
+    }
+
+    @Override
+    public List<String> getKoodiValuesForKoodisto(String koodistoUri, int koodistoVersion, boolean onlyValidKoodis) {
+        return this.getKoodisForKoodisto(koodistoUri, koodistoVersion, onlyValidKoodis)
+                .stream().map(KoodiType::getKoodiArvo).collect(Collectors.toList());
     }
 }

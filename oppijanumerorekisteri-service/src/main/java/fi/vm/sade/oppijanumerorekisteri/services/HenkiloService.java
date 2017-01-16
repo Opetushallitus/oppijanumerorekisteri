@@ -4,7 +4,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
-import org.springframework.validation.BindException;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +29,7 @@ public interface HenkiloService {
 
     HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
 
-    HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException;
+    HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto);
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
@@ -45,7 +44,7 @@ public interface HenkiloService {
     HenkiloReadDto getMasterByOid(String henkiloOid);
 
     HenkiloReadDto getByHetu(String hetu);
-    
+
     List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
 
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);

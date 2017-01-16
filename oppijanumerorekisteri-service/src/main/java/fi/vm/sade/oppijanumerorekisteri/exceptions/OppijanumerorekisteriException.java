@@ -10,4 +10,8 @@ public abstract class OppijanumerorekisteriException extends RuntimeException {
     public OppijanumerorekisteriException(String message) {
         super(message);
     }
+
+    public OppijanumerorekisteriException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

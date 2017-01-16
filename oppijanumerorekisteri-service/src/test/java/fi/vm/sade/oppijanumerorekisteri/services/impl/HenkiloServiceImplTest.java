@@ -7,11 +7,11 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
-import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -63,15 +63,14 @@ public class HenkiloServiceImplTest {
     @Mock
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     @Mock
-    private KoodistoService koodistoService;
+    private HenkiloCreatePostValidator henkiloCreatePostValidator;
 
     @Before
     public void setup() {
         impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
-                userDetailsHelper, kielisyysRepository, koodistoService,
-                kansalaisuusRepository, identificationRepository,
-                permissionChecker, henkiloUpdatePostValidator);
+                userDetailsHelper, kielisyysRepository, kansalaisuusRepository, identificationRepository,
+                permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator);
     }
 
     @Test

@@ -22,7 +22,6 @@ import java.util.Set;
 public class HenkiloCreateDto implements Serializable {
     private static final long serialVersionUID = -8509596443256973893L;
 
-    @Size(min = 1)
     @ValidateHetu
     private String hetu;
 

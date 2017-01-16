@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -13,13 +14,13 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 
-import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,8 +45,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
-
-    private final KoodistoService koodistoService;
+    private final HenkiloCreatePostValidator henkiloCreatePostValidator;
 
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
@@ -56,11 +56,11 @@ public class HenkiloServiceImpl implements HenkiloService {
                               OidGenerator oidGenerator,
                               UserDetailsHelper userDetailsHelper,
                               KielisyysRepository kielisyysRepository,
-                              KoodistoService koodistoService,
                               KansalaisuusRepository kansalaisuusRepository,
                               IdentificationRepository identificationRepository,
                               PermissionChecker permissionChecker,
-                              HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
+                              HenkiloUpdatePostValidator henkiloUpdatePostValidator,
+                              HenkiloCreatePostValidator henkiloCreatePostValidator) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.henkiloViiteRepository = henkiloViiteRepository;
@@ -69,11 +69,11 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.oidGenerator = oidGenerator;
         this.userDetailsHelper = userDetailsHelper;
         this.kielisyysRepository = kielisyysRepository;
-        this.koodistoService = koodistoService;
         this.kansalaisuusRepository = kansalaisuusRepository;
         this.identificationRepository = identificationRepository;
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
+        this.henkiloCreatePostValidator = henkiloCreatePostValidator;
     }
 
     @Override
@@ -187,11 +187,11 @@ public class HenkiloServiceImpl implements HenkiloService {
     // call the validator.
     @Override
     @Transactional
-    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) throws BindException {
+    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) {
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
-            throw errors;
+            throw new ValidationException(errors);
         }
 
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
@@ -317,6 +317,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional
     public Henkilo createHenkilo(Henkilo henkiloCreate) {
+        BindException errors = new BindException(henkiloCreate, "henkiloCreate");
+        this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
+        if (errors.hasErrors()) {
+            throw new ValidationException(errors);
+        }
+
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
@@ -332,7 +338,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
         }
         if (henkiloCreate.getKansalaisuus() != null) {
-            this.koodistoService.postvalidateKansalaisuus(henkiloCreate.getKansalaisuus());
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
                     .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
                             .<ValidationException>orElseThrow(() -> new ValidationException("invalid.kansalaisuus")))
