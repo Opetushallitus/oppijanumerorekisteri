@@ -263,7 +263,7 @@ public class HenkiloServiceTest {
                 "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246",
                 new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         YhteystiedotRyhma mappedYhteydstiedotRyhma = new YhteystiedotRyhma();
         mappedYhteydstiedotRyhma.setYhteystieto(Sets.newHashSet(new Yhteystieto(null,

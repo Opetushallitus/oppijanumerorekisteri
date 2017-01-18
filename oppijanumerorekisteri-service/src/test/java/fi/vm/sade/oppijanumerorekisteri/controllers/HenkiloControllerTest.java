@@ -200,7 +200,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void updateHenkilo() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
@@ -212,7 +212,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void updateHenkiloONRValidationException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDTo");
@@ -228,7 +228,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void updateHenkiloNotFoundException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new NotFoundException());
@@ -240,7 +240,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void updateHenkiloValidationException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246", "1.2.3.4.1",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());

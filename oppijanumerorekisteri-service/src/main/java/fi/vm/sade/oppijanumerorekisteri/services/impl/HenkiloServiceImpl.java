@@ -198,8 +198,8 @@ public class HenkiloServiceImpl implements HenkiloService {
                     Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
-        henkiloUpdateDto.setMuokkausPvm(new Date());
-        henkiloUpdateDto.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
+        henkiloSaved.setModified(new Date());
+        henkiloSaved.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
                 .orElseThrow(UserHasNoOidException::new));
 
         // Do not update all values if henkilo is already vtj yksiloity

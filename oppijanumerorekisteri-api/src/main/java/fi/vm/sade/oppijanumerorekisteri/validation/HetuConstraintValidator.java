@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import org.springframework.util.StringUtils;
 
 import javax.validation.ConstraintValidator;

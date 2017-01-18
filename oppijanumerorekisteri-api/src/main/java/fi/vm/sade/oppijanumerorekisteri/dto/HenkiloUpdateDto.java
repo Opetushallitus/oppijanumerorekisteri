@@ -10,7 +10,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,10 +38,6 @@ public class HenkiloUpdateDto {
     private String sukupuoli;
 
     private boolean eiSuomalaistaHetua;
-
-    private Date muokkausPvm;
-
-    private String kasittelijaOid;
 
     @ValidateAsiointikieli
     private KielisyysDto asiointiKieli;

@@ -91,7 +91,7 @@ public class DtoUtils {
 
     public static HenkiloUpdateDto createHenkiloUpdateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu,
                                                           String oidHenkilo, String kielikoodi, String kielityyppi,
-                                                          String kansalaisuuskoodi, String kasittelija, String yhteystietoArvo) {
+                                                          String kansalaisuuskoodi, String yhteystietoArvo) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuus = DtoUtils.createKansalaisuusDto(kansalaisuuskoodi);
@@ -99,7 +99,7 @@ public class DtoUtils {
         LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
 
         return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu, HenkiloTyyppi.VIRKAILIJA,
-                syntymaAika, "1", false, new Date(), kasittelija, asiointikieli, aidinkieli,
+                syntymaAika, "1", false, asiointikieli, aidinkieli,
                 Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), Collections.singleton(yhteystiedotRyhma));
     }
 
