@@ -2,8 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaAlkuperatieto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -22,8 +20,8 @@ public class YhteystiedotRyhmaConverter extends BidirectionalConverter<Yhteystie
 
     @Override
     public YhteystiedotRyhmaDto convertTo(YhteystiedotRyhma source, Type<YhteystiedotRyhmaDto> destinationType) {
-        return new YhteystiedotRyhmaDto(YhteystietoRyhmaKuvaus.forValue(source.getRyhmaKuvaus()),
-                YhteystietoRyhmaAlkuperatieto.forValue(source.getRyhmaAlkuperaTieto()),
+        return new YhteystiedotRyhmaDto(source.getRyhmaKuvaus(),
+                source.getRyhmaAlkuperaTieto(),
                 source.isReadOnly(),
                 source.getYhteystieto() == null ? null : this.mapper.mapAsSet(source.getYhteystieto(), YhteystietoDto.class));
 
@@ -32,8 +30,8 @@ public class YhteystiedotRyhmaConverter extends BidirectionalConverter<Yhteystie
     @Override
     public YhteystiedotRyhma convertFrom(YhteystiedotRyhmaDto source, Type<YhteystiedotRyhma> destinationType) {
         return new YhteystiedotRyhma(null,
-                source.getRyhmaKuvaus() == null ? null : source.getRyhmaKuvaus().getRyhmanKuvaus(),
-                source.getRyhmaAlkuperaTieto() == null ? null : source.getRyhmaAlkuperaTieto().getAlkuperatieto(),
+                source.getRyhmaKuvaus() == null ? null : source.getRyhmaKuvaus(),
+                source.getRyhmaAlkuperaTieto() == null ? null : source.getRyhmaAlkuperaTieto(),
                 source.isReadOnly(),
                 source.getYhteystieto() == null ? null : this.mapper.mapAsSet(source.getYhteystieto(), Yhteystieto.class));
     }

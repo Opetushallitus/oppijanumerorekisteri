@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.KOTIOSOITE;
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
@@ -161,12 +159,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     @Test
     public void findYhteystiedot() {
         populate(henkilo("1.2.3.4.5")
-            .withYhteystieto(ryhma(KOTIOSOITE)
+            .withYhteystieto(ryhma("kotiosoite")
                 .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
                 .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
                 .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
             )
-            .withYhteystieto(ryhma(TYOOSOITE).alkupera("alkuperä")
+            .withYhteystieto(ryhma("tyoosoite").alkupera("alkuperä")
                 .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
             )
         );
@@ -181,12 +179,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(tiedot.size()).isEqualTo(4);
 
         tiedot = this.jpaRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid("1.2.3.4.5")
-                    .withRyhma(TYOOSOITE));
+                    .withRyhma("tyoosoite"));
         assertThat(tiedot.size()).isEqualTo(1);
         assertThat(tiedot.get(0).getArvo()).isEqualTo("tyo@osoite.com");
         assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
         assertThat(tiedot.get(0).getRyhmaAlkuperaTieto()).isEqualTo("alkuperä");
-        assertThat(tiedot.get(0).getRyhmaKuvaus()).isEqualTo(TYOOSOITE.getRyhmanKuvaus());
+        assertThat(tiedot.get(0).getRyhmaKuvaus()).isEqualTo("tyoosoite");
         assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
     }
 

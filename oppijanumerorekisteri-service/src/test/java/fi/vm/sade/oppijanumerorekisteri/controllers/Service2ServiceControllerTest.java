@@ -201,9 +201,9 @@ public class Service2ServiceControllerTest  {
                 "\"kotiosoite\":{\"sahkoposti\":\"testi@test.com\"}}";
 
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-                .put(YhteystietoRyhmaKuvaus.MUU_OSOITE, YhteystiedotDto.builder().katuosoite("katu 134").build())
-                .put(YhteystietoRyhmaKuvaus.TYOOSOITE, YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
-                .put(YhteystietoRyhmaKuvaus.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+                .put("muuOsoite", YhteystiedotDto.builder().katuosoite("katu 134").build())
+                .put("tyoosoite", YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
+                .put("kotiosoite", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));

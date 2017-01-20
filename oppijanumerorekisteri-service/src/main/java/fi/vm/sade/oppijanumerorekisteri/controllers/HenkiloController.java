@@ -98,7 +98,7 @@ public class HenkiloController {
                                                   @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma,
                                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                                    ExternalPermissionService permissionService ) {
-        return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhmaKuvaus.forValue(ryhma))
+        return henkiloService.getHenkiloYhteystiedot(oid, ryhma)
                 .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by ryhma="+ryhma));
     }
 

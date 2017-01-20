@@ -270,7 +270,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull YhteystietoRyhmaKuvaus ryhma) {
+    public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull String ryhma) {
         return ofNullable(yhteystietoConverter.toHenkiloYhteystiedot(
                 this.henkiloJpaRepository.findYhteystiedot(new YhteystietoCriteria()
                         .withHenkiloOid(henkiloOid)

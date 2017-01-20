@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
@@ -16,8 +15,8 @@ public class YhteystietoCriteria {
         return this;
     }
 
-    public YhteystietoCriteria withRyhma(YhteystietoRyhmaKuvaus ryhma) {
-        this.ryhmaKuvausEquals = ryhma == null ? null : ryhma.getRyhmanKuvaus();
+    public YhteystietoCriteria withRyhma(String ryhma) {
+        this.ryhmaKuvausEquals = ryhma == null ? null : ryhma;
         return this;
     }
     
