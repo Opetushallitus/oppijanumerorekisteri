@@ -69,22 +69,20 @@ public class HenkiloUpdatePostValidator implements Validator {
             errors.rejectValue("kansalaisuudet", "invalid.kansalaisuusKoodi");
         }
 
-        Set<YhteystiedotRyhmaDto> yhteystiedotRyhmat = henkiloUpdateDto.getYhteystiedotRyhma();
-
-        List<KoodiType> yhteystietotyypit = this.koodistoClient.getKoodisForKoodisto("yhteystietotyypit", 1,
-                true);
-        if (yhteystiedotRyhmat != null && !yhteystiedotRyhmat.stream().map(YhteystiedotRyhmaDto::getRyhmaKuvaus)
-                .allMatch(ryhmaKuvaus -> yhteystietotyypit.stream()
-                        .anyMatch(koodi -> koodi.getKoodiArvo().equals(ryhmaKuvaus)))) {
-            errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaKuvaus");
-        }
-
-        List<KoodiType> yhteystietojenalkuperat = this.koodistoClient.getKoodisForKoodisto("yhteystietojenalkupera", 1,
-                true);
-        if (yhteystiedotRyhmat != null && !yhteystiedotRyhmat.stream().map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto)
-                .allMatch(alkupera -> yhteystietojenalkuperat.stream()
-                        .anyMatch(koodi -> koodi.getKoodiArvo().equals(alkupera)))) {
-            errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
+        Set<YhteystiedotRyhmaDto> yhteystiedot = henkiloUpdateDto.getYhteystiedotRyhma();
+        if (yhteystiedot != null && !yhteystiedot.isEmpty()) {
+            List<KoodiType> tyypit = this.koodistoClient.getKoodisForKoodisto("yhteystietotyypit", 1, true);
+            if (!yhteystiedot.stream().map(YhteystiedotRyhmaDto::getRyhmaKuvaus)
+                    .allMatch(ryhmaKuvaus -> tyypit.stream()
+                            .anyMatch(koodi -> koodi.getKoodiArvo().equals(ryhmaKuvaus)))) {
+                errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaKuvaus");
+            }
+            List<KoodiType> alkuperat = this.koodistoClient.getKoodisForKoodisto("yhteystietojenalkupera", 1, true);
+            if (!yhteystiedot.stream().map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto)
+                    .allMatch(alkupera -> alkuperat.stream()
+                            .anyMatch(koodi -> koodi.getKoodiArvo().equals(alkupera)))) {
+                errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
+            }
         }
 
     }
