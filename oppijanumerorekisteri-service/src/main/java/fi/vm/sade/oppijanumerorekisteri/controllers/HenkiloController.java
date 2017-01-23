@@ -93,13 +93,13 @@ public class HenkiloController {
 
     @ApiOperation("Hakee annetun henkilön yhteystietoryhmän yhteystiedot")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
-    @RequestMapping(value = "/{oid}/yhteystiedot/{ryhma}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{oid}/yhteystiedot/{tyyppi}", method = RequestMethod.GET)
     public YhteystiedotDto getHenkiloYhteystiedot(@ApiParam("Henkilön OID") @PathVariable("oid") String oid,
-                                                  @ApiParam("Ryhmän nimi tai kuvaus") @PathVariable("ryhma") String ryhma,
+                                                  @ApiParam("Koodisto \"yhteystietotyypit\"") @PathVariable("tyyppi") String tyyppi,
                                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                                    ExternalPermissionService permissionService ) {
-        return henkiloService.getHenkiloYhteystiedot(oid, YhteystietoRyhmaKuvaus.forValue(ryhma))
-                .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by ryhma="+ryhma));
+        return henkiloService.getHenkiloYhteystiedot(oid, tyyppi)
+                .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by tyyppi="+tyyppi));
     }
 
     // PROXY

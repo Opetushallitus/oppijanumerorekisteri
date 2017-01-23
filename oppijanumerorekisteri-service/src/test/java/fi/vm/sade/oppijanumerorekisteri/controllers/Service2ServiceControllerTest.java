@@ -195,15 +195,15 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser
     public void getHenkiloYhteystiedot() throws Exception {
-        String content = "{\"tyoosoite\":" +
+        String content = "{\"yhteystietotyyppi2\":" +
                 "{\"sahkoposti\":\"testi@tyo.com\"}," +
-                "\"muuOsoite\":{\"katuosoite\":\"katu 134\"}, " + "" +
-                "\"kotiosoite\":{\"sahkoposti\":\"testi@test.com\"}}";
+                "\"yhteystietotyyppi7\":{\"katuosoite\":\"katu 134\"}, " + "" +
+                "\"yhteystietotyyppi1\":{\"sahkoposti\":\"testi@test.com\"}}";
 
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-                .put(YhteystietoRyhmaKuvaus.MUU_OSOITE, YhteystiedotDto.builder().katuosoite("katu 134").build())
-                .put(YhteystietoRyhmaKuvaus.TYOOSOITE, YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
-                .put(YhteystietoRyhmaKuvaus.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+                .put("yhteystietotyyppi7", YhteystiedotDto.builder().katuosoite("katu 134").build())
+                .put("yhteystietotyyppi2", YhteystiedotDto.builder().sahkoposti("testi@tyo.com").build())
+                .put("yhteystietotyyppi1", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));

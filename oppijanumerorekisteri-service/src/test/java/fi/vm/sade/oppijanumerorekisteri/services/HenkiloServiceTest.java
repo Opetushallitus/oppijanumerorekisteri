@@ -33,8 +33,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.KOTIOSOITE;
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSOITE;
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import java.time.LocalDate;
 import static java.util.Arrays.asList;
@@ -137,13 +135,13 @@ public class HenkiloServiceTest {
         assertThat(results.asMap()).isNotNull();
         assertThat(results.asMap().size()).isEqualTo(2);
         
-        YhteystiedotDto tyo = results.get(TYOOSOITE);
+        YhteystiedotDto tyo = results.get("yhteystietotyyppi2");
         assertThat(tyo).isNotNull();
         assertThat(tyo.getKatuosoite()).isEqualTo("Työkatu 3");
         assertThat(tyo.getSahkoposti()).isEqualTo("testaaja@oph.fi");
         assertThat(tyo.getPuhelinnumero()).isEqualTo("04512345678");
         
-        YhteystiedotDto koti = results.get(KOTIOSOITE);
+        YhteystiedotDto koti = results.get("yhteystietotyyppi1");
         assertThat(koti).isNotNull();
         assertThat(koti.getKatuosoite()).isEqualTo("Siilikuja 6");
         assertThat(koti.getSahkoposti()).isEqualTo("testaaja@pp.inet.fi");
@@ -153,27 +151,27 @@ public class HenkiloServiceTest {
     private List<YhteystietoHakuDto> testYhteystiedot(String henkiloOid) {
         return asList(
             YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus(KOTIOSOITE.getRyhmanKuvaus())
+                    .ryhmaKuvaus("yhteystietotyyppi1")
                     .yhteystietoTyyppi(YHTEYSTIETO_KATUOSOITE)
                     .arvo("Siilikuja 6")
                 .build(),
             YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus(KOTIOSOITE.getRyhmanKuvaus())
+                    .ryhmaKuvaus("yhteystietotyyppi1")
                     .yhteystietoTyyppi(YHTEYSTIETO_SAHKOPOSTI)
                     .arvo("testaaja@pp.inet.fi")
                 .build(),
             YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus(TYOOSOITE.getRyhmanKuvaus())
+                    .ryhmaKuvaus("yhteystietotyyppi2")
                     .yhteystietoTyyppi(YHTEYSTIETO_KATUOSOITE)
                     .arvo("Työkatu 3")
                 .build(),
             YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus(TYOOSOITE.getRyhmanKuvaus())
+                    .ryhmaKuvaus("yhteystietotyyppi2")
                     .yhteystietoTyyppi(YHTEYSTIETO_SAHKOPOSTI)
                     .arvo("testaaja@oph.fi")
                 .build(),
             YhteystietoHakuDto.builder().henkiloOid(henkiloOid)
-                    .ryhmaKuvaus(TYOOSOITE.getRyhmanKuvaus())
+                    .ryhmaKuvaus("yhteystietotyyppi2")
                     .yhteystietoTyyppi(YHTEYSTIETO_PUHELINNUMERO)
                     .arvo("04512345678")
                 .build()
@@ -184,14 +182,14 @@ public class HenkiloServiceTest {
     public void getHenkiloYhteystiedotByRyhmaEmpty() {
         given(this.henkiloJpaRepositoryMock.findYhteystiedot(any(YhteystietoCriteria.class)))
                 .willReturn(emptyList());
-        assertThat(this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE)).isEmpty();
+        assertThat(this.service.getHenkiloYhteystiedot("1.2.3.4.5", "yhteystietotyyppi1")).isEmpty();
     }
 
     @Test
     public void getHenkiloYhteystiedotByRyhma() {
         given(this.henkiloJpaRepositoryMock.findYhteystiedot(any(YhteystietoCriteria.class)))
                 .willReturn(testYhteystiedot("1.2.3.4.5"));
-        Optional<YhteystiedotDto> tiedot = this.service.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE);
+        Optional<YhteystiedotDto> tiedot = this.service.getHenkiloYhteystiedot("1.2.3.4.5", "yhteystietotyyppi1");
         assertThat(tiedot.map(YhteystiedotDto::getKatuosoite)).hasValue("Siilikuja 6");
     }
 
@@ -295,9 +293,9 @@ public class HenkiloServiceTest {
 
         assertThat(argument.getValue().getYhteystiedotRyhma().size()).isEqualTo(1);
         assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
-                .isEqualTo(YhteystietoRyhmaAlkuperatieto.RYHMAALKUPERA_VIRKAILIJA.getAlkuperatieto());
+                .isEqualTo("alkupera2");
         assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus())
-                .isEqualTo(YhteystietoRyhmaKuvaus.MUU_OSOITE.getRyhmanKuvaus());
+                .isEqualTo("yhteystietotyyppi7");
 
         assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
         assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())

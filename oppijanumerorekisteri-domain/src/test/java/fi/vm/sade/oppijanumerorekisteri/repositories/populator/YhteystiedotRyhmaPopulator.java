@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
@@ -12,15 +11,15 @@ import java.util.List;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystietoPopulator.yhteystieto;
 
 public class YhteystiedotRyhmaPopulator implements Populator<YhteystiedotRyhma> {
-    private final YhteystietoRyhmaKuvaus ryhma;
+    private final String ryhma;
     private final List<Populator<Yhteystieto>> yhteystiedot = new ArrayList<>();
     private String alkuperaTieto;
 
-    public YhteystiedotRyhmaPopulator(YhteystietoRyhmaKuvaus ryhma) {
+    public YhteystiedotRyhmaPopulator(String ryhma) {
         this.ryhma = ryhma;
     }
     
-    public static YhteystiedotRyhmaPopulator ryhma(YhteystietoRyhmaKuvaus ryhma) {
+    public static YhteystiedotRyhmaPopulator ryhma(String ryhma) {
         return new YhteystiedotRyhmaPopulator(ryhma);
     }
     
@@ -41,7 +40,7 @@ public class YhteystiedotRyhmaPopulator implements Populator<YhteystiedotRyhma> 
     @Override
     public YhteystiedotRyhma apply(EntityManager entityManager) {
         YhteystiedotRyhma ryhma = new YhteystiedotRyhma();
-        ryhma.setRyhmaKuvaus(this.ryhma.getRyhmanKuvaus());
+        ryhma.setRyhmaKuvaus(this.ryhma);
         ryhma.setRyhmaAlkuperaTieto(alkuperaTieto);
         
         yhteystiedot.forEach(tietoPopulator -> {

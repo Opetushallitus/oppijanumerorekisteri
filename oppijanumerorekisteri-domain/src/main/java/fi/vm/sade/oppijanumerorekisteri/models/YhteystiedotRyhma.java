@@ -20,9 +20,15 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkilo_id")
     private Henkilo henkilo;
     
+    /**
+     * Koodisto "yhteystietotyypit".
+     */
     @Column(name = "ryhmakuvaus")
     private String ryhmaKuvaus;
     
+    /**
+     * Koodisto "yhteystietojenalkupera".
+     */
     @Column(name = "ryhma_alkuperatieto")
     private String ryhmaAlkuperaTieto;
     

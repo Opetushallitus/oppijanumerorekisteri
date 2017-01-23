@@ -91,9 +91,9 @@ public class HenkiloMapperTest {
                 .isEqualTo(henkilo.getKielisyys());
 
         assertThat(henkiloDto.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
-        assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto().getAlkuperatieto())
+        assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
                 .isEqualTo(henkilo.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto());
-        assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus().getRyhmanKuvaus())
+        assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus())
                 .isEqualTo(henkilo.getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus());
         assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().size())
                 .isEqualTo(henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
@@ -117,9 +117,9 @@ public class HenkiloMapperTest {
 
         assertThat(henkilo.getYhteystiedotRyhma().size()).isEqualTo(henkiloDto.getYhteystiedotRyhma().size()).isEqualTo(1);
         assertThat(henkilo.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
-                .isEqualTo(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto().getAlkuperatieto());
+                .isEqualTo(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto());
         assertThat(henkilo.getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus())
-                .isEqualTo(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus().getRyhmanKuvaus());
+                .isEqualTo(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus());
         assertThat(henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto().size())
                 .isEqualTo(henkiloDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
         Yhteystieto yhteystieto = henkilo.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next();
