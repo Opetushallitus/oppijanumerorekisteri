@@ -126,12 +126,12 @@ public class HenkiloControllerTest {
     @WithMockUser(username = "1.2.3.4.5")
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{" +
-                "  \"kotiosoite\": {" +
+                "  \"yhteystietotyyppi1\": {" +
                 "    \"sahkoposti\": \"testi@test.com\"," +
                 "  }" +
                 "}";
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-            .put("kotiosoite", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+            .put("yhteystietotyyppi1", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
