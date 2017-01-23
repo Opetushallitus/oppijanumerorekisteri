@@ -147,18 +147,18 @@ public class HenkiloControllerTest {
         String content = "{" +
                 "  \"sahkoposti\": \"testi@test.com\"" +
                 "}";
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", "kotisosoite")).willReturn(
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", "yhteystietotyyppi1")).willReturn(
                 of(YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
-        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/kotisosoite").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/yhteystietotyyppi1").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
 
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", "tyoosoite")).willReturn(empty());
-        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tyoosoite").accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", "yhteystietotyyppi2")).willReturn(empty());
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/yhteystietotyyppi2").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
 
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6", "kotiosoite")).willReturn(empty());
-        this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6", "yhteystietotyyppi1")).willReturn(empty());
+        this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot/yhteystietotyyppi1").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }
 

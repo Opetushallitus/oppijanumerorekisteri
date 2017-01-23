@@ -1,5 +1,5 @@
 {
-  "kotiosoite": {
+  "yhteystietotyyppi1": {
     "sahkoposti": "testi@test.com",
     "puhelinnumero": null,
     "matkapuhelinnumero": "+358451234567",
@@ -9,7 +9,7 @@
     "kaupunki": "Toijala",
     "maa": "Suomi"
   },
-  "tyoosoite": {
+  "yhteystietotyyppi2": {
     "sahkoposti": "tyo@osoite.fi",
     "puhelinnumero": "01234567",
     "matkapuhelinnumero": "+3584040404",

@@ -105,7 +105,7 @@ public class DtoUtils {
 
     public static YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(String yhteystietoArvo) {
         YhteystietoDto yhteystieto = DtoUtils.createYhteystietoDto(yhteystietoArvo);
-        return new YhteystiedotRyhmaDto("muuOsoite", "ryhmaalkuperaVirkailija",
+        return new YhteystiedotRyhmaDto("yhteystietotyyppi7", "alkupera2",
                 true, Collections.singleton(yhteystieto));
     }
 
