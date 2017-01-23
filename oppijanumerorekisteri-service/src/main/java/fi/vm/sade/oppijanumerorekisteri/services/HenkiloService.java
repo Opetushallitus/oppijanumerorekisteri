@@ -33,7 +33,7 @@ public interface HenkiloService {
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
-    Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, YhteystietoRyhmaKuvaus ryhma);
+    Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, String ryhma);
 
     List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);
 

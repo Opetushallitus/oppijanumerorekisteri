@@ -2,8 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaAlkuperatieto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import java.time.LocalDate;
@@ -53,8 +51,8 @@ public class EntityUtils {
     }
 
     static public YhteystiedotRyhma createYhteystiedotRyhma(Henkilo henkilo, String yhteystietoArvo) {
-        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma(henkilo, YhteystietoRyhmaKuvaus.TYOOSOITE.getRyhmanKuvaus(),
-                YhteystietoRyhmaAlkuperatieto.RYHMAALKUPERA_VIRKAILIJA.getAlkuperatieto(), false,
+        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma(henkilo, "yhteystietotyyppi2",
+                "alkupera2", false,
                 null);
         Yhteystieto yhteystieto = EntityUtils.createYhteystieto(null, yhteystietoArvo);
         yhteystiedotRyhma.setYhteystieto(Collections.singleton(yhteystieto));

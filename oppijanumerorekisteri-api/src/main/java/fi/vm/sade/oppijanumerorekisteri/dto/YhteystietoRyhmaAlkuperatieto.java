@@ -5,12 +5,17 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.stream.Stream;
 
+/**
+ * @deprecated Koodisto "yhteystietojenalkupera"
+ */
+@Deprecated
 public enum YhteystietoRyhmaAlkuperatieto {
     RYHMAALKUPERA_VTJ("alkupera1", "ryhmaalkuperaVtj"),
     RYHMAALKUPERA_VIRKAILIJA("alkupera2", "ryhmaalkuperaVirkailija"),
     RYHMAALKUPERA_OMAT_TIEDOT("alkupera3", "ryhmaalkuperaOmatTiedot"),
     RYHMAALKUPERA_HAKULOMAKE("alkupera4", "ryhmaalkuperaHakulomake"),
     RYHMAALKUPERA_TIEDONSIIRROT("alkupera5", "ryhmaalkuperaTiedonsiirrot"),
+    RYHMAALKUPERA_OIKEUSTULKKIREKISTERI("alkupera7", "ryhmaalkuperaOikeustulkkirekisteri"),
     RYHMAALKUPERA_MUU("alkupera6", "ryhmaalkuperaMuu");
 
     private final String alkuperatieto;

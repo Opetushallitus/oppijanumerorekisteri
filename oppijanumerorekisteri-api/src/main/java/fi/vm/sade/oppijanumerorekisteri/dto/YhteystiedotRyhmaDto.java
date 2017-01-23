@@ -16,9 +16,15 @@ import java.util.Set;
 public class YhteystiedotRyhmaDto implements Serializable {
     private static final long serialVersionUID = 7820975061439666995L;
 
-    private YhteystietoRyhmaKuvaus ryhmaKuvaus;
+    /**
+     * Koodisto "yhteystietotyypit".
+     */
+    private String ryhmaKuvaus;
 
-    private YhteystietoRyhmaAlkuperatieto ryhmaAlkuperaTieto;
+    /**
+     * Koodisto "yhteystietojenalkupera".
+     */
+    private String ryhmaAlkuperaTieto;
 
     private boolean readOnly;
 

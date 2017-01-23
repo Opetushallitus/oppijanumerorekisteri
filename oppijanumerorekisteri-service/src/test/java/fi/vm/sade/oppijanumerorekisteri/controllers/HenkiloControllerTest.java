@@ -25,14 +25,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.KOTIOSOITE;
-import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoRyhmaKuvaus.TYOOSOITE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.contains;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -134,7 +131,7 @@ public class HenkiloControllerTest {
                 "  }" +
                 "}";
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()
-            .put(YhteystietoRyhmaKuvaus.KOTIOSOITE, YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
+            .put("kotiosoite", YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
@@ -150,26 +147,19 @@ public class HenkiloControllerTest {
         String content = "{" +
                 "  \"sahkoposti\": \"testi@test.com\"" +
                 "}";
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", KOTIOSOITE)).willReturn(
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", "kotisosoite")).willReturn(
                 of(YhteystiedotDto.builder().sahkoposti("testi@test.com").build()));
-        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk())
-                .andExpect(content().json(content));
-        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/yhteystietotyyppi1").accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/kotisosoite").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json(content));
 
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", TYOOSOITE)).willReturn(empty());
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5", "tyoosoite")).willReturn(empty());
         this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tyoosoite").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
 
-        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6", KOTIOSOITE)).willReturn(empty());
+        given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.6", "kotiosoite")).willReturn(empty());
         this.mvc.perform(get("/henkilo/1.2.3.4.6/yhteystiedot/kotiosoite").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
-
-        this.mvc.perform(get("/henkilo/1.2.3.4.5/yhteystiedot/tuntematon_tyyppi").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_illegal_argument"));
     }
 
     @Test

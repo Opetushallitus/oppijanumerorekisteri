@@ -1,12 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.validators;
 
-import com.querydsl.core.types.Predicate;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -57,6 +55,22 @@ public class HenkiloCreatePostValidator implements Validator {
                 .allMatch(kansalaisuus -> koodiTypeList.stream()
                         .anyMatch(koodi -> koodi.getKoodiArvo().equals(kansalaisuus)))) {
             errors.rejectValue("kansalaisuudet", "invalid.kansalaisuusKoodi");
+        }
+
+        Set<YhteystiedotRyhma> yhteystiedot = henkilo.getYhteystiedotRyhma();
+        if (yhteystiedot != null && !yhteystiedot.isEmpty()) {
+            List<KoodiType> tyypit = this.koodistoClient.getKoodisForKoodisto("yhteystietotyypit", 1, true);
+            if (!yhteystiedot.stream().map(YhteystiedotRyhma::getRyhmaKuvaus)
+                    .allMatch(ryhmaKuvaus -> tyypit.stream()
+                            .anyMatch(koodi -> koodi.getKoodiArvo().equals(ryhmaKuvaus)))) {
+                errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaKuvaus");
+            }
+            List<KoodiType> alkuperat = this.koodistoClient.getKoodisForKoodisto("yhteystietojenalkupera", 1, true);
+            if (!yhteystiedot.stream().map(YhteystiedotRyhma::getRyhmaAlkuperaTieto)
+                    .allMatch(alkupera -> alkuperat.stream()
+                            .anyMatch(koodi -> koodi.getKoodiArvo().equals(alkupera)))) {
+                errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
+            }
         }
 
     }
