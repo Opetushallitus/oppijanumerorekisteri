@@ -25,8 +25,8 @@ hikari:
   datasource:
     driver-class-name: org.postgresql.Driver
     jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
-    username: {{postgresql_user}}
-    password: {{postgresql_pass}}
+    username: {{postgresql_oppijanumerorekisteri_user}}
+    password: {{postgresql_oppijanumerorekisteri_password}}
     connection-test-query: SELECT 1
     maximum-pool-size: 5
     connection-timeout: 10000
