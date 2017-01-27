@@ -36,11 +36,12 @@ Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oid
 ```yaml
 cas:
   service: http://localhost:8180/oppijanumerorekisteri-service
-  url: http://localhost:8080/cas
 server:
   port: 8180
 ```
 5) Aja oppijanumerorekisteri
+
+`java -Dcas.baseUrl=http://localhost:8080 -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
 
 ## Url.properties ja CSRF
 Aina ulkoisia riippuvuuksia lisättäessä lisättävä osoite url.properties:iin
