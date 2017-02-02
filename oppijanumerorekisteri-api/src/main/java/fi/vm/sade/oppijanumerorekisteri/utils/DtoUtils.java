@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.utils;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import java.time.LocalDate;
-import java.time.Month;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Collections;
 import java.util.Date;
 
@@ -26,12 +26,12 @@ public class DtoUtils {
     public static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi,
                                                                   String hetu, String henkiloOid, String kielikoodi,
                                                                   String kielityyppi, String kansalaisuusKoodi,
-                                                                  String externalId, LocalDate syntymaaika) {
+                                                                  String externalId, LocalDate syntymaaika, Date modified) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
         return new HenkiloPerustietoDto(henkiloOid, externalId, hetu, etunimet, kutsumanimi, sukunimi, syntymaaika, aidinkieli, asiointikieli,
-                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, "1", false);
+                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, "1", modified, false);
     }
 
     public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,

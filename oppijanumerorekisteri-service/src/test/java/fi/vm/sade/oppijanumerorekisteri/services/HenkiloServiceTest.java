@@ -202,9 +202,9 @@ public class HenkiloServiceTest {
     @Test
     public void getHenkiloPerustietoByOidsTest() {
         HenkiloPerustietoDto henkiloMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "externalid1", null);
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "externalid1", null, new Date());
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "externalid1", null);
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", "externalid1", null, new Date());
         given(this.henkiloJpaRepositoryMock.findByOidIn(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloMock));
 
@@ -321,7 +321,7 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDto() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "", "fi", "suomi", "246", null, null);
+                "123456-9999", "", "fi", "suomi", "246", null, null, new Date());
         henkiloPerustietoDtoMock.setCreatedOnService(true);
 
         given(this.henkiloDataRepositoryMock.findByHetu(henkiloPerustietoDtoMock.getHetu())).willReturn(new ArrayList<>());
@@ -334,7 +334,7 @@ public class HenkiloServiceTest {
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByOid() {
         LocalDate syntymaaika = LocalDate.now();
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, syntymaaika);
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, syntymaaika, new Date());
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
 
@@ -347,7 +347,7 @@ public class HenkiloServiceTest {
     @Test(expected = NotFoundException.class)
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloNotFoundByOid() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, null);
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, null, new Date());
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
@@ -359,12 +359,14 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByHetu() {
         LocalDate syntymaaika = LocalDate.now();
+        Date modified = new Date();
         HenkiloPerustietoDto henkiloPerustietoDtoInput = DtoUtils.createHenkiloPerustietoDto(null, null, null,
-                "123456-9999", null, null, null, null, null, syntymaaika);
+                "123456-9999", null, null, null, null, null, syntymaaika, modified);
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "", "fi", "suomi", "246", null, syntymaaika);
+                "123456-9999", "", "fi", "suomi", "246", null, syntymaaika, modified);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
+                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", modified, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
+
 
         given(this.henkiloDataRepositoryMock.findByHetu(henkiloPerustietoDtoInput.getHetu())).willReturn(Collections.singletonList(henkilo));
         assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoInput))

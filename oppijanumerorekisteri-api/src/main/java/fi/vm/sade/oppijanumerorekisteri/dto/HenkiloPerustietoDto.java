@@ -10,6 +10,7 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Set;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -50,6 +51,8 @@ public class HenkiloPerustietoDto implements Serializable {
     private HenkiloTyyppi henkiloTyyppi;
 
     private String sukupuoli;
+
+    private Date modified;
 
     // Helper value to recognise when henkilo is created on service layer.
     @JsonIgnore
