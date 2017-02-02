@@ -164,7 +164,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         return jpa().from(henkilo).where(criteria.condition(henkilo)
                     .and(henkilo.modified.goe(modifiedSince.toDate())))
                 .select(henkilo.oidHenkilo)
-                .orderBy(henkilo.oidHenkilo.asc()).fetch();
+                .orderBy(henkilo.modified.asc()).fetch();
     }
 
     @Override
