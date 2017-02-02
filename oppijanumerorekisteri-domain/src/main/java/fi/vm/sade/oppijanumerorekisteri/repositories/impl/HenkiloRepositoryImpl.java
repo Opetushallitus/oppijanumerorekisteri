@@ -1,7 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
@@ -127,16 +128,10 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .fetch().stream().collect(Collectors.toMap(tuple ->
                         tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
 
-        List<Tuple> kansaTuples = jpa().from(henkilo)
+        Map<String, List<KansalaisuusDto>> stringKansalaisuusMap = jpa().from(henkilo)
                 .innerJoin(henkilo.kansalaisuus, kansalaisuus)
-                .select(henkilo.oidHenkilo, Projections.list(Projections.bean(KansalaisuusDto.class,
-                        kansalaisuus.kansalaisuusKoodi)))
                 .where(henkilo.oidHenkilo.in(oidList))
-                .fetch();
-        @SuppressWarnings("unchecked")
-        Map<String, List<KansalaisuusDto>> stringKansalaisuusMap = kansaTuples.stream()
-                .collect(Collectors.toMap(tuple ->
-                         tuple.get(0, String.class), tuple -> tuple.get(1, List.class)));
+                .transform(groupBy(henkilo.oidHenkilo).as(list(Projections.bean(KansalaisuusDto.class, kansalaisuus.kansalaisuusKoodi))));
 
         henkiloDtoList.forEach(henkiloDto -> {
             henkiloDto.setAsiointiKieli(stringAsiointikieliMap.get(henkiloDto.getOidHenkilo()));
