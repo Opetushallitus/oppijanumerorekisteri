@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/cas")
 public class CasController {
-    // PROXY
     @ApiOperation(value = "Auttaa CAS session avaamisessa oppijanumerorekisteriin.",
             notes = "Jos kutsuja haluaa tehdä useita rinnakkaisia kutsuja eikä CAS sessiota ole vielä avattu, " +
                     "täytyy tätä kutsua ensin.",
@@ -26,7 +25,6 @@ public class CasController {
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    // PROXY
     @ApiOperation(value = "Auttaa CAS session avaamisessa oppijanumerorekisteriin.",
             notes = "Jos kutsuja haluaa tehdä useita rinnakkaisia kutsuja eikä CAS sessiota ole vielä avattu, " +
                     "täytyy tätä kutsua ensin.",

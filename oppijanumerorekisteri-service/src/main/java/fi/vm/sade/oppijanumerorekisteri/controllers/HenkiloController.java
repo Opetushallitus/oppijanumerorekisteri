@@ -40,7 +40,6 @@ public class HenkiloController {
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
     }
 
-    // PROXY
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {
@@ -49,7 +48,10 @@ public class HenkiloController {
     }
 
     @ApiOperation("Hakee henkilöiden OID:n, HeTu:n ja nimet nimen perusteella")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
     public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
                                                                 @RequestParam(value = "sukunimi") String sukunimi) {
@@ -58,14 +60,20 @@ public class HenkiloController {
 
     @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
     public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
         return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
@@ -102,7 +110,6 @@ public class HenkiloController {
                 .orElseThrow(() -> new NotFoundException("Yhteystiedot not found by tyyppi="+tyyppi));
     }
 
-    // PROXY
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Hakee henkilön tiedot annetun OID:n pohjalta, sisältään kaikki henkilön tiedot.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
@@ -151,7 +158,6 @@ public class HenkiloController {
         return henkiloService.getByHetu(hetu);
     }
 
-    // PROXY
     @ApiOperation(value = "Henkilö luonti",
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "bad input")})
@@ -164,7 +170,6 @@ public class HenkiloController {
         return this.henkiloService.createHenkilo(henkilo).getOidHenkilo();
     }
 
-    // PROXY, probably slower than the original
     @ApiOperation(value = "Henkilöiden haku OID:ien perusteella.",
             notes = "Hakee henkilöiden tiedot annetun OID:ien pohjalta, sisältään kaikkien henkilön kaikki tiedot.")
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
@@ -182,7 +187,6 @@ public class HenkiloController {
         );
     }
 
-    // PROXY
     @ApiOperation(value = "Hakee henkilön tiedot annetun tunnistetiedon avulla.",
             notes = "Hakee henkilön tiedot annetun tunnistetiedon avulla.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
@@ -193,7 +197,6 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloByIDPAndIdentifier(idp, identifier);
     }
 
-    // PROXY
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.",
             notes = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
