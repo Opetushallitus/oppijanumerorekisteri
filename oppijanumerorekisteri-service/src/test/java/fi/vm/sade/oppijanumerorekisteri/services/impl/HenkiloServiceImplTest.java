@@ -117,18 +117,18 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void findHenkiloOidsModifiedSinceTest() {
-        when(henkiloJpaRepository.findOidsModifiedSince(any(), any())).thenReturn(singletonList("1.2.3"));
+        when(henkiloJpaRepository.findOidsModifiedSince(any(), any(), any(), any())).thenReturn(singletonList("1.2.3"));
 
         HenkiloCriteria criteria = HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(asList("1.2.3", "4.5.6"))).build();
         DateTime dt = new DateTime();
-        List<String> result = impl.findHenkiloOidsModifiedSince(criteria, dt);
+        List<String> result = impl.findHenkiloOidsModifiedSince(criteria, dt, null, null);
 
         assertThat(result).isEqualTo(singletonList("1.2.3"));
-        verify(henkiloJpaRepository).findOidsModifiedSince(eq(criteria), eq(dt));
+        verify(henkiloJpaRepository).findOidsModifiedSince(eq(criteria), eq(dt), eq(null), eq(null));
 
-        when(henkiloJpaRepository.findOidsModifiedSince(any(), any())).thenReturn(emptyList());
-        result = impl.findHenkiloOidsModifiedSince(criteria, dt);
+        when(henkiloJpaRepository.findOidsModifiedSince(any(), any(), any(), any())).thenReturn(emptyList());
+        result = impl.findHenkiloOidsModifiedSince(criteria, dt, null, null);
         assertThat(result).hasSize(0);
     }
 

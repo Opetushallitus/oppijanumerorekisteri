@@ -47,7 +47,7 @@ public interface HenkiloService {
 
     List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
 
-    List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);
+    List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
     Henkilo createHenkilo(Henkilo henkiloCreate);
 }

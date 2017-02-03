@@ -160,11 +160,18 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
-    public List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince) {
-        return jpa().from(henkilo).where(criteria.condition(henkilo)
+    public List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount) {
+        JPAQuery<String> query = jpa().from(henkilo).where(criteria.condition(henkilo)
                     .and(henkilo.modified.goe(modifiedSince.toDate())))
                 .select(henkilo.oidHenkilo)
-                .orderBy(henkilo.oidHenkilo.asc()).fetch();
+                .orderBy(henkilo.modified.desc());
+        if(offset != null) {
+            query.offset(offset);
+        }
+        if(amount != null) {
+            query.limit(amount);
+        }
+        return query.fetch();
     }
 
     @Override

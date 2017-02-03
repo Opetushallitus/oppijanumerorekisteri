@@ -310,8 +310,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince) {
-        return this.henkiloJpaRepository.findOidsModifiedSince(criteria, modifiedSince);
+    public List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount) {
+        return this.henkiloJpaRepository.findOidsModifiedSince(criteria, modifiedSince, offset, amount);
     }
 
     @Override

@@ -31,7 +31,6 @@ import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.Yhteystied
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-// NOTE: Model validators have separate test.
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Transactional(readOnly = true)
@@ -297,19 +296,56 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         populate(henkilo("LAST_WEEK").modified(lastWeek));
         populate(henkilo("MOMENT_AGO").modified(now.minusMinutes(1)));
 
-        List<String> results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now);
+        List<String> results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now, null, null);
         assertThat(results).hasSize(0);
 
-        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1));
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo("MOMENT_AGO");
         
         results = this.jpaRepository.findOidsModifiedSince(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(asList("YESTERDAY", "LAST_WEEK"))).build(), yesterday);
+                .henkiloOids(new HashSet<>(asList("YESTERDAY", "LAST_WEEK"))).build(), yesterday, null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo("YESTERDAY");
         
-        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), lastWeek);
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), lastWeek, null, null);
         assertThat(results).hasSize(3);
+    }
+
+    @Test
+    public void findOidsModifiedSinceWithOffsetAndAmount() {
+        DateTime now = new DateTime(),
+                yesterday = now.minusDays(1),
+                lastWeek = now.minusWeeks(1);
+        populate(henkilo("YESTERDAY").modified(yesterday));
+        populate(henkilo("LAST_WEEK").modified(lastWeek));
+        populate(henkilo("MOMENT_AGO1").modified(now.minusMinutes(1)));
+        populate(henkilo("MOMENT_AGO2").modified(now.minusMinutes(2)));
+        populate(henkilo("MOMENT_AGO3").modified(now.minusMinutes(3)));
+        populate(henkilo("MOMENT_AGO4").modified(now.minusMinutes(4)));
+
+        List<String> results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, null);
+        assertThat(results).hasSize(4);
+        assertThat(results).containsAll(Sets.newHashSet("MOMENT_AGO1", "MOMENT_AGO2", "MOMENT_AGO3", "MOMENT_AGO4"));
+
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 2, null);
+        assertThat(results).hasSize(2);
+        assertThat(results).containsAll(Sets.newHashSet("MOMENT_AGO3", "MOMENT_AGO4"));
+
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, 2);
+        assertThat(results).hasSize(2);
+        assertThat(results).containsAll(Sets.newHashSet("MOMENT_AGO1", "MOMENT_AGO2"));
+
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 1, 1);
+        assertThat(results).hasSize(1);
+        assertThat(results).containsAll(Sets.newHashSet("MOMENT_AGO2"));
+
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 100, 100);
+        assertThat(results).hasSize(0);
+
+        results = this.jpaRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), 1, 100);
+        assertThat(results).hasSize(3);
+        assertThat(results).containsAll(Sets.newHashSet("MOMENT_AGO2", "MOMENT_AGO3", "MOMENT_AGO4"));
+
     }
 }
