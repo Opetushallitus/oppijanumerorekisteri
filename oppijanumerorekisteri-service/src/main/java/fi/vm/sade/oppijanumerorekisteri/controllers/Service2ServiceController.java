@@ -61,18 +61,23 @@ public class Service2ServiceController {
         return this.henkiloService.findHenkiloViittees(criteria);
     }
 
-    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä")
+    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä aikajärjestyksessä",
+            notes = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/changedSince/{at}", method = RequestMethod.GET)
-    public List<String> findChangedPersons(@PathVariable DateTime at) {
-        return this.henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), at);
+    public List<String> findChangedPersons(@PathVariable DateTime at, @RequestParam(required = false) Integer offset,
+                                           @RequestParam(required = false) Integer amount) {
+        return this.henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), at, offset, amount);
     }
 
-    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä hakuehdoilla")
+    @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä hakuehdoilla aikajärjestyksessä",
+            notes = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/changedSince/{at}", method = RequestMethod.POST)
-    public List<String> findChangedPersons(@RequestBody HenkiloCriteria criteria, @PathVariable DateTime at) {
-        return this.henkiloService.findHenkiloOidsModifiedSince(criteria, at);
+    public List<String> findChangedPersons(@RequestBody HenkiloCriteria criteria, @PathVariable DateTime at,
+                                           @RequestParam(required = false) Integer offset,
+                                           @RequestParam(required = false) Integer amount) {
+        return this.henkiloService.findHenkiloOidsModifiedSince(criteria, at, offset, amount);
     }
 
     @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilon perustiedoista")

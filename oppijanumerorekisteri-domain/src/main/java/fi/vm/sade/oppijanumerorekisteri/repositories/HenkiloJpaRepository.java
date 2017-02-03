@@ -36,7 +36,7 @@ public interface HenkiloJpaRepository {
      */
     Optional<Henkilo> findMasterBySlaveOid(String henkiloOid);
 
-    List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince);
+    List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
     Optional<Henkilo> findByExternalId(String externalId);
 

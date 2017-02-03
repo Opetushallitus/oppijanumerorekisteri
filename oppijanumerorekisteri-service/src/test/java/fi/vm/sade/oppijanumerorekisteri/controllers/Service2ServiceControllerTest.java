@@ -98,42 +98,42 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser
     public void findChangedPersonsGet() throws Exception {
-        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(singletonList("1.2.3"));
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
         this.mvc.perform(get("/s2s/changedSince/2015-10-12T10:10:10")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[\"1.2.3\"]"));
-        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,10,10,10));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,10,10,10), null, null);
         
-        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(emptyList());
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(emptyList());
         this.mvc.perform(get("/s2s/changedSince/2015-10-12")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("[]"));
-        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,0,0,0));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), new DateTime(2015,10,12,0,0,0), null, null);
     }
     
     @Test
     @WithMockUser
     public void findChangedPersonsGetByTimestamp() throws Exception {
-        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(emptyList());
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(emptyList());
         DateTime dt = new DateTime(2015,10,12,0,0,0);
         this.mvc.perform(get("/s2s/changedSince/" + dt.toDate().getTime())
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("[]"));
-        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), dt);
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(new HenkiloCriteria(), dt, null, null);
     }
 
     @Test
     @WithMockUser
     public void findChangedPersonsPost() throws Exception {
         HenkiloCriteria criteria = HenkiloCriteria.builder().henkiloOids(new HashSet<>(singletonList("1.2.3"))).build();
-        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any())).willReturn(singletonList("1.2.3"));
+        given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
         this.mvc.perform(post("/s2s/changedSince/2015-10-12T10:10:10").content("{\"henkiloOids\": [\"1.2.3\"]}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[\"1.2.3\"]"));
-        verify(this.henkiloService).findHenkiloOidsModifiedSince(criteria, new DateTime(2015,10,12,10,10,10));
+        verify(this.henkiloService).findHenkiloOidsModifiedSince(criteria, new DateTime(2015,10,12,10,10,10), null, null);
     }
 
     @Test
