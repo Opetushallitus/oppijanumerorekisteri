@@ -42,7 +42,7 @@ public class HenkiloMapperTest {
     public void henkiloPerustietoDtoToHenkilo() {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika);
+                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika, new Date());
         Henkilo henkilo = modelmapper.map(henkiloPerustietoDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
