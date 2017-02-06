@@ -31,7 +31,7 @@
             <maxFileSize>10MB</maxFileSize>
         </triggeringPolicy>
         <encoder>
-            <pattern>%date AUDIT %msg%n</pattern>
+            <pattern>%msg%n</pattern>
         </encoder>
     </appender>
     {% endraw %}
