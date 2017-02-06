@@ -159,7 +159,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         JPAQuery<String> query = jpa().from(henkilo).where(criteria.condition(henkilo)
                     .and(henkilo.modified.goe(modifiedSince.toDate())))
                 .select(henkilo.oidHenkilo)
-                .orderBy(henkilo.modified.desc());
+                .orderBy(henkilo.modified.asc());
         if(offset != null) {
             query.offset(offset);
         }
