@@ -11,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import org.hibernate.annotations.BatchSize;
 
 @Getter
 @Setter
@@ -99,6 +100,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinTable(name = "henkilo_kansalaisuus", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(
             name = "kansalaisuus_id", referencedColumnName = "id"))
+    @BatchSize(size = 100)
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
     @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
