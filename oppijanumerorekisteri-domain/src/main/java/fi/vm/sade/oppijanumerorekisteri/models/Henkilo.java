@@ -25,7 +25,6 @@ import java.util.*;
                         @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
                         @NamedAttributeNode("kielisyys"),
-                        @NamedAttributeNode("kansalaisuus")
                 }
         )
 })
