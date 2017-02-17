@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
@@ -85,8 +86,9 @@ public class Service2ServiceController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        HenkiloPerustietoDto returnDto = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
-        if (returnDto.isCreatedOnService()) {
+        FindOrCreateDto<HenkiloPerustietoDto> wrapper = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        HenkiloPerustietoDto returnDto = wrapper.getDto();
+        if (wrapper.isCreated()) {
             return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
                     + returnDto.getOidHenkilo())).body(returnDto);
         }
@@ -98,7 +100,7 @@ public class Service2ServiceController {
     @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
-    public List<HenkiloPerustietoDto> findOrCreate(List<HenkiloPerustietoDto> henkilot) {
+    public List<HenkiloPerustietoDto> findOrCreate(@Validated @RequestBody List<HenkiloPerustietoDto> henkilot) {
         return henkiloService.findOrCreateHenkiloFromPerustietoDto(henkilot);
     }
 

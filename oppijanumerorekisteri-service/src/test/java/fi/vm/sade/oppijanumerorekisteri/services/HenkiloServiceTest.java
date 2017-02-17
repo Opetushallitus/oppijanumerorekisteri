@@ -333,12 +333,11 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDto() {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "", "fi", "suomi", "246", null, null, new Date());
-        henkiloPerustietoDtoMock.setCreatedOnService(true);
+                "123456-9999", null, "fi", "suomi", "246", null, null, new Date());
 
         given(this.henkiloDataRepositoryMock.findByHetu(henkiloPerustietoDtoMock.getHetu())).willReturn(new ArrayList<>());
         doAnswer(returnsFirstArg()).when(this.service).createHenkilo(any(Henkilo.class));
-        assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock))
+        assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock).getDto())
                 .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
     }
 
@@ -350,10 +349,11 @@ public class HenkiloServiceTest {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
 
-        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloPerustietoDtoMock.getOidHenkilo())))
-                .willReturn(Collections.singletonList(henkilo));
-        assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock))
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any()))
+                .willReturn(Optional.of(henkilo));
+        assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock).getDto())
                 .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
+        verify(this.henkiloDataRepositoryMock).findByOidHenkilo(eq(henkiloPerustietoDtoMock.getOidHenkilo()));
     }
 
     @Test(expected = NotFoundException.class)
@@ -363,9 +363,10 @@ public class HenkiloServiceTest {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
-        given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.emptyList()))
-                .willReturn(Collections.singletonList(henkilo));
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any()))
+                .willReturn(Optional.empty());
         this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoMock);
+        verify(this.henkiloDataRepositoryMock).findByOidHenkilo(eq(henkiloPerustietoDtoMock.getOidHenkilo()));
     }
 
     @Test
@@ -381,7 +382,7 @@ public class HenkiloServiceTest {
 
 
         given(this.henkiloDataRepositoryMock.findByHetu(henkiloPerustietoDtoInput.getHetu())).willReturn(Collections.singletonList(henkilo));
-        assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoInput))
+        assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoInput).getDto())
                 .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
     }
 

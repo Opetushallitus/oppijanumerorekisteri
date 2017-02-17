@@ -12,5 +12,5 @@ import java.util.Optional;
 @Transactional(propagation = Propagation.MANDATORY)
 @Repository
 public interface IdentificationRepository extends QueryDslPredicateExecutor, JpaRepository<Identification, Long> {
-    Optional<Identification> findByidpentityidAndIdentifier(String idpentityid, String identifier);
+    Optional<Identification> findByIdpEntityIdAndIdentifier(String idpEntityId, String identifier);
 }

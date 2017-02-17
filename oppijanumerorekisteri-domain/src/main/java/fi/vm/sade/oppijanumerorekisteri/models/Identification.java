@@ -21,8 +21,8 @@ public class Identification extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkilo_id", nullable = false)
     private Henkilo henkilo;
 
-    @Column(nullable = false)
-    private String idpentityid;
+    @Column(name = "idpentityid", nullable = false)
+    private String idpEntityId;
 
     @Column(nullable = false)
     private String identifier;

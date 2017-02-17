@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
@@ -43,6 +44,9 @@ public class HenkiloControllerTest {
 
     @MockBean
     private HenkiloService henkiloService;
+
+    @MockBean
+    private IdentificationService identificationService;
 
     @MockBean
     private PermissionChecker permissionChecker;

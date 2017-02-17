@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto.created;
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto.found;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
@@ -27,7 +29,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
+import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
@@ -139,34 +143,41 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public HenkiloPerustietoDto findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
-        HenkiloPerustietoDto returnHenkiloPerustietoDto = null;
-        if (!StringUtils.isEmpty(henkiloPerustietoDto.getOidHenkilo())) {
-            return this.mapper.map(this.getHenkilosByOids(Collections.singletonList(henkiloPerustietoDto.getOidHenkilo()))
-                            .stream().findFirst().orElseThrow(NotFoundException::new),
-                    HenkiloPerustietoDto.class);
-        }
-        if (!StringUtils.isEmpty(henkiloPerustietoDto.getExternalId())) {
-            Optional<Henkilo> henkilo = henkiloJpaRepository.findByExternalId(henkiloPerustietoDto.getExternalId());
-            if (henkilo.isPresent()) {
-                return mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
-            }
-        }
-        Optional<Henkilo> henkilo = this.getHenkiloByHetu(henkiloPerustietoDto.getHetu());
-        if (henkilo.isPresent()) {
-            return this.mapper.map(henkilo.get(), HenkiloPerustietoDto.class);
-        }
+    public FindOrCreateDto<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
+        return findHenkilo(henkiloPerustietoDto)
+                .map(entity -> found(this.mapper.map(entity, HenkiloPerustietoDto.class)))
+                .orElseGet(() -> {
+                    Henkilo entity = this.createHenkilo(henkiloPerustietoDto);
+                    return created(this.mapper.map(entity, HenkiloPerustietoDto.class));
+                });
+    }
 
-        Henkilo entity = this.createHenkilo(this.mapper.map(henkiloPerustietoDto, Henkilo.class));
+    private Optional<Henkilo> findHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
+        return Stream.<Function<HenkiloPerustietoDto, Optional<Henkilo>>>of(
+                dto -> Optional.ofNullable(dto.getOidHenkilo()).flatMap(oid -> Optional.of(getEntityByOid(oid))),
+                dto -> Optional.ofNullable(dto.getExternalId()).flatMap(henkiloJpaRepository::findByExternalId),
+                dto -> Optional.ofNullable(dto.getIdentification()).flatMap(henkiloJpaRepository::findByIdentification),
+                dto -> Optional.ofNullable(dto.getHetu()).flatMap(this::getHenkiloByHetu)
+        ).map(transformer -> transformer.apply(henkiloPerustietoDto))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
+    }
+
+    private Henkilo createHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
+        Henkilo entity = this.mapper.map(henkiloPerustietoDto, Henkilo.class);
         if (!StringUtils.isEmpty(henkiloPerustietoDto.getExternalId())) {
             ExternalId externalId = new ExternalId();
             externalId.setExternalid(henkiloPerustietoDto.getExternalId());
             externalId.setHenkilo(entity);
             entity.setExternalIds(Collections.singleton(externalId));
         }
-        returnHenkiloPerustietoDto = this.mapper.map(entity, HenkiloPerustietoDto.class);
-        returnHenkiloPerustietoDto.setCreatedOnService(true);
-        return returnHenkiloPerustietoDto;
+        if (henkiloPerustietoDto.getIdentification() != null) {
+            Identification identification = mapper.map(henkiloPerustietoDto.getIdentification(), Identification.class);
+            identification.setHenkilo(entity);
+            entity.setIdentifications(Collections.singleton(identification));
+        }
+        return this.createHenkilo(entity);
     }
 
     @Override
@@ -177,7 +188,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         // tapauksessa tunnisteita on kuitenkin useita (oid, externalid, hetu),
         // jolloin toteutuksesta tulisi tarpeettoman monimutkainen ylläpidon
         // kannalta.
-        return henkilot.stream().map(this::findOrCreateHenkiloFromPerustietoDto).collect(toList());
+        return henkilot.stream().map(this::findOrCreateHenkiloFromPerustietoDto).map(FindOrCreateDto::getDto).collect(toList());
     }
 
     @Override
@@ -293,7 +304,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier) {
-        Identification identification = this.identificationRepository.findByidpentityidAndIdentifier(idp, identifier)
+        Identification identification = this.identificationRepository.findByIdpEntityIdAndIdentifier(idp, identifier)
                 .orElseThrow(NotFoundException::new);
         return this.mapper.map(identification.getHenkilo(), HenkiloDto.class);
     }

@@ -36,7 +36,7 @@ public class IdentificationRepositoryTest {
         this.testEntityManager.persist(identification);
 
         Optional<Identification> foundIdentification = this.identificationRepository.
-                findByidpentityidAndIdentifier("oppijaToken", "testikayttaja@posti.fi");
+                findByIdpEntityIdAndIdentifier("oppijaToken", "testikayttaja@posti.fi");
         assertThat(foundIdentification).hasValue(identification);
 
     }

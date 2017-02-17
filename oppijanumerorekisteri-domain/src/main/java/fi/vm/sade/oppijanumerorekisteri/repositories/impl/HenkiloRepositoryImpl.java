@@ -6,6 +6,7 @@ import static com.querydsl.core.group.GroupBy.list;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
@@ -178,6 +180,19 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .from(qHenkilo)
                 .join(qHenkilo.externalIds, qExternalId)
                 .where(qExternalId.externalid.eq(externalId))
+                .select(qHenkilo).fetchOne());
+    }
+
+    @Override
+    public Optional<Henkilo> findByIdentification(IdentificationDto identification) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QIdentification qIdentification = QIdentification.identification;
+
+        return Optional.ofNullable(jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.identifications, qIdentification)
+                .where(qIdentification.idpEntityId.eq(identification.getIdpEntityId()))
+                .where(qIdentification.identifier.eq(identification.getIdentifier()))
                 .select(qHenkilo).fetchOne());
     }
 }

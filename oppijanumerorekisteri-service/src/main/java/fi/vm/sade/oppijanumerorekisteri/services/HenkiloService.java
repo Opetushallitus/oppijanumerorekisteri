@@ -23,7 +23,7 @@ public interface HenkiloService {
 
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
 
-    HenkiloPerustietoDto findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
+    FindOrCreateDto<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
 
     List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
 

@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
+import javax.validation.Valid;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Getter
@@ -23,9 +24,14 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class HenkiloPerustietoDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
+    @Size(min = 1)
     private String oidHenkilo;
 
+    @Size(min = 1)
     private String externalId;
+
+    @Valid
+    private IdentificationDto identification;
 
     @ValidateHetu
     private String hetu;
@@ -53,10 +59,6 @@ public class HenkiloPerustietoDto implements Serializable {
     private String sukupuoli;
 
     private Date modified;
-
-    // Helper value to recognise when henkilo is created on service layer.
-    @JsonIgnore
-    private boolean createdOnService;
 
     private boolean isFind() {
         return !isEmpty(getOidHenkilo()) || !isEmpty(getExternalId());
