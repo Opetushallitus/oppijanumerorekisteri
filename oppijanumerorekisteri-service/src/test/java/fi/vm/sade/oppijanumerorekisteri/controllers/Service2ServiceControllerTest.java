@@ -26,6 +26,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -82,7 +83,7 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser
     public void findDuplicateHenkilosTest() throws Exception {
-        given(this.henkiloService.findHenkiloViittees(any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
+        given(this.henkiloService.findHenkiloViittees(any(), anyInt())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))

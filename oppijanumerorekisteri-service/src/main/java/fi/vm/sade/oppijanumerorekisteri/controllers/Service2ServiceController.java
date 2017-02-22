@@ -58,7 +58,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/duplicateHenkilos", method = RequestMethod.POST) 
     public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria criteria) {
-        return this.henkiloService.findHenkiloViittees(criteria);
+        return this.henkiloService.findHenkiloViittees(criteria, 5000);
     }
 
     @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä aikajärjestyksessä",

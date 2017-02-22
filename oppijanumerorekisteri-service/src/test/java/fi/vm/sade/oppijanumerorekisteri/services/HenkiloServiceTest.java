@@ -308,14 +308,21 @@ public class HenkiloServiceTest {
     public void findHenkiloViitteesTest() {
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
-        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria(), 1000);
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
         assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
         
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(emptyList());
-        results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        results = this.service.findHenkiloViittees(new HenkiloCriteria(), 1000);
         assertThat(results.size()).isEqualTo(0);
+
+        // Assert split works as intended
+        given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
+                new HenkiloViiteDto("OID", "MASTER")));
+        HenkiloCriteria criteria = new HenkiloCriteria() {{setHenkiloOids(Sets.newHashSet("OID1", "OID2"));}};
+        results = this.service.findHenkiloViittees(criteria, 1);
+        assertThat(results).size().isEqualTo(2);
     }
 
     @Test
