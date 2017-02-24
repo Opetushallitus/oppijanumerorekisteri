@@ -1,19 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
-import fi.vm.sade.oppijanumerorekisteri.TestApplication;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,17 +21,16 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-//@DataJpaTest
+@DataJpaTest
 @Transactional(readOnly = true)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = TestApplication.class)
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
 public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
 
     @Autowired
     private HenkiloViiteRepository henkiloViiteRepository;
     
-    @Ignore
+    @Autowired
+    private TestEntityManager testEntityManager;
+
     @Test
     public void findHenkiloViitteesByHenkilo() {
         populate(henkilo("CHILD1").withMaster(henkilo("ROOT")));
