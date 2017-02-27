@@ -25,13 +25,23 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         List<HenkiloViiteDto> result;
         if(!CollectionUtils.isEmpty(criteria.getHenkiloOids())) {
             // Find master oids
-            List<String> queryOids = criteria.getHenkiloOids().stream().collect(Collectors.toList());
-            List<String> masters = em.unwrap(Session.class).createSQLQuery("SELECT hv.master_oid \n" +
-                    "FROM henkiloviite hv \n" +
-                    "  INNER JOIN (\n" +
-                    "    SELECT '" + queryOids.get(0) + "' as query_oid\n" +
-                    queryOids.subList(1, queryOids.size()).stream().map(s -> "    UNION ALL SELECT '" + s + "'\n").collect(Collectors.joining())  +
-                    "  ) as hv_tmp on hv.master_oid = hv_tmp.query_oid OR hv.slave_oid = hv_tmp.query_oid\n").list();
+            List<String> masters;
+            if(criteria.getHenkiloOids().size() >= 80) {
+                List<String> queryOids = criteria.getHenkiloOids().stream().collect(Collectors.toList());
+                masters = em.unwrap(Session.class).createSQLQuery("SELECT hv.master_oid \n" +
+                        "FROM henkiloviite hv \n" +
+                        "  INNER JOIN (\n" +
+                        "    SELECT '" + queryOids.get(0) + "' as query_oid\n" +
+                        queryOids.subList(1, queryOids.size()).stream().map(s -> "    UNION ALL SELECT '" + s + "'\n").collect(Collectors.joining())  +
+                        "  ) as hv_tmp on hv.master_oid = hv_tmp.query_oid OR hv.slave_oid = hv_tmp.query_oid\n").list();
+            }
+            else {
+                masters = jpa().select(henkiloViite.masterOid.as("masterOid"))
+                        .from(henkiloViite)
+                        .where(henkiloViite.masterOid.in(criteria.getHenkiloOids())
+                                .or(henkiloViite.slaveOid.in(criteria.getHenkiloOids())))
+                        .fetch();
+            }
 
             // Find all slaves for the master oids
             result = jpa().select(Projections.bean(HenkiloViiteDto.class,
