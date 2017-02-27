@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static java.util.Collections.singletonList;
@@ -46,6 +47,19 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
                 .contains("CHILD1", "CHILD2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
                 .allMatch(isEqual("ROOT"));
+
+        // Search large queryset (80+)
+        Set<String> henkiloOids = new HashSet<>();
+        for(int i=1; i<100; i++) {
+            henkiloOids.add("CHILD" + i);
+        }
+        results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
+                .henkiloOids(henkiloOids).build());
+        assertThat(results).hasSize(3);
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
+                .contains("CHILD1", "CHILD2", "CHILD3");
+        assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
+                .contains("ROOT", "ROOT3");
 
         // Search by child:
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
