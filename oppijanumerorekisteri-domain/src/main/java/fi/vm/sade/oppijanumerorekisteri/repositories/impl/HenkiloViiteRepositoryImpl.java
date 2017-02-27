@@ -30,7 +30,7 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
                     "FROM henkiloviite hv \n" +
                     "  INNER JOIN (\n" +
                     "    SELECT '" + queryOids.get(0) + "' as query_oid\n" +
-                    queryOids.subList(1, queryOids.size()).stream().map(s -> "    UNION ALL SELECT " + s + "\n").collect(Collectors.joining())  +
+                    queryOids.subList(1, queryOids.size()).stream().map(s -> "    UNION ALL SELECT '" + s + "'\n").collect(Collectors.joining())  +
                     "  ) as hv_tmp on hv.master_oid = hv_tmp.query_oid OR hv.slave_oid = hv_tmp.query_oid\n").list();
 
             // Find all slaves for the master oids
