@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
+import org.hibernate.type.StringType;
 import org.springframework.util.CollectionUtils;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite.henkiloViite;
@@ -21,11 +25,14 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         List<HenkiloViiteDto> result;
         if(!CollectionUtils.isEmpty(criteria.getHenkiloOids())) {
             // Find master oids
-            List<String> masters = jpa().select(henkiloViite.masterOid)
-                    .from(henkiloViite)
-                    .where(henkiloViite.masterOid.in(criteria.getHenkiloOids())
-                            .or(henkiloViite.slaveOid.in(criteria.getHenkiloOids())))
-                    .fetch();
+            List<String> queryOids = criteria.getHenkiloOids().stream().collect(Collectors.toList());
+            List<String> masters = em.unwrap(Session.class).createSQLQuery("SELECT hv.master_oid \n" +
+                    "FROM henkiloviite hv \n" +
+                    "  INNER JOIN (\n" +
+                    "    SELECT '" + queryOids.get(0) + "' as query_oid\n" +
+                    queryOids.subList(1, queryOids.size()).stream().map(s -> "    UNION ALL SELECT " + s + "\n").collect(Collectors.joining())  +
+                    "  ) as hv_tmp on hv.master_oid = hv_tmp.query_oid OR hv.slave_oid = hv_tmp.query_oid\n").list();
+
             // Find all slaves for the master oids
             result = jpa().select(Projections.bean(HenkiloViiteDto.class,
                     henkiloViite.masterOid.as("masterOid"),
