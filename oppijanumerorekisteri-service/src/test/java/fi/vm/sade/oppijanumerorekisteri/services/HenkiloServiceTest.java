@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -59,6 +60,7 @@ public class HenkiloServiceTest {
     private PermissionChecker permissionCheckerMock;
     private KielisyysRepository kielisyysRepositoryMock;
     private KansalaisuusRepository kansalaisuusRepositoryMock;
+    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     @Before
     public void setup() {
@@ -73,11 +75,12 @@ public class HenkiloServiceTest {
         HenkiloUpdatePostValidator henkiloUpdatePostValidatorMock = Mockito.mock(HenkiloUpdatePostValidator.class);
         HenkiloCreatePostValidator henkiloCreatePostValidatorMock = Mockito.mock(HenkiloCreatePostValidator.class);
         this.henkiloViiteRepositoryMock = Mockito.mock(HenkiloViiteRepository.class);
+        this.oppijanumerorekisteriProperties = Mockito.mock(OppijanumerorekisteriProperties.class);
 
         this.service = spy(new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, henkiloViiteRepositoryMock,
                 mapper, new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
                 this.kansalaisuusRepositoryMock, identificationRepositoryMock, this.permissionCheckerMock,
-                henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock));
+                henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock, oppijanumerorekisteriProperties));
     }
 
     @Test
@@ -306,6 +309,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void findHenkiloViitteesTest() {
+        given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(5000);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
         List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
@@ -316,6 +320,14 @@ public class HenkiloServiceTest {
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(emptyList());
         results = this.service.findHenkiloViittees(new HenkiloCriteria());
         assertThat(results.size()).isEqualTo(0);
+
+        // Assert split works as intended
+        given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(1);
+        given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
+                new HenkiloViiteDto("OID", "MASTER")));
+        HenkiloCriteria criteria = new HenkiloCriteria() {{setHenkiloOids(Sets.newHashSet("OID1", "OID2"));}};
+        results = this.service.findHenkiloViittees(criteria);
+        assertThat(results).size().isEqualTo(2);
     }
 
     @Test

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
 import static java.util.Collections.singletonList;
@@ -33,58 +34,83 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findHenkiloViitteesByHenkilo() {
-        populate(henkilo("CHILD1").withMaster(henkilo("ROOT")));
-        populate(henkilo("CHILD2").withMaster(henkilo("ROOT")));
-        populate(henkilo("UNRELATED_CHILD").withMaster(henkilo("ROOT2")));
-        populate(henkilo("CHILD3").withMaster(henkilo("ROOT3")));
+        populate(henkilo("1.2.3.4.1").withMaster(henkilo("1.2.3.4.0"))); // CHILD1 - ROOT
+        populate(henkilo("1.2.3.4.2").withMaster(henkilo("1.2.3.4.0"))); // CHILD2 - ROOT
+        populate(henkilo("1.2.3.5.1").withMaster(henkilo("1.2.3.5.0"))); // UNRELATED_CHILD - ROOT2
+        populate(henkilo("1.2.3.6.1").withMaster(henkilo("1.2.3.6.0"))); // CHILD3 - ROOT3
 
         // Search by root:
         List<HenkiloViiteDto> results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("ROOT"))).build());
+                .henkiloOids(new HashSet<>(singletonList("1.2.3.4.0"))).build());
         assertThat(results).hasSize(2);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2");
+                .contains("1.2.3.4.1", "1.2.3.4.2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
-                .allMatch(isEqual("ROOT"));
+                .allMatch(isEqual("1.2.3.4.0"));
+
+        // Search large queryset (80+)
+        Set<String> henkiloOids = new HashSet<>();
+        for(int i=1; i<100; i++) {
+            henkiloOids.add("1.2.3.4." + i);
+        }
+        henkiloOids.add("1.2.3.6.1");
+        results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
+                .henkiloOids(henkiloOids).build());
+        assertThat(results).hasSize(3);
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
+                .contains("1.2.3.4.1", "1.2.3.4.2", "1.2.3.6.1");
+        assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
+                .contains("1.2.3.4.0", "1.2.3.6.0");
 
         // Search by child:
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("CHILD1"))).build());
+                .henkiloOids(new HashSet<>(singletonList("1.2.3.4.1"))).build());
         assertThat(results).hasSize(2);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2");
+                .contains("1.2.3.4.1", "1.2.3.4.2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
-                .allMatch(isEqual("ROOT"));
+                .allMatch(isEqual("1.2.3.4.0"));
 
         // Search without search terms (returns all graphs):
         results = this.henkiloViiteRepository.findBy(new HenkiloCriteria());
         assertThat(results).hasSize(4);
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2", "UNRELATED_CHILD", "CHILD3");
+                .contains("1.2.3.4.1", "1.2.3.4.2", "1.2.3.5.1", "1.2.3.6.1");
 
-        // Cause CHILD2 to have two masters (ROOT and ROOT3) (error in db):
+        // Cause 1.2.3.4.2 to have two masters (ROOT and 1.2.3.6.0) (error in db):
         HenkiloViite doubleParent = new HenkiloViite();
-        doubleParent.setMasterOid("CHILD2");
-        doubleParent.setSlaveOid("ROOT3");
+        doubleParent.setMasterOid("1.2.3.4.2");
+        doubleParent.setSlaveOid("1.2.3.6.0");
         em.persist(doubleParent);
 
         // This would not cause errors in query:
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
-                .henkiloOids(new HashSet<>(singletonList("CHILD2"))).build());
+                .henkiloOids(new HashSet<>(singletonList("1.2.3.4.2"))).build());
         assertThat(results).hasSize(3); // just one extra row
         assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
-                .contains("CHILD1", "CHILD2");
+                .contains("1.2.3.4.1", "1.2.3.4.2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
-                .contains("ROOT");
+                .contains("1.2.3.4.0");
 
         // Cause an invalid loop in the graph (error in db):
         HenkiloViite invalidViite = new HenkiloViite();
-        invalidViite.setMasterOid("CHILD2");
-        invalidViite.setSlaveOid("ROOT");
+        invalidViite.setMasterOid("1.2.3.4.2");
+        invalidViite.setSlaveOid("1.2.3.4.0");
         em.persist(invalidViite);
 
         // This query will still not hang:
         results = this.henkiloViiteRepository.findBy(new HenkiloCriteria());
         assertThat(results).hasSize(6); // just some extra rows
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void largeSetsDoesNotAllowBadCharacters() {
+        // Search large queryset (80+)
+        Set<String> henkiloOids = new HashSet<>();
+        for(int i=1; i<100; i++) {
+            henkiloOids.add("1.2.3.4.df" + i);
+        }
+        this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
+                .henkiloOids(henkiloOids).build());
     }
 }

@@ -1,56 +1,75 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
+import com.google.common.collect.Sets;
+import com.querydsl.core.types.Projections;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.type.StringType;
+import org.springframework.util.CollectionUtils;
 
-import java.util.List;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
+import static fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite.henkiloViite;
+import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 
 public class HenkiloViiteRepositoryImpl extends AbstractRepository implements HenkiloViiteRepositoryCustom {
 
     @Override
     public List<HenkiloViiteDto> findBy(HenkiloCriteria criteria) {
-        // With QueryDSL's JPA version, we can't make unions :/
-        Where where = buildSqlConditions(criteria, "h");
-        SQLQuery query = where.apply(em.unwrap(Session.class)
-                .createSQLQuery("-- Select the \"main\" viite to matching henkilo (to any direction)\n" +
-                        "  SELECT DISTINCT v.master_oid as \"masterOid\",\n" +
-                        "         v.slave_oid as \"henkiloOid\"\n" +
-                        "  FROM henkilo h INNER JOIN henkiloviite v ON v.master_oid = h.oidhenkilo\n" +
-                        "                                              OR v.slave_oid = h.oidhenkilo\n" +
-                        "      -- make sure both master and slave exist (no foreign references and non existing references do exist)\n" +
-                        "      INNER JOIN henkilo hm ON v.master_oid = hm.oidhenkilo\n" +
-                        "      INNER JOIN henkilo hs ON v.slave_oid = hs.oidhenkilo\n" +
-                        "      " + where + "\n" +
-                        "  -- Union with all other viittees with the same master than previous (needed given that the henkilo given matched to slave):\n" +
-                        "  UNION SELECT DISTINCT v2.master_oid as \"masterOid\",\n" +
-                        "               v2.slave_oid as \"henkiloOid\"\n" +
-                        "  FROM henkilo h INNER JOIN henkiloviite v ON v.master_oid = h.oidhenkilo\n" +
-                        "                                              OR v.slave_oid = h.oidhenkilo\n" +
-                        "      INNER JOIN henkiloviite v2 ON v2.master_oid = v.master_oid AND v2.slave_oid != v.slave_oid\n" +
-                        "      -- make sure both master and slave exist (no foreign references and non existing references do exist)\n" +
-                        "      INNER JOIN henkilo hm ON v2.master_oid = hm.oidhenkilo\n" +
-                        "      INNER JOIN henkilo hs ON v2.slave_oid = hs.oidhenkilo\n" +
-                        "      " + where + "\n" +
-                        "ORDER BY \"masterOid\", \"henkiloOid\""));
-        query.setResultTransformer(new AliasToBeanResultTransformer(HenkiloViiteDto.class));
-        return (List<HenkiloViiteDto>) query.list();
-    }
-    
-    private Where buildSqlConditions(HenkiloCriteria criteria, String h) {
-        Where where = new Where();
-        if (criteria.getHenkiloOids() != null) {
-            if (criteria.getHenkiloOids().isEmpty()) {
-                where.conditions.add("FALSE"); // ok in native queries
-            } else {
-                where.conditions.add(h+".oidhenkilo in (:oids)");
-                where.parameterSetters.add(q -> q.setParameterList("oids", criteria.getHenkiloOids(), StringType.INSTANCE));
+        List<HenkiloViiteDto> result;
+        if(!CollectionUtils.isEmpty(criteria.getHenkiloOids())) {
+            // Find master oids
+            List<String> masters;
+            // For large queries. This allows postgres to benefit from indices.
+            if(criteria.getHenkiloOids().size() >= 80) {
+                List<String> queryOids = criteria.getHenkiloOids().stream().filter(s -> s.matches("^(\\.|\\d)*$")).collect(Collectors.toList());
+                masters = em.unwrap(Session.class).createSQLQuery("SELECT hv.master_oid \n" +
+                        "FROM henkiloviite hv \n" +
+                        "  INNER JOIN (\n" +
+                        "    SELECT '" + queryOids.get(0) + "' as query_oid\n" +
+                        queryOids.subList(1, queryOids.size()).stream().map(s -> "    UNION ALL SELECT '" + s + "'\n").collect(Collectors.joining())  +
+                        "  ) as hv_tmp on hv.master_oid = hv_tmp.query_oid OR hv.slave_oid = hv_tmp.query_oid\n").list();
             }
+            else {
+                masters = jpa().select(henkiloViite.masterOid.as("masterOid"))
+                        .from(henkiloViite)
+                        .where(henkiloViite.masterOid.in(criteria.getHenkiloOids())
+                                .or(henkiloViite.slaveOid.in(criteria.getHenkiloOids())))
+                        .fetch();
+            }
+
+            // Find all slaves for the master oids
+            result = jpa().select(Projections.bean(HenkiloViiteDto.class,
+                    henkiloViite.masterOid.as("masterOid"),
+                    henkiloViite.slaveOid.as("henkiloOid")))
+                    .from(henkiloViite)
+                    .where(henkiloViite.masterOid.in(masters))
+                    .fetch();
         }
-        return where;
+        else {
+            // Find all
+            result = jpa().select(Projections.bean(HenkiloViiteDto.class,
+                    henkiloViite.masterOid.as("masterOid"),
+                    henkiloViite.slaveOid.as("henkiloOid")))
+                    .from(henkiloViite)
+                    .fetch();
+        }
+
+        // Make sure all henkilos exist
+        List<String> existingHenkilos = jpa().select(henkilo.oidHenkilo)
+                .from(henkilo)
+                .where(henkilo.oidHenkilo.in(result.stream().flatMap(henkiloViiteDto ->
+                        Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())))
+                .fetch();
+
+        return result.stream().filter(henkiloViiteDto ->
+                existingHenkilos.containsAll(Sets.newHashSet(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())))
+                .collect(Collectors.toList());
     }
 }

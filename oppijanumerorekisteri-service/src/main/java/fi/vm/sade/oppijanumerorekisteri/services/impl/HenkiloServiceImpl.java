@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -47,6 +48,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final HenkiloCreatePostValidator henkiloCreatePostValidator;
 
+    private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
+
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
                               HenkiloRepository henkiloDataRepository,
@@ -60,7 +63,8 @@ public class HenkiloServiceImpl implements HenkiloService {
                               IdentificationRepository identificationRepository,
                               PermissionChecker permissionChecker,
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator,
-                              HenkiloCreatePostValidator henkiloCreatePostValidator) {
+                              HenkiloCreatePostValidator henkiloCreatePostValidator,
+                              OppijanumerorekisteriProperties oppijanumerorekisteriProperties) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.henkiloViiteRepository = henkiloViiteRepository;
@@ -74,6 +78,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
         this.henkiloCreatePostValidator = henkiloCreatePostValidator;
+        this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
     }
 
     @Override
@@ -305,7 +310,21 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria) {
-        return this.henkiloViiteRepository.findBy(criteria);
+        List<HenkiloViiteDto> henkiloViiteDtoList = new ArrayList<>();
+        if(criteria.getHenkiloOids() != null) {
+            List<List<String>> henkiloOidListSplit = Lists.partition(
+                    criteria.getHenkiloOids().stream().collect(Collectors.toList()),
+                    oppijanumerorekisteriProperties.getHenkiloViiteSplitSize());
+            henkiloOidListSplit.forEach(henkiloOidList -> {
+                criteria.setHenkiloOids(henkiloOidList.stream().collect(Collectors.toSet()));
+                henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
+            });
+        }
+        else {
+            henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
+        }
+
+        return henkiloViiteDtoList;
     }
 
     @Override
