@@ -81,8 +81,17 @@ public class Service2ServiceController {
         return this.henkiloService.findHenkiloOidsModifiedSince(criteria, at, offset, amount);
     }
 
-    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilon perustiedoista")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
+    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
+            notes = "Henkilöllä on neljä erilaista tunnistetietoa: OID, hetu, external id ja identification."
+                    + " Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404."
+                    + " Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla."
+                    + " Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Henkilö löytyi jollakin annetuista tunnisteista"),
+        @ApiResponse(code = 201, message = "Henkilö luotiin annetuista perustiedoista"),
+        @ApiResponse(code = 400, message = "Henkilön tiedot virheelliset"),
+        @ApiResponse(code = 404, message = "Henkilöä ei löydy annetulla OID:lla"),
+    })
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
