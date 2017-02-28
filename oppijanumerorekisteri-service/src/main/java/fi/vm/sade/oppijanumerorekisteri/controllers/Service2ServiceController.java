@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
@@ -86,7 +86,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        FindOrCreateDto<HenkiloPerustietoDto> wrapper = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
         HenkiloPerustietoDto returnDto = wrapper.getDto();
         if (wrapper.isCreated()) {
             return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"

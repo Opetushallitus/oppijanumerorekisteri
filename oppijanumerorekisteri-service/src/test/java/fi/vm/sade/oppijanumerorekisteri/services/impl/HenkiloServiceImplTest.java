@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
@@ -143,7 +143,7 @@ public class HenkiloServiceImplTest {
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
         when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
-        FindOrCreateDto<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+        FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
 
         verify(henkiloRepository).findByOidHenkilo(eq("oid1"));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
@@ -171,7 +171,7 @@ public class HenkiloServiceImplTest {
         when(henkiloJpaRepository.findByExternalIds(any())).thenReturn(singleton(henkilo));
         when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
-        FindOrCreateDto<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+        FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
 
         verify(henkiloJpaRepository).findByExternalIds(eq(singletonList("externalid1")));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
@@ -188,7 +188,7 @@ public class HenkiloServiceImplTest {
         when(henkiloJpaRepository.findByIdentifications(any())).thenReturn(singleton(henkilo));
         when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
-        FindOrCreateDto<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+        FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
 
         verify(henkiloJpaRepository).findByIdentifications(eq(singletonList(identification)));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));

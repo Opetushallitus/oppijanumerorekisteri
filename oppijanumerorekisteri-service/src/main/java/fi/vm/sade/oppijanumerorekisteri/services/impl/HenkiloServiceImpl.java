@@ -1,11 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto.created;
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto.found;
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -137,7 +138,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public FindOrCreateDto<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
+    public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
         return findHenkilo(henkiloPerustietoDto)
                 .map(entity -> found(this.mapper.map(entity, HenkiloPerustietoDto.class)))
                 .orElseGet(() -> created(this.createHenkilo(henkiloPerustietoDto)));
@@ -181,7 +182,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         // tapauksessa tunnisteita on kuitenkin useita (oid, externalid, hetu),
         // jolloin toteutuksesta tulisi tarpeettoman monimutkainen ylläpidon
         // kannalta.
-        return henkilot.stream().map(this::findOrCreateHenkiloFromPerustietoDto).map(FindOrCreateDto::getDto).collect(toList());
+        return henkilot.stream().map(this::findOrCreateHenkiloFromPerustietoDto).map(FindOrCreateWrapper::getDto).collect(toList());
     }
 
     @Override
