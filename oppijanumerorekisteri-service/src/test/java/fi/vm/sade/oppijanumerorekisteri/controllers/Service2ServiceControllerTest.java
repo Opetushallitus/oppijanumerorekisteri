@@ -196,6 +196,24 @@ public class Service2ServiceControllerTest  {
 
     @Test
     @WithMockUser
+    public void findOrCreateHenkiloShouldWorkWithoutHetu() throws Exception {
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder()
+                .etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
+                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
+                .build();
+        String inputContent = "{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
+    }
+
+    @Test
+    @WithMockUser
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{\"yhteystietotyyppi2\":" +
                 "{\"sahkoposti\":\"testi@tyo.com\"}," +

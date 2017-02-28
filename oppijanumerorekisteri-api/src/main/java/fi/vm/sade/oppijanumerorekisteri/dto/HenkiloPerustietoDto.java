@@ -68,12 +68,6 @@ public class HenkiloPerustietoDto implements Serializable {
     }
 
     @JsonIgnore
-    @AssertTrue(message = "invalid.hetu.empty")
-    public boolean isHetuExistsIfCreate() {
-        return isFind() || !isEmpty(getHetu());
-    }
-
-    @JsonIgnore
     @AssertTrue(message = "invalid.etunimet.empty")
     public boolean isEtunimetValidIfCreate() {
         return isFind() || !isEmpty(getEtunimet());
