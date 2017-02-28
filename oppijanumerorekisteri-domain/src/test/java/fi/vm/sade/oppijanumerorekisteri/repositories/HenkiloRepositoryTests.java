@@ -110,7 +110,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         Date luontiMuokkausPvm = new Timestamp(System.currentTimeMillis());
         HenkiloPerustietoDto assertHenkilo = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
-                "fi", "suomi", "246", null, syntymaaika, luontiMuokkausPvm);
+                "fi", "suomi", "246", null, null, syntymaaika, luontiMuokkausPvm);
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
         persistedHenkilo.getAidinkieli().setHenkilos(Collections.singleton(persistedHenkilo));

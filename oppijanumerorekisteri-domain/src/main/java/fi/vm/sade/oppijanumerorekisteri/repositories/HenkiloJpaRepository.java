@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
+import java.util.Collection;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
@@ -41,6 +42,10 @@ public interface HenkiloJpaRepository {
 
     Optional<Henkilo> findByExternalId(String externalId);
 
+    Collection<Henkilo> findByExternalIds(Collection<String> externalIds);
+
     Optional<Henkilo> findByIdentification(IdentificationDto identification);
+
+    Collection<Henkilo> findByIdentifications(Collection<IdentificationDto> identifications);
 
 }

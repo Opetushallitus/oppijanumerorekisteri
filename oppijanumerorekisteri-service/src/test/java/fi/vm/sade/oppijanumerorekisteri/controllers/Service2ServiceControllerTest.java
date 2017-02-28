@@ -185,7 +185,7 @@ public class Service2ServiceControllerTest  {
     @Test
     @WithMockUser
     public void findOrCreateHenkiloShouldWorkWithExternalIdOnly() throws Exception {
-        String content = "{\"externalId\": \"externalid1\"}";
+        String content = "{\"externalIds\": [\"externalid1\"]}";
         given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class)))
                 .willReturn(found(new HenkiloPerustietoDto()));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")

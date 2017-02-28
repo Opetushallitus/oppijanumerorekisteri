@@ -12,6 +12,14 @@ public class IdentificationDto {
     @Size(min = 1)
     private String identifier;
 
+    public IdentificationDto() {
+    }
+
+    public IdentificationDto(String idpEntityId, String identifier) {
+        this.idpEntityId = idpEntityId;
+        this.identifier = identifier;
+    }
+
     public String getIdpEntityId() {
         return idpEntityId;
     }

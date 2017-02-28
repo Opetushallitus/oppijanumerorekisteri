@@ -5,9 +5,11 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import java.util.Date;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,15 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class IdentificationServiceImpl implements IdentificationService {
 
-    private final IdentificationRepository identificationRepository;
     private final HenkiloRepository henkiloRepository;
+    private final HenkiloJpaRepository henkiloJpaRepository;
+    private final UserDetailsHelper userDetailsHelper;
     private final OrikaConfiguration mapper;
 
-    public IdentificationServiceImpl(IdentificationRepository identificationRepository,
-            HenkiloRepository henkiloRepository,
+    public IdentificationServiceImpl(HenkiloRepository henkiloRepository,
+            HenkiloJpaRepository henkiloJpaRepository,
+            UserDetailsHelper userDetailsHelper,
             OrikaConfiguration mapper) {
-        this.identificationRepository = identificationRepository;
         this.henkiloRepository = henkiloRepository;
+        this.henkiloJpaRepository = henkiloJpaRepository;
+        this.userDetailsHelper = userDetailsHelper;
         this.mapper = mapper;
     }
 
@@ -42,19 +47,19 @@ public class IdentificationServiceImpl implements IdentificationService {
     @Override
     @Transactional(readOnly = false)
     public Iterable<IdentificationDto> create(String oid, IdentificationDto dto) {
-        Identification entity = identificationRepository.findByIdpEntityIdAndIdentifier(dto.getIdpEntityId(), dto.getIdentifier())
+        Henkilo henkilo = henkiloJpaRepository.findByIdentification(dto)
                 .orElseGet(() -> save(oid, dto));
 
-        Henkilo henkilo = entity.getHenkilo();
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
     }
 
-    private Identification save(String oid, IdentificationDto dto) {
+    private Henkilo save(String oid, IdentificationDto dto) {
         Henkilo henkilo = getHenkiloByOid(oid);
         Identification identification = mapper.map(dto, Identification.class);
-        identification.setHenkilo(henkilo);
         henkilo.getIdentifications().add(identification);
-        return identificationRepository.save(identification);
+        henkilo.setModified(new Date());
+        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+        return henkiloRepository.save(henkilo);
     }
 
 }

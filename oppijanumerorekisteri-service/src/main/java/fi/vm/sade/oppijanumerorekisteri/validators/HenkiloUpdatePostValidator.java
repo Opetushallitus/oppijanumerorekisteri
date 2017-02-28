@@ -5,7 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +42,7 @@ public class HenkiloUpdatePostValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
-        String kasittelijaOid = this.userDetailsHelper.getCurrentUserOid()
-                .orElseThrow(UserHasNoOidException::new);
+        String kasittelijaOid = this.userDetailsHelper.getCurrentUserOid();
         if (kasittelijaOid.equals(henkiloUpdateDto.getOidHenkilo())) {
             errors.reject("cant.modify.own.data");
         }

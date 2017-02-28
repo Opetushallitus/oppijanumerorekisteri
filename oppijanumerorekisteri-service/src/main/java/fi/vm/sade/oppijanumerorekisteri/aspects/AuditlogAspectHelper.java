@@ -36,7 +36,7 @@ public class AuditlogAspectHelper {
 
     // Set the method calling user id and log.
     private void finishLogging(LogMessage.LogMessageBuilder builder) {
-        Optional<String> oid = this.userDetailsHelper.getCurrentUserOid();
+        Optional<String> oid = this.userDetailsHelper.findCurrentUserOid();
         LogMessage logMessage = builder.id(oid.orElse("No oid")).build();
         audit.log(logMessage);
     }

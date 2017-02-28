@@ -8,7 +8,6 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateDto.found;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UserHasNoOidException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
@@ -26,14 +25,13 @@ import org.springframework.validation.BindException;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import static java.util.Optional.ofNullable;
 import java.util.stream.Collectors;
 
-import static java.util.Optional.ofNullable;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import org.joda.time.DateTime;
-import org.springframework.util.StringUtils;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
@@ -42,7 +40,6 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloViiteRepository henkiloViiteRepository;
     private final KielisyysRepository kielisyysRepository;
     private final KansalaisuusRepository kansalaisuusRepository;
-    private final IdentificationRepository identificationRepository;
 
     private final YhteystietoConverter yhteystietoConverter;
     private final OrikaConfiguration mapper;
@@ -64,7 +61,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                               UserDetailsHelper userDetailsHelper,
                               KielisyysRepository kielisyysRepository,
                               KansalaisuusRepository kansalaisuusRepository,
-                              IdentificationRepository identificationRepository,
                               PermissionChecker permissionChecker,
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator,
                               HenkiloCreatePostValidator henkiloCreatePostValidator,
@@ -78,7 +74,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.userDetailsHelper = userDetailsHelper;
         this.kielisyysRepository = kielisyysRepository;
         this.kansalaisuusRepository = kansalaisuusRepository;
-        this.identificationRepository = identificationRepository;
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
         this.henkiloCreatePostValidator = henkiloCreatePostValidator;
@@ -88,8 +83,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Boolean getHasHetu() {
-        Optional<String> hetu = this.henkiloJpaRepository.findHetuByOid(this.userDetailsHelper.getCurrentUserOid()
-                .orElseThrow(UserHasNoOidException::new));
+        Optional<String> hetu = this.henkiloJpaRepository.findHetuByOid(this.userDetailsHelper.getCurrentUserOid());
         return !hetu.orElse("").isEmpty();
     }
 
@@ -146,17 +140,14 @@ public class HenkiloServiceImpl implements HenkiloService {
     public FindOrCreateDto<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
         return findHenkilo(henkiloPerustietoDto)
                 .map(entity -> found(this.mapper.map(entity, HenkiloPerustietoDto.class)))
-                .orElseGet(() -> {
-                    Henkilo entity = this.createHenkilo(henkiloPerustietoDto);
-                    return created(this.mapper.map(entity, HenkiloPerustietoDto.class));
-                });
+                .orElseGet(() -> created(this.createHenkilo(henkiloPerustietoDto)));
     }
 
     private Optional<Henkilo> findHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
         return Stream.<Function<HenkiloPerustietoDto, Optional<Henkilo>>>of(
                 dto -> Optional.ofNullable(dto.getOidHenkilo()).flatMap(oid -> Optional.of(getEntityByOid(oid))),
-                dto -> Optional.ofNullable(dto.getExternalId()).flatMap(henkiloJpaRepository::findByExternalId),
-                dto -> Optional.ofNullable(dto.getIdentification()).flatMap(henkiloJpaRepository::findByIdentification),
+                dto -> Optional.ofNullable(dto.getExternalIds()).flatMap(externalIds -> findUnique(henkiloJpaRepository.findByExternalIds(externalIds))),
+                dto -> Optional.ofNullable(dto.getIdentifications()).flatMap(identifications -> findUnique(henkiloJpaRepository.findByIdentifications(identifications))),
                 dto -> Optional.ofNullable(dto.getHetu()).flatMap(this::getHenkiloByHetu)
         ).map(transformer -> transformer.apply(henkiloPerustietoDto))
                 .filter(Optional::isPresent)
@@ -164,20 +155,22 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .findFirst();
     }
 
-    private Henkilo createHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
-        Henkilo entity = this.mapper.map(henkiloPerustietoDto, Henkilo.class);
-        if (!StringUtils.isEmpty(henkiloPerustietoDto.getExternalId())) {
-            ExternalId externalId = new ExternalId();
-            externalId.setExternalid(henkiloPerustietoDto.getExternalId());
-            externalId.setHenkilo(entity);
-            entity.setExternalIds(Collections.singleton(externalId));
+    private Optional<Henkilo> findUnique(Collection<Henkilo> henkilot) {
+        Iterator<Henkilo> iterator = henkilot.iterator();
+        if (!iterator.hasNext()) {
+            return Optional.empty();
         }
-        if (henkiloPerustietoDto.getIdentification() != null) {
-            Identification identification = mapper.map(henkiloPerustietoDto.getIdentification(), Identification.class);
-            identification.setHenkilo(entity);
-            entity.setIdentifications(Collections.singleton(identification));
+        Henkilo henkilo = iterator.next();
+        if (iterator.hasNext()) {
+            throw new IllegalArgumentException("Annetuilla tunnisteilla löytyi useita henkilöitä");
         }
-        return this.createHenkilo(entity);
+        return Optional.of(henkilo);
+    }
+
+    private HenkiloPerustietoDto createHenkilo(HenkiloPerustietoDto dto) {
+        Henkilo entity = this.mapper.map(dto, Henkilo.class);
+        entity = this.createHenkilo(entity);
+        return this.mapper.map(entity, HenkiloPerustietoDto.class);
     }
 
     @Override
@@ -215,8 +208,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
         henkiloSaved.setModified(new Date());
-        henkiloSaved.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
-                .orElseThrow(UserHasNoOidException::new));
+        henkiloSaved.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
 
         // Do not update all values if henkilo is already vtj yksiloity
         if (henkiloSaved.isYksiloityVTJ()) {
@@ -304,9 +296,9 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier) {
-        Identification identification = this.identificationRepository.findByIdpEntityIdAndIdentifier(idp, identifier)
+        Henkilo henkilo = this.henkiloJpaRepository.findByIdentification(new IdentificationDto(idp, identifier))
                 .orElseThrow(NotFoundException::new);
-        return this.mapper.map(identification.getHenkilo(), HenkiloDto.class);
+        return this.mapper.map(henkilo, HenkiloDto.class);
     }
 
     @Override
@@ -356,8 +348,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
-        henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid()
-                .orElseThrow(UserHasNoOidException::new));
+        henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
 
         if (henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKieliKoodi() != null) {
             henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAidinkieli().getKieliKoodi())

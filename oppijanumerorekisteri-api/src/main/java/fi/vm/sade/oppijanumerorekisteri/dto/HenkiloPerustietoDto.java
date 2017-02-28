@@ -11,8 +11,10 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
+import org.springframework.util.CollectionUtils;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Getter
@@ -28,10 +30,11 @@ public class HenkiloPerustietoDto implements Serializable {
     private String oidHenkilo;
 
     @Size(min = 1)
-    private String externalId;
+    private List<String> externalIds;
 
     @Valid
-    private IdentificationDto identification;
+    @Size(min = 1)
+    private List<IdentificationDto> identifications;
 
     @ValidateHetu
     private String hetu;
@@ -61,7 +64,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private Date modified;
 
     private boolean isFind() {
-        return !isEmpty(getOidHenkilo()) || !isEmpty(getExternalId());
+        return !isEmpty(getOidHenkilo()) || !CollectionUtils.isEmpty(getExternalIds());
     }
 
     @JsonIgnore
