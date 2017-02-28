@@ -28,7 +28,7 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
             List<String> masters;
             // For large queries. This allows postgres to benefit from indices.
             if(criteria.getHenkiloOids().size() >= 80) {
-                List<String> queryOids = criteria.getHenkiloOids().stream().collect(Collectors.toList());
+                List<String> queryOids = criteria.getHenkiloOids().stream().filter(s -> s.matches("^(\\.|\\d)*$")).collect(Collectors.toList());
                 masters = em.unwrap(Session.class).createSQLQuery("SELECT hv.master_oid \n" +
                         "FROM henkiloviite hv \n" +
                         "  INNER JOIN (\n" +
