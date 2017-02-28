@@ -56,3 +56,4 @@ authentication:
     password: '{{oppijanumerorekisteri_kayttooikeus_password}}'
 oppijanumerorekisteri:
   uses-ssl-proxy: true
+  henkilo-viite-split-size: 5000

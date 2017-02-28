@@ -45,7 +45,7 @@ public interface HenkiloService {
 
     HenkiloReadDto getByHetu(String hetu);
 
-    List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria, int splitSize);
+    List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
 
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
