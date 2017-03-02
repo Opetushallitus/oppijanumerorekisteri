@@ -4,23 +4,22 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import java.util.Set;
 
+/**
+ * Kansalaisuus koodistosta "maatjavaltiot2".
+ *
+ * @see Henkilo#kansalaisuus henkilön kansalaisuudet
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false, exclude = "henkilos")
+@EqualsAndHashCode(callSuper = false)
 @Entity
 public class Kansalaisuus extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1807970088588578536L;
 
     @Column(name = "kansalaisuuskoodi", nullable = false, unique = true)
     private String kansalaisuusKoodi;
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "kansalaisuus")
-    private Set<Henkilo> henkilos;
 
 }

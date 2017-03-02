@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class EntityUtils {
     static public Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
-        return new Kansalaisuus(kansalaisuuskoodi, null);
+        return new Kansalaisuus(kansalaisuuskoodi);
     }
 
     static public Kielisyys createKielisyys(String kielikoodi, String kielityyppi) {
