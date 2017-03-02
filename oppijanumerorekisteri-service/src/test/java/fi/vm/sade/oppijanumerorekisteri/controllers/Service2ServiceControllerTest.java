@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.joda.time.DateTime;
@@ -180,18 +179,6 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(status().reason("bad_request_persistence"));
-    }
-
-    @Test
-    @WithMockUser
-    public void findOrCreateHenkiloShouldWorkWithExternalIdOnly() throws Exception {
-        String content = "{\"externalIds\": [\"externalid1\"]}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class)))
-                .willReturn(found(new HenkiloPerustietoDto()));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
-                .content(content).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
     }
 
     @Test

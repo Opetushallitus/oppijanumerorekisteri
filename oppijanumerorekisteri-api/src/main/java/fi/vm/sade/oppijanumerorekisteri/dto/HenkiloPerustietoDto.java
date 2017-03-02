@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
-import org.springframework.util.CollectionUtils;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Getter
@@ -64,7 +63,7 @@ public class HenkiloPerustietoDto implements Serializable {
     private Date modified;
 
     private boolean isFind() {
-        return !isEmpty(getOidHenkilo()) || !CollectionUtils.isEmpty(getExternalIds());
+        return !isEmpty(getOidHenkilo());
     }
 
     @JsonIgnore
