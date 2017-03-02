@@ -50,7 +50,7 @@ public class HenkiloJsonTest {
     public void testHenkiloPerustietoDtoSerialize() throws Exception {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(new IdentificationDto("key", "value1")), syntymaaika, new Date(29364800000L));
+                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(IdentificationDto.of("key", "value1")), syntymaaika, new Date(29364800000L));
         assertThat(this.perustietoJson.write(henkiloPerustietoDto)).isEqualToJson("/henkilo/testHenkiloPerustietoDto.json");
     }
 
@@ -58,7 +58,7 @@ public class HenkiloJsonTest {
     public void testHenkiloPerustietoDtoDeserialize() throws Exception {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(new IdentificationDto("key", "value1")), syntymaaika, new Date(29364800000L));
+                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), singletonList(IdentificationDto.of("key", "value1")), syntymaaika, new Date(29364800000L));
         assertThat(this.perustietoJson.read("/henkilo/testHenkiloPerustietoDto.json").getObject()).isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDto);
     }
 

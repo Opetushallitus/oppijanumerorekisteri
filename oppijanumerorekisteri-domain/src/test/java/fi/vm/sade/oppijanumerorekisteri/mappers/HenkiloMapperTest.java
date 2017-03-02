@@ -158,8 +158,8 @@ public class HenkiloMapperTest {
     public void henkiloPerustietoDtoIdentificationIdShouldMapToEntity() {
         HenkiloPerustietoDto dto = HenkiloPerustietoDto.builder()
                 .identifications(asList(
-                        new IdentificationDto("key", "value1"),
-                        new IdentificationDto("key", "value2")))
+                        IdentificationDto.of("key", "value1"),
+                        IdentificationDto.of("key", "value2")))
                 .build();
 
         Henkilo entity = this.modelmapper.map(dto, Henkilo.class);
