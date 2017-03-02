@@ -263,8 +263,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         if (henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
-                    .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
-                            .orElseGet(() -> this.kansalaisuusRepository.save(new Kansalaisuus(k.getKansalaisuusKoodi()))))
+                    .map(k -> kansalaisuusRepository.findOrCreate(k.getKansalaisuusKoodi()))
                     .collect(Collectors.toCollection(HashSet::new));
             henkiloSaved.setKansalaisuus(kansalaisuusSet);
             henkiloUpdateDto.setKansalaisuus(null);
@@ -364,8 +363,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         if (henkiloCreate.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloCreate.getKansalaisuus().stream()
-                    .map(k -> this.kansalaisuusRepository.findByKansalaisuusKoodi(k.getKansalaisuusKoodi())
-                            .orElseGet(() -> this.kansalaisuusRepository.save(new Kansalaisuus(k.getKansalaisuusKoodi()))))
+                    .map(k -> kansalaisuusRepository.findOrCreate(k.getKansalaisuusKoodi()))
                     .collect(Collectors.toSet());
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }

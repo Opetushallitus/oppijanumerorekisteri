@@ -275,8 +275,8 @@ public class HenkiloServiceTest {
         given(userDetailsHelperMock.getCurrentUserOid()).willReturn("1.2.3.4.1");
         given(this.kielisyysRepositoryMock.findByKieliKoodi(anyString()))
                 .willReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
-        given(this.kansalaisuusRepositoryMock.findByKansalaisuusKoodi(anyString()))
-                .willReturn(Optional.of(EntityUtils.createKansalaisuus("246")));
+        given(this.kansalaisuusRepositoryMock.findOrCreate(anyString()))
+                .willReturn(EntityUtils.createKansalaisuus("246"));
 
         this.service.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto);
         verify(this.henkiloDataRepositoryMock).save(argument.capture());
