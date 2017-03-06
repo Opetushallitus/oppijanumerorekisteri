@@ -45,7 +45,6 @@ public class YhteystiedotRyhmaPopulator implements Populator<YhteystiedotRyhma> 
         
         yhteystiedot.forEach(tietoPopulator -> {
             Yhteystieto tieto = tietoPopulator.apply(entityManager);
-            tieto.setYhteystiedotRyhma(ryhma);
             ryhma.getYhteystieto().add(tieto);
         });
         

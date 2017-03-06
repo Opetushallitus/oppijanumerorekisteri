@@ -266,7 +266,7 @@ public class HenkiloServiceTest {
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         YhteystiedotRyhma mappedYhteydstiedotRyhma = new YhteystiedotRyhma();
-        mappedYhteydstiedotRyhma.setYhteystieto(Sets.newHashSet(new Yhteystieto(null,
+        mappedYhteydstiedotRyhma.setYhteystieto(Sets.newHashSet(new Yhteystieto(
                 henkiloUpdateDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
                 henkiloUpdateDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
         ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);

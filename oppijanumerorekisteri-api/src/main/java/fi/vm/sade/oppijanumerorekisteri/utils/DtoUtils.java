@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Month;
+import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -101,12 +103,12 @@ public class DtoUtils {
 
         return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu, HenkiloTyyppi.VIRKAILIJA,
                 syntymaAika, "1", false, asiointikieli, aidinkieli,
-                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), Collections.singleton(yhteystiedotRyhma));
+                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
     }
 
     public static YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(String yhteystietoArvo) {
         YhteystietoDto yhteystieto = DtoUtils.createYhteystietoDto(yhteystietoArvo);
-        return new YhteystiedotRyhmaDto("yhteystietotyyppi7", "alkupera2",
+        return new YhteystiedotRyhmaDto(1L, "yhteystietotyyppi7", "alkupera2",
                 true, Collections.singleton(yhteystieto));
     }
 
