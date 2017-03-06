@@ -7,6 +7,9 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import java.time.LocalDate;
 import java.time.Month;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {OrikaConfiguration.class})
@@ -42,7 +46,7 @@ public class HenkiloMapperTest {
     public void henkiloPerustietoDtoToHenkilo() {
         LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", syntymaaika, new Date());
+                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), syntymaaika, new Date());
         Henkilo henkilo = modelmapper.map(henkiloPerustietoDto, Henkilo.class);
         assertThat(henkilo.getEtunimet()).isEqualTo("arpa");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("arpa");
@@ -137,4 +141,33 @@ public class HenkiloMapperTest {
         assertThat(henkiloDtodest.getEtunimet()).isNotNull();
         assertThat(henkiloDtodest.getKutsumanimi()).isNotNull();
     }
+
+    @Test
+    public void henkiloPerustietoDtoExternalIdShouldMapToEntity() {
+        HenkiloPerustietoDto dto = HenkiloPerustietoDto.builder()
+                .externalIds(asList("eka", "toka"))
+                .build();
+
+        Henkilo entity = this.modelmapper.map(dto, Henkilo.class);
+        dto = this.modelmapper.map(entity, HenkiloPerustietoDto.class);
+
+        assertThat(dto.getExternalIds()).containsExactlyInAnyOrder("eka", "toka");
+    }
+
+    @Test
+    public void henkiloPerustietoDtoIdentificationIdShouldMapToEntity() {
+        HenkiloPerustietoDto dto = HenkiloPerustietoDto.builder()
+                .identifications(asList(
+                        IdentificationDto.of("key", "value1"),
+                        IdentificationDto.of("key", "value2")))
+                .build();
+
+        Henkilo entity = this.modelmapper.map(dto, Henkilo.class);
+        dto = this.modelmapper.map(entity, HenkiloPerustietoDto.class);
+
+        assertThat(dto.getIdentifications())
+                .extracting("idpEntityId", "identifier")
+                .containsExactlyInAnyOrder(tuple("key", "value1"), tuple("key", "value2"));
+    }
+
 }

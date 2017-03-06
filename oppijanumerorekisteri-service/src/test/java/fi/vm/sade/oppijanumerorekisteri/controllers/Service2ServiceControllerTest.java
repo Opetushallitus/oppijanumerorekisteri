@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.joda.time.DateTime;
@@ -141,13 +142,13 @@ public class Service2ServiceControllerTest  {
     public void findOrCreateNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .hetu("081296-967T").oidHenkilo("1.2.3.4.5").henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA).createdOnService(true).build();
+                .hetu("081296-967T").oidHenkilo("1.2.3.4.5").henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA).build();
         String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(henkiloPerustietoDto);
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
@@ -182,14 +183,20 @@ public class Service2ServiceControllerTest  {
 
     @Test
     @WithMockUser
-    public void findOrCreateHenkiloShouldWorkWithExternalIdOnly() throws Exception {
-        String content = "{\"externalId\": \"externalid1\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class)))
-                .willReturn(new HenkiloPerustietoDto());
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
-                .content(content).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+    public void findOrCreateHenkiloShouldWorkWithoutHetu() throws Exception {
+        this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder()
+                .etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
+                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
+                .build();
+        String inputContent = "{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
+        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated())
+                .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
 
     @Test

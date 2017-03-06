@@ -5,6 +5,7 @@ import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
@@ -27,15 +28,18 @@ import java.util.List;
 @RequestMapping("/henkilo")
 public class HenkiloController {
     private HenkiloService henkiloService;
+    private IdentificationService identificationService;
 
     private PermissionChecker permissionChecker;
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
 
     @Autowired
     public HenkiloController(HenkiloService henkiloService,
+                             IdentificationService identificationService,
                              PermissionChecker permissionChecker,
                              HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
         this.henkiloService = henkiloService;
+        this.identificationService = identificationService;
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
     }
@@ -195,6 +199,21 @@ public class HenkiloController {
     public HenkiloDto findByIdpAndIdentifier(@ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
                                           @ApiParam(value = "Varsinainen tunniste", required = true) @RequestParam("id") String identifier) {
         return this.henkiloService.getHenkiloByIDPAndIdentifier(idp, identifier);
+    }
+
+    @GetMapping("/{oid}/identification")
+    @ApiOperation("Henkilön tunnistetietojen haku.")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    public Iterable<IdentificationDto> getIdentifications(@PathVariable String oid) {
+        return identificationService.listByHenkiloOid(oid);
+    }
+
+    @PostMapping("/{oid}/identification")
+    @ApiOperation("Henkilön tunnistetietojen lisääminen.")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    public Iterable<IdentificationDto> addIdentification(@PathVariable String oid,
+            @RequestBody @Validated IdentificationDto identification) {
+        return identificationService.create(oid, identification);
     }
 
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.",

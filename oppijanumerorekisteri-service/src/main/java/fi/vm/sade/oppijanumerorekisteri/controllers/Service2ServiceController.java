@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
@@ -80,13 +81,23 @@ public class Service2ServiceController {
         return this.henkiloService.findHenkiloOidsModifiedSince(criteria, at, offset, amount);
     }
 
-    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilon perustiedoista")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Validation exception")})
+    @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
+            notes = "Henkilöllä on neljä erilaista tunnistetietoa: OID, hetu, external id ja identification."
+                    + " Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404."
+                    + " Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla."
+                    + " Jos henkilöä ei löydy, luodaan uusi henkilö annetuista tiedoista (ml. kaikki tunnistetiedot).")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Henkilö löytyi jollakin annetuista tunnisteista"),
+        @ApiResponse(code = 201, message = "Henkilö luotiin annetuista perustiedoista"),
+        @ApiResponse(code = 400, message = "Henkilön tiedot virheelliset"),
+        @ApiResponse(code = 404, message = "Henkilöä ei löydy annetulla OID:lla"),
+    })
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        HenkiloPerustietoDto returnDto = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
-        if (returnDto.isCreatedOnService()) {
+        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        HenkiloPerustietoDto returnDto = wrapper.getDto();
+        if (wrapper.isCreated()) {
             return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
                     + returnDto.getOidHenkilo())).body(returnDto);
         }
@@ -98,7 +109,7 @@ public class Service2ServiceController {
     @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
-    public List<HenkiloPerustietoDto> findOrCreate(List<HenkiloPerustietoDto> henkilot) {
+    public List<HenkiloPerustietoDto> findOrCreate(@Validated @RequestBody List<HenkiloPerustietoDto> henkilot) {
         return henkiloService.findOrCreateHenkiloFromPerustietoDto(henkilot);
     }
 

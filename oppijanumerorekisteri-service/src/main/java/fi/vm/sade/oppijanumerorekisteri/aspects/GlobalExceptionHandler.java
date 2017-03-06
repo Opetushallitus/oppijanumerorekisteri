@@ -2,13 +2,13 @@ package fi.vm.sade.oppijanumerorekisteri.aspects;
 
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +29,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "unauthorized") // 401 Not authorized
     @ExceptionHandler(AccessDeniedException.class)
     public void notAuthorized() {
+    }
+
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "unauthorized") // 401 Not authorized
+    @ExceptionHandler(UnauthorizedException.class)
+    public void unauthorized() {
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_hibernate_constraint") // 400 Bad request.

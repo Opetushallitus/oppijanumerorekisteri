@@ -11,7 +11,9 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import javax.validation.Valid;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Getter
@@ -23,9 +25,15 @@ import static org.springframework.util.StringUtils.isEmpty;
 public class HenkiloPerustietoDto implements Serializable {
     private static final long serialVersionUID = -1263854768854256588L;
 
+    @Size(min = 1)
     private String oidHenkilo;
 
-    private String externalId;
+    @Size(min = 1)
+    private List<String> externalIds;
+
+    @Valid
+    @Size(min = 1)
+    private List<IdentificationDto> identifications;
 
     @ValidateHetu
     private String hetu;
@@ -54,18 +62,8 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private Date modified;
 
-    // Helper value to recognise when henkilo is created on service layer.
-    @JsonIgnore
-    private boolean createdOnService;
-
     private boolean isFind() {
-        return !isEmpty(getOidHenkilo()) || !isEmpty(getExternalId());
-    }
-
-    @JsonIgnore
-    @AssertTrue(message = "invalid.hetu.empty")
-    public boolean isHetuExistsIfCreate() {
-        return isFind() || !isEmpty(getHetu());
+        return !isEmpty(getOidHenkilo());
     }
 
     @JsonIgnore

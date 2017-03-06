@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
@@ -24,6 +25,8 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import java.util.Date;
 
 import static java.util.Optional.empty;
@@ -43,6 +46,9 @@ public class HenkiloControllerTest {
 
     @MockBean
     private HenkiloService henkiloService;
+
+    @MockBean
+    private IdentificationService identificationService;
 
     @MockBean
     private PermissionChecker permissionChecker;
@@ -97,7 +103,7 @@ public class HenkiloControllerTest {
     @WithMockUser
     public void findHenkilotByOidList() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
-                "1.2.3.4.5", "fi", "suomi", "246", "externalid1", null, new Date());
+                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
         String inputOidList = "[\"1.2.3.4.5\"]";
         String returnContent = "[" +
                 "  {" +

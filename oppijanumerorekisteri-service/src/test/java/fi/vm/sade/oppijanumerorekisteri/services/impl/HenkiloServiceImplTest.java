@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -27,6 +29,7 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -50,8 +53,6 @@ public class HenkiloServiceImplTest {
     @Mock
     private KansalaisuusRepository kansalaisuusRepository;
     @Mock
-    private IdentificationRepository identificationRepository;
-    @Mock
     private OrikaConfiguration orikaConfiguration;
     @Mock
     private YhteystietoConverter yhteystietoConverter;
@@ -72,7 +73,7 @@ public class HenkiloServiceImplTest {
     public void setup() {
         impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
-                userDetailsHelper, kielisyysRepository, kansalaisuusRepository, identificationRepository,
+                userDetailsHelper, kielisyysRepository, kansalaisuusRepository,
                 permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties);
     }
 
@@ -136,14 +137,60 @@ public class HenkiloServiceImplTest {
     }
 
     @Test
-    public void findOrCreateHenkiloFromPerustietoDtoShouldFindByExternalId() {
-        HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().externalId("externalid1").build();
+    public void findOrCreateHenkiloFromPerustietoDtoShouldFindByOid() {
+        HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().oidHenkilo("oid1").build();
         Henkilo henkilo = new Henkilo();
-        when(henkiloJpaRepository.findByExternalId(any())).thenReturn(Optional.of(henkilo));
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
-        HenkiloPerustietoDto output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+        FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
 
-        verify(henkiloJpaRepository).findByExternalId(eq("externalid1"));
+        verify(henkiloRepository).findByOidHenkilo(eq("oid1"));
+        verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
+        verify(henkiloRepository, never()).save(any(Henkilo.class));
+    }
+
+    @Test
+    public void findOrCreateHenkiloFromPerustietoDtoShouldThrowByOid() {
+        HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().oidHenkilo("oid1").build();
+        Henkilo henkilo = new Henkilo();
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.empty());
+        when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
+
+        Throwable throwable = catchThrowable(() -> impl.findOrCreateHenkiloFromPerustietoDto(input));
+
+        assertThat(throwable).isInstanceOf(NotFoundException.class);
+        verify(henkiloRepository).findByOidHenkilo(eq("oid1"));
+        verify(henkiloRepository, never()).save(any(Henkilo.class));
+    }
+
+    @Test
+    public void findOrCreateHenkiloFromPerustietoDtoShouldFindByExternalId() {
+        HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().externalIds(singletonList("externalid1")).build();
+        Henkilo henkilo = new Henkilo();
+        when(henkiloJpaRepository.findByExternalIds(any())).thenReturn(singleton(henkilo));
+        when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
+
+        FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+
+        verify(henkiloJpaRepository).findByExternalIds(eq(singletonList("externalid1")));
+        verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
+        verify(henkiloRepository, never()).save(any(Henkilo.class));
+    }
+
+    @Test
+    public void findOrCreateHenkiloFromPerustietoDtoShouldFindByIdentification() {
+        IdentificationDto identification = new IdentificationDto();
+        identification.setIdpEntityId("key");
+        identification.setIdentifier("value1");
+        HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().identifications(singletonList(identification)).build();
+        Henkilo henkilo = new Henkilo();
+        when(henkiloJpaRepository.findByIdentifications(any())).thenReturn(singleton(henkilo));
+        when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
+
+        FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
+
+        verify(henkiloJpaRepository).findByIdentifications(eq(singletonList(identification)));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
         verify(henkiloRepository, never()).save(any(Henkilo.class));
     }
