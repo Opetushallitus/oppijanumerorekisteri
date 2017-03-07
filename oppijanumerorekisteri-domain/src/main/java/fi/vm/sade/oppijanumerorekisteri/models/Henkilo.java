@@ -103,7 +103,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @BatchSize(size = 100)
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
-    @OneToMany(mappedBy = "henkilo", cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "henkilo_id")
     private Set<YhteystiedotRyhma> yhteystiedotRyhma = new HashSet<>();
 
     @Column(name = "kasittelija")

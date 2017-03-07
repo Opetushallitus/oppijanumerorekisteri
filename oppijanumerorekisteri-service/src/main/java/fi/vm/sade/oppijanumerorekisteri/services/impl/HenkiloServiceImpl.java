@@ -232,15 +232,21 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         if (henkiloUpdateDto.getYhteystiedotRyhma() != null) {
-            henkiloSaved.clearYhteystiedotRyhmas();
+            // poistetaan käyttäjän antamista ryhmistä read-only merkityt
+            List<YhteystiedotRyhma> readOnlyRyhmat = henkiloSaved.getYhteystiedotRyhma().stream()
+                    .filter(YhteystiedotRyhma::isReadOnly).collect(toList());
+            henkiloUpdateDto.getYhteystiedotRyhma().removeIf(dto
+                    -> readOnlyRyhmat.stream().anyMatch(entity -> entity.isEquivalentTo(dto)));
+            // rakennetaan ryhmälista uudelleen
+            henkiloSaved.getYhteystiedotRyhma().clear();
+            // käyttäjän muokkaukset
             henkiloUpdateDto.getYhteystiedotRyhma().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
-                yhteystiedotRyhma.setHenkilo(henkiloSaved);
-                if (yhteystiedotRyhma.getYhteystieto() != null) {
-                    yhteystiedotRyhma.getYhteystieto().forEach(yhteystieto -> yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma));
-                }
                 henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
             });
+            // lisätään read-only ryhmät takaisin
+            henkiloSaved.getYhteystiedotRyhma().addAll(readOnlyRyhmat);
+
             henkiloUpdateDto.setYhteystiedotRyhma(null);
         }
 
@@ -269,7 +275,6 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setKansalaisuus(null);
         }
     }
-
 
     @Override
     @Transactional(readOnly = true)

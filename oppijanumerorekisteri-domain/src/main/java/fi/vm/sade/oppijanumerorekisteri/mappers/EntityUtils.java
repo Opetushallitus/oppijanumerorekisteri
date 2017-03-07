@@ -39,28 +39,27 @@ public class EntityUtils {
         Kansalaisuus kansalaisuus = new Kansalaisuus();
         kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
 
-        YhteystiedotRyhma yhteystiedotRyhma = EntityUtils.createYhteystiedotRyhma(null, yhteystietoArvo);
+        YhteystiedotRyhma yhteystiedotRyhma = EntityUtils.createYhteystiedotRyhma(yhteystietoArvo);
 
         Henkilo henkilo = new Henkilo(oidHenkilo, hetu, henkiloTyyppi, etunimet, kutsumanimi, sukunimi, aidinkieli, aidinkieli,
                 luontiMuokkausSyncedPvm, luontiMuokkausSyncedPvm, lastVtjSynced, passivoitu, false, false, false, false, false,
                 Sets.newHashSet(aidinkieli), Sets.newHashSet(kansalaisuus), null, kasittelija, "1", syntymaAika,
                 null, null, null, null, null, false);
-        yhteystiedotRyhma.setHenkilo(henkilo);
         henkilo.setYhteystiedotRyhma(Sets.newHashSet(yhteystiedotRyhma));
         return henkilo;
     }
 
-    static public YhteystiedotRyhma createYhteystiedotRyhma(Henkilo henkilo, String yhteystietoArvo) {
-        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma(henkilo, "yhteystietotyyppi2",
+    static public YhteystiedotRyhma createYhteystiedotRyhma(String yhteystietoArvo) {
+        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma("yhteystietotyyppi2",
                 "alkupera2", false,
                 null);
-        Yhteystieto yhteystieto = EntityUtils.createYhteystieto(null, yhteystietoArvo);
+        yhteystiedotRyhma.setId(1L);
+        Yhteystieto yhteystieto = EntityUtils.createYhteystieto(yhteystietoArvo);
         yhteystiedotRyhma.setYhteystieto(Collections.singleton(yhteystieto));
-        yhteystieto.setYhteystiedotRyhma(yhteystiedotRyhma);
         return yhteystiedotRyhma;
     }
 
-    static public Yhteystieto createYhteystieto(YhteystiedotRyhma yhteystiedotRyhma, String yhteystietoArvo) {
-        return new Yhteystieto(yhteystiedotRyhma, YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo);
+    static public Yhteystieto createYhteystieto(String yhteystietoArvo) {
+        return new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo);
     }
 }

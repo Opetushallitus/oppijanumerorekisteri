@@ -40,6 +40,7 @@
   "modified": 29364800000,
   "yhteystiedotRyhma": [
     {
+      "id": 1,
       "ryhmaKuvaus": "yhteystietotyyppi7",
       "ryhmaAlkuperaTieto": "alkupera2",
       "readOnly": true,

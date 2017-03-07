@@ -76,7 +76,6 @@ public class HenkiloPopulator implements Populator<Henkilo> {
 
             yhteystietoRyhmas.forEach(ryhmaPopulator -> {
                 YhteystiedotRyhma ryhma = ryhmaPopulator.apply(entityManager);
-                ryhma.setHenkilo(henkilo);
                 henkilo.getYhteystiedotRyhma().add(ryhma);
             });
 

@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
@@ -41,6 +40,7 @@ import static java.util.Collections.emptyList;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.*;
@@ -262,13 +262,18 @@ public class HenkiloServiceTest {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999",
                 "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246",
                 new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        long yhteystiedotRyhmaId = henkilo.getYhteystiedotRyhma().stream().mapToLong(YhteystiedotRyhma::getId).max().orElse(0L) + 1;
+        henkilo.getYhteystiedotRyhma().add(YhteystiedotRyhma.builder()
+                .ryhmaKuvaus("yhteystietotyyppi5").ryhmaAlkuperaTieto("alkupera1")
+                .id(yhteystiedotRyhmaId).readOnly(true)
+                .build());
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
-        YhteystiedotRyhma mappedYhteydstiedotRyhma = new YhteystiedotRyhma();
-        mappedYhteydstiedotRyhma.setYhteystieto(Sets.newHashSet(new Yhteystieto(null,
-                henkiloUpdateDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi(),
-                henkiloUpdateDto.getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())));
+        henkiloUpdateDto.getYhteystiedotRyhma().add(YhteystiedotRyhmaDto.builder()
+                .id(yhteystiedotRyhmaId).readOnly(false)
+                .ryhmaKuvaus("readonly").ryhmaAlkuperaTieto("readonly")
+                .build());
         ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
         given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
         .willReturn(Collections.singletonList(henkilo));
@@ -293,17 +298,15 @@ public class HenkiloServiceTest {
         assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
         assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
 
-        assertThat(argument.getValue().getYhteystiedotRyhma().size()).isEqualTo(1);
-        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
-                .isEqualTo("alkupera2");
-        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getRyhmaKuvaus())
-                .isEqualTo("yhteystietotyyppi7");
+        assertThat(argument.getValue().getYhteystiedotRyhma())
+                .extracting("id", "ryhmaAlkuperaTieto", "ryhmaKuvaus")
+                .containsExactlyInAnyOrder(
+                        tuple(1L, "alkupera2", "yhteystietotyyppi7"),
+                        tuple(yhteystiedotRyhmaId, "alkupera1", "yhteystietotyyppi5"));
 
-        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().size()).isEqualTo(1);
-        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoTyyppi())
-                .isEqualTo(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO);
-        assertThat(argument.getValue().getYhteystiedotRyhma().iterator().next().getYhteystieto().iterator().next().getYhteystietoArvo())
-                .isEqualTo("arpa@kuutio.fi");
+        assertThat(argument.getValue().getYhteystiedotRyhma())
+                .flatExtracting("yhteystieto").extracting("yhteystietoTyyppi", "yhteystietoArvo")
+                .containsExactly(tuple(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, "arpa@kuutio.fi"));
     }
 
     @Test
