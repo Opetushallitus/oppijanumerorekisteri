@@ -11,4 +11,5 @@ public interface KayttooikeusClient {
     boolean checkUserPermissionToUser(String callingUserOid, String userOid, List<String> allowedRoles,
                                       ExternalPermissionService externalPermissionService, Set<String> callingUserRoles)
             throws IOException;
+    void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException;
 }

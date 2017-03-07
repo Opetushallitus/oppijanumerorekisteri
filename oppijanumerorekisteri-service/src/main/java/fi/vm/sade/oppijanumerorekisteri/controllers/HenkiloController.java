@@ -142,6 +142,14 @@ public class HenkiloController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/{oid}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Passivoi henkilön. DEPRECATE.",
+            notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
+            authorizations = @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"))
+    public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) {
+            this.henkiloService.disableHenkilo(oid);
+    }
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")

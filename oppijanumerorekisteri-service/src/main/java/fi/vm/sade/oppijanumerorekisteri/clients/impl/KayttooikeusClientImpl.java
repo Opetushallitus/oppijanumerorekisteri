@@ -55,4 +55,10 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         return this.objectMapper.readerFor(Boolean.class).readValue(content);
     }
 
+    @Override
+    public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException {
+        String url = this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, kasittelijaOid);
+        cachingRestClient.delete(url);
+    }
+
 }

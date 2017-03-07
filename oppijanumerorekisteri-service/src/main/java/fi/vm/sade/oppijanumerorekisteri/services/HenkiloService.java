@@ -5,7 +5,9 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,9 @@ public interface HenkiloService {
     Boolean getHasHetu();
 
     boolean getOidExists(String oid);
+
+    @Transactional(readOnly = false)
+    void disableHenkilo(String oid) throws IOException;
 
     String getOidByHetu(String hetu);
 
