@@ -36,11 +36,19 @@ public class Yhteystieto extends IdentifiableAndVersionedEntity {
         return Objects.equals(yhteystietoTyyppi, u.getYhteystietoTyyppi());
     }
 
-    public static Builder builder(YhteystietoTyyppi yhteystietoTyyppi, String yhteystietoArvo) {
+    public static YhteystietoBuilder builder(YhteystietoTyyppi yhteystietoTyyppi, String yhteystietoArvo) {
         return new Builder(yhteystietoTyyppi, yhteystietoArvo);
     }
 
-    public static class Builder {
+    public static interface YhteystietoBuilder {
+
+        YhteystietoBuilder id(Long id);
+
+        Yhteystieto build();
+
+    }
+
+    private static class Builder implements YhteystietoBuilder {
 
         private final YhteystietoTyyppi yhteystietoTyyppi;
         private final String yhteystietoArvo;
@@ -51,11 +59,13 @@ public class Yhteystieto extends IdentifiableAndVersionedEntity {
             this.yhteystietoArvo = yhteystietoArvo;
         }
 
+        @Override
         public Builder id(Long id) {
             this.id = requireNonNull(id);
             return this;
         }
 
+        @Override
         public Yhteystieto build() {
             Yhteystieto yhteystieto = new Yhteystieto();
             yhteystieto.setId(id);

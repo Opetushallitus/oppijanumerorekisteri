@@ -264,8 +264,8 @@ public class HenkiloServiceTest {
                 new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         long yhteystiedotRyhmaId = henkilo.getYhteystiedotRyhma().stream().mapToLong(YhteystiedotRyhma::getId).max().orElse(0L) + 1;
         henkilo.getYhteystiedotRyhma().add(YhteystiedotRyhma.builder()
-                .id(yhteystiedotRyhmaId).readOnly(true)
                 .ryhmaKuvaus("yhteystietotyyppi5").ryhmaAlkuperaTieto("alkupera1")
+                .id(yhteystiedotRyhmaId).readOnly(true)
                 .build());
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246",

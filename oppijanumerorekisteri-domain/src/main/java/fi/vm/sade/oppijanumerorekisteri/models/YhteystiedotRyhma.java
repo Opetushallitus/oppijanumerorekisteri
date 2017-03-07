@@ -47,11 +47,37 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
         return getId().equals(dto.getId());
     }
 
-    public static Builder builder() {
+    public static RyhmaKuvausBuilder builder() {
         return new Builder();
     }
 
-    public static class Builder {
+    public static interface RyhmaKuvausBuilder {
+
+        RyhmaAlkuperaTietoBuilder ryhmaKuvaus(String ryhmaKuvaus);
+
+    }
+
+    public static interface RyhmaAlkuperaTietoBuilder {
+
+        YhteystiedotRyhmaBuilder ryhmaAlkuperaTieto(String ryhmaAlkuperaTieto);
+
+    }
+
+    public static interface YhteystiedotRyhmaBuilder {
+
+        YhteystiedotRyhmaBuilder id(Long id);
+
+        YhteystiedotRyhmaBuilder readOnly(boolean readOnly);
+
+        YhteystiedotRyhmaBuilder yhteystieto(Yhteystieto yhteystieto);
+
+        YhteystiedotRyhmaBuilder yhteystieto(Set<Yhteystieto> yhteystieto);
+
+        YhteystiedotRyhma build();
+
+    }
+
+    private static class Builder implements RyhmaKuvausBuilder, RyhmaAlkuperaTietoBuilder, YhteystiedotRyhmaBuilder {
 
         private Long id;
         private String ryhmaKuvaus;
@@ -59,36 +85,43 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
         private boolean readOnly;
         private final Set<Yhteystieto> yhteystieto = new HashSet<>();
 
+        @Override
         public Builder id(Long id) {
             this.id = requireNonNull(id);
             return this;
         }
 
-        public Builder ryhmaKuvaus(String ryhmaKuvaus) {
+        @Override
+        public RyhmaAlkuperaTietoBuilder ryhmaKuvaus(String ryhmaKuvaus) {
             this.ryhmaKuvaus = requireNonNull(ryhmaKuvaus);
             return this;
         }
 
-        public Builder ryhmaAlkuperaTieto(String ryhmaAlkuperaTieto) {
+        @Override
+        public YhteystiedotRyhmaBuilder ryhmaAlkuperaTieto(String ryhmaAlkuperaTieto) {
             this.ryhmaAlkuperaTieto = requireNonNull(ryhmaAlkuperaTieto);
             return this;
         }
 
-        public Builder readOnly(boolean readOnly) {
+        @Override
+        public YhteystiedotRyhmaBuilder readOnly(boolean readOnly) {
             this.readOnly = readOnly;
             return this;
         }
 
-        public Builder yhteystieto(Yhteystieto yhteystieto) {
+        @Override
+        public YhteystiedotRyhmaBuilder yhteystieto(Yhteystieto yhteystieto) {
             this.yhteystieto.add(requireNonNull(yhteystieto));
             return this;
         }
 
-        public Builder yhteystieto(Set<Yhteystieto> yhteystieto) {
+        @Override
+        public YhteystiedotRyhmaBuilder yhteystieto(Set<Yhteystieto> yhteystieto) {
             this.yhteystieto.addAll(requireNonNull(yhteystieto));
             return this;
         }
 
+        @Override
         public YhteystiedotRyhma build() {
             YhteystiedotRyhma entity = new YhteystiedotRyhma();
             entity.setId(id);
