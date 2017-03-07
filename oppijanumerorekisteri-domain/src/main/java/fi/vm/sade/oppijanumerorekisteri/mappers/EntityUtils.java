@@ -50,12 +50,10 @@ public class EntityUtils {
     }
 
     static public YhteystiedotRyhma createYhteystiedotRyhma(String yhteystietoArvo) {
-        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma.Builder()
-                .id(1L)
-                .ryhmaKuvaus("yhteystietotyyppi2")
-                .ryhmaAlkuperaTieto("alkupera2")
-                .readOnly(false)
-                .build();
+        YhteystiedotRyhma yhteystiedotRyhma = new YhteystiedotRyhma("yhteystietotyyppi2",
+                "alkupera2", false,
+                null);
+        yhteystiedotRyhma.setId(1L);
         Yhteystieto yhteystieto = EntityUtils.createYhteystieto(yhteystietoArvo);
         yhteystiedotRyhma.setYhteystieto(Collections.singleton(yhteystieto));
         return yhteystiedotRyhma;

@@ -15,6 +15,8 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "yhteystiedotryhma")
 public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
