@@ -147,7 +147,7 @@ public class HenkiloController {
     @ApiOperation(value = "Passivoi henkilön. DEPRECATE.",
             notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
             authorizations = @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"))
-    public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) {
+    public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) throws IOException {
             this.henkiloService.disableHenkilo(oid);
     }
 
