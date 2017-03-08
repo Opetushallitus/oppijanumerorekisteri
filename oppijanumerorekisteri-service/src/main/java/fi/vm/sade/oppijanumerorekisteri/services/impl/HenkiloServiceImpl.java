@@ -104,7 +104,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     public void disableHenkilo(String oid) throws IOException {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid)
                 .orElseThrow(() -> new NotFoundException("Henkilö not found"));

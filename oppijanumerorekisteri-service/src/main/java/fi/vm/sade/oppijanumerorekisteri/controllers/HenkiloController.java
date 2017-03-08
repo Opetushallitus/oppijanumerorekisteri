@@ -144,7 +144,7 @@ public class HenkiloController {
 
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/{oid}", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Passivoi henkilön. DEPRECATE.",
+    @ApiOperation(value = "Passivoi henkilön mukaanlukien käyttöoikeudet ja organisaatiot.",
             notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
             authorizations = @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"))
     public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) throws IOException {
