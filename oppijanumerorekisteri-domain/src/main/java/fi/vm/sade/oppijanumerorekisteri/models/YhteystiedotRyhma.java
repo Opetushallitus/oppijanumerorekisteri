@@ -47,23 +47,31 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
         return getId().equals(dto.getId());
     }
 
+    public void addYhteystieto(Yhteystieto yhteystieto) {
+        this.yhteystieto.add(yhteystieto);
+    }
+
+    public void clearYhteystieto() {
+        this.yhteystieto.clear();
+    }
+
     public static RyhmaKuvausBuilder builder() {
         return new Builder();
     }
 
-    public static interface RyhmaKuvausBuilder {
+    public interface RyhmaKuvausBuilder {
 
         RyhmaAlkuperaTietoBuilder ryhmaKuvaus(String ryhmaKuvaus);
 
     }
 
-    public static interface RyhmaAlkuperaTietoBuilder {
+    public interface RyhmaAlkuperaTietoBuilder {
 
         YhteystiedotRyhmaBuilder ryhmaAlkuperaTieto(String ryhmaAlkuperaTieto);
 
     }
 
-    public static interface YhteystiedotRyhmaBuilder {
+    public interface YhteystiedotRyhmaBuilder {
 
         YhteystiedotRyhmaBuilder id(Long id);
 

@@ -16,7 +16,6 @@ public interface HenkiloService {
 
     boolean getOidExists(String oid);
 
-    @Transactional(readOnly = false)
     void disableHenkilo(String oid) throws IOException;
 
     String getOidByHetu(String hetu);

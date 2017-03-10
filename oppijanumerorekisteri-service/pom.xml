@@ -68,6 +68,10 @@
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.rajapinnat</groupId>
+            <artifactId>vtj-api</artifactId>
+        </dependency>
 
         <!-- Spring-boot -->
         <dependency>
@@ -106,10 +110,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
         </dependency>
 
         <!-- Spring -->
@@ -160,22 +160,32 @@
             <artifactId>org.jresearch.orika.spring</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-access</artifactId>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Other -->
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-access</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-suggest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>
