@@ -1,10 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.models.Yksilointitieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import org.junit.Before;
@@ -150,5 +152,46 @@ public class YksilointiServiceTest {
                 .doesNotContain(YksilointiServiceImpl.RYHMAALKUPERA_VTJ);
     }
 
+    @Test
+    public void paivitaSukupuoli() {
+        this.henkilo.setSukupuoli("2");
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+
+        Date before = new Date();
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+        assertThat(yksiloity.getSukupuoli()).isEqualTo("1");
+        assertThat(yksiloity.getModified()).isAfter(before);
+    }
+
+    @Test
+    public void tallennaPuuttuvaSukupuoliHetunPerusteella() {
+        this.henkilo.setSukupuoli(null);
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-sukupuoli-puuttuu.json");
+
+        Date before = new Date();
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+        assertThat(yksiloity.getSukupuoli()).isEqualTo("1");
+        assertThat(yksiloity.getModified()).isAfter(before);
+    }
+
+    @Test
+    public void testKielisyysTallentuu() {
+        this.henkilo.setAidinkieli(null);
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+        Date before = new Date();
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+        assertThat(yksiloity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        assertThat(yksiloity.getModified()).isAfter(before);
+    }
+
+    @Test
+    public void lisaaYksilointiTietoKunNimetEivatTasmaa() {
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-erilaiset-nimet.json");
+        Date before = new Date();
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getYksilointitieto()).isNotNull().extracting("etunimet").contains("Teijo Tahvelo");
+        assertThat(yksiloity.getEtunimet()).isEqualTo("Teppo Taneli");
+    }
 
 }
