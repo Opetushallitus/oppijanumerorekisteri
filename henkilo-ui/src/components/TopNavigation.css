@@ -1,0 +1,64 @@
+.topNavigationContainer {
+    position: relative;
+    clear: both;
+}
+
+#topNavigation a {
+    display: inline-block;
+    padding: 10px;
+}
+
+#topNavigation .navigationItem {
+    padding: 10px;
+    color: rgb(21, 158, 203);
+    border: 2px solid rgb(21, 158, 203);
+    margin-left: 15px;
+    border-radius: 2px;
+}
+
+#topNavigation a.navigationItem {
+    cursor: pointer;
+}
+
+#topNavigation .navigationItem.currentView {
+    background-color: rgb(21, 158, 203);
+    border: 2px solid rgb(21, 158, 203);
+    color: white;
+}
+
+.tabs {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tabs li {
+    float: left;
+    display: inline;
+    font-size: 15px;
+    color: #159ECB;
+    padding: 10px 30px;
+    font-weight: 600;
+    border-bottom: 1px solid #b5b5b5;
+    cursor: pointer;
+}
+
+.tabs li.active {
+    color: #2A2A2A;
+    border-left: 1px solid #d5d5d5;
+    border-right: 1px solid #d5d5d5;
+    border-top: 2px solid #159ECB;
+    border-bottom: none;
+    padding-bottom: 10px;
+    background-color: white;
+    /*padding-bottom: 10px !important;*/
+}
+
+.tabs::after {
+    content: "\00a0";
+    padding: 20px 30px 21px;
+    font-size: 15px;
+    float: none;
+    overflow: hidden;
+    display: block;
+    border-bottom: 1px solid #b5b5b5;
+}
