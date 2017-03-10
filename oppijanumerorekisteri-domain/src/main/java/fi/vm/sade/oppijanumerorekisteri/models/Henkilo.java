@@ -132,7 +132,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Boolean turvakielto = false;
 
     @OneToOne(mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinColumn(name = "henkiloid")
     private Yksilointitieto yksilointitieto;
 
     public void clearYhteystiedotRyhmas() {
