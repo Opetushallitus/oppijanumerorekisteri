@@ -23,22 +23,10 @@ import static org.mockito.Mockito.*;
 public class YksilointiServiceTest {
     private MockVtjClient vtjClient;
 
-    private HenkiloRepository henkiloRepository;
-    private YksilointitietoRepository yksilointitietoRepository;
-    private KansalaisuusRepository kansalaisuusRepository;
-    private KielisyysRepository kielisyysRepository;
-    private YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
-    private YhteystietoRepository yhteystietoRepository;
-
     private YksilointiService yksilointiService;
 
     private final String henkiloOid = "1.2.246.562.24.27470134096";
     private Henkilo henkilo;
-
-    private final String yksiloimatonOid = "yksiloimatonOid";
-    private final String hetu = "010101-123N";
-    private final String paivamaara = "1901-01-01";
-    private final String kasittelija = "jeppis";
 
     @Before
     public void setup() {
@@ -46,27 +34,28 @@ public class YksilointiServiceTest {
         MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
 
-        this.henkiloRepository = mock(HenkiloRepository.class);
-        this.yksilointitietoRepository = mock(YksilointitietoRepository.class);
-        this.kansalaisuusRepository = mock(KansalaisuusRepository.class);
-        this.kielisyysRepository = mock(KielisyysRepository.class);
-        this.yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
-        this.yhteystietoRepository = mock(YhteystietoRepository.class);
+        HenkiloRepository henkiloRepository = mock(HenkiloRepository.class);
+        YksilointitietoRepository yksilointitietoRepository = mock(YksilointitietoRepository.class);
+        KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
+        KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
+        YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
+        YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
 
-        this.yksilointiService = new YksilointiServiceImpl(this.henkiloRepository, this.yksilointitietoRepository,
-                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties, this.kansalaisuusRepository,
-                this.kielisyysRepository, this.yhteystiedotRyhmaRepository, this.yhteystietoRepository);
+        this.yksilointiService = new YksilointiServiceImpl(henkiloRepository, yksilointitietoRepository,
+                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties, kansalaisuusRepository,
+                kielisyysRepository, yhteystiedotRyhmaRepository, yhteystietoRepository);
 
-        when(this.kielisyysRepository.findByKieliKoodi(anyString()))
+        when(kielisyysRepository.findByKieliKoodi(anyString()))
                 .thenReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
-        doAnswer(AdditionalAnswers.returnsFirstArg()).when(this.kielisyysRepository).save(any(Kielisyys.class));
-        when(this.kansalaisuusRepository.findOrCreate(anyString()))
+        doAnswer(AdditionalAnswers.returnsFirstArg()).when(kielisyysRepository).save(any(Kielisyys.class));
+        when(kansalaisuusRepository.findOrCreate(anyString()))
                 .thenReturn(EntityUtils.createKansalaisuus("246"));
 
-        this.henkilo = EntityUtils.createHenkilo("Teppo Taneli", "Teppo", "Testaaja", "010101-123N", this.henkiloOid,
+        String hetu = "010101-123N";
+        this.henkilo = EntityUtils.createHenkilo("Teppo Taneli", "Teppo", "Testaaja", hetu, this.henkiloOid,
                 false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(),
                 "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1990, 3, 23));
-        when(this.henkiloRepository.findByOidHenkilo(anyString())).thenReturn(Optional.of(this.henkilo));
+        when(henkiloRepository.findByOidHenkilo(anyString())).thenReturn(Optional.of(this.henkilo));
     }
 
     @Test
@@ -95,7 +84,8 @@ public class YksilointiServiceTest {
         assertThat(originalSyntymaaika).isEqualTo("1990-03-23");
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
-        assertThat(yksiloity.getSyntymaaika()).isEqualTo(this.paivamaara);
+        String paivamaara = "1901-01-01";
+        assertThat(yksiloity.getSyntymaaika()).isEqualTo(paivamaara);
         assertThat(yksiloity.getModified()).isAfter(before);
     }
 
