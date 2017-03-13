@@ -24,7 +24,7 @@ spring:
 hikari:
   datasource:
     driver-class-name: org.postgresql.Driver
-    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
+    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
     connection-test-query: SELECT 1

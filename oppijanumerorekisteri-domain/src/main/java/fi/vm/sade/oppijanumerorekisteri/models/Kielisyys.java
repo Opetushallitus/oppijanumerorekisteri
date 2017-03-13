@@ -1,20 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 @EqualsAndHashCode(callSuper = false, exclude = "henkilos")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(uniqueConstraints = @UniqueConstraint(name = "UK_kielisyys_01",
         columnNames = { "kielikoodi" }))
 @Entity

@@ -40,7 +40,7 @@ public class Yhteystieto extends IdentifiableAndVersionedEntity {
         return new Builder(yhteystietoTyyppi, yhteystietoArvo);
     }
 
-    public static interface YhteystietoBuilder {
+    public interface YhteystietoBuilder {
 
         YhteystietoBuilder id(Long id);
 

@@ -1,12 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
-import fi.vm.sade.oppijanumerorekisteri.models.Yksilointitieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import org.junit.Before;
@@ -17,13 +15,9 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.*;
 
 public class YksilointiServiceTest {
@@ -117,7 +111,7 @@ public class YksilointiServiceTest {
     }
 
     @Test
-    public void testOppijalleTallentuuVtjYhteystiedot() {
+    public void oppijalleTallentuuVtjYhteystiedot() {
         final String henkiloOid = "yksiloimatonOppija";
         this.henkilo.setOidHenkilo(henkiloOid);
         this.henkilo.setSukunimi("Oppija");
@@ -134,7 +128,7 @@ public class YksilointiServiceTest {
     }
 
     @Test
-    public void testVirkailijalleEiTallennuVtjYhteystiedot() {
+    public void virkailijalleEiTallennuVtjYhteystiedot() {
         final String henkiloOid = "yksiloimatonVirkailija";
         this.henkilo.setOidHenkilo(henkiloOid);
         this.henkilo.setSukunimi("Virkailija");
@@ -175,7 +169,7 @@ public class YksilointiServiceTest {
     }
 
     @Test
-    public void testKielisyysTallentuu() {
+    public void kielisyysTallentuu() {
         this.henkilo.setAidinkieli(null);
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
         Date before = new Date();

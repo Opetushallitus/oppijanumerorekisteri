@@ -2,6 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.clients;
 
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 
+import java.util.Optional;
+
 public interface VtjClient {
-    YksiloityHenkilo fetchHenkilo(String hetu);
+    Optional<YksiloityHenkilo> fetchHenkilo(String hetu);
 }

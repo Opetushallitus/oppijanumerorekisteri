@@ -6,7 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
@@ -22,12 +21,15 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
-import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class YksilointiServiceImpl implements YksilointiService {
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
+    private static final String KIELIKOODI_SV = "sv";
 
     private final YksilointitietoRepository yksilointitietoRepository;
     private final HenkiloRepository henkiloRepository;
@@ -43,6 +45,9 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final String RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE = "yhteystietotyyppi8";
+
+    private static final Predicate<String> stringNotEmpty = it -> !StringUtils.isEmpty(it);
+    private static final Predicate<Collection> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
 
     @Autowired
     public YksilointiServiceImpl(HenkiloRepository henkiloRepository,
@@ -65,19 +70,17 @@ public class YksilointiServiceImpl implements YksilointiService {
         this.yhteystietoRepository = yhteystietoRepository;
     }
 
-
     @Override
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
         Henkilo henkilo = this.henkiloRepository.findByOidHenkilo(henkiloOid)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found by oid " + henkiloOid));
-        String hetu = henkilo.getHetu();
 
-        if (hetu != null) {
+        if (!StringUtils.isEmpty(henkilo.getHetu())) {
             henkilo = yksiloiHenkilo(henkilo);
         }
 
-
+        // Remove yksilointitieto if henkilo was yksiloity succesfully.
         if (henkilo != null && henkilo.isYksiloityVTJ() && henkilo.getYksilointitieto() != null) {
             this.yksilointitietoRepository.delete(henkilo.getYksilointitieto());
             henkilo.setYksilointitieto(null);
@@ -87,24 +90,25 @@ public class YksilointiServiceImpl implements YksilointiService {
         return henkilo;
     }
 
-    private Henkilo yksiloiHenkilo(@NotNull Henkilo henkilo) {
+    private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
         /* VTJ data for Henkilo contains a huge data set and parsing this data
          * might change in the future, if Henkilo's data must contain all what
          * VTJ has to offer but that's still uncertain
          */
-        YksiloityHenkilo yksiloityHenkilo = this.vtjClient.fetchHenkilo(henkilo.getHetu());
+        YksiloityHenkilo yksiloityHenkilo = this.vtjClient.fetchHenkilo(henkilo.getHetu())
+                .orElseThrow(() ->
+                        new NotFoundException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
         henkilo.setYksilointiYritetty(true);
-
-        if (yksiloityHenkilo == null) {
-            throw new NotFoundException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu());
-        }
-        // Henkilo model must be refresh to avoid StaleObjectException
-//        henkilo = henkiloDAO.findByOid(henkiloOid);
 
         NimienYhtenevyys nimienYhtenevyys = tarkistaNimet(henkilo, yksiloityHenkilo);
 
         if (!nimienYhtenevyys.etunimimatch || !nimienYhtenevyys.sukunimimatch) {
+            logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
+                    + "--Annetut etunimet: " + henkilo.getEtunimet() + ", VTJ: " + yksiloityHenkilo.getEtunimi() + "\n"
+                    + "--Annettu kutsumanimi: " + henkilo.getKutsumanimi() + ", VTJ: " + yksiloityHenkilo.getKutsumanimi() + "\n"
+                    + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ: " + yksiloityHenkilo.getSukunimi());
+
             this.addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
         }
         else {
@@ -113,7 +117,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setOppijanumero(henkilo.getOidHenkilo());
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
-            henkilo = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+            this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
 
             henkilo.setYksiloityVTJ(true);
             //OPHASPA-1820 kumotaan pärstäyksilöinti
@@ -158,54 +162,34 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     }
 
-    private void addYksilointitietosWhenNamesDoNotMatch(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
-        Yksilointitieto yksilointitieto;
-
-        if (henkilo.getYksilointitieto() == null) {
-            yksilointitieto = new Yksilointitieto();
-        }
-        else {
-            yksilointitieto = henkilo.getYksilointitieto();
-        }
-
-        logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
-                + "--Annetut etunimet: " + henkilo.getEtunimet() + ", VTJ: " + yksiloityHenkilo.getEtunimi() + "\n"
-                + "--Annettu kutsumanimi: " + henkilo.getKutsumanimi() + ", VTJ: " + yksiloityHenkilo.getKutsumanimi() + "\n"
-                + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ: " + yksiloityHenkilo.getSukunimi());
+    private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
+        Yksilointitieto yksilointitieto = Optional.ofNullable(henkilo.getYksilointitieto())
+                .orElseGet(Yksilointitieto::new);
 
         yksilointitieto.setEtunimet(yksiloityHenkilo.getEtunimi());
         yksilointitieto.setKutsumanimi(yksiloityHenkilo.getKutsumanimi());
         yksilointitieto.setSukunimi(yksiloityHenkilo.getSukunimi());
-
-        yksilointitieto.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
-
-        if (!CollectionUtils.isEmpty(yksiloityHenkilo.getKansalaisuusKoodit())) {
-            for (Kansalaisuus k : this.findOrCreateKansalaisuus(yksiloityHenkilo.getKansalaisuusKoodit())) {
-                yksilointitieto.addKansalaisuus(k);
-            }
-        }
-
-        if (!StringUtils.isEmpty(yksiloityHenkilo.getAidinkieliKoodi())) {
-            yksilointitieto.setAidinkieli(this.findOrCreateKielisyys(yksiloityHenkilo.getAidinkieliKoodi()));
-        }
-
-        if ((yksiloityHenkilo.getOsoitteet() != null && !yksiloityHenkilo.getOsoitteet().isEmpty()) ||
-                !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti())) {
-            if (yksilointitieto.getYhteystiedotRyhma() != null &&
-                    !yksilointitieto.getYhteystiedotRyhma().isEmpty()) {
-                yksilointitieto.getYhteystiedotRyhma().clear();
-            }
-
-            if(HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi())) {
-                for (YhteystiedotRyhma ytRyhma : this.addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli())) {
-                    yksilointitieto.addYhteystiedotRyhma(ytRyhma);
-                }
-            }
-        }
+        yksilointitieto.setSukupuoli(this.maaritaSukupuoli(yksiloityHenkilo));
         yksilointitieto.setTurvakielto(yksiloityHenkilo.isTurvakielto());
+
+        Optional.ofNullable(yksiloityHenkilo.getKansalaisuusKoodit()).filter(collectionNotEmpty)
+                .map(this::findOrCreateKansalaisuus)
+                .ifPresent(kansalaisuusKoodis -> kansalaisuusKoodis.forEach(yksilointitieto::addKansalaisuus));
+
+        Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
+                .map(this::findOrCreateKielisyys)
+                .ifPresent(yksilointitieto::setAidinkieli);
+
+        yksilointitieto.clearYhteystiedotRyhma();
+        Optional.of(yksiloityHenkilo)
+                .filter(yHenkilo -> (yHenkilo.getOsoitteet() != null && !yHenkilo.getOsoitteet().isEmpty()) ||
+                        !StringUtils.isEmpty(yHenkilo.getSahkoposti()))
+                .filter(yHenkilo -> HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi()))
+                .map(yHenkilo -> this.addYhteystiedot(yHenkilo, henkilo.getAsiointiKieli()))
+                .ifPresent(yhteystiedotRyhmas -> yhteystiedotRyhmas.forEach(yksilointitieto::addYhteystiedotRyhma));
+
         yksilointitieto.setHenkilo(henkilo);
         henkilo.setYksilointitieto(yksilointitieto);
-
         henkilo.setModified(new Date());
     }
 
@@ -217,169 +201,113 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
     }
 
-    // TODO löytynee jo jostain
-    public Set<Kansalaisuus> findOrCreateKansalaisuus(List<String> kansalaisuusKoodit) {
-        Set<Kansalaisuus> kansalaisuudet = new HashSet<>();
-        for (String kKoodi : kansalaisuusKoodit) {
-            if(this.isKansalaisuusKoodiValid(Collections.singletonList(kKoodi))) {
-                kansalaisuudet.add(this.kansalaisuusRepository.findOrCreate(kKoodi));
-            }
-        }
-        return kansalaisuudet;
+    private Set<Kansalaisuus> findOrCreateKansalaisuus(@NotNull List<String> kansalaisuusKoodit) {
+        return kansalaisuusKoodit.stream()
+                .filter(kansalaisuusKoodi ->
+                        this.isKansalaisuusKoodiValid(Collections.singletonList(kansalaisuusKoodi)))
+                .map(this.kansalaisuusRepository::findOrCreate).collect(Collectors.toSet());
     }
 
-    // TODO löytynee jo jostain
-    public Kielisyys findOrCreateKielisyys(String kieliKoodi) {
-        Optional<Kielisyys> kielisyys;
-        kielisyys = this.kielisyysRepository.findByKieliKoodi(kieliKoodi);
-        if(!kielisyys.isPresent()) {
-            Kielisyys newKielisyys = new Kielisyys();
-            newKielisyys.setKieliKoodi(kieliKoodi);
-            kielisyys = Optional.of(this.kielisyysRepository.save(newKielisyys));
-        }
-        return kielisyys.get();
+    private Kielisyys findOrCreateKielisyys(final String kieliKoodi) {
+        return this.kielisyysRepository.findByKieliKoodi(kieliKoodi)
+                .orElseGet(() -> this.kielisyysRepository.save(Kielisyys.builder().kieliKoodi(kieliKoodi).build()));
     }
 
-    public Set<YhteystiedotRyhma> addYhteystiedot(YksiloityHenkilo yksiloityHenkilo, Kielisyys asiointiKieli) {
-        Set<YhteystiedotRyhma> newYhteystiedot = new HashSet<YhteystiedotRyhma>();
+    private Set<YhteystiedotRyhma> addYhteystiedot(YksiloityHenkilo yksiloityHenkilo, Kielisyys asiointiKieli) {
+        Set<YhteystiedotRyhma> newYhteystiedot = new HashSet<>();
 
-        if (yksiloityHenkilo.getOsoitteet() != null && !yksiloityHenkilo.getOsoitteet().isEmpty()) {
-            for (YksiloityHenkilo.OsoiteTieto ot : yksiloityHenkilo.getOsoitteet()) {
-                YhteystiedotRyhma ytRyhma = new YhteystiedotRyhma();
-                ytRyhma.setReadOnly(true);
-                ytRyhma.setRyhmaKuvaus(ot.getTyyppi());
-                ytRyhma.setRyhmaAlkuperaTieto(RYHMAALKUPERA_VTJ);
+        Optional.ofNullable(yksiloityHenkilo.getOsoitteet()).filter(collectionNotEmpty)
+                .ifPresent(osoiteTietos -> osoiteTietos.forEach(osoiteTieto -> {
+                    Set<Yhteystieto> yhteystietoSet = getYhteystietos(asiointiKieli, osoiteTieto);
 
-                Yhteystieto ytKatu = new Yhteystieto();
-                ytKatu.setYhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE);
-                if ( (asiointiKieli != null && asiointiKieli.getKieliKoodi().equals("sv") &&
-                        !StringUtils.isEmpty(ot.getKatuosoiteR())) || StringUtils.isEmpty(ot.getKatuosoiteS()) ) {
-                    ytKatu.setYhteystietoArvo(ot.getKatuosoiteR());
-                }
-                else {
-                    ytKatu.setYhteystietoArvo(ot.getKatuosoiteS());
-                }
-                ytRyhma.addYhteystieto(ytKatu);
+                    newYhteystiedot.add(YhteystiedotRyhma.builder().ryhmaKuvaus(osoiteTieto.getTyyppi())
+                            .ryhmaAlkuperaTieto(RYHMAALKUPERA_VTJ).readOnly(true).yhteystieto(yhteystietoSet).build());
+                }));
 
-                if (ot.getPostinumero() != null) {
-                    Yhteystieto ytNro = new Yhteystieto();
-                    ytNro.setYhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO);
-                    ytNro.setYhteystietoArvo(ot.getPostinumero());
-                    ytRyhma.addYhteystieto(ytNro);
-                }
-
-                Yhteystieto ytCity = new Yhteystieto();
-                ytCity.setYhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_KAUPUNKI);
-                if ( (asiointiKieli != null && asiointiKieli.getKieliKoodi().equals("sv") &&
-                        !StringUtils.isEmpty(ot.getKaupunkiR())) || StringUtils.isEmpty(ot.getKaupunkiS()) ) {
-                    ytCity.setYhteystietoArvo(ot.getKaupunkiR());
-                }
-                else {
-                    ytCity.setYhteystietoArvo(ot.getKaupunkiS());
-                }
-                ytRyhma.addYhteystieto(ytCity);
-
-                Yhteystieto ytMaa = new Yhteystieto();
-                ytMaa.setYhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_MAA);
-                if ( (asiointiKieli != null && asiointiKieli.getKieliKoodi().equals("sv") &&
-                        !StringUtils.isEmpty(ot.getMaaR())) || StringUtils.isEmpty(ot.getMaaS()) ) {
-                    ytMaa.setYhteystietoArvo(ot.getMaaR());
-                }
-                else {
-                    ytMaa.setYhteystietoArvo(ot.getMaaS());
-                }
-                ytRyhma.addYhteystieto(ytMaa);
-
-                newYhteystiedot.add(ytRyhma);
-            }
-        }
         if (!StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti())) {
-            YhteystiedotRyhma sahkYhtTieto = new YhteystiedotRyhma();
-            sahkYhtTieto.setReadOnly(true);
-            sahkYhtTieto.setRyhmaKuvaus(RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE);
-            sahkYhtTieto.setRyhmaAlkuperaTieto(RYHMAALKUPERA_VTJ);
-
-            Yhteystieto yt = new Yhteystieto();
-            yt.setYhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI);
-            yt.setYhteystietoArvo(yksiloityHenkilo.getSahkoposti());
-            sahkYhtTieto.addYhteystieto(yt);
-
+            Yhteystieto yt = Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, yksiloityHenkilo.getSahkoposti()).build();
+            YhteystiedotRyhma sahkYhtTieto = YhteystiedotRyhma.builder().ryhmaKuvaus(RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE)
+                    .ryhmaAlkuperaTieto(RYHMAALKUPERA_VTJ).readOnly(true).yhteystieto(yt).build();
             newYhteystiedot.add(sahkYhtTieto);
         }
 
         return newYhteystiedot;
     }
 
-    private Henkilo paivitaHenkilonTiedotVTJnTiedoilla(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+    private Set<Yhteystieto> getYhteystietos(Kielisyys asiointiKieli, YksiloityHenkilo.OsoiteTieto ot) {
+        Set<Yhteystieto> yhteystietoSet = new HashSet<>();
+
+        yhteystietoSet.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_KATUOSOITE,
+                getYhteystietoArvoByAsiointikieli(asiointiKieli, ot.getKatuosoiteR(), ot.getKatuosoiteS())).build());
+
+        Optional.ofNullable(ot.getPostinumero()).ifPresent(postiNumero ->
+                yhteystietoSet.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO, postiNumero).build()));
+
+        yhteystietoSet.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_KAUPUNKI,
+                getYhteystietoArvoByAsiointikieli(asiointiKieli, ot.getKaupunkiR(), ot.getKaupunkiS())).build());
+
+        yhteystietoSet.add(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_MAA,
+                getYhteystietoArvoByAsiointikieli(asiointiKieli, ot.getMaaR(), ot.getMaaS())).build());
+
+        return yhteystietoSet;
+    }
+
+    private String getYhteystietoArvoByAsiointikieli(Kielisyys asiointiKieli, String yhteystietoR, String yhteystietoS) {
+        return Optional.ofNullable(yhteystietoR)
+                .filter(yhteystieto -> asiointiKieli != null && asiointiKieli.getKieliKoodi().equals(KIELIKOODI_SV))
+                .filter(yhteystieto -> !StringUtils.isEmpty(yhteystietoR) || StringUtils.isEmpty(yhteystietoS))
+                .orElse(yhteystietoS);
+    }
+
+    private void paivitaHenkilonTiedotVTJnTiedoilla(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
 
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
 
+        // person's existing ssn has changed
+        this.updateIfYksiloityValueNotNull(henkilo.getHetu(), yksiloityHenkilo.getHetu(), henkilo::setHetu);
 
-        if (henkilo.getHetu() != null && !henkilo.getHetu().equals(yksiloityHenkilo.getHetu())) {
-            // person's existing ssn has changed
-            henkilo.setHetu(yksiloityHenkilo.getHetu());
-        }
-
-        if (!henkilo.getEtunimet().equals(yksiloityHenkilo.getEtunimi())) {
-            henkilo.setEtunimet(yksiloityHenkilo.getEtunimi());
-        }
-        if (!henkilo.getSukunimi().equals(yksiloityHenkilo.getSukunimi())) {
-            henkilo.setSukunimi(yksiloityHenkilo.getSukunimi());
-        }
+        this.updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
+        this.updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
         // Sometimes this might null or empty in VTJ data, in that case the original value is kept
-        if (!StringUtils.isEmpty(yksiloityHenkilo.getKutsumanimi()) &&
-                !henkilo.getKutsumanimi().equals(yksiloityHenkilo.getKutsumanimi())) {
-            henkilo.setKutsumanimi(yksiloityHenkilo.getKutsumanimi());
-        }
+        this.updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
-        if (!StringUtils.isEmpty(yksiloityHenkilo.getAidinkieliKoodi())) {
-            henkilo.setAidinkieli(this.findOrCreateKielisyys(yksiloityHenkilo.getAidinkieliKoodi()));
-        }
+        Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
+                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(this.findOrCreateKielisyys(kieliKoodi)));
 
         henkilo.setTurvakielto(yksiloityHenkilo.isTurvakielto());
-        try {
-            henkilo.setSyntymaaika(HetuUtils.dateFromHetu(yksiloityHenkilo.getHetu()));
-        } catch (DateTimeParseException e) {
-            throw new ValidationException("security.number.format.illegal");
-        }
+        henkilo.setSyntymaaika(HetuUtils.dateFromHetu(yksiloityHenkilo.getHetu()));
 
         //Override VTJ-based address data.
-        Iterator<YhteystiedotRyhma> iterator = henkilo.getYhteystiedotRyhma().iterator();
-        while (iterator.hasNext()) {
-            YhteystiedotRyhma yr = iterator.next();
+        removeVtjYhteystiedotAndUpdateForOppija(henkilo, yksiloityHenkilo);
 
-            if (yr.getRyhmaAlkuperaTieto().matches(RYHMAALKUPERA_VTJ)) {
-                for (Yhteystieto yhs : yr.getYhteystieto()) {
-                    this.yhteystietoRepository.delete(yhs);
-                }
-                yr.clearYhteystieto();
-                this.yhteystiedotRyhmaRepository.delete(yr);
-                iterator.remove();
-            }
-        }
+        Optional.ofNullable(yksiloityHenkilo.getKansalaisuusKoodit()).filter(collectionNotEmpty)
+                .ifPresent(kansalaisuuskoodis -> {
+                    henkilo.clearKansalaisuus();
+                    this.findOrCreateKansalaisuus(kansalaisuuskoodis).forEach(henkilo::addKansalaisuus);
+                });
 
-        if(HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi())) {
-            if (!CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) ||
-                    !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti())) {
-                henkilo.addAllYhteystiedotRyhmas(this.addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli()));
-            }
-        }
-
-        if (yksiloityHenkilo.getKansalaisuusKoodit() != null &&
-                !yksiloityHenkilo.getKansalaisuusKoodit().isEmpty()) {
-            henkilo.clearKansalaisuus();
-            for (Kansalaisuus k : this.findOrCreateKansalaisuus(yksiloityHenkilo.getKansalaisuusKoodit())) {
-                henkilo.addKansalaisuus(k);
-            }
-        }
-
-        henkilo.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
+        henkilo.setSukupuoli(this.maaritaSukupuoli(yksiloityHenkilo));
         henkilo.setModified(new Date());
-
-        return henkilo;
     }
 
-    public boolean isKansalaisuusKoodiValid(List<String> kansalaisuusKoodiList) {
+    private void removeVtjYhteystiedotAndUpdateForOppija(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+        Iterator<YhteystiedotRyhma> iterator = henkilo.getYhteystiedotRyhma().iterator();
+        iterator.forEachRemaining(yhteystiedotRyhmaI -> Optional.ofNullable(yhteystiedotRyhmaI)
+                .filter(yhteystiedotRyhma -> yhteystiedotRyhma.getRyhmaAlkuperaTieto().equals(RYHMAALKUPERA_VTJ))
+                .ifPresent(yhteystiedotRyhma -> {
+                    yhteystiedotRyhma.getYhteystieto().forEach(this.yhteystietoRepository::delete);
+                    yhteystiedotRyhma.clearYhteystieto();
+                    this.yhteystiedotRyhmaRepository.delete(yhteystiedotRyhmaI);
+                    iterator.remove();
+                }));
+        Optional.of(henkilo.getHenkiloTyyppi()).filter(HenkiloTyyppi.OPPIJA::equals)
+                .filter(henkiloTyyppi -> !CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) ||
+                        !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti()))
+                .ifPresent(henkiloTyyppi ->
+                        henkilo.addAllYhteystiedotRyhmas(this.addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli())));
+    }
+
+    private boolean isKansalaisuusKoodiValid(List<String> kansalaisuusKoodiList) {
         List<String> koodiTypeList = this.koodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 1, true);
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
         return !(kansalaisuusKoodiList != null && !kansalaisuusKoodiList.stream()
@@ -387,4 +315,10 @@ public class YksilointiServiceImpl implements YksilointiService {
                         .anyMatch(koodi -> koodi.equals(kansalaisuus))));
     }
 
+    private void updateIfYksiloityValueNotNull(final String original, final String yksiloityValue, Consumer<String> consumer) {
+        Optional.ofNullable(yksiloityValue)
+                .filter(stringNotEmpty)
+                .filter(hetu -> !hetu.equals(original))
+                .ifPresent(consumer);
+    }
 }

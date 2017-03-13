@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 
 import java.io.InputStreamReader;
+import java.util.Optional;
 
 
 public class MockVtjClient implements VtjClient {
@@ -17,10 +18,10 @@ public class MockVtjClient implements VtjClient {
     }
 
     @Override
-    public YksiloityHenkilo fetchHenkilo(String hetu) {
+    public Optional<YksiloityHenkilo> fetchHenkilo(String hetu) {
         if (usedFixture == null) {
             throw new IllegalArgumentException("Used fixture not provided!");
         }
-        return gson.fromJson(new InputStreamReader(getClass().getResourceAsStream(usedFixture)), YksiloityHenkilo.class);
+        return Optional.ofNullable(gson.fromJson(new InputStreamReader(getClass().getResourceAsStream(usedFixture)), YksiloityHenkilo.class));
     }
 }

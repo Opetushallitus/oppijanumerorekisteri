@@ -46,6 +46,10 @@ public class Yksilointitieto extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "yksilointitieto_id")
     private Set<YhteystiedotRyhma> yhteystiedotRyhma = new HashSet<>();
 
+    public void clearYhteystiedotRyhma() {
+        this.yhteystiedotRyhma.clear();
+    }
+
     public void addKansalaisuus(Kansalaisuus kansalaisuus) {
         this.kansalaisuus.add(kansalaisuus);
     }

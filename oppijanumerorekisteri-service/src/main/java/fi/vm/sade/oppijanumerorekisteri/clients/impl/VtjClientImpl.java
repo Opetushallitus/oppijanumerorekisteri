@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class VtjClientImpl implements VtjClient {
@@ -29,10 +30,10 @@ public class VtjClientImpl implements VtjClient {
     }
 
     @Override
-    public YksiloityHenkilo fetchHenkilo(String hetu) {
+    public Optional<YksiloityHenkilo> fetchHenkilo(String hetu) {
         String vtjUrl = this.urlConfiguration.url("vtj-service.url", hetu);
         try {
-            return restClient.get(vtjUrl, YksiloityHenkilo.class);
+            return Optional.ofNullable(restClient.get(vtjUrl, YksiloityHenkilo.class));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
