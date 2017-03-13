@@ -54,6 +54,9 @@ authentication:
   kayttooikeus:
     username: {{oppijanumerorekisteri_kayttooikeus_username}}
     password: '{{oppijanumerorekisteri_kayttooikeus_password}}'
+  vtj:
+    username: {{authentication_app_username_to_vtj}}
+    password: {{authentication_app_password_to_vtj}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000
