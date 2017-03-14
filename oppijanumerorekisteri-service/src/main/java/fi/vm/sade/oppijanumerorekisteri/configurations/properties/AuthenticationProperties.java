@@ -16,5 +16,12 @@ public class AuthenticationProperties {
         private String username;
         private String password;
     }
-    private Kayttooikeus kayttooikeus;
+    @Getter
+    @Setter
+    public static class Vtj {
+        private String username;
+        private String password;
+    }
+    private Kayttooikeus kayttooikeus = new Kayttooikeus();
+    private Vtj vtj = new Vtj();
 }

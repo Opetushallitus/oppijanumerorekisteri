@@ -11,4 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "oppijanumerorekisteri")
 public class OppijanumerorekisteriProperties {
     private int henkiloViiteSplitSize;
+    private float etunimiThreshold = 0.85f;
+    private float sukunimiThreshold = 0.85f;
 }

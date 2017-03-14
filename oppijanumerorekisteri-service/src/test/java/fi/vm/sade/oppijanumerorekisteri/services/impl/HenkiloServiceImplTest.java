@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
@@ -68,13 +69,16 @@ public class HenkiloServiceImplTest {
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
     @Mock
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
+    @Mock
+    private KayttooikeusClient kayttooikeusClient;
 
     @Before
     public void setup() {
         impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
                 userDetailsHelper, kielisyysRepository, kansalaisuusRepository,
-                permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties);
+                permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties,
+                kayttooikeusClient);
     }
 
     @Test

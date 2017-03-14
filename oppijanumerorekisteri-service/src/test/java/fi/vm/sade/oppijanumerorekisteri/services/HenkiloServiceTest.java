@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -75,11 +76,12 @@ public class HenkiloServiceTest {
         HenkiloCreatePostValidator henkiloCreatePostValidatorMock = Mockito.mock(HenkiloCreatePostValidator.class);
         this.henkiloViiteRepositoryMock = Mockito.mock(HenkiloViiteRepository.class);
         this.oppijanumerorekisteriProperties = Mockito.mock(OppijanumerorekisteriProperties.class);
+        KayttooikeusClient kayttooikeusClient = Mockito.mock(KayttooikeusClient.class);
 
         this.service = spy(new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, henkiloViiteRepositoryMock,
                 mapper, new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
                 this.kansalaisuusRepositoryMock, this.permissionCheckerMock,
-                henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock, oppijanumerorekisteriProperties));
+                henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock, oppijanumerorekisteriProperties, kayttooikeusClient));
     }
 
     @Test

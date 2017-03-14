@@ -13,8 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 import org.hibernate.annotations.BatchSize;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -132,8 +131,23 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private Boolean turvakielto = false;
 
+    @OneToOne(mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    private Yksilointitieto yksilointitieto;
+
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
+    }
+
+    public void clearKansalaisuus() {
+        this.kansalaisuus.clear();
+    }
+
+    public void addKansalaisuus(Kansalaisuus kansalaisuus) {
+        this.kansalaisuus.add(kansalaisuus);
+    }
+
+    public void addAllYhteystiedotRyhmas(Set<YhteystiedotRyhma> yhteystiedotRyhmas) {
+        this.yhteystiedotRyhma.addAll(yhteystiedotRyhmas);
     }
 
     public void addYhteystiedotRyhma(YhteystiedotRyhma yhteystiedotRyhma) {

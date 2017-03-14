@@ -44,7 +44,7 @@ public class EntityUtils {
         Henkilo henkilo = new Henkilo(oidHenkilo, hetu, henkiloTyyppi, etunimet, kutsumanimi, sukunimi, aidinkieli, aidinkieli,
                 luontiMuokkausSyncedPvm, luontiMuokkausSyncedPvm, lastVtjSynced, passivoitu, false, false, false, false, false,
                 Sets.newHashSet(aidinkieli), Sets.newHashSet(kansalaisuus), null, kasittelija, "1", syntymaAika,
-                null, null, null, null, null, false);
+                null, null, null, null, null, false, null);
         henkilo.setYhteystiedotRyhma(Sets.newHashSet(yhteystiedotRyhma));
         return henkilo;
     }
@@ -61,5 +61,10 @@ public class EntityUtils {
 
     static public Yhteystieto createYhteystieto(String yhteystietoArvo) {
         return new Yhteystieto(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, yhteystietoArvo);
+    }
+
+    static public Yksilointitieto createYksilointitieto(String etunimet, String kutsumanimi, String sukunimi, String sukupuoli, Henkilo henkilo) {
+        return new Yksilointitieto(henkilo, etunimet, kutsumanimi, sukunimi, sukupuoli, false, null,
+                Sets.newHashSet(), Sets.newHashSet());
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -55,6 +56,9 @@ public class HenkiloControllerTest {
 
     @MockBean
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
+
+    @MockBean
+    private YksilointiService yksilointiService;
 
     @Autowired
     private ObjectMapper objectMapper;

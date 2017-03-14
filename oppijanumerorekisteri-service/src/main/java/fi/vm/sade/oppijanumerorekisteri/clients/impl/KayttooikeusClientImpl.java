@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.generic.rest.CachingRestClient;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -38,7 +36,6 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         cachingRestClient.setPassword(authenticationProperties.getKayttooikeus().getPassword());
     }
 
-
     @Override
     public boolean checkUserPermissionToUser(String callingUserOid, String userOid, List<String> allowedRoles,
                                              ExternalPermissionService externalPermissionService, Set<String> callingUserRoles)
@@ -53,6 +50,12 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         InputStream content = cachingRestClient.post(url, JSON, this.objectMapper.writeValueAsString(permissionCheckDto))
                 .getEntity().getContent();
         return this.objectMapper.readerFor(Boolean.class).readValue(content);
+    }
+
+    @Override
+    public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException {
+        String url = this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, kasittelijaOid);
+        cachingRestClient.delete(url);
     }
 
 }

@@ -24,7 +24,7 @@ spring:
 hikari:
   datasource:
     driver-class-name: org.postgresql.Driver
-    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication
+    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
     connection-test-query: SELECT 1
@@ -54,6 +54,9 @@ authentication:
   kayttooikeus:
     username: {{oppijanumerorekisteri_kayttooikeus_username}}
     password: '{{oppijanumerorekisteri_kayttooikeus_password}}'
+  vtj:
+    username: {{authentication_app_username_to_vtj}}
+    password: {{authentication_app_password_to_vtj}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000

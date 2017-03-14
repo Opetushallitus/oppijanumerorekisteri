@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
@@ -20,11 +21,14 @@ import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.*;
 import static java.util.Optional.ofNullable;
 import java.util.stream.Collectors;
@@ -52,6 +56,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
+    private final KayttooikeusClient kayttooikeusClient;
+
     @Autowired
     public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
                               HenkiloRepository henkiloDataRepository,
@@ -65,7 +71,8 @@ public class HenkiloServiceImpl implements HenkiloService {
                               PermissionChecker permissionChecker,
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator,
                               HenkiloCreatePostValidator henkiloCreatePostValidator,
-                              OppijanumerorekisteriProperties oppijanumerorekisteriProperties) {
+                              OppijanumerorekisteriProperties oppijanumerorekisteriProperties,
+                              KayttooikeusClient kayttooikeusClient) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.henkiloViiteRepository = henkiloViiteRepository;
@@ -79,6 +86,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
         this.henkiloCreatePostValidator = henkiloCreatePostValidator;
         this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
+        this.kayttooikeusClient = kayttooikeusClient;
     }
 
     @Override
@@ -94,6 +102,18 @@ public class HenkiloServiceImpl implements HenkiloService {
         Predicate searchPredicate = QHenkilo.henkilo.oidHenkilo.eq(oid);
         return this.henkiloDataRepository.exists(searchPredicate);
     }
+
+    @Override
+    @Transactional
+    public void disableHenkilo(String oid) throws IOException {
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid)
+                .orElseThrow(() -> new NotFoundException("Henkilö not found"));
+        henkilo.setPassivoitu(true);
+        String kasittelija = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        this.kayttooikeusClient.passivoiHenkilo(oid, kasittelija);
+    }
+
 
     @Override
     @Transactional(readOnly = true)

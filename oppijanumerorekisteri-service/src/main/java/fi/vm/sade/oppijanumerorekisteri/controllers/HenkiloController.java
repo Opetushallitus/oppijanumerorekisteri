@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,19 @@ public class HenkiloController {
 
     private PermissionChecker permissionChecker;
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
+    private final YksilointiService yksilointiService;
 
     @Autowired
     public HenkiloController(HenkiloService henkiloService,
                              IdentificationService identificationService,
                              PermissionChecker permissionChecker,
-                             HenkiloUpdatePostValidator henkiloUpdatePostValidator) {
+                             HenkiloUpdatePostValidator henkiloUpdatePostValidator,
+                             YksilointiService yksilointiService) {
         this.henkiloService = henkiloService;
         this.identificationService = identificationService;
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
+        this.yksilointiService = yksilointiService;
     }
 
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
@@ -142,6 +146,14 @@ public class HenkiloController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/{oid}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Passivoi henkilön mukaanlukien käyttöoikeudet ja organisaatiot.",
+            notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
+            authorizations = @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"))
+    public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) throws IOException {
+            this.henkiloService.disableHenkilo(oid);
+    }
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")
@@ -226,5 +238,20 @@ public class HenkiloController {
     public List<String> findPossibleHenkiloTypes() {
         return this.henkiloService.listPossibleHenkiloTypesAccessible();
     }
+
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/{oid}/yksiloi", method = RequestMethod.POST)
+    @ApiOperation(value = "Käynnistää henkilön yksilöinnin. DEPRECATE.",
+            notes = "Käynnistää henkilön yksilöintiprosessin VTJ:n suuntaan manuaalisesti.",
+            authorizations = {@Authorization("ROLE_APP_HENKILONHALLINTA_READ_UPDATE"),
+                    @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
+                    @Authorization("ROLE_APP_HENKILONHALLINTA_KKVASTUU"),
+                    @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI")})
+    public void yksiloiManuaalisesti(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
+                                     @RequestHeader(value = "External-Permission-Service", required = false)
+                                             ExternalPermissionService permissionService) {
+            this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
+    }
+
 
 }

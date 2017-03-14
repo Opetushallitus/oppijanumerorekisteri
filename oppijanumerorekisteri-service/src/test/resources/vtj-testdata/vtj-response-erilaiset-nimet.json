@@ -1,0 +1,33 @@
+{
+  "etunimi": "Teijo Tahvelo",
+  "kutsumanimi": "Teijo",
+  "sukunimi": "Testaaja",
+  "hetu": "010101-123N",
+  "sukupuoli": "1",
+  "turvakielto": false,
+  "sahkoposti": "foo@bar.com",
+  "aidinkieliKoodi": "fi",
+  "kansalaisuusKoodit": ["246"],
+  "osoitteet": [
+    {
+      "tyyppi": "yhteystietotyyppi4",
+      "katuosoiteS": "Foobartie 1 A 001",
+      "katuosoiteR": "Foobartie 1 A 001",
+      "kaupunkiS": "HELSINKI",
+      "kaupunkiR": "HELSINGFORS",
+      "postinumero": "00100",
+      "maaS": "Suomi",
+      "maaR": "Finland"
+    },
+    {
+      "tyyppi": "yhteystietotyyppi5",
+      "katuosoiteS": "",
+      "katuosoiteR": null,
+      "kaupunkiS": "",
+      "kaupunkiR": null,
+      "postinumero": null,
+      "maaS": "",
+      "maaR": ""
+    }
+  ]
+}
