@@ -1,11 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.validators;
 
-import fi.vm.sade.koodisto.service.types.common.KoodiType;
-import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,24 +13,24 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.stream.Collectors.toSet;
 
 @Component
 public class HenkiloUpdatePostValidator implements Validator {
     private UserDetailsHelper userDetailsHelper;
 
-    private KoodistoClient koodistoClient;
+    private KoodistoService koodistoService;
 
     private HenkiloJpaRepository henkiloJpaRepository;
 
     @Autowired
     public HenkiloUpdatePostValidator(UserDetailsHelper userDetailsHelper,
-                                      KoodistoClient koodistoClient,
+                                      KoodistoService koodistoService,
                                       HenkiloJpaRepository henkiloJpaRepository) {
         this.userDetailsHelper = userDetailsHelper;
-        this.koodistoClient = koodistoClient;
+        this.koodistoService = koodistoService;
         this.henkiloJpaRepository = henkiloJpaRepository;
     }
 
@@ -52,37 +52,25 @@ public class HenkiloUpdatePostValidator implements Validator {
             errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
-        if(henkiloUpdateDto.getSukupuoli() != null &&
-                this.koodistoClient.getKoodiValuesForKoodisto("sukupuoli", 1, true)
-                        .stream().noneMatch(koodiArvo -> koodiArvo.equals(henkiloUpdateDto.getSukupuoli())) ) {
-            errors.rejectValue("sukupuoli", "invalid.sukupuoli");
-        }
+        KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
 
-        Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloUpdateDto.getKansalaisuus();
-        List<String> koodiTypeList = this.koodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 1, true);
-        // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
-        if (kansalaisuusDtoSet != null && !kansalaisuusDtoSet.stream().map(KansalaisuusDto::getKansalaisuusKoodi)
-                .allMatch(kansalaisuus -> koodiTypeList.stream()
-                        .anyMatch(koodi -> koodi.equals(kansalaisuus)))) {
-            errors.rejectValue("kansalaisuudet", "invalid.kansalaisuusKoodi");
-        }
+        koodiValidator.validate(Koodisto.SUKUPUOLI, henkiloUpdateDto.getSukupuoli(),
+                "sukupuoli", "invalid.sukupuoli");
+
+        Set<String> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
+                .map(KansalaisuusDto::getKansalaisuusKoodi).collect(toSet());
+        koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusSet,
+                "kansalaisuudet", "invalid.kansalaisuusKoodi");
 
         Set<YhteystiedotRyhmaDto> yhteystiedot = henkiloUpdateDto.getYhteystiedotRyhma();
-        if (yhteystiedot != null && !yhteystiedot.isEmpty()) {
-            List<KoodiType> tyypit = this.koodistoClient.getKoodisForKoodisto("yhteystietotyypit", 1, true);
-            if (!yhteystiedot.stream().map(YhteystiedotRyhmaDto::getRyhmaKuvaus)
-                    .allMatch(ryhmaKuvaus -> tyypit.stream()
-                            .anyMatch(koodi -> koodi.getKoodiArvo().equals(ryhmaKuvaus)))) {
-                errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaKuvaus");
-            }
-            List<KoodiType> alkuperat = this.koodistoClient.getKoodisForKoodisto("yhteystietojenalkupera", 1, true);
-            if (!yhteystiedot.stream().map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto)
-                    .allMatch(alkupera -> alkuperat.stream()
-                            .anyMatch(koodi -> koodi.getKoodiArvo().equals(alkupera)))) {
-                errors.rejectValue("yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
-            }
-        }
-
+        Set<String> tyypit = yhteystiedot.stream()
+                .map(YhteystiedotRyhmaDto::getRyhmaKuvaus).collect(toSet());
+        koodiValidator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
+                        "yhteystiedotRyhma", "invalid.ryhmaKuvaus");
+        Set<String> alkuperat = yhteystiedot.stream()
+                .map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto).collect(toSet());
+        koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
+                    "yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
     }
 
 }
