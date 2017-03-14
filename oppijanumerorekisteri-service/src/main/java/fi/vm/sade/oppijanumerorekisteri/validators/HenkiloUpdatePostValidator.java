@@ -57,20 +57,25 @@ public class HenkiloUpdatePostValidator implements Validator {
         koodiValidator.validate(Koodisto.SUKUPUOLI, henkiloUpdateDto.getSukupuoli(),
                 "sukupuoli", "invalid.sukupuoli");
 
-        Set<String> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
-                .map(KansalaisuusDto::getKansalaisuusKoodi).collect(toSet());
-        koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusSet,
-                "kansalaisuus", "invalid.kansalaisuusKoodi");
+        Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloUpdateDto.getKansalaisuus();
+        if (kansalaisuusDtoSet != null) {
+            Set<String> kansalaisuusKoodit = kansalaisuusDtoSet.stream()
+                    .map(KansalaisuusDto::getKansalaisuusKoodi).collect(toSet());
+            koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusKoodit,
+                    "kansalaisuus", "invalid.kansalaisuusKoodi");
+        }
 
         Set<YhteystiedotRyhmaDto> yhteystiedot = henkiloUpdateDto.getYhteystiedotRyhma();
-        Set<String> tyypit = yhteystiedot.stream()
-                .map(YhteystiedotRyhmaDto::getRyhmaKuvaus).collect(toSet());
-        koodiValidator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
-                        "yhteystiedotRyhma", "invalid.ryhmaKuvaus");
-        Set<String> alkuperat = yhteystiedot.stream()
-                .map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto).collect(toSet());
-        koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
+        if (yhteystiedot != null && !yhteystiedot.isEmpty()) {
+            Set<String> tyypit = yhteystiedot.stream()
+                    .map(YhteystiedotRyhmaDto::getRyhmaKuvaus).collect(toSet());
+            koodiValidator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
+                    "yhteystiedotRyhma", "invalid.ryhmaKuvaus");
+            Set<String> alkuperat = yhteystiedot.stream()
+                    .map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto).collect(toSet());
+            koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
                     "yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
+        }
     }
 
 }

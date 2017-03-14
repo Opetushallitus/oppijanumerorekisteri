@@ -46,19 +46,25 @@ public class HenkiloCreatePostValidator implements Validator {
         koodiValidator.validate(Koodisto.SUKUPUOLI, henkilo.getSukupuoli(),
                 "sukupuoli", "invalid.sukupuoli");
 
-        Set<String> kansalaisuusSet = henkilo.getKansalaisuus().stream()
-                .map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet());
-        koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusSet,
-                "kansalaisuus", "invalid.kansalaisuusKoodi");
+        Set<Kansalaisuus> kansalaisuusSet = henkilo.getKansalaisuus();
+        if (kansalaisuusSet != null) {
+            Set<String> kansalaisuusKoodit = kansalaisuusSet.stream()
+                    .map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet());
+            koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusKoodit,
+                    "kansalaisuus", "invalid.kansalaisuusKoodi");
+        }
 
         Set<YhteystiedotRyhma> yhteystiedot = henkilo.getYhteystiedotRyhma();
-        Set<String> tyypit = yhteystiedot.stream()
-                .map(YhteystiedotRyhma::getRyhmaKuvaus).collect(toSet());
-        koodiValidator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
-                        "yhteystiedotRyhma", "invalid.ryhmaKuvaus");
-        Set<String> alkuperat = yhteystiedot.stream()
-                .map(YhteystiedotRyhma::getRyhmaAlkuperaTieto).collect(toSet());
-        koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
+        if (yhteystiedot != null && !yhteystiedot.isEmpty()) {
+            Set<String> tyypit = yhteystiedot.stream()
+                    .map(YhteystiedotRyhma::getRyhmaKuvaus).collect(toSet());
+            koodiValidator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
+                    "yhteystiedotRyhma", "invalid.ryhmaKuvaus");
+            Set<String> alkuperat = yhteystiedot.stream()
+                    .map(YhteystiedotRyhma::getRyhmaAlkuperaTieto).collect(toSet());
+            koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
                     "yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
+        }
     }
+
 }
