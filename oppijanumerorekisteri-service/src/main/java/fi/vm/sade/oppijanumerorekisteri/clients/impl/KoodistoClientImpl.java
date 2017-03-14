@@ -33,6 +33,7 @@ public class KoodistoClientImpl implements KoodistoClient {
         KoodiType[] koodiCollectionType = this.httpClient
                 .get("koodisto-service.koodi", koodistoUri, Boolean.toString(onlyValidKoodis), Integer.toString(koodistoVersio))
                 .expectStatus(200).accept(JSON)
+                .retryOnError(3)
                 .execute(r -> objectMapper.readValue(r.asInputStream(), KoodiType[].class));
         return Arrays.asList(koodiCollectionType);
     }
