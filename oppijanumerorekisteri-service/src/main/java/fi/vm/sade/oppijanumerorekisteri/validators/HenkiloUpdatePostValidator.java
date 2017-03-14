@@ -60,7 +60,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         Set<String> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()
                 .map(KansalaisuusDto::getKansalaisuusKoodi).collect(toSet());
         koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusSet,
-                "kansalaisuudet", "invalid.kansalaisuusKoodi");
+                "kansalaisuus", "invalid.kansalaisuusKoodi");
 
         Set<YhteystiedotRyhmaDto> yhteystiedot = henkiloUpdateDto.getYhteystiedotRyhma();
         Set<String> tyypit = yhteystiedot.stream()

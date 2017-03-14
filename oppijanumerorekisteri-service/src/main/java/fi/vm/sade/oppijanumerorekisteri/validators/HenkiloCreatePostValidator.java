@@ -49,7 +49,7 @@ public class HenkiloCreatePostValidator implements Validator {
         Set<String> kansalaisuusSet = henkilo.getKansalaisuus().stream()
                 .map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet());
         koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusSet,
-                "kansalaisuudet", "invalid.kansalaisuusKoodi");
+                "kansalaisuus", "invalid.kansalaisuusKoodi");
 
         Set<YhteystiedotRyhma> yhteystiedot = henkilo.getYhteystiedotRyhma();
         Set<String> tyypit = yhteystiedot.stream()
