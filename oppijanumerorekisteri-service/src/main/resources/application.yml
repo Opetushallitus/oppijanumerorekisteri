@@ -1,3 +1,5 @@
+spring:
+  cache.type: EHCACHE
 server:
   contextPath: /oppijanumerorekisteri-service
 flyway:
