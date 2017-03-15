@@ -1,8 +1,9 @@
 import React from 'react';
 
-const HenkiloPage = () => (
+const HenkiloPage = ({testCounter, onChange}) => (
     <section>
-        <h2>Henkilöhaku</h2>
+        <h2>Henkilöhaku {testCounter}</h2>
+        <input onChange={onChange}/>
     </section>
 );
 

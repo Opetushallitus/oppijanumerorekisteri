@@ -1,12 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {increment, decrement} from '../actions/actions';
+import {change} from '../actions/actions';
 import HenkiloPage from '../components/henkilo/HenkiloPage';
-
-const HenkiloPageContainer = ({testCounter}) => {
-    console.log(testCounter);
-    return (<HenkiloPage></HenkiloPage>);
-};
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -15,4 +10,12 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {increment, decrement})(HenkiloPageContainer);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onChange: (newCount) => {
+            dispatch(change(newCount.nativeEvent.target.value))
+        }
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HenkiloPage);

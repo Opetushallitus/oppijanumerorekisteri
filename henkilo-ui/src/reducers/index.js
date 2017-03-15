@@ -1,17 +1,20 @@
-import { INCREMENT, DECREMENT } from '../actions/actiontypes';
+import { INCREMENT, DECREMENT, CHANGE } from '../actions/actiontypes';
 
 import { routerReducer as routing } from 'react-router-redux';
 import { combineReducers } from 'redux';
 
 const testCounter = (state = 0, action) => {
-  const { type } = action;
-  if(type === INCREMENT) {
-    return state + 1;
-  } else if( type === DECREMENT) {
-    return state - 1
-  } else {
-    return 0;
-  }
+    const { type } = action;
+    switch(type) {
+        case INCREMENT:
+            return state + 1;
+        case DECREMENT:
+            return state - 1;
+        case CHANGE:
+            return action.count;
+        default:
+            return state;
+    }
 };
 
 const rootReducer = combineReducers({
