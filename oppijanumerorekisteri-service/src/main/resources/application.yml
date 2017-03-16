@@ -1,5 +1,6 @@
 spring:
-  cache.type: EHCACHE
+  cache:
+    type: EHCACHE
 server:
   contextPath: /oppijanumerorekisteri-service
 flyway:
