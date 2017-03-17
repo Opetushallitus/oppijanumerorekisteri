@@ -1,5 +1,5 @@
 import { INCREMENT, DECREMENT, CHANGE, FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST, FETCH_FRONTPROPERTIES_REQUEST,
-    FETCH_FRONTPROPERTIES_SUCCESS
+    FETCH_FRONTPROPERTIES_SUCCESS, FETCH_L10N_SUCCESS, FETCH_L10N_REQUEST
 } from '../actions/actiontypes';
 
 import { routerReducer as routing } from 'react-router-redux';
@@ -41,11 +41,23 @@ const frontProperties = (state = {initialized: false, properties: []}, action) =
     }
 };
 
+const l10n = (state = {initialized: false, localisations: []}, action) => {
+    switch (action.type) {
+        case FETCH_L10N_REQUEST:
+            return Object.assign({}, state, {initialized: false});
+        case FETCH_L10N_SUCCESS:
+            return Object.assign({}, state, {initialized: true, localisations: action.data});
+        default:
+            return state;
+    }
+};
+
 const rootReducer = combineReducers({
     testCounter,
     routing,
     kutsuList,
-    frontProperties
+    frontProperties,
+    l10n
 });
 
 export default rootReducer;

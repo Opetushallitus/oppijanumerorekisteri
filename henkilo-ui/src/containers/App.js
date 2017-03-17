@@ -1,12 +1,12 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {increment, decrement, fetchFrontProperties} from '../actions/actions';
+import {increment, decrement, fetchFrontProperties, fetchL10n} from '../actions/actions';
 import TopNavigation from '../components/TopNavigation'
 
 const App = React.createClass({
     render: function() {
         return (
-            this.props.initialized
+            this.props.frontProperties.initialized && this.props.l10n.initialized
                 ? <div>
                     <TopNavigation></TopNavigation>
                     <div className="wrapper">
@@ -21,6 +21,7 @@ const App = React.createClass({
     },
     componentDidMount: function() {
         this.props.fetchFrontProperties();
+        this.props.fetchL10n();
     },
     propTypes: {
         // Injected by React Redux
@@ -33,7 +34,10 @@ const App = React.createClass({
         // Injected by React Router
         children: PropTypes.node,
 
-        initialized: PropTypes.bool,
+        frontProperties: PropTypes.shape({
+            initialized: React.PropTypes.bool,
+            properties: React.array,
+        }),
 
     }
 });
@@ -42,8 +46,9 @@ const mapStateToProps = (state, ownProps) => {
     return {
         pathname: ownProps.location.pathname.substring(1),
         testCounter: state.testCounter,
-        initialized: state.frontProperties.initialized,
+        frontProperties: state.frontProperties,
+        l10n: state.l10n,
     };
 };
 
-export default connect(mapStateToProps, {increment, decrement, fetchFrontProperties})(App)
+export default connect(mapStateToProps, {increment, decrement, fetchFrontProperties, fetchL10n})(App)
