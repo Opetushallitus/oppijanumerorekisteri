@@ -18,7 +18,7 @@ const KutsututPage = React.createClass({
     },
 
     render: function() {
-        const L = this.props.l10n;
+        const L = this.props.l10n['fi'];
         const kutsuResponse = this.props.kutsuList;
         return (
             <div className="wrapper">
