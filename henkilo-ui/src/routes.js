@@ -9,6 +9,6 @@ import HenkiloPageContainer from './containers/HenkiloPageContainer';
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
     <Route path="/kutsu/list" component={KutsututPageContainer} />
-    <Route path="/kutsu" component={KutsuPageContainer} />
+    <Route path="/uusikutsu" component={KutsuPageContainer} />
     <Route path="/henkilo" component={HenkiloPageContainer} />
 </Route>

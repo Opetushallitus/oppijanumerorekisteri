@@ -1,0 +1,14 @@
+.sortedBy {
+    font-weight: bold;
+}
+.sortHeader {
+    cursor: pointer;
+}
+.sortHeader.sortedBy .text {
+    text-decoration: underline;
+}
+.sortHeader span.symbol {
+    padding-left: 10px;
+    font-weight: bold;
+}
+    

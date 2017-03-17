@@ -1,4 +1,3 @@
-import React from 'react';
 import {connect} from 'react-redux';
 import {change} from '../actions/actions';
 import HenkiloPage from '../components/henkilo/HenkiloPage';

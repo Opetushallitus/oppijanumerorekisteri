@@ -1,17 +1,30 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {increment, decrement} from '../actions/actions';
+import {deleteKutsu, fetchKutsus} from '../actions/actions';
 import KutsututPage from '../components/kutsutut/KutsututPage';
+import {l10n} from '../l10n'
 
-const KutsututPageContainer = ({testCounter}) => (
-    <KutsututPage kutsutut="['test', 'best', 'dest']"></KutsututPage>
-);
+const KutsututPageContainer = React.createClass({
+    componentDidMount: function() {
+        this.props.fetchKutsus();
+    },
+    render: function() {
+        return <KutsututPage {...this.props} l10n={l10n}/>;
+    }
+});
 
 const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname.substring(1),
-        testCounter: state.testCounter
+        kutsuList: state.kutsuList
     };
 };
 
-export default connect(mapStateToProps, {increment, decrement})(KutsututPageContainer)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        deleteKutsu: (msg) => dispatch(deleteKutsu(msg)),
+        fetchKutsus: (orderBy, direction) => dispatch(fetchKutsus(orderBy, direction))
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(KutsututPageContainer)
