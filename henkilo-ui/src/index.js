@@ -8,8 +8,10 @@ import Root from './containers/Root'
 import configureStore from './store/configureStore'
 
 import './reset.css';
-import './index.css';
 import './general-style.css';
+import 'oph-virkailija-style-guide/oph-styles.css'
+import './index.css';
+
 
 let store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);

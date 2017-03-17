@@ -17,7 +17,9 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "select2": "^4.0.0",
-    "shallow-equal-fuzzy": "^0.0.2"
+    "shallow-equal-fuzzy": "^0.0.2",
+    "oph-urls-js": "Opetushallitus/oph-urls-js#master",
+    "virkailija-styles": "Opetushallitus/virkailija-styles#styleguide"
   },
   "devDependencies": {
     "react-scripts": "0.9.4",
