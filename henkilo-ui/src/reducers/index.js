@@ -32,12 +32,12 @@ const kutsuList = (state = {loaded: false, result: []}, action) => {
     }
 };
 
-const frontProperties = (state = {initialized: false, properties: []}, action) => {
+const frontProperties = (state = {initialized: false,}, action) => {
     switch (action.type) {
         case FETCH_FRONTPROPERTIES_REQUEST:
             return Object.assign({}, state, {initialized: false});
         case FETCH_FRONTPROPERTIES_SUCCESS:
-            return Object.assign({}, state, {initialized: true, properties: action.properties});
+            return Object.assign({}, state, {initialized: true});
         default:
             return state;
     }
