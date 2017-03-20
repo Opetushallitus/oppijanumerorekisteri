@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -10,6 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@ConditionalOnProperty(name = "oppijanumerorekisteri.swagger.enabled", matchIfMissing = true)
 public class SwaggerConfiguration {
     @Bean
     public Docket henkiloApi() {
