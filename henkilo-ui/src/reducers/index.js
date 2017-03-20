@@ -1,4 +1,4 @@
-import { INCREMENT, DECREMENT, CHANGE, FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST, FETCH_FRONTPROPERTIES_REQUEST,
+import { FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST, FETCH_FRONTPROPERTIES_REQUEST,
     FETCH_FRONTPROPERTIES_SUCCESS, FETCH_L10N_SUCCESS, FETCH_L10N_REQUEST, FETCH_LOCALISATION_REQUEST,
     FETCH_LOCALISATION_SUCCESS
 } from '../actions/actiontypes'
@@ -6,20 +6,6 @@ import { INCREMENT, DECREMENT, CHANGE, FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST,
 import { routerReducer as routing } from 'react-router-redux'
 import { combineReducers } from 'redux'
 import R from 'ramda'
-
-const testCounter = (state = 0, action) => {
-    const { type } = action;
-    switch(type) {
-        case INCREMENT:
-            return state + 1;
-        case DECREMENT:
-            return state - 1;
-        case CHANGE:
-            return action.count;
-        default:
-            return state;
-    }
-};
 
 const kutsuList = (state = {loaded: false, result: []}, action) => {
     switch (action.type) {
@@ -78,7 +64,6 @@ const l10n = (state = {l10nInitialized: false, localisationsInitialized: false, 
 };
 
 const rootReducer = combineReducers({
-    testCounter,
     routing,
     kutsuList,
     frontProperties,

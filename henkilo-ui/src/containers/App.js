@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {increment, decrement, fetchFrontProperties} from '../actions/actions';
+import {fetchFrontProperties} from '../actions/actions';
 import TopNavigation from '../components/TopNavigation'
 
 const App = React.createClass({
@@ -12,9 +12,6 @@ const App = React.createClass({
                     <div className="wrapper">
                         {this.props.children}
                     </div>
-                    <button onClick={this.props.increment}>inc</button>
-                    <button onClick={this.props.decrement}>dec</button>
-                    <div>In app component: {this.props.testCounter}</div>
                 </div>
                 : <div>Prefetching data...</div>
         )
@@ -26,10 +23,6 @@ const App = React.createClass({
     propTypes: {
         // Injected by React Redux
         pathname: PropTypes.string.isRequired,
-        testCounter: PropTypes.number,
-
-        increment: PropTypes.func,
-        decrement: PropTypes.func,
 
         // Injected by React Router
         children: PropTypes.node,
@@ -49,10 +42,9 @@ const App = React.createClass({
 const mapStateToProps = (state, ownProps) => {
     return {
         pathname: ownProps.location.pathname.substring(1),
-        testCounter: state.testCounter,
         frontProperties: state.frontProperties,
         l10n: state.l10n,
     };
 };
 
-export default connect(mapStateToProps, {increment, decrement, fetchFrontProperties})(App)
+export default connect(mapStateToProps, {fetchFrontProperties})(App)

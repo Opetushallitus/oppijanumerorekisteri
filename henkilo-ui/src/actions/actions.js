@@ -1,14 +1,10 @@
-import { INCREMENT, DECREMENT, CHANGE, DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST,
+import { DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST,
     FETCH_KUTSU_SUCCESS, FETCH_FRONTPROPERTIES_REQUEST, FETCH_FRONTPROPERTIES_SUCCESS, FETCH_L10N_REQUEST,
     FETCH_L10N_SUCCESS, FETCH_LOCALISATION_REQUEST, FETCH_LOCALISATION_SUCCESS
 } from './actiontypes'
 import {http} from "../http"
 import {urls} from 'oph-urls-js'
 import frontUrls from '../kayttooikeus-ui-virkailija-oph'
-
-export const increment = () => ({ type: INCREMENT });
-export const decrement = () => ({ type: DECREMENT });
-export const change = (count) => ({type: CHANGE, count});
 
 const requestL10n = () => ({type: FETCH_L10N_REQUEST});
 const receivedL10n = (json) => ({type: FETCH_L10N_SUCCESS, data: json});
