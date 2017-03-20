@@ -52,6 +52,11 @@ public class HenkiloUpdatePostValidator implements Validator {
             errors.rejectValue("hetu", "socialsecuritynr.already.exists");
         }
 
+        KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
+        if (!kutsumanimiValidator.isValid(henkiloUpdateDto.getKutsumanimi())) {
+            errors.reject("kutsumanimi", "kutsumanimi.must.exist.in.etunimet");
+        }
+
         KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
 
         koodiValidator.validate(Koodisto.SUKUPUOLI, henkiloUpdateDto.getSukupuoli(),
