@@ -1,5 +1,8 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
 # dependencies
-/node_modules
+/**/node_modules
 
 # testing
 /coverage
@@ -7,9 +10,13 @@
 # production
 /build
 
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
 # misc
 .DS_Store
 .env
 npm-debug.log*
-.idea
-*.iml
