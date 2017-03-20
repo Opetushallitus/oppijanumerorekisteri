@@ -26,6 +26,7 @@
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
         <revision>default revision</revision>
+        <ui.working.dir>src/main/static</ui.working.dir>
     </properties>
 
     <dependencies>
@@ -110,8 +111,78 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>1.1</version>
+                    <configuration>
+                        <workingDirectory>${ui.working.dir}</workingDirectory>
+                    </configuration>
+
+                    <executions>
+                        <execution>
+                            <id>install node and npm</id>
+                            <goals>
+                                <goal>install-node-and-npm</goal>
+                            </goals>
+                            <configuration>
+                                <nodeVersion>v6.3.1</nodeVersion>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>npm install</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <arguments>install</arguments>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>npm run testci</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <environmentVariables>
+                                    <CI>true</CI>
+                                </environmentVariables>
+                                <arguments>run test</arguments>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>npm run build</id>
+                            <goals>
+                                <goal>npm</goal>
+                            </goals>
+                            <configuration>
+                                <arguments>run build</arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- For mvn clean -->
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <filesets>
+                            <fileset>
+                                <directory>node_modules</directory>
+                                <includes>
+                                    <include>**/**</include>
+                                </includes>
+                                <followSymlinks>false</followSymlinks>
+                            </fileset>
+                        </filesets>
+                    </configuration>
+                </plugin>
+
                 <!-- Generate buildversion.txt (branch and revision attributes should be set on bamboo) -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -140,10 +211,7 @@ buildTtime=${maven.build.timestamp}
                         </execution>
                     </executions>
                 </plugin>
-            </plugins>
-        </pluginManagement>
 
-        <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
