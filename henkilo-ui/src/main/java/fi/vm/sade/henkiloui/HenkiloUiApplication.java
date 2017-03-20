@@ -1,4 +1,4 @@
-package fi.vm.sade;
+package fi.vm.sade.henkiloui;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

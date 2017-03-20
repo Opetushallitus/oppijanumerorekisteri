@@ -1,0 +1,32 @@
+#
+# TÄHÄN TIEDOSTOON EI SAA TALLENTAA YMPÄRISTÖKOHTAISIA ARVOJA MUUTOIN KUIN MUUTTUJINA!!!
+#
+# Tämä tiedosto toimii pohjana tiedostolle, joka asettaa tomcatin ympäristökohtaiset arvot.
+#
+
+# Aseta vähintään nämä ympäristökohtaiset arvot
+
+spring:
+  main:
+    banner-mode: "off"
+dev:
+  username: user
+  password: password
+cas:
+  ldap:
+    url: ldap://{{host_ldap}}/dc=opintopolku,dc=fi
+    managed-dn: {{ldap_manager_userdn}}
+    password: {{ldap_manager_password}}
+    user-search-base: ou=People
+    user-search-filter: (|(mail={0})(uid={0}))
+    group-search-base: ou=groups
+    group-search-filter: (uniqueMember={0})
+    group-role-attribute: cn
+  service: https://{{host_virkailija}}/henkilo-ui
+  send-renew: false
+  key: oppijanumerorekisteri-service
+host:
+  host-virkailija: https://{{host_virkailija}}
+  host-cas: https://{{host_cas}}
+henkiloui:
+  uses-ssl-proxy: true
