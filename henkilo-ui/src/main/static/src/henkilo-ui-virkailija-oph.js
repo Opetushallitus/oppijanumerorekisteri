@@ -1,11 +1,13 @@
 export default {
     "cas.login": "/cas/login",
 
+    "henkilo-ui.baseUrl": "/",
+    "henkilo-ui.l10n": "henkilo-ui/l10n",
+
     "lokalisointi.baseUrl": "/",
     "lokalisointi.localisation": "lokalisointi/cxf/rest/v1/localisation",
 
     "kayttooikeus-service.baseUrl": "/",
-    "kayttooikeus-service.l10n": "kayttooikeus-service/l10n",
     "kayttooikeus-service.l10n.languages": "kayttooikeus-service/l10n/languages",
     "kayttooikeus-service.kutsu": "kayttooikeus-service/kutsu",
     "kayttooikeus-service.peruutaKutsu": "kayttooikeus-service/kutsu/$1",

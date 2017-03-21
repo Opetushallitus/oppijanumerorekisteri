@@ -4,7 +4,7 @@ import { DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST,
 } from './actiontypes'
 import {http} from "../http"
 import {urls} from 'oph-urls-js'
-import frontUrls from '../kayttooikeus-ui-virkailija-oph'
+import frontUrls from '../henkilo-ui-virkailija-oph'
 
 const requestL10n = () => ({type: FETCH_L10N_REQUEST});
 const receivedL10n = (json) => ({type: FETCH_L10N_SUCCESS, data: json});
@@ -12,9 +12,9 @@ const requestLocalisation = () => ({type: FETCH_LOCALISATION_REQUEST});
 const receiveLocalisation = (json) => ({type: FETCH_LOCALISATION_SUCCESS, data: json});
 const fetchL10n = () => (dispatch, getState) => {
     dispatch(requestL10n());
-    http.get(urls.url('kayttooikeus-service.l10n')).then(json => dispatch(receivedL10n(json)));
+    http.get(urls.url('henkilo-ui.l10n')).then(json => dispatch(receivedL10n(json)));
     dispatch(requestLocalisation());
-    const localisationBaseUrl = urls().url('lokalisointi.localisation');
+    const localisationBaseUrl = urls().url('lokalisointi.localisation', {category: "kayttooikeus"});
     http.get(localisationBaseUrl )
         .then(json => dispatch(receiveLocalisation(json)));
 };
@@ -27,7 +27,7 @@ const receivedFrontProperties = () => ({
 export const fetchFrontProperties = () => (dispatch) => {
     dispatch(requestFrontProperties());
     urls.addProperties(frontUrls);
-    urls.load({overrides: '/kayttooikeus-service/config/frontProperties',})
+    urls.load({overrides: '/henkilo-ui/config/frontProperties',})
         .then(() => {
             dispatch(receivedFrontProperties());
             dispatch(fetchL10n());
