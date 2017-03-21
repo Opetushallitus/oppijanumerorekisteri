@@ -26,7 +26,6 @@
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
         <revision>default revision</revision>
-        <ui.working.dir>src/main/static</ui.working.dir>
     </properties>
 
     <dependencies>
@@ -111,106 +110,133 @@
     </dependencies>
 
     <build>
-            <plugins>
-                <plugin>
-                    <groupId>com.github.eirslett</groupId>
-                    <artifactId>frontend-maven-plugin</artifactId>
-                    <version>1.1</version>
-                    <configuration>
-                        <workingDirectory>${ui.working.dir}</workingDirectory>
-                    </configuration>
+        <!-- Turn on filtering by default for application properties -->
+        <resources>
+            <!-- From spring-boot-parent -->
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/application*.yml</include>
+                    <include>**/application*.yaml</include>
+                    <include>**/application*.properties</include>
+                </includes>
+            </resource>
+            <!-- From spring-boot-parent -->
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>**/application*.yml</exclude>
+                    <exclude>**/application*.yaml</exclude>
+                    <exclude>**/application*.properties</exclude>
+                </excludes>
+            </resource>
+            <!-- To add static build to jar -->
+            <resource>
+                <directory>src/main/static/build</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <workingDirectory>src/main/static</workingDirectory>
+                </configuration>
 
-                    <executions>
-                        <execution>
-                            <id>install node and npm</id>
-                            <goals>
-                                <goal>install-node-and-npm</goal>
-                            </goals>
-                            <configuration>
-                                <nodeVersion>v6.3.1</nodeVersion>
-                            </configuration>
-                        </execution>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v6.3.1</nodeVersion>
+                        </configuration>
+                    </execution>
 
-                        <execution>
-                            <id>npm install</id>
-                            <goals>
-                                <goal>npm</goal>
-                            </goals>
-                            <configuration>
-                                <arguments>install</arguments>
-                            </configuration>
-                        </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
 
-                        <execution>
-                            <id>npm run testci</id>
-                            <goals>
-                                <goal>npm</goal>
-                            </goals>
-                            <configuration>
-                                <environmentVariables>
-                                    <CI>true</CI>
-                                </environmentVariables>
-                                <arguments>run test</arguments>
-                            </configuration>
-                        </execution>
+                    <execution>
+                        <id>npm run test</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <environmentVariables>
+                                <CI>true</CI>
+                            </environmentVariables>
+                            <arguments>run test</arguments>
+                        </configuration>
+                    </execution>
 
-                        <execution>
-                            <id>npm run build</id>
-                            <goals>
-                                <goal>npm</goal>
-                            </goals>
-                            <configuration>
-                                <arguments>run build</arguments>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+                    <execution>
+                        <id>npm run build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-                <!-- For mvn clean -->
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.0.0</version>
-                    <configuration>
-                        <filesets>
-                            <fileset>
-                                <directory>node_modules</directory>
-                                <includes>
-                                    <include>**/**</include>
-                                </includes>
-                                <followSymlinks>false</followSymlinks>
-                            </fileset>
-                        </filesets>
-                    </configuration>
-                </plugin>
+            <!-- For mvn clean -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>node_modules</directory>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
 
-                <!-- Generate buildversion.txt (branch and revision attributes should be set on bamboo) -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>write buildversion.txt</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                            <configuration>
-                                <target>
-                                    <echo message="writing target/public/classes/buildversion.txt" />
-                                    <echo file="target/classes/public/buildversion.txt">
-                                        <![CDATA[artifactId=${project.artifactId}
+            <!-- Generate buildversion.txt (branch and revision attributes should be set on bamboo) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>write buildversion.txt</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="writing target/public/classes/buildversion.txt" />
+                                <echo file="target/classes/public/buildversion.txt">
+                                    <![CDATA[artifactId=${project.artifactId}
 version=${project.version}
 buildNumber=${buildNumber}
 branchName=${branch}
 vcsRevision=${revision}
 buildTtime=${maven.build.timestamp}
 ]]>
-                                    </echo>
-                                </target>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+                                </echo>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>

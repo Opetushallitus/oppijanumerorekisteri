@@ -2,7 +2,8 @@ import 'babel-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { browserHistory } from 'react-router'
+import {useRouterHistory} from 'react-router'
+import {createHistory} from 'history'
 import { syncHistoryWithStore } from 'react-router-redux'
 import Root from './containers/Root'
 import configureStore from './store/configureStore'
@@ -14,6 +15,9 @@ import './index.css';
 
 
 let store = configureStore();
+const browserHistory = useRouterHistory(createHistory)({
+    basename: '/henkilo-ui'
+});
 const history = syncHistoryWithStore(browserHistory, store);
 
 render(
