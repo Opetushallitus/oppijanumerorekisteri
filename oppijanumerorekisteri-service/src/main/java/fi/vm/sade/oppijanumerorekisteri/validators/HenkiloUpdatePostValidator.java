@@ -54,7 +54,10 @@ public class HenkiloUpdatePostValidator implements Validator {
 
         KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
         if (!kutsumanimiValidator.isValid(henkiloUpdateDto.getKutsumanimi())) {
-            errors.reject("kutsumanimi", "kutsumanimi.must.exist.in.etunimet");
+            errors.rejectValue("kutsumanimi",
+                    "kutsumanimi.must.exist.in.etunimet",
+                    new Object[]{henkiloUpdateDto.getKutsumanimi(), henkiloUpdateDto.getEtunimet()},
+                    "Kutsumanimen on oltava osa etunimeä");
         }
 
         KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);

@@ -10,6 +10,7 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindException;
 
 import javax.validation.constraints.NotNull;
@@ -224,7 +224,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
-            throw new ValidationException(errors);
+            throw new UnprocessableEntityException(errors);
         }
 
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
@@ -370,7 +370,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         BindException errors = new BindException(henkiloCreate, "henkiloCreate");
         this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
         if (errors.hasErrors()) {
-            throw new ValidationException(errors);
+            throw new UnprocessableEntityException(errors);
         }
 
         henkiloCreate.setOidHenkilo(getFreePersonOid());

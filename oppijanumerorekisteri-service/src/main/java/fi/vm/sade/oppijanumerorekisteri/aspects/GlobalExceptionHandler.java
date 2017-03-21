@@ -3,6 +3,12 @@ package fi.vm.sade.oppijanumerorekisteri.aspects;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import static java.util.stream.Collectors.toList;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,10 +22,29 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    private ResponseEntity<Map<String, Object>> constructErrorResponse(Exception exception, HttpStatus status, HttpServletRequest request) {
+        Map<String, Object> body = constructErrorBody(exception, status, request);
+        return ResponseEntity.status(status).body(body);
+    }
+
+    private Map<String, Object> constructErrorBody(Exception exception, HttpStatus status, HttpServletRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("exception", exception.getClass().getCanonicalName());
+        body.put("message", exception.getMessage());
+        body.put("path", request.getRequestURI());
+        return body;
+    }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "not_found") // 404 Entity not found by primary key.
     @ExceptionHandler({NotFoundException.class})
@@ -71,6 +96,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity badRequestServiceValidationException(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException ve) {
         ve.setStackTrace(new StackTraceElement[0]);
         return ResponseEntity.badRequest().body(ve);
+    }
+
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ResponseEntity<Map<String, Object>> unprocessableEntityException(UnprocessableEntityException exception, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        Map<String, Object> body = constructErrorBody(exception, status, request);
+        Errors errors = exception.getErrors();
+        body.put("globalErrors", errors.getGlobalErrors().stream()
+                .map(this::constructObjectError)
+                .collect(toList()));
+        body.put("fieldErrors", errors.getFieldErrors().stream()
+                .map(this::constructFieldError)
+                .collect(toList()));
+        return ResponseEntity.status(status).body(body);
+    }
+
+    private Map<String, Object> constructObjectError(ObjectError objectError) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("code", objectError.getCode());
+        body.put("arguments", objectError.getArguments());
+        body.put("message", objectError.getDefaultMessage());
+        return body;
+    }
+
+    private Map<String, Object> constructFieldError(FieldError fieldError) {
+        Map<String, Object> body = constructObjectError(fieldError);
+        body.put("field", fieldError.getField());
+        body.put("rejectedValue", fieldError.getRejectedValue());
+        return body;
     }
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "duplicate_hetu_undeterministic_behaviour")
