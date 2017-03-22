@@ -7,6 +7,7 @@
 * React
 * Redux
 * ES6
+* NPM
 
 ## Ennakkovaatimukset
 * Asennettu Java 8
@@ -35,8 +36,9 @@
 Tämä ajaa testit ja luo 
 
 ### Ajaminen:
-Idea: SpringBoot VMOptions `-Dspring.profiles.active=dev -Dspring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml` 
-JAR:  `java -jar target\henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml`
+Idea: SpringBoot VMOptions `-Dspring.profiles.active=dev -Dspring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml`
+
+JAR:  `java -jar target/henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml`
 
 Ui löytyy osoitteesta http://localhost:8280/henkilo-ui/
 
