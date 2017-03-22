@@ -104,25 +104,6 @@ We are always open to [your feedback](https://github.com/facebookincubator/creat
 
 ## Folder Structure
 
-After creation, your project should look like this:
-
-```
-my-app/
-  README.md
-  node_modules/
-  package.json
-  public/
-    index.html
-    favicon.ico
-  src/
-    App.css
-    App.js
-    App.test.js
-    index.css
-    actions.js
-    logo.svg
-```
-
 For the project to build, **these files must exist with exact filenames**:
 
 * `public/index.html` is the page template;

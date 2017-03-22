@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {fetchFrontProperties} from '../actions/actions';
+import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 
 const App = React.createClass({

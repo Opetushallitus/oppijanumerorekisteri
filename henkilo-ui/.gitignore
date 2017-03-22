@@ -20,3 +20,9 @@ target/
 .DS_Store
 .env
 npm-debug.log*
+
+
+out/
+src/main/static/etc/
+src/main/static/node/
+
