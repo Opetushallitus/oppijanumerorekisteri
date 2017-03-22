@@ -23,5 +23,8 @@ public class UrlConfiguration extends OphProperties {
         if(!StringUtils.isEmpty(environment.getProperty("front.koodisto.baseUrl"))) {
             frontProperties.put("koodisto-service.baseUrl", environment.getProperty("front.koodisto.baseUrl"));
         }
+        if(!StringUtils.isEmpty(environment.getProperty("front.kayttooikeus.baseUrl"))) {
+            frontProperties.put("kayttooikeus-service.baseUrl", environment.getProperty("front.kayttooikeus.baseUrl"));
+        }
     }
 }
