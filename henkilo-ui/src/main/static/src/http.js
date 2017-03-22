@@ -1,9 +1,9 @@
-import 'isomorphic-fetch'
+import fetch from 'isomorphic-fetch'
 
 export const http = {
     get: (url) => fetch(url, {credentials: 'include', mode: 'cors'})
         .then(response => response.json()),
-    delete: (url) => fetch(url, {method: 'DELETE', credentials: 'same-origin', mode: 'no-cors'})
+    delete: (url) => fetch(url, {method: 'DELETE', credentials: 'include', mode: 'cors'})
         .then(response => response.json()),
 };
 
