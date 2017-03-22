@@ -8,7 +8,7 @@ import HenkiloPageContainer from './containers/HenkiloPageContainer';
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
-    <Route path="/kutsu/list" component={KutsututPageContainer} />
-    <Route path="/uusikutsu" component={KutsuPageContainer} />
+    <Route path="/kutsutut" component={KutsututPageContainer} />
+    <Route path="/kutsulomake" component={KutsuPageContainer} />
     <Route path="/henkilo" component={HenkiloPageContainer} />
 </Route>

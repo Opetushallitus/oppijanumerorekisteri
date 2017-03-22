@@ -1,8 +1,8 @@
 
 export const mainNavigation = [
     {path: '/anomukset', label: 'Käyttöoikeusanomukset'},
-    {path: '/kutsu/list', label: 'Kutsutut'},
-    {path: '/kutsu', label: 'Virkailijan kutsuminen Opintopolkuun'},
+    {path: '/kutsutut', label: 'Kutsutut'},
+    {path: '/kutsulomake', label: 'Virkailijan kutsuminen Opintopolkuun'},
     {path: '/henkilo', label: 'Henkilöhaku'}
 ];
 
