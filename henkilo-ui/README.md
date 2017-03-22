@@ -13,6 +13,8 @@
 * henkiloui.yml (löytyy integraatiopalvelimelta tai kysy muilta kehittäjiltä)
   * Lisää front propertyt esim. seuraavasti:
   ```
+  server:
+    port: 8280
   front:
     kayttooikeus:
       baseUrl: http://localhost:<port>
@@ -36,9 +38,18 @@ Tämä ajaa testit ja luo
 Idea: SpringBoot VMOptions `-Dspring.profiles.active=dev -Dspring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml` 
 JAR:  `java -jar target\henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml`
 
+Ui löytyy osoitteesta http://localhost:8280/henkilo-ui/
+
 ## Frontend
 Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyttää webpack-dev-server:iä seuraavasti:
 
 `npm install`
 
 `npm start`
+
+## API-dokumentaatio
+
+Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta: 
+https://virkailija.opintopolku.fi/henkilo-ui/swagger-ui.html
+
+Tämä sisältää vain UI:n pakolliset rajapinnat ja sitä ei ole tarkoitettu kutsuttavaksi mistään muualta.
