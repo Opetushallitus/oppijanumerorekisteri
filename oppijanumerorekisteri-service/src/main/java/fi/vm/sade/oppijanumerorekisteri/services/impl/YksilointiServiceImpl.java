@@ -352,7 +352,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     public void enableYksilointi(String oid, String palvelutunniste) {
         Henkilo henkilo = getHenkiloByOid(oid);
         if (henkilo.getYksilointiSynkronoinnit().stream().noneMatch(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
-            henkilo.getYksilointiSynkronoinnit().add(new YksilointiSynkronointi(palvelutunniste));
+            henkilo.getYksilointiSynkronoinnit().add(new YksilointiSynkronointi(palvelutunniste, new Date()));
             saveHenkilo(henkilo);
         }
     }

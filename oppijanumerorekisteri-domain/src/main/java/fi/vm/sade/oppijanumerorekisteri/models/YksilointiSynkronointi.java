@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -27,5 +28,8 @@ public class YksilointiSynkronointi extends IdentifiableAndVersionedEntity {
 
     @Column(nullable = false)
     private String palvelutunniste;
+
+    @Column(nullable = false)
+    private Date luotu;
 
 }
