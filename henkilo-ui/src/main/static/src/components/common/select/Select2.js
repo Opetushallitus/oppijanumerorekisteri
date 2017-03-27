@@ -221,7 +221,7 @@ const Select2 = React.createClass({
   render: function() {
     const props = $.extend({}, this.props),
         data = this.props.data,
-        value = this.props.value,
+        // value = this.props.value,
         passData = this.props.passData;
     delete props.data;
     delete props.value;
