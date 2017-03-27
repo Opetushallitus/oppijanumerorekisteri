@@ -7,8 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping(value = "/config")
 public class ConfigController {
     private UrlConfiguration urlProperties;
@@ -18,7 +19,6 @@ public class ConfigController {
         this.urlProperties = urlProperties;
     }
     
-    @ResponseBody
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/frontProperties", method = RequestMethod.GET, produces = "text/plain")
     public String frontPropertiesJson() {
