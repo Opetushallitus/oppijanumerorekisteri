@@ -36,12 +36,14 @@ public class YksilointiServiceTest {
 
         HenkiloRepository henkiloRepository = mock(HenkiloRepository.class);
         YksilointitietoRepository yksilointitietoRepository = mock(YksilointitietoRepository.class);
+        UserDetailsHelper userDetailsHelper = mock(UserDetailsHelper.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
         YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
         YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
 
         this.yksilointiService = new YksilointiServiceImpl(henkiloRepository, yksilointitietoRepository,
+                userDetailsHelper,
                 this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties, kansalaisuusRepository,
                 kielisyysRepository, yhteystiedotRyhmaRepository, yhteystietoRepository);
 

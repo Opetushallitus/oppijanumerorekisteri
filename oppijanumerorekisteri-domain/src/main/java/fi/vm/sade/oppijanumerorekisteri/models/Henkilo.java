@@ -134,6 +134,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @OneToOne(mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     private Yksilointitieto yksilointitieto;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_henkilo_yksilointi_synkronointi"))
+    private Set<YksilointiSynkronointi> yksilointiSynkronoinnit;
+
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
     }

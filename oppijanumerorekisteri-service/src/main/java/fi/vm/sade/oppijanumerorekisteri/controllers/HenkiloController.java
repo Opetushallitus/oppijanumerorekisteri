@@ -253,5 +253,25 @@ public class HenkiloController {
             this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
     }
 
+    @GetMapping("/{oid}/yksilointi")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
+    public Iterable<String> listPalvelutunnisteet(@PathVariable String oid) {
+        return yksilointiService.listPalvelutunnisteet(oid);
+    }
+
+    @PutMapping("/{oid}/yksilointi/{palvelutunniste}")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Aktivoi yksilöinnin annetulle palvelutunnisteelle")
+    public void enableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
+        yksilointiService.enableYksilointi(oid, palvelutunniste);
+    }
+
+    @DeleteMapping("/{oid}/yksilointi/{palvelutunniste}")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
+    public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
+        yksilointiService.disableYksilointi(oid, palvelutunniste);
+    }
 
 }

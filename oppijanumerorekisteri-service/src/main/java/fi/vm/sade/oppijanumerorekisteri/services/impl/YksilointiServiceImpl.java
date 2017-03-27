@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class YksilointiServiceImpl implements YksilointiService {
@@ -37,6 +39,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final KielisyysRepository kielisyysRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
+
+    private final UserDetailsHelper userDetailsHelper;
 
     private final VtjClient vtjClient;
     private final KoodistoClient koodistoClient;
@@ -52,6 +56,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Autowired
     public YksilointiServiceImpl(HenkiloRepository henkiloRepository,
                                  YksilointitietoRepository yksilointitietoRepository,
+                                 UserDetailsHelper userDetailsHelper,
                                  VtjClient vtjClient,
                                  KoodistoClient koodistoClient,
                                  OppijanumerorekisteriProperties oppijanumerorekisteriProperties,
@@ -61,6 +66,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                                  YhteystietoRepository yhteystietoRepository) {
         this.henkiloRepository = henkiloRepository;
         this.yksilointitietoRepository = yksilointitietoRepository;
+        this.userDetailsHelper = userDetailsHelper;
         this.vtjClient = vtjClient;
         this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
         this.kansalaisuusRepository = kansalaisuusRepository;
@@ -70,11 +76,21 @@ public class YksilointiServiceImpl implements YksilointiService {
         this.yhteystietoRepository = yhteystietoRepository;
     }
 
+    private Henkilo getHenkiloByOid(String oid) {
+        return this.henkiloRepository.findByOidHenkilo(oid)
+                .orElseThrow(() -> new NotFoundException("Henkilo not found by oid " + oid));
+    }
+
+    private Henkilo saveHenkilo(Henkilo henkilo) {
+        henkilo.setModified(new Date());
+        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+        return henkiloRepository.save(henkilo);
+    }
+
     @Override
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
-        Henkilo henkilo = this.henkiloRepository.findByOidHenkilo(henkiloOid)
-                .orElseThrow(() -> new NotFoundException("Henkilo not found by oid " + henkiloOid));
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
 
         if (!StringUtils.isEmpty(henkilo.getHetu())) {
             henkilo = yksiloiHenkilo(henkilo);
@@ -321,4 +337,33 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .filter(hetu -> !hetu.equals(original))
                 .ifPresent(consumer);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<String> listPalvelutunnisteet(String oid) {
+        Henkilo henkilo = getHenkiloByOid(oid);
+        return henkilo.getYksilointiSynkronoinnit().stream()
+                .map(YksilointiSynkronointi::getPalvelutunniste)
+                .collect(toSet());
+    }
+
+    @Override
+    @Transactional
+    public void enableYksilointi(String oid, String palvelutunniste) {
+        Henkilo henkilo = getHenkiloByOid(oid);
+        if (henkilo.getYksilointiSynkronoinnit().stream().noneMatch(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
+            henkilo.getYksilointiSynkronoinnit().add(new YksilointiSynkronointi(palvelutunniste, new Date()));
+            saveHenkilo(henkilo);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void disableYksilointi(String oid, String palvelutunniste) {
+        Henkilo henkilo = getHenkiloByOid(oid);
+        if (henkilo.getYksilointiSynkronoinnit().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
+            saveHenkilo(henkilo);
+        }
+    }
+
 }
