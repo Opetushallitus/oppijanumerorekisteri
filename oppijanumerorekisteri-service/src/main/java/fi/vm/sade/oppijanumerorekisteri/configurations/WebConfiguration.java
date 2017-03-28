@@ -23,14 +23,6 @@ public class WebConfiguration extends WebMvcConfigurerAdapter{
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        if(Arrays.stream(this.environment.getActiveProfiles()).anyMatch(s -> s.equals("dev") || s.equals("luokka"))) {
-            registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:3000", "http://localhost:8280");
-        }
-    }
-
-    @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         // Disable extensions causing trouble when OID is provided at the end of rest API.
         configurer.setUseRegisteredSuffixPatternMatch(true);
