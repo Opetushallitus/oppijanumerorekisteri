@@ -3,13 +3,17 @@ import { combineReducers } from 'redux'
 import { l10n } from './l10n.reducer';
 import { frontProperties } from './frontProperties.reducer';
 import { kutsuList } from './kutsuList.reducer';
+import {henkilo} from "./henkilo.reducer";
+import {koodisto} from "./koodisto.reducer";
 
 
 const rootReducer = combineReducers({
     routing,
     kutsuList,
     frontProperties,
-    l10n
+    l10n,
+    henkilo,
+    koodisto,
 });
 
 export default rootReducer;

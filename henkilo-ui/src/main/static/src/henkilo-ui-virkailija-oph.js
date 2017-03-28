@@ -25,6 +25,8 @@ export default {
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
     "oppijanumerorekisteri-service.henkilo.delete": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteri-service/henkilo/$1/yksiloi",
+
+    "organisaatio-service.baseUrl": "/",
     "organisaatio-service.organisaatio.ByOid": "organisaatio-service/rest/organisaatio/$1",
 
     "koodisto-service.baseUrl": "/",

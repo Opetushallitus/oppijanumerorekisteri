@@ -2,14 +2,13 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {deleteKutsu, fetchKutsus} from '../actions/kutsu.actions';
 import KutsututPage from '../components/kutsutut/KutsututPage';
-// import {l10n} from '../l10n'
 
 const KutsututPageContainer = React.createClass({
     componentDidMount: function() {
         this.props.fetchKutsus();
     },
     render: function() {
-        return <KutsututPage {...this.props} l10n={this.props.l10n}/>;
+        return <KutsututPage {...this.props} />;
     }
 });
 

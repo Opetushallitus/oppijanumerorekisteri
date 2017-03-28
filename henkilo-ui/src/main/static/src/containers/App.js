@@ -3,11 +3,12 @@ import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 
+
 const App = React.createClass({
     render: function() {
         return (
             this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
-                ? <div>
+                ? <div className="oph-typography">
                     <TopNavigation></TopNavigation>
                     <div className="wrapper">
                         {this.props.children}

@@ -1,0 +1,20 @@
+.henkiloViewEditButtons {
+    display: inline-block;
+    width: 100%;
+}
+
+.henkiloViewEditButtons button {
+    margin-right: 15px;
+    float: right;
+}
+
+.henkiloViewButtons {
+    display: inline-block;
+    width: 100%;
+    margin-top: 25px;
+}
+
+.henkiloViewButtons button {
+    margin-right: 15px;
+    float: left;
+}

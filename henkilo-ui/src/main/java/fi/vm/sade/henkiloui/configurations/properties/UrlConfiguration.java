@@ -26,5 +26,8 @@ public class UrlConfiguration extends OphProperties {
         if(!StringUtils.isEmpty(environment.getProperty("front.kayttooikeus.baseUrl"))) {
             frontProperties.put("kayttooikeus-service.baseUrl", environment.getProperty("front.kayttooikeus.baseUrl"));
         }
+        if(!StringUtils.isEmpty(environment.getProperty("front.oppijanumerorekisteri.baseUrl"))) {
+            frontProperties.put("oppijanumerorekisteri-service.baseUrl", environment.getProperty("front.oppijanumerorekisteri.baseUrl"));
+        }
     }
 }

@@ -50,6 +50,24 @@ Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyt
 
 `npm start`
 
+### CORS
+Integraatiopalvelinta vastaan kehitettäessä on käytettävästä 
+selaimesta otettava pois käytöstä tietoturva-asetuksia. Myös lokaalisti ajettavaa palvelinta kehitettäessä (eri localhost portti)
+
+<b>Chrome:</b>
+
+Sulje kaikki chrome instanssit ennen seuraavan ajamista.
+
+Linux `$ google-chrome --disable-web-security`
+
+Windows `chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security` 
+
+OSX `$ open -a Google\ Chrome --args --disable-web-security --user-data-dir`
+
+Tämän jälkeen avaa sessio haluttuihin palveluihin integraatiopalvelimelle tekemällä niihin jokin kysely. 
+
+<b>Huom. ei turvallinen selailuun kehityksen aikana! Käytä tällöin rinnalla eri selainta.</b>
+
 ## API-dokumentaatio
 
 Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta: 

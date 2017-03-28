@@ -19,7 +19,7 @@ const Field = React.createClass({
     },
     render: function() {
         const className = classNames({'field': true,
-            '${this.props.className}': this.props.className,
+            [`${this.props.className}`]: this.props.className,
             'readonly': this.props.readOnly});
         const type = {type: this.props.password ? 'password' : false};
         return (
