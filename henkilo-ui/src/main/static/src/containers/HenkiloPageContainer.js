@@ -3,7 +3,7 @@ import HenkiloPage from '../components/henkilo/HenkiloPage';
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        path: ownProps.location.pathname.substring(1)
+        path: ownProps.location.pathname
     };
 };
 

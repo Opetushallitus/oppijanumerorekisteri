@@ -3,10 +3,11 @@ import React from 'react'
 import HenkiloViewUserContent from './HenkiloViewUserContent'
 import HenkiloViewContactContent from './HenkiloViewContactContent'
 import HenkiloViewOrganisationContent from './HenkiloViewOrganisationContent'
+import locale from '../../configuration/locale'
 
 const HenkiloView = React.createClass({
     render: function() {
-        const L = this.props.l10n['fi'];
+        const L = this.props.l10n[locale];
         return (
             <div>
                 <div className="wrapper">
@@ -15,21 +16,21 @@ const HenkiloView = React.createClass({
                         || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
                         || this.props.koodisto.kansalaisuusKoodistoLoading
                             ? L['LADATAAN']
-                            : <HenkiloViewUserContent {...this.props} readOnly={true} locale="fi" showPassive={false} />
+                            : <HenkiloViewUserContent {...this.props} readOnly={true} locale={locale} showPassive={false} />
                     }
                 </div>
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading
                             ? L['LADATAAN']
-                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale="fi" />
+                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={locale} />
                     }
                 </div>
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloOrgsLoading
                             ? L['LADATAAN']
-                            : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale="fi" />
+                            : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={locale} />
                     }
                 </div>
             </div>

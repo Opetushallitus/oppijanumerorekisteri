@@ -5,7 +5,7 @@ import { frontProperties } from './frontProperties.reducer';
 import { kutsuList } from './kutsuList.reducer';
 import {henkilo} from "./henkilo.reducer";
 import {koodisto} from "./koodisto.reducer";
-
+import {naviState} from "./navigation.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -14,6 +14,7 @@ const rootReducer = combineReducers({
     l10n,
     henkilo,
     koodisto,
+    naviState,
 });
 
 export default rootReducer;

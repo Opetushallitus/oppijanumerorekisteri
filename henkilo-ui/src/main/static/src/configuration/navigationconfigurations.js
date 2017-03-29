@@ -6,7 +6,7 @@ export const mainNavigation = [
     {path: '/henkilo', label: 'Henkilöhaku'}
 ];
 
-export const henkiloNavi = [
-    {path: '/henkilo', label: 'Henkilön tiedot'},
+export const henkiloNavi = oid => [
+    {path: '/henkilo/' + oid, label: 'Henkilön tiedot'},
     {path: '/henkilo/duplikaatit', label: 'Hae duplikaatit'}
 ];

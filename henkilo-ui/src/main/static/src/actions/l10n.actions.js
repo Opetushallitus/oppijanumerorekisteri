@@ -11,7 +11,6 @@ export const fetchL10n = () => (dispatch, getState) => {
     http.get(urls.url('henkilo-ui.l10n')).then(json => dispatch(receivedL10n(json)));
     dispatch(requestLocalisation());
     const localisationBaseUrl = urls().url('lokalisointi.localisation', {category: "kayttooikeus"});
-    console.log('localisointi', localisationBaseUrl);
     http.get(localisationBaseUrl )
         .then(json => dispatch(receiveLocalisation(json)));
 };

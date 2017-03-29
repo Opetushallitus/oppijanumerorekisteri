@@ -1,4 +1,6 @@
+import './Button.css'
 import React from 'react'
+import classNames from 'classnames/bind';
 
 export default class Button extends React.Component {
 
@@ -11,18 +13,18 @@ export default class Button extends React.Component {
     };
 
     render() {
-        // const className = classNames({
-        //     'oph-button': true,
-        //     'oph-button-primary': !this.props.confirm,
-        //     'oph-button-confirm': this.props.confirm,
-        //     'oph-button-big': this.props.big,
-        //     '${this.props.className}': this.props.className
-        // });
+        const className = classNames({
+            'oph-button': true,
+            'oph-button-primary': !this.props.confirm,
+            'oph-button-confirm': this.props.confirm,
+            'oph-button-big': this.props.big,
+            [`${this.props.className}`]: this.props.className
+        });
 
         return (
             this.props.href
                 ? <a href={this.props.href} className="a" onClick={this.props.action}>{this.props.children}</a>
-                : <button className="oph-button oph-button-primary" disabled={this.props.disabled} onClick={!this.props.disabled ? this.props.action : () => {}}>{this.props.children}</button>
+                : <button className={className} disabled={this.props.disabled} onClick={!this.props.disabled ? this.props.action : () => {}}>{this.props.children}</button>
         );
     }
 }

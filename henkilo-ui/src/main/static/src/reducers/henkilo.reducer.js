@@ -1,6 +1,6 @@
 import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
-    FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS
+    FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS
 } from "../actions/actiontypes";
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
@@ -20,6 +20,7 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
         case FETCH_KAYTTAJATIETO_REQUEST:
             return Object.assign({}, state, {kayttajatietoLoading: true});
         case FETCH_KAYTTAJATIETO_SUCCESS:
+        case FETCH_KAYTTAJATIETO_FAILURE:
             return Object.assign({}, state, {kayttajatietoLoading: false, kayttajatieto: action.kayttajatieto});
         case FETCH_HENKILOORGS_REQUEST:
             return Object.assign({}, state, {henkiloOrgsLoading: true});

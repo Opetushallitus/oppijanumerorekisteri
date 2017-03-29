@@ -2,10 +2,13 @@ import {http} from "../http";
 import {urls} from 'oph-urls-js';
 import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
-    FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS, FETCH_ORGANISATIONS_REQUEST,
+    FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
+    FETCH_ORGANISATIONS_REQUEST,
     FETCH_ORGANISATIONS_SUCCESS, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_REQUEST,
-    UPDATE_HENKILO_SUCCESS, UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_SUCCESS, YKSILOI_HENKILO_REQUEST,
+    UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_PASSWORD_REQUEST,
+    UPDATE_PASSWORD_SUCCESS,
+    YKSILOI_HENKILO_REQUEST,
     YKSILOI_HENKILO_SUCCESS
 } from "./actiontypes";
 
@@ -19,10 +22,21 @@ export const fetchHenkilo = (oid) => (dispatch => {
 
 const requestHenkiloUpdate = oid => ({type: UPDATE_HENKILO_REQUEST, oid});
 const receiveHenkiloUpdate = (oid) => ({type: UPDATE_HENKILO_SUCCESS, oid, receivedAt: Date.now()});
-export const updateHenkilo = (payload) => (dispatch => {
+export const updateHenkiloAndRefetch = (payload) => (dispatch => {
     dispatch(requestHenkiloUpdate(payload.oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo');
-    http.put(url, payload).then(oid => {dispatch(receiveHenkiloUpdate(oid))});
+    http.put(url, payload).then(oid => {
+        dispatch(receiveHenkiloUpdate(oid));
+        dispatch(fetchHenkilo(oid));
+    });
+});
+
+const requestKayttajatietoUpdate = kayttajatieto => ({type: UPDATE_KAYTTAJATIETO_REQUEST, kayttajatieto});
+const receiveKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_SUCCESS, kayttajatieto, receivedAt: Date.now()});
+export const updateKayttajatieto = (oid, username) => (dispatch => {
+    dispatch(requestKayttajatietoUpdate(username));
+    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
+    http.post(url, {username: username}).then(kayttajatieto => {dispatch(receiveKayttajatietoUpdate(kayttajatieto))});
 });
 
 const requestUpdatePassword = oid => ({type: UPDATE_PASSWORD_REQUEST, oid});
@@ -52,10 +66,11 @@ export const yksiloiHenkilo = (oid,) => (dispatch => {
 
 const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
 const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});
+const errorKayttajatieto = () => ({type: FETCH_KAYTTAJATIETO_FAILURE, kayttajatieto: {}});
 export const fetchKayttajatieto = (oid) => (dispatch => {
     dispatch(requestKaytajatieto(oid));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.get(url).then(json => {dispatch(receiveKayttajatieto(json))});
+    http.get(url).then(json => {dispatch(receiveKayttajatieto(json))}).catch(() => dispatch(errorKayttajatieto()));
 });
 
 const requestOrganisations = oidOrganisations => ({type: FETCH_ORGANISATIONS_REQUEST, oidOrganisations});

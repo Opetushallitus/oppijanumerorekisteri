@@ -5,6 +5,8 @@ import Modal from '../common/modal/Modal'
 import Button from '../common/button/Button'
 import SortByHeader from '../common/sort-by-header/SortByHeader'
 import './KutsututPage.css'
+import locale from '../../configuration/locale'
+
 
 const KutsututPage = React.createClass({
     getInitialState: function() {
@@ -18,7 +20,7 @@ const KutsututPage = React.createClass({
     },
 
     render: function() {
-        const L = this.props.l10n['fi'];
+        const L = this.props.l10n[locale];
         const kutsuResponse = this.props.kutsuList;
         return (
             <div className="wrapper">

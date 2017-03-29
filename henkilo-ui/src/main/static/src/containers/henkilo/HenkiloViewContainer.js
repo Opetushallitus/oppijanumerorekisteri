@@ -2,17 +2,21 @@ import React from 'react'
 import {connect} from 'react-redux';
 import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkilo,
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
     updatePassword, yksiloiHenkilo
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto,
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
+import {updateNavigation} from "../../actions/navigation.actions";
+import {henkiloNavi} from "../../configuration/navigationconfigurations";
 
 
 const HenkiloViewContainer = React.createClass({
     componentDidMount: function() {
+        this.props.updateNavigation(henkiloNavi(this.props.oid), '/henkilo');
+
         this.props.fetchHenkilo(this.props.oid);
         this.props.fetchHenkiloOrgs(this.props.oid);
         this.props.fetchYhteystietotyypitKoodisto();
@@ -28,7 +32,7 @@ const HenkiloViewContainer = React.createClass({
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        path: ownProps.location.pathname.substring(1),
+        path: ownProps.location.pathname,
         oid: ownProps.params['oid'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
@@ -44,11 +48,13 @@ const mapDispatchToProps = (dispatch) => {
         fetchKieliKoodisto: () => dispatch(fetchKieliKoodisto()),
         fetchKansalaisuusKoodisto: () => dispatch(fetchKansalaisuusKoodisto()),
         fetchSukupuoliKoodisto: () => dispatch(fetchSukupuoliKoodisto()),
-        updateHenkilo: (payload) => dispatch(updateHenkilo(payload)),
+        updateHenkilo: (payload) => dispatch(updateHenkiloAndRefetch(payload)),
         fetchKayttajatieto: (oid) => dispatch(fetchKayttajatieto(oid)),
         updatePassword: (oid, password) => dispatch(updatePassword(oid, password)),
         passivoiHenkilo: (oid) => dispatch(passivoiHenkilo(oid)),
         yksiloiHenkilo: (oid) => dispatch(yksiloiHenkilo(oid)),
+        updateKayttajatieto: (oid, kayttajanimi) => dispatch(updateKayttajatieto(oid, kayttajanimi)),
+        updateNavigation: (naviTabs, backLocation) => dispatch(updateNavigation(naviTabs, backLocation))
     }
 };
 

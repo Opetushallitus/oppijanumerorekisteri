@@ -8,7 +8,10 @@ import Button from "../common/button/Button";
 const HenkiloViewUserContent = React.createClass({
     propTypes: {
         l10n: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.shape({kayttajatiedot: React.PropTypes.object, henkilo: React.PropTypes.object}).isRequired,
+        henkilo: React.PropTypes.shape({
+            kayttajatieto: React.PropTypes.object.isRequired,
+            henkilo: React.PropTypes.object.isRequired
+        }).isRequired,
         readOnly: React.PropTypes.bool.isRequired,
         showPassive: React.PropTypes.bool,
         locale: React.PropTypes.string.isRequired,
@@ -22,11 +25,11 @@ const HenkiloViewUserContent = React.createClass({
         yksiloiHenkilo: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
-        const kayttajatieto = this.props.henkilo.kayttajatieto;
         this.henkiloUpdate = this.props.henkilo.henkilo;
         this.kieliKoodis = this.props.koodisto.kieli;
         this.kansalaisuusKoodis = this.props.koodisto.kansalaisuus;
         this.sukupuoliKoodis = this.props.koodisto.sukupuoli;
+        const kayttajatieto = this.props.henkilo.kayttajatieto;
 
         return {
             readOnly: this.props.readOnly,
@@ -167,7 +170,8 @@ const HenkiloViewUserContent = React.createClass({
     _edit: function () {
         this.setState({readOnly: false});
         this._preEditData = {
-            basicInfo: this.state.basicInfo,
+            basicInfo: Object.assign({}, this.state.basicInfo),
+            basicInfo2: Object.assign({}, this.state.basicInfo2),
             henkiloUpdate: JSON.parse(JSON.stringify(this.henkiloUpdate)), // deep copy
         }
     },
@@ -175,7 +179,6 @@ const HenkiloViewUserContent = React.createClass({
         this.henkiloUpdate = this._preEditData.henkiloUpdate;
         this.setState({
             readOnly: true,
-            basicInfo: this._preEditData.basicInfo,
         });
     },
     _update: function () {
@@ -183,6 +186,9 @@ const HenkiloViewUserContent = React.createClass({
         if(this.henkiloUpdate.password && this.henkiloUpdate.password === this.henkiloUpdate.passwordAgain) {
             this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
             this.henkiloUpdate.password = this.henkiloUpdate.passwordAgain = null;
+        }
+        if(this._preEditData.henkiloUpdate.kayttajanimi === undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
+            this.props.updateKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});
     },

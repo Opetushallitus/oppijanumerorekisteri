@@ -14,7 +14,7 @@ const KutsututPageContainer = React.createClass({
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        path: ownProps.location.pathname.substring(1),
+        path: ownProps.location.pathname,
         kutsuList: state.kutsuList,
         l10n: state.l10n.localisations,
     };

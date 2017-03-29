@@ -95,7 +95,7 @@ class KutsuFormPage extends React.Component  {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        path: ownProps.location.pathname.substring(1),
+        path: ownProps.location.pathname,
         l10n: state.l10n.localisations,
     };
 };
