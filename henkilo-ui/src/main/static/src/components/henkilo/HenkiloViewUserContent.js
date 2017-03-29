@@ -23,6 +23,7 @@ const HenkiloViewUserContent = React.createClass({
         updatePassword: React.PropTypes.func.isRequired,
         passivoiHenkilo: React.PropTypes.func.isRequired,
         yksiloiHenkilo: React.PropTypes.func.isRequired,
+        updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -182,7 +183,7 @@ const HenkiloViewUserContent = React.createClass({
         });
     },
     _update: function () {
-        this.props.updateHenkilo(this.henkiloUpdate);
+        this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
         if(this.henkiloUpdate.password && this.henkiloUpdate.password === this.henkiloUpdate.passwordAgain) {
             this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
             this.henkiloUpdate.password = this.henkiloUpdate.passwordAgain = null;

@@ -12,7 +12,7 @@ const HenkiloViewContactContent = React.createClass({
         readOnly: React.PropTypes.bool.isRequired,
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
-        updateHenkilo: React.PropTypes.func.isRequired,
+        updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -101,7 +101,7 @@ const HenkiloViewContactContent = React.createClass({
         });
     },
     _update: function () {
-        this.props.updateHenkilo(this.henkiloUpdate);
+        this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     },
     _updateModelField: function (event) {
         const value = event.target.value;

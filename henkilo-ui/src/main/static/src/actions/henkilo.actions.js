@@ -44,7 +44,7 @@ const receiveUpdatePassword = (oid) => ({type: UPDATE_PASSWORD_SUCCESS, oid, rec
 export const updatePassword = (oid, password) => (dispatch => {
     dispatch(requestUpdatePassword(oid));
     const url = urls.url('kayttooikeus-service.henkilo.password', oid);
-    http.post(url, password).then(() => {dispatch(receiveUpdatePassword(oid))});
+    http.post(url, '"' + password + '"').then(() => {dispatch(receiveUpdatePassword(oid))});
 });
 
 const requestPassivoiHenkilo = oid => ({type: PASSIVOI_HENKILO_REQUEST, oid});

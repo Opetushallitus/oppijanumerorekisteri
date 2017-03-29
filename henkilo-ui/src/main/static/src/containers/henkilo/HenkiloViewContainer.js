@@ -40,22 +40,6 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchHenkilo: oid => dispatch(fetchHenkilo(oid)),
-        fetchHenkiloOrgs: oid => dispatch(fetchHenkiloOrgs(oid)),
-        fetchYhteystietotyypitKoodisto: () => dispatch(fetchYhteystietotyypitKoodisto()),
-        fetchKieliKoodisto: () => dispatch(fetchKieliKoodisto()),
-        fetchKansalaisuusKoodisto: () => dispatch(fetchKansalaisuusKoodisto()),
-        fetchSukupuoliKoodisto: () => dispatch(fetchSukupuoliKoodisto()),
-        updateHenkilo: (payload) => dispatch(updateHenkiloAndRefetch(payload)),
-        fetchKayttajatieto: (oid) => dispatch(fetchKayttajatieto(oid)),
-        updatePassword: (oid, password) => dispatch(updatePassword(oid, password)),
-        passivoiHenkilo: (oid) => dispatch(passivoiHenkilo(oid)),
-        yksiloiHenkilo: (oid) => dispatch(yksiloiHenkilo(oid)),
-        updateKayttajatieto: (oid, kayttajanimi) => dispatch(updateKayttajatieto(oid, kayttajanimi)),
-        updateNavigation: (naviTabs, backLocation) => dispatch(updateNavigation(naviTabs, backLocation))
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(HenkiloViewContainer)
+export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
+fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
+    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(HenkiloViewContainer)
