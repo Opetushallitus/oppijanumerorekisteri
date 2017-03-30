@@ -22,6 +22,7 @@ const Field = React.createClass({
             [`${this.props.className}`]: this.props.className,
             'readonly': this.props.readOnly});
         const type = {type: this.props.password ? 'password' : false};
+        const autoFocus = this.props.autoFocus;
         return (
             this.props.readOnly
                 ? <span className={className}>{this.props.children}</span>
@@ -29,7 +30,7 @@ const Field = React.createClass({
                     ? <Select2 data={this.props.data} name={this.props.inputValue} onSelect={this.props.changeAction}
                                value={this.props.selectValue} />
                     : <input className={className} name={this.props.inputValue} onChange={this.props.changeAction}
-                         defaultValue={this.props.children} {...type} />
+                         defaultValue={this.props.children} {...type} autoFocus={autoFocus} />
         )
     }
 });

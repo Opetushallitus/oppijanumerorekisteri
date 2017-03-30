@@ -19,12 +19,14 @@ export default {
     "kayttooikeus-service.omattiedot.oid": "kayttooikeus-service/omattiedot/oid",
     "kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio": "kayttooikeus-service/kayttooikeusryhma/$1/$2",
     "kayttooikeus-service.virkailija-ui.basePath": "kayttooikeus-service/virkailija",
+    "kayttooikeus-service.prequel": "kayttooikeus-service/cas/prequel",
 
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
     "oppijanumerorekisteri-service.henkilo.delete": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteri-service/henkilo/$1/yksiloi",
+    "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
 
     "organisaatio-service.baseUrl": "/",
     "organisaatio-service.organisaatio.ByOid": "organisaatio-service/rest/organisaatio/$1",

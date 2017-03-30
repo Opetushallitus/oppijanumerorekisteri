@@ -6,6 +6,7 @@ import { kutsuList } from './kutsuList.reducer';
 import {henkilo} from "./henkilo.reducer";
 import {koodisto} from "./koodisto.reducer";
 import {naviState} from "./navigation.reducer";
+import {prequels} from "./prequels.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     henkilo,
     koodisto,
     naviState,
+    prequels,
 });
 
 export default rootReducer;

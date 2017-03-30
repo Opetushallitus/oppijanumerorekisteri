@@ -2,6 +2,7 @@ import {FETCH_FRONTPROPERTIES_REQUEST, FETCH_FRONTPROPERTIES_SUCCESS} from './ac
 import frontUrls from '../henkilo-ui-virkailija-oph';
 import {urls} from 'oph-urls-js';
 import {fetchL10n} from './l10n.actions';
+import {fetchPrequels} from "./prequel.actions";
 
 const requestFrontProperties = () => ({type: FETCH_FRONTPROPERTIES_REQUEST});
 const receivedFrontProperties = () => ({
@@ -14,6 +15,9 @@ export const fetchFrontProperties = () => (dispatch) => {
     urls.load({overrides: '/henkilo-ui/config/frontProperties',})
         .then(() => {
             dispatch(receivedFrontProperties());
+            // Fetch localisations
             dispatch(fetchL10n());
+            // Do prequel requests to external services that require authentication so CAS session is opened
+            dispatch(fetchPrequels());
         });
 };

@@ -9,6 +9,7 @@ const App = React.createClass({
     render: function() {
         return (
             this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
+                && this.props.notLoadedCount === 0
                 ? <div className="oph-typography mainContainer">
                 <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
                                l10n={this.props.l10n.localisations[locale]} />
@@ -48,6 +49,7 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n,
         naviTabs: state.naviState.naviTabs,
         backButton: state.naviState.backButton,
+        notLoadedCount: state.prequels.notLoadedCount,
     };
 };
 

@@ -38,7 +38,7 @@ const HenkiloViewUserContent = React.createClass({
             confirmPassivointi: false,
             confirmYksilointi: false,
             basicInfo: [
-                {label: 'HENKILO_ETUNIMET', value: this.henkiloUpdate.etunimet, inputValue: 'etunimet'},
+                {label: 'HENKILO_ETUNIMET', value: this.henkiloUpdate.etunimet, inputValue: 'etunimet', autoFocus: true},
                 {label: 'HENKILO_SUKUNIMI', value: this.henkiloUpdate.sukunimi, inputValue: 'sukunimi'},
                 {label: 'HENKILO_SYNTYMAAIKA', inputValue: 'syntymaaika', date: true,
                     value: dateformat(new Date(this.henkiloUpdate.syntymaaika), this.props.l10n[this.props.locale]['PVM_FORMAATTI']), },
@@ -103,7 +103,7 @@ const HenkiloViewUserContent = React.createClass({
                                             <span className="strong">{L[values.label]}</span>
                                             <Field inputValue={values.inputValue} changeAction={!values.date ? this._updateModelField : this._updateDateField}
                                                    readOnly={this.state.readOnly} data={values.data}
-                                                   selectValue={values.selectValue}>
+                                                   selectValue={values.selectValue} autoFocus={values.autoFocus}>
                                                 {values.value}
                                             </Field>
                                         </Columns>
