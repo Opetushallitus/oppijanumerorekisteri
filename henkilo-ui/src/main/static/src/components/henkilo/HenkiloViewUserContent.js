@@ -25,9 +25,9 @@ const HenkiloViewUserContent = React.createClass({
         yksiloiHenkilo: React.PropTypes.func.isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
 
-        basicInfo: React.PropTypes.array.isRequired,
-        basicInfo2: React.PropTypes.array.isRequired,
-        loginInfo: React.PropTypes.array.isRequired,
+        basicInfo: React.PropTypes.func.isRequired,
+        basicInfo2: React.PropTypes.func.isRequired,
+        loginInfo: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -53,7 +53,7 @@ const HenkiloViewUserContent = React.createClass({
                         </div>
                         <Columns columns={3}>
                             <div className="henkiloViewContent">
-                                {this.props.basicInfo.map((values, idx) =>
+                                {this.props.basicInfo().map((values, idx) =>
                                 !values.showOnlyOnWrite || !this.state.readOnly
                                     ? <div key={idx} id={values.label}>
                                         <Columns columns={2}>
@@ -69,7 +69,7 @@ const HenkiloViewUserContent = React.createClass({
                                 )}
                             </div>
                             <div className="henkiloViewContent">
-                                {this.props.basicInfo2.map((values, idx) =>
+                                {this.props.basicInfo2().map((values, idx) =>
                                 !values.showOnlyOnWrite || !this.state.readOnly
                                     ? <div key={idx} id={values.label}>
                                         <Columns columns={2}>
@@ -85,7 +85,7 @@ const HenkiloViewUserContent = React.createClass({
                                 )}
                             </div>
                             <div className="henkiloViewContent">
-                                {this.props.loginInfo.map((values, idx) =>
+                                {this.props.loginInfo().map((values, idx) =>
                                 !values.showOnlyOnWrite || !this.state.readOnly
                                     ? <div key={idx} id={values.label}>
                                         <Columns columns={2}>
