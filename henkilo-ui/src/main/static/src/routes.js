@@ -5,12 +5,12 @@ import KutsututPageContainer from './containers/KutsututPageContainer';
 import KutsuFormPage from './containers/KutsuFormPage';
 import AnomustListPageContainer from './containers/AnomusPageContainer';
 import HenkiloPageContainer from './containers/HenkiloPageContainer';
-import HenkiloViewContainer from './containers/henkilo/HenkiloViewContainer';
+import OppijaViewContainer from './containers/henkilo/OppijaViewContainer';
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
     <Route path="/kutsutut" component={KutsututPageContainer} />
     <Route path="/kutsulomake" component={KutsuFormPage} />
     <Route path="/henkilo" component={HenkiloPageContainer} />
-    <Route path="/henkilo/:oid" component={HenkiloViewContainer} />
+    <Route path="/henkilo/:oid" component={OppijaViewContainer} />
 </Route>

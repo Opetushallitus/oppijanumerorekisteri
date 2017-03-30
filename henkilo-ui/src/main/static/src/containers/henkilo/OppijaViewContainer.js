@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
+import OppijaViewPage from "../../components/henkilo/OppijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
     updatePassword, yksiloiHenkilo
@@ -13,7 +13,7 @@ import {updateNavigation} from "../../actions/navigation.actions";
 import {henkiloNavi} from "../../configuration/navigationconfigurations";
 
 
-const HenkiloViewContainer = React.createClass({
+const OppijaViewContainer = React.createClass({
     componentDidMount: function() {
         this.props.updateNavigation(henkiloNavi(this.props.oid), '/henkilo');
 
@@ -26,7 +26,7 @@ const HenkiloViewContainer = React.createClass({
         this.props.fetchKayttajatieto(this.props.oid);
     },
     render: function() {
-        return <HenkiloViewPage {...this.props} />;
+        return <OppijaViewPage {...this.props} />;
     }
 });
 
@@ -42,4 +42,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(HenkiloViewContainer)
+    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(OppijaViewContainer)
