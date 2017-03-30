@@ -8,7 +8,7 @@ import Select2 from '../common/select/Select2';
 const HenkiloViewContactContent = React.createClass({
     propTypes: {
         l10n: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.object.isRequired,
+        henkilo: React.PropTypes.shape({henkilo: React.PropTypes.object.isRequired,}).isRequired,
         readOnly: React.PropTypes.bool.isRequired,
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
@@ -58,14 +58,13 @@ const HenkiloViewContactContent = React.createClass({
                                     <h3>{yhteystiedotRyhma.name}</h3>
                                     { yhteystiedotRyhma.value.map((yhteystieto, idx2) =>
                                         <div key={idx2} id={yhteystieto.label}>
-                                            { !this.state.readOnly || yhteystieto.value
+                                            { (!this.state.readOnly && !yhteystiedotRyhma.readOnly) || yhteystieto.value
                                                 ? <Columns columns={2}>
                                                     <span className="strong">{L[yhteystieto.label]}</span>
                                                     <Field inputValue={yhteystieto.inputValue} changeAction={this._updateModelField}
-                                                           readOnly={this.state.readOnly}>{yhteystieto.value}</Field>
+                                                           readOnly={yhteystiedotRyhma.readOnly || this.state.readOnly}>{yhteystieto.value}</Field>
                                                 </Columns>
                                                 : null}
-
                                         </div>
                                     ) }
                                 </Columns>
@@ -145,7 +144,8 @@ const HenkiloViewContactContent = React.createClass({
                         inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo'}
                 ))),
                 name: yhteystiedotRyhma.ryhmaKuvaus && _this.yhteystietotyypitKoodis.filter(kieli =>
-                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale]
+                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale],
+                readOnly: yhteystiedotRyhma.readOnly,
             };
             yhteystiedotRyhma.yhteystieto = YhteystietoFlatList.value.map(yhteystietoFlat => (
                 {

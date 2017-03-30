@@ -7,6 +7,36 @@ import locale from '../../configuration/locale'
 import dateformat from 'dateformat'
 
 const OppijaViewPage = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <div className="wrapper">
+                    {
+                        this._isUserContentLoading()
+                            ? this.L['LADATAAN']
+                            : <HenkiloViewUserContent {...this.props} readOnly={true} locale={locale} showPassive={false}
+                                                      basicInfo={this._createBasicInfo}
+                                                      basicInfo2={this._createBasicInfo2}
+                                                      loginInfo={this._createLoginInfo} />
+                    }
+                </div>
+                <div className="wrapper">
+                    {
+                        this._isContactContentLoading()
+                            ? this.L['LADATAAN']
+                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={locale} />
+                    }
+                </div>
+                <div className="wrapper">
+                    {
+                        this._isOrganisatiionContentLoading()
+                            ? this.L['LADATAAN']
+                            : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={locale} />
+                    }
+                </div>
+            </div>
+        )
+    },
     getInitialState: function () {
         this.L = this.props.l10n[locale];
         this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading
@@ -65,36 +95,6 @@ const OppijaViewPage = React.createClass({
         ];
         return {
         }
-    },
-    render: function() {
-        return (
-            <div>
-                <div className="wrapper">
-                    {
-                        this._isUserContentLoading()
-                            ? this.L['LADATAAN']
-                            : <HenkiloViewUserContent {...this.props} readOnly={true} locale={locale} showPassive={false}
-                        basicInfo={this._createBasicInfo}
-                                                      basicInfo2={this._createBasicInfo2}
-                                                      loginInfo={this._createLoginInfo} />
-                    }
-                </div>
-                <div className="wrapper">
-                    {
-                        this._isContactContentLoading()
-                            ? this.L['LADATAAN']
-                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={locale} />
-                    }
-                </div>
-                <div className="wrapper">
-                    {
-                        this._isOrganisatiionContentLoading()
-                            ? this.L['LADATAAN']
-                            : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={locale} />
-                    }
-                </div>
-            </div>
-        )
     },
 });
 
