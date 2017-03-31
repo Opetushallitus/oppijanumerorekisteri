@@ -13,6 +13,7 @@ const HenkiloViewContactContent = React.createClass({
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
+        editButtons: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -82,8 +83,7 @@ const HenkiloViewContactContent = React.createClass({
                         <Button big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <Button big action={this._discard}>{L['PERUUTA_LINKKI']}</Button>
-                        <Button confirm big action={this._update}>{L['TALLENNA_LINKKI']}</Button>
+                        {this.props.editButtons(this._discard, this._update)}
                     </div>
                 }
             </div>

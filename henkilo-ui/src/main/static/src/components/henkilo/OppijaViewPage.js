@@ -24,7 +24,8 @@ const OppijaViewPage = React.createClass({
                     {
                         this.props._isContactContentLoading()
                             ? this.props.L['LADATAAN']
-                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
+                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
+                                                         editButtons={this.props._editButtons} />
                     }
                 </div>
             </div>

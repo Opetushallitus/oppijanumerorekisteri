@@ -9,15 +9,17 @@ export default class Button extends React.Component {
         disabled: React.PropTypes.bool,
         href: React.PropTypes.string,
         confirm: React.PropTypes.bool,
-        big: React.PropTypes.bool
+        big: React.PropTypes.bool,
+        cancel: React.PropTypes.bool,
     };
 
     render() {
         const className = classNames({
             'oph-button': true,
-            'oph-button-primary': !this.props.confirm,
+            'oph-button-primary': !this.props.confirm && !this.props.cancel,
             'oph-button-confirm': this.props.confirm,
             'oph-button-big': this.props.big,
+            'oph-button-cancel': this.props.cancel,
             [`${this.props.className}`]: this.props.className
         });
 

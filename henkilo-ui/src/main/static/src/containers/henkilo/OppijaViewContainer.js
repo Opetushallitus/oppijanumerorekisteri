@@ -87,8 +87,8 @@ const OppijaViewContainer = React.createClass({
                                  normalLabel={this.L['PASSIVOI_LINKKI']} confirmLabel={this.L['PASSIVOI_LINKKI_CONFIRM']} />,
         ];
         this._editButtons = (discard, update) => [
-            <Button key="discard" big action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
-            <Button key="update" confirm big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
+            <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
+            <Button key="update" big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
         ];
         return {
             confirmPassivointi: false,
