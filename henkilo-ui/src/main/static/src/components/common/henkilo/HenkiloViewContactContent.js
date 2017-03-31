@@ -52,26 +52,26 @@ const HenkiloViewContactContent = React.createClass({
                             }
                         </div>
                         <div className="henkiloViewContent">
-                            {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
-                            <div key={idx}>
-                                <Columns columns={this.state.contactInfo.length}>
-                                    <h3>{yhteystiedotRyhmaFlat.name}</h3>
-                                    { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
-                                        <div key={idx2} id={yhteystietoFlat.label}>
-                                            { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
-                                                ? <Columns columns={2}>
-                                                    <span className="strong">{L[yhteystietoFlat.label]}</span>
-                                                    <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
-                                                           readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
-                                                        {yhteystietoFlat.value}
-                                                    </Field>
-                                                </Columns>
-                                                : null}
+                            <Columns columns={this.state.contactInfo.length}>
+                                {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
+                                        <div key={idx}>
+                                            <h3>{yhteystiedotRyhmaFlat.name}</h3>
+                                            { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
+                                                <div key={idx2} id={yhteystietoFlat.label}>
+                                                    { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
+                                                        ? <Columns columns={2}>
+                                                            <span className="strong">{L[yhteystietoFlat.label]}</span>
+                                                            <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
+                                                                   readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
+                                                                {yhteystietoFlat.value}
+                                                            </Field>
+                                                        </Columns>
+                                                        : null}
+                                                </div>
+                                            ) }
                                         </div>
-                                    ) }
-                                </Columns>
-                            </div>
-                            )}
+                                )}
+                            </Columns>
                         </div>
                     </div>
                 </Columns>
