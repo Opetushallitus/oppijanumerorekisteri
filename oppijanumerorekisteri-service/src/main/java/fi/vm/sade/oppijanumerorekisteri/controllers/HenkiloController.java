@@ -1,9 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @Api(tags = "Henkilot")
@@ -46,6 +49,20 @@ public class HenkiloController {
         this.permissionChecker = permissionChecker;
         this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
         this.yksilointiService = yksilointiService;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    public Slice<HenkiloHakuDto> list(
+            HenkiloCriteria criteria,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "20") int count,
+            @RequestParam(required = false) Optional<String> organisaatioOid) {
+        return henkiloService.list(criteria, page, count, organisaatioOid);
     }
 
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")

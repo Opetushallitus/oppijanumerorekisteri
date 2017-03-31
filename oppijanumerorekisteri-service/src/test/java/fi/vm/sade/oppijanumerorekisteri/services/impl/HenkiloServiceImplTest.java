@@ -1,11 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -30,10 +33,14 @@ import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toSet;
+import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -79,6 +86,76 @@ public class HenkiloServiceImplTest {
                 userDetailsHelper, kielisyysRepository, kansalaisuusRepository,
                 permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties,
                 kayttooikeusClient);
+    }
+
+    @Test
+    public void haeShouldReturnEmptySliceWhenEmptySallitutHenkiloOids() {
+        HenkiloCriteria criteria = new HenkiloCriteria();
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any())).thenReturn(KayttooikeudetDto.user(emptySet()));
+
+        Slice<HenkiloHakuDto> slice = impl.list(criteria, 1, 20, Optional.empty());
+
+        assertThat(slice.getContent()).isEmpty();
+        verifyZeroInteractions(henkiloJpaRepository);
+    }
+
+    @Test
+    public void haeShouldCreateSliceCorrectly() {
+        HenkiloCriteria criteria = new HenkiloCriteria();
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
+                .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
+        HenkiloHakuDto henkilo1 = HenkiloHakuDto.builder().oidHenkilo("1").build();
+        HenkiloHakuDto henkilo2 = HenkiloHakuDto.builder().oidHenkilo("2").build();
+        HenkiloHakuDto henkilo3 = HenkiloHakuDto.builder().oidHenkilo("3").build();
+        when(henkiloJpaRepository.findBy(any(), anyLong(), anyLong()))
+                .thenReturn(asList(henkilo1, henkilo2, henkilo3));
+
+        Slice<HenkiloHakuDto> slice;
+
+        slice = impl.list(criteria, 1, 3, Optional.of("organisaatio1"));
+        assertThat(slice.getContent()).containsExactly(henkilo1, henkilo2, henkilo3);
+        assertThat(slice.isLast()).isTrue();
+
+        slice = impl.list(criteria, 1, 2, Optional.of("organisaatio1"));
+        assertThat(slice.getContent()).containsExactly(henkilo1, henkilo2);
+        assertThat(slice.isLast()).isFalse();
+
+        slice = impl.list(criteria, 2, 3, Optional.of("organisaatio1"));
+        assertThat(slice.getContent()).containsExactly(henkilo1, henkilo2, henkilo3);
+        assertThat(slice.isLast()).isTrue();
+
+        slice = impl.list(criteria, 2, 1, Optional.of("organisaatio1"));
+        assertThat(slice.getContent()).containsExactly(henkilo1);
+        assertThat(slice.isLast()).isFalse();
+    }
+
+    @Test
+    public void haeShouldSearchByHenkiloOids() {
+        HenkiloCriteria criteria = new HenkiloCriteria();
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
+                .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
+
+        Slice<HenkiloHakuDto> slice = impl.list(criteria, 1, 20, Optional.of("organisaatio1"));
+
+        ArgumentCaptor<HenkiloCriteria> criteriaCaptor = ArgumentCaptor.forClass(HenkiloCriteria.class);
+        verify(henkiloJpaRepository).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
+        criteria = criteriaCaptor.getValue();
+        assertThat(criteria.getHenkiloOids()).containsExactlyInAnyOrder("henkilo1", "henkilo2", "henkilo3");
+    }
+
+    @Test
+    public void haeShouldFilterHenkiloOids() {
+        HenkiloCriteria criteria = new HenkiloCriteria();
+        criteria.setHenkiloOids(Stream.of("henkilo1", "henkilo3", "henkilo5").collect(toSet()));
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
+                .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
+
+        Slice<HenkiloHakuDto> slice = impl.list(criteria, 1, 20, Optional.of("organisaatio1"));
+
+        ArgumentCaptor<HenkiloCriteria> criteriaCaptor = ArgumentCaptor.forClass(HenkiloCriteria.class);
+        verify(henkiloJpaRepository).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
+        criteria = criteriaCaptor.getValue();
+        assertThat(criteria.getHenkiloOids()).containsExactlyInAnyOrder("henkilo1", "henkilo3");
     }
 
     @Test
