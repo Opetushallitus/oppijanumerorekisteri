@@ -50,54 +50,25 @@ const HenkiloViewUserContent = React.createClass({
                             <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>
                         </div>
                         <Columns columns={3} gap="10px">
-                            <div className="henkiloViewContent">
-                                {this.props.basicInfo().map((values, idx) =>
-                                !values.showOnlyOnWrite || !this.state.readOnly
-                                    ? <div key={idx} id={values.label}>
-                                        <Columns columns={2} className="labelValue">
-                                            <span className="oph-bold">{L[values.label]}</span>
-                                            <Field inputValue={values.inputValue} changeAction={!values.date ? this._updateModelField : this._updateDateField}
-                                                   readOnly={values.readOnly || this.state.readOnly} data={values.data}
-                                                   selectValue={values.selectValue} autoFocus={values.autoFocus}>
-                                                {values.value}
-                                            </Field>
-                                        </Columns>
+                            {
+                                [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()].map(info =>
+                                    <div className="henkiloViewContent">
+                                        {info.map((values, idx) =>
+                                            !values.showOnlyOnWrite || !this.state.readOnly
+                                                ? <div key={idx} id={values.label}>
+                                                <Columns columns={2} className="labelValue">
+                                                    <span className="oph-bold">{L[values.label]}</span>
+                                                    <Field {...values} changeAction={!values.date ? this._updateModelField : this._updateDateField}
+                                                           readOnly={values.readOnly || this.state.readOnly}>
+                                                        {values.value}
+                                                    </Field>
+                                                </Columns>
+                                            </div>
+                                                : null
+                                        )}
                                     </div>
-                                    : null
-                                )}
-                            </div>
-                            <div className="henkiloViewContent">
-                                {this.props.basicInfo2().map((values, idx) =>
-                                !values.showOnlyOnWrite || !this.state.readOnly
-                                    ? <div key={idx} id={values.label}>
-                                        <Columns columns={2} className="labelValue">
-                                            <span className="oph-bold">{L[values.label]}</span>
-                                            <Field inputValue={values.inputValue} changeAction={this._updateModelField}
-                                                   readOnly={values.readOnly || this.state.readOnly} data={values.data}
-                                                   selectValue={values.selectValue}>
-                                                {values.value}
-                                            </Field>
-                                        </Columns>
-                                    </div>
-                                    : null
-                                )}
-                            </div>
-                            <div className="henkiloViewContent">
-                                {this.props.loginInfo().map((values, idx) =>
-                                !values.showOnlyOnWrite || !this.state.readOnly
-                                    ? <div key={idx} id={values.label}>
-                                        <Columns columns={2} className="labelValue">
-                                            <span className="oph-bold">{L[values.label]}</span>
-                                            <Field inputValue={values.inputValue} changeAction={this._updateModelField}
-                                                   readOnly={values.readOnly || this.state.readOnly} data={values.data}
-                                                   selectValue={values.selectValue} password={values.password}>
-                                                {values.value}
-                                            </Field>
-                                        </Columns>
-                                    </div>
-                                    : null
-                                )}
-                            </div>
+                                )
+                            }
                         </Columns>
                     </div>
                 {this.state.readOnly
