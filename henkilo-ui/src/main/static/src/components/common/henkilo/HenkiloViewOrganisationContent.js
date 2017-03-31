@@ -1,7 +1,7 @@
 import './HenkiloViewOrganisationContent.css'
 import React from 'react'
 import Columns from 'react-columns'
-import Button from "../common/button/Button";
+import Button from "../button/Button";
 
 const HenkiloViewOrganisationContent = React.createClass({
     propTypes: {
@@ -33,8 +33,10 @@ const HenkiloViewOrganisationContent = React.createClass({
                         <div className="header">
                             <h2>{L['HENKILO_ORGANISAATIOT_OTSIKKO']}</h2>
                         </div>
-                        <input type="checkbox" onChange={() => this.setState({showPassive: !this.state.showPassive})} />
-                        <span> {L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
+                        <label className="oph-checkable" htmlFor="showPassive">
+                            <input id="showPassive" type="checkbox" className="oph-checkable-input" onChange={() => this.setState({showPassive: !this.state.showPassive})} />
+                            <span className="oph-checkable-text"> {L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
+                        </label>
                         <div className="henkiloViewContent">
                             {this.state.organisationInfo.map((values, idx) =>
                                 !values.passive || this.state.showPassive

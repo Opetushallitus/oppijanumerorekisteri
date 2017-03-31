@@ -1,12 +1,13 @@
-import './OppijaViewPage.css'
+import './VirkailijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
+import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 import locale from '../../configuration/locale'
 import dateformat from 'dateformat'
 import Button from "../common/button/Button";
 
-const OppijaViewPage = React.createClass({
+const VirkailijaViewPage = React.createClass({
     render: function() {
         return (
             <div>
@@ -29,18 +30,27 @@ const OppijaViewPage = React.createClass({
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={locale} />
                     }
                 </div>
+                <div className="wrapper">
+                    {
+                        this._isOrganisatiionContentLoading()
+                            ? this.L['LADATAAN']
+                            : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={locale} />
+                    }
+                </div>
             </div>
         )
     },
     getInitialState: function () {
         this.L = this.props.l10n[locale];
-        this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
+        this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading
+        || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading;
         this._isContactContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
+        this._isOrganisatiionContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
         this._createBasicInfo = () => [
-            {label: 'HENKILO_SUKUNIMI', value: this.props.henkilo.henkilo.sukunimi, inputValue: 'sukunimi', autoFocus: true},
-            {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet'},
+            {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet', autoFocus: true},
+            {label: 'HENKILO_SUKUNIMI', value: this.props.henkilo.henkilo.sukunimi, inputValue: 'sukunimi'},
             {label: 'HENKILO_SYNTYMAAIKA', inputValue: 'syntymaaika', date: true,
                 value: dateformat(new Date(this.props.henkilo.henkilo.syntymaaika), this.L['PVM_FORMAATTI']), },
             {label: 'HENKILO_HETU', value: this.props.henkilo.henkilo.hetu, inputValue: 'hetu'},
@@ -49,25 +59,30 @@ const OppijaViewPage = React.createClass({
 
         this._createBasicInfo2 = () => ([
             this.props.henkilo.henkilo.kansalaisuus && this.props.henkilo.henkilo.kansalaisuus.length
-                ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
-                ({
-                    label: 'HENKILO_KANSALAISUUS',
-                    data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
-                    value: this.props.koodisto.kansalaisuus.filter(kansalaisuus =>
-                    kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
-                    inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
-                    selectValue: values.kansalaisuusKoodi
-                })).reduce((a,b) => a.concat(b))
-                : { label: 'HENKILO_KANSALAISUUS',
+                ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) => ({label: 'HENKILO_KANSALAISUUS',
+                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+                value: this.props.koodisto.kansalaisuus.filter(kansalaisuus =>
+                kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
+                inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
+                selectValue: values.kansalaisuusKoodi
+            })).reduce((a,b) => a.concat(b))
+                : {label: 'HENKILO_KANSALAISUUS',
                 data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
-                value: null },
+                value: null},
+
             {label: 'HENKILO_AIDINKIELI',
                 data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'aidinkieli.kieliKoodi',
                 value: this.props.henkilo.henkilo.aidinkieli && this.props.koodisto.kieli.filter(kieli =>
                 kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][locale],
                 selectValue: this.props.henkilo.henkilo.aidinkieli && this.props.henkilo.henkilo.aidinkieli.kieliKoodi},
+            {label: 'HENKILO_SUKUPUOLI',
+                data: this.props.koodisto.sukupuoli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+                inputValue: 'sukupuoli',
+                value: this.props.henkilo.henkilo.sukupuoli && this.props.koodisto.sukupuoli.filter(sukupuoli =>
+                sukupuoli.value === this.props.henkilo.henkilo.sukupuoli)[0][locale],
+                selectValue: this.props.henkilo.henkilo.sukupuoli},
             {label: 'HENKILO_OPPIJANUMERO', value: this.props.henkilo.henkilo.oidHenkilo, inputValue: 'oidHenkilo'},
             {label: 'HENKILO_ASIOINTIKIELI',
                 data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
@@ -76,7 +91,11 @@ const OppijaViewPage = React.createClass({
                 kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][locale],
                 selectValue: this.props.henkilo.henkilo.asiointiKieli && this.props.henkilo.henkilo.asiointiKieli.kieliKoodi},
         ]);
-        this._createLoginInfo = () => [];
+        this._createLoginInfo = () => [
+            {label: 'HENKILO_KAYTTAJANIMI', value: this.props.henkilo.kayttajatieto.username, inputValue: 'kayttajanimi'},
+            {label: 'HENKILO_PASSWORD', value: null, showOnlyOnWrite: false, inputValue: 'password', password: true},
+            {label: 'HENKILO_PASSWORDAGAIN', value: null, showOnlyOnWrite: true, inputValue: 'passwordAgain', password: true},
+        ];
         this._readOnlyButtons = (edit) => [
             <Button key="edit" big action={edit}>{this.L['MUOKKAA_LINKKI']}</Button>,
             !this.state.confirmYksilointi
@@ -87,6 +106,7 @@ const OppijaViewPage = React.createClass({
             : !this.state.confirmPassivointi
                 ? <Button key="passivoi" big action={() => {this.setState({confirmPassivointi: true})}}>{this.L['PASSIVOI_LINKKI']}</Button>
                 : <Button key="passivoiConfirm" big confirm action={() => this.props.passivoiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}>{this.L['PASSIVOI_CONFIRM']}</Button>,
+            <Button key="haka" big action={() => {}}>{this.L['LISAA_HAKA_LINKKI']}</Button>,
         ];
         this._editButtons = (discard, update) => [
             <Button key="discard" big action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
@@ -99,4 +119,4 @@ const OppijaViewPage = React.createClass({
     },
 });
 
-export default OppijaViewPage;
+export default VirkailijaViewPage;

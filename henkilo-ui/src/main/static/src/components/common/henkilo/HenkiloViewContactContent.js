@@ -1,9 +1,9 @@
 import './HenkiloViewContactContent.css'
 import React from 'react'
 import Columns from 'react-columns'
-import Field from '../common/field/Field';
-import Button from "../common/button/Button";
-import Select2 from '../common/select/Select2';
+import Field from '../field/Field';
+import Button from "../button/Button";
+import Select2 from '../select/Select2';
 
 const HenkiloViewContactContent = React.createClass({
     propTypes: {

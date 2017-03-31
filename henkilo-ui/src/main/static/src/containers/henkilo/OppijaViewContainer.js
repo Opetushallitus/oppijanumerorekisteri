@@ -2,28 +2,25 @@ import React from 'react'
 import {connect} from 'react-redux';
 import OppijaViewPage from "../../components/henkilo/OppijaViewPage";
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
+    fetchHenkilo, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
     updatePassword, yksiloiHenkilo
 } from "../../actions/henkilo.actions";
 import {
-    fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto,
+    fetchKansalaisuusKoodisto, fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
-import {henkiloNavi} from "../../configuration/navigationconfigurations";
+import {oppijaNavi} from "../../configuration/navigationconfigurations";
 
 
 const OppijaViewContainer = React.createClass({
     componentDidMount: function() {
-        this.props.updateNavigation(henkiloNavi(this.props.oid), '/henkilo');
+        this.props.updateNavigation(oppijaNavi(this.props.oid), '/henkilo');
 
         this.props.fetchHenkilo(this.props.oid);
-        this.props.fetchHenkiloOrgs(this.props.oid);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
-        this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttajatieto(this.props.oid);
     },
     render: function() {
         return <OppijaViewPage {...this.props} />;
@@ -40,6 +37,6 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
-fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
+export default connect(mapStateToProps, {fetchHenkilo, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
+fetchKansalaisuusKoodisto, updateHenkiloAndRefetch, updatePassword, passivoiHenkilo,
     yksiloiHenkilo, updateKayttajatieto, updateNavigation})(OppijaViewContainer)

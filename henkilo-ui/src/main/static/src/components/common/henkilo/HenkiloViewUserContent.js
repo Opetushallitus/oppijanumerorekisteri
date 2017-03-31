@@ -2,7 +2,7 @@ import './HenkiloViewUserContent.css'
 import React from 'react'
 import Columns from 'react-columns'
 import dateformat from 'dateformat'
-import Field from '../common/field/Field';
+import Field from '../field/Field';
 
 const HenkiloViewUserContent = React.createClass({
     propTypes: {
