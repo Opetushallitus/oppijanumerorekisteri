@@ -4,7 +4,6 @@ import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 
 const OppijaViewPage = React.createClass({
-
     render: function() {
         return (
             <div>
@@ -25,13 +24,13 @@ const OppijaViewPage = React.createClass({
                         this.props._isContactContentLoading()
                             ? this.props.L['LADATAAN']
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
-                                                         editButtons={this.props._editButtons} />
+                                                         editButtons={this.props._editButtons}
+                                                         creatableYhteystietotyypit={this.props._creatableYhteystietotyypit}/>
                     }
                 </div>
             </div>
         )
     },
-
 });
 
 export default OppijaViewPage;

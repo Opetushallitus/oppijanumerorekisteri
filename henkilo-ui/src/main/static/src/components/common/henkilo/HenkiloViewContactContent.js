@@ -14,6 +14,7 @@ const HenkiloViewContactContent = React.createClass({
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
         editButtons: React.PropTypes.func.isRequired,
+        creatableYhteystietotyypit: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -25,8 +26,6 @@ const HenkiloViewContactContent = React.createClass({
             {label: 'YHTEYSTIETO_POSTINUMERO', value: null, inputValue: null},
             {label: 'YHTEYSTIETO_KUNTA', value: null, inputValue: null},
         ];
-        this.yhteystietotyypitKoodis = this.props.koodisto.yhteystietotyypit;
-
 
         return {
             readOnly: this.props.readOnly,
@@ -43,7 +42,7 @@ const HenkiloViewContactContent = React.createClass({
                         <div className="right">
                             { !this.state.readOnly
                                 ? <div>
-                                    <Select2 data={this.yhteystietotyypitKoodis.map((yhteystietotyyppi, idx) =>
+                                    <Select2 data={this.props.creatableYhteystietotyypit().map((yhteystietotyyppi, idx) =>
                                         ({id: yhteystietotyyppi.value, text:yhteystietotyyppi[this.props.locale]}))}
                                              onSelect={this._createYhteystiedotRyhma}
                                              options={{placeholder:L['HENKILO_LUOYHTEYSTIETO']}} />
@@ -147,7 +146,7 @@ const HenkiloViewContactContent = React.createClass({
                     && yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0].yhteystietoArvo,
                         inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo'}
                 ))),
-                name: yhteystiedotRyhma.ryhmaKuvaus && _this.yhteystietotyypitKoodis.filter(kieli =>
+                name: yhteystiedotRyhma.ryhmaKuvaus && _this.props.koodisto.yhteystietotyypit.filter(kieli =>
                 kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale],
                 readOnly: yhteystiedotRyhma.readOnly,
             };

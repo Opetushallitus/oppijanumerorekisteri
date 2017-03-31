@@ -51,11 +51,11 @@ const HenkiloViewUserContent = React.createClass({
                         </div>
                         <Columns columns={3} gap="10px">
                             {
-                                [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()].map(info =>
-                                    <div className="henkiloViewContent">
-                                        {info.map((values, idx) =>
+                                [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()].map((info, idx) =>
+                                    <div key={idx} className="henkiloViewContent">
+                                        {info.map((values, idx2) =>
                                             !values.showOnlyOnWrite || !this.state.readOnly
-                                                ? <div key={idx} id={values.label}>
+                                                ? <div key={idx2} id={values.label}>
                                                 <Columns columns={2} className="labelValue">
                                                     <span className="oph-bold">{L[values.label]}</span>
                                                     <Field {...values} changeAction={!values.date ? this._updateModelField : this._updateDateField}

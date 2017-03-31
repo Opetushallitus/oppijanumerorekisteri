@@ -26,10 +26,11 @@ const OppijaViewContainer = React.createClass({
         this.props.fetchKansalaisuusKoodisto();
     },
     render: function() {
-        const props = {...this.props, L: this.L, locale:locale, _isUserContentLoading: this._isUserContentLoading,
+        const props = {...this.props, L: this.L, locale: locale, _isUserContentLoading: this._isUserContentLoading,
             _isContactContentLoading: this._isContactContentLoading, _createBasicInfo: this._createBasicInfo,
             _createBasicInfo2: this._createBasicInfo2, _createLoginInfo: this._createLoginInfo,
-            _readOnlyButtons: this._readOnlyButtons, _editButtons: this._editButtons, };
+            _readOnlyButtons: this._readOnlyButtons, _editButtons: this._editButtons,
+            _creatableYhteystietotyypit: this._creatableYhteystietotyypit, };
         return <OppijaViewPage {...props} />;
     },
     getInitialState: function () {
@@ -90,6 +91,9 @@ const OppijaViewContainer = React.createClass({
             <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
             <Button key="update" big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
         ];
+        this._creatableYhteystietotyypit = () => this.props.koodisto.yhteystietotyypit
+            .filter(yhteystietotyyppi => ['yhteystietotyyppi4', 'yhteystietotyyppi10', 'yhteystietotyyppi5', 'yhteystietotyyppi9',
+            'yhteystietotyyppi12', 'yhteystietotyyppi18', 'yhteystietotyyppi11', 'yhteystietotyyppi8'].indexOf(yhteystietotyyppi.value) === -1);
         return {
             confirmPassivointi: false,
         }
