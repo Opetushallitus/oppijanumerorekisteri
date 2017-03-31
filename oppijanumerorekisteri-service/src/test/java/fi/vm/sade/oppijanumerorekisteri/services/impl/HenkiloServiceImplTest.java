@@ -95,7 +95,7 @@ public class HenkiloServiceImplTest {
 
         Slice<HenkiloHakuDto> slice = impl.list(criteria, 1, 20, Optional.empty());
 
-        assertThat(slice.getContent()).isEmpty();
+        assertThat(slice.getResults()).isEmpty();
         verifyZeroInteractions(henkiloJpaRepository);
     }
 
@@ -113,19 +113,19 @@ public class HenkiloServiceImplTest {
         Slice<HenkiloHakuDto> slice;
 
         slice = impl.list(criteria, 1, 3, Optional.of("organisaatio1"));
-        assertThat(slice.getContent()).containsExactly(henkilo1, henkilo2, henkilo3);
+        assertThat(slice.getResults()).containsExactly(henkilo1, henkilo2, henkilo3);
         assertThat(slice.isLast()).isTrue();
 
         slice = impl.list(criteria, 1, 2, Optional.of("organisaatio1"));
-        assertThat(slice.getContent()).containsExactly(henkilo1, henkilo2);
+        assertThat(slice.getResults()).containsExactly(henkilo1, henkilo2);
         assertThat(slice.isLast()).isFalse();
 
         slice = impl.list(criteria, 2, 3, Optional.of("organisaatio1"));
-        assertThat(slice.getContent()).containsExactly(henkilo1, henkilo2, henkilo3);
+        assertThat(slice.getResults()).containsExactly(henkilo1, henkilo2, henkilo3);
         assertThat(slice.isLast()).isTrue();
 
         slice = impl.list(criteria, 2, 1, Optional.of("organisaatio1"));
-        assertThat(slice.getContent()).containsExactly(henkilo1);
+        assertThat(slice.getResults()).containsExactly(henkilo1);
         assertThat(slice.isLast()).isFalse();
     }
 
