@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Kevyempi malli sivutukselle. Sisältää varsinaisen {@link #content datan}
+ * Kevyempi malli sivutukselle. Sisältää varsinaisen {@link #results datan}
  * lisäksi vain onko sivu {@link #last viimeinen}, jonka avulla pystyy
  * läpikäymään tiedot läpi.
  *
@@ -25,15 +25,15 @@ public class Slice<T> implements Iterable<T> {
     private final int size;
     private final int numberOfElements;
     private final boolean last;
-    private final List<T> content;
+    private final List<T> results;
 
-    public static <T> Slice of(int number, int count, List<T> content) {
-        requireNonNull(content);
-        if (content.size() > count) {
-            List<T> slice = content.subList(0, count);
+    public static <T> Slice of(int number, int count, List<T> results) {
+        requireNonNull(results);
+        if (results.size() > count) {
+            List<T> slice = results.subList(0, count);
             return new Slice(number, count, slice.size(), false, slice);
         } else {
-            return new Slice(number, count, content.size(), true, content);
+            return new Slice(number, count, results.size(), true, results);
         }
     }
 
@@ -43,7 +43,7 @@ public class Slice<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return content.iterator();
+        return results.iterator();
     }
 
 }
