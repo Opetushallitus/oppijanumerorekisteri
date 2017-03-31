@@ -41,14 +41,14 @@ const HenkiloViewOrganisationContent = React.createClass({
                             {this.state.organisationInfo.map((values, idx) =>
                                 !values.passive || this.state.showPassive
                                     ? <div key={idx}>
-                                        <div><span className="strong">{values.name} ({values.typesFlat})</span></div>
+                                        <div><span className="oph-bold">{values.name} ({values.typesFlat})</span></div>
                                         <div>
-                                            <span className="strong">{L['HENKILO_ORGTUNNISTE']}:</span>
+                                            <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <span>{values.id}</span>
                                         </div>
                                         <div>
-                                            <span className="strong">{L['HENKILO_TEHTAVANIMIKE']}:</span>
+                                            <span className="oph-bold">{L['HENKILO_TEHTAVANIMIKE']}:</span>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <span>{values.role}</span>
                                         </div>

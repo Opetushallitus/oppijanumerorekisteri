@@ -68,7 +68,7 @@ const OppijaViewContainer = React.createClass({
                 value: this.props.henkilo.henkilo.aidinkieli && this.props.koodisto.kieli.filter(kieli =>
                 kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][locale],
                 selectValue: this.props.henkilo.henkilo.aidinkieli && this.props.henkilo.henkilo.aidinkieli.kieliKoodi},
-            {label: 'HENKILO_OPPIJANUMERO', value: this.props.henkilo.henkilo.oidHenkilo, inputValue: 'oidHenkilo'},
+            {label: 'HENKILO_OPPIJANUMERO', value: this.props.henkilo.henkilo.oidHenkilo, inputValue: 'oidHenkilo', readOnly: true,},
             {label: 'HENKILO_ASIOINTIKIELI',
                 data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'asiointiKieli.kieliKoodi',

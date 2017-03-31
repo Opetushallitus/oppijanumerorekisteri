@@ -51,17 +51,17 @@ const HenkiloViewContactContent = React.createClass({
                             }
                         </div>
                         <div className="header">
-                            <p className="oph-h2">{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
+                            <p className="oph-h2 oph-bold">{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
                         </div>
                         <div className="henkiloViewContent">
                             <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
                                 {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
                                         <div key={idx}>
-                                            <p className="oph-h3">{yhteystiedotRyhmaFlat.name}</p>
+                                            <p className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name}</p>
                                             { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
                                                 <div key={idx2} id={yhteystietoFlat.label}>
                                                     { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
-                                                        ? <Columns columns={2}>
+                                                        ? <Columns columns={2} className="labelValue">
                                                             <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
                                                             <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
                                                                    readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>

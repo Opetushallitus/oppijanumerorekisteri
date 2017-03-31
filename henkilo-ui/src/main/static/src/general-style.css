@@ -228,6 +228,16 @@ select option {
     color: #00526C;
 }
 
-.strong {
-    font-weight: bold;
+.labelValue {
+    padding: 5px 0;
 }
+
+.header {
+    margin-bottom: 20px;
+}
+
+.midHeader {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+

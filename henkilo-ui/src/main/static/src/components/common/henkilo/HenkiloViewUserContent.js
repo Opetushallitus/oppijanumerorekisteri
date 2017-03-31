@@ -47,17 +47,17 @@ const HenkiloViewUserContent = React.createClass({
             <div className="henkiloViewUserContentWrapper">
                     <div>
                         <div className="header">
-                            <h2>{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</h2>
+                            <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>
                         </div>
-                        <Columns columns={3}>
+                        <Columns columns={3} gap="10px">
                             <div className="henkiloViewContent">
                                 {this.props.basicInfo().map((values, idx) =>
                                 !values.showOnlyOnWrite || !this.state.readOnly
                                     ? <div key={idx} id={values.label}>
-                                        <Columns columns={2}>
-                                            <span className="strong">{L[values.label]}</span>
+                                        <Columns columns={2} className="labelValue">
+                                            <span className="oph-bold">{L[values.label]}</span>
                                             <Field inputValue={values.inputValue} changeAction={!values.date ? this._updateModelField : this._updateDateField}
-                                                   readOnly={this.state.readOnly} data={values.data}
+                                                   readOnly={values.readOnly || this.state.readOnly} data={values.data}
                                                    selectValue={values.selectValue} autoFocus={values.autoFocus}>
                                                 {values.value}
                                             </Field>
@@ -70,10 +70,10 @@ const HenkiloViewUserContent = React.createClass({
                                 {this.props.basicInfo2().map((values, idx) =>
                                 !values.showOnlyOnWrite || !this.state.readOnly
                                     ? <div key={idx} id={values.label}>
-                                        <Columns columns={2}>
-                                            <span className="strong">{L[values.label]}</span>
+                                        <Columns columns={2} className="labelValue">
+                                            <span className="oph-bold">{L[values.label]}</span>
                                             <Field inputValue={values.inputValue} changeAction={this._updateModelField}
-                                                   readOnly={this.state.readOnly} data={values.data}
+                                                   readOnly={values.readOnly || this.state.readOnly} data={values.data}
                                                    selectValue={values.selectValue}>
                                                 {values.value}
                                             </Field>
@@ -86,10 +86,10 @@ const HenkiloViewUserContent = React.createClass({
                                 {this.props.loginInfo().map((values, idx) =>
                                 !values.showOnlyOnWrite || !this.state.readOnly
                                     ? <div key={idx} id={values.label}>
-                                        <Columns columns={2}>
-                                            <span className="strong">{L[values.label]}</span>
+                                        <Columns columns={2} className="labelValue">
+                                            <span className="oph-bold">{L[values.label]}</span>
                                             <Field inputValue={values.inputValue} changeAction={this._updateModelField}
-                                                   readOnly={this.state.readOnly} data={values.data}
+                                                   readOnly={values.readOnly || this.state.readOnly} data={values.data}
                                                    selectValue={values.selectValue} password={values.password}>
                                                 {values.value}
                                             </Field>
