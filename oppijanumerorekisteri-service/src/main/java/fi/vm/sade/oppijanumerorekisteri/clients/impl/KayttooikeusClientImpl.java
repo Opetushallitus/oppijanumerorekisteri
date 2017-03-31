@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -56,6 +58,31 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
     public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException {
         String url = this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, kasittelijaOid);
         cachingRestClient.delete(url);
+    }
+
+    @Override
+    public KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid) {
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid);
+        return getHenkiloKayttooikeudetByUrl(url);
+    }
+
+    @Override
+    public KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, String organisaatioOid) {
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut-by-organisaatio", henkiloOid, organisaatioOid);
+        return getHenkiloKayttooikeudetByUrl(url);
+    }
+
+    private KayttooikeudetDto getHenkiloKayttooikeudetByUrl(String url) {
+        try {
+            String json = cachingRestClient.getAsString(url);
+            KayttooikeudetDto kayttooikeudet = objectMapper.readValue(json, KayttooikeudetDto.class);
+            if (!kayttooikeudet.isAdmin() && kayttooikeudet.getOids() == null) {
+                throw new DataInconsistencyException("Käyttöoikeuspalvelu palautti epäkonsistenttia tietoa");
+            }
+            return kayttooikeudet;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 }

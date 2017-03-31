@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 
 import java.io.IOException;
@@ -12,4 +12,6 @@ public interface KayttooikeusClient {
                                       ExternalPermissionService externalPermissionService, Set<String> callingUserRoles)
             throws IOException;
     void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException;
+    KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid);
+    KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, String organisaatioOid);
 }

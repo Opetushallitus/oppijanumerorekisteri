@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -16,6 +17,17 @@ import java.util.Optional;
 // High speed repository for jpa queries with querydsl.
 @Repository
 public interface HenkiloJpaRepository {
+
+    /**
+     * Yleiskäyttöinen henkilöhaku.
+     *
+     * @param criteria hakukriteerit
+     * @param limit alkioiden maksimimäärä
+     * @param offset sivutuksen offset
+     * @return henkilot
+     */
+    List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset);
+
     Optional<String> findHetuByOid(String henkiloOid);
 
     Optional<String> findOidByHetu(String hetu);
