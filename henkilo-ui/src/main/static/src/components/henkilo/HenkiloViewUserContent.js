@@ -3,7 +3,6 @@ import React from 'react'
 import Columns from 'react-columns'
 import dateformat from 'dateformat'
 import Field from '../common/field/Field';
-import Button from "../common/button/Button";
 
 const HenkiloViewUserContent = React.createClass({
     propTypes: {
@@ -28,6 +27,8 @@ const HenkiloViewUserContent = React.createClass({
         basicInfo: React.PropTypes.func.isRequired,
         basicInfo2: React.PropTypes.func.isRequired,
         loginInfo: React.PropTypes.func.isRequired,
+        readOnlyButtons: React.PropTypes.func.isRequired,
+        editButtons: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -38,9 +39,6 @@ const HenkiloViewUserContent = React.createClass({
         return {
             readOnly: this.props.readOnly,
             showPassive: false,
-            confirmPassivointi: false,
-            confirmYksilointi: false,
-
         }
     },
     render: function() {
@@ -104,22 +102,10 @@ const HenkiloViewUserContent = React.createClass({
                     </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
-                        { !this.state.confirmYksilointi
-                            ? <Button big action={() => {this.setState({confirmYksilointi: true})}}>{L['YKSILOI_LINKKI']}</Button>
-                            : <Button big confirm action={this._yksiloi}>{L['YKSILOI_CONFIRM']}</Button>
-                        }
-                        { this.henkiloUpdate.passivoitu
-                            ? <Button big disabled action={() => {}}>{L['PASSIVOI_PASSIVOITU']}</Button>
-                            : !this.state.confirmPassivointi
-                                ? <Button big action={() => {this.setState({confirmPassivointi: true})}}>{L['PASSIVOI_LINKKI']}</Button>
-                                : <Button big confirm action={this._passivoi}>{L['PASSIVOI_CONFIRM']}</Button>
-                        }
-                        <Button big action={() => {}}>{L['LISAA_HAKA_LINKKI']}</Button>
+                        {this.props.readOnlyButtons(this._edit)}
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <Button big action={this._discard}>{L['PERUUTA_LINKKI']}</Button>
-                        <Button confirm big action={this._update}>{L['TALLENNA_LINKKI']}</Button>
+                        {this.props.editButtons(this._discard, this._update)}
                     </div>
                 }
             </div>
@@ -149,12 +135,6 @@ const HenkiloViewUserContent = React.createClass({
             this.props.updateKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});
-    },
-    _passivoi: function () {
-        this.props.passivoiHenkilo(this.henkiloUpdate.oidHenkilo);
-    },
-    _yksiloi: function () {
-        this.props.yksiloiHenkilo(this.henkiloUpdate.oidHenkilo);
     },
     _updateModelField: function (event) {
         const value = event.target.value;

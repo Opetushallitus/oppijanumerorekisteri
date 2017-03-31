@@ -5,6 +5,7 @@ import HenkiloViewContactContent from './HenkiloViewContactContent'
 import HenkiloViewOrganisationContent from './HenkiloViewOrganisationContent'
 import locale from '../../configuration/locale'
 import dateformat from 'dateformat'
+import Button from "../common/button/Button";
 
 const OppijaViewPage = React.createClass({
     render: function() {
@@ -17,7 +18,9 @@ const OppijaViewPage = React.createClass({
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={locale} showPassive={false}
                                                       basicInfo={this._createBasicInfo}
                                                       basicInfo2={this._createBasicInfo2}
-                                                      loginInfo={this._createLoginInfo} />
+                                                      loginInfo={this._createLoginInfo}
+                                                      readOnlyButtons={this._readOnlyButtons}
+                                                      editButtons={this._editButtons} />
                     }
                 </div>
                 <div className="wrapper">
@@ -57,35 +60,35 @@ const OppijaViewPage = React.createClass({
         this._createBasicInfo2 = () => ([
             this.props.henkilo.henkilo.kansalaisuus && this.props.henkilo.henkilo.kansalaisuus.length
                 ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) => ({label: 'HENKILO_KANSALAISUUS',
-                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 value: this.props.koodisto.kansalaisuus.filter(kansalaisuus =>
-                kansalaisuus.value === values.kansalaisuusKoodi)[0][this.props.locale],
+                kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
                 inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
                 selectValue: values.kansalaisuusKoodi
             })).reduce((a,b) => a.concat(b))
                 : {label: 'HENKILO_KANSALAISUUS',
-                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
                 value: null},
 
             {label: 'HENKILO_AIDINKIELI',
-                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'aidinkieli.kieliKoodi',
                 value: this.props.henkilo.henkilo.aidinkieli && this.props.koodisto.kieli.filter(kieli =>
-                kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][this.props.locale],
+                kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][locale],
                 selectValue: this.props.henkilo.henkilo.aidinkieli && this.props.henkilo.henkilo.aidinkieli.kieliKoodi},
             {label: 'HENKILO_SUKUPUOLI',
-                data: this.props.koodisto.sukupuoli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.sukupuoli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'sukupuoli',
                 value: this.props.henkilo.henkilo.sukupuoli && this.props.koodisto.sukupuoli.filter(sukupuoli =>
-                sukupuoli.value === this.props.henkilo.henkilo.sukupuoli)[0][this.props.locale],
+                sukupuoli.value === this.props.henkilo.henkilo.sukupuoli)[0][locale],
                 selectValue: this.props.henkilo.henkilo.sukupuoli},
             {label: 'HENKILO_OPPIJANUMERO', value: this.props.henkilo.henkilo.oidHenkilo, inputValue: 'oidHenkilo'},
             {label: 'HENKILO_ASIOINTIKIELI',
-                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
                 inputValue: 'asiointiKieli.kieliKoodi',
                 value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli.filter(kieli =>
-                kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][this.props.locale],
+                kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][locale],
                 selectValue: this.props.henkilo.henkilo.asiointiKieli && this.props.henkilo.henkilo.asiointiKieli.kieliKoodi},
         ]);
         this._createLoginInfo = () => [
@@ -93,7 +96,25 @@ const OppijaViewPage = React.createClass({
             {label: 'HENKILO_PASSWORD', value: null, showOnlyOnWrite: false, inputValue: 'password', password: true},
             {label: 'HENKILO_PASSWORDAGAIN', value: null, showOnlyOnWrite: true, inputValue: 'passwordAgain', password: true},
         ];
+        this._readOnlyButtons = (edit) => [
+            <Button key="edit" big action={edit}>{this.L['MUOKKAA_LINKKI']}</Button>,
+            !this.state.confirmYksilointi
+                ? <Button key="yksilointi" big action={() => {this.setState({confirmYksilointi: true})}}>{this.L['YKSILOI_LINKKI']}</Button>
+                : <Button key="yksilointiConfirm" big confirm action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}>{this.L['YKSILOI_CONFIRM']}</Button>,
+            this.props.henkilo.henkilo.passivoitu
+            ? <Button key="passivoi" big disabled action={() => {}}>{this.L['PASSIVOI_PASSIVOITU']}</Button>
+            : !this.state.confirmPassivointi
+                ? <Button key="passivoi" big action={() => {this.setState({confirmPassivointi: true})}}>{this.L['PASSIVOI_LINKKI']}</Button>
+                : <Button key="passivoiConfirm" big confirm action={() => this.props.passivoiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}>{this.L['PASSIVOI_CONFIRM']}</Button>,
+            <Button key="haka" big action={() => {}}>{this.L['LISAA_HAKA_LINKKI']}</Button>,
+        ];
+        this._editButtons = (discard, update) => [
+            <Button key="discard" big action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
+            <Button key="update" confirm big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
+        ];
         return {
+            confirmPassivointi: false,
+            confirmYksilointi: false,
         }
     },
 });

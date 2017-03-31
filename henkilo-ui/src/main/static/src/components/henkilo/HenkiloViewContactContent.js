@@ -52,17 +52,19 @@ const HenkiloViewContactContent = React.createClass({
                             }
                         </div>
                         <div className="henkiloViewContent">
-                            {this.state.contactInfo.map((yhteystiedotRyhma, idx) =>
+                            {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
                             <div key={idx}>
                                 <Columns columns={this.state.contactInfo.length}>
-                                    <h3>{yhteystiedotRyhma.name}</h3>
-                                    { yhteystiedotRyhma.value.map((yhteystieto, idx2) =>
-                                        <div key={idx2} id={yhteystieto.label}>
-                                            { (!this.state.readOnly && !yhteystiedotRyhma.readOnly) || yhteystieto.value
+                                    <h3>{yhteystiedotRyhmaFlat.name}</h3>
+                                    { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
+                                        <div key={idx2} id={yhteystietoFlat.label}>
+                                            { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
                                                 ? <Columns columns={2}>
-                                                    <span className="strong">{L[yhteystieto.label]}</span>
-                                                    <Field inputValue={yhteystieto.inputValue} changeAction={this._updateModelField}
-                                                           readOnly={yhteystiedotRyhma.readOnly || this.state.readOnly}>{yhteystieto.value}</Field>
+                                                    <span className="strong">{L[yhteystietoFlat.label]}</span>
+                                                    <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
+                                                           readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
+                                                        {yhteystietoFlat.value}
+                                                    </Field>
                                                 </Columns>
                                                 : null}
                                         </div>
