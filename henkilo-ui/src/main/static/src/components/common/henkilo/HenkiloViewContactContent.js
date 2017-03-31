@@ -39,8 +39,7 @@ const HenkiloViewContactContent = React.createClass({
             <div className="henkiloViewUserContentWrapper">
                 <Columns columns={1}>
                     <div>
-                        <div className="header">
-                            <h2>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
+                        <div className="right">
                             { !this.state.readOnly
                                 ? <div>
                                     <Select2 data={this.yhteystietotyypitKoodis.map((yhteystietotyyppi, idx) =>
@@ -51,16 +50,19 @@ const HenkiloViewContactContent = React.createClass({
                                 : null
                             }
                         </div>
+                        <div className="header">
+                            <p className="oph-h2">{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
+                        </div>
                         <div className="henkiloViewContent">
-                            <Columns columns={this.state.contactInfo.length}>
+                            <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
                                 {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
                                         <div key={idx}>
-                                            <h3>{yhteystiedotRyhmaFlat.name}</h3>
+                                            <p className="oph-h3">{yhteystiedotRyhmaFlat.name}</p>
                                             { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
                                                 <div key={idx2} id={yhteystietoFlat.label}>
                                                     { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
                                                         ? <Columns columns={2}>
-                                                            <span className="strong">{L[yhteystietoFlat.label]}</span>
+                                                            <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
                                                             <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
                                                                    readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
                                                                 {yhteystietoFlat.value}
