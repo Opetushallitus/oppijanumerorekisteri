@@ -17,6 +17,7 @@ import java.util.Set;
 public class HenkiloCriteria {
 
     private Set<String> henkiloOids;
+    private String hetu;
     private HenkiloTyyppi tyyppi;
     private Boolean passivoitu;
     private Boolean duplikaatti;
@@ -28,6 +29,9 @@ public class HenkiloCriteria {
                 return Expressions.FALSE;
             }
             condition = condition.and(henkilo.oidHenkilo.in(henkiloOids));
+        }
+        if (hetu != null) {
+            condition = condition.and(henkilo.hetu.eq(hetu));
         }
         if (tyyppi != null) {
             condition = condition.and(henkilo.henkiloTyyppi.eq(tyyppi));
