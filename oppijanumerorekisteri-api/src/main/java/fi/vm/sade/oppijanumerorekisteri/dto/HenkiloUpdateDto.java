@@ -26,7 +26,6 @@ public class HenkiloUpdateDto {
 
     private String sukunimi;
 
-    @Size(min = 1)
     @ValidateHetu
     private String hetu;
 
