@@ -20,7 +20,8 @@ const Field = React.createClass({
     render: function() {
         const className = classNames({'field': true,
             [`${this.props.className}`]: this.props.className,
-            'readonly': this.props.readOnly});
+            'readOnly': this.props.readOnly,
+            'oph-input': !this.props.readOnly && !this.props.data});
         const type = {type: this.props.password ? 'password' : false};
         const autoFocus = this.props.autoFocus;
         return (

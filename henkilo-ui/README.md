@@ -25,6 +25,8 @@
       baseUrl: http://localhost:<port>
     koodisto:
       baseUrl: http://localhost:<port>
+    oppijanumerorekisteri:
+      baseUrl: http://localhost:<port>
   ```
   * Näihin voi myös laittaa integraatiopalvelimen osoitteen kehittäjän tarpeista riippuen
   * Jos käytät kirjautumista vaativia integraatiopalvelimen rajapintoja muista käydä kirjautumassa sinne ja tarvittaessa avaa dev konsolissa näkyvät linkit erikseen ennen sivun uudelleenpäivitystä!

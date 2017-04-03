@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
+import AdminViewPage from "../../components/henkilo/AdminViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
     updatePassword, yksiloiHenkilo
@@ -10,12 +10,12 @@ import {
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
-import {henkiloNavi} from "../../configuration/navigationconfigurations";
+import {adminNavi} from "../../configuration/navigationconfigurations";
 
 
-const HenkiloViewContainer = React.createClass({
+const AdminViewContainer = React.createClass({
     componentDidMount: function() {
-        this.props.updateNavigation(henkiloNavi(this.props.oid), '/henkilo');
+        this.props.updateNavigation(adminNavi(this.props.oid), '/henkilo');
 
         this.props.fetchHenkilo(this.props.oid);
         this.props.fetchHenkiloOrgs(this.props.oid);
@@ -26,7 +26,7 @@ const HenkiloViewContainer = React.createClass({
         this.props.fetchKayttajatieto(this.props.oid);
     },
     render: function() {
-        return <HenkiloViewPage {...this.props} />;
+        return <AdminViewPage {...this.props} />;
     }
 });
 
@@ -42,4 +42,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(HenkiloViewContainer)
+    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(AdminViewContainer)

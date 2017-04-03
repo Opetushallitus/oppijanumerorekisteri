@@ -16,8 +16,7 @@ fieldset label {
 }
 
 fieldset input {
-    margin: 0px;
-    margin-top: 10px;
+    margin: 10px 0 0;
 }
 
 fieldset input, fieldset select {
@@ -63,7 +62,7 @@ label.required::after{
 .mainContainer {
     margin-top: 10px;
     margin-left: 1%;
-    margin-right: 1%;
+    margin-right: 2%;
     position: relative;
     text-align: left;
 }
@@ -76,31 +75,12 @@ label.required::after{
     margin-bottom: 40px;
 }
 
-.header {
-    font-size: 0.6em;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
 .clickable {
     cursor: pointer;
 }
 
 .clear {
     clear: both;
-}
-
-.appFooter {
-    clear: both;
-    margin-top: 40px;
-    border-top: 1px solid #AEAEAE;
-    padding: 20px;
-}
-
-.appFooter .build {
-    float:right;
-    font-size: 0.65em;
-    color: #AEAEAE;
 }
 
 .is-error {
@@ -139,8 +119,7 @@ label.required::after{
     border: 1px solid #E09191;
     border-radius: 2px;
     color: #2B2B2B;
-    margin: 10px;
-    margin-bottom: 50px;
+    margin: 10px 10px 50px;
 }
 
 .mainContent {
@@ -161,28 +140,4 @@ body {
 
 hr {
     background: #AEAEAE;
-}
-
-h1 {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 32px;
-    color: #2A2A2A;
-    line-height: 19px;
-    font-weight: 600;
-}
-
-h2 {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 24px;
-    color: #2A2A2A;
-    line-height: 19px;
-    font-weight: 600;
-}
-
-h3 {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    color: #2A2A2A;
-    line-height: 19px;
-    font-weight: 600;
 }

@@ -1,18 +1,20 @@
 import './HenkiloViewContactContent.css'
 import React from 'react'
 import Columns from 'react-columns'
-import Field from '../common/field/Field';
-import Button from "../common/button/Button";
-import Select2 from '../common/select/Select2';
+import Field from '../field/Field';
+import Button from "../button/Button";
+import Select2 from '../select/Select2';
 
 const HenkiloViewContactContent = React.createClass({
     propTypes: {
         l10n: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.object.isRequired,
+        henkilo: React.PropTypes.shape({henkilo: React.PropTypes.object.isRequired,}).isRequired,
         readOnly: React.PropTypes.bool.isRequired,
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
+        editButtons: React.PropTypes.func.isRequired,
+        creatableYhteystietotyypit: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         this.henkiloUpdate = this.props.henkilo.henkilo;
@@ -24,8 +26,6 @@ const HenkiloViewContactContent = React.createClass({
             {label: 'YHTEYSTIETO_POSTINUMERO', value: null, inputValue: null},
             {label: 'YHTEYSTIETO_KUNTA', value: null, inputValue: null},
         ];
-        this.yhteystietotyypitKoodis = this.props.koodisto.yhteystietotyypit;
-
 
         return {
             readOnly: this.props.readOnly,
@@ -39,11 +39,10 @@ const HenkiloViewContactContent = React.createClass({
             <div className="henkiloViewUserContentWrapper">
                 <Columns columns={1}>
                     <div>
-                        <div className="header">
-                            <h2>{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</h2>
+                        <div className="right">
                             { !this.state.readOnly
                                 ? <div>
-                                    <Select2 data={this.yhteystietotyypitKoodis.map((yhteystietotyyppi, idx) =>
+                                    <Select2 data={this.props.creatableYhteystietotyypit().map((yhteystietotyyppi, idx) =>
                                         ({id: yhteystietotyyppi.value, text:yhteystietotyyppi[this.props.locale]}))}
                                              onSelect={this._createYhteystiedotRyhma}
                                              options={{placeholder:L['HENKILO_LUOYHTEYSTIETO']}} />
@@ -51,26 +50,30 @@ const HenkiloViewContactContent = React.createClass({
                                 : null
                             }
                         </div>
+                        <div className="header">
+                            <p className="oph-h2 oph-bold">{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
+                        </div>
                         <div className="henkiloViewContent">
-                            {this.state.contactInfo.map((yhteystiedotRyhma, idx) =>
-                            <div key={idx}>
-                                <Columns columns={this.state.contactInfo.length}>
-                                    <h3>{yhteystiedotRyhma.name}</h3>
-                                    { yhteystiedotRyhma.value.map((yhteystieto, idx2) =>
-                                        <div key={idx2} id={yhteystieto.label}>
-                                            { !this.state.readOnly || yhteystieto.value
-                                                ? <Columns columns={2}>
-                                                    <span className="strong">{L[yhteystieto.label]}</span>
-                                                    <Field inputValue={yhteystieto.inputValue} changeAction={this._updateModelField}
-                                                           readOnly={this.state.readOnly}>{yhteystieto.value}</Field>
-                                                </Columns>
-                                                : null}
-
+                            <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
+                                {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
+                                        <div key={idx}>
+                                            <p className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name}</p>
+                                            { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
+                                                <div key={idx2} id={yhteystietoFlat.label}>
+                                                    { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
+                                                        ? <Columns columns={2} className="labelValue">
+                                                            <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
+                                                            <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
+                                                                   readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
+                                                                {yhteystietoFlat.value}
+                                                            </Field>
+                                                        </Columns>
+                                                        : null}
+                                                </div>
+                                            ) }
                                         </div>
-                                    ) }
-                                </Columns>
-                            </div>
-                            )}
+                                )}
+                            </Columns>
                         </div>
                     </div>
                 </Columns>
@@ -79,8 +82,7 @@ const HenkiloViewContactContent = React.createClass({
                         <Button big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <Button big action={this._discard}>{L['PERUUTA_LINKKI']}</Button>
-                        <Button confirm big action={this._update}>{L['TALLENNA_LINKKI']}</Button>
+                        {this.props.editButtons(this._discard, this._update)}
                     </div>
                 }
             </div>
@@ -144,8 +146,9 @@ const HenkiloViewContactContent = React.createClass({
                     && yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0].yhteystietoArvo,
                         inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo'}
                 ))),
-                name: yhteystiedotRyhma.ryhmaKuvaus && _this.yhteystietotyypitKoodis.filter(kieli =>
-                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale]
+                name: yhteystiedotRyhma.ryhmaKuvaus && _this.props.koodisto.yhteystietotyypit.filter(kieli =>
+                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale],
+                readOnly: yhteystiedotRyhma.readOnly,
             };
             yhteystiedotRyhma.yhteystieto = YhteystietoFlatList.value.map(yhteystietoFlat => (
                 {
