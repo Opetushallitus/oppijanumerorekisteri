@@ -8,24 +8,27 @@ const OppijaViewPage = React.createClass({
         return (
             <div>
                 <div className="wrapper">
+                    <div>
+                        {this.props.createNotifications(1)}
+                    </div>
                     {
-                        this.props._isUserContentLoading()
+                        this.props.isUserContentLoading()
                             ? this.props.L['LADATAAN']
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
-                                                      basicInfo={this.props._createBasicInfo}
-                                                      basicInfo2={this.props._createBasicInfo2}
-                                                      loginInfo={this.props._createLoginInfo}
-                                                      readOnlyButtons={this.props._readOnlyButtons}
-                                                      editButtons={this.props._editButtons} />
+                                                      basicInfo={this.props.createBasicInfo}
+                                                      basicInfo2={this.props.createBasicInfo2}
+                                                      loginInfo={this.props.createLoginInfo}
+                                                      readOnlyButtons={this.props.readOnlyButtons}
+                                                      editButtons={this.props.editButtons} />
                     }
                 </div>
                 <div className="wrapper">
                     {
-                        this.props._isContactContentLoading()
+                        this.props.isContactContentLoading()
                             ? this.props.L['LADATAAN']
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
-                                                         editButtons={this.props._editButtons}
-                                                         creatableYhteystietotyypit={this.props._creatableYhteystietotyypit}/>
+                                                         editButtons={this.props.editButtons}
+                                                         creatableYhteystietotyypit={this.props.creatableYhteystietotyypit}/>
                     }
                 </div>
             </div>
