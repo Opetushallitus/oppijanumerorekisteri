@@ -79,7 +79,7 @@ const HenkiloViewContactContent = React.createClass({
                 </Columns>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
+                        <Button key="contactEdit" big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
                         {this.props.editButtons(this._discard, this._update)}

@@ -85,7 +85,8 @@ const OppijaViewContainer = React.createClass({
             this.props.henkilo.henkilo.passivoitu
                 ? <Button key="passivoi" big disabled action={() => {}}>{this.L['PASSIVOI_PASSIVOITU']}</Button>
                 : <ConfirmButton key="passivoi" big action={() => this.props.passivoiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
-                                 normalLabel={this.L['PASSIVOI_LINKKI']} confirmLabel={this.L['PASSIVOI_LINKKI_CONFIRM']} />,
+                                 normalLabel={this.L['PASSIVOI_LINKKI']} confirmLabel={this.L['PASSIVOI_LINKKI_CONFIRM']}
+                                 errorMessage={this._createPopupErrorMessage('passivoi')} />,
         ];
         this._editButtons = (discard, update) => [
             <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
@@ -96,8 +97,12 @@ const OppijaViewContainer = React.createClass({
             'yhteystietotyyppi12', 'yhteystietotyyppi18', 'yhteystietotyyppi11', 'yhteystietotyyppi8'].indexOf(yhteystietotyyppi.value) === -1);
         this._createNotifications = (position) => this.props.henkilo.notifications.filter(notification => notification.position === position)
             .map((notification, idx) => <div key={idx}>{this.L[notification.notL10nMessage]}</div>);
+        this._createPopupErrorMessage = (notificationKey) => {
+            const notification = this.props.henkilo.buttonNotifications[notificationKey];
+            return {errorTopic: notification && this.L[notification.notL10nMessage],
+                errorText: notification && this.L[notification.notL10nText]};
+        };
         return {
-            confirmPassivointi: false,
         }
     },
 });

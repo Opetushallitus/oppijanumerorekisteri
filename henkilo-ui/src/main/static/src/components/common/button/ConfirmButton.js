@@ -1,15 +1,17 @@
 import './Button.css'
 import React from 'react'
 import Button from "./Button";
+import ReactTimeout from 'react-timeout'
 
-export default class ConfirmButton extends React.Component {
+class ConfirmButton extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             confirmState: false,
+            disabled: false,
         }
-    }
+    };
 
     static propTypes = {
         action: React.PropTypes.func.isRequired,
@@ -17,18 +19,27 @@ export default class ConfirmButton extends React.Component {
         confirmLabel: React.PropTypes.string.isRequired,
     };
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.errorMessage && nextProps.errorMessage.errorTopic) {
+            this.setState({confirmState: false, disabled: true});
+            this.props.setTimeout(() => {this.setState({disabled: false})}, 2000);
+        }
+    };
+
     render() {
         return (
             !this.state.confirmState
                 ?
-                <Button className={this.props.className} {...this.props} action={() => {this.setState({confirmState: true})}}>
+                <Button className={this.props.className} {...this.props} action={() => {this.setState({confirmState: true})}}
+                        disabled={this.state.disabled}>
                     {this.props.normalLabel}
                 </Button>
-                :
-                <Button className={this.props.className} confirm {...this.props} >
+                : // Never show error message after confirm state
+                <Button className={this.props.className} confirm {...this.props} errorMessage={null}>
                     {this.props.confirmLabel}
                 </Button>
         );
-    }
+    };
 }
 
+export default ReactTimeout(ConfirmButton);
