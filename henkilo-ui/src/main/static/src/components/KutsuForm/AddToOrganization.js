@@ -6,12 +6,13 @@ import R from 'ramda'
 // import AddedOrganizations from './AddedOrganizations';
 
 export default class AddToOrganisation extends React.Component {
-
+    
     render() {
         const L = this.props.l10n;
         return (
             <fieldset className="add-to-organisation">
                 <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>
+                {/*<h3>{this.props.omattiedot}</h3>*/}
                 {/*<AddedOrganizations changeOrganization={oldId => e => this.changeOrganization(oldId, e)}*/}
                                     {/*orgs={this.props.orgs}*/}
                                     {/*addedOrgs={this.props.addedOrgs}*/}

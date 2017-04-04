@@ -11,24 +11,21 @@ const requestOmattiedot = () => ({type: FETCH_OMATTIEDOT_REQUEST});
 const receiveOmattiedotSuccess = (json) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
 const receiveOmattiedotFailure = (error) => ({type: FETCH_OMATTIEDOT_FAILURE, error});
 
-export const fetchOmattiedot = () => dispatch => {
+export const fetchOmattiedot = () => async dispatch => {
     dispatch(requestOmattiedot());
     const url = urls.url('cas.me');
-    return http.get(url).then(omattiedotResponse => {
+    try {
+        const omattiedotResponse = await http.get(url);
         const omattiedot = JSON.parse(omattiedotResponse);
         return dispatch(receiveOmattiedotSuccess(omattiedot));
-    }, (error) => {
+    } catch( error ) {
         dispatch(receiveOmattiedotFailure(error));
         console.error(error);
-    })
-
-
+    }
 };
 
-export const fetchKutsuFormData = () => dispatch => {
-    dispatch(fetchOmattiedot())
-        .then( () => {
-            dispatch(fetchHenkiloOrgs());
-        });
+export const fetchKutsuFormData = () => async dispatch => {
+    await dispatch(fetchOmattiedot());
+    await dispatch(fetchHenkiloOrgs());
 };
 

@@ -48,7 +48,7 @@ class KutsuFormPage extends React.Component  {
                 </VirkailijaBasicInformation>
 
                 <AddToOrganization l10n={l10n}
-                                   omaOid={this.props.omaOid}
+                                   omattiedot={this.props.omattiedot}
                                    orgs={this.props.organizationsFlatInHierarchyOrder}
                                    addedOrgs={this.props.addedOrgs}/>
 
