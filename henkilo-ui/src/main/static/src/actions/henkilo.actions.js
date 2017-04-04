@@ -4,7 +4,8 @@ import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_ORGANISATIONS_REQUEST,
-    FETCH_ORGANISATIONS_SUCCESS, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS, UPDATE_HENKILO_FAILURE,
+    FETCH_ORGANISATIONS_SUCCESS, PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
+    UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
     UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_PASSWORD_REQUEST,
     UPDATE_PASSWORD_SUCCESS,
@@ -48,14 +49,18 @@ export const updatePassword = (oid, password) => (dispatch => {
     http.post(url, '"' + password + '"').then(() => {dispatch(receiveUpdatePassword(oid))});
 });
 
-const requestPassivoiHenkilo = (oid) => ({type: PASSIVOI_HENKILO_REQUEST, oid});
-const receivePassivoiHenkilo = () => ({type: PASSIVOI_HENKILO_SUCCESS,
-    notification: {position: 'passivoi', notL10nMessage: 'PASSIVOINTI_EPÄONNISTUI', notL10nText: 'PASSIVOINTI_EPÄONNISTUI_TEXT'},
-    receivedAt: Date.now()});
+const requestPassivoiHenkilo = (oid) => ({type: PASSIVOI_HENKILO_REQUEST, oid, });
+const receivePassivoiHenkilo = () => ({type: PASSIVOI_HENKILO_SUCCESS, receivedAt: Date.now(), });
+const errorPassivoiHenkilo = (e) => ({type: PASSIVOI_HENKILO_FAILURE,
+    buttonNotification: {position: 'passivoi', notL10nMessage: 'PASSIVOI_ERROR_TOPIC', notL10nText: 'PASSIVOI_ERROR_TEXT'},
+    receivedAt: Date.now(), });
 export const passivoiHenkilo = (oid) => (dispatch => {
     dispatch(requestPassivoiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.delete', oid);
-    http.delete(url).then(() => {dispatch(receivePassivoiHenkilo())});
+    http.delete(url).then(() => {
+        dispatch(receivePassivoiHenkilo());
+        dispatch(fetchHenkilo(oid));
+    }).catch(e => dispatch(errorPassivoiHenkilo(e)));
 });
 
 const requestYksiloiHenkilo = oid => ({type: YKSILOI_HENKILO_REQUEST, oid});
@@ -65,7 +70,6 @@ export const yksiloiHenkilo = (oid,) => (dispatch => {
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi', oid);
     http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))});
 });
-
 
 const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
 const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});

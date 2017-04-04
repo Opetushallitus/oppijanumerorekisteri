@@ -1,7 +1,7 @@
 import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
-    PASSIVOI_HENKILO_SUCCESS
+    PASSIVOI_HENKILO_FAILURE,
 } from "../actions/actiontypes";
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
@@ -10,8 +10,8 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
         .map(henkiloOrg => Object.assign({}, henkiloOrg, organisations.filter(org => org.oid === henkiloOrg.organisaatioOid)[0]));
 };
 
-export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true,
-                            henkilo: {}, henkiloOrgs: [], kayttajatieto: {}, notifications: []}, action) => {
+export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
+                            henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: []}, action) => {
     switch (action.type) {
         case FETCH_HENKILO_REQUEST:
             return Object.assign({}, state, {henkiloLoading: true});
@@ -30,9 +30,9 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
                 henkiloOrgsLoading: false,
                 henkiloOrgs: mapOrgHenkilosWithOrganisations(action.henkiloOrgs, action.organisations),
             });
-        case PASSIVOI_HENKILO_SUCCESS:
+        case PASSIVOI_HENKILO_FAILURE:
             const newState = Object.assign({}, state);
-            newState.notifications.push(action.notification);
+            newState.buttonNotifications[action.buttonNotification.position] = action.buttonNotification;
             return newState;
         default:
             return state;

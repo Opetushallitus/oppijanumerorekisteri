@@ -14,12 +14,15 @@ const receiveGenericKoodisto = (fetchSuccessType, typeField, json) => ({
     [typeField]: json,
     receivedAt: Date.now()
 });
-const fetchGenericKoodisto = (fetchRequestType, fetchSuccessType, fetchFailureType, urlProperty, typeField) => (dispatch => {
-    dispatch(requestGenericKoodisto(fetchRequestType, ));
-    const url = urls.url(urlProperty);
-    http.get(url).then(json => {
-        dispatch(receiveGenericKoodisto(fetchSuccessType, typeField, json))
-    });
+const fetchGenericKoodisto = (fetchRequestType, fetchSuccessType, fetchFailureType, urlProperty, typeField) => ((dispatch, getState) => {
+    // Update only if not already fetched
+    if(!getState().koodisto[typeField].length) {
+        dispatch(requestGenericKoodisto(fetchRequestType, ));
+        const url = urls.url(urlProperty);
+        http.get(url).then(json => {
+            dispatch(receiveGenericKoodisto(fetchSuccessType, typeField, json))
+        });
+    }
 });
 
 export const fetchKieliKoodisto = () => fetchGenericKoodisto(FETCH_KIELIKOODISTO_REQUEST, FETCH_KIELIKOODISTO_SUCCESS,

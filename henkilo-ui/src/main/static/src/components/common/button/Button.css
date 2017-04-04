@@ -4,4 +4,9 @@
     color: #F5F5F5;
 }
 
+/* fix the width not being wide enough by default */
+.popup-button > .oph-popup {
+    width: inherit;
+}
+
 /* Relies virkailija-styles on app for button styles */
