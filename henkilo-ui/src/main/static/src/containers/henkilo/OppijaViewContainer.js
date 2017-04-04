@@ -54,8 +54,8 @@ const OppijaViewContainer = React.createClass({
                 ({
                     label: 'HENKILO_KANSALAISUUS',
                     data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
-                    value: this.props.koodisto.kansalaisuus.filter(kansalaisuus =>
-                    kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
+                    value: this.props.koodisto.kansalaisuus
+                        .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
                     inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
                     selectValue: values.kansalaisuusKoodi
                 })).reduce((a,b) => a.concat(b))

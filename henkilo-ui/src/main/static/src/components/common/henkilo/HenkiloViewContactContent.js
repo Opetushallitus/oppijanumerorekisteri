@@ -17,7 +17,7 @@ const HenkiloViewContactContent = React.createClass({
         creatableYhteystietotyypit: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
-        this.henkiloUpdate = this.props.henkilo.henkilo;
+        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.contactInfoTemplate = [
             {label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null},
             {label: 'YHTEYSTIETO_PUHELINNUMERO', value: null, inputValue: null},
@@ -92,11 +92,10 @@ const HenkiloViewContactContent = React.createClass({
         this.setState({readOnly: false});
         this._preEditData = {
             contactInfo: this.state.contactInfo,
-            henkiloUpdate: JSON.parse(JSON.stringify(this.henkiloUpdate)), // deep copy
         }
     },
     _discard: function () {
-        this.henkiloUpdate = this._preEditData.henkiloUpdate;
+        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.setState({
             readOnly: true,
             contactInfo: this._preEditData.contactInfo,

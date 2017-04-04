@@ -31,7 +31,7 @@ const HenkiloViewUserContent = React.createClass({
         editButtons: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
-        this.henkiloUpdate = this.props.henkilo.henkilo;
+        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.kieliKoodis = this.props.koodisto.kieli;
         this.kansalaisuusKoodis = this.props.koodisto.kansalaisuus;
         this.sukupuoliKoodis = this.props.koodisto.sukupuoli;
@@ -39,6 +39,7 @@ const HenkiloViewUserContent = React.createClass({
         return {
             readOnly: this.props.readOnly,
             showPassive: false,
+            editData: [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()],
         }
     },
     render: function() {
@@ -51,19 +52,21 @@ const HenkiloViewUserContent = React.createClass({
                         </div>
                         <Columns columns={3} gap="10px">
                             {
-                                [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()].map((info, idx) =>
+                                this.state.editData.map((info, idx) =>
                                     <div key={idx} className="henkiloViewContent">
                                         {info.map((values, idx2) =>
                                             !values.showOnlyOnWrite || !this.state.readOnly
-                                                ? <div key={idx2} id={values.label}>
-                                                <Columns columns={2} className="labelValue">
-                                                    <span className="oph-bold">{L[values.label]}</span>
-                                                    <Field {...values} changeAction={!values.date ? this._updateModelField : this._updateDateField}
-                                                           readOnly={values.readOnly || this.state.readOnly}>
-                                                        {values.value}
-                                                    </Field>
-                                                </Columns>
-                                            </div>
+                                                ?
+                                                <div key={idx2} id={values.label}>
+                                                    <Columns columns={2} className="labelValue">
+                                                        <span className="oph-bold">{L[values.label]}</span>
+                                                        <Field {...values}
+                                                               changeAction={!values.date ? this._updateModelField : this._updateDateField}
+                                                               readOnly={values.readOnly || this.state.readOnly}>
+                                                            {values.value}
+                                                        </Field>
+                                                    </Columns>
+                                                </div>
                                                 : null
                                         )}
                                     </div>
@@ -84,14 +87,9 @@ const HenkiloViewUserContent = React.createClass({
     },
     _edit: function () {
         this.setState({readOnly: false});
-        this._preEditData = {
-            basicInfo: Object.assign({}, this.state.basicInfo),
-            basicInfo2: Object.assign({}, this.state.basicInfo2),
-            henkiloUpdate: JSON.parse(JSON.stringify(this.henkiloUpdate)), // deep copy
-        }
     },
     _discard: function () {
-        this.henkiloUpdate = this._preEditData.henkiloUpdate;
+        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.setState({
             readOnly: true,
         });
