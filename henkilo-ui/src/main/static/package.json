@@ -23,10 +23,11 @@
     "select2": "^4.0.0",
     "shallow-equal-fuzzy": "^0.0.2",
     "virkailija-styles": "Opetushallitus/virkailija-styles#styleguide",
-    "react-timeout": "^1.0.0"
+    "react-timeout": "^1.0.0",
+    "babel-core": "6.24.0"
   },
   "devDependencies": {
-    "react-scripts": "0.9.4",
+    "react-scripts": "0.9.5",
     "redux-devtools": "^3.3.2",
     "redux-devtools-dock-monitor": "^1.1.1",
     "redux-devtools-log-monitor": "^1.2.0",
