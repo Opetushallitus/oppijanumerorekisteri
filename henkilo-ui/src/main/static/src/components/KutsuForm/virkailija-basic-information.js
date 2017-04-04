@@ -5,38 +5,26 @@ import locale from '../../configuration/locale';
 
 export class VirkailijaBasicInformation extends React.Component {
 
-    constructor(props) {
-        super();
-        const {basicInfo} = props;
-
-        this.state = {
-            basicInfo: basicInfo
-        }
-    }
-
-    componentDidMount() {
-        // basicInfo.setLanguage(this.props.languages[0].code)
-    }
-
     render() {
-        const L = this.props.l10n['fi'];
-        const {basicInfo} = this.state;
+        const L = this.props.l10n[locale];
+        const {basicInfo} = this.props;
+
         return (
             <fieldset className="basic-info">
                 <h2>{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
                 <div className="row">
                     <label htmlFor="etunimi" className="required">{L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
                     <input type="text" id="etunimi" value={basicInfo.etunimi || ''}
-                           onChange={this.handleEtunimi.bind(this)}/>
+                           onChange={this.updateEtunimi.bind(this)}/>
                 </div>
                 <div className="row">
                     <label htmlFor="sukunimi" className="required">{L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
                     <input type="text" id="sukunimi" value={basicInfo.sukunimi || ''}
-                           onChange={this.handleSukunimi.bind(this)}/>
+                           onChange={this.updateSukunimi.bind(this)}/>
                 </div>
                 <div className="row">
                     <label htmlFor="email" className="required">{L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
-                    <input type="text" id="email" value={basicInfo.email || ''} onChange={this.handleEmail.bind(this)}/>
+                    <input type="text" id="email" value={basicInfo.email} onChange={this.updateEmail.bind(this)}/>
                 </div>
                 <div className="row select-row">
                     <label htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
@@ -58,31 +46,37 @@ export class VirkailijaBasicInformation extends React.Component {
 
     renderLang(lang) {
         return (
-            <option key={lang.code} value={lang.code}>{lang.name[this.props.locale]}</option>
+            <option key={lang.code} value={lang.code}>{lang.name[locale]}</option>
         )
     }
 
-    handleEmail(event) {
-        const basicInfo = this.state.basicInfo;
+    updateEmail(event) {
+        const { basicInfo } = this.props;
         basicInfo.email = event.target.value;
-        this.setState({basicInfo});
+        this.props.setBasicInfo(basicInfo);
     }
 
-    handleEtunimi(event) {
-        const basicInfo = this.state.basicInfo;
+    updateEtunimi(event) {
+        const { basicInfo } = this.props;
         basicInfo.etunimi = event.target.value;
-        this.setState({basicInfo});
+        this.props.setBasicInfo(basicInfo);
     }
 
-    handleSukunimi(event) {
-        const basicInfo = this.state.basicInfo;
+    updateSukunimi(event) {
+        const { basicInfo } = this.props;
         basicInfo.sukunimi = event.target.value;
-        this.setState({basicInfo});
+        this.props.setBasicInfo(basicInfo);
     }
 
     selectLanguage(event) {
-        const basicInfo = this.state.basicInfo;
+        const { basicInfo } = this.props;
         basicInfo.languageCode = event.target.value;
-        this.setState({basicInfo});
+        this.props.setBasicInfo(basicInfo);
     }
 }
+
+VirkailijaBasicInformation.propTypes = {
+    basicInfo: React.PropTypes.object,
+    l10n: React.PropTypes.object,
+    setBasicInfo: React.PropTypes.func
+};

@@ -1,5 +1,6 @@
 export default {
     "cas.login": "/cas/login",
+    "cas.me": "cas/me",
 
     "henkilo-ui.baseUrl": "/",
     "henkilo-ui.l10n": "henkilo-ui/l10n",
@@ -36,4 +37,6 @@ export default {
     "koodisto-service.koodisto.kansalaisuus": "koodisto-service/rest/json/maatjavaltiot2/koodi",
     "koodisto-service.koodisto.sukupuoli": "koodisto-service/rest/json/sukupuoli/koodi",
     "koodisto-service.koodisto.yhteystietotyypit": "koodisto-service/rest/json/yhteystietotyypit/koodi"
+
+
 }

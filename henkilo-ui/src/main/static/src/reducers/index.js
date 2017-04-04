@@ -7,6 +7,7 @@ import {henkilo} from "./henkilo.reducer";
 import {koodisto} from "./koodisto.reducer";
 import {naviState} from "./navigation.reducer";
 import {prequels} from "./prequels.reducer";
+import {omattiedot} from "./omattiedot.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
     koodisto,
     naviState,
     prequels,
+    omattiedot
 });
 
 export default rootReducer;

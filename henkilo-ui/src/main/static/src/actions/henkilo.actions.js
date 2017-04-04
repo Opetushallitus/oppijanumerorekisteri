@@ -98,12 +98,13 @@ const receiveHenkiloOrgs = (henkiloOrgs, organisations) => ({
     organisations: organisations,
     receivedAt: Date.now()
 });
-export const fetchHenkiloOrgs = (oid) => (dispatch => {
+export const fetchHenkiloOrgs = (oid) => (dispatch, getState) => {
+    oid = oid || getState().omattiedot.omattiedot.oid;
     dispatch(requestHenkiloOrgs(oid));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oid);
-    http.get(url).then(json => {
+    return http.get(url).then(json => {
         dispatch(fetchOrganisations(json.map(orgHenkilo => orgHenkilo.organisaatioOid)))
             .then(organisationsAction => dispatch(receiveHenkiloOrgs(json, organisationsAction.organisations)));
     });
-});
+};
 
