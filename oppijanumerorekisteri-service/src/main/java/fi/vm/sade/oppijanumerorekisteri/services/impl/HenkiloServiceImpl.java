@@ -94,13 +94,6 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Slice<HenkiloHakuDto> list(HenkiloCriteria criteria, int page, int count, Optional<String> organisaatioOid) {
-        if (page < 1) {
-            throw new ValidationException("Sivunumero tulee olla luonnollinen luku");
-        }
-        if (count < 1) {
-            throw new ValidationException("Maksimimäärä tulee olla luonnollinen luku");
-        }
-
         // käyttöoikeustarkistukset
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         KayttooikeudetDto kayttooikeudet = organisaatioOid

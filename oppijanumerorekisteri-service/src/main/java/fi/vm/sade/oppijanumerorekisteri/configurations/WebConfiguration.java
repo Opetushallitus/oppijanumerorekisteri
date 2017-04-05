@@ -3,15 +3,15 @@ package fi.vm.sade.oppijanumerorekisteri.configurations;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.util.Arrays;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @Configuration
 public class WebConfiguration extends WebMvcConfigurerAdapter{
@@ -20,6 +20,12 @@ public class WebConfiguration extends WebMvcConfigurerAdapter{
     @Autowired
     public WebConfiguration(Environment environment) {
         this.environment = environment;
+    }
+
+    // Tämän voinee poistaa spring boot 1.5+ (https://github.com/spring-projects/spring-boot/issues/6228)
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
     }
 
     @Override
