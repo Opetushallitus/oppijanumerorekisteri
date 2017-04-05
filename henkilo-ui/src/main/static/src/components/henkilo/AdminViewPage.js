@@ -32,7 +32,7 @@ const AdminViewPage = React.createClass({
                 </div>
                 <div className="wrapper">
                     {
-                        this._isOrganisatiionContentLoading()
+                        this._isOrganisationContentLoading()
                             ? this.L['LADATAAN']
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={locale} />
                     }
@@ -46,7 +46,7 @@ const AdminViewPage = React.createClass({
         || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading;
         this._isContactContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
-        this._isOrganisatiionContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
+        this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
         this._createBasicInfo = () => [
             {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet', autoFocus: true},

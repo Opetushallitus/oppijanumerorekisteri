@@ -8,7 +8,7 @@ import {
     UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
     UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_PASSWORD_REQUEST,
-    UPDATE_PASSWORD_SUCCESS,
+    UPDATE_PASSWORD_SUCCESS, YKSILOI_HENKILO_FAILURE,
     YKSILOI_HENKILO_REQUEST,
     YKSILOI_HENKILO_SUCCESS
 } from "./actiontypes";
@@ -65,10 +65,13 @@ export const passivoiHenkilo = (oid) => (dispatch => {
 
 const requestYksiloiHenkilo = oid => ({type: YKSILOI_HENKILO_REQUEST, oid});
 const receiveYksiloiHenkilo = (oid) => ({type: YKSILOI_HENKILO_SUCCESS, oid, receivedAt: Date.now()});
+const errorYksiloiHenkilo = (error) => ({type: YKSILOI_HENKILO_FAILURE,
+    receivedAt: Date.now(),
+    buttonNotification: {position: 'yksiloi', notL10nMessage: 'YKSILOI_ERROR_TOPIC', notL10nText: 'YKSILOI_ERROR_TEXT'},});
 export const yksiloiHenkilo = (oid,) => (dispatch => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi', oid);
-    http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))});
+    http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))}).catch(e => dispatch(errorYksiloiHenkilo(e)));
 });
 
 const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});

@@ -132,4 +132,4 @@ const HenkiloViewUserContent = React.createClass({
     }
 });
 
-export default HenkiloViewUserContent
+export default HenkiloViewUserContent;

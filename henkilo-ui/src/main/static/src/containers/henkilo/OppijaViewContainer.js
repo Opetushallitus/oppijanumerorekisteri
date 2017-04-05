@@ -16,6 +16,7 @@ import Button from "../../components/common/button/Button";
 import locale from '../../configuration/locale'
 import ConfirmButton from "../../components/common/button/ConfirmButton";
 
+
 const OppijaViewContainer = React.createClass({
     componentDidMount: function() {
         this.props.updateNavigation(oppijaNavi(this.props.oid), '/henkilo');
@@ -81,7 +82,8 @@ const OppijaViewContainer = React.createClass({
         this._readOnlyButtons = (edit) => [
             <Button key="edit" big action={edit}>{this.L['MUOKKAA_LINKKI']}</Button>,
             <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
-                           normalLabel={this.L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}/>,
+                           normalLabel={this.L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}
+                           errorMessage={this._createPopupErrorMessage('yksiloi')} />,
             this.props.henkilo.henkilo.passivoitu
                 ? <Button key="passivoi" big disabled action={() => {}}>{this.L['PASSIVOI_PASSIVOITU']}</Button>
                 : <ConfirmButton key="passivoi" big action={() => this.props.passivoiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
@@ -119,4 +121,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, updateHenkiloAndRefetch, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(OppijaViewContainer)
+    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(OppijaViewContainer);
