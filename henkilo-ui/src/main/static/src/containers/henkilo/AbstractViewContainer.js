@@ -6,15 +6,6 @@ import ConfirmButton from "../../components/common/button/ConfirmButton";
 
 class AbstractViewContainer extends React.Component {
 
-    _isUserContentLoading() {
-        return this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
-        || this.props.koodisto.kansalaisuusKoodistoLoading;
-    };
-
-    _isContactContentLoading() {
-        return this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
-    };
-
     _editButtons(discard, update) {
         return [
             <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,

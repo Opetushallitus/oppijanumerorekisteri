@@ -29,7 +29,8 @@ class OppijaViewContainer extends AbstractViewContainer {
             isContactContentLoading: this._isContactContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
             readOnlyButtons: this._readOnlyButtons, editButtons: this._editButtons,
-            creatableYhteystietotyypit: this._creatableYhteystietotyypit, createNotifications: this._createNotifications, };
+            creatableYhteystietotyypit: this._creatableYhteystietotyypit.bind(this),
+            createNotifications: this._createNotifications.bind(this), };
         return <OppijaViewPage {...props} />;
     };
     constructor(props) {
@@ -37,28 +38,9 @@ class OppijaViewContainer extends AbstractViewContainer {
 
         this.L = this.props.l10n[locale];
 
-        // Functions bound to use this scope
-        this._isUserContentLoading = this._isUserContentLoading.bind(this);
-        this._isContactContentLoading = this._isContactContentLoading.bind(this);
-
-        this._createNotifications = this._createNotifications.bind(this);
-        this._createPopupErrorMessage = this._createPopupErrorMessage.bind(this);
-        this._creatableYhteystietotyypit = this._creatableYhteystietotyypit.bind(this);
-
-        this.createSukunimiFieldWithAutofocus = this.createSukunimiFieldWithAutofocus.bind(this);
-        this.createEtunimetField = this.createEtunimetField.bind(this);
-        this.createSyntymaaikaField = this.createSyntymaaikaField.bind(this);
-        this.createHetuField = this.createHetuField.bind(this);
-        this.createKutsumanimiField = this.createKutsumanimiField.bind(this);
-
-        this.createKansalaisuusField = this.createKansalaisuusField.bind(this);
-        this.createAidinkieliField = this.createAidinkieliField.bind(this);
-        this.createOppijanumeroField = this.createOppijanumeroField.bind(this);
-        this.createAsiointikieliField = this.createAsiointikieliField.bind(this);
-
-        this.createEditButton = this.createEditButton.bind(this);
-        this.createYksilointiButton = this.createYksilointiButton.bind(this);
-        this.createPassivoiButton = this.createPassivoiButton.bind(this);
+        this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
+            || this.props.koodisto.kansalaisuusKoodistoLoading;
+        this._isContactContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
 
         // Basic info box content
         this._createBasicInfo = () => [
@@ -75,6 +57,7 @@ class OppijaViewContainer extends AbstractViewContainer {
             this.createAsiointikieliField(),
         ]);
         this._createLoginInfo = () => [];
+
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
             this.createEditButton(edit),

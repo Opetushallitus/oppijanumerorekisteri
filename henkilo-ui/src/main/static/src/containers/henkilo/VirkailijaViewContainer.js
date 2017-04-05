@@ -30,7 +30,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         const props = {...this.props, L: this.L, locale: locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
-            editButtons: this._editButtons, createNotifications: this._createNotifications, };
+            editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this), };
         return <VirkailijaViewPage {...props} />;
     };
 
@@ -42,21 +42,6 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.henkilo.kayttajatietoLoading;
         this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
-
-        this.createSukunimiFieldWithAutofocus = this.createSukunimiFieldWithAutofocus.bind(this);
-        this.createEtunimetField = this.createEtunimetField.bind(this);
-        this.createKutsumanimiField = this.createKutsumanimiField.bind(this);
-        this.createAsiointikieliField = this.createAsiointikieliField.bind(this);
-        this.createOppijanumeroField = this.createOppijanumeroField.bind(this);
-        this.createKayttajanimiField = this.createKayttajanimiField.bind(this);
-
-        this.createEditButton = this.createEditButton.bind(this);
-        this.createPassivoiButton = this.createPassivoiButton.bind(this);
-        this.createHakaButton = this.createHakaButton.bind(this);
-        this.createPasswordButton = this.createPasswordButton.bind(this);
-
-        this._createNotifications = this._createNotifications.bind(this);
-        this._createPopupErrorMessage = this._createPopupErrorMessage.bind(this);
 
         this._createBasicInfo = () => [
             this.createSukunimiFieldWithAutofocus(),
