@@ -84,10 +84,12 @@ class AbstractViewContainer extends React.Component {
 
     createAsiointikieliField() {
         return {label: 'HENKILO_ASIOINTIKIELI',
-            data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+            data: this.props.koodisto.kieli
+                .filter(koodi => ['fi', 'sv', 'en'].indexOf(koodi.value) !== -1)
+                .map(koodi => ({id: koodi.value, text: koodi[locale]})),
             inputValue: 'asiointiKieli.kieliKoodi',
-            value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli.filter(kieli =>
-            kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][locale],
+            value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli
+                .filter(kieli => kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][locale],
             selectValue: this.props.henkilo.henkilo.asiointiKieli && this.props.henkilo.henkilo.asiointiKieli.kieliKoodi};
     };
 
@@ -123,6 +125,14 @@ class AbstractViewContainer extends React.Component {
 
     createPasswordButton() {
         return <Button key="password" big action={() => {}}>{this.L['SALASANA_ASETA']}</Button>;
+    };
+
+    static createLoading() {
+        return <div className="oph-spinner">
+            <div className="oph-bounce oph-bounce1"/>
+            <div className="oph-bounce oph-bounce2"/>
+            <div className="oph-bounce oph-bounce3"/>
+        </div>;
     };
 }
 

@@ -2,6 +2,7 @@ import './OppijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
+import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 
 const OppijaViewPage = React.createClass({
     render: function() {
@@ -13,7 +14,7 @@ const OppijaViewPage = React.createClass({
                     </div>
                     {
                         this.props.isUserContentLoading()
-                            ? this.props.L['LADATAAN']
+                            ? AbstractViewContainer.createLoading()
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
                                                       basicInfo2={this.props.createBasicInfo2}
@@ -25,7 +26,7 @@ const OppijaViewPage = React.createClass({
                 <div className="wrapper">
                     {
                         this.props.isContactContentLoading()
-                            ? this.props.L['LADATAAN']
+                            ? AbstractViewContainer.createLoading()
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
                                                          editButtons={this.props.editButtons}
                                                          creatableYhteystietotyypit={this.props.creatableYhteystietotyypit}/>

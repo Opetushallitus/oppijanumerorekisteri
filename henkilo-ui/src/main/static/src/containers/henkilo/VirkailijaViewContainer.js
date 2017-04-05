@@ -43,6 +43,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         || this.props.henkilo.kayttajatietoLoading;
         this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
+        // Basic info box content
         this._createBasicInfo = () => [
             this.createSukunimiFieldWithAutofocus(),
             this.createEtunimetField(),
@@ -55,6 +56,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this._createLoginInfo = () => [
             this.createKayttajanimiField(),
         ];
+        // Basic info default buttons
         this._readOnlyButtons = (edit) => [
             this.createEditButton(edit),
             this.createPassivoiButton(),

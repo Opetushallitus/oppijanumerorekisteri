@@ -61,7 +61,7 @@ const HenkiloViewContactContent = React.createClass({
                                             { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
                                                 <div key={idx2} id={yhteystietoFlat.label}>
                                                     { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
-                                                        ? <Columns columns={2} className="labelValue">
+                                                        ? <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
                                                             <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
                                                             <Field inputValue={yhteystietoFlat.inputValue} changeAction={this._updateModelField}
                                                                    readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>

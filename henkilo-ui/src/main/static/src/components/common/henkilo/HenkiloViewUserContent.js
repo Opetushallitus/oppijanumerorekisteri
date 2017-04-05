@@ -58,7 +58,7 @@ const HenkiloViewUserContent = React.createClass({
                                             !values.showOnlyOnWrite || !this.state.readOnly
                                                 ?
                                                 <div key={idx2} id={values.label}>
-                                                    <Columns columns={2} className="labelValue">
+                                                    <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
                                                         <span className="oph-bold">{L[values.label]}</span>
                                                         <Field {...values}
                                                                changeAction={!values.date ? this._updateModelField : this._updateDateField}

@@ -2,6 +2,7 @@ import './VirkailijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
+import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 
 const VirkailijaViewPage = React.createClass({
     render: function() {
@@ -10,7 +11,7 @@ const VirkailijaViewPage = React.createClass({
                 <div className="wrapper">
                     {
                         this.props.isUserContentLoading()
-                            ? this.props.L['LADATAAN']
+                            ? AbstractViewContainer.createLoading()
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
                                                       basicInfo2={this.props.createBasicInfo2}
@@ -22,7 +23,7 @@ const VirkailijaViewPage = React.createClass({
                 <div className="wrapper">
                     {
                         this.props.isOrganisationContentLoading()
-                            ? this.props.L['LADATAAN']
+                            ? AbstractViewContainer.createLoading()
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
                 </div>
