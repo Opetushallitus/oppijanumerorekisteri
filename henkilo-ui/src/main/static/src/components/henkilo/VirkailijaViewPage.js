@@ -1,7 +1,6 @@
 import './VirkailijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
-import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 
 const VirkailijaViewPage = React.createClass({

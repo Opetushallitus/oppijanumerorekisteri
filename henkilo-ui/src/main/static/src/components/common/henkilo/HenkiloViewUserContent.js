@@ -100,7 +100,7 @@ const HenkiloViewUserContent = React.createClass({
             this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
             this.henkiloUpdate.password = this.henkiloUpdate.passwordAgain = null;
         }
-        if(this._preEditData.henkiloUpdate.kayttajanimi === undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
+        if(this.props.henkilo.henkilo.kayttajanimi === undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});

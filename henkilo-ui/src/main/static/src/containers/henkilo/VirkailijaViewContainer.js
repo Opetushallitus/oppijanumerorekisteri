@@ -7,17 +7,15 @@ import {
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto,
-    fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
-import Button from "../../components/common/button/Button";
 import locale from '../../configuration/locale'
-import ConfirmButton from "../../components/common/button/ConfirmButton";
+import AbstractViewContainer from "./AbstractViewContainer";
 
 
-const VirkailijaViewContainer = React.createClass({
-    componentDidMount: function() {
+class VirkailijaViewContainer extends AbstractViewContainer {
+    componentDidMount() {
         this.props.updateNavigation(virkailijaNavi(this.props.oid), '/henkilo');
 
         this.props.fetchHenkilo(this.props.oid);
@@ -26,81 +24,61 @@ const VirkailijaViewContainer = React.createClass({
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKayttajatieto(this.props.oid);
-    },
-    render: function() {
+    };
+
+    render() {
         const props = {...this.props, L: this.L, locale: locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
             editButtons: this._editButtons, createNotifications: this._createNotifications, };
         return <VirkailijaViewPage {...props} />;
-    },
-    getInitialState: function () {
+    };
+
+    constructor(props) {
+        super(props);
+
         this.L = this.props.l10n[locale];
         this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.henkilo.kayttajatietoLoading;
         this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
+        this.createSukunimiFieldWithAutofocus = this.createSukunimiFieldWithAutofocus.bind(this);
+        this.createEtunimetField = this.createEtunimetField.bind(this);
+        this.createKutsumanimiField = this.createKutsumanimiField.bind(this);
+        this.createAsiointikieliField = this.createAsiointikieliField.bind(this);
+        this.createOppijanumeroField = this.createOppijanumeroField.bind(this);
+        this.createKayttajanimiField = this.createKayttajanimiField.bind(this);
+
+        this.createEditButton = this.createEditButton.bind(this);
+        this.createPassivoiButton = this.createPassivoiButton.bind(this);
+        this.createHakaButton = this.createHakaButton.bind(this);
+        this.createPasswordButton = this.createPasswordButton.bind(this);
+
+        this._createNotifications = this._createNotifications.bind(this);
+        this._createPopupErrorMessage = this._createPopupErrorMessage.bind(this);
+
         this._createBasicInfo = () => [
-            {
-                label: 'HENKILO_SUKUNIMI',
-                value: this.props.henkilo.henkilo.sukunimi,
-                inputValue: 'sukunimi',
-                autoFocus: true
-            },
-            {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet'},
-            {label: 'HENKILO_KUTSUMANIMI', value: this.props.henkilo.henkilo.kutsumanimi, inputValue: 'kutsumanimi'},
-            {
-                label: 'HENKILO_ASIOINTIKIELI',
-                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
-                inputValue: 'asiointiKieli.kieliKoodi',
-                value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli.filter(kieli =>
-                kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][locale],
-                selectValue: this.props.henkilo.henkilo.asiointiKieli && this.props.henkilo.henkilo.asiointiKieli.kieliKoodi
-            },
+            this.createSukunimiFieldWithAutofocus(),
+            this.createEtunimetField(),
+            this.createKutsumanimiField(),
+            this.createAsiointikieliField(),
         ];
         this._createBasicInfo2 = () => ([
-            {
-                label: 'HENKILO_OPPIJANUMERO',
-                value: this.props.henkilo.henkilo.oidHenkilo,
-                inputValue: 'oidHenkilo',
-                readOnly: true,
-            },
+            this.createOppijanumeroField(),
         ]);
-        this._createLoginInfo = () => [{
-            label: 'HENKILO_KAYTTAJANIMI',
-            value: this.props.henkilo.kayttajatieto.username,
-            inputValue: 'kayttajanimi'},
+        this._createLoginInfo = () => [
+            this.createKayttajanimiField(),
         ];
         this._readOnlyButtons = (edit) => [
-            <Button key="edit" big action={edit}>{this.L['MUOKKAA_LINKKI']}</Button>,
-            this.props.henkilo.henkilo.passivoitu
-                ? <Button key="passivoi" big disabled action={() => {
-            }}>{this.L['PASSIVOI_PASSIVOITU']}</Button>
-                : <ConfirmButton key="passivoi" big
-                                 action={() => this.props.passivoiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
-                                 normalLabel={this.L['PASSIVOI_LINKKI']}
-                                 confirmLabel={this.L['PASSIVOI_LINKKI_CONFIRM']}
-                                 errorMessage={this._createPopupErrorMessage('passivoi')}/>,
-            <Button key="haka" big action={() => {}}>{this.L['LISAA_HAKA_LINKKI']}</Button>,
-            <Button key="password" big action={() => {}}>{this.L['SALASANA_ASETA']}</Button>,
+            this.createEditButton(edit),
+            this.createPassivoiButton(),
+            this.createHakaButton(),
+            this.createPasswordButton(),
         ];
-        this._editButtons = (discard, update) => [
-            <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
-            <Button key="update" big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
-        ];
-        this._createNotifications = (position) => this.props.henkilo.notifications.filter(notification => notification.position === position)
-            .map((notification, idx) => <div key={idx}>{this.L[notification.notL10nMessage]}</div>);
-        this._createPopupErrorMessage = (notificationKey) => {
-            const notification = this.props.henkilo.buttonNotifications[notificationKey];
-            return {
-                errorTopic: notification && this.L[notification.notL10nMessage],
-                errorText: notification && this.L[notification.notL10nText]
-            };
-        };
-        return {};
-    },
-});
+
+    };
+}
 
 const mapStateToProps = (state, ownProps) => {
     return {
