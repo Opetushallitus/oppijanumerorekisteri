@@ -14,7 +14,7 @@ const OppijaViewPage = React.createClass({
                     </div>
                     {
                         this.props.isUserContentLoading()
-                            ? AbstractViewContainer.createLoading()
+                            ? AbstractViewContainer.createLoader()
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
                                                       basicInfo2={this.props.createBasicInfo2}
@@ -26,7 +26,7 @@ const OppijaViewPage = React.createClass({
                 <div className="wrapper">
                     {
                         this.props.isContactContentLoading()
-                            ? AbstractViewContainer.createLoading()
+                            ? AbstractViewContainer.createLoader()
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
                                                          editButtons={this.props.editButtons}
                                                          creatableYhteystietotyypit={this.props.creatableYhteystietotyypit}/>

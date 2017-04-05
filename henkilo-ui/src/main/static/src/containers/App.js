@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 import locale from "../configuration/locale";
+import AbstractViewContainer from "./henkilo/AbstractViewContainer";
 
 
 const App = React.createClass({
@@ -17,7 +18,7 @@ const App = React.createClass({
                     {this.props.children}
                 </div>
             </div>
-                : <div>Prefetching data...</div>
+                : <div>{AbstractViewContainer.createLoader()}</div>
         )
     },
     componentDidMount: function() {

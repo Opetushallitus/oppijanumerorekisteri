@@ -127,7 +127,7 @@ class AbstractViewContainer extends React.Component {
         return <Button key="password" big action={() => {}}>{this.L['SALASANA_ASETA']}</Button>;
     };
 
-    static createLoading() {
+    static createLoader() {
         return <div className="oph-spinner">
             <div className="oph-bounce oph-bounce1"/>
             <div className="oph-bounce oph-bounce2"/>
