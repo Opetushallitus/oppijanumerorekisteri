@@ -15,6 +15,7 @@ export default {
     "kayttooikeus-service.buildversion": "kayttooikeus-service/buildversion.txt",
     "kayttooikeus-service.henkilo.organisaatios": "kayttooikeus-service/henkilo/$1/organisaatio",
     "kayttooikeus-service.henkilo.organisaatiohenkilos": "kayttooikeus-service/henkilo/$1/organisaatiohenkilo",
+    "kayttooikeus-service.organisaatiohenkilo.passivoi": "kayttooikeus-service/organisaatiohenkilo/$1/$2",
     "kayttooikeus-service.henkilo.kayttajatieto": "kayttooikeus-service/henkilo/$1/kayttajatiedot",
     "kayttooikeus-service.henkilo.password": "kayttooikeus-service/henkilo/$1/password",
     "kayttooikeus-service.omattiedot.oid": "kayttooikeus-service/omattiedot/oid",

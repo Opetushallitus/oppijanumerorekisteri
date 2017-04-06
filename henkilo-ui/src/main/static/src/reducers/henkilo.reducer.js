@@ -1,4 +1,5 @@
 import {
+    DELETE_HENKILOORGS_FAILURE,
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE,
@@ -34,6 +35,7 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
             });
         case PASSIVOI_HENKILO_FAILURE:
         case YKSILOI_HENKILO_FAILURE:
+        case DELETE_HENKILOORGS_FAILURE:
             const newState = Object.assign({}, state);
             newState.buttonNotifications[action.buttonNotification.position] = action.buttonNotification;
             return newState;

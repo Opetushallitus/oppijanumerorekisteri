@@ -27,6 +27,7 @@ class ConfirmButton extends React.Component {
     };
 
     render() {
+        const confirmProps = {...this.props, cancel: false};
         return (
             !this.state.confirmState
                 ?
@@ -35,7 +36,7 @@ class ConfirmButton extends React.Component {
                     {this.props.normalLabel}
                 </Button>
                 : // Never show error message after confirm state
-                <Button className={this.props.className} confirm {...this.props} errorMessage={null}>
+                <Button className={this.props.className} confirm {...confirmProps} errorMessage={null}>
                     {this.props.confirmLabel}
                 </Button>
         );

@@ -1,6 +1,8 @@
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
 import {
+    DELETE_HENKILOORGS_FAILURE,
+    DELETE_HENKILOORGS_REQUEST, DELETE_HENKILOORGS_SUCCESS,
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_ORGANISATIONS_REQUEST,
@@ -114,8 +116,6 @@ export const fetchHenkiloOrgs = oid => (dispatch, getState) => {
     });
 };
 
-
-
 const requestHenkiloOrganisaatios = oid => ({type: FETCH_HENKILO_ORGANISAATIOS_REQUEST, oid});
 const receiveHenkiloOrganisaatiosSuccess = (henkiloOrganisaatios) => ({
     type: FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
@@ -136,3 +136,23 @@ export const fetchHenkiloOrganisaatios = (oid) => async (dispatch, getState) => 
     }
 };
 
+const requestPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({type: DELETE_HENKILOORGS_REQUEST, oidHenkilo, oidHenkiloOrg});
+const receivePassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({type: DELETE_HENKILOORGS_SUCCESS, oidHenkilo, oidHenkiloOrg,
+    receivedAt: Date.now()});
+const errorPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
+    type: DELETE_HENKILOORGS_FAILURE,
+    oidHenkilo,
+    oidHenkiloOrg,
+    buttonNotification: {position: 'passivoiOrg', notL10nMessage: 'PASSIVOI_ORG_ERROR_TOPIC', notL10nText: 'PASSIVOI_ORG_ERROR_TEXT'},
+    receivedAt: Date.now(),
+});
+export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
+    dispatch(requestPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
+    const url = urls.url('kayttooikeus-service.organisaatiohenkilo.passivoi', oidHenkilo, oidHenkiloOrg);
+    return http.delete(url)
+        .then(() => {
+            dispatch(receivePassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
+            dispatch(fetchHenkiloOrgs(oidHenkilo));
+        })
+        .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
+};

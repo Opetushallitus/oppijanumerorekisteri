@@ -2,6 +2,7 @@ import './HenkiloViewOrganisationContent.css'
 import React from 'react'
 import Columns from 'react-columns'
 import Button from "../button/Button";
+import ConfirmButton from "../button/ConfirmButton";
 
 const HenkiloViewOrganisationContent = React.createClass({
     propTypes: {
@@ -10,10 +11,12 @@ const HenkiloViewOrganisationContent = React.createClass({
         readOnly: React.PropTypes.bool.isRequired,
         showPassive: React.PropTypes.bool,
         locale: React.PropTypes.string.isRequired,
+
+        passivoiHenkiloOrg: React.PropTypes.func.isRequired,
     },
     getInitialState: function() {
         const organisations = this.props.henkilo.henkiloOrgs;
-
+        this.L = this.props.l10n[this.props.locale];
         return {
             readOnly: this.props.readOnly,
             showPassive: false,
@@ -25,46 +28,54 @@ const HenkiloViewOrganisationContent = React.createClass({
         }
     },
     render: function() {
-        const L = this.props.l10n[this.props.locale];
+        
         return (
             <div className="henkiloViewUserContentWrapper">
-                <Columns columns={1}>
-                    <div>
-                        <div className="header">
-                            <h2>{L['HENKILO_ORGANISAATIOT_OTSIKKO']}</h2>
-                        </div>
-                        <label className="oph-checkable" htmlFor="showPassive">
-                            <input id="showPassive" type="checkbox" className="oph-checkable-input" onChange={() => this.setState({showPassive: !this.state.showPassive})} />
-                            <span className="oph-checkable-text"> {L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
-                        </label>
-                        <div className="henkiloViewContent">
+                <div>
+                    <div className="header">
+                        <p className="oph-h2 oph-bold">{this.L['HENKILO_ORGANISAATIOT_OTSIKKO']}</p>
+                    </div>
+                    <label className="oph-checkable" htmlFor="showPassive">
+                        <input id="showPassive" type="checkbox" className="oph-checkable-input" onChange={() => this.setState({showPassive: !this.state.showPassive})} />
+                        <span className="oph-checkable-text"> {this.L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
+                    </label>
+                    <div className="henkiloViewContent">
+                        <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
                             {this.state.organisationInfo.map((values, idx) =>
                                 !values.passive || this.state.showPassive
-                                    ? <div key={idx}>
+                                    ?
+                                    <div key={idx}>
                                         <div><span className="oph-bold">{values.name} ({values.typesFlat})</span></div>
-                                        <div>
-                                            <span className="oph-bold">{L['HENKILO_ORGTUNNISTE']}:</span>
+                                        <div className="labelValue">
+                                            <span className="oph-bold">{this.L['HENKILO_ORGTUNNISTE']}:</span>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <span>{values.id}</span>
                                         </div>
-                                        <div>
-                                            <span className="oph-bold">{L['HENKILO_TEHTAVANIMIKE']}:</span>
+                                        <div className="labelValue">
+                                            <span className="oph-bold">{this.L['HENKILO_TEHTAVANIMIKE']}:</span>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <span>{values.role}</span>
                                         </div>
-                                        <div>
+                                        <div className="labelValue">
                                             {!values.passive
-                                                ? <Button action={() => {}}>{L['HENKILO_PASSIVOI']}</Button>
-                                                : <Button action={() => {}} disabled={true}>{L['HENKILO_PASSIVOITU']}</Button>}
+                                                ? <ConfirmButton key="passivoiOrg" cancel
+                                                                 action={() => this.passivoiHenkiloOrganisation(values.id)}
+                                                                 confirmLabel={this.L['HENKILO_ORG_PASSIVOI_CONFIRM']}
+                                                                 normalLabel={this.L['HENKILO_ORG_PASSIVOI']}
+                                                                 errorMessage={this.props._createPopupErrorMessage('passivoiOrg')} />
+                                                : <Button disabled action={() => {}}>{this.L['HENKILO_ORG_PASSIVOITU']}</Button>}
                                         </div>
                                     </div>
                                     : null
                             )}
-                        </div>
+                        </Columns>
                     </div>
-                </Columns>
+                </div>
             </div>
         )
+    },
+    passivoiHenkiloOrganisation: function(organisationOid) {
+        this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);
     },
 });
 

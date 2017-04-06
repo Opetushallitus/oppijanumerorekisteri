@@ -2,7 +2,8 @@ import React from 'react'
 import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
+    updateKayttajatieto,
     updatePassword, yksiloiHenkilo
 } from "../../actions/henkilo.actions";
 import {
@@ -30,7 +31,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         const props = {...this.props, L: this.L, locale: locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
-            editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this), };
+            editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this),
+            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), };
         return <VirkailijaViewPage {...props} />;
     };
 
@@ -79,4 +81,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(VirkailijaViewContainer);
+    yksiloiHenkilo, updateKayttajatieto, updateNavigation, passivoiHenkiloOrg})(VirkailijaViewContainer);
