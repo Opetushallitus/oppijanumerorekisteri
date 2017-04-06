@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import AdminViewPage from "../../components/henkilo/AdminViewPage";
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateKayttajatieto,
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
     updatePassword, yksiloiHenkilo
 } from "../../actions/henkilo.actions";
 import {
@@ -42,4 +42,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateKayttajatieto, updateNavigation})(AdminViewContainer)
+    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation})(AdminViewContainer)

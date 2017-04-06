@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateKayttajatieto,
+    updateAndRefetchKayttajatieto,
     updatePassword, yksiloiHenkilo
 } from "../../actions/henkilo.actions";
 import {
@@ -81,4 +81,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateKayttajatieto, updateNavigation, passivoiHenkiloOrg})(VirkailijaViewContainer);
+    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation, passivoiHenkiloOrg})(VirkailijaViewContainer);

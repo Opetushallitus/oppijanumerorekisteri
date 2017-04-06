@@ -40,10 +40,14 @@ export const updateHenkiloAndRefetch = (payload) => (dispatch => {
 
 const requestKayttajatietoUpdate = kayttajatieto => ({type: UPDATE_KAYTTAJATIETO_REQUEST, kayttajatieto});
 const receiveKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_SUCCESS, kayttajatieto, receivedAt: Date.now()});
-export const updateKayttajatieto = (oid, username) => (dispatch => {
+export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
     dispatch(requestKayttajatietoUpdate(username));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.post(url, {username: username}).then(kayttajatieto => {dispatch(receiveKayttajatietoUpdate(kayttajatieto))});
+    http.post(url, {username: username})
+        .then(kayttajatieto => {
+            dispatch(receiveKayttajatietoUpdate(kayttajatieto));
+            dispatch(fetchKayttajatieto(oid));
+        });
 });
 
 const requestUpdatePassword = oid => ({type: UPDATE_PASSWORD_REQUEST, oid});
