@@ -12,6 +12,7 @@ import {
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
+import {fetchAllKayttooikeusryhmasForHenkilo} from "../../actions/kayttooikeusryhma.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -25,6 +26,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKayttajatieto(this.props.oid);
         this.props.fetchYhteystietotyypitKoodisto();
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oid);
     };
 
     render() {
@@ -77,11 +79,12 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
-        locale: state.locale
+        locale: state.locale,
+        kayttooikeus: state.kayttooikeus,
     };
 };
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto,
     updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
-    passivoiHenkiloOrg})(VirkailijaViewContainer);
+    passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo})(VirkailijaViewContainer);

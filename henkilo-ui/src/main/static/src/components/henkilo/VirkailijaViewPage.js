@@ -3,6 +3,10 @@ import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
+import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
+import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
+import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
+import HenkiloViewCreateKayttooikeus from "../common/henkilo/HenkiloViewCreateKayttooikeus";
 
 const VirkailijaViewPage = React.createClass({
     render: function() {
@@ -26,6 +30,26 @@ const VirkailijaViewPage = React.createClass({
                             ? AbstractViewContainer.createLoader()
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
+                </div>
+                <div className="wrapper">
+                    {
+                        this.props.kayttooikeus.kayttooikeusLoading
+                            ? AbstractViewContainer.createLoader()
+                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                    }
+                </div>
+                <div className="wrapper">
+                    <HenkiloViewOpenKayttooikeusanomus {...this.props} />
+                </div>
+                <div className="wrapper">
+                    {
+                        this.props.kayttooikeus.kayttooikeusLoading
+                            ? AbstractViewContainer.createLoader()
+                            : <HenkiloViewExpiredKayttooikeus {...this.props} />
+                    }
+                </div>
+                <div className="wrapper">
+                    <HenkiloViewCreateKayttooikeus {...this.props} />
                 </div>
             </div>
         )
