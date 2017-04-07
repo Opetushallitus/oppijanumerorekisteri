@@ -39,7 +39,7 @@ const HenkiloViewUserContent = React.createClass({
         return {
             readOnly: this.props.readOnly,
             showPassive: false,
-            editData: [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()],
+            editData: [this.props.basicInfo(), this.props.basicInfo2(this.henkiloUpdate), this.props.loginInfo()],
         }
     },
     render: function() {

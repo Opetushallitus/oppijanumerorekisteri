@@ -7,7 +7,7 @@ import {
     updatePassword, yksiloiHenkilo
 } from "../../actions/henkilo.actions";
 import {
-    fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto,
+    fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
@@ -25,6 +25,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKayttajatieto(this.props.oid);
+        this.props.fetchYhteystietotyypitKoodisto();
     };
 
     render() {
@@ -42,7 +43,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this.L = this.props.l10n[locale];
         this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading
-        || this.props.henkilo.kayttajatietoLoading;
+        || this.props.henkilo.kayttajatietoLoading ||this.props.koodisto.yhteystietotyypitKoodistoLoading;
         this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
         // Basic info box content
@@ -52,8 +53,10 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             this.createKutsumanimiField(),
             this.createAsiointikieliField(),
         ];
-        this._createBasicInfo2 = () => ([
+        this._createBasicInfo2 = (henkiloUpdate) => ([
             this.createOppijanumeroField(),
+            this.createTyosahkopostiField(henkiloUpdate),
+            this.createTyopuhelinField(henkiloUpdate),
         ]);
         this._createLoginInfo = () => [
             this.createKayttajanimiField(),
@@ -80,5 +83,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
-fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation, passivoiHenkiloOrg})(VirkailijaViewContainer);
+    fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto,
+    updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
+    passivoiHenkiloOrg})(VirkailijaViewContainer);

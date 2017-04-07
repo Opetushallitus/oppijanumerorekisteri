@@ -38,6 +38,15 @@ export const updateHenkiloAndRefetch = (payload) => (dispatch => {
     }).catch(e => dispatch(errorHenkiloUpdate(e)));
 });
 
+const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
+const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});
+const errorKayttajatieto = () => ({type: FETCH_KAYTTAJATIETO_FAILURE, kayttajatieto: {}});
+export const fetchKayttajatieto = (oid) => (dispatch => {
+    dispatch(requestKaytajatieto(oid));
+    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
+    http.get(url).then(json => {dispatch(receiveKayttajatieto(json))}).catch(() => dispatch(errorKayttajatieto()));
+});
+
 const requestKayttajatietoUpdate = kayttajatieto => ({type: UPDATE_KAYTTAJATIETO_REQUEST, kayttajatieto});
 const receiveKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_SUCCESS, kayttajatieto, receivedAt: Date.now()});
 export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
@@ -81,15 +90,6 @@ export const yksiloiHenkilo = (oid,) => (dispatch => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi', oid);
     http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))}).catch(e => dispatch(errorYksiloiHenkilo(e)));
-});
-
-const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
-const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});
-const errorKayttajatieto = () => ({type: FETCH_KAYTTAJATIETO_FAILURE, kayttajatieto: {}});
-export const fetchKayttajatieto = (oid) => (dispatch => {
-    dispatch(requestKaytajatieto(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.get(url).then(json => {dispatch(receiveKayttajatieto(json))}).catch(() => dispatch(errorKayttajatieto()));
 });
 
 const requestOrganisations = oidOrganisations => ({type: FETCH_ORGANISATIONS_REQUEST, oidOrganisations});
