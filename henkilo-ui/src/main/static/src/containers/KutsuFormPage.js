@@ -6,7 +6,7 @@ import AddToOrganization from '../components/KutsuForm/AddToOrganization';
 import locale from '../configuration/locale';
 import Button from '../components/common/button/Button';
 import { fetchKutsuFormData } from '../actions/omattiedot.actions';
-import { kutsuAddOrganisaatio } from '../actions/kutsu.actions';
+import { kutsuAddOrganisaatio } from '../actions/uusivirkailijakutsu.actions';
 
 class KutsuFormPage extends React.Component  {
 

@@ -1,14 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux';
-
-
 import { getOrganisaatios } from './OrganisaatioUtilities';
 import R from 'ramda'
 import './AddedOrganization.css';
 import { kutsuAddOrganisaatio,
     kutsuRemoveOrganisaatio,
     kutsuClearOrganisaatios,
-    kutsuSetOrganisaatio} from '../../actions/kutsu.actions';
+    kutsuSetOrganisaatio,
+    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio} from '../../actions/uusivirkailijakutsu.actions';
 import { toLocalizedText } from '../../localizabletext'
 import Select2 from '../common/select/Select2';
 import OrgSelect2 from './OrgSelect2'
@@ -74,6 +73,7 @@ class AddedOrganisation extends React.Component {
         const availableOrganisaatios = getOrganisaatios(this.props.orgs);
         const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
         this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
+        this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.omattiedot.data.oid, organisaatio.oid)
     }
 
     mapOrganisaatio(organisaatio) {
@@ -122,8 +122,15 @@ AddedOrganisation.PropTypes = {
     index: React.PropTypes.number
 };
 
-export default connect(() => ({}), {
+const mapStateToProps = (state) => {
+    return {
+        omattiedot: state.omattiedot
+    }
+};
+
+export default connect(mapStateToProps, {
     kutsuAddOrganisaatio,
     kutsuSetOrganisaatio,
     kutsuRemoveOrganisaatio,
-    kutsuClearOrganisaatios})(AddedOrganisation);
+    kutsuClearOrganisaatios,
+    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio})(AddedOrganisation);
