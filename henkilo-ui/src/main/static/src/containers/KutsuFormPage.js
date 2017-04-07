@@ -46,7 +46,7 @@ class KutsuFormPage extends React.Component  {
             } else {
                 return (
                     <form className="kutsuFormWrapper">
-                        <span>{this.props.l10n[locale]['POISTA_MERKKIA', 1]}</span>
+                        <span>{this.props.l10n[locale]['POISTA_MERKKIA']}</span>
                         <VirkailijaBasicInformation l10n={l10n}
                                                     basicInfo={basicInfo}
                                                     setBasicInfo={this.setBasicInfo.bind(this)}>

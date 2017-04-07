@@ -9,7 +9,7 @@ import { virkailijaInvitationAddOrganisaatio,
     virkailijaInvitationRemoveOrganisaatio,
     virkailijaInvitationClearOrganisaatios} from '../../actions/virkailijainvitation.actions';
 import { toLocalizedText } from '../../localizabletext'
-import Select2 from '../common/select/Select2';
+// import Select2 from '../common/select/Select2';
 import OrgSelect2 from './OrgSelect2'
 import locale from '../../configuration/locale';
 
