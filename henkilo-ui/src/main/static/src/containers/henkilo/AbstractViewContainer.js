@@ -105,7 +105,15 @@ class AbstractViewContainer extends React.Component {
         };
     };
 
-    findOrCreateYhteystiedotRyhma(henkiloUpdate, ryhmakuvaus, yhteystietotyyppi) {
+    createTyosahkopostiField(henkiloUpdate) {
+        return this._findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_SAHKOPOSTI', 'HENKILO_TYOSAHKOPOSTI');
+    };
+
+    createTyopuhelinField(henkiloUpdate) {
+        return this._findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_PUHELINNUMERO', 'HENKILO_TYOPUHELIN');
+    }
+
+    _findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, ryhmakuvaus, yhteystietotyyppi, label) {
         let yhteystiedotRyhmaIndex = null;
         let yhteystietoIndex = null;
         let tyosahkopostiRyhma = henkiloUpdate.yhteystiedotRyhma
@@ -141,23 +149,9 @@ class AbstractViewContainer extends React.Component {
             tyosahkoposti = {yhteystietoTyyppi: yhteystietotyyppi, yhteystietoArvo: ''};
             henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(tyosahkoposti);
         }
-        return {yhteystiedotRyhmaIndex: yhteystiedotRyhmaIndex, yhteystietoIndex: yhteystietoIndex, tyosahkopostiRyhma, tyosahkoposti};
-    }
-
-    createTyosahkopostiField(henkiloUpdate) {
-        const yhteystiedotRyhma = this.findOrCreateYhteystiedotRyhma(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_SAHKOPOSTI');
-
-        return { label: 'HENKILO_TYOSAHKOPOSTI',
-                value: yhteystiedotRyhma.tyosahkoposti && yhteystiedotRyhma.tyosahkoposti.yhteystietoArvo,
-                inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhma.yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystiedotRyhma.yhteystietoIndex+'.yhteystietoArvo',
-        };
-    };
-
-    createTyopuhelinField(henkiloUpdate) {
-        const yhteystiedotRyhma = this.findOrCreateYhteystiedotRyhma(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_PUHELINNUMERO');
-        return { label: 'HENKILO_TYOPUHELIN',
-            value: yhteystiedotRyhma.tyosahkoposti && yhteystiedotRyhma.tyosahkoposti.yhteystietoArvo,
-            inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhma.yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystiedotRyhma.yhteystietoIndex+'.yhteystietoArvo',
+        return { label: label,
+            value: tyosahkoposti && tyosahkoposti.yhteystietoArvo,
+            inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystietoIndex+'.yhteystietoArvo',
         };
     }
 
