@@ -7,7 +7,9 @@ import { kutsuAddOrganisaatio,
     kutsuRemoveOrganisaatio,
     kutsuClearOrganisaatios,
     kutsuSetOrganisaatio,
-    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio} from '../../actions/uusivirkailijakutsu.actions';
+    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
+    addOrganisaatioPermission,
+    removeOrganisaatioPermission} from '../../actions/uusivirkailijakutsu.actions';
 import { toLocalizedText } from '../../localizabletext'
 import Select2 from '../common/select/Select2';
 import OrgSelect2 from './OrgSelect2'
@@ -42,7 +44,7 @@ class AddedOrganisation extends React.Component {
                     <label htmlFor="permissions">
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']} *
                     </label>
-                    <Select2 onSelect={this.selectPermissions} multiple id="permissions" l10n={L}
+                    <Select2 onSelect={this.addPermission.bind(this, selectablePermissions)} multiple id="permissions" l10n={L}
                              data={selectablePermissions.map(permission => ({
                                  id: permission.ryhmaId,
                                  text: toLocalizedText(locale, permission.ryhmaNames)
@@ -57,7 +59,7 @@ class AddedOrganisation extends React.Component {
                             return (
                                 <li key={permission.ryhmaId}>
                                     {toLocalizedText(locale, permission.ryhmaNames)}
-                                    <i className="fa fa-times-circle right remove-icon" onClick={this.removeAddedPermission.bind(null, permission.ryhmaId)} aria-hidden="true"></i>
+                                    <i className="fa fa-times-circle right remove-icon" onClick={this.removePermission.bind(this, permission)} aria-hidden="true"></i>
                                 </li>
                             )
                         })}
@@ -90,24 +92,17 @@ class AddedOrganisation extends React.Component {
     removeAddedOrg(oid, e) {
         e.preventDefault();
         this.props.kutsuRemoveOrganisaatio(oid);
+    }   
+
+    addPermission( selectablePermissions, event ) {
+        const ryhmaId = parseInt(event.target.value, 10);
+        const selectedPermission = R.find(R.propEq('ryhmaId', ryhmaId))(selectablePermissions);
+        this.props.addOrganisaatioPermission(this.props.addedOrg.oid, selectedPermission);
     }
 
-    selectPermissions(e) {
-        const selectedIds = Array.apply(null, e.target.options)
-            .filter(option => option.selected)
-            .map(option => option.value)
-            .map(value => parseInt(value, 10));
-        const selectedPermissions = R.filter((permission) => selectedIds.includes(permission.ryhmaId), this.props.addedOrg.selectablePermissions);
-        this.props.addedOrg.selectedPermissions = R.union(this.props.addedOrg.selectedPermissions, selectedPermissions);
-
-        // organisations.updated();
-    }
-
-    removeAddedPermission(id, e) {
+    removePermission(permission, e) {
         e.preventDefault();
-        this.props.addedOrg.selectedPermissions = R.reject(permission => permission.ryhmaId === id, this.props.addedOrg.selectedPermissions);
-
-        // organisations.updated();
+        this.props.removeOrganisaatioPermission(this.props.addedOrg.oid, permission);
     }
 
 }
@@ -133,4 +128,6 @@ export default connect(mapStateToProps, {
     kutsuSetOrganisaatio,
     kutsuRemoveOrganisaatio,
     kutsuClearOrganisaatios,
-    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio})(AddedOrganisation);
+    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
+    addOrganisaatioPermission,
+    removeOrganisaatioPermission})(AddedOrganisation);
