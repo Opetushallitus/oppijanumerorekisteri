@@ -37,7 +37,7 @@ class AddedOrganisation extends React.Component {
                                 value={addedOrg.oid}
                                 options={{placeholder: L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}}/>
                     <i className="fa fa-times-circle remove-icon after"
-                       onClick={this.removeAddedOrg.bind(null, addedOrg.oid)} aria-hidden="true"></i>
+                       onClick={this.removeOrganisaatio.bind(this, addedOrg.oid)} aria-hidden="true"></i>
                 </div>
 
                 <div className="row permissions-row">
@@ -89,7 +89,7 @@ class AddedOrganisation extends React.Component {
 
     }
 
-    removeAddedOrg(oid, e) {
+    removeOrganisaatio(oid, e) {
         e.preventDefault();
         this.props.kutsuRemoveOrganisaatio(oid);
     }   

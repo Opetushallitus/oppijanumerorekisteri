@@ -12,6 +12,7 @@ import './reset.css';
 import './general-style.css';
 import 'oph-virkailija-style-guide/oph-styles.css'
 import './index.css';
+import 'font-awesome/css/font-awesome.min.css';
 
 
 let store = configureStore();
