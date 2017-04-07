@@ -9,7 +9,6 @@ export default class AddToOrganisation extends React.Component {
 
     render() {
         const L = this.props.l10n[locale];
-        console.log(this.props);
         return (
             <fieldset className="add-to-organisation">
                 <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>
@@ -24,15 +23,12 @@ export default class AddToOrganisation extends React.Component {
     }
 
     addEmptyOrganization(e) {
-
         e.preventDefault();
-        const emptyOrganization = () => ({
-            oid: '',
-            organisation: {oid:''},
+        this.props.addOrganisaatio({oid: '',
+            organisation: {oid: ''},
             selectablePermissions: [],
             selectedPermissions: []
         });
-        this.props.addOrganisaatio(emptyOrganization);
     }
 
     changeOrganization(oldOid, e) {

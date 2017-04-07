@@ -6,6 +6,7 @@ export const AddedOrganizations = (props) =>
     <div>{props.addedOrgs.map((organization, index) =>
         <AddedOrganization
             key={index}
+            index={index}
             orgs={props.orgs}
             addedOrgs={props.addedOrgs}
             addedOrg={organization}

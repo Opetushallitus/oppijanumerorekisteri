@@ -6,7 +6,7 @@ import AddToOrganization from '../components/KutsuForm/AddToOrganization';
 import locale from '../configuration/locale';
 import Button from '../components/common/button/Button';
 import { fetchKutsuFormData } from '../actions/omattiedot.actions';
-import { virkailijaInvitationAddOrganisaatio } from '../actions/virkailijainvitation.actions';
+import { kutsuAddOrganisaatio } from '../actions/kutsu.actions';
 
 class KutsuFormPage extends React.Component  {
 
@@ -51,13 +51,12 @@ class KutsuFormPage extends React.Component  {
                                                     basicInfo={basicInfo}
                                                     setBasicInfo={this.setBasicInfo.bind(this)}>
                         </VirkailijaBasicInformation>
-                        <h3>{this.props.addedOrgs}</h3>
                         <AddToOrganization l10n={l10n}
                                            omattiedot={this.props.omattiedot.data}
                                            orgs={this.props.henkilo.henkiloOrganisaatios}
                                            addedOrgs={this.props.addedOrgs}
                                            henkilo={this.props.henkilo}
-                                           addOrganisaatio={this.props.virkailijaInvitationAddOrganisaatio}/>
+                                           addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
 
                         <div className="kutsuFormFooter row">
                             <Button confirm action={this.openConfirmationModal} disabled={!this.isValid()}>
@@ -120,4 +119,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchKutsuFormData, virkailijaInvitationAddOrganisaatio})(KutsuFormPage);
+export default connect(mapStateToProps, {fetchKutsuFormData, kutsuAddOrganisaatio})(KutsuFormPage);

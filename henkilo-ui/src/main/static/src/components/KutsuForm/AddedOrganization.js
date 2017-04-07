@@ -5,11 +5,12 @@ import { connect } from 'react-redux';
 import { getOrganisaatios } from './OrganisaatioUtilities';
 import R from 'ramda'
 import './AddedOrganization.css';
-import { virkailijaInvitationAddOrganisaatio,
-    virkailijaInvitationRemoveOrganisaatio,
-    virkailijaInvitationClearOrganisaatios} from '../../actions/virkailijainvitation.actions';
+import { kutsuAddOrganisaatio,
+    kutsuRemoveOrganisaatio,
+    kutsuClearOrganisaatios,
+    kutsuSetOrganisaatio} from '../../actions/kutsu.actions';
 import { toLocalizedText } from '../../localizabletext'
-// import Select2 from '../common/select/Select2';
+import Select2 from '../common/select/Select2';
 import OrgSelect2 from './OrgSelect2'
 import locale from '../../configuration/locale';
 
@@ -19,10 +20,9 @@ class AddedOrganisation extends React.Component {
         const addedOrg = this.props.addedOrg;
         const availableOrgs = getOrganisaatios(this.props.orgs);
         const excludedOrgOids = R.map(R.prop('oid'), R.filter(org => addedOrg.oid !== org.oid)(this.props.addedOrgs));
-        // const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
-        const L = this.props.l10n;
+        const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
+        const L = this.props.l10n[locale];
         const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, availableOrgs);
-
         return (
             <div className="added-org" key={addedOrg.oid}>
                 <div className="row">
@@ -30,7 +30,7 @@ class AddedOrganisation extends React.Component {
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
                     <OrgSelect2 id="org"
-                                onSelect={this.changeOrganization.bind(this, addedOrg.oid)}
+                                onSelect={this.changeOrganization.bind(this)}
                                 data={orgs.map(this.mapOrganisaatio)}
                                 l10n={L}
                                 value={addedOrg.oid}
@@ -43,34 +43,37 @@ class AddedOrganisation extends React.Component {
                     <label htmlFor="permissions">
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']} *
                     </label>
-                    {/*<Select2 onSelect={this.selectPermissions} multiple id="permissions" l10n={L}*/}
-                             {/*data={selectablePermissions.map(permission => ({*/}
-                                 {/*id: permission.ryhmaId,*/}
-                                 {/*text: toLocalizedText(locale, permission.ryhmaNames)*/}
-                             {/*}))}*/}
-                             {/*options={{*/}
-                                 {/*disabled: !addedOrg.oid,*/}
-                                 {/*placeholder: L['VIRKAILIJAN_LISAYS_SUODATA_KAYTTOOIKEUKSIA']*/}
-                             {/*}}>*/}
-                    {/*</Select2>*/}
-                    {/*<ul className="selected-permissions">*/}
-                        {/*{addedOrg.selectedPermissions.map(permission => {*/}
-                            {/*return (*/}
-                                {/*<li key={permission.ryhmaId}>*/}
-                                    {/*{toLocalizedText(locale, permission.ryhmaNames)}*/}
-                                    {/*<i className="fa fa-times-circle right remove-icon" onClick={this.removeAddedPermission.bind(null, permission.ryhmaId)} aria-hidden="true"></i>*/}
-                                {/*</li>*/}
-                            {/*)*/}
-                        {/*})}*/}
-                    {/*</ul>*/}
+                    <Select2 onSelect={this.selectPermissions} multiple id="permissions" l10n={L}
+                             data={selectablePermissions.map(permission => ({
+                                 id: permission.ryhmaId,
+                                 text: toLocalizedText(locale, permission.ryhmaNames)
+                             }))}
+                             options={{
+                                 disabled: !addedOrg.oid,
+                                 placeholder: L['VIRKAILIJAN_LISAYS_SUODATA_KAYTTOOIKEUKSIA']
+                             }}>
+                    </Select2>
+                    <ul className="selected-permissions">
+                        {addedOrg.selectedPermissions.map(permission => {
+                            return (
+                                <li key={permission.ryhmaId}>
+                                    {toLocalizedText(locale, permission.ryhmaNames)}
+                                    <i className="fa fa-times-circle right remove-icon" onClick={this.removeAddedPermission.bind(null, permission.ryhmaId)} aria-hidden="true"></i>
+                                </li>
+                            )
+                        })}
+                    </ul>
                 </div>
                 <div className="clear"></div>
             </div>
         )
     }
 
-    changeOrganization(oid) {
-        console.log('changin organization:', oid);
+    changeOrganization(event) {
+        const selectedOrganisaatioOid = event.target.value;
+        const availableOrganisaatios = getOrganisaatios(this.props.orgs);
+        const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
+        this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
     }
 
     mapOrganisaatio(organisaatio) {
@@ -86,7 +89,7 @@ class AddedOrganisation extends React.Component {
 
     removeAddedOrg(oid, e) {
         e.preventDefault();
-        this.props.virkailijaInvitationRemoveOrganisaatio(oid);
+        this.props.kutsuRemoveOrganisaatio(oid);
     }
 
     selectPermissions(e) {
@@ -115,10 +118,12 @@ AddedOrganisation.PropTypes = {
     addedOrgs: React.PropTypes.array,
     addedOrg: React.PropTypes.object,
     orgs: React.PropTypes.array,
-    uiLang: React.PropTypes.object
+    uiLang: React.PropTypes.object,
+    index: React.PropTypes.number
 };
 
 export default connect(() => ({}), {
-    virkailijaInvitationAddOrganisaatio,
-    virkailijaInvitationRemoveOrganisaatio,
-    virkailijaInvitationClearOrganisaatios})(AddedOrganisation);
+    kutsuAddOrganisaatio,
+    kutsuSetOrganisaatio,
+    kutsuRemoveOrganisaatio,
+    kutsuClearOrganisaatios})(AddedOrganisation);
