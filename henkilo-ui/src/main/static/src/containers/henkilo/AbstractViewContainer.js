@@ -31,6 +31,10 @@ class AbstractViewContainer extends React.Component {
                 .indexOf(yhteystietotyyppi.value) === -1);
     };
 
+    /*
+    * Fields
+    * */
+
     createKansalaisuusField() {
         return this.props.henkilo.henkilo.kansalaisuus && this.props.henkilo.henkilo.kansalaisuus.length
             ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
@@ -100,6 +104,60 @@ class AbstractViewContainer extends React.Component {
             inputValue: 'kayttajanimi'
         };
     };
+
+    createTyosahkopostiField(henkiloUpdate) {
+        return this._findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_SAHKOPOSTI', 'HENKILO_TYOSAHKOPOSTI');
+    };
+
+    createTyopuhelinField(henkiloUpdate) {
+        return this._findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_PUHELINNUMERO', 'HENKILO_TYOPUHELIN');
+    }
+
+    _findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, ryhmakuvaus, yhteystietotyyppi, label) {
+        let yhteystiedotRyhmaIndex = null;
+        let yhteystietoIndex = null;
+        let tyosahkopostiRyhma = henkiloUpdate.yhteystiedotRyhma
+            .filter((yhteystiedotRyhma, idx) => {
+                if(!yhteystiedotRyhmaIndex && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus) {
+                    yhteystiedotRyhmaIndex = idx;
+                    return true;
+                }
+                return false;
+            })[0];
+        let tyosahkoposti = tyosahkopostiRyhma
+            ? tyosahkopostiRyhma.yhteystieto.filter((yhteystieto, idx) => {
+                if(yhteystietoIndex === null && yhteystieto.yhteystietoTyyppi === yhteystietotyyppi) {
+                    yhteystietoIndex = idx;
+                    return true;
+                }
+                return false;
+            })[0]
+            : null;
+        if(yhteystiedotRyhmaIndex === null) {
+            yhteystiedotRyhmaIndex = henkiloUpdate.yhteystiedotRyhma.length;
+            tyosahkopostiRyhma = {
+                readOnly: false,
+                ryhmaAlkuperaTieto: "alkupera2", // Virkailija
+                ryhmaKuvaus: ryhmakuvaus,
+                yhteystieto: []
+            };
+            henkiloUpdate.yhteystiedotRyhma.push(tyosahkopostiRyhma);
+        }
+
+        if(yhteystietoIndex === null) {
+            yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.length;
+            tyosahkoposti = {yhteystietoTyyppi: yhteystietotyyppi, yhteystietoArvo: ''};
+            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(tyosahkoposti);
+        }
+        return { label: label,
+            value: tyosahkoposti && tyosahkoposti.yhteystietoArvo,
+            inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystietoIndex+'.yhteystietoArvo',
+        };
+    }
+
+    /*
+    * Buttons
+    * */
 
     createEditButton(edit) {
         return <Button key="edit" big action={edit}>{this.L['MUOKKAA_LINKKI']}</Button>;

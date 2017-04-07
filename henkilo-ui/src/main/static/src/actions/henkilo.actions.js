@@ -1,6 +1,8 @@
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
 import {
+    DELETE_HENKILOORGS_FAILURE,
+    DELETE_HENKILOORGS_REQUEST, DELETE_HENKILOORGS_SUCCESS,
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_ORGANISATIONS_REQUEST,
@@ -36,12 +38,25 @@ export const updateHenkiloAndRefetch = (payload) => (dispatch => {
     }).catch(e => dispatch(errorHenkiloUpdate(e)));
 });
 
+const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
+const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});
+const errorKayttajatieto = () => ({type: FETCH_KAYTTAJATIETO_FAILURE, kayttajatieto: {}});
+export const fetchKayttajatieto = (oid) => (dispatch => {
+    dispatch(requestKaytajatieto(oid));
+    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
+    http.get(url).then(json => {dispatch(receiveKayttajatieto(json))}).catch(() => dispatch(errorKayttajatieto()));
+});
+
 const requestKayttajatietoUpdate = kayttajatieto => ({type: UPDATE_KAYTTAJATIETO_REQUEST, kayttajatieto});
 const receiveKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_SUCCESS, kayttajatieto, receivedAt: Date.now()});
-export const updateKayttajatieto = (oid, username) => (dispatch => {
+export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
     dispatch(requestKayttajatietoUpdate(username));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.post(url, {username: username}).then(kayttajatieto => {dispatch(receiveKayttajatietoUpdate(kayttajatieto))});
+    http.post(url, {username: username})
+        .then(kayttajatieto => {
+            dispatch(receiveKayttajatietoUpdate(kayttajatieto));
+            dispatch(fetchKayttajatieto(oid));
+        });
 });
 
 const requestUpdatePassword = oid => ({type: UPDATE_PASSWORD_REQUEST, oid});
@@ -77,15 +92,6 @@ export const yksiloiHenkilo = (oid,) => (dispatch => {
     http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))}).catch(e => dispatch(errorYksiloiHenkilo(e)));
 });
 
-const requestKaytajatieto = oid => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
-const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});
-const errorKayttajatieto = () => ({type: FETCH_KAYTTAJATIETO_FAILURE, kayttajatieto: {}});
-export const fetchKayttajatieto = (oid) => (dispatch => {
-    dispatch(requestKaytajatieto(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.get(url).then(json => {dispatch(receiveKayttajatieto(json))}).catch(() => dispatch(errorKayttajatieto()));
-});
-
 const requestOrganisations = oidOrganisations => ({type: FETCH_ORGANISATIONS_REQUEST, oidOrganisations});
 const receiveOrganisations = (json) => ({type: FETCH_ORGANISATIONS_SUCCESS, organisations: json, receivedAt: Date.now()});
 const fetchOrganisations = (oidOrganisations) => (dispatch => {
@@ -114,8 +120,6 @@ export const fetchHenkiloOrgs = oid => (dispatch, getState) => {
     });
 };
 
-
-
 const requestHenkiloOrganisaatios = oid => ({type: FETCH_HENKILO_ORGANISAATIOS_REQUEST, oid});
 const receiveHenkiloOrganisaatiosSuccess = (henkiloOrganisaatios) => ({
     type: FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
@@ -136,3 +140,23 @@ export const fetchHenkiloOrganisaatios = (oid) => async (dispatch, getState) => 
     }
 };
 
+const requestPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({type: DELETE_HENKILOORGS_REQUEST, oidHenkilo, oidHenkiloOrg});
+const receivePassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({type: DELETE_HENKILOORGS_SUCCESS, oidHenkilo, oidHenkiloOrg,
+    receivedAt: Date.now()});
+const errorPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
+    type: DELETE_HENKILOORGS_FAILURE,
+    oidHenkilo,
+    oidHenkiloOrg,
+    buttonNotification: {position: 'passivoiOrg', notL10nMessage: 'PASSIVOI_ORG_ERROR_TOPIC', notL10nText: 'PASSIVOI_ORG_ERROR_TEXT'},
+    receivedAt: Date.now(),
+});
+export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
+    dispatch(requestPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
+    const url = urls.url('kayttooikeus-service.organisaatiohenkilo.passivoi', oidHenkilo, oidHenkiloOrg);
+    return http.delete(url)
+        .then(() => {
+            dispatch(receivePassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
+            dispatch(fetchHenkiloOrgs(oidHenkilo));
+        })
+        .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
+};

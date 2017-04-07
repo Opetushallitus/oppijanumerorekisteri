@@ -39,7 +39,7 @@ const HenkiloViewUserContent = React.createClass({
         return {
             readOnly: this.props.readOnly,
             showPassive: false,
-            editData: [this.props.basicInfo(), this.props.basicInfo2(), this.props.loginInfo()],
+            editData: [this.props.basicInfo(), this.props.basicInfo2(this.henkiloUpdate), this.props.loginInfo()],
         }
     },
     render: function() {
@@ -100,8 +100,8 @@ const HenkiloViewUserContent = React.createClass({
             this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
             this.henkiloUpdate.password = this.henkiloUpdate.passwordAgain = null;
         }
-        if(this.props.henkilo.henkilo.kayttajanimi === undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
-            this.props.updateKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
+        if(this.props.henkilo.kayttajatieto.username === undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
+            this.props.updateAndRefetchKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});
     },
