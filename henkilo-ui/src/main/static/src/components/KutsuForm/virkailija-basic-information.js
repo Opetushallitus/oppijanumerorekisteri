@@ -10,7 +10,7 @@ export class VirkailijaBasicInformation extends React.Component {
         const {basicInfo} = this.props;
 
         return (
-            <fieldset className="basic-info">
+            <fieldset>
                 <h2>{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
                 <div className="row">
                     <label htmlFor="etunimi" className="required">{L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>

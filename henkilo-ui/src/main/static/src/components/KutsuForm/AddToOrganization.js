@@ -1,33 +1,38 @@
 import React from 'react'
 import R from 'ramda'
-
+import locale from '../../configuration/locale';
 // import {addEmptyOrganization, changeOrganization} from '../../logic/organisations'
 
-// import AddedOrganizations from './AddedOrganizations';
+import { AddedOrganizations } from './AddedOrganizations';
 
 export default class AddToOrganisation extends React.Component {
-    
+
     render() {
-        const L = this.props.l10n;
+        const L = this.props.l10n[locale];
+        console.log(this.props);
         return (
             <fieldset className="add-to-organisation">
                 <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>
-                {/*<h3>{this.props.omattiedot}</h3>*/}
-                {/*<AddedOrganizations changeOrganization={oldId => e => this.changeOrganization(oldId, e)}*/}
-                                    {/*orgs={this.props.orgs}*/}
-                                    {/*addedOrgs={this.props.addedOrgs}*/}
-                                    {/*l10n={this.props.l10n}*/}
-                                    {/*uiLang={this.props.uiLang} />*/}
+                <AddedOrganizations orgs={this.props.orgs}
+                                    addedOrgs={this.props.addedOrgs}
+                                    l10n={this.props.l10n} />
                 <div className="row">
-                    <a href="#" onClick={this.addEmptyOrganization}>{L['VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI']}</a>
+                    <a href="#" onClick={this.addEmptyOrganization.bind(this)}>{L['VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI']}</a>
                 </div>
             </fieldset>
         )
     }
 
     addEmptyOrganization(e) {
+
         e.preventDefault();
-        // addEmptyOrganization();
+        const emptyOrganization = () => ({
+            oid: '',
+            organisation: {oid:''},
+            selectablePermissions: [],
+            selectedPermissions: []
+        });
+        this.props.addOrganisaatio(emptyOrganization);
     }
 
     changeOrganization(oldOid, e) {
@@ -37,5 +42,14 @@ export default class AddToOrganisation extends React.Component {
             // changeOrganization(oldOid, selectedOrganization, this.props.omaOid);
         }
     }
+
 }
 
+AddToOrganisation.propTypes = {
+    addedOrgs: React.PropTypes.array,
+    l10n: React.PropTypes.object,
+    omattiedot: React.PropTypes.object,
+    orgs: React.PropTypes.array,
+    henkilo: React.PropTypes.object,
+    addOrganisaatio: React.PropTypes.func
+};

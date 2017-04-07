@@ -5,7 +5,7 @@ export const omattiedot = (state = { omattiedotLoading: true, omattiedot: undefi
         case FETCH_OMATTIEDOT_REQUEST:
             return Object.assign({}, state, { omattiedotLoading: true });
         case FETCH_OMATTIEDOT_SUCCESS:
-            return Object.assign({}, state, { omattiedotLoading: false, omattiedot: action.omattiedot });
+            return Object.assign({}, state, { omattiedotLoading: false, data: action.omattiedot });
         case FETCH_OMATTIEDOT_FAILURE:
             return Object.assign({}, state, { omattiedotLoading: false, });
         default:

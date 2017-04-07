@@ -10,7 +10,10 @@ import {
     UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_PASSWORD_REQUEST,
     UPDATE_PASSWORD_SUCCESS, YKSILOI_HENKILO_FAILURE,
     YKSILOI_HENKILO_REQUEST,
-    YKSILOI_HENKILO_SUCCESS
+    YKSILOI_HENKILO_SUCCESS,
+    FETCH_HENKILO_ORGANISAATIOS_REQUEST,
+    FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
+    FETCH_HENKILO_ORGANISAATIOS_FAILURE
 } from "./actiontypes";
 
 const requestHenkilo = oid => ({type: FETCH_HENKILO_REQUEST, oid});
@@ -95,19 +98,41 @@ const fetchOrganisations = (oidOrganisations) => (dispatch => {
 });
 
 const requestHenkiloOrgs = oid => ({type: FETCH_HENKILOORGS_REQUEST, oid});
-const receiveHenkiloOrgs = (henkiloOrgs, organisations) => ({
+const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({
     type: FETCH_HENKILOORGS_SUCCESS,
     henkiloOrgs: henkiloOrgs,
     organisations: organisations,
     receivedAt: Date.now()
 });
-export const fetchHenkiloOrgs = (oid) => (dispatch, getState) => {
-    oid = oid || getState().omattiedot.omattiedot.oid;
+export const fetchHenkiloOrgs = oid => (dispatch, getState) => {
+    oid = oid || getState().omattiedot.data.oid;
     dispatch(requestHenkiloOrgs(oid));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oid);
     return http.get(url).then(json => {
         dispatch(fetchOrganisations(json.map(orgHenkilo => orgHenkilo.organisaatioOid)))
-            .then(organisationsAction => dispatch(receiveHenkiloOrgs(json, organisationsAction.organisations)));
+            .then(organisationsAction => dispatch(receiveHenkiloOrgsSuccess(json, organisationsAction.organisations)));
     });
+};
+
+
+
+const requestHenkiloOrganisaatios = oid => ({type: FETCH_HENKILO_ORGANISAATIOS_REQUEST, oid});
+const receiveHenkiloOrganisaatiosSuccess = (henkiloOrganisaatios) => ({
+    type: FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
+    henkiloOrganisaatios
+});
+const receiveHenkiloOrganisaatioFailure = error => ({type: FETCH_HENKILO_ORGANISAATIOS_FAILURE, error});
+
+export const fetchHenkiloOrganisaatios = (oid) => async (dispatch, getState) => {
+    oid = oid || getState().omattiedot.data.oid;
+    dispatch(requestHenkiloOrganisaatios(oid));
+    const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oid);
+    try {
+        const henkiloOrganisaatios = await http.get(url);
+        return dispatch(receiveHenkiloOrganisaatiosSuccess( henkiloOrganisaatios ));
+    } catch (error) {
+        dispatch(receiveHenkiloOrganisaatioFailure);
+        console.error(`Failed fetching organisaatios for henkilo: ${oid}: ${error}`);
+    }
 };
 

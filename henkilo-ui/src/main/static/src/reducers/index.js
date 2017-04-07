@@ -8,6 +8,7 @@ import {koodisto} from "./koodisto.reducer";
 import {naviState} from "./navigation.reducer";
 import {prequels} from "./prequels.reducer";
 import {omattiedot} from "./omattiedot.reducer";
+import {virkailijaInvitationOrganisaatios} from './virkailijainvitation.reducer';
 
 const rootReducer = combineReducers({
     routing,
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
     koodisto,
     naviState,
     prequels,
-    omattiedot
+    omattiedot,
+    virkailijaInvitationOrganisaatios
 });
 
 export default rootReducer;

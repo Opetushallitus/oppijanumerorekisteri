@@ -179,10 +179,11 @@ const Select2 = React.createClass({
         },
         inputTooLong: function (args) {
           const overChars = args.input.length - args.maximum;
-          return l10n.msg('POISTA_MERKKIA', overChars);
+          return `${l10n['POISTA']} ${overChars} ${l10n['MERKKIA']}`;
         },
         inputTooShort: function (args) {
-          return l10n.msg('SYOTA_VAHINTAAN_MERKKIA', args.minimum);
+          const result = `${l10n['SYOTA_VAHINTAAN']} ${args.minimum} ${l10n['MERKKIA']}`;
+          return result;
         },
         loadingMore: function () {
           return l10n['LADATAAN'];
@@ -191,7 +192,7 @@ const Select2 = React.createClass({
           return l10n['EI_TULOKSIA'];
         },
         maximumSelected: function (args) {
-          return l10n.msg('VOIT_VALITA_VAIN', args.maximum);
+          return `${l10n['VOIT_VALITA_VAIN']} ${args.maximum}`;
         },
         searching: function () {
           return l10n['ETSITAAN'];

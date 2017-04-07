@@ -6,6 +6,7 @@ import AddToOrganization from '../components/KutsuForm/AddToOrganization';
 import locale from '../configuration/locale';
 import Button from '../components/common/button/Button';
 import { fetchKutsuFormData } from '../actions/omattiedot.actions';
+import { virkailijaInvitationAddOrganisaatio } from '../actions/virkailijainvitation.actions';
 
 class KutsuFormPage extends React.Component  {
 
@@ -39,30 +40,37 @@ class KutsuFormPage extends React.Component  {
         // };
         const {l10n} = this.props;
         const {basicInfo} = this.state;
-        return (
-            <form className="kutsuFormWrapper">
-                <h1>{this.state.basicInfo.email}</h1>
-                <VirkailijaBasicInformation l10n={l10n}
-                                            basicInfo={basicInfo}
-                                            setBasicInfo={this.setBasicInfo.bind(this)}>
-                </VirkailijaBasicInformation>
 
-                <AddToOrganization l10n={l10n}
-                                   omattiedot={this.props.omattiedot}
-                                   orgs={this.props.organizationsFlatInHierarchyOrder}
-                                   addedOrgs={this.props.addedOrgs}/>
+            if(this.props.omattiedot.omattiedotLoading || this.props.henkilo.henkiloOrganisaatiosLoading) {
+                return (<h2>Loading</h2>);
+            } else {
+                return (
+                    <form className="kutsuFormWrapper">
+                        <span>{this.props.l10n[locale]['POISTA_MERKKIA', 1]}</span>
+                        <VirkailijaBasicInformation l10n={l10n}
+                                                    basicInfo={basicInfo}
+                                                    setBasicInfo={this.setBasicInfo.bind(this)}>
+                        </VirkailijaBasicInformation>
+                        <h3>{this.props.addedOrgs}</h3>
+                        <AddToOrganization l10n={l10n}
+                                           omattiedot={this.props.omattiedot.data}
+                                           orgs={this.props.henkilo.henkiloOrganisaatios}
+                                           addedOrgs={this.props.addedOrgs}
+                                           henkilo={this.props.henkilo}
+                                           addOrganisaatio={this.props.virkailijaInvitationAddOrganisaatio}/>
 
-                <div className="kutsuFormFooter row">
-                    <Button confirm action={this.openConfirmationModal} disabled={!this.isValid()}>
-                    {L['VIRKAILIJAN_LISAYS_TALLENNA']}
-                    </Button> {this.isAddToOrganizationsNotificationShown() &&
-                    <span className="missingInfo">
-                    {L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS']}
-                    </span>}
-                </div>
-                {/*<KutsuConfirmation {...confirmationProps} />*/}
-            </form>
-        )
+                        <div className="kutsuFormFooter row">
+                            <Button confirm action={this.openConfirmationModal} disabled={!this.isValid()}>
+                                {L['VIRKAILIJAN_LISAYS_TALLENNA']}
+                            </Button> {this.isAddToOrganizationsNotificationShown() &&
+                            <span className="missingInfo">
+                                {L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS']}
+                            </span>}
+                        </div>
+                        {/*<KutsuConfirmation {...confirmationProps} />*/}
+                    </form>
+                )
+            }
     }
 
     isValid() {
@@ -107,8 +115,9 @@ const mapStateToProps = (state, ownProps) => {
         path: ownProps.location.pathname,
         l10n: state.l10n.localisations,
         omattiedot: state.omattiedot,
-        henkilo: state.henkilo
+        henkilo: state.henkilo,
+        addedOrgs: state.virkailijaInvitationOrganisaatios
     };
 };
 
-export default connect(mapStateToProps, {fetchKutsuFormData})(KutsuFormPage);
+export default connect(mapStateToProps, {fetchKutsuFormData, virkailijaInvitationAddOrganisaatio})(KutsuFormPage);

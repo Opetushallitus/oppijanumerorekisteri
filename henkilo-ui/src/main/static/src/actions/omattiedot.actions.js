@@ -5,7 +5,7 @@ import {
     FETCH_OMATTIEDOT_SUCCESS,
     FETCH_OMATTIEDOT_FAILURE
 } from './actiontypes';
-import {fetchHenkiloOrgs} from './henkilo.actions';
+import {fetchHenkiloOrganisaatios} from './henkilo.actions';
 
 const requestOmattiedot = () => ({type: FETCH_OMATTIEDOT_REQUEST});
 const receiveOmattiedotSuccess = (json) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
@@ -26,6 +26,6 @@ export const fetchOmattiedot = () => async dispatch => {
 
 export const fetchKutsuFormData = () => async dispatch => {
     await dispatch(fetchOmattiedot());
-    await dispatch(fetchHenkiloOrgs());
+    await dispatch(fetchHenkiloOrganisaatios());
 };
 
