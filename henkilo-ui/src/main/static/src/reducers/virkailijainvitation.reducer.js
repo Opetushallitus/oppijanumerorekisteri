@@ -26,7 +26,8 @@ export const virkailijaInvitationOrganisaatios = (state = [], action) => {
             };
             return newOrganisaatios;
         case KUTSU_REMOVE_ORGANISAATIO:
-            return R.reject( organisaatio => organisaatio.oid === action.organisaatio.oid );
+            console.log('remove organisaatio', action.organisaatioOid);
+            return R.reject( organisaatio => organisaatio.oid === action.organisaatioOid, newOrganisaatios );
         case KUTSU_CLEAR_ORGANISAATIOS:
             return [];
         case FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST:
