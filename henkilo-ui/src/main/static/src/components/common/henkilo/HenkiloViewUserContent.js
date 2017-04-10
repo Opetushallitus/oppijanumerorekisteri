@@ -50,6 +50,7 @@ const HenkiloViewUserContent = React.createClass({
                         <div className="header">
                             <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>
                         </div>
+
                         <Columns columns={3} gap="10px">
                             {
                                 this.state.editData.map((info, idx) =>
