@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
 import { VirkailijaBasicInformation } from '../components/KutsuForm/virkailija-basic-information';
 import React from 'react';
-// import R from 'ramda';
+import R from 'ramda';
 import AddToOrganization from '../components/KutsuForm/AddToOrganization';
 import locale from '../configuration/locale';
 import Button from '../components/common/button/Button';
 import { fetchKutsuFormData } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/uusivirkailijakutsu.actions';
+import { browserHistory } from 'react-router';
+import KutsuConfirmation from '../components/KutsuForm/kutsuconfirmation';
 
 class KutsuFormPage extends React.Component  {
 
@@ -29,15 +31,15 @@ class KutsuFormPage extends React.Component  {
 
     render() {
         const L = this.props.l10n[locale];
-        // const uiLang = this.props.locale;
-        // const confirmationProps = {
-        //     addedOrgs: this.props.addedOrgs,
-        //     modalCloseFn: this.closeConfirmationModal,
-        //     modalOpen: this.state.confirmationModalOpen,
-        //     ready:(ok) => ok ? navigateTo('/kutsu/list', 'VIRKAILIJAN_LISAYS_LAHETETTY') : this.setState({
-        //             confirmationModalOpen: false
-        //         })
-        // };
+        const confirmationProps = {
+            l10n: this.props.l10n,
+            addedOrgs: this.props.addedOrgs,
+            modalCloseFn: this.closeConfirmationModal.bind(this),
+            modalOpen: this.state.confirmationModalOpen,
+            basicInfo: this.state.basicInfo,
+            clearBasicInfo: this.clearBasicInfo.bind(this),
+            ready: (ok) => ok ? browserHistory.push('/kutsutut') : this.setState({ confirmationModalOpen: false })
+        };
         const {l10n} = this.props;
         const {basicInfo} = this.state;
 
@@ -59,14 +61,14 @@ class KutsuFormPage extends React.Component  {
                                            addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
 
                         <div className="kutsuFormFooter row">
-                            <Button confirm action={this.openConfirmationModal} disabled={!this.isValid()}>
+                            <Button confirm action={this.openConfirmationModal.bind(this)} disabled={!this.isValid.bind(this)}>
                                 {L['VIRKAILIJAN_LISAYS_TALLENNA']}
-                            </Button> {this.isAddToOrganizationsNotificationShown() &&
+                            </Button> {this.isAddToOrganizationsNotificationShown.bind(this) &&
                             <span className="missingInfo">
                                 {L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS']}
                             </span>}
                         </div>
-                        {/*<KutsuConfirmation {...confirmationProps} />*/}
+                        <KutsuConfirmation {...confirmationProps} />
                     </form>
                 )
             }
@@ -78,12 +80,16 @@ class KutsuFormPage extends React.Component  {
     }
 
     isOrganizationsValid() {
-        // return this.props.addedOrgs.length > 0
-        //     && R.all(org => org.oid && org.selectedPermissions.length > 0)(this.props.addedOrgs)
+        return this.props.addedOrgs.length > 0
+            && R.all(org => org.oid && org.selectedPermissions.length > 0)(this.props.addedOrgs)
     }
 
     setBasicInfo(basicInfo) {
         this.setState({basicInfo});
+    }
+
+    clearBasicInfo() {
+        this.setState({ basicInfo: {}});
     }
 
     isValidEmail(email) {

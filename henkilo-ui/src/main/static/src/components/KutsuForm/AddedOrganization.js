@@ -56,6 +56,7 @@ class AddedOrganisation extends React.Component {
                     </Select2>
                     <ul className="selected-permissions">
                         {addedOrg.selectedPermissions.map(permission => {
+                            console.log('permission', locale, permission);
                             return (
                                 <li key={permission.ryhmaId}>
                                     {toLocalizedText(locale, permission.ryhmaNames)}

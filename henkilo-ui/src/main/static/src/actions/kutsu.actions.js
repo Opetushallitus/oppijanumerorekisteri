@@ -1,6 +1,5 @@
 import { DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_KUTSU_SUCCESS} from './actiontypes';
 
-
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
 import {} from './actiontypes';
