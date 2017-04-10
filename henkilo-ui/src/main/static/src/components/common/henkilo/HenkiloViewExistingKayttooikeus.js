@@ -1,6 +1,6 @@
 import './HenkiloViewExpiredKayttooikeus.css'
 import React from 'react'
-import ReactDataGrid from 'react-data-grid'
+import Table from '../table/Table'
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -20,6 +20,21 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
             'HENKILO_KAYTTOOIKEUS_JATKOAIKA',
         ];
+
+        this.createRows();
+    };
+
+    createRows() {
+        this._rows = this.props.kayttooikeus.kayttooikeus
+            .map(kayttooikeus => ({
+                [this.tableHeadings[0]]: kayttooikeus.organisaatioOid,
+                [this.tableHeadings[1]]: kayttooikeus.ryhmaNames.texts
+                    .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
+                [this.tableHeadings[2]]: kayttooikeus.alkuPvm,
+                [this.tableHeadings[3]]: kayttooikeus.voimassaPvm,
+                [this.tableHeadings[4]]: kayttooikeus.kasitelty + '/' + kayttooikeus.kasittelijaOid,
+                [this.tableHeadings[5]]: '',
+            }));
     };
 
     render() {
@@ -30,31 +45,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                     <div>
-                        <table>
-                            <thead>
-                            <tr>
-                                {this.tableHeadings.map((heading, idx) => <th key={idx}>{this.L[heading]}</th>)}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                this.props.kayttooikeus.kayttooikeus.map((kayttooikeus, idx) =>
-                                    (kayttooikeus.tila !== 'SULJETTU'
-                                            ? <tr key={idx}>
-                                                <td>{kayttooikeus.organisaatioOid}</td>
-                                                <td>{kayttooikeus.ryhmaNames.texts
-                                                    .filter(text => text.lang === this.props.locale.toUpperCase())[0].text}</td>
-                                                <td>{kayttooikeus.alkuPvm}</td>
-                                                <td>{kayttooikeus.voimassaPvm}</td>
-                                                <td>{kayttooikeus.kasitelty}/{kayttooikeus.kasittelijaOid}</td>
-                                                <td>{}</td>
-                                            </tr>
-                                            : null
-                                    )
-                                )
-                            }
-                            </tbody>
-                        </table>
+                        <Table headings={this.tableHeadings} />
                     </div>
                 </div>
             </div>
