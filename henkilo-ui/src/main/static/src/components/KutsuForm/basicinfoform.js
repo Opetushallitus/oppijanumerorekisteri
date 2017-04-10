@@ -2,32 +2,33 @@ import React from 'react'
 import Select2 from '../common/select/Select2';
 import languages from '../../configuration/languages';
 import locale from '../../configuration/locale';
+import './basicinfoform.css';
 
-export class VirkailijaBasicInformation extends React.Component {
+export class BasicInfo extends React.Component {
 
     render() {
         const L = this.props.l10n[locale];
         const {basicInfo} = this.props;
 
         return (
-            <fieldset>
+            <fieldset id="basicinfo">
                 <h2>{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
-                <div className="row">
-                    <label htmlFor="etunimi" className="required">{L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
-                    <input type="text" id="etunimi" value={basicInfo.etunimi || ''}
+                <div className="oph-field oph-field-inline">
+                    <label htmlFor="etunimi" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
+                    <input type="text" id="etunimi" className="oph-input" aria-required="true" value={basicInfo.etunimi || ''}
                            onChange={this.updateEtunimi.bind(this)}/>
                 </div>
-                <div className="row">
-                    <label htmlFor="sukunimi" className="required">{L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
-                    <input type="text" id="sukunimi" value={basicInfo.sukunimi || ''}
+                <div className="oph-field oph-field-inline">
+                    <label htmlFor="sukunimi" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
+                    <input type="text" id="sukunimi" className="oph-input" aria-required="true" value={basicInfo.sukunimi || ''}
                            onChange={this.updateSukunimi.bind(this)}/>
                 </div>
-                <div className="row">
-                    <label htmlFor="email" className="required">{L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
-                    <input type="text" id="email" value={basicInfo.email} onChange={this.updateEmail.bind(this)}/>
+                <div className="oph-field oph-field-inline">
+                    <label htmlFor="email" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
+                    <input type="text" id="email" className="oph-input" aria-required="true" value={basicInfo.email} onChange={this.updateEmail.bind(this)}/>
                 </div>
-                <div className="row select-row">
-                    <label htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label" htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                     <div className="fieldContainer">
                         <Select2 id="lang"
                                  data={languages.map(language => ({id: language.code, text: language.name[locale]}))}
@@ -35,7 +36,7 @@ export class VirkailijaBasicInformation extends React.Component {
                                  value={basicInfo.languageCode}>
                             {languages.map(this.renderLang.bind(this))}
                         </Select2>
-                        <div className="descriptionBelow">
+                        <div className="oph-field-text">
                             {L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
                         </div>
                     </div>
@@ -75,7 +76,7 @@ export class VirkailijaBasicInformation extends React.Component {
     }
 }
 
-VirkailijaBasicInformation.propTypes = {
+BasicInfo.propTypes = {
     basicInfo: React.PropTypes.object,
     l10n: React.PropTypes.object,
     setBasicInfo: React.PropTypes.func

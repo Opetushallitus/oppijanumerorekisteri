@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { VirkailijaBasicInformation } from '../components/KutsuForm/virkailija-basic-information';
+import { BasicInfo } from '../components/KutsuForm/basicinfoform';
 import React from 'react';
 import R from 'ramda';
 import AddToOrganization from '../components/KutsuForm/AddToOrganization';
@@ -48,11 +48,12 @@ class KutsuFormPage extends React.Component  {
             } else {
                 return (
                     <form className="kutsuFormWrapper">
+
                         <span>{this.props.l10n[locale]['POISTA_MERKKIA']}</span>
-                        <VirkailijaBasicInformation l10n={l10n}
-                                                    basicInfo={basicInfo}
-                                                    setBasicInfo={this.setBasicInfo.bind(this)}>
-                        </VirkailijaBasicInformation>
+                        <BasicInfo l10n={l10n}
+                                    basicInfo={basicInfo}
+                                    setBasicInfo={this.setBasicInfo.bind(this)}>
+                        </BasicInfo>
                         <AddToOrganization l10n={l10n}
                                            omattiedot={this.props.omattiedot.data}
                                            orgs={this.props.henkilo.henkiloOrganisaatios}
@@ -61,7 +62,7 @@ class KutsuFormPage extends React.Component  {
                                            addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
 
                         <div className="kutsuFormFooter row">
-                            <Button confirm action={this.openConfirmationModal.bind(this)} disabled={!this.isValid.bind(this)}>
+                            <Button confirm action={this.openConfirmationModal.bind(this)} disabled={!this.isValid()}>
                                 {L['VIRKAILIJAN_LISAYS_TALLENNA']}
                             </Button> {this.isAddToOrganizationsNotificationShown.bind(this) &&
                             <span className="missingInfo">

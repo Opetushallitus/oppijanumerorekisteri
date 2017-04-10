@@ -67,3 +67,9 @@ body .select2-search__field{
 body .select2-selection--multiple{
     padding-top: 0 !important;
 }
+
+
+
+body .select2-results__option {
+    font-family: "Open Sans", Helvetica, sans-sefif;
+}
