@@ -1,14 +1,14 @@
 import { connect } from 'react-redux';
-import { BasicInfo } from '../components/KutsuForm/basicinfoform';
+import { BasicInfo } from '../components/kutsuminen/BasicinfoForm';
 import React from 'react';
 import R from 'ramda';
-import AddToOrganization from '../components/KutsuForm/AddToOrganization';
+import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import locale from '../configuration/locale';
 import Button from '../components/common/button/Button';
 import { fetchKutsuFormData } from '../actions/omattiedot.actions';
-import { kutsuAddOrganisaatio } from '../actions/uusivirkailijakutsu.actions';
+import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
 import { browserHistory } from 'react-router';
-import KutsuConfirmation from '../components/KutsuForm/kutsuconfirmation';
+import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
 
 class KutsuFormPage extends React.Component  {
 
@@ -54,12 +54,12 @@ class KutsuFormPage extends React.Component  {
                                     basicInfo={basicInfo}
                                     setBasicInfo={this.setBasicInfo.bind(this)}>
                         </BasicInfo>
-                        <AddToOrganization l10n={l10n}
-                                           omattiedot={this.props.omattiedot.data}
-                                           orgs={this.props.henkilo.henkiloOrganisaatios}
-                                           addedOrgs={this.props.addedOrgs}
-                                           henkilo={this.props.henkilo}
-                                           addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
+                        <KutsuOrganisaatios l10n={l10n}
+                                            omattiedot={this.props.omattiedot.data}
+                                            orgs={this.props.henkilo.henkiloOrganisaatios}
+                                            addedOrgs={this.props.addedOrgs}
+                                            henkilo={this.props.henkilo}
+                                            addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
 
                         <div className="kutsuFormFooter row">
                             <Button confirm action={this.openConfirmationModal.bind(this)} disabled={!this.isValid()}>
@@ -122,7 +122,7 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         omattiedot: state.omattiedot,
         henkilo: state.henkilo,
-        addedOrgs: state.virkailijaInvitationOrganisaatios
+        addedOrgs: state.kutsuminenOrganisaatios
     };
 };
 

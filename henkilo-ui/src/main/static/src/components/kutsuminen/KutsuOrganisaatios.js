@@ -2,10 +2,9 @@ import React from 'react'
 import R from 'ramda'
 import locale from '../../configuration/locale';
 // import {addEmptyOrganization, changeOrganization} from '../../logic/organisations'
-
 import { AddedOrganizations } from './AddedOrganizations';
 
-export default class AddToOrganisation extends React.Component {
+export default class KutsuOrganisaatios extends React.Component {
 
     render() {
         const L = this.props.l10n[locale];
@@ -41,7 +40,7 @@ export default class AddToOrganisation extends React.Component {
 
 }
 
-AddToOrganisation.propTypes = {
+KutsuOrganisaatios.propTypes = {
     addedOrgs: React.PropTypes.array,
     l10n: React.PropTypes.object,
     omattiedot: React.PropTypes.object,
@@ -49,3 +48,4 @@ AddToOrganisation.propTypes = {
     henkilo: React.PropTypes.object,
     addOrganisaatio: React.PropTypes.func
 };
+

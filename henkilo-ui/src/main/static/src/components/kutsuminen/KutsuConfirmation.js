@@ -3,8 +3,8 @@ import R from "ramda";
 import Modal from "../common/modal/Modal";
 import Button from "../common/button/Button";
 import locale from '../../configuration/locale';
-import {toLocalizedText} from '../../localizabletext'
-import './kutsuconfirmation.css'
+import {toLocalizedText} from '../../localizabletext';
+import './KutsuConfirmation.css';
 import {http} from '../../http';
 import {urls} from 'oph-urls-js';
 

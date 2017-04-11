@@ -2,7 +2,7 @@ import React from 'react'
 import Select2 from '../common/select/Select2';
 import languages from '../../configuration/languages';
 import locale from '../../configuration/locale';
-import './basicinfoform.css';
+import './BasicinfoForm.css';
 
 export class BasicInfo extends React.Component {
 

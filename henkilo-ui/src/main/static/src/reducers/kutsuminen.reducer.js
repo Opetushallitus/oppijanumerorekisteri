@@ -9,7 +9,7 @@ import {KUTSU_ADD_ORGANISAATIO,
     FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE,
     ADD_ORGANISAATIO_PERMISSION, REMOVE_ORGANISAATIO_PERMISSION} from '../actions/actiontypes';
 
-export const virkailijaInvitationOrganisaatios = (state = [], action) => {
+export const kutsuminenOrganisaatios = (state = [], action) => {
     const newOrganisaatios = state.slice();
     let kutsu;
     switch (action.type) {

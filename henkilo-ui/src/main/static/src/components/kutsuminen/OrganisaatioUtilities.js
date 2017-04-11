@@ -70,6 +70,3 @@ export const getOrganisaatios = organisaatios => {
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };
 
-// export const fetchOrganizationPermissionsPromise = (henkiloOid, organisaatioOid) =>
-//     fetch(window.url('kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio', henkiloOid, organisaatioOid), {
-//         credentials: 'same-origin'}).then(handleFetchError).then(response => response.json());

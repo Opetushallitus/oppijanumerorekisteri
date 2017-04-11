@@ -9,7 +9,7 @@ import { kutsuAddOrganisaatio,
     kutsuSetOrganisaatio,
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
     addOrganisaatioPermission,
-    removeOrganisaatioPermission} from '../../actions/uusivirkailijakutsu.actions';
+    removeOrganisaatioPermission} from '../../actions/kutsuminen.actions';
 import { toLocalizedText } from '../../localizabletext'
 import Select2 from '../common/select/Select2';
 import OrgSelect2 from './OrgSelect2'
