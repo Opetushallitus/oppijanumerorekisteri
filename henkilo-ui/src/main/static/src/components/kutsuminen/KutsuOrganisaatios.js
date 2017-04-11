@@ -1,7 +1,5 @@
 import React from 'react'
-import R from 'ramda'
 import locale from '../../configuration/locale';
-// import {addEmptyOrganization, changeOrganization} from '../../logic/organisations'
 import { AddedOrganizations } from './AddedOrganizations';
 
 export default class KutsuOrganisaatios extends React.Component {
@@ -28,14 +26,6 @@ export default class KutsuOrganisaatios extends React.Component {
             selectablePermissions: [],
             selectedPermissions: []
         });
-    }
-
-    changeOrganization(oldOid, e) {
-        const selectedOrganization = R.find(R.pathEq(['oid'], e.target.value))(this.props.orgs);
-        //console.info('changeOrganization', e.target.value, selectedOrganization);
-        if (selectedOrganization) {
-            // changeOrganization(oldOid, selectedOrganization, this.props.omaOid);
-        }
     }
 
 }
