@@ -61,9 +61,7 @@ class KutsuConfirmation extends React.Component {
 
     async sendInvitation(e) {
         e.preventDefault();
-        console.log('props', this.props);
-        
-        
+
         const payload = {
             etunimi: this.props.basicInfo.etunimi,
             sukunimi: this.props.basicInfo.sukunimi,
@@ -79,29 +77,12 @@ class KutsuConfirmation extends React.Component {
 
         try {
             const url = urls.url('kayttooikeus-service.kutsu');
-            const invitation = await http.post(url, payload);
+            await http.post(url, payload);
             this.props.basicInfo.clearBasicInfo();
-            console.log(invitation);
         } catch (error) {
             console.error(`Creating new virkailija kutsu failed`, error);
             throw error;
         }
-
-        // const {invitationResponseS} = kutsu(payload);
-        //
-        // invitationResponseS.onValue(response => {
-        //     this.props.basicInfo.clear();
-        //     if (this.props.ready) {
-        //         this.props.ready(true);
-        //     } else {
-        //         this.setState({sent: true});
-        //     }
-        // });
-        // invitationResponseS.onError(() => {
-        //     if (this.props.ready) {
-        //         this.props.ready(false);
-        //     }
-        // });
     }
 }
 
