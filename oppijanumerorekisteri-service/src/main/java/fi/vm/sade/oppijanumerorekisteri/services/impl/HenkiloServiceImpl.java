@@ -93,28 +93,30 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Slice<HenkiloHakuDto> list(HenkiloCriteria criteria, int page, int count, Optional<String> organisaatioOid) {
+    public Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count) {
         // käyttöoikeustarkistukset
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        KayttooikeudetDto kayttooikeudet = organisaatioOid
-                .map(oid -> kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, oid))
-                .orElseGet(() -> kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid));
+        OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);
+        organisaatioCriteria.setPassivoitu(false); // haetaan aina voimassaolevat käyttöoikeudet
+        KayttooikeudetDto kayttooikeudet = kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
         if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
             // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
             return Slice.empty(page, count);
         }
+
+        HenkiloCriteria henkiloCriteria = mapper.map(criteria, HenkiloCriteria.class);
         kayttooikeudet.getOids().ifPresent(henkiloOids -> {
-            if (isEmpty(criteria.getHenkiloOids())) {
-                criteria.setHenkiloOids(henkiloOids);
+            if (isEmpty(henkiloCriteria.getHenkiloOids())) {
+                henkiloCriteria.setHenkiloOids(henkiloOids);
             } else {
-                criteria.getHenkiloOids().retainAll(henkiloOids);
+                henkiloCriteria.getHenkiloOids().retainAll(henkiloOids);
             }
         });
 
         // haetaan yksi ylimääräinen rivi, jotta voidaan päätellä onko seuraavaa viipaletta
         int limit = count + 1;
         int offset = (page - 1) * count;
-        return Slice.of(page, count, henkiloJpaRepository.findBy(criteria, limit, offset));
+        return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
     }
 
     @Override

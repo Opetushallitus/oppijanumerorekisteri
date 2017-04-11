@@ -8,6 +8,10 @@ import lombok.*;
 
 import java.util.Set;
 
+/**
+ * Henkilöiden hakemiseen oppijanumerorekisteristä henkilön perustietojen
+ * perusteella.
+ */
 @Getter
 @Setter
 @Builder

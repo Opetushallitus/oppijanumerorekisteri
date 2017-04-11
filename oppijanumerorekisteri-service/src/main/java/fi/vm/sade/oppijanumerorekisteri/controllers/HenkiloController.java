@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.constraints.Min;
 
 
@@ -60,11 +58,10 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Slice<HenkiloHakuDto> list(
-            HenkiloCriteria criteria,
+            HenkiloHakuCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
-            @RequestParam(required = false, defaultValue = "20") @Min(1) int count,
-            @RequestParam(required = false) Optional<String> organisaatioOid) {
-        return henkiloService.list(criteria, page, count, organisaatioOid);
+            @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
+        return henkiloService.list(criteria, page, count);
     }
 
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")

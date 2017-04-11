@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -38,8 +39,10 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import java.time.LocalDate;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -62,6 +65,7 @@ public class HenkiloServiceTest {
     private KielisyysRepository kielisyysRepositoryMock;
     private KansalaisuusRepository kansalaisuusRepositoryMock;
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
+    private KayttooikeusClient kayttooikeusClient;
 
     @Before
     public void setup() {
@@ -76,12 +80,82 @@ public class HenkiloServiceTest {
         HenkiloCreatePostValidator henkiloCreatePostValidatorMock = Mockito.mock(HenkiloCreatePostValidator.class);
         this.henkiloViiteRepositoryMock = Mockito.mock(HenkiloViiteRepository.class);
         this.oppijanumerorekisteriProperties = Mockito.mock(OppijanumerorekisteriProperties.class);
-        KayttooikeusClient kayttooikeusClient = Mockito.mock(KayttooikeusClient.class);
+        kayttooikeusClient = Mockito.mock(KayttooikeusClient.class);
 
         this.service = spy(new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, henkiloViiteRepositoryMock,
                 mapper, new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
                 this.kansalaisuusRepositoryMock, this.permissionCheckerMock,
                 henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock, oppijanumerorekisteriProperties, kayttooikeusClient));
+    }
+
+    @Test
+    public void listShouldReturnEmptySliceWhenEmptySallitutHenkiloOids() {
+        HenkiloHakuCriteria criteria = new HenkiloHakuCriteria();
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any())).thenReturn(KayttooikeudetDto.user(emptySet()));
+
+        Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
+
+        assertThat(slice.getResults()).isEmpty();
+        verifyZeroInteractions(henkiloJpaRepositoryMock);
+    }
+
+    @Test
+    public void listShouldCreateSliceCorrectly() {
+        HenkiloHakuCriteria criteria = new HenkiloHakuCriteria();
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
+                .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
+        HenkiloHakuDto henkilo1 = HenkiloHakuDto.builder().oidHenkilo("1").build();
+        HenkiloHakuDto henkilo2 = HenkiloHakuDto.builder().oidHenkilo("2").build();
+        HenkiloHakuDto henkilo3 = HenkiloHakuDto.builder().oidHenkilo("3").build();
+        when(henkiloJpaRepositoryMock.findBy(any(), anyLong(), anyLong()))
+                .thenReturn(asList(henkilo1, henkilo2, henkilo3));
+
+        Slice<HenkiloHakuDto> slice;
+
+        slice = service.list(criteria, 1, 3);
+        assertThat(slice.getResults()).containsExactly(henkilo1, henkilo2, henkilo3);
+        assertThat(slice.isLast()).isTrue();
+
+        slice = service.list(criteria, 1, 2);
+        assertThat(slice.getResults()).containsExactly(henkilo1, henkilo2);
+        assertThat(slice.isLast()).isFalse();
+
+        slice = service.list(criteria, 2, 3);
+        assertThat(slice.getResults()).containsExactly(henkilo1, henkilo2, henkilo3);
+        assertThat(slice.isLast()).isTrue();
+
+        slice = service.list(criteria, 2, 1);
+        assertThat(slice.getResults()).containsExactly(henkilo1);
+        assertThat(slice.isLast()).isFalse();
+    }
+
+    @Test
+    public void listShouldSearchByHenkiloOids() {
+        HenkiloHakuCriteria criteria = new HenkiloHakuCriteria();
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
+                .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
+
+        Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
+
+        ArgumentCaptor<HenkiloCriteria> criteriaCaptor = ArgumentCaptor.forClass(HenkiloCriteria.class);
+        verify(henkiloJpaRepositoryMock).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
+        HenkiloCriteria henkiloCriteria = criteriaCaptor.getValue();
+        assertThat(henkiloCriteria.getHenkiloOids()).containsExactlyInAnyOrder("henkilo1", "henkilo2", "henkilo3");
+    }
+
+    @Test
+    public void listShouldFilterHenkiloOids() {
+        HenkiloHakuCriteria criteria = new HenkiloHakuCriteria();
+        criteria.setHenkiloOids(Stream.of("henkilo1", "henkilo3", "henkilo5").collect(toSet()));
+        when(kayttooikeusClient.getHenkiloKayttooikeudet(any(), any()))
+                .thenReturn(KayttooikeudetDto.user(Stream.of("henkilo1", "henkilo2", "henkilo3").collect(toSet())));
+
+        Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
+
+        ArgumentCaptor<HenkiloCriteria> criteriaCaptor = ArgumentCaptor.forClass(HenkiloCriteria.class);
+        verify(henkiloJpaRepositoryMock).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
+        HenkiloCriteria henkiloCriteria = criteriaCaptor.getValue();
+        assertThat(henkiloCriteria.getHenkiloOids()).containsExactlyInAnyOrder("henkilo1", "henkilo3");
     }
 
     @Test

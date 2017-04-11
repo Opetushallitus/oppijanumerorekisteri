@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface HenkiloService {
 
-    Slice<HenkiloHakuDto> list(HenkiloCriteria criteria, int page, int count, Optional<String> organisaatioOids);
+    Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
 
     Boolean getHasHetu();
 
