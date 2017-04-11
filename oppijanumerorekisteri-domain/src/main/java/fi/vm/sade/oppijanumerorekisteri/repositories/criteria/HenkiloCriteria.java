@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import lombok.*;
@@ -22,26 +22,23 @@ public class HenkiloCriteria {
     private Boolean passivoitu;
     private Boolean duplikaatti;
 
-    public BooleanExpression condition(QHenkilo henkilo) {
-        BooleanExpression condition = Expressions.TRUE.eq(true);
+    public Predicate condition(QHenkilo henkilo) {
+        BooleanBuilder builder = new BooleanBuilder();
         if (henkiloOids != null) {
-            if (henkiloOids.isEmpty()) {
-                return Expressions.FALSE;
-            }
-            condition = condition.and(henkilo.oidHenkilo.in(henkiloOids));
+            builder.and(henkilo.oidHenkilo.in(henkiloOids));
         }
         if (hetu != null) {
-            condition = condition.and(henkilo.hetu.eq(hetu));
+            builder.and(henkilo.hetu.eq(hetu));
         }
         if (tyyppi != null) {
-            condition = condition.and(henkilo.henkiloTyyppi.eq(tyyppi));
+            builder.and(henkilo.henkiloTyyppi.eq(tyyppi));
         }
         if (passivoitu != null) {
-            condition = condition.and(henkilo.passivoitu.eq(passivoitu));
+            builder.and(henkilo.passivoitu.eq(passivoitu));
         }
         if (duplikaatti != null) {
-            condition = condition.and(henkilo.duplicate.eq(duplikaatti));
+            builder.and(henkilo.duplicate.eq(duplikaatti));
         }
-        return condition;
+        return builder;
     }
 }
