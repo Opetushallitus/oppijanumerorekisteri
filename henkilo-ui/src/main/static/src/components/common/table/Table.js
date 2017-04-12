@@ -2,6 +2,9 @@ import './Table.css'
 import React from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
+import SortAscIcon from "../icons/SortAscIcon";
+import SortDescIcon from "../icons/SortDescIcon";
+import SortIconNone from "../icons/SortIconNone";
 
 class Table extends React.Component {
     static propTypes = {
@@ -34,8 +37,8 @@ class Table extends React.Component {
                                     header: props => {
                                         return (<span className="oph-bold">
                                             {heading.label} {props.column.sorting.desc !== undefined
-                                            ? (props.column.sorting.desc ? '∧' : '∨')
-                                            : ''}
+                                            ? (props.column.sorting.desc ? <SortAscIcon/> : <SortDescIcon/>)
+                                            : <SortIconNone/>}
                                         </span>)
                                     },
                                     accessor: heading.key,
