@@ -5,54 +5,59 @@ import 'react-table/react-table.css'
 
 class Table extends React.Component {
     static propTypes = {
-        headings: React.PropTypes.array.isRequired,
+        headings: React.PropTypes.arrayOf(React.PropTypes.shape({
+            key: React.PropTypes.string.isRequired,
+            label: React.PropTypes.string.isRequired,
+            maxWidth: React.PropTypes.number,
+            minWidth: React.PropTypes.number,
+        }).isRequired).isRequired,
+        data: React.PropTypes.arrayOf(React.PropTypes.objectOf(
+            React.PropTypes.oneOfType([
+                React.PropTypes.string,
+                React.PropTypes.object
+            ]).isRequired)),
     };
-    constructor(props) {
-        super(props);
 
-        this.tableHeadings = this.props.headings;
-        this.headingDirections = [false];
-    }
     render() {
         return (
             <div>
                 <ReactTable className="table"
                             showPagination={false}
-                            resizable={false}
-                            defaultPageSize={this.tableHeadings.length}
+                            resizable={true}
+                            pageSize={this.props.data.length}
                             loadingText=""
-                            // onChange={this.onSort}
-                            data={this.tableHeadings.map(heading => ({heading}))}
-                            columns={[{getHeaderProps: (state, rowInfo, column) => {
-                                console.log(state.sorting);
-                                const sorting = state.sorting && state.sorting.length
-                                    ? state.sorting.filter(sorting => {
-                                        return column.id === sorting.id;
-                                    })[0]
-                                    : undefined;
-                                column.sorting = {desc: sorting && sorting.desc};
-                                return {
-                                };
-                            },
-                                header: props => {
-                                    return (<span>Heading {props.column.sorting.desc !== undefined ? (props.column.sorting.desc ? '∧' : '∨') : ''}</span>)
-                                },
-                                accessor: 'heading',
-                                sortable: true,
-                            }
-                            ]} />
+                            noDataText=""
+                            data={this.props.data}
+                            columns={
+                                this.props.headings.map(heading => ({
+                                    getHeaderProps: this.getHeaderProps,
+                                    header: props => {
+                                        return (<span className="oph-bold">
+                                            {heading.label} {props.column.sorting.desc !== undefined
+                                            ? (props.column.sorting.desc ? '∧' : '∨')
+                                            : ''}
+                                        </span>)
+                                    },
+                                    accessor: heading.key,
+                                    sortable: true,
+                                    maxWidth: heading.maxWidth || undefined,
+                                    minWidth: heading.minWidth || 100,
+                                }))
+                            } />
             </div>
         );
     };
 
-    // onSort(state, instance) {
-    //     console.log(state.sorting);
-    //     console.log(instance);
-    //     state.headingDirections = state.headingDirections || [false];
-    //     state.headingDirections = state.headingDirections.map((heading, idx) => {
-    //         return state.sorting[idx].desc;
-    //     });
-    // }
+    getHeaderProps(state, rowInfo, column) {
+        const sorting = state.sorting && state.sorting.length
+            ? state.sorting.filter(sorting => {
+                return column.id === sorting.id;
+            })[0]
+            : undefined;
+        column.sorting = {desc: sorting && sorting.desc};
+        return {};
+    };
+
 }
 
 export default Table;

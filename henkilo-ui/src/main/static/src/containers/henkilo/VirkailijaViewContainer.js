@@ -12,7 +12,10 @@ import {
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
-import {fetchAllKayttooikeusryhmasForHenkilo} from "../../actions/kayttooikeusryhma.actions";
+import {
+    fetchAllKayttooikeusAnomusForHenkilo,
+    fetchAllKayttooikeusryhmasForHenkilo
+} from "../../actions/kayttooikeusryhma.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -27,6 +30,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this.props.fetchKayttajatieto(this.props.oid);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oid);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oid);
+
     };
 
     render() {
@@ -34,7 +39,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
             editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this),
-            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), };
+            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), myonnaButton: this.createMyonnaConfirmButton.bind(this),
+            hylkaaButton: this.createHylkaaConfirmButton.bind(this), };
         return <VirkailijaViewPage {...props} />;
     };
 
@@ -87,4 +93,4 @@ const mapStateToProps = (state, ownProps) => {
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto,
     updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
-    passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo})(VirkailijaViewContainer);
+    passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo})(VirkailijaViewContainer);
