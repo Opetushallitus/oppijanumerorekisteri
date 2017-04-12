@@ -39,7 +39,6 @@ class VirkailijaViewContainer extends AbstractViewContainer {
 
     constructor(props) {
         super(props);
-
         this.L = this.props.l10n[locale];
         this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading

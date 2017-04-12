@@ -3,6 +3,8 @@ import Button from "../../components/common/button/Button";
 import locale from '../../configuration/locale'
 import dateformat from 'dateformat';
 import ConfirmButton from "../../components/common/button/ConfirmButton";
+import PopupButton from "../../components/common/button/PopupButton";
+import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent";
 
 class AbstractViewContainer extends React.Component {
 
@@ -178,12 +180,25 @@ class AbstractViewContainer extends React.Component {
     };
 
     createHakaButton() {
-        return <Button key="haka" big action={() => {}}>{this.L['LISAA_HAKA_LINKKI']}</Button>;
+        const popupStyle = { bottom: '10px', left: '515px'};
+
+        return (<PopupButton popupStyle={popupStyle}
+                             popupTitle={this.createHakatunnistePopupTitle()}
+                             popupContent={this.createHakatunnistePopupContent(this.props.oid)}>{this.L['LISAA_HAKA_LINKKI']}</PopupButton>);
     };
 
     createPasswordButton() {
         return <Button key="password" big action={() => {}}>{this.L['SALASANA_ASETA']}</Button>;
     };
+
+    createHakatunnistePopupTitle() {
+        return <h3>{this.L['HAKATUNNISTEET']}:</h3>
+    }
+
+    createHakatunnistePopupContent(henkiloOid) {
+        return <HakatunnistePopupContent henkiloOid={henkiloOid}
+                                         l10n={this.props.l10n}></HakatunnistePopupContent>;
+    }
 
     static createLoader() {
         return <div className="oph-spinner">
