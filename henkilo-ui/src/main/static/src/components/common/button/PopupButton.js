@@ -17,7 +17,6 @@ export default class PopupButton extends React.Component {
     }
 
     render() {
-        // const popupProps = {...this.props};
         const wrapperStyle = { position: 'relative' };
         return (
             <div style={wrapperStyle}>
