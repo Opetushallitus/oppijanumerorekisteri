@@ -1,6 +1,5 @@
 import R from 'ramda';
 import {toLocalizedText} from '../../localizabletext';
-import locale from '../../configuration/locale';
 
 export const organisaatioHierarchyRoots = (orgs, locale) => {
     // First sort by name:
@@ -65,7 +64,7 @@ export const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots, lo
     return result;
 };
 
-export const getOrganisaatios = organisaatios => {
+export const getOrganisaatios = (organisaatios, locale) => {
     const hierarchyRoots = organisaatioHierarchyRoots(organisaatios, locale);
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };

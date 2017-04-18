@@ -11,7 +11,6 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
-import locale from '../../configuration/locale'
 import AbstractViewContainer from "./AbstractViewContainer";
 
 
@@ -29,7 +28,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     };
 
     render() {
-        const props = {...this.props, L: this.L, locale: locale, isUserContentLoading: this._isUserContentLoading,
+        const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
             editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this),
@@ -39,7 +38,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
 
     constructor(props) {
         super(props);
-        this.L = this.props.l10n[locale];
+        this.L = this.props.l10n[this.props.locale];
         this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.henkilo.kayttajatietoLoading ||this.props.koodisto.yhteystietotyypitKoodistoLoading;
@@ -78,6 +77,7 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
+        locale: state.locale
     };
 };
 

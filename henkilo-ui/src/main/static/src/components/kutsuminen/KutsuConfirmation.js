@@ -2,13 +2,22 @@ import React from "react";
 import R from "ramda";
 import Modal from "../common/modal/Modal";
 import Button from "../common/button/Button";
-import locale from '../../configuration/locale';
 import {toLocalizedText} from '../../localizabletext';
 import './KutsuConfirmation.css';
 import {http} from '../../http';
 import {urls} from 'oph-urls-js';
 
-class KutsuConfirmation extends React.Component {
+export default class KutsuConfirmation extends React.Component {
+
+    static propTypes = {
+        addedOrgs: React.PropTypes.array,
+        modalCloseFn: React.PropTypes.func,
+        modalOpen: React.PropTypes.bool,
+        basicInfo: React.PropTypes.object,
+        clearBasicInfo: React.PropTypes.func,
+        ready: React.PropTypes.func,
+        locale: React.PropTypes.string
+    }
 
     constructor() {
         super();
@@ -18,7 +27,7 @@ class KutsuConfirmation extends React.Component {
     }
 
     render() {
-        const L = this.props.l10n[locale];
+        const L = this.props.l10n[this.props.locale];
 
         return (
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
@@ -42,7 +51,7 @@ class KutsuConfirmation extends React.Component {
     }
 
     renderAddedOrg(org) {
-        const orgName = toLocalizedText(locale, org.organisation.nimi);
+        const orgName = toLocalizedText(this.props.locale, org.organisation.nimi);
         return (
             <div key={org.organisation.oid}>
                 <h3>{orgName}</h3>
@@ -54,7 +63,7 @@ class KutsuConfirmation extends React.Component {
     renderAddedOrgPermission(permission) {
         return (
             <div key={permission.ryhmaId}>
-                <h4>{toLocalizedText(locale, permission.ryhmaNames)}</h4>
+                <h4>{toLocalizedText(this.props.locale, permission.ryhmaNames)}</h4>
             </div>
         )
     }
@@ -84,15 +93,6 @@ class KutsuConfirmation extends React.Component {
             throw error;
         }
     }
+
+
 }
-
-KutsuConfirmation.propTypes = {
-    addedOrgs: React.PropTypes.array,
-    modalCloseFn: React.PropTypes.func,
-    modalOpen: React.PropTypes.bool,
-    basicInfo: React.PropTypes.object,
-    clearBasicInfo: React.PropTypes.func,
-    ready: React.PropTypes.func
-};
-
-export default KutsuConfirmation;

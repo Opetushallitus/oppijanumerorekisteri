@@ -3,7 +3,6 @@ import React from 'react';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
 import R from 'ramda';
-import locale from '../../../configuration/locale';
 import './HakaPopupContent.css';
 
 export default class HakatunnistePopupContent extends React.Component {
@@ -29,7 +28,7 @@ export default class HakatunnistePopupContent extends React.Component {
     }
 
     render() {
-        const L = this.props.l10n[locale];
+        const L = this.props.l10n[this.props.locale];
         return (<div>
             <ul>
                 {this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>

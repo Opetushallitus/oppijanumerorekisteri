@@ -11,7 +11,6 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../../configuration/navigationconfigurations";
-import locale from '../../configuration/locale'
 import AbstractViewContainer from "./AbstractViewContainer";
 
 
@@ -25,7 +24,7 @@ class OppijaViewContainer extends AbstractViewContainer {
         this.props.fetchKansalaisuusKoodisto();
     };
     render() {
-        const props = {...this.props, L: this.L, locale: locale, isUserContentLoading: this._isUserContentLoading,
+        const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isContactContentLoading: this._isContactContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
             readOnlyButtons: this._readOnlyButtons, editButtons: this._editButtons,
@@ -36,7 +35,7 @@ class OppijaViewContainer extends AbstractViewContainer {
     constructor(props) {
         super(props);
 
-        this.L = this.props.l10n[locale];
+        this.L = this.props.l10n[this.props.locale];
 
         this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
             || this.props.koodisto.kansalaisuusKoodistoLoading;
@@ -74,6 +73,7 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
+        locale: state.locale
     };
 };
 

@@ -13,7 +13,6 @@ import { kutsuAddOrganisaatio,
 import { toLocalizedText } from '../../localizabletext'
 import Select2 from '../common/select/Select2';
 import OrgSelect2 from './OrgSelect2'
-import locale from '../../configuration/locale';
 
 class AddedOrganisation extends React.Component {
 
@@ -22,7 +21,7 @@ class AddedOrganisation extends React.Component {
         const availableOrgs = getOrganisaatios(this.props.orgs);
         const excludedOrgOids = R.map(R.prop('oid'), R.filter(org => addedOrg.oid !== org.oid)(this.props.addedOrgs));
         const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
-        const L = this.props.l10n[locale];
+        const L = this.props.l10n[this.props.locale];
         const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, availableOrgs);
         return (
             <div className="added-org" key={addedOrg.oid}>
@@ -47,7 +46,7 @@ class AddedOrganisation extends React.Component {
                     <Select2 onSelect={this.addPermission.bind(this, selectablePermissions)} multiple id="permissions" l10n={L}
                              data={selectablePermissions.map(permission => ({
                                  id: permission.ryhmaId,
-                                 text: toLocalizedText(locale, permission.ryhmaNames)
+                                 text: toLocalizedText(this.props.locale, permission.ryhmaNames)
                              }))}
                              options={{
                                  disabled: !addedOrg.oid,
@@ -58,7 +57,7 @@ class AddedOrganisation extends React.Component {
                         {addedOrg.selectedPermissions.map(permission => {
                             return (
                                 <li key={permission.ryhmaId}>
-                                    {toLocalizedText(locale, permission.ryhmaNames)}
+                                    {toLocalizedText(this.props.locale, permission.ryhmaNames)}
                                     <i className="fa fa-times-circle right remove-icon" onClick={this.removePermission.bind(this, permission)} aria-hidden="true"></i>
                                 </li>
                             )
@@ -72,14 +71,14 @@ class AddedOrganisation extends React.Component {
 
     changeOrganization(event) {
         const selectedOrganisaatioOid = event.target.value;
-        const availableOrganisaatios = getOrganisaatios(this.props.orgs);
+        const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
         const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
         this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
         this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.omattiedot.data.oid, organisaatio.oid)
     }
 
     mapOrganisaatio(organisaatio) {
-        const organisaatioNimi = org => toLocalizedText(locale, organisaatio.nimi);
+        const organisaatioNimi = org => toLocalizedText(this.props.locale, organisaatio.nimi);
         return {
             id: organisaatio.oid,
             searchText: organisaatio.fullLocalizedName,
@@ -114,12 +113,13 @@ AddedOrganisation.PropTypes = {
     addedOrg: React.PropTypes.object,
     orgs: React.PropTypes.array,
     uiLang: React.PropTypes.object,
-    index: React.PropTypes.number
+    index: React.PropTypes.number,
 };
 
 const mapStateToProps = (state) => {
     return {
-        omattiedot: state.omattiedot
+        omattiedot: state.omattiedot,
+        locale: state.locale
     }
 };
 

@@ -3,7 +3,6 @@ import { BasicInfo } from '../components/kutsuminen/BasicinfoForm';
 import React from 'react';
 import R from 'ramda';
 import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
-import locale from '../configuration/locale';
 import Button from '../components/common/button/Button';
 import { fetchKutsuFormData } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
@@ -30,9 +29,10 @@ class KutsuFormPage extends React.Component  {
     }
 
     render() {
-        const L = this.props.l10n[locale];
+        const L = this.props.l10n[this.props.locale];
         const confirmationProps = {
             l10n: this.props.l10n,
+            locale: this.props.locale,
             addedOrgs: this.props.addedOrgs,
             modalCloseFn: this.closeConfirmationModal.bind(this),
             modalOpen: this.state.confirmationModalOpen,
@@ -49,16 +49,18 @@ class KutsuFormPage extends React.Component  {
                 return (
                     <form className="kutsuFormWrapper">
 
-                        <span>{this.props.l10n[locale]['POISTA_MERKKIA']}</span>
+                        <span>{this.props.l10n[this.props.locale]['POISTA_MERKKIA']}</span>
                         <BasicInfo l10n={l10n}
                                     basicInfo={basicInfo}
-                                    setBasicInfo={this.setBasicInfo.bind(this)}>
+                                    setBasicInfo={this.setBasicInfo.bind(this)}
+                                    locale={this.props.locale}>
                         </BasicInfo>
                         <KutsuOrganisaatios l10n={l10n}
                                             omattiedot={this.props.omattiedot.data}
                                             orgs={this.props.henkilo.henkiloOrganisaatios}
                                             addedOrgs={this.props.addedOrgs}
                                             henkilo={this.props.henkilo}
+                                            locale={this.props.locale}
                                             addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
 
                         <div className="kutsuFormFooter row">
@@ -122,7 +124,8 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         omattiedot: state.omattiedot,
         henkilo: state.henkilo,
-        addedOrgs: state.kutsuminenOrganisaatios
+        addedOrgs: state.kutsuminenOrganisaatios,
+        locale: state.locale
     };
 };
 

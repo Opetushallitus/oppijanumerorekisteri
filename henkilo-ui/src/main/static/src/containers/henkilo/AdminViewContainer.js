@@ -37,6 +37,7 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
+        locale: state.locale
     };
 };
 

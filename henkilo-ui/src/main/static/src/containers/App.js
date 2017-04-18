@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
-import locale from "../configuration/locale";
 import AbstractViewContainer from "./henkilo/AbstractViewContainer";
 
 
@@ -13,7 +12,7 @@ const App = React.createClass({
                 && this.props.notLoadedCount === 0
                 ? <div className="oph-typography mainContainer">
                 <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
-                               l10n={this.props.l10n.localisations[locale]} />
+                               l10n={this.props.l10n.localisations[this.props.locale]} />
                 <div>
                     {this.props.children}
                 </div>
@@ -51,6 +50,7 @@ const mapStateToProps = (state, ownProps) => {
         naviTabs: state.naviState.naviTabs,
         backButton: state.naviState.backButton,
         notLoadedCount: state.prequels.notLoadedCount,
+        locale: state.locale
     };
 };
 

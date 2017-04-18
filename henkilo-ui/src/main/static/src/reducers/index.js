@@ -9,6 +9,7 @@ import {naviState} from "./navigation.reducer";
 import {prequels} from "./prequels.reducer";
 import {omattiedot} from "./omattiedot.reducer";
 import {kutsuminenOrganisaatios} from './kutsuminen.reducer';
+import { locale } from './locale.reducer';
 
 const rootReducer = combineReducers({
     routing,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
     naviState,
     prequels,
     omattiedot,
-    kutsuminenOrganisaatios
+    kutsuminenOrganisaatios,
+    locale
 });
 
 export default rootReducer;

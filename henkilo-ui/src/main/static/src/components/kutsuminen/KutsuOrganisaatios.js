@@ -1,11 +1,20 @@
 import React from 'react'
-import locale from '../../configuration/locale';
 import { AddedOrganizations } from './AddedOrganizations';
 
 export default class KutsuOrganisaatios extends React.Component {
 
+    static propTypes = {
+        addedOrgs: React.PropTypes.array,
+        l10n: React.PropTypes.object,
+        omattiedot: React.PropTypes.object,
+        orgs: React.PropTypes.array,
+        henkilo: React.PropTypes.object,
+        addOrganisaatio: React.PropTypes.func,
+        locale: React.PropTypes.string
+    }
+
     render() {
-        const L = this.props.l10n[locale];
+        const L = this.props.l10n[this.props.locale];
         return (
             <fieldset className="add-to-organisation">
                 <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>
@@ -29,13 +38,4 @@ export default class KutsuOrganisaatios extends React.Component {
     }
 
 }
-
-KutsuOrganisaatios.propTypes = {
-    addedOrgs: React.PropTypes.array,
-    l10n: React.PropTypes.object,
-    omattiedot: React.PropTypes.object,
-    orgs: React.PropTypes.array,
-    henkilo: React.PropTypes.object,
-    addOrganisaatio: React.PropTypes.func
-};
 

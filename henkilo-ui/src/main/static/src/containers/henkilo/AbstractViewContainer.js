@@ -1,6 +1,5 @@
 import React from 'react'
 import Button from "../../components/common/button/Button";
-import locale from '../../configuration/locale'
 import dateformat from 'dateformat';
 import ConfirmButton from "../../components/common/button/ConfirmButton";
 import PopupButton from "../../components/common/button/PopupButton";
@@ -42,24 +41,24 @@ class AbstractViewContainer extends React.Component {
             ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
                 ({
                     label: 'HENKILO_KANSALAISUUS',
-                    data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+                    data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
                     value: this.props.koodisto.kansalaisuus
-                        .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
+                        .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][this.props.locale],
                     inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
                     selectValue: values.kansalaisuusKoodi
                 })).reduce((a,b) => a.concat(b))
             : { label: 'HENKILO_KANSALAISUUS',
-                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
                 inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
                 value: null };
     };
 
     createAidinkieliField() {
         return {label: 'HENKILO_AIDINKIELI',
-            data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+            data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
             inputValue: 'aidinkieli.kieliKoodi',
             value: this.props.henkilo.henkilo.aidinkieli && this.props.koodisto.kieli.filter(kieli =>
-        kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][locale],
+        kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][this.props.locale],
             selectValue: this.props.henkilo.henkilo.aidinkieli && this.props.henkilo.henkilo.aidinkieli.kieliKoodi};
     };
 
@@ -92,10 +91,10 @@ class AbstractViewContainer extends React.Component {
         return {label: 'HENKILO_ASIOINTIKIELI',
             data: this.props.koodisto.kieli
                 .filter(koodi => ['fi', 'sv', 'en'].indexOf(koodi.value) !== -1)
-                .map(koodi => ({id: koodi.value, text: koodi[locale]})),
+                .map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
             inputValue: 'asiointiKieli.kieliKoodi',
             value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli
-                .filter(kieli => kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][locale],
+                .filter(kieli => kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][this.props.locale],
             selectValue: this.props.henkilo.henkilo.asiointiKieli && this.props.henkilo.henkilo.asiointiKieli.kieliKoodi};
     };
 
@@ -197,7 +196,8 @@ class AbstractViewContainer extends React.Component {
 
     _createHakatunnistePopupContent(henkiloOid) {
         return <HakatunnistePopupContent henkiloOid={henkiloOid}
-                                         l10n={this.props.l10n}></HakatunnistePopupContent>;
+                                         l10n={this.props.l10n}
+                                         locale={this.props.locale}></HakatunnistePopupContent>;
     }
 
     static createLoader() {

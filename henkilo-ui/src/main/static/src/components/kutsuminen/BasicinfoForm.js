@@ -1,13 +1,12 @@
 import React from 'react'
 import Select2 from '../common/select/Select2';
 import languages from '../../configuration/languages';
-import locale from '../../configuration/locale';
 import './BasicinfoForm.css';
 
 export class BasicInfo extends React.Component {
 
     render() {
-        const L = this.props.l10n[locale];
+        const L = this.props.l10n[this.props.locale];
         const {basicInfo} = this.props;
 
         return (
@@ -31,7 +30,7 @@ export class BasicInfo extends React.Component {
                     <label className="oph-label" htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                     <div className="fieldContainer">
                         <Select2 id="lang"
-                                 data={languages.map(language => ({id: language.code, text: language.name[locale]}))}
+                                 data={languages.map(language => ({id: language.code, text: language.name[this.props.locale]}))}
                                  onSelect={this.selectLanguage.bind(this)}
                                  value={basicInfo.languageCode}>
                             {languages.map(this.renderLang.bind(this))}
@@ -47,7 +46,7 @@ export class BasicInfo extends React.Component {
 
     renderLang(lang) {
         return (
-            <option key={lang.code} value={lang.code}>{lang.name[locale]}</option>
+            <option key={lang.code} value={lang.code}>{lang.name[this.props.locale]}</option>
         )
     }
 
@@ -77,7 +76,8 @@ export class BasicInfo extends React.Component {
 }
 
 BasicInfo.propTypes = {
-    basicInfo: React.PropTypes.object,
-    l10n: React.PropTypes.object,
-    setBasicInfo: React.PropTypes.func
+    basicInfo: React.PropTypes.object.required,
+    l10n: React.PropTypes.object.required,
+    setBasicInfo: React.PropTypes.func.required,
+    locale: React.PropTypes.string.required
 };
