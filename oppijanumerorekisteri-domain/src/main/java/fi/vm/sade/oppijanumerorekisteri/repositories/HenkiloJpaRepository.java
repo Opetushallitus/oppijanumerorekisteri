@@ -19,6 +19,14 @@ import java.util.Optional;
 public interface HenkiloJpaRepository {
 
     /**
+     * Yleiskäyttöinen henkilöhaku ilman sivutusta.
+     *
+     * @param criteria hakukriteerit
+     * @return henkilot
+     */
+    List<HenkiloHakuDto> findBy(HenkiloCriteria criteria);
+
+    /**
      * Yleiskäyttöinen henkilöhaku.
      *
      * @param criteria hakukriteerit

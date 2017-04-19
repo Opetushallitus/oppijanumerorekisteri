@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuCriteria;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
@@ -104,6 +106,12 @@ public class Service2ServiceController {
         else {
             return ResponseEntity.ok(returnDto);
         }
+    }
+
+    @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
+    @PostMapping("/henkilo/perustiedot")
+    public Iterable<HenkiloHakuDto> list(@RequestBody HenkiloHakuCriteria criteria) {
+        return henkiloService.list(criteria);
     }
 
     @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")

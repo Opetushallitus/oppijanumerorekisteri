@@ -32,6 +32,7 @@ import org.springframework.validation.BindException;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
+import static java.util.Collections.emptyList;
 import java.util.stream.Collectors;
 
 import java.util.function.Function;
@@ -89,6 +90,31 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.henkiloCreatePostValidator = henkiloCreatePostValidator;
         this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
         this.kayttooikeusClient = kayttooikeusClient;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria) {
+        // käyttöoikeustarkistukset
+        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
+        OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);
+        organisaatioCriteria.setPassivoitu(false); // haetaan aina voimassaolevat käyttöoikeudet
+        KayttooikeudetDto kayttooikeudet = kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
+        if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
+            // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
+            return emptyList();
+        }
+
+        HenkiloCriteria henkiloCriteria = mapper.map(criteria, HenkiloCriteria.class);
+        kayttooikeudet.getOids().ifPresent(henkiloOids -> {
+            if (isEmpty(henkiloCriteria.getHenkiloOids())) {
+                henkiloCriteria.setHenkiloOids(henkiloOids);
+            } else {
+                henkiloCriteria.getHenkiloOids().retainAll(henkiloOids);
+            }
+        });
+
+        return henkiloJpaRepository.findBy(henkiloCriteria);
     }
 
     @Override
