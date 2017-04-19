@@ -54,7 +54,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         return new Date(from[2], from[1]-1, from[0]);
     }
 
-    createRows(headingList) {
+    createRows() {
+        const headingList = this.headingList.map(heading => heading.key);
         return this.props.kayttooikeus.kayttooikeusAnomus
             .map((haettuKayttooikeusRyhma, idx) => ({
                 [headingList[0]]: dateformat(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm), this.L['PVM_FORMAATTI']),
@@ -89,7 +90,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                     <div>
-                        <Table headings={this.tableHeadings} data={this.createRows(this.headingList.map(heading => heading.key))} />
+                        <Table headings={this.tableHeadings} data={this.createRows()} />
                     </div>
                 </div>
             </div>
