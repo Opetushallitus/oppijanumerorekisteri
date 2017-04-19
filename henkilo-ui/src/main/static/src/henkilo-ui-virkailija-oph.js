@@ -1,4 +1,5 @@
 export default {
+    "cas.baseUrl": "/",
     "cas.login": "/cas/login",
     "cas.me": "cas/me",
 

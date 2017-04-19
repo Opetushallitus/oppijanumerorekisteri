@@ -20,7 +20,7 @@ export const fetchOmattiedot = () => async dispatch => {
         return dispatch(receiveOmattiedotSuccess(omattiedot));
     } catch( error ) {
         dispatch(receiveOmattiedotFailure(error));
-        console.error(error);
+        console.error('Failed fetching omat tiedot', error);
     }
 };
 
