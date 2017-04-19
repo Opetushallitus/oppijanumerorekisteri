@@ -62,10 +62,10 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 [headingList[1]]: haettuKayttooikeusRyhma.anomus.organisaatioOid,
                 [headingList[2]]: haettuKayttooikeusRyhma.kayttoOikeusRyhma.description.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[3]]: <input defaultValue={dateformat(this.dates[idx].alkupvm, this.L['PVM_FORMAATTI'])}
+                [headingList[3]]: <input className="oph-input" defaultValue={dateformat(this.dates[idx].alkupvm, this.L['PVM_FORMAATTI'])}
                                          onChange={(event) => {this.dates[idx].alkupvm =
                                              HenkiloViewOpenKayttooikeusanomus.ddmmyyyyToDate(event.target.value);} } />,
-                [headingList[4]]: <input defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
+                [headingList[4]]: <input className="oph-input" defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
                                          onChange={(event) => {this.dates[idx].loppupvm =
                                              HenkiloViewOpenKayttooikeusanomus.ddmmyyyyToDate(event.target.value);}} />,
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
