@@ -26,7 +26,6 @@
     "select2": "^4.0.0",
     "shallow-equal-fuzzy": "^0.0.2",
     "virkailija-styles": "Opetushallitus/virkailija-styles#styleguide",
-    "react-data-grid": "^2.0.24",
     "react-table": "^5.5.0"
   },
   "devDependencies": {
