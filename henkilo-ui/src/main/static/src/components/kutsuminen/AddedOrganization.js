@@ -18,7 +18,7 @@ class AddedOrganisation extends React.Component {
 
     render() {
         const addedOrg = this.props.addedOrg;
-        const availableOrgs = getOrganisaatios(this.props.orgs);
+        const availableOrgs = getOrganisaatios(this.props.orgs, this.props.locale);
         const excludedOrgOids = R.map(R.prop('oid'), R.filter(org => addedOrg.oid !== org.oid)(this.props.addedOrgs));
         const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
         const L = this.props.l10n[this.props.locale];
@@ -31,7 +31,7 @@ class AddedOrganisation extends React.Component {
                     </label>
                     <OrgSelect2 id="org"
                                 onSelect={this.changeOrganization.bind(this)}
-                                data={orgs.map(this.mapOrganisaatio)}
+                                data={orgs.map(this.mapOrganisaatio.bind(this))}
                                 l10n={L}
                                 value={addedOrg.oid}
                                 options={{placeholder: L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}}/>

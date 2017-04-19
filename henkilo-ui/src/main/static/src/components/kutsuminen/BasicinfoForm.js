@@ -76,8 +76,8 @@ export class BasicInfo extends React.Component {
 }
 
 BasicInfo.propTypes = {
-    basicInfo: React.PropTypes.object.required,
-    l10n: React.PropTypes.object.required,
-    setBasicInfo: React.PropTypes.func.required,
-    locale: React.PropTypes.string.required
+    basicInfo: React.PropTypes.object,
+    l10n: React.PropTypes.object,
+    setBasicInfo: React.PropTypes.func,
+    locale: React.PropTypes.string
 };
