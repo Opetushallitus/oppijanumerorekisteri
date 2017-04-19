@@ -16,6 +16,11 @@ import java.util.List;
 import java.util.Set;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import java.util.LinkedHashMap;
+import static java.util.stream.Collectors.joining;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -56,6 +61,32 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
     public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException {
         String url = this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, kasittelijaOid);
         cachingRestClient.delete(url);
+    }
+
+    @Override
+    public KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria) {
+        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
+        if (criteria.getPassivoitu() != null) {
+            parameters.put("passivoitu", criteria.getPassivoitu());
+        }
+        if (criteria.getOrganisaatioOids() != null) {
+            parameters.put("organisaatioOids", criteria.getOrganisaatioOids().stream().collect(joining(",")));
+        }
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid, parameters);
+        return getHenkiloKayttooikeudetByUrl(url);
+    }
+
+    private KayttooikeudetDto getHenkiloKayttooikeudetByUrl(String url) {
+        try {
+            String json = cachingRestClient.getAsString(url);
+            KayttooikeudetDto kayttooikeudet = objectMapper.readValue(json, KayttooikeudetDto.class);
+            if (!kayttooikeudet.isAdmin() && kayttooikeudet.getOids() == null) {
+                throw new DataInconsistencyException("Käyttöoikeuspalvelu palautti epäkonsistenttia tietoa");
+            }
+            return kayttooikeudet;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 }

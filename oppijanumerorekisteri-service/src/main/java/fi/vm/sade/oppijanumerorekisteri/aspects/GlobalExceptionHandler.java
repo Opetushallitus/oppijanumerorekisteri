@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
@@ -130,6 +131,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "duplicate_hetu_undeterministic_behaviour")
     @ExceptionHandler(DuplicateHetuException.class)
     public void internalErrorDuplicateHetuException() {
+    }
+
+    @ExceptionHandler(DataInconsistencyException.class)
+    public ResponseEntity<Map<String, Object>> dataInconsistencyException(DataInconsistencyException exception, HttpServletRequest request) {
+        logger.error(exception.getMessage(), exception);
+        return constructErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
 }

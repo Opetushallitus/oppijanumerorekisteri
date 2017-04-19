@@ -65,6 +65,13 @@ public class HenkiloControllerTest {
 
     @Test
     @WithMockUser(username = "1.2.3.4.5")
+    public void list() throws Exception {
+        this.mvc.perform(get("/henkilo?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "1.2.3.4.5")
     public void hasHetu() throws Exception {
         given(this.henkiloService.getHasHetu()).willReturn(true);
         this.mvc.perform(get("/henkilo/current/hasHetu").accept(MediaType.APPLICATION_JSON_UTF8))

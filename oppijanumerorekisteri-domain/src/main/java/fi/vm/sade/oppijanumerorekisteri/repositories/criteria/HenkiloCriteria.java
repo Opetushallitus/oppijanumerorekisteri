@@ -1,12 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import lombok.*;
 
 import java.util.Set;
 
+/**
+ * Henkilöiden hakemiseen oppijanumerorekisteristä henkilön perustietojen
+ * perusteella.
+ */
 @Getter
 @Setter
 @Builder
@@ -14,16 +19,30 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HenkiloCriteria {
+
     private Set<String> henkiloOids;
-    
-    public BooleanExpression condition(QHenkilo henkilo) {
-        BooleanExpression condition = Expressions.TRUE.eq(true);
+    private String hetu;
+    private HenkiloTyyppi tyyppi;
+    private Boolean passivoitu;
+    private Boolean duplikaatti;
+
+    public Predicate condition(QHenkilo henkilo) {
+        BooleanBuilder builder = new BooleanBuilder();
         if (henkiloOids != null) {
-            if (henkiloOids.isEmpty()) {
-                return Expressions.FALSE;
-            }
-            condition = condition.and(henkilo.oidHenkilo.in(henkiloOids));
+            builder.and(henkilo.oidHenkilo.in(henkiloOids));
         }
-        return condition;
+        if (hetu != null) {
+            builder.and(henkilo.hetu.eq(hetu));
+        }
+        if (tyyppi != null) {
+            builder.and(henkilo.henkiloTyyppi.eq(tyyppi));
+        }
+        if (passivoitu != null) {
+            builder.and(henkilo.passivoitu.eq(passivoitu));
+        }
+        if (duplikaatti != null) {
+            builder.and(henkilo.duplicate.eq(duplikaatti));
+        }
+        return builder;
     }
 }

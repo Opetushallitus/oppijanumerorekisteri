@@ -7,6 +7,7 @@ import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
@@ -39,6 +40,27 @@ import static java.util.stream.Collectors.toList;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
+
+    @Override
+    public List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<HenkiloHakuDto> query = jpa().from(qHenkilo)
+                .select(Projections.constructor(HenkiloHakuDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi
+        ));
+
+        query.where(criteria.condition(qHenkilo));
+        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
+        query.limit(limit);
+        query.offset(offset);
+
+        return query.fetch();
+    }
 
     @Override
     public Optional<String> findHetuByOid(String henkiloOid) {
@@ -162,8 +184,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
 
     @Override
     public List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount) {
-        JPAQuery<String> query = jpa().from(henkilo).where(criteria.condition(henkilo)
-                    .and(henkilo.modified.goe(modifiedSince.toDate())))
+        JPAQuery<String> query = jpa().from(henkilo).where(criteria.condition(henkilo))
+                    .where(henkilo.modified.goe(modifiedSince.toDate()))
                 .select(henkilo.oidHenkilo)
                 .orderBy(henkilo.modified.asc());
         if(offset != null) {

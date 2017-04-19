@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import com.google.common.collect.Sets;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
@@ -44,6 +45,15 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
+
+    @Test
+    public void findBy() {
+        HenkiloCriteria criteria = new HenkiloCriteria();
+
+        List<HenkiloHakuDto> henkilot = this.jpaRepository.findBy(criteria, 5, 0);
+
+        assertThat(henkilot).isEmpty();
+    }
 
     @Test
     public void findHetuByOid() {

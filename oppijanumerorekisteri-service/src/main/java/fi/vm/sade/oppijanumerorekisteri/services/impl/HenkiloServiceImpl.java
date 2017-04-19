@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -30,13 +32,13 @@ import org.springframework.validation.BindException;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
-import static java.util.Optional.ofNullable;
 import java.util.stream.Collectors;
 
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import org.joda.time.DateTime;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
@@ -87,6 +89,34 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.henkiloCreatePostValidator = henkiloCreatePostValidator;
         this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
         this.kayttooikeusClient = kayttooikeusClient;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count) {
+        // käyttöoikeustarkistukset
+        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
+        OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);
+        organisaatioCriteria.setPassivoitu(false); // haetaan aina voimassaolevat käyttöoikeudet
+        KayttooikeudetDto kayttooikeudet = kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
+        if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
+            // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
+            return Slice.empty(page, count);
+        }
+
+        HenkiloCriteria henkiloCriteria = mapper.map(criteria, HenkiloCriteria.class);
+        kayttooikeudet.getOids().ifPresent(henkiloOids -> {
+            if (isEmpty(henkiloCriteria.getHenkiloOids())) {
+                henkiloCriteria.setHenkiloOids(henkiloOids);
+            } else {
+                henkiloCriteria.getHenkiloOids().retainAll(henkiloOids);
+            }
+        });
+
+        // haetaan yksi ylimääräinen rivi, jotta voidaan päätellä onko seuraavaa viipaletta
+        int limit = count + 1;
+        int offset = (page - 1) * count;
+        return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
     }
 
     @Override
@@ -307,7 +337,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull String ryhma) {
-        return ofNullable(yhteystietoConverter.toHenkiloYhteystiedot(
+        return Optional.ofNullable(yhteystietoConverter.toHenkiloYhteystiedot(
                 this.henkiloJpaRepository.findYhteystiedot(new YhteystietoCriteria()
                         .withHenkiloOid(henkiloOid)
                         .withRyhma(ryhma))
