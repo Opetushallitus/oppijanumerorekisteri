@@ -26,7 +26,7 @@ class Table extends React.Component {
             <div>
                 <ReactTable className="table"
                             showPagination={false}
-                            resizable={true}
+                            resizable={false}
                             pageSize={this.props.data.length}
                             loadingText=""
                             noDataText=""
