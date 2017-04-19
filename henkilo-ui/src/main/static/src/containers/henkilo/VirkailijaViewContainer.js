@@ -14,7 +14,7 @@ import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo
+    fetchAllKayttooikeusryhmasForHenkilo, updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
 
 
@@ -91,6 +91,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
-    fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto,
-    updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
-    passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo})(VirkailijaViewContainer);
+    fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
+    fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
+    passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma})(VirkailijaViewContainer);

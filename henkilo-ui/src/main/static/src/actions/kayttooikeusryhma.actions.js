@@ -5,6 +5,8 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE, FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS, FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
+    UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST, UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS,
+    UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
 } from './actiontypes';
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
@@ -38,5 +40,18 @@ export const fetchAllKayttooikeusAnomusForHenkilo = henkiloOid => dispatch => {
     http.get(url)
         .then(kayttooikeusAnomus => {dispatch(receiveAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid, kayttooikeusAnomus))})
         .catch(() => dispatch(errorAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid)));
+};
+
+const requestHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST, id, });
+const receiveHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS, id, });
+const errorHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE, id });
+export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo) => dispatch => {
+    dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
+    const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
+    http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm,})
+        .then(() => {
+            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
+            dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo));
+        }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
 };
 
