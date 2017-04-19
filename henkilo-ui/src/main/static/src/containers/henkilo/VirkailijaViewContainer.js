@@ -12,6 +12,10 @@ import {
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
+import {
+    fetchAllKayttooikeusAnomusForHenkilo,
+    fetchAllKayttooikeusryhmasForHenkilo, updateHaettuKayttooikeusryhma
+} from "../../actions/kayttooikeusryhma.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -25,6 +29,9 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKayttajatieto(this.props.oid);
         this.props.fetchYhteystietotyypitKoodisto();
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oid);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oid);
+
     };
 
     render() {
@@ -32,7 +39,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
             editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this),
-            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), };
+            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), myonnaButton: this.createMyonnaConfirmButton.bind(this),
+            hylkaaButton: this.createHylkaaConfirmButton.bind(this), };
         return <VirkailijaViewPage {...props} />;
     };
 
@@ -77,11 +85,13 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
-        locale: state.locale
+        locale: state.locale,
+        kayttooikeus: state.kayttooikeus,
     };
 };
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
-    fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto,
-    updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
-    passivoiHenkiloOrg})(VirkailijaViewContainer);
+    fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
+    fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
+    passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma})(VirkailijaViewContainer);

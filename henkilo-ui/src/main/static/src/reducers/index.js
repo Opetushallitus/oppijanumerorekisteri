@@ -10,6 +10,7 @@ import {prequels} from "./prequels.reducer";
 import {omattiedot} from "./omattiedot.reducer";
 import {kutsuminenOrganisaatios} from './kutsuminen.reducer';
 import { locale } from './locale.reducer';
+import {kayttooikeus} from "./kayttooikeusryhma.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     prequels,
     omattiedot,
     kutsuminenOrganisaatios,
-    locale
+    locale,
+    kayttooikeus,
 });
 
 export default rootReducer;
