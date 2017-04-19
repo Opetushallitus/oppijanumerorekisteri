@@ -72,6 +72,9 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         if (criteria.getOrganisaatioOids() != null) {
             parameters.put("organisaatioOids", criteria.getOrganisaatioOids().stream().collect(joining(",")));
         }
+        if (criteria.getKayttoOikeusRyhmaNimet() != null) {
+            parameters.put("kayttoOikeusRyhmaNimet", criteria.getKayttoOikeusRyhmaNimet().stream().collect(joining(",")));
+        }
         String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid, parameters);
         return getHenkiloKayttooikeudetByUrl(url);
     }

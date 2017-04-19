@@ -16,5 +16,6 @@ public class OrganisaatioCriteria {
 
     private Boolean passivoitu;
     private Set<String> organisaatioOids;
+    private Set<String> kayttoOikeusRyhmaNimet;
 
 }

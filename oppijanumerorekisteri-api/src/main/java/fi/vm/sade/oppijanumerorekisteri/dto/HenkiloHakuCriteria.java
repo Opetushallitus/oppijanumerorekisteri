@@ -23,5 +23,6 @@ public class HenkiloHakuCriteria {
 
     // organisaatiocriteria
     private Set<String> organisaatioOids;
+    private Set<String> kayttoOikeusRyhmaNimet;
 
 }
