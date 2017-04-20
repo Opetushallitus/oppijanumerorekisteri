@@ -1,37 +1,13 @@
-.results table {
-    width: 100%;
-    border: 1px solid gray;
-}
-.results td, .results th {
-    text-align: left;
-    width: 30%;
-    padding: 20px;
-    border-bottom: 1px solid gray;
-}
-.results tr:last-child td {
-    border-bottom: 0;
-}
+
 .confirmation-modal table td, .confirmation-modal table th {
     padding: 10px;
     text-align: left;
 }
 
-.kutsuOrganisaatio {
-    padding-bottom: 5px;
-}
 .confirmation-modal {
     width: 50%;
     position: relative;
     margin: 2em auto;
     padding: 2em;
     background: #ffffff;
-}
-.row {
-    clear: both;
-}
-.left {
-    float: left;
-}
-.right {
-    float: right;
 }

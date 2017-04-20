@@ -17,7 +17,7 @@ export default class KutsuConfirmation extends React.Component {
         clearBasicInfo: React.PropTypes.func,
         ready: React.PropTypes.func,
         locale: React.PropTypes.string
-    }
+    };
 
     constructor() {
         super();
@@ -87,7 +87,7 @@ export default class KutsuConfirmation extends React.Component {
         try {
             const url = urls.url('kayttooikeus-service.kutsu');
             await http.post(url, payload);
-            this.props.basicInfo.clearBasicInfo();
+            this.props.clearBasicInfo();
         } catch (error) {
             console.error(`Creating new virkailija kutsu failed`, error);
             throw error;
