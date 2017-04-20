@@ -4,21 +4,23 @@ import Select2 from '../select/Select2';
 import './Field.css';
 import classNames from 'classnames/bind';
 
-const Field = React.createClass({
-    propTypes: {
+export default class Field extends React.Component {
+    static propTypes = {
         readOnly: React.PropTypes.bool,
         changeAction: React.PropTypes.func,
         inputValue: React.PropTypes.string,
         selectValue: React.PropTypes.string,
         password: React.PropTypes.bool
-    },
-    getInitialState: function () {
-        return {
-            readOnly: true
-        }
-    },
-    render: function() {
-        const className = classNames({'field': true,
+    };
+
+    constructor() {
+        super();
+        this.state = {readOnly: true};
+    }
+
+    render() {
+        const className = classNames(
+            {'field': true,
             [`${this.props.className}`]: this.props.className,
             'readOnly': this.props.readOnly,
             'oph-input': !this.props.readOnly && !this.props.data});
@@ -34,5 +36,4 @@ const Field = React.createClass({
                          defaultValue={this.props.children} {...type} autoFocus={autoFocus} />
         )
     }
-});
-export default Field;
+}

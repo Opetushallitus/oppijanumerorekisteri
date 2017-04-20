@@ -12,14 +12,14 @@ const wrapperStyles = {
   overflowY: 'auto'
 }
 
-const Modal = React.createClass({
-  propTypes: {
+export default class Modal extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool.isRequired,
     onClose: React.PropTypes.func.isRequired,
     closeOnOuterClick: React.PropTypes.bool.isRequired,
-  },
+  };
 
-  render: function() {
+  render() {
     if (this.props.show) {
       return (
         <div
@@ -32,14 +32,13 @@ const Modal = React.createClass({
     } else {
       return null
     }
-  },
+  }
 
-  hideOnOuterClick: function(e) {
+  hideOnOuterClick(e) {
     if (e.target.dataset.modal && this.props.closeOnOuterClick) {
       this.props.onClose(e)
     }
   }
 
-});
+}
 
-export default Modal

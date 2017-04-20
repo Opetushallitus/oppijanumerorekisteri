@@ -2,30 +2,29 @@ import React from 'react'
 
 import './SortByHeader.css';
 
-const SortByHeader = React.createClass({
-    propTypes: {
+export default class SortByHeader extends React.Component {
+    static propTypes = {
         by: React.PropTypes.string.isRequired,
         state: React.PropTypes.object.isRequired, // {sortBy: <by-field>, direction: 'ASC'|'DESC'}
         onChange: React.PropTypes.func.isRequired // (sortBy: string, direction: 'ASC'|'DESC') => void
-    },
+    }
 
-    render: function() {
+    render() {
         const className = "sortHeader" + (this.isSelected() ? " sortedBy" : "");
         return (<th className={className} onClick={this.toggle}><span className="text">{this.props.children}</span> {this.symbol()}</th>);
-    },
+    }
     
-    isSelected: function() {
+    isSelected() {
         return this.props.by === this.props.state.sortBy;
-    },
+    }
     
-    toggle: function() {
+    toggle() {
         const direction = this.isSelected() ? (this.props.state.direction === 'ASC' ? 'DESC' : 'ASC') : "ASC";
         this.props.onChange(this.props.by, direction);
-    },
+    }
     
-    symbol: function() {
+    symbol() {
         return <span className="symbol">{this.isSelected() ? (this.props.state.direction === 'ASC' ? "∧" : "∨")
                 : "∧"}</span>;
     }
-});
-export default SortByHeader;
+}

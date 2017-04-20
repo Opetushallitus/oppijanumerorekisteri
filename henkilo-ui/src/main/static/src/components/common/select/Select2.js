@@ -16,8 +16,8 @@ function swapNodesIfInGivenOrder(a, b) {
   }
 }
 
-const Select2 = React.createClass({
-  propTypes: {
+export default class Select2 extends React.Component {
+  static propTypes = {
     defaultValue: PropTypes.oneOfType([
       PropTypes.number,
       PropTypes.array,
@@ -39,29 +39,42 @@ const Select2 = React.createClass({
     onUnselect: PropTypes.func,
     passData: PropTypes.bool,
     l10n: PropTypes.object
-  },
+  };
 
-  el: null,
-  forceUpdateValue: false,
+  static defaultProps = {
+      data: [],
+      events: [
+          [`change.${namespace}`, 'onChange'],
+          [`select2:open.${namespace}`, 'onOpen'],
+          [`select2:close.${namespace}`, 'onClose'],
+          [`select2:select.${namespace}`, 'onSelect'],
+          [`select2:unselect.${namespace}`, 'onUnselect']
+      ],
+      options: {},
+      multiple: false
+  };
 
-  componentDidMount: function() {
+  el: null;
+  forceUpdateValue: false;
+
+  componentDidMount() {
     this.initSelect2(this.props);
     this.updateValue();
-  },
+  }
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.updSelect2(nextProps);
-  },
+  }
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     this.updateValue();
-  },
+  }
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.destroySelect2();
-  },
+  }
 
-  initSelect2: function(props, updateValue = false) {
+  initSelect2(props, updateValue = false) {
     const { options } = props;
 
     this.el = $(ReactDOM.findDOMNode(this));
@@ -72,9 +85,9 @@ const Select2 = React.createClass({
     }
     this.el.select2(this.prepareOptions(options));
     this.attachEventHandlers(props);
-  },
+  }
 
-  updSelect2: function(props) {
+  updSelect2(props) {
     const prevProps = this.props;
 
     if (!shallowEqualFuzzy(prevProps.data, props.data)) {
@@ -92,9 +105,9 @@ const Select2 = React.createClass({
       this.detachEventHandlers(props);
       this.attachEventHandlers(props);
     }
-  },
+  }
 
-  updateValue: function() {
+  updateValue() {
     const { value, defaultValue, multiple } = this.props;
     const newValue = this.prepareValue(value, defaultValue);
     const currentValue = multiple ? this.el.val() || [] : this.el.val();
@@ -103,18 +116,18 @@ const Select2 = React.createClass({
       this.el.val(newValue).trigger('change');
       this.forceUpdateValue = false;
     }
-  },
+  }
 
-  destroySelect2: function(withCallbacks = true) {
+  destroySelect2(withCallbacks = true) {
     if (withCallbacks) {
       this.detachEventHandlers(this.props);
     }
 
     this.el.select2('destroy');
     this.el = null;
-  },
+  }
 
-  attachEventHandlers: function(props) {
+  attachEventHandlers(props) {
     props.events.forEach(event => {
       if (typeof props[event[1]] !== 'undefined') {
         this.el.on(event[0], props[event[1]]);
@@ -142,17 +155,17 @@ const Select2 = React.createClass({
         }
       });
     }
-  },
+  }
 
-  detachEventHandlers: function(props) {
+  detachEventHandlers(props) {
     props.events.forEach(event => {
       if (typeof props[event[1]] !== 'undefined') {
         this.el.off(event[0]);
       }
     });
-  },
+  }
 
-  prepareValue: function(value, defaultValue) {
+  prepareValue(value, defaultValue) {
     const issetValue = typeof value !== 'undefined' && value !== null;
     const issetDefaultValue = typeof defaultValue !== 'undefined';
 
@@ -160,9 +173,9 @@ const Select2 = React.createClass({
       return defaultValue;
     }
     return value;
-  },
+  }
 
-  prepareOptions: function(options) {
+  prepareOptions(options) {
     const opt = options;
     if (typeof opt.dropdownParent === 'string') {
       opt.dropdownParent = $(opt.dropdownParent);
@@ -174,10 +187,10 @@ const Select2 = React.createClass({
     if (this.props.l10n) {
       const l10n = this.props.l10n;
       opt.language = {
-        errorLoading: function () {
+        errorLoading: function() {
           return l10n['VIRHE_LADATTAESSA_VASTAUKSIA'];
         },
-        inputTooLong: function (args) {
+        inputTooLong: function(args) {
           const overChars = args.input.length - args.maximum;
           return `${l10n['POISTA']} ${overChars} ${l10n['MERKKIA']}`;
         },
@@ -200,14 +213,14 @@ const Select2 = React.createClass({
       };
     }
     return opt;
-  },
+  }
 
-  isObject: function(value) {
+  isObject(value) {
     const type = typeof value;
     return type === 'function' || (value && type === 'object') || false;
-  },
+  }
 
-  makeOption: function(item) {
+  makeOption(item) {
     if (this.isObject(item)) {
       const itemParams = $.extend({}, item),
           id = item.id,
@@ -217,9 +230,9 @@ const Select2 = React.createClass({
       return (<option key={`option-${id}`} value={id} {...itemParams}>{text}</option>);
     }
     return (<option key={`option-${item}`} value={item}>{item}</option>);
-  },
+  }
 
-  render: function() {
+  render() {
     const props = $.extend({}, this.props),
         data = this.props.data,
         // value = this.props.value,
@@ -256,19 +269,7 @@ const Select2 = React.createClass({
       </select>
     );
   }
-});
+}
 
-Select2.defaultProps= {
-  data: [],
-  events: [
-    [`change.${namespace}`, 'onChange'],
-    [`select2:open.${namespace}`, 'onOpen'],
-    [`select2:close.${namespace}`, 'onClose'],
-    [`select2:select.${namespace}`, 'onSelect'],
-    [`select2:unselect.${namespace}`, 'onUnselect']
-  ],
-  options: {},
-  multiple: false
-};
 
-export default Select2
+
