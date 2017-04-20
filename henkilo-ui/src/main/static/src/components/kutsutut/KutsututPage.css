@@ -1,4 +1,9 @@
 
+#kutsutut-page h2 {
+    font-weight: bold;
+    font-size: 2em;
+}
+
 .confirmation-modal table td, .confirmation-modal table th {
     padding: 10px;
     text-align: left;
@@ -10,4 +15,12 @@
     margin: 2em auto;
     padding: 2em;
     background: #ffffff;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
 }

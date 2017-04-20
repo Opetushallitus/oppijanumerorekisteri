@@ -35,19 +35,25 @@ export default class KutsuConfirmation extends React.Component {
                     <i className="fa fa-times-circle fa-2 clickable right" onClick={this.props.modalCloseFn}
                        aria-hidden="true"></i>
                     <h1>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h1>
-                    {/*<p>{L.msg('VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI', this.props.basicInfo.email, this.props.basicInfo.etunimi, this.props.basicInfo.sukunimi)}</p>*/}
+                    <p>{ L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI'] } {this.props.basicInfo.email}</p>
                     <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</h2>
                     {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
                     <div className="row">
-                        <Button confirm className="left" action={this.sendInvitation.bind(this)}>
-                            {L['VIRKAILIJAN_LISAYS_TALLENNA']}
-                        </Button>
+                        {this.state.sent ?
+                            <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button> :
+                            <Button action={this.sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
+                        }
+
+
                     </div>
-                    <div className="clear"></div>
-                    <p>{this.state.sent ? L['VIRKAILIJAN_LISAYS_LAHETETTY'] : ''}</p>
                 </div>
             </Modal>
         )
+    }
+
+    onClose() {
+        this.props.modalCloseFn();
+        this.setState({sent: false});
     }
 
     renderAddedOrg(org) {
@@ -87,7 +93,7 @@ export default class KutsuConfirmation extends React.Component {
         try {
             const url = urls.url('kayttooikeus-service.kutsu');
             await http.post(url, payload);
-            this.props.clearBasicInfo();
+            this.setState({sent: true});
         } catch (error) {
             console.error(`Creating new virkailija kutsu failed`, error);
             throw error;

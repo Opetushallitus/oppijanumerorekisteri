@@ -64,10 +64,11 @@ class KutsuFormPage extends React.Component  {
                                             addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
 
                         <div className="kutsuFormFooter row">
-                            <Button confirm action={this.openConfirmationModal.bind(this)} disabled={!this.isValid()}>
+                            <Button action={this.openConfirmationModal.bind(this)} disabled={!this.isValid()}>
                                 {L['VIRKAILIJAN_LISAYS_TALLENNA']}
                             </Button> {this.isAddToOrganizationsNotificationShown.bind(this) &&
-                            <span className="missingInfo">
+
+                        <span className="missingInfo">
                                 {L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS']}
                             </span>}
                         </div>

@@ -19,7 +19,7 @@ export default class KutsututPage extends React.Component {
         const L = this.props.l10n[this.props.locale];
         const kutsuResponse = this.props.kutsuList;
         return (
-            <div className="wrapper">
+            <div className="wrapper" id="kutsutut-page">
                 <div className="header">
                     <h2>{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</h2>
                 </div>
@@ -34,7 +34,7 @@ export default class KutsututPage extends React.Component {
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
                     locale={this.props.locale}></KutsututTable>}
 
-                {this.state.confirmDeleteFor != null && <Modal show={this.state.confirmDeleteFor != null} onClose={this.cancelInvitationCancellation}
+                {this.state.confirmDeleteFor != null && <Modal show={this.state.confirmDeleteFor != null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>
                     <div className="confirmation-modal">
                         <h2>{L['PERUUTA_KUTSU_VAHVISTUS']}</h2>
@@ -88,6 +88,7 @@ export default class KutsututPage extends React.Component {
             this.props.deleteKutsu(this.state.confirmDeleteFor.id);
             this.setState({confirmDeleteFor: null});
         }
+        this.props.fetchKutsus();
     }
 }
 

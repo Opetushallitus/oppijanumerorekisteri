@@ -26,7 +26,6 @@ export const kutsuminenOrganisaatios = (state = [], action) => {
             };
             return newOrganisaatios;
         case KUTSU_REMOVE_ORGANISAATIO:
-            console.log('remove organisaatio', action.organisaatioOid);
             return R.reject( organisaatio => organisaatio.oid === action.organisaatioOid, newOrganisaatios );
         case KUTSU_CLEAR_ORGANISAATIOS:
             return [];
