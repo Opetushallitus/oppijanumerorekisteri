@@ -95,24 +95,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria) {
-        // käyttöoikeustarkistukset
-        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);
-        organisaatioCriteria.setPassivoitu(false); // haetaan aina voimassaolevat käyttöoikeudet
-        KayttooikeudetDto kayttooikeudet = kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
+        KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
         if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
             // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
             return emptyList();
         }
-
-        HenkiloCriteria henkiloCriteria = mapper.map(criteria, HenkiloCriteria.class);
-        kayttooikeudet.getOids().ifPresent(henkiloOids -> {
-            if (isEmpty(henkiloCriteria.getHenkiloOids())) {
-                henkiloCriteria.setHenkiloOids(henkiloOids);
-            } else {
-                henkiloCriteria.getHenkiloOids().retainAll(henkiloOids);
-            }
-        });
+        HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
         return henkiloJpaRepository.findBy(henkiloCriteria);
     }
@@ -120,16 +108,27 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count) {
-        // käyttöoikeustarkistukset
-        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);
-        organisaatioCriteria.setPassivoitu(false); // haetaan aina voimassaolevat käyttöoikeudet
-        KayttooikeudetDto kayttooikeudet = kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
+        KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
         if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
             // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
             return Slice.empty(page, count);
         }
+        HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
+        // haetaan yksi ylimääräinen rivi, jotta voidaan päätellä onko seuraavaa viipaletta
+        int limit = count + 1;
+        int offset = (page - 1) * count;
+        return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
+    }
+
+    private KayttooikeudetDto getKayttooikeudet(HenkiloHakuCriteria criteria) {
+        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
+        OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);
+        organisaatioCriteria.setPassivoitu(false); // haetaan aina voimassaolevat käyttöoikeudet
+        return kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
+    }
+
+    private HenkiloCriteria createHenkiloCriteria(HenkiloHakuCriteria criteria, KayttooikeudetDto kayttooikeudet) {
         HenkiloCriteria henkiloCriteria = mapper.map(criteria, HenkiloCriteria.class);
         kayttooikeudet.getOids().ifPresent(henkiloOids -> {
             if (isEmpty(henkiloCriteria.getHenkiloOids())) {
@@ -138,11 +137,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 henkiloCriteria.getHenkiloOids().retainAll(henkiloOids);
             }
         });
-
-        // haetaan yksi ylimääräinen rivi, jotta voidaan päätellä onko seuraavaa viipaletta
-        int limit = count + 1;
-        int offset = (page - 1) * count;
-        return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
+        return henkiloCriteria;
     }
 
     @Override
