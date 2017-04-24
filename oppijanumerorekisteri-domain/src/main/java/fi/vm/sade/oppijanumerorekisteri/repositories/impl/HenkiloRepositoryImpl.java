@@ -42,6 +42,25 @@ import static java.util.stream.Collectors.toList;
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
 
     @Override
+    public List<HenkiloHakuDto> findBy(HenkiloCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<HenkiloHakuDto> query = jpa().from(qHenkilo)
+                .select(Projections.constructor(HenkiloHakuDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi
+        ));
+
+        query.where(criteria.condition(qHenkilo));
+        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
+
+        return query.fetch();
+    }
+
+    @Override
     public List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
 

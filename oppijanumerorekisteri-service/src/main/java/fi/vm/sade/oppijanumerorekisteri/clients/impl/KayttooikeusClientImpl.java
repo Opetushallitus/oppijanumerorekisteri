@@ -19,8 +19,6 @@ import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import java.util.LinkedHashMap;
-import static java.util.stream.Collectors.joining;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -65,14 +63,7 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
 
     @Override
     public KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria) {
-        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
-        if (criteria.getPassivoitu() != null) {
-            parameters.put("passivoitu", criteria.getPassivoitu());
-        }
-        if (criteria.getOrganisaatioOids() != null) {
-            parameters.put("organisaatioOids", criteria.getOrganisaatioOids().stream().collect(joining(",")));
-        }
-        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid, parameters);
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid, criteria.getAsMap());
         return getHenkiloKayttooikeudetByUrl(url);
     }
 
