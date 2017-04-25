@@ -33,10 +33,6 @@ fieldset .fieldContainer {
     min-width: 250px;
 }
 
-.descriptionBelow {
-    padding-top: 5px;
-}
-
 input {
     font-size: 14px;
 }
@@ -122,6 +118,21 @@ label.required::after{
     margin: 10px 10px 50px;
 }
 
+h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
 .mainContent {
     margin-bottom: 50px;
 }
@@ -133,9 +144,6 @@ label.required::after{
 
 body h2 {
     padding-bottom: 5px
-}
-
-body {
 }
 
 hr {

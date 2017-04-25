@@ -14,14 +14,6 @@ export default class KutsututTable extends React.Component {
         locale: React.PropTypes.string
     };
 
-    constructor() {
-        super();
-        this.state = {
-            sortBy: 'AIKALEIMA',
-            direction: 'DESC'
-        }
-    }
-
     render() {
         const L = this.props.L;
         const headings = [{ key: 'KUTSUT_NIMI_OTSIKKO', label: L['KUTSUT_NIMI_OTSIKKO'] },

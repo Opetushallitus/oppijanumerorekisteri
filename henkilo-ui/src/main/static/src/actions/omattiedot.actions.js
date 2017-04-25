@@ -5,7 +5,8 @@ import {
     FETCH_OMATTIEDOT_SUCCESS,
     FETCH_OMATTIEDOT_FAILURE
 } from './actiontypes';
-import {fetchHenkiloOrganisaatios} from './henkilo.actions';
+import {fetchHenkilo, fetchHenkiloOrganisaatios, fetchKayttajatieto, fetchHenkiloOrgs} from './henkilo.actions';
+
 
 const requestOmattiedot = () => ({type: FETCH_OMATTIEDOT_REQUEST});
 const receiveOmattiedotSuccess = (json) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
@@ -27,5 +28,21 @@ export const fetchOmattiedot = () => async dispatch => {
 export const fetchKutsuFormData = () => async dispatch => {
     await dispatch(fetchOmattiedot());
     await dispatch(fetchHenkiloOrganisaatios());
+};
+
+export const fetchOmattiedotHenkiloData = () => async dispatch => {
+    const data = await dispatch(fetchOmattiedot());
+    const oid = data.omattiedot.oid;
+
+    Promise.all([
+        dispatch(fetchHenkilo(oid)),
+        dispatch(fetchKayttajatieto(oid)),
+        dispatch(fetchHenkiloOrgs(oid))
+    ]).then( () => {
+        // no need to react on success
+    }, (error) => {
+        console.error('Failed fetching user information', error);
+        throw error;
+    });
 };
 

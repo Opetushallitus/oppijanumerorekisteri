@@ -119,6 +119,13 @@ class KutsuFormPage extends React.Component  {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        fetchKutsuFormData: () => dispatch(fetchKutsuFormData()),
+        kutsuAddOrganisaatio: (organisaatio) => dispatch(kutsuAddOrganisaatio(organisaatio))
+    }
+};
+
 const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
@@ -130,4 +137,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchKutsuFormData, kutsuAddOrganisaatio})(KutsuFormPage);
+export default connect(mapStateToProps, mapDispatchToProps)(KutsuFormPage);
