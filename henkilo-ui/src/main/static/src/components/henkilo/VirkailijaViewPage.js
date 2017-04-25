@@ -44,7 +44,6 @@ const VirkailijaViewPage = React.createClass({
                             ? AbstractViewContainer.createLoader()
                             : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
                     }
-
                 </div>
                 <div className="wrapper">
                     {

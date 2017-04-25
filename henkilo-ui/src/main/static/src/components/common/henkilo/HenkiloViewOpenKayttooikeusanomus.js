@@ -12,7 +12,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         hylkaaButton: React.PropTypes.func.isRequired,
         updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
 
-        kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.object.isRequired}),
+        kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
     };
     constructor(props) {
         super(props);

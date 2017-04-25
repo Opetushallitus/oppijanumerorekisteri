@@ -52,13 +52,13 @@ class AbstractViewContainer extends React.Component {
             </td>
             <td>
                 <Select2 name={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} data={organisaatioData}
-                         onselect={organisaatioAction} />
+                         onSelect={organisaatioAction} />
                 <div>
                     <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
                 </div>
 
                 <div>
-                    <Select2 name={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} data={ryhmaData} onselect={ryhmaAction} />
+                    <Select2 name={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} data={ryhmaData} onSelect={ryhmaAction} />
                 </div>
             </td>
         </tr>;
@@ -84,22 +84,42 @@ class AbstractViewContainer extends React.Component {
         </tr>;
     };
 
-    createKayttooikeusKayttooikeudetField(myonnettavaKayttooikeusAction) {
+    createKayttooikeusKayttooikeudetField(kayttooikeusData, filterList, kayttooikeusAction, close) {
+        console.log(kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1));
         return <tr>
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
             <td>
-                <Select2 name={''} data={[]} onselect={myonnettavaKayttooikeusAction} />
+                <span>
+                    <Select2 name={''} data={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
+                             onSelect={kayttooikeusAction} />
+                </span>
+                <div>
+                    {filterList.map(selectedId => <div className="oph-alert oph-alert-info">
+                        <div className="oph-alert-container">
+                            <div className="oph-alert-title">{selectedId}</div>
+                            <button className="oph-button oph-button-close" type="button" title="Close" aria-label="Close"
+                                    onClick={() => close(selectedId)}>
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                    </div>)}
+                </div>
             </td>
         </tr>;
     };
 
-    createKayttooikeusHaeButton(haeButtonAction) {
+    createKayttooikeusHaeButton(haeButtonAction, validationMessages) {
         return <tr>
             <td />
             <td>
-                <Button disabled action={haeButtonAction} >{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}</Button>
+                <Button disabled={validationMessages.length > 0} action={haeButtonAction}>
+                    {this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
+                </Button>
+                {validationMessages.map((validationMessage) => <span className="oph-h5">
+                    {this.L[validationMessage.label]}
+                </span>)}
             </td>
         </tr>;
     };
