@@ -4,15 +4,24 @@ import dateformat from 'dateformat';
 import ConfirmButton from "../../components/common/button/ConfirmButton";
 import PopupButton from "../../components/common/button/PopupButton";
 import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent";
+import Select2 from "../../components/common/select/Select2";
 
 class AbstractViewContainer extends React.Component {
+
+    createKayttooikeusFields(...kayttooikeusFields) {
+        return <table>
+            <tbody>
+            {kayttooikeusFields.map(kayttooikeusField => kayttooikeusField)}
+            </tbody>
+        </table>
+    };
 
     _editButtons(discard, update) {
         return [
             <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
             <Button key="update" big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
         ];
-    }
+    };
 
     _createNotifications(position) {
         return this.props.henkilo.notifications.filter(notification => notification.position === position)
@@ -35,6 +44,65 @@ class AbstractViewContainer extends React.Component {
     /*
     * Fields
     * */
+
+    createKayttooikeusKohdeField(organisaatioData, organisaatioAction, ryhmaData, ryhmaAction) {
+        return <tr>
+            <td>
+                <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
+            </td>
+            <td>
+                <Select2 name={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} data={organisaatioData}
+                         onselect={organisaatioAction} />
+                <div>
+                    <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
+                </div>
+
+                <div>
+                    <Select2 name={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} data={ryhmaData} onselect={ryhmaAction} />
+                </div>
+            </td>
+        </tr>;
+    };
+
+    createKayttooikeusKestoField(alkaaPvmAction, paattyyPvmAction) {
+        return <tr>
+            <td>
+                <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
+            </td>
+            <td>
+                <div className="kayttooikeus-input-container">
+                    <span className="oph-h5">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
+                    <input className="oph-input" defaultValue={dateformat(new Date(), this.L['PVM_FORMAATTI'])}
+                           onChange={alkaaPvmAction} />
+                </div>
+                <div className="kayttooikeus-input-container">
+                    <span className="oph-h5">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
+                    <input className="oph-input" defaultValue={dateformat(new Date(), this.L['PVM_FORMAATTI'])}
+                           onChange={paattyyPvmAction} />
+                </div>
+            </td>
+        </tr>;
+    };
+
+    createKayttooikeusKayttooikeudetField(myonnettavaKayttooikeusAction) {
+        return <tr>
+            <td>
+                <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
+            </td>
+            <td>
+                <Select2 name={''} data={[]} onselect={myonnettavaKayttooikeusAction} />
+            </td>
+        </tr>;
+    };
+
+    createKayttooikeusHaeButton(haeButtonAction) {
+        return <tr>
+            <td />
+            <td>
+                <Button disabled action={haeButtonAction} >{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}</Button>
+            </td>
+        </tr>;
+    };
 
     createKansalaisuusField() {
         return this.props.henkilo.henkilo.kansalaisuus && this.props.henkilo.henkilo.kansalaisuus.length

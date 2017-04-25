@@ -40,7 +40,11 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
             editButtons: this._editButtons, createNotifications: this._createNotifications.bind(this),
             _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), myonnaButton: this.createMyonnaConfirmButton.bind(this),
-            hylkaaButton: this.createHylkaaConfirmButton.bind(this), };
+            hylkaaButton: this.createHylkaaConfirmButton.bind(this),
+            createKayttooikeusFields: this.createKayttooikeusFields(this.createKayttooikeusKohdeField([], () => {}, [], () => {},),
+                this.createKayttooikeusKestoField(() => {}, () => {}), this.createKayttooikeusKayttooikeudetField(() => {}),
+                this.createKayttooikeusHaeButton(() => {})),
+        };
         return <VirkailijaViewPage {...props} />;
     };
 
