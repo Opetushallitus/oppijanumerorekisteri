@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import com.google.common.collect.Lists;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
+import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -119,6 +121,21 @@ public class HenkiloServiceImpl implements HenkiloService {
         int limit = count + 1;
         int offset = (page - 1) * count;
         return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria) {
+        KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
+        if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
+            // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
+            return emptyList();
+        }
+        HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
+
+        return mapper.map(henkiloJpaRepository.findWithYhteystiedotBy(henkiloCriteria),
+                new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
+                new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
     }
 
     private KayttooikeudetDto getKayttooikeudet(HenkiloHakuCriteria criteria) {
