@@ -1,10 +1,13 @@
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
-import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 import dateformat from 'dateformat'
+import AbstractViewContainer from '../../containers/henkilo/AbstractViewContainer';
 import Button from "../common/button/Button";
-import {passivoiHenkiloOrg} from '../../actions/henkilo.actions';
+import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
+import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
+import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
+
 
 export default class OmattiedotPage extends React.Component {
 
@@ -23,7 +26,6 @@ export default class OmattiedotPage extends React.Component {
             || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
             || this.props.koodisto.kansalaisuusKoodistoLoading;
         const isContactContentLoading = this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
-        const isOrganisationContentLoading = this.props.henkilo.henkiloOrgsLoading;
         return (
             <div>
                 <div className="wrapper">
@@ -50,10 +52,24 @@ export default class OmattiedotPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        isOrganisationContentLoading ? L['LADATAAN'] :
-                            <HenkiloViewOrganisationContent
-                                _createPopupErrorMessage={this._createPopupErrorMessage.bind(this)} {...this.props}
-                                passivoiHenkiloOrg={passivoiHenkiloOrg} readOnly={true} locale={this.props.locale}/>
+                        this.props.kayttooikeus.kayttooikeusLoading
+                            ? AbstractViewContainer.createLoader()
+                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                    }
+                </div>
+                <div className="wrapper">
+                    {
+                        this.props.kayttooikeus.kayttooikeusAnomusLoading
+                            ? AbstractViewContainer.createLoader()
+                            : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
+                    }
+
+                </div>
+                <div className="wrapper">
+                    {
+                        this.props.kayttooikeus.kayttooikeusLoading
+                            ? AbstractViewContainer.createLoader()
+                            : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }
                 </div>
             </div>
@@ -160,14 +176,6 @@ export default class OmattiedotPage extends React.Component {
             .filter(yhteystietotyyppi => ['yhteystietotyyppi4', 'yhteystietotyyppi10', 'yhteystietotyyppi5', 'yhteystietotyyppi9',
                 'yhteystietotyyppi12', 'yhteystietotyyppi18', 'yhteystietotyyppi11', 'yhteystietotyyppi8']
                 .indexOf(yhteystietotyyppi.value) === -1);
-    };
-
-    _createPopupErrorMessage(notificationKey) {
-        const notification = this.props.henkilo.buttonNotifications[notificationKey];
-        return {
-            errorTopic: notification && this.L[notification.notL10nMessage],
-            errorText: notification && this.L[notification.notL10nText]
-        };
     };
 
     _editButtons(discard, update) {
