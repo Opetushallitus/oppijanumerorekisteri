@@ -40,9 +40,11 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         this.kayttooikeudetAction = (event) => {
             // set ko value
             const value = event.target.value;
-            this.setState({
-                selectedList: [...this.state.selectedList, value],
-            });
+            if(value !== '') {
+                this.setState({
+                    selectedList: [...this.state.selectedList, value],
+                });
+            }
             this.checkAndSetIfInvalid('kayttooikeus', 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID');
         };
 
