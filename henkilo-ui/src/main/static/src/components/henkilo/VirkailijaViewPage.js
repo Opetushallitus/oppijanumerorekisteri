@@ -53,6 +53,7 @@ const VirkailijaViewPage = React.createClass({
                     }
                 </div>
                 <div className="wrapper">
+
                     <HenkiloViewCreateKayttooikeus {...this.props} />
                 </div>
             </div>
