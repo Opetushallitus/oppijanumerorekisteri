@@ -32,3 +32,36 @@
 .Select-control .Select-input:focus {
     outline: none;
 }
+
+.Select-arrow-zone:before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    top: 1rem;
+    right: 8px;
+    right: 0.5rem;
+    border-top: 8px solid #666;
+    border-top: 0.5rem solid #666;
+    border-right: 8px solid transparent;
+    border-right: 0.5rem solid transparent;
+    border-left: 8px solid transparent;
+    border-left: 0.5rem solid transparent;
+}
+.Select-arrow-zone:after {
+    content: "";
+    position: absolute;
+    top: 16px;
+    top: 1rem;
+    right: calc(0.5rem + 1px);
+    border-top: calc(0.5rem - 1px) solid #fff;
+    border-right: calc(0.5rem - 1px) solid transparent;
+    border-left: calc(0.5rem - 1px) solid transparent;
+}
+
+.Select-arrow {
+    border: initial;
+    display: initial;
+    height: initial;
+    width: initial;
+    position: initial;
+}
