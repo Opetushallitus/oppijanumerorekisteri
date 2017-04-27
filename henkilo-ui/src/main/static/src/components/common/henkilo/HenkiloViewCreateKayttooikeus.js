@@ -1,6 +1,7 @@
 import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
 import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer";
+import StaticUtils from "../StaticUtils";
 
 class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     static propTypes = {
@@ -8,16 +9,22 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         locale: React.PropTypes.string.isRequired,
         henkilo: React.PropTypes.shape({henkiloOrgs: React.PropTypes.array.isRequired,}),
     };
+
     constructor(props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
+        this.kayttooikeusModel = {
+            kayttokohdeOrganisationOid: '',
+            kayttokohdeRyhmaOid: '',
+            myonnettavatOikeudet: [],
+            alkupvm: new Date(),
+            loppupvm: StaticUtils.datePlusOneYear(new Date()),
+        };
         this.KO_TEMP_INITIALDATA = [{id: 'id', text: 'text'}, {id: 'id2', text: 'text2'}];
-        this.kayttooikeusList = [];
 
         this.organisationAction = (event) => {
-            // set organisation to state
-            // ...
+            this.kayttooikeusModel.kayttokohdeOrganisationOid = event.target.value;
             this.setState({
                 validationMessages: this.state.validationMessages.filter(
                     validationMessage => validationMessage.id !== 'organisation'),
@@ -25,8 +32,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         };
 
         this.ryhmaAction = (event) => {
-            // set ryhma to state
-            // ...
+            this.kayttooikeusModel.kayttokohdeRyhmaOid = event.target.value;
             this.setState({
                 validationMessages: this.state.validationMessages.filter(
                     validationMessage => validationMessage.id !== 'organisation'),
@@ -50,15 +56,20 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
             const selectedList = this.state.selectedList.filter(selected => selected !== kayttooikeusId);
             const id = 'kayttooikeus';
             const label = 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID';
-            this.setState({
-                selectedList,
-            });
+            let newState = { selectedList, };
             if(this.state.validationMessages.filter(validationMessage => validationMessage.id === id)[0] === undefined
                 && !selectedList.length) {
-                this.setState({
-                    validationMessages: [...this.state.validationMessages, {id, label}],
-                });
+                newState = Object.assign(newState, { validationMessages: [...this.state.validationMessages, {id, label}],});
             }
+            this.setState(newState);
+        };
+
+        this.kestoAlkaaAction = (event) => {
+            this.kayttooikeusModel.alkupvm = StaticUtils.ddmmyyyyToDate(event.target.value);
+        };
+
+        this.kestoPaattyyAction = (event) => {
+            this.kayttooikeusModel.loppupvm = StaticUtils.ddmmyyyyToDate(event.target.value);
         };
 
         this.state = {
@@ -69,6 +80,10 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     };
 
     render() {
+        const organisationSelect = {organisationData: [{id: 'x', text: 'd'}], organisationAction: this.organisationAction,
+        organisationValue: this.kayttooikeusModel.kayttokohdeOrganisationOid};
+        const ryhmaSelect = {ryhmaData:[ {id: 'x', text: 'd'}], ryhmaAction: this.ryhmaAction,
+            ryhmaValue: this.kayttooikeusModel.kayttokohdeRyhmaOid};
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div className="add-kayttooikeus-container">
@@ -77,9 +92,9 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                     </div>
                     {
                         this.createKayttooikeusFields(
-                            this.createKayttooikeusKohdeField([{id: 'x', text: 'd'}], this.organisationAction,
-                                [{id: 'x', text: 'd'}], this.ryhmaAction),
-                            this.createKayttooikeusKestoField(() => {}, () => {}),
+                            this.createKayttooikeusKohdeField(organisationSelect, ryhmaSelect),
+                            this.createKayttooikeusKestoField(this.kestoAlkaaAction, this.kayttooikeusModel.alkupvm,
+                                this.kestoPaattyyAction, this.kayttooikeusModel.loppupvm),
                             this.createKayttooikeusKayttooikeudetField(this.KO_TEMP_INITIALDATA, this.state.selectedList,
                                 this.kayttooikeudetAction, this.close),
                             this.createKayttooikeusHaeButton(() => {}, this.state.validationMessages))

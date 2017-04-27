@@ -45,26 +45,31 @@ class AbstractViewContainer extends React.Component {
     * Fields
     * */
 
-    createKayttooikeusKohdeField(organisaatioData, organisaatioAction, ryhmaData, ryhmaAction) {
+    createKayttooikeusKohdeField(organisationSelect, ryhmaSelect) {
         return <tr>
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
             </td>
             <td>
-                <Select2 name={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} data={organisaatioData}
-                         onSelect={organisaatioAction} />
+                <Select2 options={{placeholder:this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']}}
+                         data={organisationSelect.organisationData}
+                         onSelect={organisationSelect.organisationAction}
+                         value={organisationSelect.organisationValue} />
                 <div>
                     <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
                 </div>
 
                 <div>
-                    <Select2 name={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} data={ryhmaData} onSelect={ryhmaAction} />
+                    <Select2 options={{placeholder:this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']}}
+                             data={ryhmaSelect.ryhmaData}
+                             onSelect={ryhmaSelect.ryhmaAction}
+                             value={ryhmaSelect.ryhmaValue} />
                 </div>
             </td>
         </tr>;
     };
 
-    createKayttooikeusKestoField(alkaaPvmAction, paattyyPvmAction) {
+    createKayttooikeusKestoField(alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue) {
         return <tr>
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
@@ -72,12 +77,12 @@ class AbstractViewContainer extends React.Component {
             <td>
                 <div className="kayttooikeus-input-container">
                     <span className="oph-h5">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
-                    <input className="oph-input" defaultValue={dateformat(new Date(), this.L['PVM_FORMAATTI'])}
+                    <input className="oph-input" defaultValue={dateformat(alkaaInitValue, this.L['PVM_FORMAATTI'])}
                            onChange={alkaaPvmAction} />
                 </div>
                 <div className="kayttooikeus-input-container">
                     <span className="oph-h5">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
-                    <input className="oph-input" defaultValue={dateformat(new Date(), this.L['PVM_FORMAATTI'])}
+                    <input className="oph-input" defaultValue={dateformat(paattyyInitValue, this.L['PVM_FORMAATTI'])}
                            onChange={paattyyPvmAction} />
                 </div>
             </td>
@@ -85,14 +90,13 @@ class AbstractViewContainer extends React.Component {
     };
 
     createKayttooikeusKayttooikeudetField(kayttooikeusData, filterList, kayttooikeusAction, close) {
-        console.log(kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1));
         return <tr>
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
             <td>
                 <span>
-                    <Select2 name={''} data={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
+                    <Select2 data={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
                              onSelect={kayttooikeusAction} />
                 </span>
                 <div>
