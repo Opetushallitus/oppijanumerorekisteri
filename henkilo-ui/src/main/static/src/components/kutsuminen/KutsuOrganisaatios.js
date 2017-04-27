@@ -11,7 +11,7 @@ export default class KutsuOrganisaatios extends React.Component {
         henkilo: React.PropTypes.object,
         addOrganisaatio: React.PropTypes.func,
         locale: React.PropTypes.string
-    }
+    };
 
     render() {
         const L = this.props.l10n[this.props.locale];

@@ -7,22 +7,16 @@ import './OrganisaatioSelection.css';
 export default class OrganisaatioSelection extends React.Component {
 
     static propTypes = {
-        originalOrganisaatios: React.PropTypes.array,
         organisaatios: React.PropTypes.array,
-        onSelect: React.PropTypes.func,
+        selectOrganisaatio: React.PropTypes.func,
         locale: React.PropTypes.string,
         selectedOrganisaatioName: React.PropTypes.string,
-        omattiedot: React.PropTypes.object,
-        kutsuSetOrganisaatio: React.PropTypes.func,
-        fetchKutsujaKayttooikeusForHenkiloInOrganisaatio: React.PropTypes.func
     };
 
     constructor() {
         super();
         this.state = {
-            organisaatioSelection: {
-                options: []
-            }
+            options: []
         }
 
     }
@@ -30,7 +24,7 @@ export default class OrganisaatioSelection extends React.Component {
     render() {
         return <div>{this.props.selectedOrganisaatioName}
             <Select className={'organisaatioSelection'}
-                    options={this.state.organisaatioSelection.options}
+                    options={this.state.options}
                     placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
                     onInputChange={this.inputChange.bind(this)}
                     onChange={this.props.selectOrganisaatio}
@@ -44,7 +38,8 @@ export default class OrganisaatioSelection extends React.Component {
         return {
             value: organisaatio.oid,
             label: `${organisaatioNimi(organisaatio)} (${organisaatio.tyypit.join(',')})`,
-            level: organisaatio.level
+            level: organisaatio.level,
+            optionClassName: `organisaatio-level-${organisaatio.level}`
         };
     }
 
@@ -53,16 +48,10 @@ export default class OrganisaatioSelection extends React.Component {
             const options = this.props.organisaatios
                 .filter(organisaatio => organisaatio.fullLocalizedName.indexOf(value) >= 0)
                 .map(this.mapOrganisaatio.bind(this));
-
-            this.setState({
-                organisaatioSelection: {
-                    options: options
-                }
-            })
+            console.log(options);
+            this.setState({ options: options })
         } else {
-            this.setState({
-                organisaatioSelection: {options: []}
-            });
+            this.setState({ options: [] });
         }
 
     }

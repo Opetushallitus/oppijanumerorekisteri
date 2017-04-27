@@ -56,15 +56,10 @@ class AddedOrganisation extends React.Component {
                     <OrganisaatioSelection originalOrganisaatios={this.props.orgs}
                                            organisaatios={orgs}
                                            selectedOrganisaatioName={selectedOrganisaatioName}
-                                           omattiedot={this.props.omattiedot}
                                            locale={this.props.locale}
                                            index={this.props.index}
                                            selectOrganisaatio={this.selectOrganisaatio.bind(this)}
                                            L={L}></OrganisaatioSelection>
-
-
-                    <i className="fa fa-times-circle remove-icon after"
-                       onClick={this.removeOrganisaatio.bind(this, addedOrg.oid)} aria-hidden="true"></i>
                 </div>
 
                 <div className="row permissions-row">
@@ -98,8 +93,8 @@ class AddedOrganisation extends React.Component {
     }
 
 
-    removeOrganisaatio(oid, e) {
-        e.preventDefault();
+    removeOrganisaatio(oid) {
+        console.log('here too', oid);
         this.props.kutsuRemoveOrganisaatio(oid);
     }
 
@@ -115,11 +110,16 @@ class AddedOrganisation extends React.Component {
     }
 
     selectOrganisaatio(selection) {
-        const selectedOrganisaatioOid = selection.value;
-        const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
-        const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
-        this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
-        this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.omattiedot.data.oid, organisaatio.oid);
+        if (!selection) {
+            this.removeOrganisaatio(this.props.addedOrg.oid);
+        } else {
+            const selectedOrganisaatioOid = selection.value;
+            const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
+            const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
+            this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
+            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.omattiedot.data.oid, organisaatio.oid);
+        }
+
     }
 }
 
