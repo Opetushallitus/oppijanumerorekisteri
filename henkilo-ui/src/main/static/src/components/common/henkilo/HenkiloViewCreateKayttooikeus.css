@@ -1,0 +1,17 @@
+.kayttooikeus-input-container input {
+    width: 125px;
+    margin-right: 15px;
+}
+
+.kayttooikeus-input-container {
+    display: inline-block;
+}
+
+.kayttooikeus-input-container > span {
+    display: block;
+}
+
+.add-kayttooikeus-container td {
+    padding-right: 30px;
+    padding-top: 20px;
+}

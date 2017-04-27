@@ -1,10 +1,9 @@
-import React from 'react'
-import Select2 from '../select/Select2';
-
 import './Field.css';
+import React from 'react'
 import classNames from 'classnames/bind';
+import OphSelect from '../select/OphSelect'
 
-export default class Field extends React.Component {
+class Field extends React.Component {
     static propTypes = {
         readOnly: React.PropTypes.bool,
         changeAction: React.PropTypes.func,
@@ -30,10 +29,15 @@ export default class Field extends React.Component {
             this.props.readOnly
                 ? <span className={className}>{this.props.children}</span>
                 : this.props.data
-                    ? <Select2 data={this.props.data} name={this.props.inputValue} onSelect={this.props.changeAction}
-                               value={this.props.selectValue} />
+                    ? <OphSelect options={this.props.data}
+                                 name={this.props.inputValue}
+                                 onChange={this.props.changeAction}
+                                 value={this.props.selectValue}
+                                 placeholder="" />
                     : <input className={className} name={this.props.inputValue} onChange={this.props.changeAction}
                          defaultValue={this.props.children} {...type} autoFocus={autoFocus} />
         )
     }
 }
+
+export default Field;

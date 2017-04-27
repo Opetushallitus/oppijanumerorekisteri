@@ -3,7 +3,7 @@ import React from 'react'
 import Columns from 'react-columns'
 import Field from '../field/Field';
 import Button from "../button/Button";
-import Select2 from '../select/Select2';
+import OphSelect from '../select/OphSelect'
 
 const HenkiloViewContactContent = React.createClass({
     propTypes: {
@@ -38,13 +38,13 @@ const HenkiloViewContactContent = React.createClass({
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>
-                    <div className="right">
+                    <div className="right" style={{width: "20%"}}>
                         { !this.state.readOnly
                             ? <div>
-                                <Select2 data={this.props.creatableYhteystietotyypit().map((yhteystietotyyppi, idx) =>
-                                    ({id: yhteystietotyyppi.value, text:yhteystietotyyppi[this.props.locale]}))}
-                                         onSelect={this._createYhteystiedotRyhma}
-                                         options={{placeholder:L['HENKILO_LUOYHTEYSTIETO']}} />
+                                <OphSelect onChange={this._createYhteystiedotRyhma}
+                                           options={this.props.creatableYhteystietotyypit().map((yhteystietotyyppi, idx) =>
+                                               ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
+                                           placeholder={L['HENKILO_LUOYHTEYSTIETO']} />
                             </div>
                             : null
                         }

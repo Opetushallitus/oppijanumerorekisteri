@@ -44,7 +44,6 @@ const VirkailijaViewPage = React.createClass({
                             ? AbstractViewContainer.createLoader()
                             : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
                     }
-
                 </div>
                 <div className="wrapper">
                     {
@@ -54,6 +53,7 @@ const VirkailijaViewPage = React.createClass({
                     }
                 </div>
                 <div className="wrapper">
+
                     <HenkiloViewCreateKayttooikeus {...this.props} />
                 </div>
             </div>
