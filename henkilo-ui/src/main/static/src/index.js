@@ -13,8 +13,6 @@ import './general-style.css';
 import 'oph-virkailija-style-guide/oph-styles.css'
 import './index.css';
 import 'font-awesome/css/font-awesome.min.css';
-import 'react-select/dist/react-select.css';
-
 
 let store = configureStore();
 const browserHistory = useRouterHistory(createHistory)({

@@ -1,7 +1,7 @@
 import React from 'react'
 import languages from '../../configuration/languages';
 import './BasicinfoForm.css';
-import Select from 'react-select';
+import OphSelect from '../common/select/OphSelect';
 
 export class BasicInfo extends React.Component {
 
@@ -37,11 +37,10 @@ export class BasicInfo extends React.Component {
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label" htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                     <div className="fieldContainer">
-                        <Select name="languageSelection"
-                                value={basicInfo.languageCode}
-                                options={languageOptions}
-                                onChange={this.selectLanguage.bind(this)}>
-                        </Select>
+                        <OphSelect name="languageSelection"
+                                   value={basicInfo.languageCode}
+                                   options={languageOptions}
+                                   onChange={this.selectLanguage.bind(this)}/>
 
                         <div className="oph-field-text">
                             {L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}

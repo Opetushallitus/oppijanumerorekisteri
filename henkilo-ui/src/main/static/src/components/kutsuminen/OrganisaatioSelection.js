@@ -1,6 +1,6 @@
 import React from 'react';
 import {toLocalizedText} from '../../localizabletext';
-import Select from 'react-select';
+import OphSelect from '../common/select/OphSelect';
 import './OrganisaatioSelection.css';
 
 
@@ -23,14 +23,14 @@ export default class OrganisaatioSelection extends React.Component {
 
     render() {
         return <div>{this.props.selectedOrganisaatioName}
-            <Select className={'organisaatioSelection'}
+            <OphSelect className={'organisaatioSelection'}
                     options={this.state.options}
                     placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
                     onInputChange={this.inputChange.bind(this)}
                     onChange={this.props.selectOrganisaatio}
                     optionRenderer={this.renderOption.bind(this)}
                     value={this.props.selectedOrganisaatioName}
-                    noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` }></Select>
+                    noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` }></OphSelect>
         </div>;
     }
 

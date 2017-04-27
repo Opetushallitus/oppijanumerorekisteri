@@ -1,0 +1,34 @@
+.Select-control {
+    color: #333;
+    cursor: default;
+    display: table;
+    border-spacing: 0;
+    border-collapse: separate;
+    height: 36px;
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+
+    font-family: inherit;
+    font-size: inherit;
+    box-sizing: border-box;
+    border: 1px solid #aeaeae;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: inset 0 1px 4px #ccc;
+    -webkit-transition-property: border, background;
+    transition-property: border, background;
+    -webkit-transition-duration: 0.15s;
+    transition-duration: 0.15s;
+    -webkit-transition-timing-function: ease;
+    transition-timing-function: ease;
+}
+.Select-control:hover {
+    box-shadow: inset 0 1px 4px #ccc;
+    border-color: #999;
+
+}
+.Select-control .Select-input:focus {
+    outline: none;
+}
