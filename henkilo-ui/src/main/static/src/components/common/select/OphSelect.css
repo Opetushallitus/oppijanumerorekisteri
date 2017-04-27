@@ -36,9 +36,7 @@
 .Select-arrow-zone:before {
     content: "";
     position: absolute;
-    top: 16px;
     top: 1rem;
-    right: 8px;
     right: 0.5rem;
     border-top: 8px solid #666;
     border-top: 0.5rem solid #666;
@@ -50,7 +48,6 @@
 .Select-arrow-zone:after {
     content: "";
     position: absolute;
-    top: 16px;
     top: 1rem;
     right: calc(0.5rem + 1px);
     border-top: calc(0.5rem - 1px) solid #fff;
