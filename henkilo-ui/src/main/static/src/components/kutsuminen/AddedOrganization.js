@@ -32,10 +32,9 @@ class AddedOrganisation extends React.Component {
     render() {
         const addedOrg = this.props.addedOrg;
         const availableOrgs = getOrganisaatios(this.props.orgs, this.props.locale);
-        const excludedOrgOids = R.map(R.prop('oid'), R.filter(org => addedOrg.oid !== org.oid)(this.props.addedOrgs));
+        const excludedOrgOids = R.map(R.prop('oid'), this.props.addedOrgs);
         const L = this.props.l10n[this.props.locale];
         const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, availableOrgs);
-
         const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
         const permissionsSelect = {
             options: selectablePermissions.map(permission => ({
@@ -94,7 +93,6 @@ class AddedOrganisation extends React.Component {
 
 
     removeOrganisaatio(oid) {
-        console.log('here too', oid);
         this.props.kutsuRemoveOrganisaatio(oid);
     }
 
