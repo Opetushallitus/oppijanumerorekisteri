@@ -17,6 +17,8 @@ public interface HenkiloService {
 
     Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
 
+    Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria);
+
     Boolean getHasHetu();
 
     boolean getOidExists(String oid);

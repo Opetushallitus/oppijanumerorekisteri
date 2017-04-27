@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
@@ -35,6 +36,16 @@ public interface HenkiloJpaRepository {
      * @return henkilot
      */
     List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset);
+
+    /**
+     * Henkilöiden perustietojen ja yhteystietojen hakutoiminto. Henkilöllä voi
+     * olla useita yhteystietoja, joten tämä metodi palauttaa henkilön tiedot
+     * jokaista yhteystietoa kohti.
+     *
+     * @param criteria hakukriteerit
+     * @return henkilot ja yhteystiedot
+     */
+    List<HenkiloYhteystietoDto> findWithYhteystiedotBy(HenkiloCriteria criteria);
 
     Optional<String> findHetuByOid(String henkiloOid);
 

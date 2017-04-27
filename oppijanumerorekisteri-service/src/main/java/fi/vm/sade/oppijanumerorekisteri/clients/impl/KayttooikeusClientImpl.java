@@ -63,18 +63,20 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
 
     @Override
     public KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria) {
-        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid, criteria.getAsMap());
-        return getHenkiloKayttooikeudetByUrl(url);
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.sallitut", henkiloOid);
+        return getHenkiloKayttooikeudetByUrl(url, criteria);
     }
 
-    private KayttooikeudetDto getHenkiloKayttooikeudetByUrl(String url) {
+    private KayttooikeudetDto getHenkiloKayttooikeudetByUrl(String url, OrganisaatioCriteria criteria) {
         try {
-            String json = cachingRestClient.getAsString(url);
-            KayttooikeudetDto kayttooikeudet = objectMapper.readValue(json, KayttooikeudetDto.class);
-            if (!kayttooikeudet.isAdmin() && kayttooikeudet.getOids() == null) {
-                throw new DataInconsistencyException("Käyttöoikeuspalvelu palautti epäkonsistenttia tietoa");
+            String request = objectMapper.writeValueAsString(criteria);
+            try (InputStream response = cachingRestClient.post(url, JSON, request).getEntity().getContent()) {
+                KayttooikeudetDto kayttooikeudet = objectMapper.readValue(response, KayttooikeudetDto.class);
+                if (!kayttooikeudet.isAdmin() && kayttooikeudet.getOids() == null) {
+                    throw new DataInconsistencyException("Käyttöoikeuspalvelu palautti epäkonsistenttia tietoa");
+                }
+                return kayttooikeudet;
             }
-            return kayttooikeudet;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

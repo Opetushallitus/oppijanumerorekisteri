@@ -9,6 +9,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
@@ -33,7 +34,9 @@ import java.util.stream.Collectors;
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import java.util.Collection;
 import static java.util.stream.Collectors.toList;
@@ -77,6 +80,34 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
         query.limit(limit);
         query.offset(offset);
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<HenkiloYhteystietoDto> findWithYhteystiedotBy(HenkiloCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QYhteystiedotRyhma qYhteystiedotRyhma = QYhteystiedotRyhma.yhteystiedotRyhma;
+        QYhteystieto qYhteystieto = QYhteystieto.yhteystieto;
+
+        JPAQuery<HenkiloYhteystietoDto> query = jpa().from(qHenkilo)
+                .leftJoin(qHenkilo.yhteystiedotRyhma, qYhteystiedotRyhma)
+                .leftJoin(qYhteystiedotRyhma.yhteystieto, qYhteystieto)
+                .select(Projections.constructor(HenkiloYhteystietoDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi,
+                        qYhteystiedotRyhma.id,
+                        qYhteystiedotRyhma.ryhmaKuvaus,
+                        qYhteystiedotRyhma.ryhmaAlkuperaTieto,
+                        qYhteystiedotRyhma.readOnly,
+                        qYhteystieto.yhteystietoTyyppi,
+                        qYhteystieto.yhteystietoArvo));
+
+        query.where(criteria.condition(qHenkilo));
+        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
 
         return query.fetch();
     }
