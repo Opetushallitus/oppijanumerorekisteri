@@ -28,8 +28,9 @@ export default class OrganisaatioSelection extends React.Component {
                     placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
                     onInputChange={this.inputChange.bind(this)}
                     onChange={this.props.selectOrganisaatio}
+                    optionRenderer={this.renderOption.bind(this)}
                     value={this.props.selectedOrganisaatioName}
-                    noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 merkkiä` }></Select>
+                    noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` }></Select>
         </div>;
     }
 
@@ -38,9 +39,12 @@ export default class OrganisaatioSelection extends React.Component {
         return {
             value: organisaatio.oid,
             label: `${organisaatioNimi(organisaatio)} (${organisaatio.tyypit.join(',')})`,
-            level: organisaatio.level,
-            optionClassName: `organisaatio-level-${organisaatio.level}`
+            level: organisaatio.level
         };
+    }
+
+    renderOption(option) {
+        return (<span className={`organisaatio-level-${option.level}`}>{option.label}</span>)
     }
 
     inputChange(value) {
@@ -48,7 +52,6 @@ export default class OrganisaatioSelection extends React.Component {
             const options = this.props.organisaatios
                 .filter(organisaatio => organisaatio.fullLocalizedName.indexOf(value) >= 0)
                 .map(this.mapOrganisaatio.bind(this));
-            console.log(options);
             this.setState({ options: options })
         } else {
             this.setState({ options: [] });
