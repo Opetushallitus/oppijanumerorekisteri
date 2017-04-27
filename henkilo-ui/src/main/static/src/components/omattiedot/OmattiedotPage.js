@@ -72,6 +72,9 @@ export default class OmattiedotPage extends React.Component {
                             : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }
                 </div>
+                <div className="wrapper">
+                </div>
+
             </div>
         )
     }

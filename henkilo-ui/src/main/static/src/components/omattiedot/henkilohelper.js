@@ -63,10 +63,6 @@ export const createBasicinfo2Wrapper = (henkilo, locale, koodisto) => {
     return () => createBasicInfo2(henkilo, locale, koodisto);
 };
 
-export
-
-
-
 export const createBasicInfo = (henkilo, L) => {
     return [
         {label: 'HENKILO_ETUNIMET', value: henkilo.etunimet, inputValue: 'etunimet', autoFocus: true},

@@ -1,14 +1,22 @@
 import React from 'react'
-import Select2 from '../common/select/Select2';
 import languages from '../../configuration/languages';
 import './BasicinfoForm.css';
+import Select from 'react-select';
 
 export class BasicInfo extends React.Component {
+
+    static propTypes = {
+        basicInfo: React.PropTypes.object,
+        l10n: React.PropTypes.object,
+        setBasicInfo: React.PropTypes.func,
+        locale: React.PropTypes.string
+    };
 
     render() {
         const L = this.props.l10n[this.props.locale];
         const {basicInfo} = this.props;
 
+        const languageOptions = languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
         return (
             <fieldset id="basicinfo">
                 <h2>{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
@@ -29,24 +37,18 @@ export class BasicInfo extends React.Component {
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label" htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                     <div className="fieldContainer">
-                        <Select2 id="lang"
-                                 data={languages.map(language => ({id: language.code, text: language.name[this.props.locale]}))}
-                                 onSelect={this.selectLanguage.bind(this)}
-                                 value={basicInfo.languageCode}>
-                            {languages.map(this.renderLang.bind(this))}
-                        </Select2>
+                        <Select name="languageSelection"
+                                value={basicInfo.languageCode}
+                                options={languageOptions}
+                                onChange={this.selectLanguage.bind(this)}>
+                        </Select>
+
                         <div className="oph-field-text">
                             {L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
                         </div>
                     </div>
                 </div>
             </fieldset>
-        )
-    }
-
-    renderLang(lang) {
-        return (
-            <option key={lang.code} value={lang.code}>{lang.name[this.props.locale]}</option>
         )
     }
 
@@ -68,16 +70,10 @@ export class BasicInfo extends React.Component {
         this.props.setBasicInfo(basicInfo);
     }
 
-    selectLanguage(event) {
+    selectLanguage(selection) {
         const { basicInfo } = this.props;
-        basicInfo.languageCode = event.target.value;
+        basicInfo.languageCode = selection.value;
         this.props.setBasicInfo(basicInfo);
     }
 }
 
-BasicInfo.propTypes = {
-    basicInfo: React.PropTypes.object,
-    l10n: React.PropTypes.object,
-    setBasicInfo: React.PropTypes.func,
-    locale: React.PropTypes.string
-};

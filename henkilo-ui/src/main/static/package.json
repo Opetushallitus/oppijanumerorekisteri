@@ -20,13 +20,14 @@
     "react-redux": "^5.0.3",
     "react-router": "^3.0.2",
     "react-router-redux": "^4.0.8",
+    "react-select": "^1.0.0-rc.3",
+    "react-table": "^5.5.0",
     "react-timeout": "^1.0.0",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "select2": "^4.0.0",
     "shallow-equal-fuzzy": "^0.0.2",
-    "virkailija-styles": "Opetushallitus/virkailija-styles#styleguide",
-    "react-table": "^5.5.0"
+    "virkailija-styles": "Opetushallitus/virkailija-styles#styleguide"
   },
   "devDependencies": {
     "react-scripts": "0.9.5",

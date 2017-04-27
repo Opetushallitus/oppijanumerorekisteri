@@ -41,3 +41,8 @@ ul.selected-permissions li {
 .clear {
     clear: both;
 }
+
+.permissionSelect {
+    width: 300px;
+    float: left;
+}
