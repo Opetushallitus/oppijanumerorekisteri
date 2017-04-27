@@ -4,7 +4,7 @@ const _getBasicInfoKansalaisuus = (henkilo, locale, koodistoKansalaisuus) => {
     return henkilo.kansalaisuus && henkilo.kansalaisuus.length
         ? henkilo.kansalaisuus.map((values, idx) => ({
             label: 'HENKILO_KANSALAISUUS',
-            data: koodistoKansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+            data: koodistoKansalaisuus.map(koodi => ({value: koodi.value, label: koodi[locale]})),
             value: koodistoKansalaisuus.filter(kansalaisuus =>
             kansalaisuus.value === values.kansalaisuusKoodi)[0][locale],
             inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
@@ -12,7 +12,7 @@ const _getBasicInfoKansalaisuus = (henkilo, locale, koodistoKansalaisuus) => {
         })).reduce((a, b) => a.concat(b))
     : {
             label: 'HENKILO_KANSALAISUUS',
-            data: koodistoKansalaisuus.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+            data: koodistoKansalaisuus.map(koodi => ({value: koodi.value, label: koodi[locale]})),
             inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
             value: null
         }
@@ -21,7 +21,7 @@ const _getBasicInfoKansalaisuus = (henkilo, locale, koodistoKansalaisuus) => {
 const _getBasicInfoAidinkieli = (henkilo, locale, koodistoKieli) => {
     return {
         label: 'HENKILO_AIDINKIELI',
-        data: koodistoKieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+        data: koodistoKieli.map(koodi => ({value: koodi.value, label: koodi[locale]})),
         inputValue: 'aidinkieli.kieliKoodi',
         value: henkilo.aidinkieli && koodistoKieli.filter(kieli =>
         kieli.value === henkilo.aidinkieli.kieliKoodi)[0][locale],
@@ -32,7 +32,7 @@ const _getBasicInfoAidinkieli = (henkilo, locale, koodistoKieli) => {
 const _getBasicInfoSukupuoli = (henkilo, locale, koodistoSukupuoli) => {
     return {
         label: 'HENKILO_SUKUPUOLI',
-        data: koodistoSukupuoli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+        data: koodistoSukupuoli.map(koodi => ({value: koodi.value, label: koodi[locale]})),
         inputValue: 'sukupuoli',
         value: henkilo.sukupuoli && koodistoSukupuoli.filter(sukupuoli =>
         sukupuoli.value === henkilo.sukupuoli)[0][locale],
@@ -47,7 +47,7 @@ const _getBasicInfoOppijanumero = (henkilo) => {
 const _getBasicInfoAsiointikieli = (henkilo, locale, koodistoKieli) => {
     return {
         label: 'HENKILO_ASIOINTIKIELI',
-        data: koodistoKieli.map(koodi => ({id: koodi.value, text: koodi[locale]})),
+        data: koodistoKieli.map(koodi => ({value: koodi.value, label: koodi[locale]})),
         inputValue: 'asiointiKieli.kieliKoodi',
         value: henkilo.asiointiKieli && koodistoKieli.filter(kieli =>
         kieli.value === henkilo.asiointiKieli.kieliKoodi)[0][locale],

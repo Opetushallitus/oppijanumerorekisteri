@@ -104,8 +104,8 @@ export default class OmattiedotPage extends React.Component {
                 ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) => ({
                     label: 'HENKILO_KANSALAISUUS',
                     data: this.props.koodisto.kansalaisuus.map(koodi => ({
-                        id: koodi.value,
-                        text: koodi[this.props.locale]
+                        value: koodi.value,
+                        label: koodi[this.props.locale]
                     })),
                     value: this.props.koodisto.kansalaisuus.filter(kansalaisuus =>
                     kansalaisuus.value === values.kansalaisuusKoodi)[0][this.props.locale],
@@ -115,15 +115,15 @@ export default class OmattiedotPage extends React.Component {
                 : {
                     label: 'HENKILO_KANSALAISUUS',
                     data: this.props.koodisto.kansalaisuus.map(koodi => ({
-                        id: koodi.value,
-                        text: koodi[this.props.locale]
+                        value: koodi.value,
+                        label: koodi[this.props.locale]
                     })),
                     inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
                     value: null
                 },
             {
                 label: 'HENKILO_AIDINKIELI',
-                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kieli.map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
                 inputValue: 'aidinkieli.kieliKoodi',
                 value: this.props.henkilo.henkilo.aidinkieli && this.props.koodisto.kieli.filter(kieli =>
                 kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][this.props.locale],
@@ -131,7 +131,7 @@ export default class OmattiedotPage extends React.Component {
             },
             {
                 label: 'HENKILO_SUKUPUOLI',
-                data: this.props.koodisto.sukupuoli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.sukupuoli.map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
                 inputValue: 'sukupuoli',
                 value: this.props.henkilo.henkilo.sukupuoli && this.props.koodisto.sukupuoli.filter(sukupuoli =>
                 sukupuoli.value === this.props.henkilo.henkilo.sukupuoli)[0][this.props.locale],
@@ -140,7 +140,7 @@ export default class OmattiedotPage extends React.Component {
             {label: 'HENKILO_OPPIJANUMERO', value: this.props.henkilo.henkilo.oidHenkilo, inputValue: 'oidHenkilo'},
             {
                 label: 'HENKILO_ASIOINTIKIELI',
-                data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kieli.map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
                 inputValue: 'asiointiKieli.kieliKoodi',
                 value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli.filter(kieli =>
                 kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][this.props.locale],

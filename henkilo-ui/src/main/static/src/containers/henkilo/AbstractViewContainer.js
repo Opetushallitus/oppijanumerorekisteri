@@ -1,15 +1,16 @@
 import React from 'react'
-import Button from "../../components/common/button/Button";
-import dateformat from 'dateformat';
-import ConfirmButton from "../../components/common/button/ConfirmButton";
-import PopupButton from "../../components/common/button/PopupButton";
-import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent";
-import Select2 from "../../components/common/select/Select2";
+import Button from "../../components/common/button/Button"
+import dateformat from 'dateformat'
+import ConfirmButton from "../../components/common/button/ConfirmButton"
+import PopupButton from "../../components/common/button/PopupButton"
+import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent"
+import OphSelect from '../../components/common/select/OphSelect'
+
 
 class AbstractViewContainer extends React.Component {
 
     createKayttooikeusFields(...kayttooikeusFields) {
-        return <table>
+        return <table style={{width: "100%"}}>
             <tbody>
             {kayttooikeusFields.map(kayttooikeusField => kayttooikeusField)}
             </tbody>
@@ -51,19 +52,19 @@ class AbstractViewContainer extends React.Component {
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
             </td>
             <td>
-                <Select2 options={{placeholder:this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']}}
-                         data={organisationSelect.organisationData}
-                         onSelect={organisationSelect.organisationAction}
-                         value={organisationSelect.organisationValue} />
+                <OphSelect value={organisationSelect.organisationValue}
+                           options={organisationSelect.organisationData}
+                           onChange={organisationSelect.organisationAction}
+                           placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
                 <div>
                     <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
                 </div>
 
                 <div>
-                    <Select2 options={{placeholder:this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']}}
-                             data={ryhmaSelect.ryhmaData}
-                             onSelect={ryhmaSelect.ryhmaAction}
-                             value={ryhmaSelect.ryhmaValue} />
+                    <OphSelect value={ryhmaSelect.ryhmaValue}
+                               options={ryhmaSelect.ryhmaData}
+                               onChange={ryhmaSelect.ryhmaAction}
+                               placeholder={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} />
                 </div>
             </td>
         </tr>;
@@ -95,20 +96,26 @@ class AbstractViewContainer extends React.Component {
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
             <td>
-                <span>
-                    <Select2 data={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
-                             onSelect={kayttooikeusAction} />
-                </span>
-                <div>
-                    {filterList.map(selectedId => <div className="oph-alert oph-alert-info">
-                        <div className="oph-alert-container">
-                            <div className="oph-alert-title">{selectedId}</div>
-                            <button className="oph-button oph-button-close" type="button" title="Close" aria-label="Close"
-                                    onClick={() => close(selectedId)}>
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                    </div>)}
+                <div style={{display: "flex"}}>
+                    <div style={{flex: "1"}}>
+                        <OphSelect //value={kayttooikeusData.kayttooikeusValue}
+                            options={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
+                            onChange={kayttooikeusAction}
+                            placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
+                    </div>
+                    <div style={{flex: "1"}}>
+                        <span>
+                            {filterList.map(selectedId => <div className="oph-alert oph-alert-info">
+                                <div className="oph-alert-container">
+                                    <div className="oph-alert-title">{selectedId}</div>
+                                    <button className="oph-button oph-button-close" type="button" title="Close"
+                                            aria-label="Close" onClick={() => close(selectedId)}>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                            </div>)}
+                        </span>
+                    </div>
                 </div>
             </td>
         </tr>;
@@ -133,21 +140,21 @@ class AbstractViewContainer extends React.Component {
             ? this.props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
                 ({
                     label: 'HENKILO_KANSALAISUUS',
-                    data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                    data: this.props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
                     value: this.props.koodisto.kansalaisuus
                         .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][this.props.locale],
                     inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
                     selectValue: values.kansalaisuusKoodi
                 })).reduce((a,b) => a.concat(b))
             : { label: 'HENKILO_KANSALAISUUS',
-                data: this.props.koodisto.kansalaisuus.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                data: this.props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
                 inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
                 value: null };
     };
 
     createAidinkieliField() {
         return {label: 'HENKILO_AIDINKIELI',
-            data: this.props.koodisto.kieli.map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+            data: this.props.koodisto.kieli.map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
             inputValue: 'aidinkieli.kieliKoodi',
             value: this.props.henkilo.henkilo.aidinkieli && this.props.koodisto.kieli.filter(kieli =>
         kieli.value === this.props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][this.props.locale],
@@ -183,7 +190,7 @@ class AbstractViewContainer extends React.Component {
         return {label: 'HENKILO_ASIOINTIKIELI',
             data: this.props.koodisto.kieli
                 .filter(koodi => ['fi', 'sv', 'en'].indexOf(koodi.value) !== -1)
-                .map(koodi => ({id: koodi.value, text: koodi[this.props.locale]})),
+                .map(koodi => ({value: koodi.value, label: koodi[this.props.locale]})),
             inputValue: 'asiointiKieli.kieliKoodi',
             value: this.props.henkilo.henkilo.asiointiKieli && this.props.koodisto.kieli
                 .filter(kieli => kieli.value === this.props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][this.props.locale],

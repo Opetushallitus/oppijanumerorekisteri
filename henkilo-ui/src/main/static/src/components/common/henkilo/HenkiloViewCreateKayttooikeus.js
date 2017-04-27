@@ -1,7 +1,7 @@
 import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
-import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer";
-import StaticUtils from "../StaticUtils";
+import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer"
+import StaticUtils from "../StaticUtils"
 
 class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     static propTypes = {
@@ -21,29 +21,28 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
             alkupvm: new Date(),
             loppupvm: StaticUtils.datePlusOneYear(new Date()),
         };
-        this.KO_TEMP_INITIALDATA = [{id: 'id', text: 'text'}, {id: 'id2', text: 'text2'}];
+        this.KO_TEMP_INITIALDATA = [{value: 'id', label: 'text'}, {value: 'id2', label: 'text2'}];
 
-        this.organisationAction = (event) => {
-            this.kayttooikeusModel.kayttokohdeOrganisationOid = event.target.value;
+        this.organisationAction = (value) => {
+            this.kayttooikeusModel.kayttokohdeOrganisationOid = value.value;
             this.setState({
                 validationMessages: this.state.validationMessages.filter(
                     validationMessage => validationMessage.id !== 'organisation'),
             });
         };
 
-        this.ryhmaAction = (event) => {
-            this.kayttooikeusModel.kayttokohdeRyhmaOid = event.target.value;
+        this.ryhmaAction = (value) => {
+            this.kayttooikeusModel.kayttokohdeRyhmaOid = value.value;
             this.setState({
                 validationMessages: this.state.validationMessages.filter(
                     validationMessage => validationMessage.id !== 'organisation'),
             });
         };
 
-        this.kayttooikeudetAction = (event) => {
-            const value = event.target.value;
-            if(value !== '') {
+        this.kayttooikeudetAction = (value) => {
+            if(value.value !== '') {
                 this.setState({
-                    selectedList: [...this.state.selectedList, value],
+                    selectedList: [...this.state.selectedList, value.value],
                 });
             }
             this.setState({
@@ -80,9 +79,9 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     };
 
     render() {
-        const organisationSelect = {organisationData: [{id: 'x', text: 'd'}], organisationAction: this.organisationAction,
+        const organisationSelect = {organisationData: [{value: 'x', label: 'd'}], organisationAction: this.organisationAction,
         organisationValue: this.kayttooikeusModel.kayttokohdeOrganisationOid};
-        const ryhmaSelect = {ryhmaData:[ {id: 'x', text: 'd'}], ryhmaAction: this.ryhmaAction,
+        const ryhmaSelect = {ryhmaData:[ {value: 'x', label: 'd'}], ryhmaAction: this.ryhmaAction,
             ryhmaValue: this.kayttooikeusModel.kayttokohdeRyhmaOid};
         return (
             <div className="henkiloViewUserContentWrapper">
