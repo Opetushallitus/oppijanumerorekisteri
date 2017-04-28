@@ -9,18 +9,25 @@ export default class OrganisaatioSelection extends React.Component {
 
     static propTypes = {
         L: React.PropTypes.object.isRequired,
-        organisaatios: React.PropTypes.array.isRequired,
+        organisaatios: React.PropTypes.arrayOf(React.PropTypes.shape({
+            organisaatio: React.PropTypes.shape({
+                nimi: React.PropTypes.object.isRequired,
+                oid: React.PropTypes.string.isRequired,
+                parentOidPath: React.PropTypes.string, // Null for root organisation
+                tyypit: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+            }).isRequired,
+        })).isRequired,
         selectOrganisaatio: React.PropTypes.func,
         locale: React.PropTypes.string.isRequired,
         selectedOrganisaatioName: React.PropTypes.string,
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
         this.state = {
             options: []
         }
-
     }
 
     render() {

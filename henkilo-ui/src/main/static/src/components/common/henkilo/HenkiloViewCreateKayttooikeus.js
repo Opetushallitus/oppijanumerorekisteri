@@ -79,8 +79,16 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     };
 
     render() {
-        const organisationSelect = {organisationData: [{value: 'x', label: 'd'}], organisationAction: this.organisationAction,
-        organisationValue: this.kayttooikeusModel.kayttokohdeOrganisationOid};
+        const organisationSelect = {
+            organisationData: [{organisaatio: {
+                nimi: {fi: 'dddddddd'},
+                oid: 'x',
+                tyypit: ['MUU']},
+            }
+            ],
+            organisationAction: this.organisationAction,
+            organisationValue: this.kayttooikeusModel.kayttokohdeOrganisationOid
+        };
         const ryhmaSelect = {ryhmaData:[ {value: 'x', label: 'd'}], ryhmaAction: this.ryhmaAction,
             ryhmaValue: this.kayttooikeusModel.kayttokohdeRyhmaOid};
         return (
