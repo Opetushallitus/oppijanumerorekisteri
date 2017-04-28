@@ -59,11 +59,11 @@ class AbstractViewContainer extends React.Component {
             </td>
             <td>
                 <div>
-                    <OrganisaatioSelection L={this.L}
-                                           organisaatios={organisationSelect.organisationData}
-                                           selectOrganisaatio={organisationSelect.organisationAction}
-                                           selectedOrganisaatioName="xxxxxx"
-                    />
+                    {/*<OrganisaatioSelection L={this.L}*/}
+                                           {/*organisaatios={organisationSelect.organisationData}*/}
+                                           {/*selectOrganisaatio={organisationSelect.organisationAction}*/}
+                                           {/*selectedOrganisaatioName="xxxxxx"*/}
+                    {/*/>*/}
                     <OphSelect value={organisationSelect.organisationValue}
                                options={organisationSelect.organisationData}
                                onChange={organisationSelect.organisationAction}

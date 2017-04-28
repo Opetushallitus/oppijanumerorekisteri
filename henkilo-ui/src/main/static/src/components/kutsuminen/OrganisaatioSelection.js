@@ -8,10 +8,10 @@ import {getOrganisaatios} from "./OrganisaatioUtilities";
 export default class OrganisaatioSelection extends React.Component {
 
     static propTypes = {
-        L: React.PropTypes.array.isRequired,
-        organisaatios: React.PropTypes.array,
+        L: React.PropTypes.object.isRequired,
+        organisaatios: React.PropTypes.array.isRequired,
         selectOrganisaatio: React.PropTypes.func,
-        locale: React.PropTypes.string,
+        locale: React.PropTypes.string.isRequired,
         selectedOrganisaatioName: React.PropTypes.string,
     };
 
@@ -24,8 +24,14 @@ export default class OrganisaatioSelection extends React.Component {
     }
 
     render() {
+
+        const options = this.state.options.length || this.props.selectedOrganisaatioName === ''
+            ? this.state.options
+            : getOrganisaatios(this.props.organisaatios, this.props.locale)
+                .filter(organisaatio => organisaatio.oid === this.props.selectedOrganisaatioName)
+                .map(this.mapOrganisaatio.bind(this));
         return <OphSelect className={'organisaatioSelection'}
-                          options={this.state.options}
+                          options={options}
                           placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
                           onInputChange={this.inputChange.bind(this)}
                           onChange={this.props.selectOrganisaatio}
