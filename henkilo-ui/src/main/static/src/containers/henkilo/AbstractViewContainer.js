@@ -5,14 +5,20 @@ import ConfirmButton from "../../components/common/button/ConfirmButton"
 import PopupButton from "../../components/common/button/PopupButton"
 import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent"
 import OphSelect from '../../components/common/select/OphSelect'
+import OrganisaatioSelection from "../../components/kutsuminen/OrganisaatioSelection";
 
 
 class AbstractViewContainer extends React.Component {
 
     createKayttooikeusFields(...kayttooikeusFields) {
-        return <table style={{width: "100%"}}>
+        return <table>
+            <colgroup>
+                <col span={1} style={{width: "30%"}} />
+                <col span={1} style={{width: "60%"}} />
+                <col span={1} style={{width: "10%"}} />
+            </colgroup>
             <tbody>
-            {kayttooikeusFields.map(kayttooikeusField => kayttooikeusField)}
+            {kayttooikeusFields}
             </tbody>
         </table>
     };
@@ -52,12 +58,16 @@ class AbstractViewContainer extends React.Component {
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
             </td>
             <td>
-                <OphSelect value={organisationSelect.organisationValue}
-                           options={organisationSelect.organisationData}
-                           onChange={organisationSelect.organisationAction}
-                           placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
                 <div>
-                    <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
+                    <OrganisaatioSelection L={this.L}
+                                           organisaatios={organisationSelect.organisationData}
+                                           selectOrganisaatio={organisationSelect.organisationAction}
+                                           selectedOrganisaatioName="xxxxxx"
+                    />
+                    <OphSelect value={organisationSelect.organisationValue}
+                               options={organisationSelect.organisationData}
+                               onChange={organisationSelect.organisationAction}
+                               placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
                 </div>
 
                 <div>
@@ -66,6 +76,9 @@ class AbstractViewContainer extends React.Component {
                                onChange={ryhmaSelect.ryhmaAction}
                                placeholder={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} />
                 </div>
+            </td>
+            <td>
+                <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
             </td>
         </tr>;
     };
@@ -87,6 +100,7 @@ class AbstractViewContainer extends React.Component {
                            onChange={paattyyPvmAction} />
                 </div>
             </td>
+            <td/>
         </tr>;
     };
 
@@ -96,16 +110,16 @@ class AbstractViewContainer extends React.Component {
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
             <td>
-                <div style={{display: "flex"}}>
-                    <div style={{flex: "1"}}>
+                <div>
+                    <div>
                         <OphSelect //value={kayttooikeusData.kayttooikeusValue}
                             options={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
                             onChange={kayttooikeusAction}
                             placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
                     </div>
-                    <div style={{flex: "1"}}>
-                        <span>
-                            {filterList.map(selectedId => <div className="oph-alert oph-alert-info">
+                    <div>
+                        {
+                            filterList.map(selectedId => <div className="oph-alert oph-alert-info">
                                 <div className="oph-alert-container">
                                     <div className="oph-alert-title">{selectedId}</div>
                                     <button className="oph-button oph-button-close" type="button" title="Close"
@@ -113,11 +127,14 @@ class AbstractViewContainer extends React.Component {
                                         <span aria-hidden="true">×</span>
                                     </button>
                                 </div>
-                            </div>)}
-                        </span>
+                            </div>)
+                        }
                     </div>
                 </div>
+
+
             </td>
+            <td/>
         </tr>;
     };
 
@@ -125,13 +142,20 @@ class AbstractViewContainer extends React.Component {
         return <tr>
             <td />
             <td>
-                <Button disabled={validationMessages.length > 0} action={haeButtonAction}>
+                <div style={{display: "table-cell"}}>
+                <Button id="hae_ko_button" disabled={validationMessages.length > 0} action={haeButtonAction}>
                     {this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
                 </Button>
-                {validationMessages.map((validationMessage) => <span className="oph-h5">
-                    {this.L[validationMessage.label]}
-                </span>)}
+                </div>
+                    <ul style={{display: "table-cell"}}>
+                        {
+                            validationMessages.map((validationMessage) =>
+                                <li className="oph-h5">{this.L[validationMessage.label]}</li>
+                            )
+                        }
+                    </ul>
             </td>
+            <td/>
         </tr>;
     };
 

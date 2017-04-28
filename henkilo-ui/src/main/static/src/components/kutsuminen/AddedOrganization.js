@@ -14,7 +14,6 @@ import {
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from './OrganisaatioSelection';
-import {getOrganisaatios} from './OrganisaatioUtilities';
 
 class AddedOrganisation extends React.Component {
 
@@ -31,7 +30,7 @@ class AddedOrganisation extends React.Component {
 
     render() {
         const addedOrg = this.props.addedOrg;
-        const availableOrgs = getOrganisaatios(this.props.orgs, this.props.locale);
+        const availableOrgs = this.props.orgs;
         const excludedOrgOids = R.map(R.prop('oid'), this.props.addedOrgs);
         const L = this.props.l10n[this.props.locale];
         const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, availableOrgs);
@@ -112,7 +111,7 @@ class AddedOrganisation extends React.Component {
             this.removeOrganisaatio(this.props.addedOrg.oid);
         } else {
             const selectedOrganisaatioOid = selection.value;
-            const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
+            const availableOrganisaatios = this.props.orgs;
             const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
             this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.omattiedot.data.oid, organisaatio.oid);

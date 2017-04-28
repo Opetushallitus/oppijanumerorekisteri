@@ -2,11 +2,13 @@ import React from 'react';
 import {toLocalizedText} from '../../localizabletext';
 import OphSelect from '../common/select/OphSelect';
 import './OrganisaatioSelection.css';
+import {getOrganisaatios} from "./OrganisaatioUtilities";
 
 
 export default class OrganisaatioSelection extends React.Component {
 
     static propTypes = {
+        L: React.PropTypes.array.isRequired,
         organisaatios: React.PropTypes.array,
         selectOrganisaatio: React.PropTypes.func,
         locale: React.PropTypes.string,
@@ -22,16 +24,14 @@ export default class OrganisaatioSelection extends React.Component {
     }
 
     render() {
-        return <div>{this.props.selectedOrganisaatioName}
-            <OphSelect className={'organisaatioSelection'}
-                    options={this.state.options}
-                    placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
-                    onInputChange={this.inputChange.bind(this)}
-                    onChange={this.props.selectOrganisaatio}
-                    optionRenderer={this.renderOption.bind(this)}
-                    value={this.props.selectedOrganisaatioName}
-                    noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` }></OphSelect>
-        </div>;
+        return <OphSelect className={'organisaatioSelection'}
+                          options={this.state.options}
+                          placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
+                          onInputChange={this.inputChange.bind(this)}
+                          onChange={this.props.selectOrganisaatio}
+                          optionRenderer={this.renderOption.bind(this)}
+                          value={this.props.selectedOrganisaatioName}
+                          noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` } />;
     }
 
     mapOrganisaatio(organisaatio) {
@@ -49,7 +49,7 @@ export default class OrganisaatioSelection extends React.Component {
 
     inputChange(value) {
         if (value.length >= 3) {
-            const options = this.props.organisaatios
+            const options = getOrganisaatios(this.props.organisaatios, this.props.locale)
                 .filter(organisaatio => organisaatio.fullLocalizedName.indexOf(value) >= 0)
                 .map(this.mapOrganisaatio.bind(this));
             this.setState({ options: options })
