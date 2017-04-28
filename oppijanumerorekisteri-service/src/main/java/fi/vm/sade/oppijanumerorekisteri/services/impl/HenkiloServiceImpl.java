@@ -213,7 +213,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
-        return this.mapper.map(getHenkiloByHetu(hetu).orElseThrow(NotFoundException::new), HenkiloOidHetuNimiDto.class);
+        return henkiloJpaRepository.findOidHetuNimiByHetu(hetu).orElseThrow(NotFoundException::new);
     }
 
     private Optional<Henkilo> getHenkiloByHetu(String hetu) {

@@ -8,6 +8,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
@@ -299,6 +300,20 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .join(qHenkilo.identifications, qIdentification)
                 .where(anyOf(predicates))
                 .select(qHenkilo).distinct().fetch();
+    }
+
+    @Override
+    public Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        return Optional.ofNullable(jpa().from(qHenkilo).where(qHenkilo.hetu.eq(hetu))
+                .select(Projections.bean(HenkiloOidHetuNimiDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi))
+                .fetchOne());
     }
 
 }

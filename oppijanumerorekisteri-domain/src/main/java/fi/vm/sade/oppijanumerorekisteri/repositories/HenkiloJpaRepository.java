@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
@@ -78,5 +79,7 @@ public interface HenkiloJpaRepository {
     Optional<Henkilo> findByIdentification(IdentificationDto identification);
 
     Collection<Henkilo> findByIdentifications(Collection<IdentificationDto> identifications);
+
+    Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu);
 
 }
