@@ -14,9 +14,8 @@ import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo, updateHaettuKayttooikeusryhma
+    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
-import {fetchKutsujaKayttooikeusForHenkiloInOrganisaatio} from "../../actions/kutsuminen.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -96,4 +95,5 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma, fetchKutsujaKayttooikeusForHenkiloInOrganisaatio, fetchHenkiloOrganisaatios})(VirkailijaViewContainer);
+    updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatios,
+})(VirkailijaViewContainer);

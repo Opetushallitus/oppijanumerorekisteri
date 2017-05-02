@@ -52,7 +52,7 @@ class AbstractViewContainer extends React.Component {
     * Fields
     * */
 
-    createKayttooikeusKohdeField(organisationSelect, ryhmaSelect) {
+    createKayttooikeusKohdeField(organisationData, organisationAction, organisationValue) {
         return <tr>
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
@@ -60,17 +60,17 @@ class AbstractViewContainer extends React.Component {
             <td>
                 <div>
                     <OrganisaatioSelection L={this.L}
-                                           organisaatios={organisationSelect.organisationData}
-                                           selectOrganisaatio={organisationSelect.organisationAction}
-                                           selectedOrganisaatioOid={organisationSelect.organisationValue}
+                                           organisaatios={organisationData}
+                                           selectOrganisaatio={organisationAction}
+                                           selectedOrganisaatioOid={organisationValue}
                                            locale={this.props.locale} />
                 </div>
 
                 <div>
                     <OrganisaatioSelection L={this.L}
-                                           organisaatios={organisationSelect.organisationData}
-                                           selectOrganisaatio={organisationSelect.organisationAction}
-                                           selectedOrganisaatioOid={organisationSelect.organisationValue}
+                                           organisaatios={organisationData}
+                                           selectOrganisaatio={organisationAction}
+                                           selectedOrganisaatioOid={organisationValue}
                                            locale={this.props.locale}
                                            isRyhma={true} />
                 </div>
@@ -103,6 +103,12 @@ class AbstractViewContainer extends React.Component {
     };
 
     createKayttooikeusKayttooikeudetField(kayttooikeusData, filterList, kayttooikeusAction, close) {
+        const filteredOptions = kayttooikeusData && kayttooikeusData.filter(kayttooikeus =>
+            filterList.indexOf(kayttooikeus.ryhmaId) === -1)
+                .map(kayttooikeus => ({
+                    value: kayttooikeus.ryhmaId,
+                    label: kayttooikeus.ryhmaNames.texts.filter(text => text.lang.toLowerCase() === this.props.locale)[0].text,
+                }));
         return <tr>
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
@@ -110,29 +116,27 @@ class AbstractViewContainer extends React.Component {
             <td>
                 <div>
                     <div>
-                        <OphSelect //value={kayttooikeusData.kayttooikeusValue}
-                            options={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
-                            onChange={kayttooikeusAction}
-                            placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
-                    </div>
-                    <div>
-                        {
-                            filterList.map(selectedId => <div className="oph-alert oph-alert-info">
-                                <div className="oph-alert-container">
-                                    <div className="oph-alert-title">{selectedId}</div>
-                                    <button className="oph-button oph-button-close" type="button" title="Close"
-                                            aria-label="Close" onClick={() => close(selectedId)}>
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                            </div>)
-                        }
+                        <OphSelect disabled={kayttooikeusData === undefined}
+                                   options={filteredOptions}
+                                   onChange={kayttooikeusAction} />
                     </div>
                 </div>
-
-
             </td>
-            <td/>
+            <td>
+                <div>
+                    {
+                        filterList.map(selectedId => <div className="oph-alert oph-alert-info">
+                            <div className="oph-alert-container">
+                                <div className="oph-alert-title">{selectedId}</div>
+                                <button className="oph-button oph-button-close" type="button" title="Close"
+                                        aria-label="Close" onClick={() => close(selectedId)}>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>)
+                    }
+                </div>
+            </td>
         </tr>;
     };
 

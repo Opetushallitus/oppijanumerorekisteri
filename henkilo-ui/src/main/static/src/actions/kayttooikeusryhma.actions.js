@@ -10,6 +10,8 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
+    UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
+    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
 } from './actiontypes';
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
@@ -76,3 +78,19 @@ export const fetchOrganisaatioKayttooikeusryhmat = organisaatioOid => async disp
         throw error;
     }
 };
+
+const requestAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) =>
+    ({ type: FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST, oidHenkilo, oidOrganisation, });
+const receiveAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation, allowedKayttooikeus) =>
+    ({ type: FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS, oidHenkilo, oidOrganisation, allowedKayttooikeus, });
+const errorAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) =>
+    ({ type: FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE, oidHenkilo, oidOrganisation, });
+export const fetchAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrganisation) => dispatch => {
+    dispatch(requestAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation));
+    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio', oidHenkilo, oidOrganisation);
+    http.get(url, oidHenkilo, oidOrganisation)
+        .then((allowedKayttooikeus) =>
+            dispatch(receiveAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation, allowedKayttooikeus)))
+        .catch(() => dispatch(errorAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation)));
+};
+

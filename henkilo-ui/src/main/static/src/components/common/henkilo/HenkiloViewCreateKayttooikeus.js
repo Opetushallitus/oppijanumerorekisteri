@@ -8,6 +8,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
         henkilo: React.PropTypes.shape({henkiloOrgs: React.PropTypes.array.isRequired,}),
+        kayttooikeus: React.PropTypes.shape({allowedKayttooikeus: React.PropTypes.object}),
     };
 
     constructor(props) {
@@ -16,7 +17,6 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         this.L = this.props.l10n[this.props.locale];
         this.kayttooikeusModel = {
             kayttokohdeOrganisationOid: '',
-            kayttokohdeRyhmaOid: '',
             myonnettavatOikeudet: [],
             alkupvm: new Date(),
             loppupvm: StaticUtils.datePlusOneYear(new Date()),
@@ -29,14 +29,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                 validationMessages: this.state.validationMessages.filter(
                     validationMessage => validationMessage.id !== 'organisation'),
             });
-        };
-
-        this.ryhmaAction = (value) => {
-            this.kayttooikeusModel.kayttokohdeRyhmaOid = value.value;
-            this.setState({
-                validationMessages: this.state.validationMessages.filter(
-                    validationMessage => validationMessage.id !== 'organisation'),
-            });
+            this.props.fetchAllowedKayttooikeusryhmasForOrganisation(this.props.oidHenkilo, value.value);
         };
 
         this.kayttooikeudetAction = (value) => {
@@ -74,18 +67,12 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         this.state = {
             selectedList: [],
             validationMessages: [{id: 'organisation', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'},
-                {id: 'kayttooikeus', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'}]
-        }
+                {id: 'kayttooikeus', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'}],
+            kayttooikeusData: [],
+        };
     };
 
     render() {
-        const organisationSelect = {
-            organisationData: this.props.henkilo.henkiloOrganisaatios,
-            organisationAction: this.organisationAction,
-            organisationValue: this.kayttooikeusModel.kayttokohdeOrganisationOid
-        };
-        const ryhmaSelect = {ryhmaData:[ {value: 'x', label: 'd'}], ryhmaAction: this.ryhmaAction,
-            ryhmaValue: this.kayttooikeusModel.kayttokohdeRyhmaOid};
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div className="add-kayttooikeus-container">
@@ -94,11 +81,12 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                     </div>
                     {
                         this.createKayttooikeusFields(
-                            this.createKayttooikeusKohdeField(organisationSelect, ryhmaSelect),
+                            this.createKayttooikeusKohdeField(this.props.henkilo.henkiloOrganisaatios, this.organisationAction,
+                                this.kayttooikeusModel.kayttokohdeOrganisationOid),
                             this.createKayttooikeusKestoField(this.kestoAlkaaAction, this.kayttooikeusModel.alkupvm,
                                 this.kestoPaattyyAction, this.kayttooikeusModel.loppupvm),
-                            this.createKayttooikeusKayttooikeudetField(this.KO_TEMP_INITIALDATA, this.state.selectedList,
-                                this.kayttooikeudetAction, this.close),
+                            this.createKayttooikeusKayttooikeudetField(this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo],
+                                this.state.selectedList, this.kayttooikeudetAction, this.close),
                             this.createKayttooikeusHaeButton(() => {}, this.state.validationMessages))
                     }
                     <div>
