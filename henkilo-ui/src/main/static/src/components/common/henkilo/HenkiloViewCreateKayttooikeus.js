@@ -35,7 +35,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         this.kayttooikeudetAction = (value) => {
             if(value.value !== '') {
                 this.setState({
-                    selectedList: [...this.state.selectedList, value.value],
+                    selectedList: [...this.state.selectedList, value],
                 });
             }
             this.setState({
@@ -45,7 +45,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         };
 
         this.close = (kayttooikeusId) => {
-            const selectedList = this.state.selectedList.filter(selected => selected !== kayttooikeusId);
+            const selectedList = this.state.selectedList.filter(selected => selected.value !== kayttooikeusId);
             const id = 'kayttooikeus';
             const label = 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID';
             let newState = { selectedList, };
@@ -85,7 +85,8 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                                 this.kayttooikeusModel.kayttokohdeOrganisationOid),
                             this.createKayttooikeusKestoField(this.kestoAlkaaAction, this.kayttooikeusModel.alkupvm,
                                 this.kestoPaattyyAction, this.kayttooikeusModel.loppupvm),
-                            this.createKayttooikeusKayttooikeudetField(this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo],
+                            this.createKayttooikeusKayttooikeudetField(
+                                this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo],
                                 this.state.selectedList, this.kayttooikeudetAction, this.close),
                             this.createKayttooikeusHaeButton(() => {}, this.state.validationMessages))
                     }

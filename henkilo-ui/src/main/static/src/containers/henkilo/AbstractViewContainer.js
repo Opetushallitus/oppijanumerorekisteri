@@ -102,9 +102,9 @@ class AbstractViewContainer extends React.Component {
         </tr>;
     };
 
-    createKayttooikeusKayttooikeudetField(kayttooikeusData, filterList, kayttooikeusAction, close) {
+    createKayttooikeusKayttooikeudetField(kayttooikeusData, selectedList, kayttooikeusAction, close) {
         const filteredOptions = kayttooikeusData && kayttooikeusData.filter(kayttooikeus =>
-            filterList.indexOf(kayttooikeus.ryhmaId) === -1)
+            selectedList.indexOf(kayttooikeus.ryhmaId) === -1)
                 .map(kayttooikeus => ({
                     value: kayttooikeus.ryhmaId,
                     label: kayttooikeus.ryhmaNames.texts.filter(text => text.lang.toLowerCase() === this.props.locale)[0].text,
@@ -121,15 +121,15 @@ class AbstractViewContainer extends React.Component {
                                    onChange={kayttooikeusAction} />
                     </div>
                 </div>
-            </td>
-            <td>
                 <div>
                     {
-                        filterList.map(selectedId => <div className="oph-alert oph-alert-info">
+                        selectedList.map(selected => <div className="oph-alert oph-alert-info">
                             <div className="oph-alert-container">
-                                <div className="oph-alert-title">{selectedId}</div>
-                                <button className="oph-button oph-button-close" type="button" title="Close"
-                                        aria-label="Close" onClick={() => close(selectedId)}>
+                                <div className="oph-alert-title">{selected.label}</div>
+                                <button className="oph-button oph-button-close"
+                                        type="button"
+                                        title={this.L['POISTA']}
+                                        aria-label="Close" onClick={() => close(selected.value)}>
                                     <span aria-hidden="true">×</span>
                                 </button>
                             </div>
@@ -137,6 +137,7 @@ class AbstractViewContainer extends React.Component {
                     }
                 </div>
             </td>
+            <td />
         </tr>;
     };
 
