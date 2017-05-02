@@ -310,7 +310,7 @@ public class HenkiloServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void getHenkiloOidHetuNimiByHetuNotFound() {
-        given(this.henkiloDataRepositoryMock.findByHetu("123456-9999")).willReturn(new ArrayList<>());
+        given(this.henkiloJpaRepositoryMock.findOidHetuNimiByHetu("123456-9999")).willReturn(Optional.empty());
         this.service.getHenkiloOidHetuNimiByHetu("123456-9999");
     }
 
