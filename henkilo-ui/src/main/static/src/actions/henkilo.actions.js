@@ -127,16 +127,16 @@ const receiveHenkiloOrganisaatiosSuccess = (henkiloOrganisaatios) => ({
 });
 const receiveHenkiloOrganisaatioFailure = error => ({type: FETCH_HENKILO_ORGANISAATIOS_FAILURE, error});
 
-export const fetchHenkiloOrganisaatios = (oid) => async (dispatch, getState) => {
-    oid = oid || getState().omattiedot.data.oid;
-    dispatch(requestHenkiloOrganisaatios(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oid);
+export const fetchHenkiloOrganisaatios = (oidHenkilo) => async (dispatch, getState) => {
+    oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
+    dispatch(requestHenkiloOrganisaatios(oidHenkilo));
+    const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oidHenkilo);
     try {
         const henkiloOrganisaatios = await http.get(url);
         return dispatch(receiveHenkiloOrganisaatiosSuccess( henkiloOrganisaatios ));
     } catch (error) {
         dispatch(receiveHenkiloOrganisaatioFailure);
-        console.error(`Failed fetching organisaatios for henkilo: ${oid}: ${error}`);
+        console.error(`Failed fetching organisaatios for henkilo: ${oidHenkilo}: ${error}`);
     }
 };
 

@@ -62,15 +62,17 @@ class AbstractViewContainer extends React.Component {
                     <OrganisaatioSelection L={this.L}
                                            organisaatios={organisationSelect.organisationData}
                                            selectOrganisaatio={organisationSelect.organisationAction}
-                                           selectedOrganisaatioName={organisationSelect.organisationValue}
+                                           selectedOrganisaatioOid={organisationSelect.organisationValue}
                                            locale={this.props.locale} />
                 </div>
 
                 <div>
-                    <OphSelect value={ryhmaSelect.ryhmaValue}
-                               options={ryhmaSelect.ryhmaData}
-                               onChange={ryhmaSelect.ryhmaAction}
-                               placeholder={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} />
+                    <OrganisaatioSelection L={this.L}
+                                           organisaatios={organisationSelect.organisationData}
+                                           selectOrganisaatio={organisationSelect.organisationAction}
+                                           selectedOrganisaatioOid={organisationSelect.organisationValue}
+                                           locale={this.props.locale}
+                                           isRyhma={true} />
                 </div>
             </td>
             <td>

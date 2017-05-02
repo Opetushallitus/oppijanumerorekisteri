@@ -4,7 +4,7 @@ import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo
+    updatePassword, yksiloiHenkilo, fetchHenkiloOrganisaatios
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -16,22 +16,23 @@ import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo, updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
+import {fetchKutsujaKayttooikeusForHenkiloInOrganisaatio} from "../../actions/kutsuminen.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
     componentDidMount() {
-        this.props.updateNavigation(virkailijaNavi(this.props.oid), '/henkilo');
+        this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
 
-        this.props.fetchHenkilo(this.props.oid);
-        this.props.fetchHenkiloOrgs(this.props.oid);
+        this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttajatieto(this.props.oid);
+        this.props.fetchKayttajatieto(this.props.oidHenkilo);
         this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oid);
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oid);
-
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloOrganisaatios(this.props.oidHenkilo);
     };
 
     render() {
@@ -82,7 +83,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
 const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
-        oid: ownProps.params['oid'],
+        oidHenkilo: ownProps.params['oid'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
@@ -95,4 +96,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma})(VirkailijaViewContainer);
+    updateHaettuKayttooikeusryhma, fetchKutsujaKayttooikeusForHenkiloInOrganisaatio, fetchHenkiloOrganisaatios})(VirkailijaViewContainer);

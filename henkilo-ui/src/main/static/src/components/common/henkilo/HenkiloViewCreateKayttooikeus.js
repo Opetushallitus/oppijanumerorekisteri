@@ -80,12 +80,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
 
     render() {
         const organisationSelect = {
-            organisationData: [{organisaatio: {
-                nimi: {fi: 'dddddddd'},
-                oid: 'x',
-                tyypit: ['MUU']},
-            }
-            ],
+            organisationData: this.props.henkilo.henkiloOrganisaatios,
             organisationAction: this.organisationAction,
             organisationValue: this.kayttooikeusModel.kayttokohdeOrganisationOid
         };

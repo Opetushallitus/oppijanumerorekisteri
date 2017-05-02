@@ -19,11 +19,17 @@ export default class OrganisaatioSelection extends React.Component {
         })).isRequired,
         selectOrganisaatio: React.PropTypes.func,
         locale: React.PropTypes.string.isRequired,
-        selectedOrganisaatioName: React.PropTypes.string,
+        selectedOrganisaatioOid: React.PropTypes.string,
+        isRyhma: React.PropTypes.boolean,
     };
 
     constructor(props) {
         super(props);
+
+        // Filter off organisations or ryhmas depending on isRyhma value.
+        this.getOrganisationsOrRyhmas = () => this.props.isRyhma
+            ? this.props.organisaatios.filter(organisaatio => organisaatio.organisaatio.tyypit.indexOf('Ryhma') !== -1)
+            : this.props.organisaatios.filter(organisaatio => organisaatio.organisaatio.tyypit.indexOf('Ryhma') === -1);
 
         this.state = {
             options: []
@@ -31,19 +37,18 @@ export default class OrganisaatioSelection extends React.Component {
     }
 
     render() {
-
-        const options = this.state.options.length || this.props.selectedOrganisaatioName === ''
+        const options = this.state.options.length || this.props.selectedOrganisaatioOid === ''
             ? this.state.options
-            : getOrganisaatios(this.props.organisaatios, this.props.locale)
-                .filter(organisaatio => organisaatio.oid === this.props.selectedOrganisaatioName)
+            : getOrganisaatios(this.getOrganisationsOrRyhmas(), this.props.locale)
+                .filter(organisaatio => organisaatio.oid === this.props.selectedOrganisaatioOid)
                 .map(this.mapOrganisaatio.bind(this));
         return <OphSelect className={'organisaatioSelection'}
                           options={options}
-                          placeholder={this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
+                          placeholder={this.props.isRyhma ?this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA'] : this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
                           onInputChange={this.inputChange.bind(this)}
                           onChange={this.props.selectOrganisaatio}
                           optionRenderer={this.renderOption.bind(this)}
-                          value={this.props.selectedOrganisaatioName}
+                          value={this.props.selectedOrganisaatioOid}
                           noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` } />;
     }
 
@@ -62,7 +67,7 @@ export default class OrganisaatioSelection extends React.Component {
 
     inputChange(value) {
         if (value.length >= 3) {
-            const options = getOrganisaatios(this.props.organisaatios, this.props.locale)
+            const options = getOrganisaatios(this.getOrganisationsOrRyhmas(), this.props.locale)
                 .filter(organisaatio => organisaatio.fullLocalizedName.indexOf(value) >= 0)
                 .map(this.mapOrganisaatio.bind(this));
             this.setState({ options: options })

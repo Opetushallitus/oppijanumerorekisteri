@@ -52,11 +52,11 @@ class AddedOrganisation extends React.Component {
                     </label>
 
                     <OrganisaatioSelection organisaatios={orgs}
-                                           selectedOrganisaatioName={selectedOrganisaatioOid}
+                                           selectedOrganisaatioOid={selectedOrganisaatioOid}
                                            locale={this.props.locale}
                                            index={this.props.index}
                                            selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                           L={L}></OrganisaatioSelection>
+                                           L={L} />
                 </div>
 
                 <div className="row permissions-row">
