@@ -16,12 +16,13 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        this.kayttooikeusModel = {
+        this.defaultKayttooikeusModel = () => ({
             kayttokohdeOrganisationOid: '',
             myonnettavatOikeudet: [],
             alkupvm: new Date(),
             loppupvm: StaticUtils.datePlusOneYear(new Date()),
-        };
+        });
+        this.kayttooikeusModel = this.defaultKayttooikeusModel();
         this.KO_TEMP_INITIALDATA = [{value: 'id', label: 'text'}, {value: 'id2', label: 'text2'}];
 
         this.organisationAction = (value) => {
@@ -73,6 +74,8 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                     alkupvm: dateformat(this.kayttooikeusModel.alkupvm, this.L['PVM_DBFORMAATTI']),
                     loppupvm: dateformat(this.kayttooikeusModel.loppupvm, this.L['PVM_DBFORMAATTI']),
                 })));
+            // clear
+            this.kayttooikeusModel = this.defaultKayttooikeusModel();
         };
 
         this.state = {
