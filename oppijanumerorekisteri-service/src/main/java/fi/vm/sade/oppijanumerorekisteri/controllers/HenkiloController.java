@@ -257,7 +257,7 @@ public class HenkiloController {
 
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @RequestMapping(value = "/{oid}/yksiloi", method = RequestMethod.POST)
-    @ApiOperation(value = "Käynnistää henkilön yksilöinnin. DEPRECATE.",
+    @ApiOperation(value = "Käynnistää henkilön yksilöinnin.",
             notes = "Käynnistää henkilön yksilöintiprosessin VTJ:n suuntaan manuaalisesti.",
             authorizations = {@Authorization("ROLE_APP_HENKILONHALLINTA_READ_UPDATE"),
                     @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
