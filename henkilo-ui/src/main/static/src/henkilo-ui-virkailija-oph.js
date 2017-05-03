@@ -20,6 +20,7 @@ export default {
     "kayttooikeus-service.organisaatiohenkilo.passivoi": "kayttooikeus-service/organisaatiohenkilo/$1/$2",
     "kayttooikeus-service.henkilo.kayttajatieto": "kayttooikeus-service/henkilo/$1/kayttajatiedot",
     "kayttooikeus-service.henkilo.anomus-list": "kayttooikeus-service/kayttooikeusanomus/$1",
+    "kayttooikeus-service.henkilo.kayttooikeus-myonto": "kayttooikeus-service/kayttooikeusanomus/$1/$2",
     "kayttooikeus-service.henkilo.kaytto-oikeus-anomus": "kayttooikeus-service/kayttooikeusanomus",
     "kayttooikeus-service.henkilo.password": "kayttooikeus-service/henkilo/$1/password",
     "kayttooikeus-service.omattiedot.oid": "kayttooikeus-service/omattiedot/oid",

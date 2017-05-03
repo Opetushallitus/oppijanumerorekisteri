@@ -17,6 +17,7 @@ import {
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_FAILURE
 } from "./actiontypes";
+import {fetchOmattiedot} from "./omattiedot.actions";
 
 const requestHenkilo = oid => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});

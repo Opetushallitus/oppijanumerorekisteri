@@ -12,6 +12,7 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
     UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
+    ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
 } from './actiontypes';
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
@@ -94,3 +95,13 @@ export const fetchAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrg
         .catch(() => dispatch(errorAllowedKayttooikeusryhmasForOrganisation(oidHenkilo, oidOrganisation)));
 };
 
+const requestAddKayttooikeusToHenkilo = () => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST});
+const receiveAddKayttooikeusToHenkilo = () => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS});
+const errorAddKayttooikeusToHenkilo = () => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE});
+export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) => dispatch => {
+    dispatch(requestAddKayttooikeusToHenkilo());
+    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
+    http.put(url, payload)
+        .then(() => dispatch(receiveAddKayttooikeusToHenkilo()))
+        .catch(() => dispatch(errorAddKayttooikeusToHenkilo()));
+};

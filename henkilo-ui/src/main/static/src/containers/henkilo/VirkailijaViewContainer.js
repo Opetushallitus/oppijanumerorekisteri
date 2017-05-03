@@ -3,8 +3,7 @@ import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo, fetchHenkiloOrganisaatios
+    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo,
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -13,9 +12,11 @@ import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
 import {
+    addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
+import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -31,7 +32,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
-        this.props.fetchHenkiloOrganisaatios(this.props.oidHenkilo);
+        this.props.fetchHenkiloOrganisaatiosForCurrentUser();
     };
 
     render() {
@@ -95,5 +96,5 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatios,
-})(VirkailijaViewContainer);
+    updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
+    addKayttooikeusToHenkilo,})(VirkailijaViewContainer);

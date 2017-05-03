@@ -150,13 +150,13 @@ class AbstractViewContainer extends React.Component {
                     {this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
                 </Button>
                 </div>
-                    <ul style={{display: "table-cell"}}>
-                        {
-                            validationMessages.map((validationMessage) =>
-                                <li className="oph-h5">{this.L[validationMessage.label]}</li>
-                            )
-                        }
-                    </ul>
+                <ul style={{display: "table-cell"}}>
+                    {
+                        validationMessages.map((validationMessage) =>
+                            <li className="oph-h5">{this.L[validationMessage.label]}</li>
+                        )
+                    }
+                </ul>
             </td>
             <td/>
         </tr>;

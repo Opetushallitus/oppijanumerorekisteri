@@ -2,6 +2,7 @@ import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
 import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer"
 import StaticUtils from "../StaticUtils"
+import dateformat from 'dateformat';
 
 class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     static propTypes = {
@@ -64,6 +65,16 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
             this.kayttooikeusModel.loppupvm = StaticUtils.ddmmyyyyToDate(event.target.value);
         };
 
+        this.createKayttooikeusAction = () => {
+            this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, this.kayttooikeusModel.kayttokohdeOrganisationOid,
+                this.state.selectedList.map(selected => ({
+                    id: selected.value,
+                    kayttoOikeudenTila: 'MYONNA',
+                    alkupvm: dateformat(this.kayttooikeusModel.alkupvm, this.L['PVM_DBFORMAATTI']),
+                    loppupvm: dateformat(this.kayttooikeusModel.loppupvm, this.L['PVM_DBFORMAATTI']),
+                })));
+        };
+
         this.state = {
             selectedList: [],
             validationMessages: [{id: 'organisation', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'},
@@ -88,7 +99,8 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                             this.createKayttooikeusKayttooikeudetField(
                                 this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo],
                                 this.state.selectedList, this.kayttooikeudetAction, this.close),
-                            this.createKayttooikeusHaeButton(() => {}, this.state.validationMessages))
+                            this.createKayttooikeusHaeButton(() => this.createKayttooikeusAction(),
+                                this.state.validationMessages))
                     }
                     <div>
                     </div>
