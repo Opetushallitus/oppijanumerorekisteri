@@ -3,6 +3,7 @@ import React from 'react'
 import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer"
 import StaticUtils from "../StaticUtils"
 import dateformat from 'dateformat';
+import scrollToComponent from 'react-scroll-to-component'
 
 class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     static propTypes = {
@@ -10,6 +11,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         locale: React.PropTypes.string.isRequired,
         henkilo: React.PropTypes.shape({henkiloOrgs: React.PropTypes.array.isRequired,}),
         kayttooikeus: React.PropTypes.shape({allowedKayttooikeus: React.PropTypes.object}),
+        existingKayttooikeusRef: React.PropTypes.object.isRequired,
     };
 
     constructor(props) {
@@ -76,6 +78,8 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                 })));
             // clear
             this.kayttooikeusModel = this.defaultKayttooikeusModel();
+            // Scroll
+            scrollToComponent(this.props.existingKayttooikeusRef);
         };
 
         this.state = {
@@ -93,6 +97,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                     <div className="header">
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
+                    <div>
                     {
                         this.createKayttooikeusFields(
                             this.createKayttooikeusKohdeField(this.props.henkilo.henkiloOrganisaatios, this.organisationAction,
@@ -105,7 +110,6 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                             this.createKayttooikeusHaeButton(() => this.createKayttooikeusAction(),
                                 this.state.validationMessages))
                     }
-                    <div>
                     </div>
                 </div>
             </div>

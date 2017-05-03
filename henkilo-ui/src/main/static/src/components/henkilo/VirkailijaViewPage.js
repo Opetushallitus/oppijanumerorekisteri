@@ -35,7 +35,8 @@ const VirkailijaViewPage = React.createClass({
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? AbstractViewContainer.createLoader()
-                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                            : <HenkiloViewExistingKayttooikeus {...this.props}
+                                                               ref={(ref) => this.existingKayttooikeusRef = ref} />
                     }
                 </div>
                 <div className="wrapper">
@@ -56,7 +57,8 @@ const VirkailijaViewPage = React.createClass({
                     {
                         this.props.henkilo.henkiloOrganisaatiosLoading
                             ? AbstractViewContainer.createLoader()
-                            : <HenkiloViewCreateKayttooikeus {...this.props} />
+                            : <HenkiloViewCreateKayttooikeus {...this.props}
+                                                             existingKayttooikeusRef={this.existingKayttooikeusRef} />
                     }
                 </div>
             </div>
