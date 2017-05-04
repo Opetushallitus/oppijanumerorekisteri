@@ -105,7 +105,7 @@ export const fetchHenkiloOrgs = oid => (dispatch, getState) => {
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oid);
     return http.get(url).then(json => {
         dispatch(fetchOrganisations(json.map(orgHenkilo => orgHenkilo.organisaatioOid)))
-            .then(organisationsAction => dispatch(receiveHenkiloOrgsSuccess(json, organisationsAction.organisations)));
+            .then(organisationsAction => dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached)));
     });
 };
 

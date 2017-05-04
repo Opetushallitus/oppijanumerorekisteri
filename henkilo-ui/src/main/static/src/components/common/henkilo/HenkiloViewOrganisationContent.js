@@ -30,7 +30,6 @@ const HenkiloViewOrganisationContent = React.createClass({
         }
     },
     render: function() {
-        
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>

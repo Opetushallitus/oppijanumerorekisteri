@@ -7,9 +7,8 @@ import {
 } from "../actions/actiontypes";
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
-    const orgOids = organisations.map(organisation => organisation.oid);
-    return henkiloOrgs.filter(henkiloOrg => orgOids.indexOf(henkiloOrg.organisaatioOid) !== -1)
-        .map(henkiloOrg => Object.assign({}, henkiloOrg, organisations.filter(org => org.oid === henkiloOrg.organisaatioOid)[0]));
+    return henkiloOrgs.filter(henkiloOrg => Object.keys(organisations).indexOf(henkiloOrg.organisaatioOid) !== -1)
+        .map(henkiloOrg => Object.assign({}, henkiloOrg, organisations[henkiloOrg.organisaatioOid]));
 };
 
 export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
