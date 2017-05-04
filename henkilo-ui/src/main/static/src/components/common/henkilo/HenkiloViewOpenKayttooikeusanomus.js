@@ -15,6 +15,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
         kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
     };
+
     constructor(props) {
         super(props);
 
@@ -35,16 +36,12 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         }));
 
         this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
-            console.log(this.dates[idx].alkupvm);
             this.props.updateHaettuKayttooikeusryhma(id, tila,
                 dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
                 dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
                 this.props.oid);
-        }
-
+        };
     };
-
-
 
     createRows() {
         const headingList = this.headingList.map(heading => heading.key);
