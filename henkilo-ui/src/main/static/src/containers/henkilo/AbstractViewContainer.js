@@ -189,11 +189,13 @@ class AbstractViewContainer extends React.Component {
     };
 
     createSukunimiFieldWithAutofocus() {
-        return {label: 'HENKILO_SUKUNIMI', value: this.props.henkilo.henkilo.sukunimi, inputValue: 'sukunimi', autoFocus: true};
+        return {label: 'HENKILO_SUKUNIMI', value: this.props.henkilo.henkilo.sukunimi, inputValue: 'sukunimi',
+            autoFocus: true, disabled: !!this.props.henkilo.henkilo.hetu && this.props.henkilo.henkilo.yksiloityVTJ};
     };
 
     createEtunimetField() {
-        return {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet'};
+        return {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet',
+            disabled: !!this.props.henkilo.henkilo.hetu && this.props.henkilo.henkilo.yksiloityVTJ};
     }
 
     createSyntymaaikaField() {
@@ -202,7 +204,8 @@ class AbstractViewContainer extends React.Component {
     };
 
     createHetuField() {
-        return {label: 'HENKILO_HETU', value: this.props.henkilo.henkilo.hetu, inputValue: 'hetu'};
+        return {label: 'HENKILO_HETU', value: this.props.henkilo.henkilo.hetu, inputValue: 'hetu',
+            disabled: !!this.props.henkilo.henkilo.hetu && this.props.henkilo.henkilo.yksiloityVTJ};
     };
 
     createKutsumanimiField() {
