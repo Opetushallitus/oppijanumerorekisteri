@@ -19,7 +19,6 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
         case FETCH_HENKILO_REQUEST:
             return Object.assign({}, state, {henkiloLoading: true});
         case FETCH_HENKILO_SUCCESS:
-            // TODO deep copy needed?
             return Object.assign({}, state, {henkiloLoading: false, henkilo: action.henkilo});
         case FETCH_KAYTTAJATIETO_REQUEST:
             return Object.assign({}, state, {kayttajatietoLoading: true});

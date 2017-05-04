@@ -5,8 +5,7 @@ import {
     DELETE_HENKILOORGS_REQUEST, DELETE_HENKILOORGS_SUCCESS,
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
-    FETCH_ORGANISATIONS_REQUEST,
-    FETCH_ORGANISATIONS_SUCCESS, PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
+    PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE,
     UPDATE_HENKILO_REQUEST,
     UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_PASSWORD_REQUEST,
@@ -17,6 +16,7 @@ import {
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_FAILURE
 } from "./actiontypes";
+import {fetchOrganisations} from "./organisaatio.actions";
 
 const requestHenkilo = oid => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
@@ -90,17 +90,6 @@ export const yksiloiHenkilo = (oid,) => (dispatch => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi', oid);
     http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))}).catch(e => dispatch(errorYksiloiHenkilo(e)));
-});
-
-const requestOrganisations = oidOrganisations => ({type: FETCH_ORGANISATIONS_REQUEST, oidOrganisations});
-const receiveOrganisations = (json) => ({type: FETCH_ORGANISATIONS_SUCCESS, organisations: json, receivedAt: Date.now()});
-const fetchOrganisations = (oidOrganisations) => (dispatch => {
-    dispatch(requestOrganisations(oidOrganisations));
-    const promises = oidOrganisations.map(oidOrganisation => {
-        const url = urls.url('organisaatio-service.organisaatio.ByOid', oidOrganisation);
-        return http.get(url);
-    });
-    return Promise.all(promises).then(json => dispatch(receiveOrganisations(json)));
 });
 
 const requestHenkiloOrgs = oid => ({type: FETCH_HENKILOORGS_REQUEST, oid});

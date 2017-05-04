@@ -59,7 +59,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     </div>
                     <div style={{display: 'table-cell'}}>
                         {this.props.myonnaButton(() => {
-                            this.updateHaettuKayttooikeusryhma(uusittavaKayttooikeusRyhma.id, 'UUSITTU', idx)
+                            this.updateHaettuKayttooikeusryhma(uusittavaKayttooikeusRyhma.id, 'MYONNETTY', idx)
                         })}
                     </div>
                 </div>,

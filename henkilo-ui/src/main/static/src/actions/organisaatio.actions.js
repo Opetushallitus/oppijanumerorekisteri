@@ -3,6 +3,8 @@ import {urls} from 'oph-urls-js';
 import { FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS, FETCH_ALL_ORGANISAATIOS_FAILURE,
     FETCH_ALL_RYHMAT_REQUEST, FETCH_ALL_RYHMAT_SUCCESS, FETCH_ALL_RYHMAT_FAILURE
 } from './actiontypes';
+import {FETCH_ORGANISATIONS_REQUEST, FETCH_ORGANISATIONS_SUCCESS} from "./actiontypes";
+
 
 const requestAllOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_REQUEST});
 const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGANISAATIOS_SUCCESS, organisaatios});
@@ -38,3 +40,14 @@ export const fetchAllRyhmas = () => async dispatch => {
     }
 
 };
+
+const requestOrganisations = oidOrganisations => ({type: FETCH_ORGANISATIONS_REQUEST, oidOrganisations});
+const receiveOrganisations = (json) => ({type: FETCH_ORGANISATIONS_SUCCESS, organisations: json, receivedAt: Date.now()});
+export const fetchOrganisations = (oidOrganisations) => (dispatch => {
+    dispatch(requestOrganisations(oidOrganisations));
+    const promises = oidOrganisations.map(oidOrganisation => {
+        const url = urls.url('organisaatio-service.organisaatio.ByOid', oidOrganisation);
+        return http.get(url);
+    });
+    return Promise.all(promises).then(json => dispatch(receiveOrganisations(json)));
+});
