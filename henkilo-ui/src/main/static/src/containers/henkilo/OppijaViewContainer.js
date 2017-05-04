@@ -61,6 +61,7 @@ class OppijaViewContainer extends AbstractViewContainer {
         this._readOnlyButtons = (edit) => [
             this.createEditButton(edit),
             this.createYksilointiButton(),
+            this.createHakaButton(),
             this.createPassivoiButton(),
         ];
     };
