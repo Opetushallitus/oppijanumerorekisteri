@@ -291,9 +291,11 @@ class AbstractViewContainer extends React.Component {
     };
 
     createYksilointiButton() {
-        return <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
+        return !this.props.henkilo.henkilo.yksiloityVTJ && !this.props.henkilo.henkilo.hetu
+            ? <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
                        normalLabel={this.L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}
-                       errorMessage={this._createPopupErrorMessage('yksiloi')} />;
+                       errorMessage={this._createPopupErrorMessage('yksiloi')} />
+            : null;
     };
 
     createPassivoiButton() {
