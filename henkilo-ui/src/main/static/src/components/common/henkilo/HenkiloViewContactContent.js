@@ -4,6 +4,7 @@ import Columns from 'react-columns'
 import Field from '../field/Field';
 import Button from "../button/Button";
 import OphSelect from '../select/OphSelect'
+import StaticUtils from "../StaticUtils";
 
 const HenkiloViewContactContent = React.createClass({
     propTypes: {
@@ -105,21 +106,7 @@ const HenkiloViewContactContent = React.createClass({
     _updateModelField: function (event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
-        this._updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
-    },
-    _updateFieldByDotAnnotation: function(obj, path, value) {
-        let schema = obj;  // a moving reference to internal objects within obj
-        const pList = path.split('.');
-        const len = pList.length;
-        for(let i = 0; i < len-1; i++) {
-            let elem = pList[i];
-            if( !schema[elem] ) {
-                schema[elem] = {};
-            }
-            schema = schema[elem];
-        }
-
-        schema[pList[len-1]] = value;
+        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
     },
     _createYhteystiedotRyhma: function (event) {
         this.henkiloUpdate.yhteystiedotRyhma.push({
