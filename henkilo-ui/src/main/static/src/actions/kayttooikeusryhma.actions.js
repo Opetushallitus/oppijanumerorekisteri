@@ -14,6 +14,7 @@ import {
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
     ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
 } from './actiontypes';
+import {fetchOrganisations} from "./organisaatio.actions";
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
 const receiveAllKayttooikeusryhmasForHenkilo = (henkiloOid, kayttooikeus) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
@@ -23,7 +24,10 @@ export const fetchAllKayttooikeusryhmasForHenkilo = henkiloOid => dispatch => {
     dispatch(requestAllKayttooikeusryhmasForHenkilo(henkiloOid));
     const url = urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid);
     http.get(url)
-        .then(kayttooikeus => {dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus))})
+        .then(kayttooikeus => {
+            dispatch(fetchOrganisations(kayttooikeus.map(kayttooikeus => kayttooikeus.organisaatioOid)))
+                .then(() => dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus)));
+        })
         .catch(() => dispatch(errorAllKayttooikeusryhmasForHenkilo(henkiloOid)));
 };
 
@@ -44,7 +48,10 @@ export const fetchAllKayttooikeusAnomusForHenkilo = henkiloOid => dispatch => {
     dispatch(requestAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid));
     const url = urls.url('kayttooikeus-service.henkilo.anomus-list', henkiloOid, {activeOnly: true});
     http.get(url)
-        .then(kayttooikeusAnomus => {dispatch(receiveAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid, kayttooikeusAnomus))})
+        .then(kayttooikeusAnomus => {
+            dispatch(fetchOrganisations(kayttooikeusAnomus.map(koAnomus => koAnomus.anomus.organisaatioOid)))
+                .then(() => dispatch(receiveAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid, kayttooikeusAnomus)));
+        })
         .catch(() => dispatch(errorAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid)));
 };
 

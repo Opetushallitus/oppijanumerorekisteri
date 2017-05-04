@@ -14,6 +14,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
 
         kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
+        organisaatioCache: React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,}),
     };
 
     constructor(props) {
@@ -48,7 +49,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         return this.props.kayttooikeus.kayttooikeusAnomus
             .map((haettuKayttooikeusRyhma, idx) => ({
                 [headingList[0]]: dateformat(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm), this.L['PVM_FORMAATTI']),
-                [headingList[1]]: haettuKayttooikeusRyhma.anomus.organisaatioOid,
+                [headingList[1]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale],
                 [headingList[2]]: haettuKayttooikeusRyhma.kayttoOikeusRyhma.description.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[3]]: <input className="oph-input" defaultValue={dateformat(this.dates[idx].alkupvm, this.L['PVM_FORMAATTI'])}

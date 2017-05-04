@@ -9,6 +9,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
         kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
+        organisaatioCache: React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,}),
     };
     constructor(props) {
         super(props);
@@ -44,7 +45,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map((uusittavaKayttooikeusRyhma, idx) => ({
-                [headingList[0]]: uusittavaKayttooikeusRyhma.organisaatioOid,
+                [headingList[0]]: this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid].nimi[this.props.locale],
                 [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
