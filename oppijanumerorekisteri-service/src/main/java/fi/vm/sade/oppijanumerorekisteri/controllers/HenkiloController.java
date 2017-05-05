@@ -70,6 +70,10 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
+            notes = "Hakutermillä haetaan henkilön nimen, henkilötunnuksen ja OID:n mukaan."
+                    + " Jos henkilöitä löytyy useita, palautetaan niistä nimen mukaan ensimmäinen."
+                    + " Tämä on ensisijaisesti tehty suoritusrekisterin käyttöliittymälle.")
     public HenkiloHakuDto getByHakutermi(
             @PathVariable String hakutermi,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
