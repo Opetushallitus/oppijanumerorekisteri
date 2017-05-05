@@ -33,7 +33,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: this.L[kayttooikeus.tila],
                 [headingList[3]]: dateformat(new Date(kayttooikeus.voimassaPvm), this.L['PVM_FORMAATTI']),
-                [headingList[4]]: dateformat(kayttooikeus.kasitelty, this.L['PVM_FORMAATTI']) + '/' + kayttooikeus.kasittelijaOid,
+                [headingList[4]]: dateformat(kayttooikeus.kasitelty, this.L['PVM_FORMAATTI']) + ' / ' + kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid,
             }));
     };
 

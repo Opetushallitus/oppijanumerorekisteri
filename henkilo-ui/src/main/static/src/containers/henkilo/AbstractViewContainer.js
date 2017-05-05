@@ -333,7 +333,7 @@ class AbstractViewContainer extends React.Component {
 
         return (<PopupButton popupStyle={popupStyle}
                              popupTitle={this.createHakatunnistePopupTitle()}
-                             popupContent={this._createHakatunnistePopupContent(this.props.oid)}>{this.L['LISAA_HAKA_LINKKI']}</PopupButton>);
+                             popupContent={this._createHakatunnistePopupContent(this.props.oidHenkilo)}>{this.L['LISAA_HAKA_LINKKI']}</PopupButton>);
     };
 
     createPasswordButton() {

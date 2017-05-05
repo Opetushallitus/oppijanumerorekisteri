@@ -40,7 +40,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
                 dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
                 dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
-                this.props.oid);
+                this.props.oidHenkilo);
         };
     };
 

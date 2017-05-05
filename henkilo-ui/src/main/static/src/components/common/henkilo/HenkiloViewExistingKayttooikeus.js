@@ -31,11 +31,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 loppupvm: StaticUtils.datePlusOneYear(Date.now())
             }));
 
-        this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
-            this.props.updateHaettuKayttooikeusryhma(id, tila,
-                dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
-                dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
-                this.props.oid);
+        this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
+            console.log();
+            this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
+                id,
+                kayttooikeudenTila,
+                alkupvm: dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
+                loppupvm: dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
+            }]);
         };
 
         this.createRows(headingList.map(heading => heading.key));
@@ -50,8 +53,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
                 [headingList[3]]: dateformat(new Date(uusittavaKayttooikeusRyhma.voimassaPvm), this.L['PVM_FORMAATTI']),
-                [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + '/'
-                + uusittavaKayttooikeusRyhma.kasittelijaOid,
+                [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + ' / '
+                + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
                 [headingList[5]]: <div>
                     <div style={{display: 'table-cell', paddingRight: '10px'}}>
                         <input className="oph-input" defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
@@ -60,7 +63,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     </div>
                     <div style={{display: 'table-cell'}}>
                         {this.props.myonnaButton(() => {
-                            this.updateHaettuKayttooikeusryhma(uusittavaKayttooikeusRyhma.id, 'MYONNETTY', idx)
+                            this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
+                                uusittavaKayttooikeusRyhma.organisaatioOid);
                         })}
                     </div>
                 </div>,
