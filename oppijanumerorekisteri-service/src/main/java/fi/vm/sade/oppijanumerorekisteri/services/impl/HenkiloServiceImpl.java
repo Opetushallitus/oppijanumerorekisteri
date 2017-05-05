@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
+import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -19,6 +20,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
@@ -136,6 +138,36 @@ public class HenkiloServiceImpl implements HenkiloService {
         return mapper.map(henkiloJpaRepository.findWithYhteystiedotBy(henkiloCriteria),
                 new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
                 new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloHakuDto getByHakutermi(String hakutermi, ExternalPermissionService externalPermissionService) {
+        OppijaCriteria criteria = OppijaCriteria.builder()
+                .passivoitu(false).duplikaatti(false)
+                .hakutermi(hakutermi).build();
+        List<HenkiloHakuDto> henkilot = henkiloJpaRepository.findBy(criteria, 1, 0);
+
+        if (henkilot.isEmpty() || henkilot.size() > 1) {
+            throw new NotFoundException("Henkilöä ei löytynyt hakuehdoilla");
+        }
+        HenkiloHakuDto henkilo = henkilot.get(0);
+        if (!isAllowedToAccessPerson(henkilo.getOidHenkilo(), externalPermissionService)) {
+            throw new NotFoundException("Henkilöä ei löytynyt hakuehdoilla");
+        }
+
+        return henkilo;
+    }
+
+    private boolean isAllowedToAccessPerson(String henkiloOid, ExternalPermissionService externalPermissionService) {
+        try {
+            List<String> sallitutRoolit = Stream
+                    .of("READ", "READ_UPDATE", "CRUD", "KKVASTUU", "OPHREKISTERI")
+                    .collect(toList());
+            return permissionChecker.isAllowedToAccessPerson(henkiloOid, sallitutRoolit, externalPermissionService);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private KayttooikeudetDto getKayttooikeudet(HenkiloHakuCriteria criteria) {
