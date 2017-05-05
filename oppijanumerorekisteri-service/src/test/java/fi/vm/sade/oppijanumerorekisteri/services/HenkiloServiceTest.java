@@ -279,10 +279,11 @@ public class HenkiloServiceTest {
 
     @Test
     public void getHenkiloPerustietoByOidsTest() {
+        Date modified = new Date();
         HenkiloPerustietoDto henkiloMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, modified);
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, modified);
         given(this.henkiloJpaRepositoryMock.findByOidIn(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloMock));
 
