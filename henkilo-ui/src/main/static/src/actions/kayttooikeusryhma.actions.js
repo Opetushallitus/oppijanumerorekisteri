@@ -109,6 +109,9 @@ export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) =
     dispatch(requestAddKayttooikeusToHenkilo());
     const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
     http.put(url, payload)
-        .then(() => dispatch(receiveAddKayttooikeusToHenkilo()))
+        .then(() => {
+            dispatch(receiveAddKayttooikeusToHenkilo());
+            dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+        })
         .catch(() => dispatch(errorAddKayttooikeusToHenkilo()));
 };

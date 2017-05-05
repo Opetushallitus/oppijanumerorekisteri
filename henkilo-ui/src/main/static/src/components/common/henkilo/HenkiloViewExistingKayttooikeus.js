@@ -15,14 +15,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        const headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'},
+        this.headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA'},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'},
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', maxWidth: 120},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', maxWidth: 120},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 150},
             {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA'},
         ];
-        this.tableHeadings = headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
+        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
         this.dates = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
@@ -41,7 +41,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             }]);
         };
 
-        this.createRows(headingList.map(heading => heading.key));
+        this.createRows(this.headingList.map(heading => heading.key));
     };
 
     createRows(headingList) {

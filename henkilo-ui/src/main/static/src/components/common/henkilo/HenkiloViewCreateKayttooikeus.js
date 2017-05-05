@@ -18,13 +18,19 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        this.defaultKayttooikeusModel = () => ({
+        this.initialKayttooikeusModel = () => ({
             kayttokohdeOrganisationOid: '',
             myonnettavatOikeudet: [],
             alkupvm: new Date(),
             loppupvm: StaticUtils.datePlusOneYear(new Date()),
         });
-        this.kayttooikeusModel = this.defaultKayttooikeusModel();
+        this.initialState = {
+            selectedList: [],
+            validationMessages: [{id: 'organisation', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'},
+                {id: 'kayttooikeus', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'}],
+            kayttooikeusData: [],
+        };
+        this.kayttooikeusModel = this.initialKayttooikeusModel();
         this.KO_TEMP_INITIALDATA = [{value: 'id', label: 'text'}, {value: 'id2', label: 'text2'}];
 
         this.organisationAction = (value) => {
@@ -77,17 +83,13 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                     loppupvm: dateformat(this.kayttooikeusModel.loppupvm, this.L['PVM_DBFORMAATTI']),
                 })));
             // clear
-            this.kayttooikeusModel = this.defaultKayttooikeusModel();
+            this.kayttooikeusModel = this.initialKayttooikeusModel();
+            this.setState(this.initialState);
             // Scroll
             scrollToComponent(this.props.existingKayttooikeusRef);
         };
 
-        this.state = {
-            selectedList: [],
-            validationMessages: [{id: 'organisation', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'},
-                {id: 'kayttooikeus', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'}],
-            kayttooikeusData: [],
-        };
+        this.state = this.initialState;
     };
 
     render() {
