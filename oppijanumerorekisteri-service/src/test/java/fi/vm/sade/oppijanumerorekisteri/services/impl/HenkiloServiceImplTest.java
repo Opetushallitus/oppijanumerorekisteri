@@ -1,8 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
@@ -11,12 +13,15 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import java.io.IOException;
+import java.util.Arrays;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,6 +84,57 @@ public class HenkiloServiceImplTest {
                 userDetailsHelper, kielisyysRepository, kansalaisuusRepository,
                 permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties,
                 kayttooikeusClient);
+    }
+
+    @Test
+    public void getShouldReturnThrowWhenNoHenkilo() {
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+                .thenReturn(emptyList());
+
+        Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
+
+        assertThat(throwable).isInstanceOf(NotFoundException.class);
+        verifyZeroInteractions(permissionChecker);
+    }
+
+    @Test
+    public void getShouldThrowWhenMultipleHenkilo() {
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+                .thenReturn(Arrays.asList(
+                        HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build(),
+                        HenkiloHakuDto.builder().oidHenkilo("5.6.7.8").build()
+                ));
+
+        Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
+
+        assertThat(throwable).isInstanceOf(NotFoundException.class);
+        verifyZeroInteractions(permissionChecker);
+    }
+
+    @Test
+    public void getShouldReturnHenkiloWhenPermissionGranted() throws IOException {
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+                .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
+        when(permissionChecker.isAllowedToAccessPerson(any(), any(), any()))
+                .thenReturn(true);
+
+        HenkiloHakuDto henkilo = impl.getByHakutermi("haku1", ExternalPermissionService.SURE);
+
+        assertThat(henkilo.getOidHenkilo()).isEqualTo("1.2.3.4");
+        verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), any(), eq(ExternalPermissionService.SURE));
+    }
+
+    @Test
+    public void getShouldThrowWhenPermissionDenied() throws IOException {
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+                .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
+        when(permissionChecker.isAllowedToAccessPerson(any(), any(), any()))
+                .thenReturn(false);
+
+        Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
+
+        assertThat(throwable).isInstanceOf(NotFoundException.class);
+        verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), any(), eq(ExternalPermissionService.SURE));
     }
 
     @Test

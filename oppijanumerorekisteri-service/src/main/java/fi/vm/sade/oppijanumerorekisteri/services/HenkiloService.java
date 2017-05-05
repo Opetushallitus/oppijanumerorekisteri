@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -18,6 +19,8 @@ public interface HenkiloService {
     Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
 
     Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria);
+
+    HenkiloHakuDto getByHakutermi(String hakutermi, ExternalPermissionService externalPermissionService);
 
     Boolean getHasHetu();
 
