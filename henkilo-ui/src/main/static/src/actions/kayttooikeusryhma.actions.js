@@ -65,6 +65,7 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
         .then(() => {
             dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
             dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo));
+            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
 };
 
