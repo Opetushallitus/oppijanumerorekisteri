@@ -7,6 +7,9 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS, FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
     UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST, UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS,
     UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE,
+    FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST,
+    FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
+    FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE,
 } from './actiontypes';
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
@@ -55,3 +58,21 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
         }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
 };
 
+
+
+//KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
+const requestOrganisaatioKayttooikeusryhmat = (organisaatioOid) => ({type: FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST, organisaatioOid});
+const requestOrganisaatioKayttooikeusryhmatSuccess = (kayttooikeusryhmat) => ({type: FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS, kayttooikeusryhmat});
+const requestOrganisaatioKayttooikeusryhmatFailure = (error) => ({type: FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE, error});
+export const fetchOrganisaatioKayttooikeusryhmat = organisaatioOid => async dispatch => {
+    dispatch(requestOrganisaatioKayttooikeusryhmat(organisaatioOid));
+    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.organisaatio', organisaatioOid);
+    try {
+        const kayttooikeusryhmat = await http.get(url, organisaatioOid);
+        dispatch(requestOrganisaatioKayttooikeusryhmatSuccess(kayttooikeusryhmat));
+    } catch (error) {
+        console.error(error);
+        dispatch(requestOrganisaatioKayttooikeusryhmatFailure(error));
+        throw error;
+    }
+};

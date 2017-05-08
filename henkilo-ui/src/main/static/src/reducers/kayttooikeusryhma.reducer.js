@@ -4,7 +4,8 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS
 } from "../actions/actiontypes";
 
-export const kayttooikeus = (state={kayttooikeusLoading: true, kayttooikeus: [], kayttooikeusAnomusLoading: true, kayttooikeusAnomus: []},
+export const kayttooikeus = ( state = { kayttooikeusLoading: true, kayttooikeus: [],
+                                        kayttooikeusAnomusLoading: true, kayttooikeusAnomus: []},
                              action) => {
     switch(action.type) {
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS:

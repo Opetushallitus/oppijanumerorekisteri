@@ -10,6 +10,8 @@ import {
 import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
+import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
+import { fetchOrganisaatioKayttooikeusryhmat } from '../../actions/kayttooikeusryhma.actions';
 
 class OmattiedotPageContainer extends AbstractViewContainer {
 
@@ -18,6 +20,8 @@ class OmattiedotPageContainer extends AbstractViewContainer {
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
+        this.props.fetchAllOrganisaatios();
+        this.props.fetchAllRyhmas();
         await this.props.fetchOmattiedot();
         const userOid = this.props.omattiedot.data.oid;
         this.props.fetchHenkilo(userOid);
@@ -31,7 +35,6 @@ class OmattiedotPageContainer extends AbstractViewContainer {
         return <OmattiedotPage {...this.props} />;
     }
 
-
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -42,11 +45,14 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
         locale: state.locale,
-        kayttooikeus: state.kayttooikeus
+        kayttooikeus: state.kayttooikeus,
+        organisaatios: state.organisaatioState,
+        ryhmas: state.ryhmatState,
+        organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat
     };
 };
 
 export default connect(mapStateToProps, {fetchOmattiedot, fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
     yksiloiHenkilo, updateAndRefetchKayttajatieto, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma})(OmattiedotPageContainer)
+    updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat})(OmattiedotPageContainer)

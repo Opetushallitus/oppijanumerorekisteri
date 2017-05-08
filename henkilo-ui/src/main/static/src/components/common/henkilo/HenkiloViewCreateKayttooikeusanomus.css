@@ -1,0 +1,17 @@
+.kayttooikeus-anomus-wrapper {
+    max-width: 1000px;
+}
+
+.oph-label-long {
+    width: 400px;
+}
+
+.oph-input.datefield {
+    width: 200px;
+}
+
+.datefield-wrapper {
+    width: 200px;
+    display: inline-block;
+    margin-right: 20px;
+}

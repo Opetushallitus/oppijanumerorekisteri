@@ -2,12 +2,13 @@ import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import dateformat from 'dateformat'
+import R from 'ramda';
 import AbstractViewContainer from '../../containers/henkilo/AbstractViewContainer';
 import Button from "../common/button/Button";
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
-
+import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -21,16 +22,16 @@ export default class OmattiedotPage extends React.Component {
     }
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         const isUserContentLoading = this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading
             || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
             || this.props.koodisto.kansalaisuusKoodistoLoading;
         const isContactContentLoading = this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
+        const createKayttooikeusanomusLoading = this.props.organisaatios.organisaatioLoading || this.props.ryhmas.ryhmasLoading || this.props.henkilo.henkiloLoading;
         return (
             <div>
                 <div className="wrapper">
                     {
-                        isUserContentLoading ? L['LADATAAN'] :
+                        isUserContentLoading ? AbstractViewContainer.createLoader() :
                             <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale}
                                                     showPassive={false}
                                                     basicInfo={this._createBasicInfo.bind(this)}
@@ -42,7 +43,7 @@ export default class OmattiedotPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        isContactContentLoading ? L['LADATAAN'] :
+                        isContactContentLoading ? AbstractViewContainer.createLoader() :
                             <HenkiloViewContactContent {...this.props}
                                                        creatableYhteystietotyypit={this._creatableYhteystietotyypit.bind(this)}
                                                        readOnly={true}
@@ -73,6 +74,15 @@ export default class OmattiedotPage extends React.Component {
                     }
                 </div>
                 <div className="wrapper">
+                    {
+                        createKayttooikeusanomusLoading ?
+                            AbstractViewContainer.createLoader() :
+                            <HenkiloViewCreateKayttooikeusanomus {...this.props}
+                                organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
+                                ryhmaOptions={this._parseRyhmaOptions.call(this)}
+                                kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}></HenkiloViewCreateKayttooikeusanomus>
+                    }
+
                 </div>
 
             </div>
@@ -165,6 +175,40 @@ export default class OmattiedotPage extends React.Component {
                 password: true
             },
         ];
+    }
+
+    _parseOrganisaatioOptions() {
+        if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
+            return this.props.organisaatios.organisaatiot.organisaatiot
+                .map(organisaatio => {
+                    return {
+                        label: organisaatio.nimi[this.props.locale] ? organisaatio.nimi[this.props.locale] :
+                            organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '',
+                        value: organisaatio.oid
+                    };
+                });
+        }
+        return [];
+    }
+
+    _parseKayttooikeusryhmaOptions() {
+        console.log(this.props.organisaatioKayttooikeusryhmat);
+        return this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat.map( kayttooikeusryhma => {
+
+            const label = R.find(R.propEq('lang', this.props.locale.toUpperCase()))(kayttooikeusryhma.description.texts);
+            return {
+                value: kayttooikeusryhma.id,
+                label: label.text
+            };
+        });
+    }
+
+    _parseRyhmaOptions() {
+        return this.props.ryhmas ?
+            this.props.ryhmas.ryhmas.map(ryhma => ({
+                label: ryhma.nimi[this.props.locale],
+                value: ryhma.oid
+            })) : [];
     }
 
     _readOnlyButtons(edit) {

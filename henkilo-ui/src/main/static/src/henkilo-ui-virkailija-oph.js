@@ -25,6 +25,7 @@ export default {
     "kayttooikeus-service.omattiedot.oid": "kayttooikeus-service/omattiedot/oid",
     "kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio": "kayttooikeus-service/kayttooikeusryhma/$1/$2",
     "kayttooikeus-service.kayttooikeusryhma.henkilo.oid": "kayttooikeus-service/kayttooikeusryhma/henkilo/$1",
+    "kayttooikeus-service.kayttooikeusryhma.organisaatio": "kayttooikeus-service/kayttooikeusryhma/organisaatio/$1",
     "kayttooikeus-service.virkailija-ui.basePath": "kayttooikeus-service/virkailija",
     "kayttooikeus-service.prequel": "kayttooikeus-service/cas/prequel",
 
@@ -36,7 +37,9 @@ export default {
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
 
     "organisaatio-service.baseUrl": "/",
+    "organisaatio-service.organisaatiot": "organisaatio-service/rest/organisaatio/v2/hae?aktiiviset=$1&suunnitellut=$2&lakkautetut=$3",
     "organisaatio-service.organisaatio.ByOid": "organisaatio-service/rest/organisaatio/$1",
+    "organisaatio-service.ryhmat": "organisaatio-service/rest/organisaatio/v2/ryhmat",
 
     "koodisto-service.baseUrl": "/",
     "koodisto-service.koodisto.kieli": "koodisto-service/rest/json/kieli/koodi",
