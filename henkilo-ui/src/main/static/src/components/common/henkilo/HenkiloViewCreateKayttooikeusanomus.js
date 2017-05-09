@@ -7,16 +7,16 @@ import dateformat from 'dateformat';
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
     static propTypes = {
-        l10n: React.PropTypes.object.required,
-        locale: React.PropTypes.string.required,
-        omattiedot: React.PropTypes.object.required,
-        organisaatios: React.PropTypes.object.required,
-        ryhmas: React.PropTypes.object.required,
-        henkilo: React.PropTypes.object.required,
-        organisaatioOptions: React.PropTypes.array.required,
-        ryhmaOptions: React.PropTypes.array.required,
-        kayttooikeusryhmaOptions: React.PropTypes.array.required,
-        fetchOrganisaatioKayttooikeusryhma: React.PropTypes.func.required
+        l10n: React.PropTypes.object.isRequired,
+        locale: React.PropTypes.string.isRequired,
+        omattiedot: React.PropTypes.object.isRequired,
+        organisaatios: React.PropTypes.object.isRequired,
+        ryhmas: React.PropTypes.object.isRequired,
+        henkilo: React.PropTypes.object.isRequired,
+        organisaatioOptions: React.PropTypes.array.isRequired,
+        ryhmaOptions: React.PropTypes.array.isRequired,
+        kayttooikeusryhmaOptions: React.PropTypes.array.isRequired,
+        fetchOrganisaatioKayttooikeusryhma: React.PropTypes.func.isRequired
     };
 
     constructor() {

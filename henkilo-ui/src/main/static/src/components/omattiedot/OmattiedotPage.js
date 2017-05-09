@@ -9,6 +9,7 @@ import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExisti
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
+import ConfirmButton from "../common/button/ConfirmButton";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -63,8 +64,8 @@ export default class OmattiedotPage extends React.Component {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
                             ? AbstractViewContainer.createLoader()
                             : <HenkiloViewOpenKayttooikeusanomus {...this.props}
-                                                                 myonnaButton={() => <span></span> }
-                                                                 hylkaaButton={() => <span></span> } />
+                                                                 myonnaButton={this.createMyonnaConfirmButton.bind(this)}
+                                                                 hylkaaButton={this.createHylkaaConfirmButton.bind(this)} />
                     }
 
                 </div>
@@ -184,6 +185,7 @@ export default class OmattiedotPage extends React.Component {
     }
 
     _parseOrganisaatioOptions() {
+        console.log(this.props.organisaatios);
         if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
                 .map(organisaatio => {
@@ -196,6 +198,24 @@ export default class OmattiedotPage extends React.Component {
         }
         return [];
     }
+
+    createMyonnaConfirmButton(myonna) {
+        return <ConfirmButton action={myonna}
+                              confirmLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
+                              normalLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
+                              key="myonna"
+                              errorMessage={this._createPopupErrorMessage('myonna')} />;
+
+    };
+
+    createHylkaaConfirmButton (hylkaa) {
+        return <ConfirmButton action={hylkaa}
+                              cancel
+                              confirmLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_CONFIRM']}
+                              normalLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
+                              key="hylkaa"
+                              errorMessage={this._createPopupErrorMessage('hylkaa')} />;
+    };
 
     _parseKayttooikeusryhmaOptions() {
         return this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat.map( kayttooikeusryhma => {
