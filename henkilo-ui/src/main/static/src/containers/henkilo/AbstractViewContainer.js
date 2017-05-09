@@ -5,14 +5,20 @@ import ConfirmButton from "../../components/common/button/ConfirmButton"
 import PopupButton from "../../components/common/button/PopupButton"
 import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent"
 import OphSelect from '../../components/common/select/OphSelect'
+import OrganisaatioSelection from "../../components/kutsuminen/OrganisaatioSelection";
 
 
 class AbstractViewContainer extends React.Component {
 
     createKayttooikeusFields(...kayttooikeusFields) {
-        return <table style={{width: "100%"}}>
+        return <table>
+            <colgroup>
+                <col span={1} style={{width: "30%"}} />
+                <col span={1} style={{width: "60%"}} />
+                <col span={1} style={{width: "10%"}} />
+            </colgroup>
             <tbody>
-            {kayttooikeusFields.map(kayttooikeusField => kayttooikeusField)}
+            {kayttooikeusFields}
             </tbody>
         </table>
     };
@@ -46,32 +52,37 @@ class AbstractViewContainer extends React.Component {
     * Fields
     * */
 
-    createKayttooikeusKohdeField(organisationSelect, ryhmaSelect) {
-        return <tr>
+    createKayttooikeusKohdeField(organisationData, organisationAction, organisationValue) {
+        return <tr key="kayttokohdeField">
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
             </td>
             <td>
-                <OphSelect value={organisationSelect.organisationValue}
-                           options={organisationSelect.organisationData}
-                           onChange={organisationSelect.organisationAction}
-                           placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
                 <div>
-                    <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
+                    <OrganisaatioSelection L={this.L}
+                                           organisaatios={organisationData}
+                                           selectOrganisaatio={organisationAction}
+                                           selectedOrganisaatioOid={organisationValue}
+                                           locale={this.props.locale} />
                 </div>
 
                 <div>
-                    <OphSelect value={ryhmaSelect.ryhmaValue}
-                               options={ryhmaSelect.ryhmaData}
-                               onChange={ryhmaSelect.ryhmaAction}
-                               placeholder={this.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']} />
+                    <OrganisaatioSelection L={this.L}
+                                           organisaatios={organisationData}
+                                           selectOrganisaatio={organisationAction}
+                                           selectedOrganisaatioOid={organisationValue}
+                                           locale={this.props.locale}
+                                           isRyhma={true} />
                 </div>
+            </td>
+            <td>
+                <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
             </td>
         </tr>;
     };
 
     createKayttooikeusKestoField(alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue) {
-        return <tr>
+        return <tr key="kayttooikeusKestoField">
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
             </td>
@@ -87,51 +98,67 @@ class AbstractViewContainer extends React.Component {
                            onChange={paattyyPvmAction} />
                 </div>
             </td>
+            <td/>
         </tr>;
     };
 
-    createKayttooikeusKayttooikeudetField(kayttooikeusData, filterList, kayttooikeusAction, close) {
-        return <tr>
+    createKayttooikeusKayttooikeudetField(kayttooikeusData, selectedList, kayttooikeusAction, close) {
+        const filteredOptions = kayttooikeusData && kayttooikeusData.filter(kayttooikeus =>
+            selectedList.indexOf(kayttooikeus.ryhmaId) === -1)
+                .map(kayttooikeus => ({
+                    value: kayttooikeus.ryhmaId,
+                    label: kayttooikeus.ryhmaNames.texts.filter(text => text.lang.toLowerCase() === this.props.locale)[0].text,
+                }));
+        return <tr key="kayttooikeusKayttooikeudetField">
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
             <td>
-                <div style={{display: "flex"}}>
-                    <div style={{flex: "1"}}>
-                        <OphSelect //value={kayttooikeusData.kayttooikeusValue}
-                            options={kayttooikeusData.filter(kayttooikeus => filterList.indexOf(kayttooikeus.id) === -1)}
-                            onChange={kayttooikeusAction}
-                            placeholder={this.L['HENKILO_KAYTTOOIKEUS_ORGANISAATIO']} />
-                    </div>
-                    <div style={{flex: "1"}}>
-                        <span>
-                            {filterList.map(selectedId => <div className="oph-alert oph-alert-info">
-                                <div className="oph-alert-container">
-                                    <div className="oph-alert-title">{selectedId}</div>
-                                    <button className="oph-button oph-button-close" type="button" title="Close"
-                                            aria-label="Close" onClick={() => close(selectedId)}>
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                            </div>)}
-                        </span>
+                <div>
+                    <div>
+                        <OphSelect disabled={kayttooikeusData === undefined}
+                                   options={filteredOptions}
+                                   onChange={kayttooikeusAction} />
                     </div>
                 </div>
+                <div>
+                    {
+                        selectedList.map(selected => <div className="oph-alert oph-alert-info">
+                            <div className="oph-alert-container">
+                                <div className="oph-alert-title">{selected.label}</div>
+                                <button className="oph-button oph-button-close"
+                                        type="button"
+                                        title={this.L['POISTA']}
+                                        aria-label="Close" onClick={() => close(selected.value)}>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>)
+                    }
+                </div>
             </td>
+            <td />
         </tr>;
     };
 
     createKayttooikeusHaeButton(haeButtonAction, validationMessages) {
-        return <tr>
+        return <tr key="kayttooikeusHaeButton">
             <td />
             <td>
-                <Button disabled={validationMessages.length > 0} action={haeButtonAction}>
+                <div style={{display: "table-cell"}}>
+                <Button id="hae_ko_button" disabled={validationMessages.length > 0} action={haeButtonAction}>
                     {this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
                 </Button>
-                {validationMessages.map((validationMessage) => <span className="oph-h5">
-                    {this.L[validationMessage.label]}
-                </span>)}
+                </div>
+                <ul style={{display: "table-cell"}}>
+                    {
+                        validationMessages.map((validationMessage, idx) =>
+                            <li key={idx} className="oph-h5">{this.L[validationMessage.label]}</li>
+                        )
+                    }
+                </ul>
             </td>
+            <td/>
         </tr>;
     };
 
@@ -162,11 +189,13 @@ class AbstractViewContainer extends React.Component {
     };
 
     createSukunimiFieldWithAutofocus() {
-        return {label: 'HENKILO_SUKUNIMI', value: this.props.henkilo.henkilo.sukunimi, inputValue: 'sukunimi', autoFocus: true};
+        return {label: 'HENKILO_SUKUNIMI', value: this.props.henkilo.henkilo.sukunimi, inputValue: 'sukunimi',
+            autoFocus: true, disabled: !!this.props.henkilo.henkilo.hetu && this.props.henkilo.henkilo.yksiloityVTJ};
     };
 
     createEtunimetField() {
-        return {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet'};
+        return {label: 'HENKILO_ETUNIMET', value: this.props.henkilo.henkilo.etunimet, inputValue: 'etunimet',
+            disabled: !!this.props.henkilo.henkilo.hetu && this.props.henkilo.henkilo.yksiloityVTJ};
     }
 
     createSyntymaaikaField() {
@@ -175,7 +204,8 @@ class AbstractViewContainer extends React.Component {
     };
 
     createHetuField() {
-        return {label: 'HENKILO_HETU', value: this.props.henkilo.henkilo.hetu, inputValue: 'hetu'};
+        return {label: 'HENKILO_HETU', value: this.props.henkilo.henkilo.hetu, inputValue: 'hetu',
+            disabled: !!this.props.henkilo.henkilo.hetu && this.props.henkilo.henkilo.yksiloityVTJ};
     };
 
     createKutsumanimiField() {
@@ -264,9 +294,11 @@ class AbstractViewContainer extends React.Component {
     };
 
     createYksilointiButton() {
-        return <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
+        return !this.props.henkilo.henkilo.yksiloityVTJ && !this.props.henkilo.henkilo.hetu
+            ? <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
                        normalLabel={this.L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}
-                       errorMessage={this._createPopupErrorMessage('yksiloi')} />;
+                       errorMessage={this._createPopupErrorMessage('yksiloi')} />
+            : null;
     };
 
     createPassivoiButton() {
@@ -301,7 +333,7 @@ class AbstractViewContainer extends React.Component {
 
         return (<PopupButton popupStyle={popupStyle}
                              popupTitle={this.createHakatunnistePopupTitle()}
-                             popupContent={this._createHakatunnistePopupContent(this.props.oid)}>{this.L['LISAA_HAKA_LINKKI']}</PopupButton>);
+                             popupContent={this._createHakatunnistePopupContent(this.props.oidHenkilo)}>{this.L['LISAA_HAKA_LINKKI']}</PopupButton>);
     };
 
     createPasswordButton() {

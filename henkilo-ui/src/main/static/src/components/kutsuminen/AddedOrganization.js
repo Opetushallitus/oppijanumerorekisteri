@@ -14,7 +14,7 @@ import {
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from './OrganisaatioSelection';
-import {getOrganisaatios} from './OrganisaatioUtilities';
+import {getOrganisaatios} from "./OrganisaatioUtilities";
 
 class AddedOrganisation extends React.Component {
 
@@ -31,10 +31,10 @@ class AddedOrganisation extends React.Component {
 
     render() {
         const addedOrg = this.props.addedOrg;
-        const availableOrgs = getOrganisaatios(this.props.orgs, this.props.locale);
         const excludedOrgOids = R.map(R.prop('oid'), this.props.addedOrgs);
         const L = this.props.l10n[this.props.locale];
-        const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, availableOrgs);
+        const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
+        const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, this.props.orgs);
         const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
         const permissionsSelect = {
             options: selectablePermissions.map(permission => ({
@@ -44,7 +44,6 @@ class AddedOrganisation extends React.Component {
             }))
         };
 
-        const selectedOrganisaatioName = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.fullLocalizedName : '';
         return (
             <div className="added-org" key={addedOrg.oid}>
                 <div className="row">
@@ -52,13 +51,12 @@ class AddedOrganisation extends React.Component {
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
 
-                    <OrganisaatioSelection originalOrganisaatios={this.props.orgs}
-                                           organisaatios={orgs}
-                                           selectedOrganisaatioName={selectedOrganisaatioName}
+                    <OrganisaatioSelection organisaatios={orgs}
+                                           selectedOrganisaatioOid={selectedOrganisaatioOid}
                                            locale={this.props.locale}
                                            index={this.props.index}
                                            selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                           L={L}></OrganisaatioSelection>
+                                           L={L} />
                 </div>
 
                 <div className="row permissions-row">

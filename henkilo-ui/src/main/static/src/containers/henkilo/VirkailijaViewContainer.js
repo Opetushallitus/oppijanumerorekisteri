@@ -3,8 +3,7 @@ import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo
+    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo,
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -13,25 +12,27 @@ import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "./AbstractViewContainer";
 import {
+    addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo, updateHaettuKayttooikeusryhma
+    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
+import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
     componentDidMount() {
-        this.props.updateNavigation(virkailijaNavi(this.props.oid), '/henkilo');
+        this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
 
-        this.props.fetchHenkilo(this.props.oid);
-        this.props.fetchHenkiloOrgs(this.props.oid);
+        this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttajatieto(this.props.oid);
+        this.props.fetchKayttajatieto(this.props.oidHenkilo);
         this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oid);
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oid);
-
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloOrganisaatiosForCurrentUser();
     };
 
     render() {
@@ -82,12 +83,13 @@ class VirkailijaViewContainer extends AbstractViewContainer {
 const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
-        oid: ownProps.params['oid'],
+        oidHenkilo: ownProps.params['oid'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
+        organisaatioCache: state.organisaatio.cached,
     };
 };
 
@@ -95,4 +97,5 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma})(VirkailijaViewContainer);
+    updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
+    addKayttooikeusToHenkilo,})(VirkailijaViewContainer);

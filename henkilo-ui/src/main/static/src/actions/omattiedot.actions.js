@@ -18,14 +18,15 @@ export const fetchOmattiedot = () => async dispatch => {
     try {
         const omattiedotResponse = await http.get(url);
         const omattiedot = JSON.parse(omattiedotResponse);
-        return dispatch(receiveOmattiedotSuccess(omattiedot));
+        dispatch(receiveOmattiedotSuccess(omattiedot));
+        return omattiedotResponse;
     } catch( error ) {
         dispatch(receiveOmattiedotFailure(error));
         console.error('Failed fetching omat tiedot', error);
     }
 };
 
-export const fetchKutsuFormData = () => async dispatch => {
+export const fetchHenkiloOrganisaatiosForCurrentUser = () => async dispatch => {
     await dispatch(fetchOmattiedot());
     await dispatch(fetchHenkiloOrganisaatios());
 };

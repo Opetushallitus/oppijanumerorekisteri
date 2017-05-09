@@ -16,9 +16,9 @@ import AbstractViewContainer from "./AbstractViewContainer";
 
 class OppijaViewContainer extends AbstractViewContainer {
     componentDidMount() {
-        this.props.updateNavigation(oppijaNavi(this.props.oid), '/henkilo');
+        this.props.updateNavigation(oppijaNavi(this.props.oidHenkilo), '/henkilo');
 
-        this.props.fetchHenkilo(this.props.oid);
+        this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
@@ -70,7 +70,7 @@ class OppijaViewContainer extends AbstractViewContainer {
 const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
-        oid: ownProps.params['oid'],
+        oidHenkilo: ownProps.params['oid'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,

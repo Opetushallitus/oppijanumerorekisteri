@@ -11,9 +11,9 @@ import {omattiedot} from "./omattiedot.reducer";
 import {kutsuminenOrganisaatios} from './kutsuminen.reducer';
 import { locale } from './locale.reducer';
 import {kayttooikeus} from "./kayttooikeusryhma.reducer";
-import { organisaatioState } from "./organisaatio.reducer";
 import { ryhmatState } from "./ryhmat.reducer";
 import { OrganisaatioKayttooikeusryhmat } from "./organisaatiokayttooikeusryhmat.reducer";
+import {organisaatio} from "./organisaatio.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -28,9 +28,9 @@ const rootReducer = combineReducers({
     kutsuminenOrganisaatios,
     locale,
     kayttooikeus,
-    organisaatioState,
     ryhmatState,
-    OrganisaatioKayttooikeusryhmat
+    OrganisaatioKayttooikeusryhmat,
+    organisaatio,
 });
 
 export default rootReducer;

@@ -4,14 +4,12 @@ import {
     FETCH_SUKUPUOLIKOODISTO_REQUEST, FETCH_SUKUPUOLIKOODISTO_SUCCESS, FETCH_YHTEYSTIETOTYYPITKOODISTO_REQUEST,
     FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS
 } from "../actions/actiontypes";
+import StaticUtils from "../components/common/StaticUtils";
 
 const mapKoodistoValuesByLocale = (koodisto) => koodisto.map(koodi =>
     ({value: koodi.koodiArvo.toLowerCase(),
         ...koodi.metadata.map(kieliKoodi =>
-            ({[kieliKoodi.kieli.toLowerCase()]: kieliKoodi.nimi})).reduce((a,b) => {
-            a[Object.keys(b)[0]] = b[Object.keys(b)[0]];
-            return a
-        }, {})
+            ({[kieliKoodi.kieli.toLowerCase()]: kieliKoodi.nimi})).reduce(StaticUtils.reduceListToObject, {})
     })
 );
 

@@ -3,6 +3,7 @@ import React from 'react'
 import Columns from 'react-columns'
 import dateformat from 'dateformat'
 import Field from '../field/Field';
+import StaticUtils from "../StaticUtils";
 
 const HenkiloViewUserContent = React.createClass({
     propTypes: {
@@ -62,7 +63,9 @@ const HenkiloViewUserContent = React.createClass({
                                                     <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
                                                         <span className="oph-bold">{L[values.label]}</span>
                                                         <Field {...values}
-                                                               changeAction={!values.date ? this._updateModelField : this._updateDateField}
+                                                               changeAction={!values.date
+                                                                   ? this._updateModelField
+                                                                   : this._updateDateField}
                                                                readOnly={values.readOnly || this.state.readOnly}>
                                                             {values.value}
                                                         </Field>
@@ -109,28 +112,15 @@ const HenkiloViewUserContent = React.createClass({
     _updateModelField: function (event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
-        this._updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
+        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
     },
     _updateDateField: function(event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
-        this._updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath,
-            dateformat(new Date(value), this.props.l10n['PVM_DBFORMAATTI']));
+        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath,
+            dateformat(StaticUtils.ddmmyyyyToDate(value), this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']));
     },
-    _updateFieldByDotAnnotation: function(obj, path, value) {
-        let schema = obj;  // a moving reference to internal objects within obj
-        const pList = path.split('.');
-        const len = pList.length;
-        for(let i = 0; i < len-1; i++) {
-            let elem = pList[i];
-            if( !schema[elem] ) {
-                schema[elem] = {};
-            }
-            schema = schema[elem];
-        }
 
-        schema[pList[len-1]] = value;
-    }
 });
 
 export default HenkiloViewUserContent;

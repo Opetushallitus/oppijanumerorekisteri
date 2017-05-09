@@ -4,7 +4,7 @@ import React from 'react';
 import R from 'ramda';
 import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import Button from '../components/common/button/Button';
-import { fetchKutsuFormData } from '../actions/omattiedot.actions';
+import { fetchHenkiloOrganisaatiosForCurrentUser } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
 import { browserHistory } from 'react-router';
 import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
@@ -25,7 +25,7 @@ class KutsuFormPage extends React.Component  {
     }
 
     componentDidMount() {
-        this.props.fetchKutsuFormData();
+        this.props.fetchHenkiloOrganisaatiosForCurrentUser();
     }
 
     render() {
@@ -97,7 +97,7 @@ class KutsuFormPage extends React.Component  {
     }
 
     isValidEmail(email) {
-        return email != null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
+        return email !== null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
     }
 
     isAddToOrganizationsNotificationShown() {
@@ -121,7 +121,7 @@ class KutsuFormPage extends React.Component  {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchKutsuFormData: () => dispatch(fetchKutsuFormData()),
+        fetchHenkiloOrganisaatiosForCurrentUser: () => dispatch(fetchHenkiloOrganisaatiosForCurrentUser()),
         kutsuAddOrganisaatio: (organisaatio) => dispatch(kutsuAddOrganisaatio(organisaatio))
     }
 };

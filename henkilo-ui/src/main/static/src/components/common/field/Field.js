@@ -9,7 +9,8 @@ class Field extends React.Component {
         changeAction: React.PropTypes.func,
         inputValue: React.PropTypes.string,
         selectValue: React.PropTypes.string,
-        password: React.PropTypes.bool
+        password: React.PropTypes.bool,
+        disabled: React.PropTypes.bool,
     };
 
     constructor() {
@@ -33,9 +34,15 @@ class Field extends React.Component {
                                  name={this.props.inputValue}
                                  onChange={this.props.changeAction}
                                  value={this.props.selectValue}
-                                 placeholder="" />
-                    : <input className={className} name={this.props.inputValue} onChange={this.props.changeAction}
-                         defaultValue={this.props.children} {...type} autoFocus={autoFocus} />
+                                 placeholder=""
+                                 disabled={this.props.disabled} />
+                    : <input className={className}
+                             name={this.props.inputValue}
+                             onChange={this.props.changeAction}
+                             defaultValue={this.props.children}
+                             {...type}
+                             autoFocus={autoFocus}
+                             disabled={this.props.disabled} />
         )
     }
 }

@@ -21,14 +21,15 @@ const HenkiloViewOrganisationContent = React.createClass({
             readOnly: this.props.readOnly,
             showPassive: false,
             organisationInfo: organisations.map(organisation =>
-                ({name: organisation.nimi[this.props.locale], typesFlat: organisation.tyypit && organisation.tyypit.reduce((type1, type2) => type1.concat(', ', type2)),
-                    role: organisation.tehtavanimike, passive: organisation.passivoitu,
-                    id: organisation.oid
+                ({name: organisation.nimi[this.props.locale],
+                    typesFlat: organisation.tyypit && organisation.tyypit.reduce((type1, type2) => type1.concat(', ', type2)),
+                    role: organisation.tehtavanimike,
+                    passive: organisation.passivoitu,
+                    id: organisation.oid,
                 })),
         }
     },
     render: function() {
-        
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>
