@@ -97,7 +97,7 @@ class KutsuFormPage extends React.Component  {
     }
 
     isValidEmail(email) {
-        return email != null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
+        return email !== null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
     }
 
     isAddToOrganizationsNotificationShown() {
@@ -121,7 +121,7 @@ class KutsuFormPage extends React.Component  {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchKutsuFormData: () => dispatch(fetchHenkiloOrganisaatiosForCurrentUser()),
+        fetchHenkiloOrganisaatiosForCurrentUser: () => dispatch(fetchHenkiloOrganisaatiosForCurrentUser()),
         kutsuAddOrganisaatio: (organisaatio) => dispatch(kutsuAddOrganisaatio(organisaatio))
     }
 };
