@@ -52,7 +52,7 @@ const receiveKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIE
 export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
     dispatch(requestKayttajatietoUpdate(username));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.post(url, {username: username})
+    http.put(url, {username: username})
         .then(kayttajatieto => {
             dispatch(receiveKayttajatietoUpdate(kayttajatieto));
             dispatch(fetchKayttajatieto(oid));

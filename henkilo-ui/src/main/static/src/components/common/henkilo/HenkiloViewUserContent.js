@@ -51,7 +51,6 @@ const HenkiloViewUserContent = React.createClass({
                         <div className="header">
                             <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>
                         </div>
-
                         <Columns columns={3} gap="10px">
                             {
                                 this.state.editData.map((info, idx) =>
@@ -104,7 +103,7 @@ const HenkiloViewUserContent = React.createClass({
             this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
             this.henkiloUpdate.password = this.henkiloUpdate.passwordAgain = null;
         }
-        if(this.props.henkilo.kayttajatieto.username === undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
+        if(this.props.henkilo.kayttajatieto.username !== undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});

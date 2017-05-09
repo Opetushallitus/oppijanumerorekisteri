@@ -3,7 +3,8 @@ import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE,
-    FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS, FETCH_HENKILO_ORGANISAATIOS_FAILURE
+    FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS, FETCH_HENKILO_ORGANISAATIOS_FAILURE,
+    UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE
 } from "../actions/actiontypes";
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
@@ -25,6 +26,11 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
         case FETCH_KAYTTAJATIETO_SUCCESS:
         case FETCH_KAYTTAJATIETO_FAILURE:
             return Object.assign({}, state, {kayttajatietoLoading: false, kayttajatieto: action.kayttajatieto});
+        case UPDATE_KAYTTAJATIETO_REQUEST:
+            return Object.assign({}, state, {kayttajatietoLoading: true});
+        case UPDATE_KAYTTAJATIETO_SUCCESS:
+        case UPDATE_KAYTTAJATIETO_FAILURE:
+            return Object.assign({}, state, {kayttatietoLoading: false, kayttajatieto: action.kayttajatieto});
         case FETCH_HENKILOORGS_REQUEST:
             return Object.assign({}, state, {henkiloOrgsLoading: true});
         case FETCH_HENKILOORGS_SUCCESS:

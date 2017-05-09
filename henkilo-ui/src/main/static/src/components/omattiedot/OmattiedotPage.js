@@ -62,7 +62,9 @@ export default class OmattiedotPage extends React.Component {
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
                             ? AbstractViewContainer.createLoader()
-                            : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
+                            : <HenkiloViewOpenKayttooikeusanomus {...this.props}
+                                                                 myonnaButton={() => <span></span> }
+                                                                 hylkaaButton={() => <span></span> } />
                     }
 
                 </div>
@@ -166,14 +168,18 @@ export default class OmattiedotPage extends React.Component {
                 value: this.props.henkilo.kayttajatieto.username,
                 inputValue: 'kayttajanimi'
             },
-            {label: 'HENKILO_PASSWORD', value: null, showOnlyOnWrite: false, inputValue: 'password', password: true},
+            {
+                label: 'HENKILO_PASSWORD',
+                value: null,
+                showOnlyOnWrite: false,
+                inputValue: 'password', password: true},
             {
                 label: 'HENKILO_PASSWORDAGAIN',
                 value: null,
                 showOnlyOnWrite: true,
                 inputValue: 'passwordAgain',
                 password: true
-            },
+            }
         ];
     }
 
@@ -192,7 +198,6 @@ export default class OmattiedotPage extends React.Component {
     }
 
     _parseKayttooikeusryhmaOptions() {
-        console.log(this.props.organisaatioKayttooikeusryhmat);
         return this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat.map( kayttooikeusryhma => {
 
             const label = R.find(R.propEq('lang', this.props.locale.toUpperCase()))(kayttooikeusryhma.description.texts);
