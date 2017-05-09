@@ -9,7 +9,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
-        henkilo: React.PropTypes.shape({henkiloOrgs: React.PropTypes.array.isRequired,}),
+        henkilo: React.PropTypes.shape({henkiloOrganisaatios: React.PropTypes.array.isRequired,}),
         kayttooikeus: React.PropTypes.shape({allowedKayttooikeus: React.PropTypes.object}),
         existingKayttooikeusRef: React.PropTypes.object.isRequired,
     };

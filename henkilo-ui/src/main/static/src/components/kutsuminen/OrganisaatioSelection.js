@@ -20,7 +20,7 @@ export default class OrganisaatioSelection extends React.Component {
         selectOrganisaatio: React.PropTypes.func,
         locale: React.PropTypes.string.isRequired,
         selectedOrganisaatioOid: React.PropTypes.string,
-        isRyhma: React.PropTypes.boolean,
+        isRyhma: React.PropTypes.bool,
     };
 
     constructor(props) {

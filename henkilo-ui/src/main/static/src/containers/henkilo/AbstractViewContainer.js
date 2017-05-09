@@ -53,7 +53,7 @@ class AbstractViewContainer extends React.Component {
     * */
 
     createKayttooikeusKohdeField(organisationData, organisationAction, organisationValue) {
-        return <tr>
+        return <tr key="kayttokohdeField">
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
             </td>
@@ -82,7 +82,7 @@ class AbstractViewContainer extends React.Component {
     };
 
     createKayttooikeusKestoField(alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue) {
-        return <tr>
+        return <tr key="kayttooikeusKestoField">
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
             </td>
@@ -109,7 +109,7 @@ class AbstractViewContainer extends React.Component {
                     value: kayttooikeus.ryhmaId,
                     label: kayttooikeus.ryhmaNames.texts.filter(text => text.lang.toLowerCase() === this.props.locale)[0].text,
                 }));
-        return <tr>
+        return <tr key="kayttooikeusKayttooikeudetField">
             <td>
                 <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
@@ -142,7 +142,7 @@ class AbstractViewContainer extends React.Component {
     };
 
     createKayttooikeusHaeButton(haeButtonAction, validationMessages) {
-        return <tr>
+        return <tr key="kayttooikeusHaeButton">
             <td />
             <td>
                 <div style={{display: "table-cell"}}>
@@ -152,8 +152,8 @@ class AbstractViewContainer extends React.Component {
                 </div>
                 <ul style={{display: "table-cell"}}>
                     {
-                        validationMessages.map((validationMessage) =>
-                            <li className="oph-h5">{this.L[validationMessage.label]}</li>
+                        validationMessages.map((validationMessage, idx) =>
+                            <li key={idx} className="oph-h5">{this.L[validationMessage.label]}</li>
                         )
                     }
                 </ul>

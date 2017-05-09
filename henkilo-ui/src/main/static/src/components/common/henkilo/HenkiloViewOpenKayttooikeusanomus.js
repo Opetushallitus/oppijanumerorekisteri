@@ -14,7 +14,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
 
         kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
-        organisaatioCache: React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,}),
+        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
     };
 
     constructor(props) {

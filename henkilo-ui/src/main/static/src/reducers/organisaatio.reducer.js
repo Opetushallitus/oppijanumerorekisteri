@@ -1,5 +1,6 @@
 import {FETCH_ORGANISATIONS_SUCCESS, FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS, FETCH_ALL_ORGANISAATIOS_FAILURE } from '../actions/actiontypes';
 
+import StaticUtils from '../components/common/StaticUtils'
 
 export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: [], cached: {}}, action) => {
     switch(action.type) {

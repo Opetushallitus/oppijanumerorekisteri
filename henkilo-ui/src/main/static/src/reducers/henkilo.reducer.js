@@ -12,7 +12,8 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
 };
 
 export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
-                            henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: []}, action) => {
+    henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
+    henkiloOrganisaatios: []}, action) => {
 
     switch (action.type) {
         case FETCH_HENKILO_REQUEST:

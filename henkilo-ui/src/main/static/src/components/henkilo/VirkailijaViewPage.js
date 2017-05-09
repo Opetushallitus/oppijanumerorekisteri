@@ -8,8 +8,13 @@ import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpired
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewCreateKayttooikeus from "../common/henkilo/HenkiloViewCreateKayttooikeus";
 
-const VirkailijaViewPage = React.createClass({
-    render: function() {
+class VirkailijaViewPage extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.existingKayttooikeusRef = {};
+    }
+    render() {
         return (
             <div>
                 <div className="wrapper">
@@ -63,7 +68,7 @@ const VirkailijaViewPage = React.createClass({
                 </div>
             </div>
         )
-    },
-});
+    }
+}
 
 export default VirkailijaViewPage;

@@ -7,7 +7,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
     static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
-        organisaatioCache: React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,}),
+        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
     };
     constructor(props) {
         super(props);
