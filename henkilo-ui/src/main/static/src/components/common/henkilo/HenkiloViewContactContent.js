@@ -6,8 +6,8 @@ import Button from "../button/Button";
 import OphSelect from '../select/OphSelect'
 import StaticUtils from "../StaticUtils";
 
-const HenkiloViewContactContent = React.createClass({
-    propTypes: {
+class HenkiloViewContactContent extends React.Component{
+    static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         henkilo: React.PropTypes.shape({henkilo: React.PropTypes.object.isRequired,}).isRequired,
         readOnly: React.PropTypes.bool.isRequired,
@@ -16,8 +16,11 @@ const HenkiloViewContactContent = React.createClass({
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
         editButtons: React.PropTypes.func.isRequired,
         creatableYhteystietotyypit: React.PropTypes.func.isRequired,
-    },
-    getInitialState: function() {
+    };
+
+    constructor(props) {
+        super(props);
+
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.contactInfoTemplate = [
             {label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null},
@@ -28,13 +31,14 @@ const HenkiloViewContactContent = React.createClass({
             {label: 'YHTEYSTIETO_KUNTA', value: null, inputValue: null},
         ];
 
-        return {
+        this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
             contactInfo: this._updateYhteystiedot(this),
-        }
-    },
-    render: function() {
+        };
+    };
+
+    render() {
         const L = this.props.l10n[this.props.locale];
         return (
             <div className="henkiloViewUserContentWrapper">
@@ -87,29 +91,34 @@ const HenkiloViewContactContent = React.createClass({
                 }
             </div>
         )
-    },
-    _edit: function () {
+    };
+
+    _edit() {
         this.setState({readOnly: false});
         this._preEditData = {
             contactInfo: this.state.contactInfo,
         }
-    },
-    _discard: function () {
+    };
+
+    _discard() {
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.setState({
             readOnly: true,
             contactInfo: this._preEditData.contactInfo,
         });
-    },
-    _update: function () {
+    };
+
+    _update() {
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
-    },
-    _updateModelField: function (event) {
+    };
+
+    _updateModelField(event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
-    },
-    _createYhteystiedotRyhma: function (event) {
+    };
+
+    _createYhteystiedotRyhma(event) {
         this.henkiloUpdate.yhteystiedotRyhma.push({
             readOnly: false,
             ryhmaAlkuperaTieto: "alkupera2", // Virkailija
@@ -120,9 +129,9 @@ const HenkiloViewContactContent = React.createClass({
         this.setState({
             contactInfo: contactInfo
         });
-    },
+    };
 
-    _updateYhteystiedot: _this =>
+    _updateYhteystiedot = _this =>
         _this.henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
             const yhteystietoList = yhteystiedotRyhma.yhteystieto;
             const YhteystietoFlatList = {
@@ -142,7 +151,7 @@ const HenkiloViewContactContent = React.createClass({
                 }
             ));
             return YhteystietoFlatList;
-        }),
-});
+        });
+}
 
 export default HenkiloViewContactContent

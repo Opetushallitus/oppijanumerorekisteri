@@ -5,8 +5,8 @@ import TopNavigation from '../components/TopNavigation'
 import AbstractViewContainer from "./henkilo/AbstractViewContainer";
 
 
-const App = React.createClass({
-    render: function() {
+class App extends React.Component{
+    render() {
         return (
             this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
                 && this.props.notLoadedCount === 0
@@ -19,11 +19,13 @@ const App = React.createClass({
             </div>
                 : <div>{AbstractViewContainer.createLoader()}</div>
         )
-    },
-    componentDidMount: function() {
+    };
+
+    componentDidMount() {
         this.props.fetchFrontProperties();
-    },
-    propTypes: {
+    };
+
+    static propTypes = {
         // Injected by React Redux
         pathname: PropTypes.string.isRequired,
 
@@ -39,8 +41,8 @@ const App = React.createClass({
             localisationsInitialized: React.PropTypes.bool,
         }).isRequired,
 
-    }
-});
+    };
+}
 
 const mapStateToProps = (state, ownProps) => {
     return {

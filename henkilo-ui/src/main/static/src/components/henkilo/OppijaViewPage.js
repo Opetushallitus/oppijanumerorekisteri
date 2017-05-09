@@ -4,8 +4,8 @@ import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 
-const OppijaViewPage = React.createClass({
-    render: function() {
+class OppijaViewPage extends React.Component {
+    render() {
         return (
             <div>
                 <div className="wrapper">
@@ -34,7 +34,7 @@ const OppijaViewPage = React.createClass({
                 </div>
             </div>
         )
-    },
-});
+    };
+}
 
 export default OppijaViewPage;

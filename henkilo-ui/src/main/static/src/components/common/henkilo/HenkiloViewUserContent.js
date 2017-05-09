@@ -5,8 +5,8 @@ import dateformat from 'dateformat'
 import Field from '../field/Field';
 import StaticUtils from "../StaticUtils";
 
-const HenkiloViewUserContent = React.createClass({
-    propTypes: {
+class HenkiloViewUserContent extends React.Component{
+    static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         henkilo: React.PropTypes.shape({
             kayttajatieto: React.PropTypes.object.isRequired,
@@ -30,20 +30,24 @@ const HenkiloViewUserContent = React.createClass({
         loginInfo: React.PropTypes.func.isRequired,
         readOnlyButtons: React.PropTypes.func.isRequired,
         editButtons: React.PropTypes.func.isRequired,
-    },
-    getInitialState: function() {
+    };
+
+    constructor(props) {
+        super(props);
+
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.kieliKoodis = this.props.koodisto.kieli;
         this.kansalaisuusKoodis = this.props.koodisto.kansalaisuus;
         this.sukupuoliKoodis = this.props.koodisto.sukupuoli;
 
-        return {
+        this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
             editData: [this.props.basicInfo(), this.props.basicInfo2(this.henkiloUpdate), this.props.loginInfo()],
         }
-    },
-    render: function() {
+    };
+
+    render() {
         const L = this.props.l10n[this.props.locale];
         return (
             <div className="henkiloViewUserContentWrapper">
@@ -87,17 +91,20 @@ const HenkiloViewUserContent = React.createClass({
                 }
             </div>
         )
-    },
-    _edit: function () {
+    };
+
+    _edit() {
         this.setState({readOnly: false});
-    },
-    _discard: function () {
+    };
+
+    _discard() {
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.setState({
             readOnly: true,
         });
-    },
-    _update: function () {
+    };
+
+    _update() {
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
         if(this.henkiloUpdate.password && this.henkiloUpdate.password === this.henkiloUpdate.passwordAgain) {
             this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
@@ -107,19 +114,21 @@ const HenkiloViewUserContent = React.createClass({
             this.props.updateAndRefetchKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});
-    },
-    _updateModelField: function (event) {
+    };
+
+    _updateModelField(event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
-    },
-    _updateDateField: function(event) {
+    };
+
+    _updateDateField(event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath,
             dateformat(StaticUtils.ddmmyyyyToDate(value), this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']));
-    },
+    };
 
-});
+}
 
 export default HenkiloViewUserContent;
