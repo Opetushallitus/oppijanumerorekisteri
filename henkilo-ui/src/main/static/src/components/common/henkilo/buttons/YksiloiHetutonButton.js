@@ -9,4 +9,13 @@ const YksiloiHetutonButton = ({henkilo, L}) =>
                          errorMessage={AbstractViewContainer.createPopupErrorMessage('yksiloi', henkilo, L)} />
         : null;
 
+YksiloiHetutonButton.propTypes = {
+    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
+        yksiloityVTJ: React.PropTypes.bool,
+        hetu: React.PropTypes.string,
+        oidHenkilo: React.PropTypes.string,
+    })}),
+    L: React.PropTypes.object,
+};
+
 export default YksiloiHetutonButton;
