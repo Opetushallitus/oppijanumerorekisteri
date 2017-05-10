@@ -1,7 +1,4 @@
 import React from 'react'
-import dateformat from 'dateformat'
-import StaticUtils from "../../components/common/StaticUtils";
-
 
 class AbstractViewContainer extends React.Component {
 

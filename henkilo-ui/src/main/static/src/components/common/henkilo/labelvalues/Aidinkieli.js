@@ -15,7 +15,7 @@ Aidinkieli.propTypes = {
         aidinkieli: React.PropTypes.object,
     })}),
     koodisto: React.PropTypes.shape({
-        kieli: React.PropTypes.object,
+        kieli: React.PropTypes.array,
     }),
     locale: React.PropTypes.string,
 };

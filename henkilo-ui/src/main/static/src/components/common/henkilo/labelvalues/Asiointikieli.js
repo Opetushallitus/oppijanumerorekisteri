@@ -17,7 +17,7 @@ Asiointikieli.propTypes = {
         asiointikieli: React.PropTypes.object,
     })}),
     koodisto: React.PropTypes.shape({
-        kieli: React.PropTypes.object,
+        kieli: React.PropTypes.array,
     }),
     locale: React.PropTypes.string,
 };

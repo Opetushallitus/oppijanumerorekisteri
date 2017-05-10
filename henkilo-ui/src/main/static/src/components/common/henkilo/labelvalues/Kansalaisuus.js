@@ -24,7 +24,7 @@ Kansalaisuus.propTypes = {
         yksiloityVTJ: React.PropTypes.bool,
     })}),
     koodisto: React.PropTypes.shape({
-        kansalaisuus: React.PropTypes.object,
+        kansalaisuus: React.PropTypes.array,
     }),
     locale: React.PropTypes.string,
 };
