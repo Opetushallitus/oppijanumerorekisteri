@@ -2,24 +2,10 @@ import React from 'react'
 import Button from "../../components/common/button/Button"
 import dateformat from 'dateformat'
 import OphSelect from '../../components/common/select/OphSelect'
-import OrganisaatioSelection from "../../components/kutsuminen/OrganisaatioSelection";
 import StaticUtils from "../../components/common/StaticUtils";
 
 
 class AbstractViewContainer extends React.Component {
-
-    createKayttooikeusFields(...kayttooikeusFields) {
-        return <table>
-            <colgroup>
-                <col span={1} style={{width: "30%"}} />
-                <col span={1} style={{width: "60%"}} />
-                <col span={1} style={{width: "10%"}} />
-            </colgroup>
-            <tbody>
-            {kayttooikeusFields}
-            </tbody>
-        </table>
-    };
 
     _createNotifications(position) {
         return this.props.henkilo.notifications.filter(notification => notification.position === position)
@@ -36,116 +22,6 @@ class AbstractViewContainer extends React.Component {
     /*
     * Fields
     * */
-
-    createKayttooikeusKohdeField(organisationData, organisationAction, organisationValue) {
-        return <tr key="kayttokohdeField">
-            <td>
-                <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
-            </td>
-            <td>
-                <div>
-                    <OrganisaatioSelection L={this.L}
-                                           organisaatios={organisationData}
-                                           selectOrganisaatio={organisationAction}
-                                           selectedOrganisaatioOid={organisationValue}
-                                           locale={this.props.locale} />
-                </div>
-
-                <div>
-                    <OrganisaatioSelection L={this.L}
-                                           organisaatios={organisationData}
-                                           selectOrganisaatio={organisationAction}
-                                           selectedOrganisaatioOid={organisationValue}
-                                           locale={this.props.locale}
-                                           isRyhma={true} />
-                </div>
-            </td>
-            <td>
-                <span className="oph-bold">{' ' + this.L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
-            </td>
-        </tr>;
-    };
-
-    createKayttooikeusKestoField(alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue) {
-        return <tr key="kayttooikeusKestoField">
-            <td>
-                <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
-            </td>
-            <td>
-                <div className="kayttooikeus-input-container">
-                    <span className="oph-h5">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
-                    <input className="oph-input" defaultValue={dateformat(alkaaInitValue, this.L['PVM_FORMAATTI'])}
-                           onChange={alkaaPvmAction} />
-                </div>
-                <div className="kayttooikeus-input-container">
-                    <span className="oph-h5">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
-                    <input className="oph-input" defaultValue={dateformat(paattyyInitValue, this.L['PVM_FORMAATTI'])}
-                           onChange={paattyyPvmAction} />
-                </div>
-            </td>
-            <td/>
-        </tr>;
-    };
-
-    createKayttooikeusKayttooikeudetField(kayttooikeusData, selectedList, kayttooikeusAction, close) {
-        const filteredOptions = kayttooikeusData && kayttooikeusData.filter(kayttooikeus =>
-            selectedList.indexOf(kayttooikeus.ryhmaId) === -1)
-                .map(kayttooikeus => ({
-                    value: kayttooikeus.ryhmaId,
-                    label: kayttooikeus.ryhmaNames.texts.filter(text => text.lang.toLowerCase() === this.props.locale)[0].text,
-                }));
-        return <tr key="kayttooikeusKayttooikeudetField">
-            <td>
-                <span className="oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
-            </td>
-            <td>
-                <div>
-                    <div>
-                        <OphSelect disabled={kayttooikeusData === undefined}
-                                   options={filteredOptions}
-                                   onChange={kayttooikeusAction} />
-                    </div>
-                </div>
-                <div>
-                    {
-                        selectedList.map(selected => <div className="oph-alert oph-alert-info">
-                            <div className="oph-alert-container">
-                                <div className="oph-alert-title">{selected.label}</div>
-                                <button className="oph-button oph-button-close"
-                                        type="button"
-                                        title={this.L['POISTA']}
-                                        aria-label="Close" onClick={() => close(selected.value)}>
-                                    <span aria-hidden="true">×</span>
-                                </button>
-                            </div>
-                        </div>)
-                    }
-                </div>
-            </td>
-            <td />
-        </tr>;
-    };
-
-    createKayttooikeusHaeButton(haeButtonAction, validationMessages) {
-        return <tr key="kayttooikeusHaeButton">
-            <td />
-            <td>
-                <div style={{display: "table-cell"}}>
-                <Button id="hae_ko_button" disabled={validationMessages.length > 0} action={haeButtonAction}>
-                    {this.L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
-                </Button>
-                </div>
-                <ul style={{display: "table-cell"}}>
-                    {
-                        validationMessages.map((validationMessage, idx) =>
-                            <li key={idx} className="oph-h5">{this.L[validationMessage.label]}</li>
-                        )
-                    }
-                </ul>
-            </td>
-            <td/>
-        </tr>;
-    };
 
     createKansalaisuusField() {
         return this.props.henkilo.henkilo.kansalaisuus && this.props.henkilo.henkilo.kansalaisuus.length
