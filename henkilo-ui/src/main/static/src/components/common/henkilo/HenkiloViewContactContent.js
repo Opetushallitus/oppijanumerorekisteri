@@ -5,6 +5,7 @@ import Field from '../field/Field';
 import Button from "../button/Button";
 import OphSelect from '../select/OphSelect'
 import StaticUtils from "../StaticUtils";
+import EditButtons from "./buttons/EditButtons";
 
 class HenkiloViewContactContent extends React.Component{
     static propTypes = {
@@ -14,7 +15,6 @@ class HenkiloViewContactContent extends React.Component{
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
-        editButtons: React.PropTypes.func.isRequired,
         creatableYhteystietotyypit: React.PropTypes.func.isRequired,
     };
 
@@ -86,7 +86,7 @@ class HenkiloViewContactContent extends React.Component{
                         <Button key="contactEdit" big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        {this.props.editButtons(this._discard, this._update)}
+                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
                     </div>
                 }
             </div>
