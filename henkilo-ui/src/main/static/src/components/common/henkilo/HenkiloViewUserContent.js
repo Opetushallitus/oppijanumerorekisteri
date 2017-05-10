@@ -4,6 +4,7 @@ import Columns from 'react-columns'
 import dateformat from 'dateformat'
 import Field from '../field/Field';
 import StaticUtils from "../StaticUtils";
+import EditButtons from "./buttons/EditButtons";
 
 class HenkiloViewUserContent extends React.Component{
     static propTypes = {
@@ -29,7 +30,6 @@ class HenkiloViewUserContent extends React.Component{
         basicInfo2: React.PropTypes.func.isRequired,
         loginInfo: React.PropTypes.func.isRequired,
         readOnlyButtons: React.PropTypes.func.isRequired,
-        editButtons: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -83,10 +83,10 @@ class HenkiloViewUserContent extends React.Component{
                     </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        {this.props.readOnlyButtons(this._edit)}
+                        {this.props.readOnlyButtons(this._edit.bind(this))}
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        {this.props.editButtons(this._discard, this._update)}
+                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
                     </div>
                 }
             </div>

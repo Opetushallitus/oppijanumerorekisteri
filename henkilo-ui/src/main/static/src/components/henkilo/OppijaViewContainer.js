@@ -27,8 +27,7 @@ class OppijaViewContainer extends AbstractViewContainer {
         const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isContactContentLoading: this._isContactContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
-            readOnlyButtons: this._readOnlyButtons, editButtons: this._editButtons,
-            creatableYhteystietotyypit: this._creatableYhteystietotyypit.bind(this),
+            readOnlyButtons: this._readOnlyButtons, creatableYhteystietotyypit: this._creatableYhteystietotyypit.bind(this),
             createNotifications: this._createNotifications.bind(this), };
         return <OppijaViewPage {...props} />;
     };

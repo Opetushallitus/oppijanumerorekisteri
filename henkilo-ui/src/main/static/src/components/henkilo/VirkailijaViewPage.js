@@ -26,8 +26,7 @@ class VirkailijaViewPage extends React.Component {
                                                       basicInfo={this.props.createBasicInfo}
                                                       basicInfo2={this.props.createBasicInfo2}
                                                       loginInfo={this.props.createLoginInfo}
-                                                      readOnlyButtons={this.props.readOnlyButtons}
-                                                      editButtons={this.props.editButtons} />
+                                                      readOnlyButtons={this.props.readOnlyButtons} />
                     }
                 </div>
                 <div className="wrapper">
