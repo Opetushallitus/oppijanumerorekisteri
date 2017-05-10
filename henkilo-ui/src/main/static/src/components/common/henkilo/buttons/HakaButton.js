@@ -10,4 +10,9 @@ const HakaButton = ({L, oidHenkilo}) =>
         {L['LISAA_HAKA_LINKKI']}
     </PopupButton>;
 
+HakaButton.propTypes = {
+    L: React.PropTypes.object,
+    oidHenkilo: React.PropTypes.string,
+};
+
 export default HakaButton;

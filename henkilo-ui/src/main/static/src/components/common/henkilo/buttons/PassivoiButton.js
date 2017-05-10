@@ -9,4 +9,12 @@ const PassivoiButton = ({henkilo, passivoiAction, L}) => henkilo.henkilo.passivo
                      normalLabel={L['PASSIVOI_LINKKI']} confirmLabel={L['PASSIVOI_LINKKI_CONFIRM']}
                      errorMessage={AbstractViewContainer.createPopupErrorMessage('passivoi', henkilo, L)} />;
 
+PassivoiButton.propTypes = {
+    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
+        passivoitu: React.PropTypes.bool,
+        oidHenkilo: React.PropTypes.string,
+    })}),
+    L: React.PropTypes.object,
+};
+
 export default PassivoiButton;
