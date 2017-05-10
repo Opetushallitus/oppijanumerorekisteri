@@ -10,7 +10,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         locale: React.PropTypes.string.isRequired,
         kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
+        myonnaButton: React.PropTypes.func.isRequired,
     };
+
     constructor(props) {
         super(props);
 

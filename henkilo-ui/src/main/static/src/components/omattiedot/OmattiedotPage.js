@@ -3,8 +3,6 @@ import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import dateformat from 'dateformat'
 import R from 'ramda';
-import AbstractViewContainer from '../../containers/henkilo/AbstractViewContainer';
-import Button from "../common/button/Button";
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
@@ -39,7 +37,8 @@ export default class OmattiedotPage extends React.Component {
                                                     showPassive={false}
                                                     basicInfo={this._createBasicInfo.bind(this)}
                                                     basicInfo2={this._createBasicInfo2.bind(this)}
-                                                    loginInfo={this._createLoginInfo.bind(this)} />
+                                                    loginInfo={this._createLoginInfo.bind(this)}
+                                                    readOnlyButtons={this._readOnlyButtons.bind(this)} />
                     }
                 </div>
                 <div className="wrapper">
@@ -55,7 +54,8 @@ export default class OmattiedotPage extends React.Component {
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                            : <HenkiloViewExistingKayttooikeus myonnaButton={this.createMyonnaConfirmButton.bind(this)}
+                                                               {...this.props} />
                     }
                 </div>
                 <div className="wrapper">
@@ -82,7 +82,7 @@ export default class OmattiedotPage extends React.Component {
                             <HenkiloViewCreateKayttooikeusanomus {...this.props}
                                 organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
                                 ryhmaOptions={this._parseRyhmaOptions.call(this)}
-                                kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}></HenkiloViewCreateKayttooikeusanomus>
+                                kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}/>
                     }
 
                 </div>

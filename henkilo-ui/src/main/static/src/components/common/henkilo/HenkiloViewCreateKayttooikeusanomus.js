@@ -16,7 +16,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         organisaatioOptions: React.PropTypes.array.isRequired,
         ryhmaOptions: React.PropTypes.array.isRequired,
         kayttooikeusryhmaOptions: React.PropTypes.array.isRequired,
-        fetchOrganisaatioKayttooikeusryhma: React.PropTypes.func.isRequired
+        fetchOrganisaatioKayttooikeusryhmat: React.PropTypes.func.isRequired
     };
 
     constructor() {
