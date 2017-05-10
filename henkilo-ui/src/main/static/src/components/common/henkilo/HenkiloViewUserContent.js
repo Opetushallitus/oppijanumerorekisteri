@@ -36,9 +36,6 @@ class HenkiloViewUserContent extends React.Component{
         super(props);
 
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
-        this.kieliKoodis = this.props.koodisto.kieli;
-        this.kansalaisuusKoodis = this.props.koodisto.kansalaisuus;
-        this.sukupuoliKoodis = this.props.koodisto.sukupuoli;
 
         this.state = {
             readOnly: this.props.readOnly,
