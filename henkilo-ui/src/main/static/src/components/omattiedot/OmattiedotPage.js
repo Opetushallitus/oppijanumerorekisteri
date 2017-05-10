@@ -7,7 +7,6 @@ import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExisti
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
-import ConfirmButton from "../common/button/ConfirmButton";
 import Loader from "../common/icons/Loader";
 import EditButton from "../common/henkilo/buttons/EditButton";
 

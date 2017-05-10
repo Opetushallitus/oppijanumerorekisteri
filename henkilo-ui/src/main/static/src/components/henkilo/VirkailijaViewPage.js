@@ -2,7 +2,6 @@ import './VirkailijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
-import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";

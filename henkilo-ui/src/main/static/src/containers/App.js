@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
-import AbstractViewContainer from "./henkilo/AbstractViewContainer";
 import Loader from "../components/common/icons/Loader";
 
 

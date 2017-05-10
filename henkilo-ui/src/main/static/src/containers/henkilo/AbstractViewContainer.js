@@ -1,12 +1,9 @@
 import React from 'react'
 import Button from "../../components/common/button/Button"
 import dateformat from 'dateformat'
-import ConfirmButton from "../../components/common/button/ConfirmButton"
-import PopupButton from "../../components/common/button/PopupButton"
-import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent"
-import PasswordPopupContent from "../../components/common/button/PasswordPopupContent";
 import OphSelect from '../../components/common/select/OphSelect'
 import OrganisaatioSelection from "../../components/kutsuminen/OrganisaatioSelection";
+import StaticUtils from "../../components/common/StaticUtils";
 
 class AbstractViewContainer extends React.Component {
 
@@ -32,12 +29,6 @@ class AbstractViewContainer extends React.Component {
         const notification = this.props.henkilo.buttonNotifications[notificationKey];
         return {errorTopic: notification && this.L[notification.notL10nMessage],
             errorText: notification && this.L[notification.notL10nText]};
-    };
-
-    static createPopupErrorMessage(notificationKey, henkilo, L) {
-        const notification = henkilo.buttonNotifications[notificationKey];
-        return {errorTopic: notification && L[notification.notL10nMessage],
-            errorText: notification && L[notification.notL10nText]};
     };
 
     _creatableYhteystietotyypit() {
@@ -235,54 +226,14 @@ class AbstractViewContainer extends React.Component {
     };
 
     createTyosahkopostiField(henkiloUpdate) {
-        return this._findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_SAHKOPOSTI', 'HENKILO_TYOSAHKOPOSTI');
+        return StaticUtils.findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_SAHKOPOSTI', 'HENKILO_TYOSAHKOPOSTI');
     };
 
     createTyopuhelinField(henkiloUpdate) {
-        return this._findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_PUHELINNUMERO', 'HENKILO_TYOPUHELIN');
+        return StaticUtils.findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, 'yhteystietotyyppi2', 'YHTEYSTIETO_PUHELINNUMERO', 'HENKILO_TYOPUHELIN');
     }
 
-    _findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, ryhmakuvaus, yhteystietotyyppi, label) {
-        let yhteystiedotRyhmaIndex = null;
-        let yhteystietoIndex = null;
-        let tyosahkopostiRyhma = henkiloUpdate.yhteystiedotRyhma
-            .filter((yhteystiedotRyhma, idx) => {
-                if(!yhteystiedotRyhmaIndex && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus) {
-                    yhteystiedotRyhmaIndex = idx;
-                    return true;
-                }
-                return false;
-            })[0];
-        let tyosahkoposti = tyosahkopostiRyhma
-            ? tyosahkopostiRyhma.yhteystieto.filter((yhteystieto, idx) => {
-                if(yhteystietoIndex === null && yhteystieto.yhteystietoTyyppi === yhteystietotyyppi) {
-                    yhteystietoIndex = idx;
-                    return true;
-                }
-                return false;
-            })[0]
-            : null;
-        if(yhteystiedotRyhmaIndex === null) {
-            yhteystiedotRyhmaIndex = henkiloUpdate.yhteystiedotRyhma.length;
-            tyosahkopostiRyhma = {
-                readOnly: false,
-                ryhmaAlkuperaTieto: "alkupera2", // Virkailija
-                ryhmaKuvaus: ryhmakuvaus,
-                yhteystieto: []
-            };
-            henkiloUpdate.yhteystiedotRyhma.push(tyosahkopostiRyhma);
-        }
 
-        if(yhteystietoIndex === null) {
-            yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.length;
-            tyosahkoposti = {yhteystietoTyyppi: yhteystietotyyppi, yhteystietoArvo: ''};
-            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(tyosahkoposti);
-        }
-        return { label: label,
-            value: tyosahkoposti && tyosahkoposti.yhteystietoArvo,
-            inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystietoIndex+'.yhteystietoArvo',
-        };
-    }
 }
 
 export default AbstractViewContainer;
