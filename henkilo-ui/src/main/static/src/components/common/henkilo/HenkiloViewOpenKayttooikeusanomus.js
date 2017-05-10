@@ -3,14 +3,14 @@ import React from 'react'
 import Table from '../table/Table'
 import dateformat from 'dateformat'
 import StaticUtils from "../StaticUtils";
+import MyonnaButton from "./buttons/MyonnaButton";
+import HylkaaButton from "./buttons/HylkaaButton";
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
 
-        myonnaButton: React.PropTypes.func.isRequired,
-        hylkaaButton: React.PropTypes.func.isRequired,
         updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
 
         kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
@@ -59,12 +59,12 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
                 [headingList[6]]: <div>
                     <div style={{display: 'table-cell', paddingRight: '10px'}}>
-                        {this.props.myonnaButton(() => {this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                            'MYONNETTY', idx)})}
+                        <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
+                            'MYONNETTY', idx)} henkilo={this.props.henkilo} L={this.L}/>
                     </div>
                     <div style={{display: 'table-cell'}}>
-                        {this.props.hylkaaButton(() => {this.props.myonnaButton(() => {this.updateHaettuKayttooikeusryhma(
-                            haettuKayttooikeusRyhma.id, 'HYLATTY', idx)})})}
+                        <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
+                            haettuKayttooikeusRyhma.id, 'HYLATTY', idx)} L={this.L} henkilo={this.props.henkilo} />
                     </div>
                 </div>,
             }));
