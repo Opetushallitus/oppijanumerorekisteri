@@ -39,8 +39,7 @@ export default class OmattiedotPage extends React.Component {
                                                     basicInfo={this._createBasicInfo.bind(this)}
                                                     basicInfo2={this._createBasicInfo2.bind(this)}
                                                     loginInfo={this._createLoginInfo.bind(this)}
-                                                    readOnlyButtons={this._readOnlyButtons.bind(this)}
-                                                    editButtons={this._editButtons.bind(this)}/>
+                                                    readOnlyButtons={this._readOnlyButtons.bind(this)} />
                     }
                 </div>
                 <div className="wrapper">
@@ -49,8 +48,7 @@ export default class OmattiedotPage extends React.Component {
                             <HenkiloViewContactContent {...this.props}
                                                        creatableYhteystietotyypit={this._creatableYhteystietotyypit.bind(this)}
                                                        readOnly={true}
-                                                       locale={this.props.locale}
-                                                       editButtons={this._editButtons.bind(this)}/>
+                                                       locale={this.props.locale} />
                     }
                 </div>
                 <div className="wrapper">
@@ -250,13 +248,5 @@ export default class OmattiedotPage extends React.Component {
                 'yhteystietotyyppi12', 'yhteystietotyyppi18', 'yhteystietotyyppi11', 'yhteystietotyyppi8']
                 .indexOf(yhteystietotyyppi.value) === -1);
     };
-
-    _editButtons(discard, update) {
-        const L = this.props.l10n[this.props.locale];
-        return [
-            <Button key="discard" big action={discard}>{L['PERUUTA_LINKKI']}</Button>,
-            <Button key="update" confirm big action={update}>{L['TALLENNA_LINKKI']}</Button>
-        ];
-    }
 }
 

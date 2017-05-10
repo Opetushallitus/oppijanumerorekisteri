@@ -23,13 +23,6 @@ class AbstractViewContainer extends React.Component {
         </table>
     };
 
-    _editButtons(discard, update) {
-        return [
-            <Button key="discard" big cancel action={discard}>{this.L['PERUUTA_LINKKI']}</Button>,
-            <Button key="update" big action={update}>{this.L['TALLENNA_LINKKI']}</Button>
-        ];
-    };
-
     _createNotifications(position) {
         return this.props.henkilo.notifications.filter(notification => notification.position === position)
             .map((notification, idx) => <div key={idx}>{this.L[notification.notL10nMessage]}</div>);
