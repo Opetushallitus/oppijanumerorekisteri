@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -133,7 +134,7 @@ public class HenkiloServiceImplTest {
 
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
 
-        assertThat(throwable).isInstanceOf(NotFoundException.class);
+        assertThat(throwable).isInstanceOf(ForbiddenException.class);
         verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), any(), eq(ExternalPermissionService.SURE));
     }
 
