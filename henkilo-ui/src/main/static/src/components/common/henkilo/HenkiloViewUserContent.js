@@ -5,9 +5,6 @@ import dateformat from 'dateformat'
 import Field from '../field/Field';
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
-import EditButton from "./buttons/EditButton";
-import YksiloiHetutonButton from "./buttons/YksiloiHetutonButton";
-import HakaButton from "./buttons/HakaButton";
 
 class HenkiloViewUserContent extends React.Component{
     static propTypes = {

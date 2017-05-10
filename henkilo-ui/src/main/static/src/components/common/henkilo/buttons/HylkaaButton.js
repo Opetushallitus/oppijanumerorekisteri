@@ -1,13 +1,13 @@
 import React from 'react'
 import ConfirmButton from "../../button/ConfirmButton";
-import AbstractViewContainer from "../../../../containers/henkilo/AbstractViewContainer";
+import StaticUtils from "../../StaticUtils";
 
 const HylkaaButton = ({L, hylkaaAction, henkilo}) => <ConfirmButton action={hylkaaAction}
                                             cancel
                                             confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_CONFIRM']}
                                             normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
                                             key="hylkaa"
-                                            errorMessage={AbstractViewContainer.createPopupErrorMessage('hylkaa', henkilo, L)} />;
+                                            errorMessage={StaticUtils.createPopupErrorMessage('hylkaa', henkilo, L)} />;
 HylkaaButton.propTypes = {
     L: React.PropTypes.object,
     hylkaaAction: React.PropTypes.func,
