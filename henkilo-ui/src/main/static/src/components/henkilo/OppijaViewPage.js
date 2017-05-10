@@ -26,8 +26,7 @@ class OppijaViewPage extends React.Component {
                     {
                         this.props.isContactContentLoading()
                             ? <Loader />
-                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
-                                                         creatableYhteystietotyypit={this.props.creatableYhteystietotyypit}/>
+                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
                 </div>
             </div>

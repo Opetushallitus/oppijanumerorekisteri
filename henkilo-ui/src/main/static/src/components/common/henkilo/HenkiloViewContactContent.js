@@ -6,6 +6,7 @@ import Button from "../button/Button";
 import OphSelect from '../select/OphSelect'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
+import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer";
 
 class HenkiloViewContactContent extends React.Component{
     static propTypes = {
@@ -15,7 +16,6 @@ class HenkiloViewContactContent extends React.Component{
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
-        creatableYhteystietotyypit: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -47,8 +47,9 @@ class HenkiloViewContactContent extends React.Component{
                         { !this.state.readOnly
                             ? <div>
                                 <OphSelect onChange={this._createYhteystiedotRyhma}
-                                           options={this.props.creatableYhteystietotyypit().map((yhteystietotyyppi, idx) =>
-                                               ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
+                                           options={AbstractViewContainer.creatableYhteystietotyypit(this.props.koodisto.yhteystietotyypit)
+                                               .map((yhteystietotyyppi, idx) =>
+                                                   ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
                                            placeholder={L['HENKILO_LUOYHTEYSTIETO']} />
                             </div>
                             : null
