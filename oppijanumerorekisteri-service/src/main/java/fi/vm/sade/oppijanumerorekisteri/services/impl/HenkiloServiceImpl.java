@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -153,7 +154,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         HenkiloHakuDto henkilo = henkilot.get(0);
         if (!isAllowedToAccessPerson(henkilo.getOidHenkilo(), externalPermissionService)) {
-            throw new NotFoundException("Henkilöä ei löytynyt hakuehdoilla");
+            throw new ForbiddenException("Henkilön tietoihin ei oikeuksia");
         }
 
         return henkilo;

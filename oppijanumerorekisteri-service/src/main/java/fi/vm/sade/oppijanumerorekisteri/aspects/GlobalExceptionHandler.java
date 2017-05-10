@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.aspects;
 
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
@@ -137,6 +138,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> dataInconsistencyException(DataInconsistencyException exception, HttpServletRequest request) {
         logger.error(exception.getMessage(), exception);
         return constructErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> forbiddenException(ForbiddenException exception, HttpServletRequest request) {
+        return constructErrorResponse(exception, HttpStatus.FORBIDDEN, request);
     }
 
 }
