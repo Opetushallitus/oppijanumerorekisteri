@@ -44,8 +44,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
             createNotifications: this._createNotifications.bind(this), readOnlyButtons: this._readOnlyButtons,
-            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), myonnaButton: this.createMyonnaConfirmButton.bind(this),
-            hylkaaButton: this.createHylkaaConfirmButton.bind(this), updatePassword: updatePassword,
+            _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), updatePassword: updatePassword,
         };
         return <VirkailijaViewPage {...props} />;
     };

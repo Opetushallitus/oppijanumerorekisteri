@@ -283,29 +283,6 @@ class AbstractViewContainer extends React.Component {
             inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystietoIndex+'.yhteystietoArvo',
         };
     }
-
-    /*
-    * Buttons
-    * */
-
-    createMyonnaConfirmButton(myonna) {
-        return <ConfirmButton action={myonna}
-                              confirmLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
-                              normalLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
-                              key="myonna"
-                              errorMessage={this._createPopupErrorMessage('myonna')} />;
-
-    };
-
-    createHylkaaConfirmButton (hylkaa) {
-        return <ConfirmButton action={hylkaa}
-                              cancel
-                              confirmLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_CONFIRM']}
-                              normalLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
-                              key="hylkaa"
-                              errorMessage={this._createPopupErrorMessage('hylkaa')} />;
-    };
-
 }
 
 export default AbstractViewContainer;
