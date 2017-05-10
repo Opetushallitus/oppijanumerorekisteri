@@ -127,7 +127,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                                               kayttooikeusAction={this.kayttooikeudetAction} />
                             <CKHaeButton L={this.L}
                                          validationMessages={this.state.validationMessages}
-                                         haeButtonAction={() => this.createKayttooikeusAction()} />
+                                         haeButtonAction={this.createKayttooikeusAction} />
                             </tbody>
                         </table>
                     </div>
