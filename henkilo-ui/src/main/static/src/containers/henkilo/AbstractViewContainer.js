@@ -366,14 +366,6 @@ class AbstractViewContainer extends React.Component {
                                          l10n={this.props.l10n}
                                          locale={this.props.locale}></HakatunnistePopupContent>;
     }
-
-    static createLoader() {
-        return <div className="oph-spinner">
-            <div className="oph-bounce oph-bounce1"/>
-            <div className="oph-bounce oph-bounce2"/>
-            <div className="oph-bounce oph-bounce3"/>
-        </div>;
-    };
 }
 
 export default AbstractViewContainer;

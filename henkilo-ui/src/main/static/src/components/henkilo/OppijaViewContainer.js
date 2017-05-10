@@ -11,7 +11,7 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../../configuration/navigationconfigurations";
-import AbstractViewContainer from "./AbstractViewContainer";
+import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 
 
 class OppijaViewContainer extends AbstractViewContainer {
