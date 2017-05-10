@@ -27,7 +27,7 @@ public class OppijaCriteria {
                     qHenkilo.etunimet.containsIgnoreCase(hakutermi),
                     qHenkilo.kutsumanimi.containsIgnoreCase(hakutermi),
                     qHenkilo.sukunimi.containsIgnoreCase(hakutermi),
-                    qHenkilo.oidHenkilo.contains(hakutermi)
+                    qHenkilo.oidHenkilo.eq(hakutermi)
             ));
         }
         if (passivoitu != null) {
