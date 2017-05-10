@@ -3,6 +3,7 @@ import React from 'react'
 import Columns from 'react-columns'
 import Button from "../button/Button";
 import ConfirmButton from "../button/ConfirmButton";
+import StaticUtils from "../StaticUtils";
 
 class HenkiloViewOrganisationContent extends React.Component{
     static propTypes = {
@@ -67,7 +68,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                                                                  action={() => this.passivoiHenkiloOrganisation(values.id)}
                                                                  confirmLabel={this.L['HENKILO_ORG_PASSIVOI_CONFIRM']}
                                                                  normalLabel={this.L['HENKILO_ORG_PASSIVOI']}
-                                                                 errorMessage={this.props._createPopupErrorMessage('passivoiOrg')} />
+                                                                 errorMessage={StaticUtils.createPopupErrorMessage('passivoiOrg', this.props.henkilo, this.L)} />
                                                 : <Button disabled action={() => {}}>{this.L['HENKILO_ORG_PASSIVOITU']}</Button>}
                                         </div>
                                     </div>
