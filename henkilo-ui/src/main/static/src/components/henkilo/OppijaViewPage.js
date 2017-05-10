@@ -2,7 +2,6 @@ import './OppijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
-import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 import Loader from "../common/icons/Loader";
 
 class OppijaViewPage extends React.Component {

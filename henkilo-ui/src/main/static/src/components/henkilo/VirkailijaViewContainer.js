@@ -17,6 +17,9 @@ import {
     fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
+import EditButton from "../common/henkilo/buttons/EditButton";
+import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
+import HakaButton from "../common/henkilo/buttons/HakaButton";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -38,8 +41,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     render() {
         const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
-            createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo, readOnlyButtons: this._readOnlyButtons,
-            createNotifications: this._createNotifications.bind(this),
+            createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
+            createNotifications: this._createNotifications.bind(this), readOnlyButtons: this._readOnlyButtons,
             _createPopupErrorMessage: this._createPopupErrorMessage.bind(this), myonnaButton: this.createMyonnaConfirmButton.bind(this),
             hylkaaButton: this.createHylkaaConfirmButton.bind(this),
         };
@@ -71,9 +74,9 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         ];
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
-            this.createEditButton(edit),
-            this.createPassivoiButton(),
-            this.createHakaButton(),
+            <EditButton editAction={edit} L={this.L} />,
+            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
+            <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
             this.createPasswordButton(),
         ];
 

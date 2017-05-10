@@ -9,7 +9,9 @@ export default class HakatunnistePopupContent extends React.Component {
 
     static propTypes = {
         henkiloOid: React.PropTypes.string.isRequired,
-        l10n: React.PropTypes.object.isRequired
+        l10n: React.PropTypes.object,
+        locale: React.PropTypes.string,
+        L: React.PropTypes.object
     };
 
     constructor(props) {
@@ -28,7 +30,7 @@ export default class HakatunnistePopupContent extends React.Component {
     }
 
     render() {
-        const L = this.props.l10n[this.props.locale];
+        const L = this.props.L ? this.props.L : this.props.l10n[this.props.locale];
         return (<div>
             <ul>
                 {this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>
