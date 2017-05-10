@@ -4,6 +4,10 @@ import AbstractViewContainer from "../../../containers/henkilo/AbstractViewConta
 import StaticUtils from "../StaticUtils"
 import dateformat from 'dateformat';
 import scrollToComponent from 'react-scroll-to-component'
+import CKKohde from "./createkayttooikeus/CKKohde";
+import CKKesto from "./createkayttooikeus/CKKesto";
+import CKKayttooikeudet from "./createkayttooikeus/CKKayttooikeudet";
+import CKHaeButton from "./createkayttooikeus/CKHaeButton";
 
 class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
     static propTypes = {
@@ -100,18 +104,32 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                     <div>
-                    {
-                        this.createKayttooikeusFields(
-                            this.createKayttooikeusKohdeField(this.props.henkilo.henkiloOrganisaatios, this.organisationAction,
-                                this.kayttooikeusModel.kayttokohdeOrganisationOid),
-                            this.createKayttooikeusKestoField(this.kestoAlkaaAction, this.kayttooikeusModel.alkupvm,
-                                this.kestoPaattyyAction, this.kayttooikeusModel.loppupvm),
-                            this.createKayttooikeusKayttooikeudetField(
-                                this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo],
-                                this.state.selectedList, this.kayttooikeudetAction, this.close),
-                            this.createKayttooikeusHaeButton(() => this.createKayttooikeusAction(),
-                                this.state.validationMessages))
-                    }
+                        <table>
+                            <colgroup>
+                                <col span={1} style={{width: "30%"}} />
+                                <col span={1} style={{width: "60%"}} />
+                                <col span={1} style={{width: "10%"}} />
+                            </colgroup>
+                            <tbody>
+                            <CKKohde L={this.L} locale={this.props.locale}
+                                     organisationValue={this.kayttooikeusModel.kayttokohdeOrganisationOid}
+                                     organisationAction={this.organisationAction}
+                                     organisationData={this.props.henkilo.henkiloOrganisaatios} />
+                            <CKKesto L={this.L}
+                                     alkaaInitValue={this.kayttooikeusModel.alkupvm}
+                                     paattyyInitValue={this.kayttooikeusModel.loppupvm}
+                                     alkaaPvmAction={this.kestoAlkaaAction}
+                                     paattyyPvmAction={this.kestoPaattyyAction} />
+                            <CKKayttooikeudet L={this.L} locale={this.props.locale}
+                                              kayttooikeusData={this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo]}
+                                              selectedList={this.state.selectedList}
+                                              close={this.close}
+                                              kayttooikeusAction={this.kayttooikeudetAction} />
+                            <CKHaeButton L={this.L}
+                                         validationMessages={this.state.validationMessages}
+                                         haeButtonAction={() => this.createKayttooikeusAction()} />
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
