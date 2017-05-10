@@ -16,6 +16,15 @@ import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton
 import EditButton from "../common/henkilo/buttons/EditButton";
 import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
 import HakaButton from "../common/henkilo/buttons/HakaButton";
+import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
+import Syntymaaika from "../common/henkilo/labelvalues/Syntymaaika";
+import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
+import Etunimet from "../common/henkilo/labelvalues/Etunimet";
+import Hetu from "../common/henkilo/labelvalues/Hetu";
+import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
+import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
+import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
+import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 
 
 class OppijaViewContainer extends AbstractViewContainer {
@@ -45,20 +54,29 @@ class OppijaViewContainer extends AbstractViewContainer {
         this._isContactContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
 
         // Basic info box content
-        this._createBasicInfo = () => [
-            this.createSukunimiFieldWithAutofocus(),
-            this.createEtunimetField(),
-            this.createSyntymaaikaField(),
-            this.createHetuField(),
-            this.createKutsumanimiField(),
-        ];
-        this._createBasicInfo2 = () => ([
-            this.createKansalaisuusField(),
-            this.createAidinkieliField(),
-            this.createOppijanumeroField(),
-            this.createAsiointikieliField(),
-        ]);
-        this._createLoginInfo = () => [];
+        this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
+            const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
+                updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
+                L: this.L, locale: this.props.locale,};
+            return [
+                [
+                    <Sukunimi {...props} />,
+                    <Etunimet {...props} />,
+                    <Syntymaaika {...props} />,
+                    <Hetu {...props} />,
+                    <Kutsumanimi {...props} />,
+                ],
+                [
+                    <Kansalaisuus {...props} />,
+                    <Aidinkieli {...props} />,
+                    <Oppijanumero {...props} />,
+                    <Asiointikieli {...props} />,
+                ],
+                [
+
+                ],
+            ];
+        };
 
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
