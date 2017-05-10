@@ -40,8 +40,7 @@ class HenkiloViewUserContent extends React.Component{
         this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
-            editData: [this.props.basicInfo(), this.props.basicInfo2(this.henkiloUpdate), this.props.loginInfo()],
-        }
+        };
     };
 
     render() {
@@ -54,24 +53,24 @@ class HenkiloViewUserContent extends React.Component{
                         </div>
                         <Columns columns={3} gap="10px">
                             {
-                                this.state.editData.map((info, idx) =>
+                                this.props.basicInfo(this.state.readOnly, this._updateModelField, this._updateDateField, this.henkiloUpdate)
+                                    .map((info, idx) =>
                                     <div key={idx} className="henkiloViewContent">
-                                        {info.map((values, idx2) =>
-                                            !values.showOnlyOnWrite || !this.state.readOnly
-                                                ?
-                                                <div key={idx2} id={values.label}>
-                                                    <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
-                                                        <span className="oph-bold">{L[values.label]}</span>
-                                                        <Field {...values}
-                                                               changeAction={!values.date
-                                                                   ? this._updateModelField
-                                                                   : this._updateDateField}
-                                                               readOnly={values.readOnly || this.state.readOnly}>
-                                                            {values.value}
-                                                        </Field>
-                                                    </Columns>
-                                                </div>
-                                                : null
+                                        {info.map((values, idx2) => values
+                                            // !values.showOnlyOnWrite || !this.state.readOnly
+                                            //     ? <div key={idx2} id={values.label}>
+                                            //         <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
+                                            //             <span className="oph-bold">{L[values.label]}</span>
+                                            //             <Field {...values}
+                                            //                    changeAction={!values.date
+                                            //                        ? this._updateModelField
+                                            //                        : this._updateDateField}
+                                            //                    readOnly={values.readOnly || this.state.readOnly}>
+                                            //                 {values.value}
+                                            //             </Field>
+                                            //         </Columns>
+                                            //     </div>
+                                            //     : null
                                         )}
                                     </div>
                                 )

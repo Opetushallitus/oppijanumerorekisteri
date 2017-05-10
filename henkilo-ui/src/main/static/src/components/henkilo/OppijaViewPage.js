@@ -17,8 +17,6 @@ class OppijaViewPage extends React.Component {
                             ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
-                                                      basicInfo2={this.props.createBasicInfo2}
-                                                      loginInfo={this.props.createLoginInfo}
                                                       readOnlyButtons={this.props.readOnlyButtons} />
                     }
                 </div>

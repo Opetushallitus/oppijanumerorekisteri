@@ -21,6 +21,14 @@ import EditButton from "../common/henkilo/buttons/EditButton";
 import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
 import HakaButton from "../common/henkilo/buttons/HakaButton";
 import PasswordButton from "../common/henkilo/buttons/PasswordButton";
+import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
+import Etunimet from "../common/henkilo/labelvalues/Etunimet";
+import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
+import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
+import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
+import TyoSahkoposti from "../common/henkilo/labelvalues/TyoSahkoposti";
+import TyoPuhelin from "../common/henkilo/labelvalues/TyoPuhelin";
+import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -42,7 +50,6 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     render() {
         const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
-            createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
             createNotifications: this._createNotifications.bind(this), readOnlyButtons: this._readOnlyButtons,
         };
         return <VirkailijaViewPage {...props} />;
@@ -57,20 +64,28 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
         // Basic info box content
-        this._createBasicInfo = () => [
-            this.createSukunimiFieldWithAutofocus(),
-            this.createEtunimetField(),
-            this.createKutsumanimiField(),
-            this.createAsiointikieliField(),
-        ];
-        this._createBasicInfo2 = (henkiloUpdate) => ([
-            this.createOppijanumeroField(),
-            this.createTyosahkopostiField(henkiloUpdate),
-            this.createTyopuhelinField(henkiloUpdate),
-        ]);
-        this._createLoginInfo = () => [
-            this.createKayttajanimiField(),
-        ];
+        this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
+            const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
+                updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
+                L: this.L, locale: this.props.locale,};
+            return [
+                [
+                    <Sukunimi {...props} />,
+                    <Etunimet {...props} />,
+                    <Kutsumanimi {...props} />,
+                    <Asiointikieli {...props} />,
+                ],
+                [
+                    <Oppijanumero {...props} />,
+                    <TyoSahkoposti {...props} henkiloUpdate={henkiloUpdate} />,
+                    <TyoPuhelin {...props} henkiloUpdate={henkiloUpdate} />,
+                ],
+                [
+                    <Kayttajanimi {...props} />,
+                ],
+            ]
+        };
+
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
             <EditButton editAction={edit} L={this.L} />,
