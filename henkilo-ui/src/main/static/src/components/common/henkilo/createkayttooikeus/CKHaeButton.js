@@ -1,7 +1,7 @@
 import React from 'react'
 import Button from "../../button/Button";
 
-const CKHaeButton = (haeButtonAction, validationMessages, L) =>
+const CKHaeButton = ({haeButtonAction, validationMessages, L}) =>
     <tr key="kayttooikeusHaeButton">
         <td />
         <td>
