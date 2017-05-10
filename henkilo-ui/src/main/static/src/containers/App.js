@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 import AbstractViewContainer from "./henkilo/AbstractViewContainer";
+import Loader from "../components/common/icons/Loader";
 
 
 class App extends React.Component{
@@ -17,7 +18,7 @@ class App extends React.Component{
                     {this.props.children}
                 </div>
             </div>
-                : <div>{AbstractViewContainer.createLoader()}</div>
+                : <div><Loader /></div>
         )
     };
 

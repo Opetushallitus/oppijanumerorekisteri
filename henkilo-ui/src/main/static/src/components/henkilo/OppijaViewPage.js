@@ -3,6 +3,7 @@ import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
+import Loader from "../common/icons/Loader";
 
 class OppijaViewPage extends React.Component {
     render() {
@@ -14,7 +15,7 @@ class OppijaViewPage extends React.Component {
                     </div>
                     {
                         this.props.isUserContentLoading()
-                            ? AbstractViewContainer.createLoader()
+                            ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
                                                       basicInfo2={this.props.createBasicInfo2}
@@ -26,7 +27,7 @@ class OppijaViewPage extends React.Component {
                 <div className="wrapper">
                     {
                         this.props.isContactContentLoading()
-                            ? AbstractViewContainer.createLoader()
+                            ? <Loader />
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
                                                          editButtons={this.props.editButtons}
                                                          creatableYhteystietotyypit={this.props.creatableYhteystietotyypit}/>

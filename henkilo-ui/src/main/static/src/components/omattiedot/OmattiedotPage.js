@@ -10,6 +10,7 @@ import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpen
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 import ConfirmButton from "../common/button/ConfirmButton";
+import Loader from "../common/icons/Loader";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -32,7 +33,7 @@ export default class OmattiedotPage extends React.Component {
             <div>
                 <div className="wrapper">
                     {
-                        isUserContentLoading ? AbstractViewContainer.createLoader() :
+                        isUserContentLoading ? <Loader /> :
                             <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale}
                                                     showPassive={false}
                                                     basicInfo={this._createBasicInfo.bind(this)}
@@ -44,7 +45,7 @@ export default class OmattiedotPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        isContactContentLoading ? AbstractViewContainer.createLoader() :
+                        isContactContentLoading ? <Loader /> :
                             <HenkiloViewContactContent {...this.props}
                                                        creatableYhteystietotyypit={this._creatableYhteystietotyypit.bind(this)}
                                                        readOnly={true}
@@ -55,14 +56,14 @@ export default class OmattiedotPage extends React.Component {
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
-                            ? AbstractViewContainer.createLoader()
+                            ? <Loader />
                             : <HenkiloViewExistingKayttooikeus {...this.props} />
                     }
                 </div>
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
-                            ? AbstractViewContainer.createLoader()
+                            ? <Loader />
                             : <HenkiloViewOpenKayttooikeusanomus {...this.props}
                                                                  myonnaButton={this.createMyonnaConfirmButton.bind(this)}
                                                                  hylkaaButton={this.createHylkaaConfirmButton.bind(this)} />
@@ -72,14 +73,14 @@ export default class OmattiedotPage extends React.Component {
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
-                            ? AbstractViewContainer.createLoader()
+                            ? <Loader />
                             : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }
                 </div>
                 <div className="wrapper">
                     {
                         createKayttooikeusanomusLoading ?
-                            AbstractViewContainer.createLoader() :
+                            <Loader /> :
                             <HenkiloViewCreateKayttooikeusanomus {...this.props}
                                 organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
                                 ryhmaOptions={this._parseRyhmaOptions.call(this)}
