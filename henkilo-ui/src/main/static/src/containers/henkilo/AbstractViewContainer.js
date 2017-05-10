@@ -288,26 +288,6 @@ class AbstractViewContainer extends React.Component {
     * Buttons
     * */
 
-    createEditButton(edit) {
-        return <Button key="edit" big action={edit}>{this.L['MUOKKAA_LINKKI']}</Button>;
-    };
-
-    createYksilointiButton() {
-        return !this.props.henkilo.henkilo.yksiloityVTJ && !this.props.henkilo.henkilo.hetu
-            ? <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
-                       normalLabel={this.L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}
-                       errorMessage={this._createPopupErrorMessage('yksiloi')} />
-            : null;
-    };
-
-    createPassivoiButton() {
-        return this.props.henkilo.henkilo.passivoitu
-            ? <Button key="passivoi" big disabled action={() => {}}>{this.L['PASSIVOI_PASSIVOITU']}</Button>
-            : <ConfirmButton key="passivoi" big action={() => this.props.passivoiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
-                             normalLabel={this.L['PASSIVOI_LINKKI']} confirmLabel={this.L['PASSIVOI_LINKKI_CONFIRM']}
-                             errorMessage={this._createPopupErrorMessage('passivoi')} />;
-    };
-
     createMyonnaConfirmButton(myonna) {
         return <ConfirmButton action={myonna}
                               confirmLabel={this.L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
@@ -326,45 +306,6 @@ class AbstractViewContainer extends React.Component {
                               errorMessage={this._createPopupErrorMessage('hylkaa')} />;
     };
 
-
-    createHakaButton() {
-        const popupStyle = { bottom: '10px', left: '515px'};
-
-        return (<PopupButton popupStyle={popupStyle}
-                             popupTitle={this.createHakatunnistePopupTitle()}
-                             popupContent={this._createHakatunnistePopupContent(this.props.oidHenkilo)}>{this.L['LISAA_HAKA_LINKKI']}</PopupButton>);
-    };
-
-    createPasswordButton() {
-        const popupStyle = { bottom: '-5px', left: '795px', width: '18rem' };
-
-        return (<PopupButton popupClass={'oph-popup-default oph-popup-top oph-popup-password'}
-                            popupStyle={popupStyle}
-                            popupTitle={this.createPasswordPopupTitle()}
-                            popupContent={this.createPasswordPopupContent(this.props.oid)}>{this.L['SALASANA_ASETA']}</PopupButton>);
-    };
-
-    createPasswordPopupTitle() {
-        return <h3 style={{textAlign: 'left'}}>{this.L['SALASANA_ASETA']}</h3>;
-    };
-
-    createPasswordPopupContent(henkiloOid) {
-        return <PasswordPopupContent henkiloOid={henkiloOid}
-                                     l10n={this.props.l10n}
-                                     locale={this.props.locale}
-                                     updatePassword={this.props.updatePassword}
-           />;
-    };
-
-    createHakatunnistePopupTitle() {
-        return <h3>{this.L['HAKATUNNISTEET']}:</h3>
-    }
-
-    _createHakatunnistePopupContent(henkiloOid) {
-        return <HakatunnistePopupContent henkiloOid={henkiloOid}
-                                         l10n={this.props.l10n}
-                                         locale={this.props.locale}></HakatunnistePopupContent>;
-    }
 }
 
 export default AbstractViewContainer;

@@ -20,6 +20,7 @@ import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.
 import EditButton from "../common/henkilo/buttons/EditButton";
 import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
 import HakaButton from "../common/henkilo/buttons/HakaButton";
+import PasswordButton from "../common/henkilo/buttons/PasswordButton";
 
 
 class VirkailijaViewContainer extends AbstractViewContainer {
@@ -77,7 +78,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             <EditButton editAction={edit} L={this.L} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
-            this.createPasswordButton(),
+            <PasswordButton L={this.L} />,
         ];
 
     };
