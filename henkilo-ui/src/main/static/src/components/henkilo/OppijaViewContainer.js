@@ -12,6 +12,10 @@ import {
 import {updateNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../../configuration/navigationconfigurations";
 import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
+import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
+import EditButton from "../common/henkilo/buttons/EditButton";
+import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
+import HakaButton from "../common/henkilo/buttons/HakaButton";
 
 
 class OppijaViewContainer extends AbstractViewContainer {
@@ -58,10 +62,10 @@ class OppijaViewContainer extends AbstractViewContainer {
 
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
-            this.createEditButton(edit),
-            this.createYksilointiButton(),
-            this.createHakaButton(),
-            this.createPassivoiButton(),
+            <EditButton editAction={edit} L={this.L} />,
+            <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} />,
+            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
+            <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
         ];
     };
 }

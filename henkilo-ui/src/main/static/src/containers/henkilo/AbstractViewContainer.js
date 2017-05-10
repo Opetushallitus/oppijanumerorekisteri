@@ -34,6 +34,12 @@ class AbstractViewContainer extends React.Component {
             errorText: notification && this.L[notification.notL10nText]};
     };
 
+    static createPopupErrorMessage(notificationKey, henkilo, L) {
+        const notification = henkilo.buttonNotifications[notificationKey];
+        return {errorTopic: notification && L[notification.notL10nMessage],
+            errorText: notification && L[notification.notL10nText]};
+    };
+
     _creatableYhteystietotyypit() {
         return this.props.koodisto.yhteystietotyypit
             .filter(yhteystietotyyppi => ['yhteystietotyyppi4', 'yhteystietotyyppi10', 'yhteystietotyyppi5', 'yhteystietotyyppi9',

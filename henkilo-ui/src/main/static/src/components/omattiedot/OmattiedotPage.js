@@ -11,6 +11,7 @@ import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpired
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 import ConfirmButton from "../common/button/ConfirmButton";
 import Loader from "../common/icons/Loader";
+import EditButton from "../common/henkilo/buttons/EditButton";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -38,8 +39,7 @@ export default class OmattiedotPage extends React.Component {
                                                     showPassive={false}
                                                     basicInfo={this._createBasicInfo.bind(this)}
                                                     basicInfo2={this._createBasicInfo2.bind(this)}
-                                                    loginInfo={this._createLoginInfo.bind(this)}
-                                                    readOnlyButtons={this._readOnlyButtons.bind(this)} />
+                                                    loginInfo={this._createLoginInfo.bind(this)} />
                     }
                 </div>
                 <div className="wrapper">
@@ -238,7 +238,7 @@ export default class OmattiedotPage extends React.Component {
     _readOnlyButtons(edit) {
         const L = this.props.l10n[this.props.locale];
         return [
-            <Button key="edit" big action={edit}>{L['MUOKKAA_LINKKI']}</Button>
+            <EditButton editAction={edit} L={L} />
         ];
     }
 
