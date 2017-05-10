@@ -25,12 +25,6 @@ class AbstractViewContainer extends React.Component {
             .map((notification, idx) => <div key={idx}>{this.L[notification.notL10nMessage]}</div>);
     };
 
-    _createPopupErrorMessage(notificationKey) {
-        const notification = this.props.henkilo.buttonNotifications[notificationKey];
-        return {errorTopic: notification && this.L[notification.notL10nMessage],
-            errorText: notification && this.L[notification.notL10nText]};
-    };
-
     _creatableYhteystietotyypit() {
         return this.props.koodisto.yhteystietotyypit
             .filter(yhteystietotyyppi => ['yhteystietotyyppi4', 'yhteystietotyyppi10', 'yhteystietotyyppi5', 'yhteystietotyyppi9',
