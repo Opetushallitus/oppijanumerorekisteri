@@ -4,9 +4,9 @@ import dateformat from 'dateformat'
 import ConfirmButton from "../../components/common/button/ConfirmButton"
 import PopupButton from "../../components/common/button/PopupButton"
 import HakatunnistePopupContent from "../../components/common/button/HakaPopupContent"
+import PasswordPopupContent from "../../components/common/button/PasswordPopupContent";
 import OphSelect from '../../components/common/select/OphSelect'
 import OrganisaatioSelection from "../../components/kutsuminen/OrganisaatioSelection";
-
 
 class AbstractViewContainer extends React.Component {
 
@@ -337,7 +337,24 @@ class AbstractViewContainer extends React.Component {
     };
 
     createPasswordButton() {
-        return <Button key="password" big action={() => {}}>{this.L['SALASANA_ASETA']}</Button>;
+        const popupStyle = { bottom: '-5px', left: '795px', width: '18rem' };
+
+        return (<PopupButton popupClass={'oph-popup-default oph-popup-top oph-popup-password'}
+                            popupStyle={popupStyle}
+                            popupTitle={this.createPasswordPopupTitle()}
+                            popupContent={this.createPasswordPopupContent(this.props.oid)}>{this.L['SALASANA_ASETA']}</PopupButton>);
+    };
+
+    createPasswordPopupTitle() {
+        return <h3 style={{textAlign: 'left'}}>{this.L['SALASANA_ASETA']}</h3>;
+    };
+
+    createPasswordPopupContent(henkiloOid) {
+        return <PasswordPopupContent henkiloOid={henkiloOid}
+                                     l10n={this.props.l10n}
+                                     locale={this.props.locale}
+                                     updatePassword={this.props.updatePassword}
+           />;
     };
 
     createHakatunnistePopupTitle() {
