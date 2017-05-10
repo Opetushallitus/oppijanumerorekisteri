@@ -44,7 +44,6 @@ export default class OmattiedotPage extends React.Component {
                     {
                         isContactContentLoading ? <Loader /> :
                             <HenkiloViewContactContent {...this.props}
-                                                       creatableYhteystietotyypit={this._creatableYhteystietotyypit.bind(this)}
                                                        readOnly={true}
                                                        locale={this.props.locale} />
                     }
@@ -219,12 +218,5 @@ export default class OmattiedotPage extends React.Component {
             <EditButton editAction={edit} L={L} />
         ];
     }
-
-    _creatableYhteystietotyypit() {
-        return this.props.koodisto.yhteystietotyypit
-            .filter(yhteystietotyyppi => ['yhteystietotyyppi4', 'yhteystietotyyppi10', 'yhteystietotyyppi5', 'yhteystietotyyppi9',
-                'yhteystietotyyppi12', 'yhteystietotyyppi18', 'yhteystietotyyppi11', 'yhteystietotyyppi8']
-                .indexOf(yhteystietotyyppi.value) === -1);
-    };
 }
 
