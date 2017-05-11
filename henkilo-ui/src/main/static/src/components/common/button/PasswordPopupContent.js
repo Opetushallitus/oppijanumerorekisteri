@@ -6,7 +6,7 @@ export default class PasswordPopupContent extends React.Component {
 
     static propTypes = {
         henkiloOid: React.PropTypes.string.isRequired,
-        l10n: React.PropTypes.object.isRequired,
+        L: React.PropTypes.object.isRequired,
         updatePassword: React.PropTypes.func.isRequired
     };
 
@@ -27,7 +27,7 @@ export default class PasswordPopupContent extends React.Component {
         const passwordConfirmedClass = classNames('oph-input haka-input',
             {'password-invalid': this.state.passwordConfirmedValid === false});
 
-        const L = this.props.l10n[this.props.locale];
+        const L = this.props.L;
         return (<div id='password-popup-form'>
                     <div className='password-controls'>
                         <label>{L['SALASANA_UUSI']}</label>
@@ -45,13 +45,11 @@ export default class PasswordPopupContent extends React.Component {
     }
 
     handlePasswordChange(event) {
-        this.setState({password: event.target.value});
-        this.setState({passwordValid: this.validatePassword(event.target.value)});
+        this.setState({password: event.target.value, passwordValid: this.validatePassword(event.target.value)});
     }
 
     handlePasswordConfirmedChange(event) {
-        this.setState({passwordConfirmed: event.target.value});
-        this.setState({passwordConfirmedValid: this.validateConfirmedPassword(event.target.value)});
+        this.setState({passwordConfirmed: event.target.value, passwordConfirmedValid: this.validateConfirmedPassword(event.target.value)});
     }
 
     validatePassword(password) {
