@@ -32,9 +32,8 @@ class HenkiloViewUserContent extends React.Component{
     constructor(props) {
         super(props);
 
-        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
-
         this.state = {
+            henkiloUpdate: JSON.parse(JSON.stringify(this.props.henkilo.henkilo)), // deep copy
             readOnly: this.props.readOnly,
             showPassive: false,
         };
@@ -50,8 +49,8 @@ class HenkiloViewUserContent extends React.Component{
                         </div>
                         <Columns columns={3} gap="10px">
                             {
-                                this.props.basicInfo(this.state.readOnly, this._updateModelField, this._updateDateField, this.henkiloUpdate)
-                                    .map((info, idx) =>
+                                this.props.basicInfo(this.state.readOnly, this._updateModelField.bind(this),
+                                    this._updateDateField.bind(this), this.state.henkiloUpdate).map((info, idx) =>
                                     <div key={idx} className="henkiloViewContent">
                                         {
                                             info.map((values, idx2) => values
@@ -78,35 +77,47 @@ class HenkiloViewUserContent extends React.Component{
     };
 
     _discard() {
-        this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.setState({
+            henkiloUpdate: JSON.parse(JSON.stringify(this.props.henkilo.henkilo)), // deep copy
             readOnly: true,
         });
     };
 
     _update() {
-        this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
-        if(this.henkiloUpdate.password && this.henkiloUpdate.password === this.henkiloUpdate.passwordAgain) {
-            this.props.updatePassword(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.password);
-            this.henkiloUpdate.password = this.henkiloUpdate.passwordAgain = null;
+        this.props.updateHenkiloAndRefetch(this.state.henkiloUpdate);
+        if(this.state.henkiloUpdate.password && this.state.henkiloUpdate.password === this.state.henkiloUpdate.passwordAgain) {
+            this.props.updatePassword(this.state.henkiloUpdate.oidHenkilo, this.state.henkiloUpdate.password);
+            this.state.henkiloUpdate.password = this.state.henkiloUpdate.passwordAgain = null;
         }
-        if(this.props.henkilo.kayttajatieto.username !== undefined && this.henkiloUpdate.kayttajanimi !== undefined) {
-            this.props.updateAndRefetchKayttajatieto(this.henkiloUpdate.oidHenkilo, this.henkiloUpdate.kayttajanimi);
+        if(this.props.henkilo.kayttajatieto.username !== undefined && this.state.henkiloUpdate.kayttajanimi !== undefined) {
+            this.props.updateAndRefetchKayttajatieto(this.state.henkiloUpdate.oidHenkilo, this.state.henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});
     };
 
     _updateModelField(event) {
-        const value = event.target.value;
-        const fieldpath = event.target.name;
-        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
+        let value;
+        let fieldpath;
+        if(event.optionsName) {
+            value = event.value;
+            fieldpath = event.optionsName;
+        }
+        else {
+            value = event.target.value;
+            fieldpath = event.target.name;
+        }
+        this.setState({
+            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, fieldpath, value),
+        });
     };
 
     _updateDateField(event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
-        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath,
-            dateformat(StaticUtils.ddmmyyyyToDate(value), this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']));
+        this.setState({
+            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, fieldpath,
+                dateformat(StaticUtils.ddmmyyyyToDate(value), this.props.l10n[this.props.locale]['PVM_DBFORMAATTI'])),
+        });
     };
 
 }

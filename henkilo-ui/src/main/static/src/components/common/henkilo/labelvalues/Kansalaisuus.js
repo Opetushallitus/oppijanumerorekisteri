@@ -3,19 +3,22 @@ import LabelValue from "./LabelValue"
 
 const Kansalaisuus = (props) => <LabelValue {...props} values={
     props.henkilo.henkilo.kansalaisuus && props.henkilo.henkilo.kansalaisuus.length
-    ? props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
+        ? props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
         ({
             label: 'HENKILO_KANSALAISUUS',
-            data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale]})),
+            data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
+                optionsName: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',})),
             value: props.koodisto.kansalaisuus
                 .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
-            inputValue: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
-            selectValue: values.kansalaisuusKoodi
+            selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
         })).reduce((a,b) => a.concat(b))
-    : { label: 'HENKILO_KANSALAISUUS',
-        data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale]})),
-        inputValue: 'kansalaisuus.0.kansalaisuusKoodi',
-        value: null, }
+        : {
+        label: 'HENKILO_KANSALAISUUS',
+        data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
+            optionsName: 'kansalaisuus.0.kansalaisuusKoodi'})),
+        value: null,
+        selectValue: props.henkilo.henkilo.kansalaisuus.kansalaisuusKoodi,
+    }
 } />;
 
 Kansalaisuus.propTypes = {
@@ -27,6 +30,13 @@ Kansalaisuus.propTypes = {
         kansalaisuus: React.PropTypes.array,
     }),
     locale: React.PropTypes.string,
+    henkiloUpdate: React.PropTypes.shape({
+        kansalaisuus: React.PropTypes.arrayOf(
+            React.PropTypes.shape({
+                kansalalaisuusKoodi: React.PropTypes.string,
+            })
+        )
+    }),
 };
 
 export default Kansalaisuus;
