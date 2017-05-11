@@ -107,11 +107,11 @@ export default class OmattiedotPage extends React.Component {
                 <Kutsumanimi {...props} />,
             ],
             [
-                <Kansalaisuus {...props} />,
-                <Aidinkieli {...props} />,
+                <Kansalaisuus {...props} henkiloUpdate={henkiloUpdate} />,
+                <Aidinkieli {...props} henkiloUpdate={henkiloUpdate} />,
                 <Sukupuoli {...props} />,
                 <Oppijanumero {...props} />,
-                <Asiointikieli {...props} />,
+                <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
             ],
             [
                 <Kayttajanimi {...props} />,
@@ -120,7 +120,6 @@ export default class OmattiedotPage extends React.Component {
     };
 
     _parseOrganisaatioOptions() {
-        console.log(this.props.organisaatios);
         if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
                 .map(organisaatio => {

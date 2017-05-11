@@ -73,7 +73,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
                     <Sukunimi {...props} />,
                     <Etunimet {...props} />,
                     <Kutsumanimi {...props} />,
-                    <Asiointikieli {...props} />,
+                    <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
                     <Oppijanumero {...props} />,

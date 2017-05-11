@@ -34,7 +34,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             }));
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
-            console.log();
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
