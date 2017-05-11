@@ -67,7 +67,7 @@ class OppijaViewContainer extends AbstractViewContainer {
                     <Kutsumanimi {...props} />,
                 ],
                 [
-                    <Kansalaisuus {...props} />,
+                    <Kansalaisuus {...props} henkiloUpdate={henkiloUpdate} />,
                     <Aidinkieli {...props} />,
                     <Oppijanumero {...props} />,
                     <Asiointikieli {...props} />,

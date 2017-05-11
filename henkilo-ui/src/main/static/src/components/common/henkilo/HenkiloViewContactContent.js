@@ -34,7 +34,7 @@ class HenkiloViewContactContent extends React.Component{
         this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
-            contactInfo: this._updateYhteystiedot(this),
+            contactInfo: this._updateYhteystiedot(this.henkiloUpdate, this.contactInfoTemplate, this.props.koodisto.yhteystietotyypit, this.props.locale),
         };
     };
 
@@ -46,7 +46,7 @@ class HenkiloViewContactContent extends React.Component{
                     <div className="right" style={{width: "20%"}}>
                         { !this.state.readOnly
                             ? <div>
-                                <OphSelect onChange={this._createYhteystiedotRyhma}
+                                <OphSelect onChange={this._createYhteystiedotRyhma.bind(this)}
                                            options={AbstractViewContainer.creatableYhteystietotyypit(this.props.koodisto.yhteystietotyypit)
                                                .map((yhteystietotyyppi, idx) =>
                                                    ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
@@ -69,7 +69,7 @@ class HenkiloViewContactContent extends React.Component{
                                                     ? <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
                                                         <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
                                                         <Field inputValue={yhteystietoFlat.inputValue}
-                                                               changeAction={this._updateModelField}
+                                                               changeAction={this._updateModelField.bind(this)}
                                                                readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
                                                             {yhteystietoFlat.value}
                                                         </Field>
@@ -84,7 +84,7 @@ class HenkiloViewContactContent extends React.Component{
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button key="contactEdit" big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
+                        <Button key="contactEdit" big action={this._edit.bind(this)}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
                         <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
@@ -123,26 +123,27 @@ class HenkiloViewContactContent extends React.Component{
         this.henkiloUpdate.yhteystiedotRyhma.push({
             readOnly: false,
             ryhmaAlkuperaTieto: "alkupera2", // Virkailija
-            ryhmaKuvaus: event.target.value,
+            ryhmaKuvaus: event.value,
             yhteystieto: []
         });
-        const contactInfo = this._updateYhteystiedot(this);
+        const contactInfo = this._updateYhteystiedot(this.henkiloUpdate, this.contactInfoTemplate,
+            this.props.koodisto.yhteystietotyypit, this.props.locale);
         this.setState({
             contactInfo: contactInfo
         });
     };
 
-    _updateYhteystiedot = _this =>
-        _this.henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
+    _updateYhteystiedot = (henkiloUpdate, contactInfoTemplate, yhteystietotyypit, locale) =>
+        henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
             const yhteystietoList = yhteystiedotRyhma.yhteystieto;
             const YhteystietoFlatList = {
-                value: _this.contactInfoTemplate.map(((template, idx2) => (
+                value: contactInfoTemplate.map(((template, idx2) => (
                     {label: template.label, value: yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0]
                     && yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0].yhteystietoArvo,
                         inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo'}
                 ))),
-                name: yhteystiedotRyhma.ryhmaKuvaus && _this.props.koodisto.yhteystietotyypit.filter(kieli =>
-                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale],
+                name: yhteystiedotRyhma.ryhmaKuvaus && yhteystietotyypit.filter(kieli =>
+                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
                 readOnly: yhteystiedotRyhma.readOnly,
             };
             yhteystiedotRyhma.yhteystieto = YhteystietoFlatList.value.map(yhteystietoFlat => (

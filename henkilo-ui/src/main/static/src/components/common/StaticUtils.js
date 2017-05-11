@@ -25,6 +25,8 @@ class StaticUtils extends React.Component {
         }
 
         schema[pList[len-1]] = value;
+
+        return obj;
     };
 
     static reduceListToObject = (a,b) => {
