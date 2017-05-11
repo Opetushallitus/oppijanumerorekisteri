@@ -17,7 +17,6 @@ const Kansalaisuus = (props) => <LabelValue {...props} values={
         data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
             optionsName: 'kansalaisuus.0.kansalaisuusKoodi'})),
         value: null,
-        selectValue: props.henkilo.henkilo.kansalaisuus.kansalaisuusKoodi,
     }
 } />;
 

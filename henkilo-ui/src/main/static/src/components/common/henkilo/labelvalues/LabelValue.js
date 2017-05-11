@@ -20,7 +20,7 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
 LabelValue.propTypes = {
     values: React.PropTypes.shape({
         readOnly: React.PropTypes.bool,
-        value: React.PropTypes.object,
+        value: React.PropTypes.string,
     }),
     readOnly: React.PropTypes.bool,
     updateModelFieldAction: React.PropTypes.func,
