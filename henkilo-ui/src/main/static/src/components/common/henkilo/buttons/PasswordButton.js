@@ -6,7 +6,7 @@ const PasswordButton = ({L, oidHenkilo, updatePassword}) =>
     <PopupButton popupClass={'oph-popup-default oph-popup-top oph-popup-password'}
              popupStyle={{ bottom: '-5px', left: '795px', width: '18rem' }}
              popupTitle={<h3 style={{textAlign: 'left'}}>{L['SALASANA_ASETA']}</h3>}
-             popupContent={<PasswordPopupContent henkiloOid={henkiloOid}
+             popupContent={<PasswordPopupContent henkiloOid={oidHenkilo}
                                                  L={L}
                                                  updatePassword={updatePassword}/>}>
         {L['SALASANA_ASETA']}

@@ -92,7 +92,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             <EditButton editAction={edit} L={this.L} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
-            <PasswordButton L={this.L} />,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={updatePassword}/>,
         ];
 
     };
