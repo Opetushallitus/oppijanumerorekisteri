@@ -5,19 +5,22 @@ import Field from '../field/Field';
 import Button from "../button/Button";
 import OphSelect from '../select/OphSelect'
 import StaticUtils from "../StaticUtils";
+import EditButtons from "./buttons/EditButtons";
+import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer";
 
-const HenkiloViewContactContent = React.createClass({
-    propTypes: {
+class HenkiloViewContactContent extends React.Component{
+    static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         henkilo: React.PropTypes.shape({henkilo: React.PropTypes.object.isRequired,}).isRequired,
         readOnly: React.PropTypes.bool.isRequired,
         locale: React.PropTypes.string.isRequired,
         koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
-        editButtons: React.PropTypes.func.isRequired,
-        creatableYhteystietotyypit: React.PropTypes.func.isRequired,
-    },
-    getInitialState: function() {
+    };
+
+    constructor(props) {
+        super(props);
+
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.contactInfoTemplate = [
             {label: 'YHTEYSTIETO_SAHKOPOSTI', value: null, inputValue: null},
@@ -28,13 +31,14 @@ const HenkiloViewContactContent = React.createClass({
             {label: 'YHTEYSTIETO_KUNTA', value: null, inputValue: null},
         ];
 
-        return {
+        this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
-            contactInfo: this._updateYhteystiedot(this),
-        }
-    },
-    render: function() {
+            contactInfo: this._updateYhteystiedot(this.henkiloUpdate, this.contactInfoTemplate, this.props.koodisto.yhteystietotyypit, this.props.locale),
+        };
+    };
+
+    render() {
         const L = this.props.l10n[this.props.locale];
         return (
             <div className="henkiloViewUserContentWrapper">
@@ -42,9 +46,10 @@ const HenkiloViewContactContent = React.createClass({
                     <div className="right" style={{width: "20%"}}>
                         { !this.state.readOnly
                             ? <div>
-                                <OphSelect onChange={this._createYhteystiedotRyhma}
-                                           options={this.props.creatableYhteystietotyypit().map((yhteystietotyyppi, idx) =>
-                                               ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
+                                <OphSelect onChange={this._createYhteystiedotRyhma.bind(this)}
+                                           options={AbstractViewContainer.creatableYhteystietotyypit(this.props.koodisto.yhteystietotyypit)
+                                               .map((yhteystietotyyppi, idx) =>
+                                                   ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
                                            placeholder={L['HENKILO_LUOYHTEYSTIETO']} />
                             </div>
                             : null
@@ -64,7 +69,7 @@ const HenkiloViewContactContent = React.createClass({
                                                     ? <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
                                                         <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
                                                         <Field inputValue={yhteystietoFlat.inputValue}
-                                                               changeAction={this._updateModelField}
+                                                               changeAction={this._updateModelField.bind(this)}
                                                                readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
                                                             {yhteystietoFlat.value}
                                                         </Field>
@@ -79,60 +84,66 @@ const HenkiloViewContactContent = React.createClass({
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button key="contactEdit" big action={this._edit}>{L['MUOKKAA_LINKKI']}</Button>
+                        <Button key="contactEdit" big action={this._edit.bind(this)}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        {this.props.editButtons(this._discard, this._update)}
+                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
                     </div>
                 }
             </div>
         )
-    },
-    _edit: function () {
+    };
+
+    _edit() {
         this.setState({readOnly: false});
         this._preEditData = {
             contactInfo: this.state.contactInfo,
         }
-    },
-    _discard: function () {
+    };
+
+    _discard() {
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.setState({
             readOnly: true,
             contactInfo: this._preEditData.contactInfo,
         });
-    },
-    _update: function () {
+    };
+
+    _update() {
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
-    },
-    _updateModelField: function (event) {
+    };
+
+    _updateModelField(event) {
         const value = event.target.value;
         const fieldpath = event.target.name;
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
-    },
-    _createYhteystiedotRyhma: function (event) {
+    };
+
+    _createYhteystiedotRyhma(event) {
         this.henkiloUpdate.yhteystiedotRyhma.push({
             readOnly: false,
             ryhmaAlkuperaTieto: "alkupera2", // Virkailija
-            ryhmaKuvaus: event.target.value,
+            ryhmaKuvaus: event.value,
             yhteystieto: []
         });
-        const contactInfo = this._updateYhteystiedot(this);
+        const contactInfo = this._updateYhteystiedot(this.henkiloUpdate, this.contactInfoTemplate,
+            this.props.koodisto.yhteystietotyypit, this.props.locale);
         this.setState({
             contactInfo: contactInfo
         });
-    },
+    };
 
-    _updateYhteystiedot: _this =>
-        _this.henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
+    _updateYhteystiedot = (henkiloUpdate, contactInfoTemplate, yhteystietotyypit, locale) =>
+        henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
             const yhteystietoList = yhteystiedotRyhma.yhteystieto;
             const YhteystietoFlatList = {
-                value: _this.contactInfoTemplate.map(((template, idx2) => (
+                value: contactInfoTemplate.map(((template, idx2) => (
                     {label: template.label, value: yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0]
                     && yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0].yhteystietoArvo,
                         inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo'}
                 ))),
-                name: yhteystiedotRyhma.ryhmaKuvaus && _this.props.koodisto.yhteystietotyypit.filter(kieli =>
-                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][_this.props.locale],
+                name: yhteystiedotRyhma.ryhmaKuvaus && yhteystietotyypit.filter(kieli =>
+                kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
                 readOnly: yhteystiedotRyhma.readOnly,
             };
             yhteystiedotRyhma.yhteystieto = YhteystietoFlatList.value.map(yhteystietoFlat => (
@@ -142,7 +153,7 @@ const HenkiloViewContactContent = React.createClass({
                 }
             ));
             return YhteystietoFlatList;
-        }),
-});
+        });
+}
 
 export default HenkiloViewContactContent

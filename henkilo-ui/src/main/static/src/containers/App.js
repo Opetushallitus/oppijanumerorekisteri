@@ -2,11 +2,11 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
-import AbstractViewContainer from "./henkilo/AbstractViewContainer";
+import Loader from "../components/common/icons/Loader";
 
 
-const App = React.createClass({
-    render: function() {
+class App extends React.Component{
+    render() {
         return (
             this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
                 && this.props.notLoadedCount === 0
@@ -17,13 +17,15 @@ const App = React.createClass({
                     {this.props.children}
                 </div>
             </div>
-                : <div>{AbstractViewContainer.createLoader()}</div>
+                : <div><Loader /></div>
         )
-    },
-    componentDidMount: function() {
+    };
+
+    componentDidMount() {
         this.props.fetchFrontProperties();
-    },
-    propTypes: {
+    };
+
+    static propTypes = {
         // Injected by React Redux
         pathname: PropTypes.string.isRequired,
 
@@ -39,8 +41,8 @@ const App = React.createClass({
             localisationsInitialized: React.PropTypes.bool,
         }).isRequired,
 
-    }
-});
+    };
+}
 
 const mapStateToProps = (state, ownProps) => {
     return {

@@ -2,10 +2,10 @@ import './OppijaViewPage.css'
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
-import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
+import Loader from "../common/icons/Loader";
 
-const OppijaViewPage = React.createClass({
-    render: function() {
+class OppijaViewPage extends React.Component {
+    render() {
         return (
             <div>
                 <div className="wrapper">
@@ -14,27 +14,22 @@ const OppijaViewPage = React.createClass({
                     </div>
                     {
                         this.props.isUserContentLoading()
-                            ? AbstractViewContainer.createLoader()
+                            ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
-                                                      basicInfo2={this.props.createBasicInfo2}
-                                                      loginInfo={this.props.createLoginInfo}
-                                                      readOnlyButtons={this.props.readOnlyButtons}
-                                                      editButtons={this.props.editButtons} />
+                                                      readOnlyButtons={this.props.readOnlyButtons} />
                     }
                 </div>
                 <div className="wrapper">
                     {
                         this.props.isContactContentLoading()
-                            ? AbstractViewContainer.createLoader()
-                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale}
-                                                         editButtons={this.props.editButtons}
-                                                         creatableYhteystietotyypit={this.props.creatableYhteystietotyypit}/>
+                            ? <Loader />
+                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
                 </div>
             </div>
         )
-    },
-});
+    };
+}
 
 export default OppijaViewPage;

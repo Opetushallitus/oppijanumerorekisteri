@@ -3,9 +3,10 @@ import React from 'react'
 import Columns from 'react-columns'
 import Button from "../button/Button";
 import ConfirmButton from "../button/ConfirmButton";
+import StaticUtils from "../StaticUtils";
 
-const HenkiloViewOrganisationContent = React.createClass({
-    propTypes: {
+class HenkiloViewOrganisationContent extends React.Component{
+    static propTypes = {
         henkilo: React.PropTypes.shape({henkiloOrgs: React.PropTypes.Array}.isRequired),
         l10n: React.PropTypes.object.isRequired,
         readOnly: React.PropTypes.bool.isRequired,
@@ -13,11 +14,14 @@ const HenkiloViewOrganisationContent = React.createClass({
         locale: React.PropTypes.string.isRequired,
 
         passivoiHenkiloOrg: React.PropTypes.func.isRequired,
-    },
-    getInitialState: function() {
+    };
+
+    constructor(props) {
+        super(props);
+
         const organisations = this.props.henkilo.henkiloOrgs;
         this.L = this.props.l10n[this.props.locale];
-        return {
+        this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
             organisationInfo: organisations.map(organisation =>
@@ -28,8 +32,9 @@ const HenkiloViewOrganisationContent = React.createClass({
                     id: organisation.oid,
                 })),
         }
-    },
-    render: function() {
+    };
+
+    render() {
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>
@@ -63,7 +68,7 @@ const HenkiloViewOrganisationContent = React.createClass({
                                                                  action={() => this.passivoiHenkiloOrganisation(values.id)}
                                                                  confirmLabel={this.L['HENKILO_ORG_PASSIVOI_CONFIRM']}
                                                                  normalLabel={this.L['HENKILO_ORG_PASSIVOI']}
-                                                                 errorMessage={this.props._createPopupErrorMessage('passivoiOrg')} />
+                                                                 errorMessage={StaticUtils.createPopupErrorMessage('passivoiOrg', this.props.henkilo, this.L)} />
                                                 : <Button disabled action={() => {}}>{this.L['HENKILO_ORG_PASSIVOITU']}</Button>}
                                         </div>
                                     </div>
@@ -74,10 +79,11 @@ const HenkiloViewOrganisationContent = React.createClass({
                 </div>
             </div>
         )
-    },
-    passivoiHenkiloOrganisation: function(organisationOid) {
+    };
+
+    passivoiHenkiloOrganisation(organisationOid) {
         this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);
-    },
-});
+    };
+}
 
 export default HenkiloViewOrganisationContent

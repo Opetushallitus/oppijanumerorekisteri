@@ -3,6 +3,7 @@ import React from 'react'
 import Table from '../table/Table'
 import dateformat from 'dateformat'
 import StaticUtils from "../StaticUtils";
+import MyonnaButton from "./buttons/MyonnaButton";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -11,6 +12,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
     };
+
     constructor(props) {
         super(props);
 
@@ -32,7 +34,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             }));
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
-            console.log();
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
@@ -62,10 +63,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                                    StaticUtils.ddmmyyyyToDate(event.target.value);}} />
                     </div>
                     <div style={{display: 'table-cell'}}>
-                        {this.props.myonnaButton(() => {
-                            this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
-                                uusittavaKayttooikeusRyhma.organisaatioOid);
-                        })}
+                        <MyonnaButton myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
+                            uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo} L={this.L}/>
                     </div>
                 </div>,
             }));

@@ -4,8 +4,8 @@ import App from './containers/App'
 import KutsututPageContainer from './containers/KutsututPageContainer';
 import KutsuminenPage from './containers/KutsuminenPage';
 import AnomustListPageContainer from './containers/AnomusPageContainer';
-import OppijaViewContainer from './containers/henkilo/OppijaViewContainer';
-import VirkailijaViewContainer from "./containers/henkilo/VirkailijaViewContainer";
+import OppijaViewContainer from './components/henkilo/OppijaViewContainer';
+import VirkailijaViewContainer from "./components/henkilo/VirkailijaViewContainer";
 import OmattiedotContainer from "./components/omattiedot/OmattiedotPageContainer";
 
 export default <Route path="/" component={App}>

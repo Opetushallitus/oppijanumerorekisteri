@@ -11,7 +11,20 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../../configuration/navigationconfigurations";
-import AbstractViewContainer from "./AbstractViewContainer";
+import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
+import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
+import EditButton from "../common/henkilo/buttons/EditButton";
+import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
+import HakaButton from "../common/henkilo/buttons/HakaButton";
+import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
+import Syntymaaika from "../common/henkilo/labelvalues/Syntymaaika";
+import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
+import Etunimet from "../common/henkilo/labelvalues/Etunimet";
+import Hetu from "../common/henkilo/labelvalues/Hetu";
+import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
+import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
+import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
+import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 
 
 class OppijaViewContainer extends AbstractViewContainer {
@@ -27,8 +40,7 @@ class OppijaViewContainer extends AbstractViewContainer {
         const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isContactContentLoading: this._isContactContentLoading, createBasicInfo: this._createBasicInfo,
             createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
-            readOnlyButtons: this._readOnlyButtons, editButtons: this._editButtons,
-            creatableYhteystietotyypit: this._creatableYhteystietotyypit.bind(this),
+            readOnlyButtons: this._readOnlyButtons,
             createNotifications: this._createNotifications.bind(this), };
         return <OppijaViewPage {...props} />;
     };
@@ -42,27 +54,36 @@ class OppijaViewContainer extends AbstractViewContainer {
         this._isContactContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
 
         // Basic info box content
-        this._createBasicInfo = () => [
-            this.createSukunimiFieldWithAutofocus(),
-            this.createEtunimetField(),
-            this.createSyntymaaikaField(),
-            this.createHetuField(),
-            this.createKutsumanimiField(),
-        ];
-        this._createBasicInfo2 = () => ([
-            this.createKansalaisuusField(),
-            this.createAidinkieliField(),
-            this.createOppijanumeroField(),
-            this.createAsiointikieliField(),
-        ]);
-        this._createLoginInfo = () => [];
+        this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
+            const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
+                updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
+                L: this.L, locale: this.props.locale,};
+            return [
+                [
+                    <Sukunimi {...props} />,
+                    <Etunimet {...props} />,
+                    <Syntymaaika {...props} />,
+                    <Hetu {...props} />,
+                    <Kutsumanimi {...props} />,
+                ],
+                [
+                    <Kansalaisuus {...props} henkiloUpdate={henkiloUpdate} />,
+                    <Aidinkieli {...props} henkiloUpdate={henkiloUpdate} />,
+                    <Oppijanumero {...props} />,
+                    <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
+                ],
+                [
+
+                ],
+            ];
+        };
 
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
-            this.createEditButton(edit),
-            this.createYksilointiButton(),
-            this.createHakaButton(),
-            this.createPassivoiButton(),
+            <EditButton editAction={edit} L={this.L} />,
+            <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} />,
+            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
+            <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
         ];
     };
 }
