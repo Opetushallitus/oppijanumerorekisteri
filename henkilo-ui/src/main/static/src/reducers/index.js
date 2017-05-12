@@ -14,6 +14,7 @@ import {kayttooikeus} from "./kayttooikeusryhma.reducer";
 import { ryhmatState } from "./ryhmat.reducer";
 import { OrganisaatioKayttooikeusryhmat } from "./organisaatiokayttooikeusryhmat.reducer";
 import {organisaatio} from "./organisaatio.reducer";
+import {notifications} from "./notifications.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
     ryhmatState,
     OrganisaatioKayttooikeusryhmat,
     organisaatio,
+    notifications,
 });
 
 export default rootReducer;

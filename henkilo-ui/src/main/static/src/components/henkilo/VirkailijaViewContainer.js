@@ -101,6 +101,7 @@ const mapStateToProps = (state, ownProps) => {
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
+        notifications: state.notifications,
     };
 };
 

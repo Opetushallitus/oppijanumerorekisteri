@@ -4,6 +4,7 @@ import Table from '../table/Table'
 import dateformat from 'dateformat'
 import StaticUtils from "../StaticUtils";
 import MyonnaButton from "./buttons/MyonnaButton";
+import Notifications from "../notifications/Notifications";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -11,6 +12,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         locale: React.PropTypes.string.isRequired,
         kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
+        notifications: React.PropTypes.shape({
+            existingKayttooikeus: React.PropTypes.array.isRequired,
+        }),
     };
 
     constructor(props) {
@@ -74,15 +78,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     render() {
         return (
             <div className="henkiloViewUserContentWrapper">
+                <Notifications notifications={this.props.notifications.existingKayttooikeus} L={this.L} />
+                <div className="header">
+                    <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
+                </div>
                 <div>
-                    <div className="header">
-                        <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
-                    </div>
-                    <div>
-                        <Table headings={this.tableHeadings}
-                               data={this._rows}
-                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']} />
-                    </div>
+                    <Table headings={this.tableHeadings}
+                           data={this._rows}
+                           noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']} />
                 </div>
             </div>
         );
