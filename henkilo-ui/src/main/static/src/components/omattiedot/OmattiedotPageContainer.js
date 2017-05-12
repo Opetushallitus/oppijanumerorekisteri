@@ -11,7 +11,7 @@ import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenki
     updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
-import { fetchOrganisaatioKayttooikeusryhmat } from '../../actions/kayttooikeusryhma.actions';
+import { fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus } from '../../actions/kayttooikeusryhma.actions';
 
 class OmattiedotPageContainer extends AbstractViewContainer {
 
@@ -56,4 +56,4 @@ const mapStateToProps = (state, ownProps) => {
 export default connect(mapStateToProps, {fetchOmattiedot, fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
     yksiloiHenkilo, updateAndRefetchKayttajatieto, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat})(OmattiedotPageContainer)
+    updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus})(OmattiedotPageContainer)
