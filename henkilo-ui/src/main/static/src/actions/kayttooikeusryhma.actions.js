@@ -19,6 +19,9 @@ import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST,
     ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
+    CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
+    CREATE_KAYTTOOIKEUSANOMUS_SUCCESS,
+    CREATE_KAYTTOOIKEUSANOMUS_FAILURE
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 
@@ -121,4 +124,22 @@ export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) =
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
         })
         .catch(() => dispatch(errorAddKayttooikeusToHenkilo()));
+};
+
+
+const createKayttooikeusanomusRequest = () => ({type: CREATE_KAYTTOOIKEUSANOMUS_REQUEST});
+const createKayttooikeusanomusSuccess = data => ({type: CREATE_KAYTTOOIKEUSANOMUS_SUCCESS, data});
+const createKayttooikeusanomusFailure = error => ({type: CREATE_KAYTTOOIKEUSANOMUS_FAILURE, error});
+
+export const createKayttooikeusanomus = (anomusData) => async dispatch => {
+    dispatch(createKayttooikeusanomusRequest());
+    const url = urls.url('kayttooikeus-service.henkilo.uusi.kayttooikeusanomus', anomusData.anojaOid);
+    try {
+        const anomusId = await http.post(url, anomusData);
+        dispatch(createKayttooikeusanomusSuccess(anomusId));
+    } catch (error) {
+        dispatch(createKayttooikeusanomusFailure(error));
+        console.error(`Failed creating new kayttooikeusanomus for henkilo: ${anomusData.anojaOid}`, error);
+        throw error;
+    }
 };

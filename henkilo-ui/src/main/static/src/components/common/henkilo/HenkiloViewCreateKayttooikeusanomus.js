@@ -1,8 +1,8 @@
 import React from 'react';
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
-import StaticUtils from '../StaticUtils';
-import dateformat from 'dateformat';
+import Button from '../button/Button';
+import R from 'ramda';
 
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -29,8 +29,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             kayttooikeusryhmaSelection: [],
             kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
-            startDate: '',
-            endDate: '',
             emailOptions: [],
             tehtavanimike: '',
         }
@@ -38,8 +36,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     componentDidMount() {
         this.setState({
-            startDate: dateformat(new Date(), 'yyyy-mm-dd'),
-            endDate: dateformat(StaticUtils.datePlusOneYear(new Date()), 'yyyy-mm-dd'),
             emailOptions: this._parseEmailOptions(this.props.henkilo),
         });
     }
@@ -107,32 +103,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
             </div>
 
-
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                    {L['OMATTIEDOT_KESTO']}
-                </label>
-
-                <div className="oph-input-container">
-                    <div className="datefield-wrapper">
-                        <label className="oph-label oph-bold" htmlFor="permission_starts" aria-describedby="field-text">
-                            {L['OMATTIEDOT_KAYTTOOIKEUS_ALKAA']}
-                        </label>
-                        <input id="permission_starts" value={this.state.startDate}
-                               onChange={this._changeStartDate.bind(this)}
-                               className="oph-input datefield" type="date"/>
-                    </div>
-
-                    <div className="datefield-wrapper">
-                        <label className="oph-label oph-bold" htmlFor="permission_ends" aria-describedby="field-text">
-                            {L['OMATTIEDOT_KAYTTOOIKEUS_LOPPUU']}
-                        </label>
-                        <input id="permission_ends" value={this.state.endDate} onChange={this._changeEndDate.bind(this)}
-                               className="oph-input datefield" type="date"/>
-                    </div>
-                </div>
-            </div>
-
             <div className="oph-field oph-field-inline">
                 <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                     {L['OMATTIEDOT_ANOTTAVAT']}
@@ -158,6 +128,13 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                     <textarea className="oph-input" value={this.state.perustelut}
                               onChange={this._changePerustelut.bind(this)} name="perustelut" id="perustelut" cols="30"
                               rows="10"></textarea>
+                </div>
+            </div>
+
+            <div className="oph-field oph-field-inline">
+                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"></label>
+                <div className="oph-input-container">
+                   <Button action={this._createKayttooikeusAnomus.bind(this)}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
                 </div>
             </div>
 
@@ -204,14 +181,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         this.setState({kayttooikeusryhmaSelection: selection});
     }
 
-    _changeStartDate(event) {
-        this.setState({startDate: event.target.value});
-    }
-
-    _changeEndDate(event) {
-        this.setState({endDate: event.target.value});
-    }
-
     _parseEmailOptions(henkilo) {
         let emails = [];
         henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
@@ -234,6 +203,20 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         } else {
             this.setState({organisaatioOptions: []});
         }
+    }
+
+    _createKayttooikeusAnomus() {
+        const kayttooikeusRyhmaIds = R.map( selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelection);
+        console.log('kayttooikeusRyhmaIds', kayttooikeusRyhmaIds, this.state.kayttooikeusryhmaSelection);
+        const anomusData = {
+            organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
+            email: this.state.emailSelection.value,
+            tehtavaNimike: this.state.tehtavanimike,
+            perustelut: this.state.perustelut,
+            kayttooikeusRyhmaIds,
+            anojaOid: this.props.omattiedot.data.oid
+        };
+        this.props.createKayttooikeusanomus(anomusData);
     }
 
 }
