@@ -15,6 +15,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         notifications: React.PropTypes.shape({
             existingKayttooikeus: React.PropTypes.array.isRequired,
         }),
+        removeNotification: React.PropTypes.func,
     };
 
     constructor(props) {
@@ -78,7 +79,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     render() {
         return (
             <div className="henkiloViewUserContentWrapper">
-                <Notifications notifications={this.props.notifications.existingKayttooikeus} L={this.L} />
+                <Notifications notifications={this.props.notifications.existingKayttooikeus}
+                               L={this.L}
+                               closeAction={(status) => this.props.removeNotification(status, 'existingKayttooikeus')} />
                 <div className="header">
                     <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                 </div>
