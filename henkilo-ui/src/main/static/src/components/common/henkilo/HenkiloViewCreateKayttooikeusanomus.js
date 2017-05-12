@@ -27,10 +27,12 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             ryhmaSelection: '',
             emailSelection: '',
             kayttooikeusryhmaSelection: [],
+            tehtavanimike: '',
+            perustelut: '',
+
             kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
             emailOptions: [],
-            tehtavanimike: '',
         }
     }
 
@@ -223,6 +225,14 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             anojaOid: this.props.omattiedot.data.oid
         };
         this.props.createKayttooikeusanomus(anomusData);
+        this.setState({
+            organisaatioSelection: '',
+            ryhmaSelection: '',
+            emailSelection: '',
+            kayttooikeusryhmaSelection: [],
+            tehtavanimike: '',
+            perustelut: ''
+        });
     }
 
 }
