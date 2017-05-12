@@ -10,7 +10,8 @@ export const notifications = (state={existingKayttooikeus: [],}, action) => {
                 ...state,
                 existingKayttooikeus: [...state.existingKayttooikeus, {
                     type: 'ok',
-                    notL10nMessage: 'NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI'
+                    notL10nMessage: 'NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI',
+                    id: action.id,
                 }],
             };
         case ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE:

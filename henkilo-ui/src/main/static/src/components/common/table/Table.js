@@ -53,8 +53,14 @@ class Table extends React.Component {
                                     sortable: !heading.notSortable,
                                     maxWidth: heading.maxWidth || undefined,
                                     minWidth: heading.minWidth || 100,
+                                    show: !heading.hide,
                                 }))
-                            } />
+                            }
+                            getTrProps={(state, rowInfo, column) => {
+                                return {
+                                    className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null,
+                                }}}
+                />
             </div>
         );
     };

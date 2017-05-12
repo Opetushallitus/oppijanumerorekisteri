@@ -113,14 +113,15 @@ export const fetchAllowedKayttooikeusryhmasForOrganisation = (oidHenkilo, oidOrg
 };
 
 const requestAddKayttooikeusToHenkilo = () => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_REQUEST});
-const receiveAddKayttooikeusToHenkilo = () => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS});
+const receiveAddKayttooikeusToHenkilo = (organisaatioOid, ryhmaId) => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS,
+    id: organisaatioOid + ryhmaId});
 const errorAddKayttooikeusToHenkilo = () => ({type: ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE});
 export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) => dispatch => {
     dispatch(requestAddKayttooikeusToHenkilo());
     const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
     http.put(url, payload)
         .then(() => {
-            dispatch(receiveAddKayttooikeusToHenkilo());
+            dispatch(receiveAddKayttooikeusToHenkilo(organisaatioOid, payload[0].id));
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
         })
         .catch(() => dispatch(errorAddKayttooikeusToHenkilo()));

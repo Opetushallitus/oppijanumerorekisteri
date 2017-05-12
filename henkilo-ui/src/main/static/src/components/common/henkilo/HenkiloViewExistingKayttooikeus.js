@@ -28,6 +28,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125},
             {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 125, notSortable: true},
+            {key: 'HIGHLIGHT', hide: true}
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
@@ -73,6 +74,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo} L={this.L}/>
                     </div>
                 </div>,
+                [headingList[6]]: this.props.notifications.existingKayttooikeus.filter(notification =>
+                notification.id === uusittavaKayttooikeusRyhma.organisaatioOid
+                + uusittavaKayttooikeusRyhma.ryhmaId).length > 0,
             }));
     };
 
@@ -88,11 +92,13 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 <div>
                     <Table headings={this.tableHeadings}
                            data={this._rows}
-                           noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']} />
+                           noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']}
+                    />
                 </div>
             </div>
         );
     };
+
 }
 
 export default HenkiloViewExistingKayttooikeus;
