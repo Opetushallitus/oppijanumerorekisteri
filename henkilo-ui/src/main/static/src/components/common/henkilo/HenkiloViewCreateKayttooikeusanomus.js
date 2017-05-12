@@ -134,10 +134,10 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             <div className="oph-field oph-field-inline">
                 <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"></label>
                 <div className="oph-input-container">
-                   <Button action={this._createKayttooikeusAnomus.bind(this)}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
+                   <Button action={this._createKayttooikeusAnomus.bind(this)} disabled={!this._isAnomusButtonDisabled()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
                 </div>
-            </div>
 
+            </div>
 
         </div>);
     }
@@ -205,9 +205,15 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         }
     }
 
+    _isAnomusButtonDisabled() {
+        const organisaatioOrRyhmaSelected = this.state.organisaatioSelection !== '' || this.state.ryhmaSelection !== '';
+        const ryhmaSelected = this.state.kayttooikeusryhmaSelection.length > 0;
+        const emailSelected = this.state.emailSelection.value !== undefined;
+        return organisaatioOrRyhmaSelected && ryhmaSelected && emailSelected;
+    }
+
     _createKayttooikeusAnomus() {
         const kayttooikeusRyhmaIds = R.map( selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelection);
-        console.log('kayttooikeusRyhmaIds', kayttooikeusRyhmaIds, this.state.kayttooikeusryhmaSelection);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
             email: this.state.emailSelection.value,
