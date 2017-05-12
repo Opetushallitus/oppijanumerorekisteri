@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import OmattiedotPage from './OmattiedotPage';
-import AbstractViewContainer from '../../containers/henkilo/AbstractViewContainer';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
@@ -13,7 +12,7 @@ import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, 
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus } from '../../actions/kayttooikeusryhma.actions';
 
-class OmattiedotPageContainer extends AbstractViewContainer {
+class OmattiedotPageContainer extends React.Component {
 
     async componentDidMount() {
         this.props.fetchYhteystietotyypitKoodisto();

@@ -19,7 +19,12 @@ class VirkailijaViewPage extends React.Component {
             <div>
                 <div className="wrapper">
                     {
-                        this.props.isUserContentLoading()
+                        this.props.henkilo.henkiloLoading
+                        || this.props.koodisto.kieliKoodistoLoading
+                        || this.props.koodisto.kansalaisuusKoodistoLoading
+                        || this.props.koodisto.sukupuoliKoodistoLoading
+                        || this.props.henkilo.kayttajatietoLoading
+                        ||this.props.koodisto.yhteystietotyypitKoodistoLoading
                             ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
@@ -30,7 +35,7 @@ class VirkailijaViewPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        this.props.isOrganisationContentLoading()
+                        this.props.henkilo.henkiloOrgsLoading
                             ? <Loader />
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }

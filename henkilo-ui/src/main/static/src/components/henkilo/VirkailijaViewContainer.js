@@ -10,7 +10,6 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
-import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
@@ -31,7 +30,7 @@ import TyoPuhelin from "../common/henkilo/labelvalues/TyoPuhelin";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 
 
-class VirkailijaViewContainer extends AbstractViewContainer {
+class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
         this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
 
@@ -48,10 +47,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     };
 
     render() {
-        const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
-            isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
-            createNotifications: this._createNotifications.bind(this), readOnlyButtons: this._readOnlyButtons,
-            updatePassword: updatePassword,
+        const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
+            readOnlyButtons: this._readOnlyButtons, updatePassword: updatePassword,
         };
         return <VirkailijaViewPage {...props} />;
     };
@@ -59,10 +56,6 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     constructor(props) {
         super(props);
         this.L = this.props.l10n[this.props.locale];
-        this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
-        || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading
-        || this.props.henkilo.kayttajatietoLoading ||this.props.koodisto.yhteystietotyypitKoodistoLoading;
-        this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
         // Basic info box content
         this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {

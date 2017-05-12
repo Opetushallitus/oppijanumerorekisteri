@@ -22,7 +22,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125},
-            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 125},
+            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 125, notSortable: true},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
@@ -49,7 +49,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map((uusittavaKayttooikeusRyhma, idx) => ({
-                [headingList[0]]: this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid].nimi[this.props.locale],
+                [headingList[0]]: this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid].nimi[this.props.locale] +
+                (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
                 [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
