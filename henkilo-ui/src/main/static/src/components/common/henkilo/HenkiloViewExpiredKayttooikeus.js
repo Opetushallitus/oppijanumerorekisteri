@@ -45,7 +45,9 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                     <div>
-                        <Table headings={this.tableHeadings} data={this._rows} />
+                        <Table headings={this.tableHeadings}
+                               data={this._rows}
+                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_SULKEUTUNEET_TYHJA']} />
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import 'react-table/react-table.css'
 import SortAscIcon from "../icons/SortAscIcon";
 import SortDescIcon from "../icons/SortDescIcon";
 import SortIconNone from "../icons/SortIconNone";
+import classNames from 'classnames/bind';
 
 class Table extends React.Component {
     static propTypes = {
@@ -19,30 +20,37 @@ class Table extends React.Component {
                 React.PropTypes.string,
                 React.PropTypes.object
             ]).isRequired)),
+        noDataText: React.PropTypes.string.isRequired,
+        striped: React.PropTypes.bool,
     };
 
     render() {
+        const classname = classNames({
+            table: true,
+            "-striped": this.props.striped,
+        });
         return (
             <div>
-                <ReactTable className="table"
+                <ReactTable className={classname}
                             showPagination={false}
                             resizable={false}
                             pageSize={this.props.data.length}
                             loadingText=""
-                            noDataText=""
+                            noDataText={this.props.noDataText || ''}
                             data={this.props.data}
                             columns={
                                 this.props.headings.map(heading => ({
                                     getHeaderProps: this.getHeaderProps,
                                     header: props => {
                                         return (<span className="oph-bold">
-                                            {heading.label} {props.column.sorting.desc !== undefined
+                                            {heading.label} {!heading.notSortable ? props.column.sorting.desc !== undefined
                                             ? (props.column.sorting.desc ? <SortAscIcon/> : <SortDescIcon/>)
-                                            : <SortIconNone/>}
+                                            : <SortIconNone/>
+                                            : null}
                                         </span>)
                                     },
                                     accessor: heading.key,
-                                    sortable: true,
+                                    sortable: !heading.notSortable,
                                     maxWidth: heading.maxWidth || undefined,
                                     minWidth: heading.minWidth || 100,
                                 }))
