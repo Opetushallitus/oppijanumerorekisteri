@@ -89,7 +89,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
             this.kayttooikeusModel = this.initialKayttooikeusModel();
             this.setState(this.initialState);
             // Scroll
-            scrollToComponent(this.props.existingKayttooikeusRef);
+            scrollToComponent(this.props.existingKayttooikeusRef, {align: 'top'});
         };
 
         this.state = this.initialState;

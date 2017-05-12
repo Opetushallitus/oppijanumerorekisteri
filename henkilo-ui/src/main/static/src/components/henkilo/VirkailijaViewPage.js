@@ -28,8 +28,6 @@ class VirkailijaViewPage extends React.Component {
                             ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
-                                                      basicInfo2={this.props.createBasicInfo2}
-                                                      loginInfo={this.props.createLoginInfo}
                                                       readOnlyButtons={this.props.readOnlyButtons} />
                     }
                 </div>
@@ -40,12 +38,11 @@ class VirkailijaViewPage extends React.Component {
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
                 </div>
-                <div className="wrapper">
+                <div className="wrapper" ref={(ref) => this.existingKayttooikeusRef = ref}>
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props}
-                                                               ref={(ref) => this.existingKayttooikeusRef = ref} />
+                            : <HenkiloViewExistingKayttooikeus {...this.props} />
                     }
                 </div>
                 <div className="wrapper">
