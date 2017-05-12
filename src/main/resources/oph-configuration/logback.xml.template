@@ -44,6 +44,7 @@
     <logger name="org.springframework.security" level="warn" />
     <logger name="org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration" level="info" />
     <logger name="fi.vm" level="debug" />
+    <logger name="fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter" level="error" />
     <logger name="org.hibernate.SQL" level="error" />
 
     <!-- Auditlog -->
