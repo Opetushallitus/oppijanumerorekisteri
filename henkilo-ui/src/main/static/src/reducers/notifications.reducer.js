@@ -11,7 +11,8 @@ export const notifications = (state={existingKayttooikeus: [],}, action) => {
                 existingKayttooikeus: [...state.existingKayttooikeus, {
                     type: 'ok',
                     notL10nMessage: 'NOTIFICATION_LISAA_KAYTTOOIKEUS_ONNISTUI',
-                    id: action.id,
+                    organisaatioOid: action.organisaatioOid,
+                    ryhmaIdList: action.ryhmaIdList,
                 }],
             };
         case ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE:
@@ -20,10 +21,13 @@ export const notifications = (state={existingKayttooikeus: [],}, action) => {
                 existingKayttooikeus: [...state.existingKayttooikeus, {
                     type: 'error',
                     notL10nMessage: action.notL10nMessage || 'NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI',
+                    id: action.id,
                 }],
             };
         case NOTIFICATION_REMOVED:
-            const removeNotification = state[action.group].filter(notification => notification.type === action.status)[0];
+            const removeNotification = action.id
+                ? state[action.group].filter(notification => action.id === notification.organisaatioOid + notification.ryhmaIdList.join(''))[0]
+                : state[action.group].filter(notification => notification.type === action.status)[0];
             return Object.assign({}, state, {[action.group]: state[action.group].filter(notification => notification !== removeNotification)});
         default:
             return state;

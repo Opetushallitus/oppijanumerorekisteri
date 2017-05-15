@@ -4,9 +4,15 @@ import WideRedNotification from "./WideRedNotification";
 
 const Notifications = ({notifications, L, closeAction}) => <div>
     {notifications.filter(notification => notification.type === 'ok').map(notification =>
-        <WideGreenNotification message={L[notification.notL10nMessage]} closeAction={() => closeAction(notification.type)} />)}
+        <WideGreenNotification message={L[notification.notL10nMessage]} closeAction={() =>
+            closeAction(notification.type, notification.organisaatioOid && notification.ryhmaIdList
+                ? notification.organisaatioOid + notification.ryhmaIdList.join('')
+                : null)} />)}
     {notifications.filter(notification => notification.type === 'error').map(notification =>
-        <WideRedNotification message={L[notification.notL10nMessage]} closeAction={() => closeAction(notification.type)} /> )}
+        <WideRedNotification message={L[notification.notL10nMessage]} closeAction={() =>
+            closeAction(notification.type, notification.organisaatioOid && notification.ryhmaIdList
+                ? notification.organisaatioOid + notification.ryhmaIdList.join('')
+                : null)} /> )}
 </div>;
 
 Notifications.propTypes = {

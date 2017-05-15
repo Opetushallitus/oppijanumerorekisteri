@@ -74,9 +74,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo} L={this.L}/>
                     </div>
                 </div>,
-                [headingList[6]]: this.props.notifications.existingKayttooikeus.filter(notification =>
-                notification.id === uusittavaKayttooikeusRyhma.organisaatioOid
-                + uusittavaKayttooikeusRyhma.ryhmaId).length > 0,
+                [headingList[6]]: this.props.notifications.existingKayttooikeus.some(notification => {
+                    console.log(notification);
+                    console.log(uusittavaKayttooikeusRyhma);
+                    return notification.ryhmaIdList
+                        .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
+                        && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
+                }),
+
             }));
     };
 
@@ -85,7 +90,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             <div className="henkiloViewUserContentWrapper">
                 <Notifications notifications={this.props.notifications.existingKayttooikeus}
                                L={this.L}
-                               closeAction={(status) => this.props.removeNotification(status, 'existingKayttooikeus')} />
+                               closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)} />
                 <div className="header">
                     <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                 </div>
