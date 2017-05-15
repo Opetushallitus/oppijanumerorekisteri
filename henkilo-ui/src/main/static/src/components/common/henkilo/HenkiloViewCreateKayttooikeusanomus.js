@@ -3,6 +3,7 @@ import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
 import R from 'ramda';
+import {ShowText} from '../../common/ShowText';
 
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -49,7 +50,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
             <div className="oph-field oph-field-inline">
                 <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                    {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}
+                    {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
                 </label>
                 <div className="oph-input-container">
                     <OphSelect noResultsText={ `${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}` }
@@ -88,7 +89,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
             <div className="oph-field oph-field-inline">
                 <label className="oph-label oph-bold oph-label-long" htmlFor="email" aria-describedby="field-text">
-                    {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}
+                    {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
                 </label>
 
                 <div className="oph-input-container">
@@ -107,7 +108,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
             <div className="oph-field oph-field-inline">
                 <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                    {L['OMATTIEDOT_ANOTTAVAT']}
+                    {L['OMATTIEDOT_ANOTTAVAT']}*
                 </label>
 
                 <div className="oph-input-container">
@@ -136,7 +137,17 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             <div className="oph-field oph-field-inline">
                 <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"></label>
                 <div className="oph-input-container">
-                   <Button action={this._createKayttooikeusAnomus.bind(this)} disabled={!this._isAnomusButtonDisabled()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
+                    <div className="anomus-button">
+                        <Button action={this._createKayttooikeusAnomus.bind(this)}
+                                disabled={!this._isAnomusButtonDisabled()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
+                    </div>
+                    <div className="anomus-requirements">
+                        <ShowText show={!this._validOrganisaatioOrRyhmaSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</p></ShowText>
+                        <ShowText show={!this._validTehtavanimikeSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_TEHTAVANIMIKE']}</p></ShowText>
+                        <ShowText show={!this._validEmailSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_EMAIL']}</p></ShowText>
+                        <ShowText show={!this._validKayttooikeusryhmaSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</p></ShowText>
+                        <ShowText show={!this._validPerustelutSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_PERUSTELUT']}</p></ShowText>
+                    </div>
                 </div>
 
             </div>
@@ -149,7 +160,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _changeEmailEnterKey(event) {
-        if(event.keyCode === 13) {
+        if (event.keyCode === 13) {
             const emailOptions = this.state.emailOptions;
             const newEmail = event.target.value;
             emailOptions.push({value: newEmail, label: newEmail});
@@ -208,14 +219,44 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _isAnomusButtonDisabled() {
-        const organisaatioOrRyhmaSelected = this.state.organisaatioSelection !== '' || this.state.ryhmaSelection !== '';
-        const ryhmaSelected = this.state.kayttooikeusryhmaSelection.length > 0;
-        const emailSelected = this.state.emailSelection.value !== undefined;
-        return organisaatioOrRyhmaSelected && ryhmaSelected && emailSelected;
+        return this._validOrganisaatioOrRyhmaSelection() &&
+            this._validKayttooikeusryhmaSelection() &&
+            this._validEmailSelection;
+    }
+
+    _validOrganisaatioOrRyhmaSelection() {
+        return this.state.organisaatioSelection !== '' || this.state.ryhmaSelection !== '';
+    }
+
+    _validKayttooikeusryhmaSelection() {
+        return this.state.kayttooikeusryhmaSelection.length > 0;
+    }
+
+    _validEmailSelection() {
+        return this.state.emailSelection.value !== undefined;
+    }
+
+    _validTehtavanimikeSelection() {
+        return this.state.tehtavanimike.length > 0;
+    }
+
+    _validPerustelutSelection() {
+        return this.state.perustelut.length > 0;
+    }
+
+    _resetAnomusFormFields() {
+        this.setState({
+            organisaatioSelection: '',
+            ryhmaSelection: '',
+            emailSelection: '',
+            kayttooikeusryhmaSelection: [],
+            tehtavanimike: '',
+            perustelut: ''
+        });
     }
 
     _createKayttooikeusAnomus() {
-        const kayttooikeusRyhmaIds = R.map( selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelection);
+        const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelection);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
             email: this.state.emailSelection.value,
@@ -225,14 +266,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             anojaOid: this.props.omattiedot.data.oid
         };
         this.props.createKayttooikeusanomus(anomusData);
-        this.setState({
-            organisaatioSelection: '',
-            ryhmaSelection: '',
-            emailSelection: '',
-            kayttooikeusryhmaSelection: [],
-            tehtavanimike: '',
-            perustelut: ''
-        });
+        this._resetAnomusFormFields();
     }
 
 }

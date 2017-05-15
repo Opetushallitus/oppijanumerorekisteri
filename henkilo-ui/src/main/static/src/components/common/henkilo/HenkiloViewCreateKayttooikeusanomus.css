@@ -15,3 +15,13 @@
     display: inline-block;
     margin-right: 20px;
 }
+
+.anomus-button {
+    vertical-align:top;
+    display: inline-block;
+}
+
+.anomus-requirements {
+    display: inline-block;
+    margin-left: 20px;
+}
