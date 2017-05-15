@@ -30,7 +30,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 125, notSortable: true},
             {key: 'HIGHLIGHT', hide: true}
         ];
-        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
+        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || heading.key}));
 
         this.dates = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')

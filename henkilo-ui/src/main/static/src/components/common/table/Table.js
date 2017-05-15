@@ -18,7 +18,8 @@ class Table extends React.Component {
         data: React.PropTypes.arrayOf(React.PropTypes.objectOf(
             React.PropTypes.oneOfType([
                 React.PropTypes.string,
-                React.PropTypes.object
+                React.PropTypes.object,
+                React.PropTypes.bool,
             ]).isRequired)),
         noDataText: React.PropTypes.string.isRequired,
         striped: React.PropTypes.bool,
