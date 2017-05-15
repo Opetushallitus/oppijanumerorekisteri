@@ -187,7 +187,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     _changeRyhmaSelection(selection) {
         this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelection: []});
-        this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
+        this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value); 
     }
 
     _changeKayttooikeusryhmaSelection(selection) {
@@ -233,7 +233,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _validEmailSelection() {
-        return this.state.emailSelection.value !== undefined;
+        return this.state.emailSelection !== '';
     }
 
     _validTehtavanimikeSelection() {
