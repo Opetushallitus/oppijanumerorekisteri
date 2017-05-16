@@ -187,7 +187,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     _changeRyhmaSelection(selection) {
         this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelection: []});
-        this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value); 
+        this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
     }
 
     _changeKayttooikeusryhmaSelection(selection) {
@@ -255,7 +255,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         });
     }
 
-    _createKayttooikeusAnomus() {
+    async _createKayttooikeusAnomus() {
         const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelection);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
@@ -265,8 +265,10 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             kayttooikeusRyhmaIds,
             anojaOid: this.props.omattiedot.data.oid
         };
-        this.props.createKayttooikeusanomus(anomusData);
+        await this.props.createKayttooikeusanomus(anomusData);
         this._resetAnomusFormFields();
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
+
     }
 
 }
