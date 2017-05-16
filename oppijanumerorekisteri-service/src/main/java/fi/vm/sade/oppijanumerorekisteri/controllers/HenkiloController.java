@@ -64,6 +64,22 @@ public class HenkiloController {
         return henkiloService.list(criteria, page, count);
     }
 
+    @GetMapping("/hakutermi={hakutermi}")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
+            notes = "Hakutermillä haetaan henkilön nimen, henkilötunnuksen ja OID:n mukaan."
+                    + " Jos henkilöitä löytyy useita, palautetaan niistä nimen mukaan ensimmäinen."
+                    + " Tämä on ensisijaisesti tehty suoritusrekisterin käyttöliittymälle.")
+    public HenkiloHakuDto getByHakutermi(
+            @PathVariable String hakutermi,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        return henkiloService.getByHakutermi(hakutermi, permissionService);
+    }
+
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {

@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import java.util.Collection;
@@ -37,6 +38,16 @@ public interface HenkiloJpaRepository {
      * @return henkilot
      */
     List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset);
+
+    /**
+     * Yleiskäyttöinen henkilöhaku.
+     *
+     * @param criteria hakukriteerit
+     * @param limit alkioiden maksimimäärä
+     * @param offset sivutuksen offset
+     * @return henkilot
+     */
+    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
 
     /**
      * Henkilöiden perustietojen ja yhteystietojen hakutoiminto. Henkilöllä voi

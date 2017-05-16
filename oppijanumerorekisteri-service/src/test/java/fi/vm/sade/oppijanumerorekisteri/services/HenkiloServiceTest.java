@@ -107,7 +107,7 @@ public class HenkiloServiceTest {
         HenkiloHakuDto henkilo1 = HenkiloHakuDto.builder().oidHenkilo("1").build();
         HenkiloHakuDto henkilo2 = HenkiloHakuDto.builder().oidHenkilo("2").build();
         HenkiloHakuDto henkilo3 = HenkiloHakuDto.builder().oidHenkilo("3").build();
-        when(henkiloJpaRepositoryMock.findBy(any(), anyLong(), anyLong()))
+        when(henkiloJpaRepositoryMock.findBy(any(HenkiloCriteria.class), anyLong(), anyLong()))
                 .thenReturn(asList(henkilo1, henkilo2, henkilo3));
 
         Slice<HenkiloHakuDto> slice;

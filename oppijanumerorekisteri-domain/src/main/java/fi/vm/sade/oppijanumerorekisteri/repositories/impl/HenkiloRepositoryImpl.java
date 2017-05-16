@@ -39,6 +39,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import java.util.Collection;
 import static java.util.stream.Collectors.toList;
 
@@ -76,6 +77,27 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.kutsumanimi,
                         qHenkilo.sukunimi
         ));
+
+        query.where(criteria.condition(qHenkilo));
+        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
+        query.limit(limit);
+        query.offset(offset);
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<HenkiloHakuDto> query = jpa().from(qHenkilo)
+                .select(Projections.constructor(HenkiloHakuDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi
+                ));
 
         query.where(criteria.condition(qHenkilo));
         query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
