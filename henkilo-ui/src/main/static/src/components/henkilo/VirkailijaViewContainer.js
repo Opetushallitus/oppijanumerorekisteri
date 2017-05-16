@@ -51,6 +51,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
         const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
             isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
             createNotifications: this._createNotifications.bind(this), readOnlyButtons: this._readOnlyButtons,
+            updatePassword: updatePassword,
         };
         return <VirkailijaViewPage {...props} />;
     };
@@ -91,7 +92,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             <EditButton editAction={edit} L={this.L} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
-            <PasswordButton L={this.L} />,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={this.props.updatePassword}/>,
         ];
 
     };

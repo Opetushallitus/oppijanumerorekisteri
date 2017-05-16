@@ -6,6 +6,7 @@ export default class PopupButton extends React.Component {
         popupStyle: React.PropTypes.object,
         popupTitle: React.PropTypes.element,
         popupContent: React.PropTypes.element,
+        popupClass: React.PropTypes.string
     };
 
     constructor(props) {
@@ -36,7 +37,7 @@ export default class PopupButton extends React.Component {
         };
 
         return (
-            <div className="oph-popup oph-popup-default oph-popup-top" style={this.props.popupStyle}>
+            <div className={`oph-popup ${this.props.popupClass}`} style={this.props.popupStyle}>
                 <div className="oph-popup-arrow"></div>
                 <div style={closeButtonStyles}><i className="fa fa-times" onClick={() => this.closePopup()}></i></div>
                 <div className="oph-popup-title">{this.props.popupTitle} </div>
@@ -53,4 +54,8 @@ export default class PopupButton extends React.Component {
         this.setState({show: true});
     }
 }
+
+PopupButton.defaultProps = {
+    popupClass: 'oph-popup-default oph-popup-top'
+};
 
