@@ -61,11 +61,12 @@ export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
 
 const requestUpdatePassword = oid => ({type: UPDATE_PASSWORD_REQUEST, oid});
 const receiveUpdatePassword = (oid) => ({type: UPDATE_PASSWORD_SUCCESS, oid, receivedAt: Date.now()});
-export const updatePassword = (oid, password) => (dispatch => {
+export const updatePassword = (oid, password) => dispatch => {
     dispatch(requestUpdatePassword(oid));
     const url = urls.url('kayttooikeus-service.henkilo.password', oid);
-    http.post(url, '"' + password + '"').then(() => {dispatch(receiveUpdatePassword(oid))});
-});
+    http.post(url, '"' + password + '"').then(() => {dispatch(receiveUpdatePassword(oid))})
+        .catch(e => console.log(e));
+};
 
 const requestPassivoiHenkilo = (oid) => ({type: PASSIVOI_HENKILO_REQUEST, oid, });
 const receivePassivoiHenkilo = () => ({type: PASSIVOI_HENKILO_SUCCESS, receivedAt: Date.now(), });

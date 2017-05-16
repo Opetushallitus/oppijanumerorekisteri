@@ -20,6 +20,10 @@ export default class PasswordPopupContent extends React.Component {
         }
     }
 
+    componentDidMount(){
+        this.passwordInput.focus();
+    }
+
     render() {
         const passwordClass = classNames('oph-input haka-input',
             {'password-invalid': this.state.passwordValid === false});
@@ -32,6 +36,7 @@ export default class PasswordPopupContent extends React.Component {
                     <div className='password-controls'>
                         <label>{L['SALASANA_UUSI']}</label>
                         <input className={passwordClass} type='password' aria-required='true'
+                               ref={(input) => { this.passwordInput = input; }}
                                value={this.state.password} onChange={this.handlePasswordChange.bind(this)}/>
                     </div>
                     <div className='password-controls'>
@@ -40,7 +45,8 @@ export default class PasswordPopupContent extends React.Component {
                                value={this.state.passwordConfirmed} onChange={this.handlePasswordConfirmedChange.bind(this)} />
                     </div>
                     <p>{L['SALASANA_SAANTO']}</p>
-                    <button className='oph-button oph-button-primary' disabled={this.state.passwordValid !== true || this.state.passwordConfirmedValid !== true} onClick={() => this.changePassword()}>{L['SALASANA_ASETA']}</button>
+                    <button className='oph-button oph-button-primary' disabled={this.state.passwordValid !== true || this.state.passwordConfirmedValid !== true}
+                            onClick={() => this.changePassword()}>{L['SALASANA_ASETA']}</button>
                 </div>);
     }
 
