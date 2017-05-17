@@ -75,7 +75,7 @@ class OppijaViewContainer extends React.Component {
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
             <EditButton editAction={edit} L={this.L} />,
-            <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} />,
+            <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} yksiloiAction={this.props.yksiloiHenkilo} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
         ];

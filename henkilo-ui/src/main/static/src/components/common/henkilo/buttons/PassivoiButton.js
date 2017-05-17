@@ -15,6 +15,7 @@ PassivoiButton.propTypes = {
         oidHenkilo: React.PropTypes.string,
     })}),
     L: React.PropTypes.object,
+    passivoiAction: React.PropTypes.func.isRequired,
 };
 
 export default PassivoiButton;
