@@ -1,3 +1,7 @@
 .haka-input {
     margin: 15px 0;
 }
+
+.remove:active {
+    color: #0a789c;
+}

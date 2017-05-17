@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
@@ -34,8 +33,9 @@ export default class HakatunnistePopupContent extends React.Component {
         return (<div>
             <ul>
                 {this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>
-                        (<li key={hakatunniste}>{hakatunniste} <a onClick={ () => this.removeHakatunniste(hakatunniste)}>{L['POISTA']}</a>
-            </li>)) : <h3>{L['EI_HAKATUNNUKSIA']}</h3> }
+                        (<li key={hakatunniste}>{hakatunniste} <a className="remove"
+                            onClick={ () => this.removeHakatunniste(hakatunniste)}>{L['POISTA']}</a>
+                        </li>)) : <h3>{L['EI_HAKATUNNUKSIA']}</h3> }
             </ul>
             <div className="oph-field oph-field-is-required">
                 <input type="text"
@@ -44,8 +44,9 @@ export default class HakatunnistePopupContent extends React.Component {
                        placeholder="Lisää uusi tunnus"
                        value={this.state.newTunnisteValue}
                        onChange={this.handleChange.bind(this)}
-                       onKeyPress={ (e) => e.key === 'Enter' ? this.addHakatunniste() : null} />
-                <button className="oph-button oph-button-primary" onClick={() => this.addHakatunniste()}>{L['TALLENNA_TUNNUS']}</button>
+                       onKeyPress={ (e) => e.key === 'Enter' ? this.addHakatunniste() : null}/>
+                <button className="oph-button oph-button-primary"
+                        onClick={() => this.addHakatunniste()}>{L['TALLENNA_TUNNUS']}</button>
             </div>
         </div>);
     }
@@ -55,14 +56,17 @@ export default class HakatunnistePopupContent extends React.Component {
     }
 
     async addHakatunniste() {
-        const tunnisteet = this.state.hakatunnisteet.slice(0);
-        tunnisteet.push(this.state.newTunnisteValue);
-        this.saveHakatunnisteet(tunnisteet);
-        this.setState({newTunnisteValue: ''});
+        if (this.state.newTunnisteValue.length > 0) {
+            const tunnisteet = this.state.hakatunnisteet.slice(0);
+            tunnisteet.push(this.state.newTunnisteValue);
+            this.saveHakatunnisteet(tunnisteet);
+            this.setState({newTunnisteValue: ''});
+        }
+
     }
 
     async removeHakatunniste(tunniste) {
-        const filteredTunnisteet = R.reject( (hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
+        const filteredTunnisteet = R.reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
         await this.saveHakatunnisteet(filteredTunnisteet);
     }
 
