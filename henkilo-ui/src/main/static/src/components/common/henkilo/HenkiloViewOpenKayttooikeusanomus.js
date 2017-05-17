@@ -5,6 +5,9 @@ import dateformat from 'dateformat'
 import StaticUtils from "../StaticUtils";
 import MyonnaButton from "./buttons/MyonnaButton";
 import HylkaaButton from "./buttons/HylkaaButton";
+import Button from "../button/Button";
+import { urls } from "oph-urls-js";
+import { http } from "../../../http";
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -12,7 +15,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         locale: React.PropTypes.string.isRequired,
 
         updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
-
+        isOmattiedot: React.PropTypes.bool,
         kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
     };
@@ -57,18 +60,39 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                          onChange={(event) => {this.dates[idx].loppupvm =
                                              StaticUtils.ddmmyyyyToDate(event.target.value);}} />,
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
-                [headingList[6]]: <div>
-                    <div style={{display: 'table-cell', paddingRight: '10px'}}>
-                        <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                            'MYONNETTY', idx)} henkilo={this.props.henkilo} L={this.L}/>
-                    </div>
-                    <div style={{display: 'table-cell'}}>
-                        <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
-                            haettuKayttooikeusRyhma.id, 'HYLATTY', idx)} L={this.L} henkilo={this.props.henkilo} />
-                    </div>
-                </div>,
+                [headingList[6]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx)
+
+                    ,
             }));
     };
+
+    anomusHandlingButtonsForOmattiedot (haettuKayttooikeusRyhma, idx) {
+        return <div>
+            <div style={{display: 'table-cell', paddingRight: '10px'}}>
+                <Button action={this.cancelAnomus.bind(this, haettuKayttooikeusRyhma, idx)}>{this.L['HENKILO_KAYTTOOIKEUSANOMUS_PERU']}</Button>
+            </div>
+        </div>
+    }
+
+    anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx) {
+        return <div>
+            <div style={{display: 'table-cell', paddingRight: '10px'}}>
+                <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
+                    'MYONNETTY', idx)} henkilo={this.props.henkilo} L={this.L}/>
+            </div>
+            <div style={{display: 'table-cell'}}>
+                <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
+                    haettuKayttooikeusRyhma.id, 'HYLATTY', idx)} L={this.L} henkilo={this.props.henkilo} />
+            </div>
+
+        </div>
+    }
+
+    async cancelAnomus(haettuKayttooikeusRyhma, idx) {
+        const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
+        await http.put(url, haettuKayttooikeusRyhma.id);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
+    }
 
     render() {
         return (

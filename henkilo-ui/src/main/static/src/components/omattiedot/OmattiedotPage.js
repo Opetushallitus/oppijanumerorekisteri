@@ -67,7 +67,7 @@ export default class OmattiedotPage extends React.Component {
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
                             ? <Loader />
-                            : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
+                            : <HenkiloViewOpenKayttooikeusanomus isOmattiedot={true} {...this.props} />
                     }
 
                 </div>
