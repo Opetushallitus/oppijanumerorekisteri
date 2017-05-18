@@ -31,14 +31,14 @@ public class Slice<T> implements Iterable<T> {
         requireNonNull(results);
         if (results.size() > count) {
             List<T> slice = results.subList(0, count);
-            return new Slice(number, count, slice.size(), false, slice);
+            return new Slice<>(number, count, slice.size(), false, slice);
         } else {
-            return new Slice(number, count, results.size(), true, results);
+            return new Slice<>(number, count, results.size(), true, results);
         }
     }
 
     public static <T> Slice empty(int number, int count) {
-        return new Slice(number, count, 0, true, emptyList());
+        return new Slice<T>(number, count, 0, true, emptyList());
     }
 
     @Override
