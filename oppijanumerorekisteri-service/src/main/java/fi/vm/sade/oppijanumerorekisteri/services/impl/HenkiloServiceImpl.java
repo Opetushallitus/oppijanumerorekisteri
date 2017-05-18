@@ -447,10 +447,10 @@ public class HenkiloServiceImpl implements HenkiloService {
         List<HenkiloViiteDto> henkiloViiteDtoList = new ArrayList<>();
         if(criteria.getHenkiloOids() != null) {
             List<List<String>> henkiloOidListSplit = Lists.partition(
-                    criteria.getHenkiloOids().stream().collect(Collectors.toList()),
+                    new ArrayList<>(criteria.getHenkiloOids()),
                     oppijanumerorekisteriProperties.getHenkiloViiteSplitSize());
             henkiloOidListSplit.forEach(henkiloOidList -> {
-                criteria.setHenkiloOids(henkiloOidList.stream().collect(Collectors.toSet()));
+                criteria.setHenkiloOids(new HashSet<>(henkiloOidList));
                 henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
             });
         }

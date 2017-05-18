@@ -16,7 +16,7 @@ public interface HenkiloService {
 
     Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria);
 
-    Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
+    Slice list(HenkiloHakuCriteria criteria, int page, int count);
 
     Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria);
 

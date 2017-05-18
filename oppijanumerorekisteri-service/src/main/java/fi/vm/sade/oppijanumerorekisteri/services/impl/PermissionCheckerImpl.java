@@ -4,6 +4,7 @@ import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,15 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
-    private KayttooikeusClient kayttooikeusClient;
+    private final KayttooikeusClient kayttooikeusClient;
+
+    private final UserDetailsHelper userDetailsHelper;
 
     @Autowired
-    public PermissionCheckerImpl(KayttooikeusClient kayttooikeusClient) {
+    public PermissionCheckerImpl(KayttooikeusClient kayttooikeusClient,
+                                 UserDetailsHelper userDetailsHelper) {
         this.kayttooikeusClient = kayttooikeusClient;
+        this.userDetailsHelper = userDetailsHelper;
     }
 
     public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
@@ -53,11 +58,11 @@ public class PermissionCheckerImpl implements PermissionChecker {
     public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
                                            ExternalPermissionService externalPermissionService) throws IOException {
         Set<String> callingUserRoles = this.getCasRoles();
-        if (this.isSuperUser(callingUserRoles)) {
+        if (this.isSuperUser(callingUserRoles) || this.isOwnData(userOid)) {
             return true;
         }
         else {
-            String callingUserOid = SecurityContextHolder.getContext().getAuthentication().getName();
+            String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
             return kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles,
                     externalPermissionService, callingUserRoles);
         }
@@ -70,6 +75,10 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private boolean isSuperUser(Set<String> roles) {
         return roles.contains(ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI");
+    }
+
+    private boolean isOwnData(String dataHenkiloOid) {
+        return this.userDetailsHelper.getCurrentUserOid().equals(dataHenkiloOid);
     }
 
     private Set<String> getCasRoles() {
