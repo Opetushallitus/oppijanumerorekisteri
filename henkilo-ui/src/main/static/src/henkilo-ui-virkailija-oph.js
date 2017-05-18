@@ -25,7 +25,7 @@ export default {
     "kayttooikeus-service.henkilo.uusi.kayttooikeusanomus": "kayttooikeus-service/kayttooikeusanomus/$1",
     "kayttooikeus-service.henkilo.password": "kayttooikeus-service/henkilo/$1/password",
     "kayttooikeus-service.omattiedot.oid": "kayttooikeus-service/omattiedot/oid",
-    "kayttooikeus-service.omattiedot.anomus.muokkaus": "kayttooikeus-service/kayttooikeusanomus/currentuser",
+    "kayttooikeus-service.omattiedot.anomus.muokkaus": "kayttooikeus-service/kayttooikeusanomus/peruminen/currentuser",
     "kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio": "kayttooikeus-service/kayttooikeusryhma/$1/$2",
     "kayttooikeus-service.kayttooikeusryhma.henkilo.oid": "kayttooikeus-service/kayttooikeusryhma/henkilo/$1",
     "kayttooikeus-service.kayttooikeusryhma.organisaatio": "kayttooikeus-service/kayttooikeusryhma/organisaatio/$1",
