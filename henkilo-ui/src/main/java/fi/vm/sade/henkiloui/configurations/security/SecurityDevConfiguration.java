@@ -27,17 +27,22 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
         http.httpBasic()
         .and()
         .csrf().disable()
-        .authorizeRequests()
-            .antMatchers("/buildversion.txt").permitAll()
-            .antMatchers("/swagger-ui.html").permitAll()
-            .antMatchers("/swagger-resources/**").permitAll()
-            .antMatchers("/v2/api-docs").permitAll()
-            .anyRequest().authenticated();
+                .authorizeRequests()
+                .antMatchers("/buildversion.txt").permitAll()
+                .antMatchers("/swagger-ui.html").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/v2/api-docs").permitAll()
+                .antMatchers("/admin/**").hasAuthority("APP_HENKILONHALLINTA_OPHREKISTERI")
+                .anyRequest().authenticated();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser(devProperties.getUsername()).password(devProperties.getPassword())
-                .roles("APP_HENKILONHALLINTA_OPHREKISTERI");
+        auth.inMemoryAuthentication()
+                .withUser(devProperties.getUsername()).password(devProperties.getPassword())
+                .authorities("APP_HENKILONHALLINTA_OPHREKISTERI")
+                .and()
+                .withUser(devProperties.getUsername()+"1").password(devProperties.getPassword()+"1")
+                .authorities("USER");
     }
 }
