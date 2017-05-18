@@ -43,9 +43,6 @@ public class HenkiloUpdatePostValidator implements Validator {
     public void validate(Object o, Errors errors) {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
         String kasittelijaOid = this.userDetailsHelper.getCurrentUserOid();
-        if (kasittelijaOid.equals(henkiloUpdateDto.getOidHenkilo())) {
-            errors.reject("cant.modify.own.data");
-        }
 
         Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
         if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloUpdateDto.getHetu())) {
