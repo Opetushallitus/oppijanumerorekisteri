@@ -29,6 +29,7 @@ import TyoSahkoposti from "../common/henkilo/labelvalues/TyoSahkoposti";
 import TyoPuhelin from "../common/henkilo/labelvalues/TyoPuhelin";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import {removeNotification} from "../../actions/notifications.actions";
+import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
 
 
 class AdminViewContainer extends React.Component {
@@ -84,8 +85,10 @@ class AdminViewContainer extends React.Component {
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
             <EditButton editAction={edit} L={this.L} />,
+            <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo} L={this.L} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
+            // PaivitaVtjButton
             <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={this.props.updatePassword} />,
         ];
 

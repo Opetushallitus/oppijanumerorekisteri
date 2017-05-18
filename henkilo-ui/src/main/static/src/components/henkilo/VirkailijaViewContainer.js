@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo,
+    updateAndRefetchKayttajatieto, updatePassword,
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -108,7 +108,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
-    fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
+    fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
     addKayttooikeusToHenkilo, removeNotification,})(VirkailijaViewContainer);
