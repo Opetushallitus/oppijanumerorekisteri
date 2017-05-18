@@ -44,7 +44,7 @@ public interface HenkiloService {
 
     HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
 
-    HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto);
+    HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 

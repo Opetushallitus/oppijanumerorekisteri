@@ -360,7 +360,7 @@ public class HenkiloServiceTest {
         given(this.kansalaisuusRepositoryMock.findOrCreate(anyString()))
                 .willReturn(EntityUtils.createKansalaisuus("246"));
 
-        this.service.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto);
+        this.service.updateHenkilo(henkiloUpdateDto);
         verify(this.henkiloDataRepositoryMock).save(argument.capture());
 
         assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("fi");

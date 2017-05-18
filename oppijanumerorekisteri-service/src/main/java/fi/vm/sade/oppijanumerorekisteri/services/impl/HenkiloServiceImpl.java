@@ -321,7 +321,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     // call the validator.
     @Override
     @Transactional
-    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) {
+    public HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto) {
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
@@ -341,6 +341,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setSukunimi(null);
             henkiloUpdateDto.setSukupuoli(null);
             henkiloUpdateDto.setHetu(null);
+            henkiloUpdateDto.setAidinkieli(null);
+            henkiloUpdateDto.setKansalaisuus(null);
         }
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);

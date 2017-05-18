@@ -75,7 +75,7 @@ public class YksilointiServiceTest {
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity.getKutsumanimi()).isEqualTo("Taneli");
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class YksilointiServiceTest {
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         String paivamaara = "1901-01-01";
         assertThat(yksiloity.getSyntymaaika()).isEqualTo(paivamaara);
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class YksilointiServiceTest {
         Date before = new Date();
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity.getTurvakielto()).isFalse();
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class YksilointiServiceTest {
 
         Date before = new Date();
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
         assertThat(yksiloity.isYksiloityVTJ()).isTrue();
         assertThat(yksiloity.getYhteystiedotRyhma())
                 .extracting("ryhmaAlkuperaTieto")
@@ -131,7 +131,7 @@ public class YksilointiServiceTest {
         Date before = new Date();
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
         assertThat(yksiloity.isYksiloityVTJ()).isTrue();
         assertThat(yksiloity.getYhteystiedotRyhma())
                 .extracting("ryhmaAlkuperaTieto")
@@ -146,7 +146,7 @@ public class YksilointiServiceTest {
         Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getSukupuoli()).isEqualTo("1");
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class YksilointiServiceTest {
         Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getSukupuoli()).isEqualTo("1");
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class YksilointiServiceTest {
         Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class YksilointiServiceTest {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-erilaiset-nimet.json");
         Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
-        assertThat(yksiloity.getModified()).isAfter(before);
+        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
         assertThat(yksiloity.getYksilointitieto()).isNotNull().extracting("etunimet").contains("Teijo Tahvelo");
         assertThat(yksiloity.getEtunimet()).isEqualTo("Teppo Taneli");
     }
