@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.oppijanumerorekisteri.configurations.AuditlogConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
@@ -41,11 +43,13 @@ public class YksilointiServiceTest {
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
         YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
         YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
+        Audit audit = new AuditlogConfiguration().audit();
 
         this.yksilointiService = new YksilointiServiceImpl(henkiloRepository, yksilointitietoRepository,
                 userDetailsHelper,
-                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties, kansalaisuusRepository,
-                kielisyysRepository, yhteystiedotRyhmaRepository, yhteystietoRepository);
+                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties, audit,
+                kansalaisuusRepository, kielisyysRepository, yhteystiedotRyhmaRepository,
+                yhteystietoRepository);
 
         when(kielisyysRepository.findByKieliKoodi(anyString()))
                 .thenReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));

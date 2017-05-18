@@ -285,6 +285,14 @@ public class HenkiloController {
             this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
     }
 
+    @PostMapping("/{henkiloOid}/yksilointitiedot")
+    @PreAuthorize("hasAnyRole('ROLE_APP_KAYTTOOIKEUS_SCHEDULE',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Päivittään yksilöidyn henkilön tiedot VTJ:stä")
+    public void paivitaYksilointitiedot(@PathVariable String henkiloOid) {
+        yksilointiService.paivitaYksilointitiedot(henkiloOid);
+    }
+
     @GetMapping("/{oid}/yksilointi")
     @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
