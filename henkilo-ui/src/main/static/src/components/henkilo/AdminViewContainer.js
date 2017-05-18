@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo,
@@ -9,7 +8,7 @@ import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
-import {virkailijaNavi} from "../../configuration/navigationconfigurations";
+import {adminNavi} from "../../configuration/navigationconfigurations";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
@@ -30,11 +29,16 @@ import TyoPuhelin from "../common/henkilo/labelvalues/TyoPuhelin";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import {removeNotification} from "../../actions/notifications.actions";
 import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
+import Syntymaaika from "../common/henkilo/labelvalues/Syntymaaika";
+import Hetu from "../common/henkilo/labelvalues/Hetu";
+import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
+import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
+import AdminViewPage from "./AdminViewPage";
 
 
 class AdminViewContainer extends React.Component {
     componentDidMount() {
-        this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
+        this.props.updateNavigation(adminNavi(this.props.oidHenkilo), '/henkilo');
 
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
@@ -52,7 +56,7 @@ class AdminViewContainer extends React.Component {
         const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
             readOnlyButtons: this._readOnlyButtons, updatePassword: updatePassword,
         };
-        return <VirkailijaViewPage {...props} />;
+        return <AdminViewPage {...props} />;
     };
 
     constructor(props) {
@@ -68,16 +72,20 @@ class AdminViewContainer extends React.Component {
                 [
                     <Sukunimi {...props} />,
                     <Etunimet {...props} />,
+                    <Syntymaaika {...props} />,
+                    <Hetu {...props} />,
                     <Kutsumanimi {...props} />,
+                ],
+                [
+                    <Kansalaisuus {...props} henkiloUpdate={henkiloUpdate} />,
+                    <Aidinkieli {...props} henkiloUpdate={henkiloUpdate} />,
+                    <Oppijanumero {...props} />,
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Oppijanumero {...props} />,
+                    <Kayttajanimi {...props} />,
                     <TyoSahkoposti {...props} henkiloUpdate={henkiloUpdate} />,
                     <TyoPuhelin {...props} henkiloUpdate={henkiloUpdate} />,
-                ],
-                [
-                    <Kayttajanimi {...props} />,
                 ],
             ]
         };
