@@ -4,6 +4,7 @@ import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
 import R from 'ramda';
 import {ShowText} from '../../common/ShowText';
+import Select from 'react-select';
 
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -27,10 +28,9 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             organisaatioSelection: '',
             ryhmaSelection: '',
             emailSelection: '',
-            kayttooikeusryhmaSelection: [],
+            kayttooikeusryhmaSelections: [],
             tehtavanimike: '',
             perustelut: '',
-
             kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
             emailOptions: [],
@@ -39,12 +39,14 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     componentDidMount() {
         this.setState({
-            emailOptions: this._parseEmailOptions(this.props.henkilo),
+            emailOptions: this._parseEmailOptions(this.props.henkilo)
         });
     }
 
     render() {
         const L = this.props.l10n[this.props.locale];
+        const kayttooikeusRyhmaOptions = this.props.kayttooikeusryhmaOptions.filter( option => R.findIndex( R.propEq('value', option.value), this.state.kayttooikeusryhmaSelections ) < 0  );
+
         return (<div className="kayttooikeus-anomus-wrapper">
             <h2 className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</h2>
 
@@ -111,14 +113,26 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                     {L['OMATTIEDOT_ANOTTAVAT']}*
                 </label>
 
-                <div className="oph-input-container">
-                    <OphSelect placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
+                <div className="oph-input-container kayttooikeus-selection-wrapper">
+
+
+                    <Select placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
                                noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
-                               options={this.props.kayttooikeusryhmaOptions}
-                               multi
-                               value={this.state.kayttooikeusryhmaSelection}
-                               onChange={this._changeKayttooikeusryhmaSelection.bind(this)}
-                    ></OphSelect>
+                               options={kayttooikeusRyhmaOptions}
+                               onChange={this._addKayttooikeusryhmaSelection.bind(this)}
+                    ></Select>
+
+                    <ul className="selected-permissions">
+                        {this.state.kayttooikeusryhmaSelections.map( (kayttooikeusRyhmaSelection, index) => {
+                            return (
+                                <li key={index}>
+                                    {kayttooikeusRyhmaSelection.label}
+                                    <i className="fa fa-times-circle right remove-icon"
+                                       onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)} aria-hidden="true"></i>
+                                </li>
+                            )
+                        })}
+                    </ul>
                 </div>
             </div>
 
@@ -181,17 +195,13 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _changeOrganisaatioSelection(selection) {
-        this.setState({organisaatioSelection: selection.value, ryhmaSelection: '', kayttooikeusryhmaSelection: []});
+        this.setState({organisaatioSelection: selection.value, ryhmaSelection: '', kayttooikeusryhmaSelections: []});
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
     }
 
     _changeRyhmaSelection(selection) {
-        this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelection: []});
+        this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelections: []});
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
-    }
-
-    _changeKayttooikeusryhmaSelection(selection) {
-        this.setState({kayttooikeusryhmaSelection: selection});
     }
 
     _parseEmailOptions(henkilo) {
@@ -229,7 +239,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _validKayttooikeusryhmaSelection() {
-        return this.state.kayttooikeusryhmaSelection.length > 0;
+        return this.state.kayttooikeusryhmaSelections.length > 0;
     }
 
     _validEmailSelection() {
@@ -249,14 +259,25 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             organisaatioSelection: '',
             ryhmaSelection: '',
             emailSelection: '',
-            kayttooikeusryhmaSelection: [],
+            kayttooikeusryhmaSelections: [],
             tehtavanimike: '',
             perustelut: ''
         });
     }
 
+    _addKayttooikeusryhmaSelection(kayttooikeusryhmaSelection) {
+        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;
+        kayttooikeusryhmaSelections.push(kayttooikeusryhmaSelection);
+        this.setState({kayttooikeusryhmaSelections: kayttooikeusryhmaSelections});
+    }
+
+    _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection) {
+        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter( selection => selection.value !== kayttooikeusryhmaSelection.value );
+        this.setState({kayttooikeusryhmaSelections});
+    }
+
     async _createKayttooikeusAnomus() {
-        const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelection);
+        const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelections);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
             email: this.state.emailSelection.value,
