@@ -25,12 +25,12 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [{key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU'},
-            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO'},
-            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA'},
+            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220,},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220,},
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'},
-            {key: 'EMPTY_PLACEHOLDER', minWidth: 200, notSortable: true},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50,},
+            {key: 'EMPTY_PLACEHOLDER', minWidth: 150, notSortable: true,},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
