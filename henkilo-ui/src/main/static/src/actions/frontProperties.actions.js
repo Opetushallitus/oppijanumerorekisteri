@@ -3,6 +3,7 @@ import frontUrls from '../henkilo-ui-virkailija-oph';
 import {urls} from 'oph-urls-js';
 import {fetchL10n} from './l10n.actions';
 import {fetchPrequels} from "./prequel.actions";
+import {fetchOmattiedot} from "./omattiedot.actions";
 
 const requestFrontProperties = () => ({type: FETCH_FRONTPROPERTIES_REQUEST});
 const receivedFrontProperties = () => ({
@@ -17,6 +18,8 @@ export const fetchFrontProperties = () => (dispatch) => {
             dispatch(receivedFrontProperties());
             // Fetch localisations
             dispatch(fetchL10n());
+            // Fetch locale and other info from /cas/me
+            dispatch(fetchOmattiedot());
             // Do prequel requests to external services that require authentication so CAS session is opened
             dispatch(fetchPrequels());
         });

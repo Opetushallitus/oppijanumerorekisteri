@@ -33,18 +33,23 @@ import {removeNotification} from "../../actions/notifications.actions";
 
 class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
-        this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
+        if(this.props.isAdmin) {
+            this.props.router.push('/admin/' + this.props.oidHenkilo);
+        }
+        else {
+            this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
 
-        this.props.fetchHenkilo(this.props.oidHenkilo);
-        this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
-        this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttajatieto(this.props.oidHenkilo);
-        this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
-        this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+            this.props.fetchHenkilo(this.props.oidHenkilo);
+            this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
+            this.props.fetchKieliKoodisto();
+            this.props.fetchKansalaisuusKoodisto();
+            this.props.fetchSukupuoliKoodisto();
+            this.props.fetchKayttajatieto(this.props.oidHenkilo);
+            this.props.fetchYhteystietotyypitKoodisto();
+            this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
+            this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
+            this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+        }
     };
 
     render() {
@@ -103,6 +108,7 @@ const mapStateToProps = (state, ownProps) => {
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
+        isAdmin: state.omattiedot.isAdmin,
     };
 };
 

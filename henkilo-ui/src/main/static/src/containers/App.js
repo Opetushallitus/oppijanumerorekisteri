@@ -9,7 +9,7 @@ class App extends React.Component{
     render() {
         return (
             this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
-                && this.props.notLoadedCount === 0
+                && this.props.omattiedot !== undefined && this.props.prequelsNotLoadedCount === 0
                 ? <div className="oph-typography mainContainer">
                 <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
                                l10n={this.props.l10n.localisations[this.props.locale]} />
@@ -40,7 +40,6 @@ class App extends React.Component{
             l10nInitialized: React.PropTypes.bool,
             localisationsInitialized: React.PropTypes.bool,
         }).isRequired,
-
     };
 }
 
@@ -51,8 +50,9 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n,
         naviTabs: state.naviState.naviTabs,
         backButton: state.naviState.backButton,
-        notLoadedCount: state.prequels.notLoadedCount,
-        locale: state.locale
+        prequelsNotLoadedCount: state.prequels.notLoadedCount,
+        locale: state.locale,
+        omattiedot: state.omattiedot.data,
     };
 };
 
