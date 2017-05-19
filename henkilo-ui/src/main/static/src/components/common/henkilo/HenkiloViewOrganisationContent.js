@@ -67,8 +67,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                                                 ? <ConfirmButton key="passivoiOrg" cancel
                                                                  action={() => this.passivoiHenkiloOrganisation(values.id)}
                                                                  confirmLabel={this.L['HENKILO_ORG_PASSIVOI_CONFIRM']}
-                                                                 normalLabel={this.L['HENKILO_ORG_PASSIVOI']}
-                                                                 errorMessage={StaticUtils.createPopupErrorMessage('passivoiOrg', this.props.henkilo, this.L)} />
+                                                                 normalLabel={this.L['HENKILO_ORG_PASSIVOI']} />
                                                 : <Button disabled action={() => {}}>{this.L['HENKILO_ORG_PASSIVOITU']}</Button>}
                                         </div>
                                     </div>

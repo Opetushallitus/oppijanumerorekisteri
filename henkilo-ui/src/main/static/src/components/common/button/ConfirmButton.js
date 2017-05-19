@@ -2,8 +2,16 @@ import './Button.css'
 import React from 'react'
 import Button from "./Button";
 import ReactTimeout from 'react-timeout'
+import NotificationButton from "./NotificationButton";
 
 class ConfirmButton extends React.Component {
+
+    static propTypes = {
+        action: React.PropTypes.func.isRequired,
+        normalLabel: React.PropTypes.string.isRequired,
+        confirmLabel: React.PropTypes.string.isRequired,
+        id: React.PropTypes.string.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -11,12 +19,6 @@ class ConfirmButton extends React.Component {
             confirmState: false,
             disabled: false,
         }
-    };
-
-    static propTypes = {
-        action: React.PropTypes.func.isRequired,
-        normalLabel: React.PropTypes.string.isRequired,
-        confirmLabel: React.PropTypes.string.isRequired,
     };
 
     componentWillReceiveProps(nextProps) {
@@ -36,11 +38,12 @@ class ConfirmButton extends React.Component {
                     {this.props.normalLabel}
                 </Button>
                 : // Never show error message after confirm state
-                <Button className={this.props.className} confirm {...confirmProps} errorMessage={null}>
+                <NotificationButton className={this.props.className} confirm {...confirmProps} errorMessage={null}>
                     {this.props.confirmLabel}
-                </Button>
+                </NotificationButton>
         );
     };
 }
+
 
 export default ReactTimeout(ConfirmButton);

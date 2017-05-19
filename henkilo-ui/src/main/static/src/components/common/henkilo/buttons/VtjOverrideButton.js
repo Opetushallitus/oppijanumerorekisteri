@@ -1,15 +1,16 @@
 import React from 'react'
 import ConfirmButton from "../../button/ConfirmButton";
-import StaticUtils from "../../StaticUtils";
 
 const VtjOverrideButton = ({henkilo, L, overrideAction}) =>{
     console.log();
-    return     henkilo.henkilo.yksiloityVTJ && henkilo.henkilo.hetu
-        ? <ConfirmButton key="vtjOverride" big action={() => overrideAction(henkilo.henkilo.oidHenkilo)}
-                         normalLabel={L['VTJ_OVERRIDE_LINKKI']} confirmLabel={L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
-                         errorMessage={StaticUtils.createPopupErrorMessage('vtjOverride', henkilo, L)} />
+    return henkilo.henkilo.yksiloityVTJ && henkilo.henkilo.hetu
+        ? <ConfirmButton key="vtjOverride"
+                         big
+                         action={() => overrideAction(henkilo.henkilo.oidHenkilo)}
+                         normalLabel={L['VTJ_OVERRIDE_LINKKI']}
+                         confirmLabel={L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
+                         id="vtjOverride" />
         : null;
-
 };
 
 VtjOverrideButton.propTypes = {

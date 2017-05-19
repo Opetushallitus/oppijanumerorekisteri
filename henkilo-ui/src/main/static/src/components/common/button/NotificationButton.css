@@ -1,0 +1,4 @@
+/* fix the width not being wide enough by default */
+.popup-button > .oph-popup {
+    width: inherit;
+}
