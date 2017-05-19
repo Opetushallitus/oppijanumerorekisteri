@@ -28,6 +28,8 @@ import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 
 class OppijaViewContainer extends React.Component {
     componentDidMount() {
+        this.props.router.push('/admin/' + this.props.oidHenkilo);
+
         this.props.updateNavigation(oppijaNavi(this.props.oidHenkilo), '/henkilo');
 
         this.props.fetchHenkilo(this.props.oidHenkilo);
