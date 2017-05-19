@@ -81,6 +81,10 @@ class StaticUtils extends React.Component {
         return {errorTopic: notification && L[notification.notL10nMessage],
             errorText: notification && L[notification.notL10nText]};
     };
+
+    static hasHetuAndIsYksiloity(henkilo) {
+        return !!henkilo.henkilo.hetu && henkilo.henkilo.yksiloityVTJ;
+    }
 }
 
 export default StaticUtils;
