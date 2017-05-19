@@ -364,12 +364,18 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
-
         audit.log(builder()
                 .id(kayttajaOid)
                 .kohdehenkiloOid(henkiloOid)
                 .lisatieto("VTJ-tiedot päivitetty")
                 .setOperaatio(OppijanumerorekisteriOperation.TUNNISTUSTIETOJEN_PAIVITYS)
+                .build());
+
+        henkilo.setVtjsynced(new Date());
+        audit.log(builder()
+                .id(kayttajaOid)
+                .kohdehenkiloOid(henkiloOid)
+                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTITIETOJEN_PAIVITYS)
                 .build());
     }
 
