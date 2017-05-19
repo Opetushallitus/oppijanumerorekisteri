@@ -48,7 +48,8 @@ const mapStateToProps = (state, ownProps) => {
         organisaatios: state.organisaatio,
         ryhmas: state.ryhmatState,
         organisaatioCache: state.organisaatio.cached,
-        organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat
+        organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat,
+        notifications: state.notifications,
     };
 };
 
