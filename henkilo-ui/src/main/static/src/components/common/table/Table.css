@@ -36,7 +36,28 @@
     white-space: inherit !important;
 }
 
-.ReactTable .rt-noData {
-    display: none !important;
+/* Fading out background highlight */
+@-webkit-keyframes fadeIt {
+    0%   { background-color: #e6ffc1; }
+    100% { background-color: #FFFFFF; }
+}
+@-moz-keyframes fadeIt {
+    0%   { background-color: #e6ffc1; }
+    100% { background-color: #FFFFFF; }
+}
+@-o-keyframes fadeIt {
+    0%   { background-color: #e6ffc1; }
+    100% { background-color: #FFFFFF; }
+}
+@keyframes fadeIt {
+    0%   { background-color: #e6ffc1; }
+    100% { background-color: #FFFFFF; }
 }
 
+.fadeOutBackgroundColor {
+    background-image:none !important;
+    -webkit-animation: fadeIt 5s ease-in-out;
+    -moz-animation: fadeIt 5s ease-in-out;
+    -o-animation: fadeIt 5s ease-in-out;
+    animation: fadeIt 5s ease-in-out;
+}

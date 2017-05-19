@@ -53,7 +53,7 @@ class HenkiloViewUserContent extends React.Component{
                                     this._updateDateField.bind(this), this.state.henkiloUpdate).map((info, idx) =>
                                     <div key={idx} className="henkiloViewContent">
                                         {
-                                            info.map((values, idx2) => values
+                                            info.map((values, idx2) => <div key={idx2}>{values}</div>
                                         )}
                                     </div>
                                 )
@@ -62,7 +62,7 @@ class HenkiloViewUserContent extends React.Component{
                     </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        {this.props.readOnlyButtons(this._edit.bind(this))}
+                        {this.props.readOnlyButtons(this._edit.bind(this)).map((button, idx) => <div style={{display: 'inline-block'}} key={idx}>{button}</div>)}
                     </div>
                     : <div className="henkiloViewEditButtons">
                         <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />

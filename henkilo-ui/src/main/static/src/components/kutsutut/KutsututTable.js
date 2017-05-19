@@ -20,7 +20,7 @@ export default class KutsututTable extends React.Component {
             { key: 'KUTSUT_SAHKOPOSTI_OTSIKKO', label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'] },
             { key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO', label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'] },
             { key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'] },
-            { key: 'KUTSU_PERUUTA', label: ''}
+            { key: 'KUTSU_PERUUTA', label: '', notSortable: true}
         ];
         
         const data = this.props.kutsus.map( kutsu => ({
@@ -31,7 +31,10 @@ export default class KutsututTable extends React.Component {
             KUTSU_PERUUTA: this.createPeruutaCell(kutsu)
         }));
         
-        return (<Table headings={headings} data={data}></Table>);
+        return (<div className="kutsututTableWrapper"><Table headings={headings}
+                       noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
+                       data={data}
+                       striped /></div>);
     }
 
     createNimiCell(kutsu) {

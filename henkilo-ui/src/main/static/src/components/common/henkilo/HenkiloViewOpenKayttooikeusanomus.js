@@ -30,7 +30,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI'},
-            {key: 'EMPTY_PLACEHOLDER', minWidth: 200},
+            {key: 'EMPTY_PLACEHOLDER', minWidth: 200, notSortable: true},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
@@ -102,7 +102,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                     <div>
-                        <Table headings={this.tableHeadings} data={this.createRows()} />
+                        <Table headings={this.tableHeadings}
+                               data={this.createRows()}
+                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']} />
                     </div>
                 </div>
             </div>

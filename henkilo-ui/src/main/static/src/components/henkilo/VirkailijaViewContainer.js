@@ -10,7 +10,6 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
-import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
@@ -29,9 +28,10 @@ import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import TyoSahkoposti from "../common/henkilo/labelvalues/TyoSahkoposti";
 import TyoPuhelin from "../common/henkilo/labelvalues/TyoPuhelin";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
+import {removeNotification} from "../../actions/notifications.actions";
 
 
-class VirkailijaViewContainer extends AbstractViewContainer {
+class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
         this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
 
@@ -48,10 +48,8 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     };
 
     render() {
-        const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
-            isOrganisationContentLoading: this._isOrganisationContentLoading, createBasicInfo: this._createBasicInfo,
-            createNotifications: this._createNotifications.bind(this), readOnlyButtons: this._readOnlyButtons,
-            updatePassword: updatePassword,
+        const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
+            readOnlyButtons: this._readOnlyButtons, updatePassword: updatePassword,
         };
         return <VirkailijaViewPage {...props} />;
     };
@@ -59,10 +57,6 @@ class VirkailijaViewContainer extends AbstractViewContainer {
     constructor(props) {
         super(props);
         this.L = this.props.l10n[this.props.locale];
-        this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
-        || this.props.koodisto.kansalaisuusKoodistoLoading || this.props.koodisto.sukupuoliKoodistoLoading
-        || this.props.henkilo.kayttajatietoLoading ||this.props.koodisto.yhteystietotyypitKoodistoLoading;
-        this._isOrganisationContentLoading = () => this.props.henkilo.henkiloOrgsLoading;
 
         // Basic info box content
         this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
@@ -92,7 +86,7 @@ class VirkailijaViewContainer extends AbstractViewContainer {
             <EditButton editAction={edit} L={this.L} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={this.props.updatePassword}/>,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={this.props.updatePassword} />,
         ];
 
     };
@@ -108,6 +102,7 @@ const mapStateToProps = (state, ownProps) => {
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
+        notifications: state.notifications,
     };
 };
 
@@ -116,4 +111,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo,})(VirkailijaViewContainer);
+    addKayttooikeusToHenkilo, removeNotification,})(VirkailijaViewContainer);

@@ -9,11 +9,10 @@ class OppijaViewPage extends React.Component {
         return (
             <div>
                 <div className="wrapper">
-                    <div>
-                        {this.props.createNotifications(1)}
-                    </div>
                     {
-                        this.props.isUserContentLoading()
+                        this.props.henkilo.henkiloLoading
+                        || this.props.koodisto.kieliKoodistoLoading
+                        || this.props.koodisto.kansalaisuusKoodistoLoading
                             ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
@@ -22,7 +21,8 @@ class OppijaViewPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        this.props.isContactContentLoading()
+                        this.props.henkilo.henkiloLoading
+                        || this.props.koodisto.yhteystietotyypitKoodistoLoading
                             ? <Loader />
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
@@ -30,6 +30,7 @@ class OppijaViewPage extends React.Component {
             </div>
         )
     };
+
 }
 
 export default OppijaViewPage;

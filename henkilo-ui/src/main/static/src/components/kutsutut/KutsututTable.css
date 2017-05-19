@@ -1,8 +1,4 @@
 
-.rt-thead.-header {
-    background-color: #eee;
-}
-
-.rt-tr.-even {
+.kutsututTableWrapper .rt-thead.-header {
     background-color: #eee;
 }

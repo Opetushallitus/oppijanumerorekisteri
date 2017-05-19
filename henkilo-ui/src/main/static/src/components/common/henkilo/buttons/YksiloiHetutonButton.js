@@ -4,7 +4,7 @@ import StaticUtils from "../../StaticUtils";
 
 const YksiloiHetutonButton = ({henkilo, L}) =>
     !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.hetu
-        ? <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiHenkilo(this.props.henkilo.henkilo.oidHenkilo)}
+        ? <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiAction(this.props.henkilo.henkilo.oidHenkilo)}
                          normalLabel={L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}
                          errorMessage={StaticUtils.createPopupErrorMessage('yksiloi', henkilo, L)} />
         : null;
@@ -16,6 +16,7 @@ YksiloiHetutonButton.propTypes = {
         oidHenkilo: React.PropTypes.string,
     })}),
     L: React.PropTypes.object,
+    yksiloiAction: React.PropTypes.func.isRequired,
 };
 
 export default YksiloiHetutonButton;

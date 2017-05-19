@@ -14,7 +14,7 @@
     margin-top: 25px;
 }
 
-.henkiloViewButtons > div > button {
+.henkiloViewButtons > div > div > button {
     margin-right: 15px;
     float: left;
 }

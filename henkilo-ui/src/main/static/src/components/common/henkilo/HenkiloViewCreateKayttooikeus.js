@@ -1,6 +1,5 @@
 import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
-import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer"
 import StaticUtils from "../StaticUtils"
 import dateformat from 'dateformat';
 import scrollToComponent from 'react-scroll-to-component'
@@ -9,7 +8,7 @@ import CKKesto from "./createkayttooikeus/CKKesto";
 import CKKayttooikeudet from "./createkayttooikeus/CKKayttooikeudet";
 import CKHaeButton from "./createkayttooikeus/CKHaeButton";
 
-class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
+class HenkiloViewCreateKayttooikeus extends React.Component {
     static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
@@ -90,7 +89,7 @@ class HenkiloViewCreateKayttooikeus extends AbstractViewContainer {
             this.kayttooikeusModel = this.initialKayttooikeusModel();
             this.setState(this.initialState);
             // Scroll
-            scrollToComponent(this.props.existingKayttooikeusRef);
+            scrollToComponent(this.props.existingKayttooikeusRef, {align: 'top'});
         };
 
         this.state = this.initialState;

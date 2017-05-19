@@ -22,17 +22,18 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
             </div>
             <div>
                 {
-                    selectedList.map(selected => <div className="oph-alert oph-alert-info">
-                        <div className="oph-alert-container">
-                            <div className="oph-alert-title">{selected.label}</div>
-                            <button className="oph-button oph-button-close"
-                                    type="button"
-                                    title={L['POISTA']}
-                                    aria-label="Close" onClick={() => close(selected.value)}>
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                    </div>)
+                    selectedList.map((selected, idx) =>
+                        <div key={idx} className="oph-alert oph-alert-info">
+                            <div className="oph-alert-container">
+                                <div className="oph-alert-title">{selected.label}</div>
+                                <button className="oph-button oph-button-close"
+                                        type="button"
+                                        title={L['POISTA']}
+                                        aria-label="Close" onClick={() => close(selected.value)}>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        </div>)
                 }
             </div>
         </td>

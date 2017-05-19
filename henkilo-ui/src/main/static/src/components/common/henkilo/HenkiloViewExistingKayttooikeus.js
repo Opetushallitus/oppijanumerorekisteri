@@ -4,6 +4,7 @@ import Table from '../table/Table'
 import dateformat from 'dateformat'
 import StaticUtils from "../StaticUtils";
 import MyonnaButton from "./buttons/MyonnaButton";
+import Notifications from "../notifications/Notifications";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -11,6 +12,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         locale: React.PropTypes.string.isRequired,
         kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
+        notifications: React.PropTypes.shape({
+            existingKayttooikeus: React.PropTypes.array.isRequired,
+        }),
+        removeNotification: React.PropTypes.func,
     };
 
     constructor(props) {
@@ -19,12 +24,13 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA', minWidth: 200},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS', minWidth: 150},
-            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', maxWidth: 120},
-            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', maxWidth: 120},
+            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
+            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125},
-            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA'},
+            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 125, notSortable: true},
+            {key: 'HIGHLIGHT', hide: true}
         ];
-        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
+        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || heading.key}));
 
         this.dates = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
@@ -49,7 +55,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map((uusittavaKayttooikeusRyhma, idx) => ({
-                [headingList[0]]: this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid].nimi[this.props.locale],
+                [headingList[0]]: this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid].nimi[this.props.locale] +
+                (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
                 [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
@@ -67,23 +74,36 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo} L={this.L}/>
                     </div>
                 </div>,
+                [headingList[6]]: this.props.notifications.existingKayttooikeus.some(notification => {
+                    console.log(notification);
+                    console.log(uusittavaKayttooikeusRyhma);
+                    return notification.ryhmaIdList
+                        .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
+                        && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
+                }),
+
             }));
     };
 
     render() {
         return (
             <div className="henkiloViewUserContentWrapper">
+                <Notifications notifications={this.props.notifications.existingKayttooikeus}
+                               L={this.L}
+                               closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)} />
+                <div className="header">
+                    <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
+                </div>
                 <div>
-                    <div className="header">
-                        <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
-                    </div>
-                    <div>
-                        <Table headings={this.tableHeadings} data={this._rows} />
-                    </div>
+                    <Table headings={this.tableHeadings}
+                           data={this._rows}
+                           noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']}
+                    />
                 </div>
             </div>
         );
     };
+
 }
 
 export default HenkiloViewExistingKayttooikeus;

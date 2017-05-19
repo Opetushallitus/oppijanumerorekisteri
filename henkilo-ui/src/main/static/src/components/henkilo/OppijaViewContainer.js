@@ -11,7 +11,6 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../../configuration/navigationconfigurations";
-import AbstractViewContainer from "../../containers/henkilo/AbstractViewContainer";
 import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
 import EditButton from "../common/henkilo/buttons/EditButton";
 import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
@@ -27,7 +26,7 @@ import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 
 
-class OppijaViewContainer extends AbstractViewContainer {
+class OppijaViewContainer extends React.Component {
     componentDidMount() {
         this.props.updateNavigation(oppijaNavi(this.props.oidHenkilo), '/henkilo');
 
@@ -36,22 +35,17 @@ class OppijaViewContainer extends AbstractViewContainer {
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
     };
+
     render() {
-        const props = {...this.props, L: this.L, locale: this.props.locale, isUserContentLoading: this._isUserContentLoading,
-            isContactContentLoading: this._isContactContentLoading, createBasicInfo: this._createBasicInfo,
-            createBasicInfo2: this._createBasicInfo2, createLoginInfo: this._createLoginInfo,
-            readOnlyButtons: this._readOnlyButtons,
-            createNotifications: this._createNotifications.bind(this), };
+        const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
+            readOnlyButtons: this._readOnlyButtons, };
         return <OppijaViewPage {...props} />;
     };
+
     constructor(props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-
-        this._isUserContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.kieliKoodistoLoading
-            || this.props.koodisto.kansalaisuusKoodistoLoading;
-        this._isContactContentLoading = () => this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
 
         // Basic info box content
         this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
@@ -81,7 +75,7 @@ class OppijaViewContainer extends AbstractViewContainer {
         // Basic info default buttons
         this._readOnlyButtons = (edit) => [
             <EditButton editAction={edit} L={this.L} />,
-            <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} />,
+            <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} yksiloiAction={this.props.yksiloiHenkilo} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
         ];

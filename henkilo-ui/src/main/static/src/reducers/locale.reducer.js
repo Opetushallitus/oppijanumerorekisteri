@@ -1,6 +1,3 @@
-
-
-
 export const locale = (state = 'fi', action) => {
 
     switch (action.type) {
