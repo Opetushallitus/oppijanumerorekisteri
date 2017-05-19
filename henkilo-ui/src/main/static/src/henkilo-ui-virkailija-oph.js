@@ -36,7 +36,8 @@ export default {
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
     "oppijanumerorekisteri-service.henkilo.delete": "oppijanumerorekisteri-service/henkilo/$1",
-    "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteriw-service/henkilo/$1/yksiloi",
+    "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteri-service/henkilo/$1/yksiloi",
+    "oppijanumerorekisteri-service.henkilo.vtj-override": "oppijanumerorekisteri-service/henkilo/$1/vtjOverride",
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
 
     "organisaatio-service.baseUrl": "/",

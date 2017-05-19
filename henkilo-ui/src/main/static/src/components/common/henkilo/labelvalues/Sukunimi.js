@@ -5,7 +5,6 @@ const Sukunimi = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_SUKUNIMI',
     value: props.henkilo.henkilo.sukunimi,
     inputValue: 'sukunimi',
-    autoFocus: true,
     disabled: !!props.henkilo.henkilo.hetu && props.henkilo.henkilo.yksiloityVTJ
 }} />;
 

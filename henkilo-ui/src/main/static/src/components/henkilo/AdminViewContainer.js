@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo,
+    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, overrideHenkiloVtjData,
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -34,6 +34,7 @@ import Hetu from "../common/henkilo/labelvalues/Hetu";
 import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
 import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import AdminViewPage from "./AdminViewPage";
+import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
 
 
 class AdminViewContainer extends React.Component {
@@ -70,7 +71,7 @@ class AdminViewContainer extends React.Component {
                 L: this.L, locale: this.props.locale,};
             return [
                 [
-                    <Sukunimi {...props} />,
+                    <Sukunimi {...props} autofocus={true} />,
                     <Etunimet {...props} />,
                     <Syntymaaika {...props} />,
                     <Hetu {...props} />,
@@ -96,7 +97,7 @@ class AdminViewContainer extends React.Component {
             <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo} L={this.L} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
-            // PaivitaVtjButton
+            <VtjOverrideButton henkilo={this.props.henkilo} L={this.L} overrideAction={this.props.overrideHenkiloVtjData} />,
             <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={this.props.updatePassword} />,
         ];
 
@@ -122,4 +123,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification,})(AdminViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, overrideHenkiloVtjData,})(AdminViewContainer);

@@ -70,7 +70,7 @@ class VirkailijaViewContainer extends React.Component {
                 L: this.L, locale: this.props.locale,};
             return [
                 [
-                    <Sukunimi {...props} />,
+                    <Sukunimi {...props} autofocus={true} />,
                     <Etunimet {...props} />,
                     <Kutsumanimi {...props} />,
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,

@@ -2,10 +2,10 @@ import React from 'react'
 import ConfirmButton from "../../button/ConfirmButton";
 import StaticUtils from "../../StaticUtils";
 
-const YksiloiHetutonButton = ({henkilo, L}) =>
+const YksiloiHetutonButton = ({henkilo, L, yksiloiAction}) =>
     !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.hetu
-        ? <ConfirmButton key="yksilointi" big action={() => this.props.yksiloiAction(this.props.henkilo.henkilo.oidHenkilo)}
-                         normalLabel={L['YKSILOI_LINKKI']} confirmLabel={this.L['YKSILOI_LINKKI_CONFIRM']}
+        ? <ConfirmButton key="yksilointi" big action={() => yksiloiAction(henkilo.henkilo.oidHenkilo)}
+                         normalLabel={L['YKSILOI_LINKKI']} confirmLabel={L['YKSILOI_LINKKI_CONFIRM']}
                          errorMessage={StaticUtils.createPopupErrorMessage('yksiloi', henkilo, L)} />
         : null;
 

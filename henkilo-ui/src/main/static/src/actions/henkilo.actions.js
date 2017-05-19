@@ -14,7 +14,8 @@ import {
     YKSILOI_HENKILO_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_REQUEST,
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
-    FETCH_HENKILO_ORGANISAATIOS_FAILURE
+    FETCH_HENKILO_ORGANISAATIOS_FAILURE, VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
+    VTJ_OVERRIDE_HENKILO_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 
@@ -90,7 +91,20 @@ const errorYksiloiHenkilo = (error) => ({type: YKSILOI_HENKILO_FAILURE,
 export const yksiloiHenkilo = (oid,) => (dispatch => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi', oid);
-    http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))}).catch(e => dispatch(errorYksiloiHenkilo(e)));
+    http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))})
+        .catch(e => dispatch(errorYksiloiHenkilo(e)));
+});
+
+const requestOverrideHenkiloVtjData = oid => ({type: VTJ_OVERRIDE_HENKILO_REQUEST, oid});
+const receiveOverrideHenkiloVtjData = (oid) => ({type: VTJ_OVERRIDE_HENKILO_SUCCESS, oid, receivedAt: Date.now()});
+const errorOverrideHenkiloVtjData = (error) => ({type: VTJ_OVERRIDE_HENKILO_FAILURE,
+    receivedAt: Date.now(),
+    buttonNotification: {position: 'vtjOverride', notL10nMessage: 'VTJ_OVERRIDE_ERROR_TOPIC', notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT'},});
+export const overrideHenkiloVtjData = (oid,) => (dispatch => {
+    dispatch(requestOverrideHenkiloVtjData(oid));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.vtj-override', oid);
+    http.put(url).then(() => {dispatch(receiveOverrideHenkiloVtjData(oid))})
+        .catch(e => dispatch(errorOverrideHenkiloVtjData(e)));
 });
 
 const requestHenkiloOrgs = oid => ({type: FETCH_HENKILOORGS_REQUEST, oid});
