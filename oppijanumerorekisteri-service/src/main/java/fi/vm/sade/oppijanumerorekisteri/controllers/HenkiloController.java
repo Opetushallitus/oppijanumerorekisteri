@@ -126,7 +126,7 @@ public class HenkiloController {
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                           ExternalPermissionService permissionService) throws BindException {
-        return this.henkiloService.updateHenkiloFromHenkiloUpdateDto(henkiloUpdateDto).getOidHenkilo();
+        return this.henkiloService.updateHenkilo(henkiloUpdateDto).getOidHenkilo();
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")

@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-@Component
 public class DtoUtils {
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
         KielisyysDto kielisyysDto = new KielisyysDto();
@@ -29,7 +28,8 @@ public class DtoUtils {
     public static HenkiloPerustietoDto createHenkiloPerustietoDto(String etunimet, String kutsumanimi, String sukunimi,
                                                                   String hetu, String henkiloOid, String kielikoodi,
                                                                   String kielityyppi, String kansalaisuusKoodi,
-                                                                  List<String> externalIds, List<IdentificationDto> identifications, LocalDate syntymaaika, Date modified) {
+                                                                  List<String> externalIds, List<IdentificationDto> identifications,
+                                                                  LocalDate syntymaaika, Date modified) {
         KielisyysDto aidinkieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
@@ -101,8 +101,8 @@ public class DtoUtils {
         YhteystiedotRyhmaDto yhteystiedotRyhma = DtoUtils.createYhteystiedotRyhmaDto(yhteystietoArvo);
         LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
 
-        return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu, HenkiloTyyppi.VIRKAILIJA,
-                syntymaAika, "1", false, asiointikieli, aidinkieli,
+        return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu,
+                syntymaAika, "1", asiointikieli, aidinkieli,
                 Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
     }
 

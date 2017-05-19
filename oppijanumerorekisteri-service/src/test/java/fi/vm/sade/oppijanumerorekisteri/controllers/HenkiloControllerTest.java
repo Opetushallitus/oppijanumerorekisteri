@@ -211,7 +211,7 @@ public class HenkiloControllerTest {
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
-        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
+        given(this.henkiloService.updateHenkilo(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
     }
@@ -225,7 +225,7 @@ public class HenkiloControllerTest {
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDTo");
         errors.rejectValue("hetu", henkiloUpdateDto.getHetu());
-        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class)))
+        given(this.henkiloService.updateHenkilo(any(HenkiloUpdateDto.class)))
                 .willThrow(new fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException(errors));
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
@@ -239,7 +239,7 @@ public class HenkiloControllerTest {
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
-        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new NotFoundException());
+        given(this.henkiloService.updateHenkilo(any(HenkiloUpdateDto.class))).willThrow(new NotFoundException());
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
     }
@@ -251,7 +251,7 @@ public class HenkiloControllerTest {
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
-        given(this.henkiloService.updateHenkiloFromHenkiloUpdateDto(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
+        given(this.henkiloService.updateHenkilo(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest())
                 .andExpect(status().reason("illegal_argument_value"));

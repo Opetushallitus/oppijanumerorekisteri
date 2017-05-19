@@ -321,7 +321,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     // call the validator.
     @Override
     @Transactional
-    public HenkiloUpdateDto updateHenkiloFromHenkiloUpdateDto(HenkiloUpdateDto henkiloUpdateDto) {
+    public HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto) {
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
@@ -341,6 +341,8 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setSukunimi(null);
             henkiloUpdateDto.setSukupuoli(null);
             henkiloUpdateDto.setHetu(null);
+            henkiloUpdateDto.setAidinkieli(null);
+            henkiloUpdateDto.setKansalaisuus(null);
         }
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
@@ -445,10 +447,10 @@ public class HenkiloServiceImpl implements HenkiloService {
         List<HenkiloViiteDto> henkiloViiteDtoList = new ArrayList<>();
         if(criteria.getHenkiloOids() != null) {
             List<List<String>> henkiloOidListSplit = Lists.partition(
-                    criteria.getHenkiloOids().stream().collect(Collectors.toList()),
+                    new ArrayList<>(criteria.getHenkiloOids()),
                     oppijanumerorekisteriProperties.getHenkiloViiteSplitSize());
             henkiloOidListSplit.forEach(henkiloOidList -> {
-                criteria.setHenkiloOids(henkiloOidList.stream().collect(Collectors.toSet()));
+                criteria.setHenkiloOids(new HashSet<>(henkiloOidList));
                 henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
             });
         }
