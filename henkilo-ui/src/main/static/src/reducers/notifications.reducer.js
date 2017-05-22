@@ -25,21 +25,20 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                 }],
             };
         case NOTIFICATION_REMOVED:
-            let removeNotification;
-            // For common notifications
-            removeNotification = state[action.group].filter(notification => action.id === action.id)[0];
-            // For kayttooikeus table notifications
-            if(!removeNotification) {
-                removeNotification  = action.id
-                    ? state[action.group].filter(notification => action.id === notification.organisaatioOid + notification.ryhmaIdList.join(''))[0]
-                    : state[action.group].filter(notification => notification.type === action.status)[0];
+            let removeNotifications;
+            // For button notifications (remove all)
+            removeNotifications = state[action.group].filter(notification => action.id === action.id);
+            // For kayttooikeus table notifications (remove single one)
+            if(!removeNotifications) {
+                removeNotifications  = action.id
+                    ? [state[action.group].filter(notification => action.id === notification.organisaatioOid + notification.ryhmaIdList.join(''))[0]]
+                    : [state[action.group].filter(notification => notification.type === action.status)[0]];
             }
-            return Object.assign({}, state, {[action.group]: state[action.group].filter(notification => notification !== removeNotification)});
+            return Object.assign({}, state, {[action.group]: state[action.group].filter(notification => removeNotifications.indexOf(notification) === -1)});
         case PASSIVOI_HENKILO_FAILURE:
         case YKSILOI_HENKILO_FAILURE:
         case DELETE_HENKILOORGS_FAILURE:
         case VTJ_OVERRIDE_HENKILO_FAILURE:
-            console.log();
             return Object.assign({}, state, {
                 ...state,
                 buttonNotifications: [...state.buttonNotifications, {

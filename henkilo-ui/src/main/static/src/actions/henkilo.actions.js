@@ -102,7 +102,7 @@ const errorOverrideHenkiloVtjData = (error) => ({type: VTJ_OVERRIDE_HENKILO_FAIL
     buttonNotification: {position: 'vtjOverride', notL10nMessage: 'VTJ_OVERRIDE_ERROR_TOPIC', notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT'},});
 export const overrideHenkiloVtjData = (oid,) => (dispatch => {
     dispatch(requestOverrideHenkiloVtjData(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.vtj-override', oid);
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
     http.put(url).then(() => {dispatch(receiveOverrideHenkiloVtjData(oid))})
         .catch(e => dispatch(errorOverrideHenkiloVtjData(e)));
 });

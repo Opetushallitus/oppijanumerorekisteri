@@ -3,7 +3,6 @@ import React from 'react'
 import Columns from 'react-columns'
 import Button from "../button/Button";
 import ConfirmButton from "../button/ConfirmButton";
-import StaticUtils from "../StaticUtils";
 
 class HenkiloViewOrganisationContent extends React.Component{
     static propTypes = {
