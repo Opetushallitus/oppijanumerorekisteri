@@ -21,13 +21,13 @@ export default class PopupButton extends React.Component {
         const wrapperStyle = { position: 'relative' };
         return (
             <div style={wrapperStyle}>
-                <button onClick={this.show.bind(this)} className="oph-button oph-button-primary oph-button-big"  type="button">{this.props.children}</button>
+                <button onClick={this.show.bind(this)}
+                        className="oph-button oph-button-primary oph-button-big"
+                        type="button">{this.props.children}</button>
                 { this.state.show ? this.createPopup() : null }
             </div>
         );
     };
-
-
 
     createPopup() {
         const closeButtonStyles = {

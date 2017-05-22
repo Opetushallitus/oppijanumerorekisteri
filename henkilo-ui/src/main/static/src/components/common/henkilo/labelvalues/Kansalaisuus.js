@@ -1,5 +1,6 @@
 import React from 'react'
 import LabelValue from "./LabelValue"
+import StaticUtils from "../../StaticUtils";
 
 const Kansalaisuus = (props) => <LabelValue {...props} values={
     props.henkilo.henkilo.kansalaisuus && props.henkilo.henkilo.kansalaisuus.length
@@ -11,12 +12,14 @@ const Kansalaisuus = (props) => <LabelValue {...props} values={
             value: props.koodisto.kansalaisuus
                 .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
             selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
+            disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
         })).reduce((a,b) => a.concat(b))
         : {
         label: 'HENKILO_KANSALAISUUS',
         data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
             optionsName: 'kansalaisuus.0.kansalaisuusKoodi'})),
         value: null,
+        disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
     }
 } />;
 

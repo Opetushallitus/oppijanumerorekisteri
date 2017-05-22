@@ -1,11 +1,12 @@
 import React from 'react'
 import LabelValue from "./LabelValue";
+import StaticUtils from "../../StaticUtils";
 
 const Etunimet = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_ETUNIMET',
     value: props.henkilo.henkilo.etunimet,
     inputValue: 'etunimet',
-    disabled: !!props.henkilo.henkilo.hetu && props.henkilo.henkilo.yksiloityVTJ
+    disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
 }} />;
 
 Etunimet.propTypes = {

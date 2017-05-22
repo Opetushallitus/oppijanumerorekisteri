@@ -28,12 +28,17 @@ import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 
 class OppijaViewContainer extends React.Component {
     componentDidMount() {
-        this.props.updateNavigation(oppijaNavi(this.props.oidHenkilo), '/henkilo');
+        if(this.props.isAdmin) {
+            this.props.router.push('/admin/' + this.props.oidHenkilo);
+        }
+        else {
+            this.props.updateNavigation(oppijaNavi(this.props.oidHenkilo), '/henkilo');
 
-        this.props.fetchHenkilo(this.props.oidHenkilo);
-        this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
+            this.props.fetchHenkilo(this.props.oidHenkilo);
+            this.props.fetchYhteystietotyypitKoodisto();
+            this.props.fetchKieliKoodisto();
+            this.props.fetchKansalaisuusKoodisto();
+        }
     };
 
     render() {
@@ -54,7 +59,7 @@ class OppijaViewContainer extends React.Component {
                 L: this.L, locale: this.props.locale,};
             return [
                 [
-                    <Sukunimi {...props} />,
+                    <Sukunimi {...props} autofocus={true} />,
                     <Etunimet {...props} />,
                     <Syntymaaika {...props} />,
                     <Hetu {...props} />,
@@ -89,7 +94,8 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
-        locale: state.locale
+        locale: state.locale,
+        isAdmin: state.omattiedot.isAdmin,
     };
 };
 

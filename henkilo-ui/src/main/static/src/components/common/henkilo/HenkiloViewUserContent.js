@@ -20,7 +20,6 @@ class HenkiloViewUserContent extends React.Component{
             kieli: React.PropTypes.array,
             kansalaisuus: React.PropTypes.kansalaisuus
         }).isRequired,
-        updatePassword: React.PropTypes.func.isRequired,
         passivoiHenkilo: React.PropTypes.func.isRequired,
         yksiloiHenkilo: React.PropTypes.func.isRequired,
         updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
@@ -85,10 +84,6 @@ class HenkiloViewUserContent extends React.Component{
 
     _update() {
         this.props.updateHenkiloAndRefetch(this.state.henkiloUpdate);
-        if(this.state.henkiloUpdate.password && this.state.henkiloUpdate.password === this.state.henkiloUpdate.passwordAgain) {
-            this.props.updatePassword(this.state.henkiloUpdate.oidHenkilo, this.state.henkiloUpdate.password);
-            this.setState({henkiloUpdate: {...this.state.henkiloUpdate, password: null, passwordAgain: null}});
-        }
         if(this.props.henkilo.kayttajatieto.username !== undefined && this.state.henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(this.state.henkiloUpdate.oidHenkilo, this.state.henkiloUpdate.kayttajanimi);
         }

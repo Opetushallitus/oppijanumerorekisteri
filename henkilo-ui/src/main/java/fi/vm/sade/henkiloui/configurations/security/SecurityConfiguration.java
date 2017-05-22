@@ -110,6 +110,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers("/swagger-resources/**").permitAll()
                     .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
                     .antMatchers("/v2/api-docs").permitAll()
+                    .antMatchers("/admin/**").hasRole("APP_HENKILONHALLINTA_OPHREKISTERI")
                     .anyRequest().authenticated()
                 .and()
                 .addFilter(casAuthenticationFilter())

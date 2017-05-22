@@ -1,12 +1,9 @@
-export const locale = (state = 'fi', action) => {
+import {FETCH_OMATTIEDOT_SUCCESS} from "../actions/actiontypes";
 
+export const locale = (state = 'fi', action) => {
     switch (action.type) {
-        case 'fi':
-            return 'fi';
-        case 'sv':
-            return 'sv';
-        case 'en':
-            return 'en';
+        case FETCH_OMATTIEDOT_SUCCESS:
+            return action.lang || 'fi';
         default:
             return 'fi';
     }

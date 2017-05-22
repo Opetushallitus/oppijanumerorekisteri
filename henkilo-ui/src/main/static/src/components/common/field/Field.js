@@ -11,6 +11,7 @@ class Field extends React.Component {
         selectValue: React.PropTypes.string,
         password: React.PropTypes.bool,
         disabled: React.PropTypes.bool,
+        autofocus: React.PropTypes.bool,
     };
 
     constructor() {
@@ -25,7 +26,6 @@ class Field extends React.Component {
             'readOnly': this.props.readOnly,
             'oph-input': !this.props.readOnly && !this.props.data});
         const type = {type: this.props.password ? 'password' : false};
-        const autoFocus = this.props.autoFocus;
         return (
             this.props.readOnly
                 ? <span className={className}>{this.props.children}</span>
@@ -41,7 +41,7 @@ class Field extends React.Component {
                              onChange={this.props.changeAction}
                              defaultValue={this.props.children}
                              {...type}
-                             autoFocus={autoFocus}
+                             autoFocus={this.props.autofocus}
                              disabled={this.props.disabled} />
         )
     }

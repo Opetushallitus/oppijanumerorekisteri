@@ -1,5 +1,6 @@
 import React from 'react'
 import LabelValue from "./LabelValue"
+import StaticUtils from "../../StaticUtils";
 
 const Aidinkieli = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_AIDINKIELI',
@@ -7,8 +8,9 @@ const Aidinkieli = (props) => <LabelValue {...props} values={{
         optionsName: 'aidinkieli.kieliKoodi',})),
     value: props.henkilo.henkilo.aidinkieli && props.koodisto.kieli.filter(kieli =>
     kieli.value === props.henkilo.henkilo.aidinkieli.kieliKoodi)[0][props.locale],
-    selectValue: props.henkiloUpdate.aidinkieli && props.henkiloUpdate.aidinkieli.kieliKoodi}
-} />;
+    selectValue: props.henkiloUpdate.aidinkieli && props.henkiloUpdate.aidinkieli.kieliKoodi,
+    disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
+}} />;
 
 Aidinkieli.propTypes = {
     henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({

@@ -7,6 +7,7 @@ import AnomustListPageContainer from './containers/AnomusPageContainer';
 import OppijaViewContainer from './components/henkilo/OppijaViewContainer';
 import VirkailijaViewContainer from "./components/henkilo/VirkailijaViewContainer";
 import OmattiedotContainer from "./components/omattiedot/OmattiedotPageContainer";
+import AdminViewContainer from "./components/henkilo/AdminViewContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -15,5 +16,5 @@ export default <Route path="/" component={App}>
     <Route path="/oppija/:oid" component={OppijaViewContainer} />
     <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
-    {/*<Route path="/admin/:oid" component={AdminViewContainer} />*/}
+    <Route path="/admin/:oid" component={AdminViewContainer} />
 </Route>

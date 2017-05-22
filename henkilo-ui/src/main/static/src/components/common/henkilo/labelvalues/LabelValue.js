@@ -2,11 +2,12 @@ import React from 'react'
 import Columns from 'react-columns'
 import Field from "../../field/Field";
 
-const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L}) => !values.showOnlyOnWrite || !readOnly
+const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus}) => !values.showOnlyOnWrite || !readOnly
     ? <div id={values.label}>
         <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
             <span className="oph-bold">{L[values.label]}</span>
             <Field {...values}
+                   autofocus={autofocus}
                    changeAction={!values.date
                        ? updateModelFieldAction
                        : updateDateFieldAction}
@@ -25,6 +26,7 @@ LabelValue.propTypes = {
     readOnly: React.PropTypes.bool,
     updateModelFieldAction: React.PropTypes.func,
     updateDateFieldAction: React.PropTypes.func,
+    autofocus: React.PropTypes.bool,
 };
 
 export default LabelValue;

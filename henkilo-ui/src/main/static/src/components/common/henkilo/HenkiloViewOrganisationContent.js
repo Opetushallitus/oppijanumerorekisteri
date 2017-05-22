@@ -1,9 +1,7 @@
 import './HenkiloViewOrganisationContent.css'
 import React from 'react'
 import Columns from 'react-columns'
-import Button from "../button/Button";
-import ConfirmButton from "../button/ConfirmButton";
-import StaticUtils from "../StaticUtils";
+import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 
 class HenkiloViewOrganisationContent extends React.Component{
     static propTypes = {
@@ -31,7 +29,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                     passive: organisation.passivoitu,
                     id: organisation.oid,
                 })),
-        }
+        };
     };
 
     render() {
@@ -63,13 +61,10 @@ class HenkiloViewOrganisationContent extends React.Component{
                                             <span>{values.role}</span>
                                         </div>
                                         <div className="labelValue">
-                                            {!values.passive
-                                                ? <ConfirmButton key="passivoiOrg" cancel
-                                                                 action={() => this.passivoiHenkiloOrganisation(values.id)}
-                                                                 confirmLabel={this.L['HENKILO_ORG_PASSIVOI_CONFIRM']}
-                                                                 normalLabel={this.L['HENKILO_ORG_PASSIVOI']}
-                                                                 errorMessage={StaticUtils.createPopupErrorMessage('passivoiOrg', this.props.henkilo, this.L)} />
-                                                : <Button disabled action={() => {}}>{this.L['HENKILO_ORG_PASSIVOITU']}</Button>}
+                                            <PassivoiOrganisaatioButton passive={values.passive}
+                                                                        id={values.id}
+                                                                        L={this.L}
+                                                                        passivoiOrgAction={this.passivoiHenkiloOrganisation.bind(this)} />
                                         </div>
                                     </div>
                                     : null

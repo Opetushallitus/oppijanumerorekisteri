@@ -1,12 +1,12 @@
 import React from 'react'
 import ConfirmButton from "../../button/ConfirmButton";
-import StaticUtils from "../../StaticUtils";
 
-const MyonnaButton = ({L, myonnaAction, henkilo}) => <ConfirmButton action={myonnaAction}
-                                            confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
-                                            normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
-                                            key="myonna"
-                                            errorMessage={StaticUtils.createPopupErrorMessage('myonna', henkilo, L)} />;
+const MyonnaButton = ({L, myonnaAction, henkilo}) =>
+    <ConfirmButton action={myonnaAction}
+                   confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA_CONFIRM']}
+                   normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_MYONNA']}
+                   key="myonna"
+                   id="myonna" />;
 
 MyonnaButton.propTypes = {
     L: React.PropTypes.object,

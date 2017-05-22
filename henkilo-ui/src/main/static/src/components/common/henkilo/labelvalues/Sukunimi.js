@@ -1,12 +1,12 @@
 import React from 'react'
 import LabelValue from "./LabelValue";
+import StaticUtils from "../../StaticUtils";
 
 const Sukunimi = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_SUKUNIMI',
     value: props.henkilo.henkilo.sukunimi,
     inputValue: 'sukunimi',
-    autoFocus: true,
-    disabled: !!props.henkilo.henkilo.hetu && props.henkilo.henkilo.yksiloityVTJ
+    disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
 }} />;
 
 Sukunimi.propTypes = {
