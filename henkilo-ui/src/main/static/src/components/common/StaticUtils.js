@@ -37,16 +37,19 @@ class StaticUtils extends React.Component {
     static findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, ryhmakuvaus, yhteystietotyyppi, label) {
         let yhteystiedotRyhmaIndex = null;
         let yhteystietoIndex = null;
-        let tyosahkopostiRyhma = henkiloUpdate.yhteystiedotRyhma
+        let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma
             .filter((yhteystiedotRyhma, idx) => {
-                if(!yhteystiedotRyhmaIndex && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus) {
+                const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto
+                    .filter(yhteystieto => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi)[0].yhteystietoArvo;
+                if(yhteystiedotRyhmaIndex === null && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus
+                    && yhteystietoByTyyppi && yhteystietoByTyyppi !== '') {
                     yhteystiedotRyhmaIndex = idx;
                     return true;
                 }
                 return false;
             })[0];
-        let tyosahkoposti = tyosahkopostiRyhma
-            ? tyosahkopostiRyhma.yhteystieto.filter((yhteystieto, idx) => {
+        let yhteystieto = yhteystietoRyhma
+            ? yhteystietoRyhma.yhteystieto.filter((yhteystieto, idx) => {
                 if(yhteystietoIndex === null && yhteystieto.yhteystietoTyyppi === yhteystietotyyppi) {
                     yhteystietoIndex = idx;
                     return true;
@@ -56,22 +59,22 @@ class StaticUtils extends React.Component {
             : null;
         if(yhteystiedotRyhmaIndex === null) {
             yhteystiedotRyhmaIndex = henkiloUpdate.yhteystiedotRyhma.length;
-            tyosahkopostiRyhma = {
+            yhteystietoRyhma = {
                 readOnly: false,
                 ryhmaAlkuperaTieto: "alkupera2", // Virkailija
                 ryhmaKuvaus: ryhmakuvaus,
                 yhteystieto: []
             };
-            henkiloUpdate.yhteystiedotRyhma.push(tyosahkopostiRyhma);
+            henkiloUpdate.yhteystiedotRyhma.push(yhteystietoRyhma);
         }
 
         if(yhteystietoIndex === null) {
             yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.length;
-            tyosahkoposti = {yhteystietoTyyppi: yhteystietotyyppi, yhteystietoArvo: ''};
-            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(tyosahkoposti);
+            yhteystieto = {yhteystietoTyyppi: yhteystietotyyppi, yhteystietoArvo: ''};
+            henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(yhteystieto);
         }
         return { label: label,
-            value: tyosahkoposti && tyosahkoposti.yhteystietoArvo,
+            value: yhteystieto && yhteystieto.yhteystietoArvo,
             inputValue: 'yhteystiedotRyhma.'+yhteystiedotRyhmaIndex+'.yhteystieto.'+yhteystietoIndex+'.yhteystietoArvo',
         };
     };
