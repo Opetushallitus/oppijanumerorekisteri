@@ -3,10 +3,19 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
 public interface YksilointiService {
+
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 
     /**
+     * Päivittään yksilöidyn henkilön tiedot VTJ:stä.
+     *
+     * @param henkiloOid henkilö oid
+     */
+    void paivitaYksilointitiedot(String henkiloOid);
+
+    /**
      * Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle.
+     *
      * @param oid henkilö oid
      * @return palvelutunnisteet
      */
@@ -14,6 +23,7 @@ public interface YksilointiService {
 
     /**
      * Aktivoi yksilöinnin annetulle palvelutunnisteelle.
+     *
      * @param oid henkilö oid
      * @param palvelutunniste palvelutunniste
      */
@@ -21,6 +31,7 @@ public interface YksilointiService {
 
     /**
      * Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta
+     *
      * @param oid henkilö oid
      * @param palvelutunniste palvelutunniste
      */

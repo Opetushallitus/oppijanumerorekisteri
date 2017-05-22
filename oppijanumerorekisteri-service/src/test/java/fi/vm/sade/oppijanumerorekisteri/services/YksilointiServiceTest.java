@@ -44,8 +44,9 @@ public class YksilointiServiceTest {
 
         this.yksilointiService = new YksilointiServiceImpl(henkiloRepository, yksilointitietoRepository,
                 userDetailsHelper,
-                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties, kansalaisuusRepository,
-                kielisyysRepository, yhteystiedotRyhmaRepository, yhteystietoRepository);
+                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties,
+                kansalaisuusRepository, kielisyysRepository, yhteystiedotRyhmaRepository,
+                yhteystietoRepository);
 
         when(kielisyysRepository.findByKieliKoodi(anyString()))
                 .thenReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));

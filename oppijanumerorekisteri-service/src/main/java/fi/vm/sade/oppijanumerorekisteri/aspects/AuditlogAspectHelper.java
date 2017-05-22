@@ -34,6 +34,18 @@ public class AuditlogAspectHelper {
         this.finishLogging(logMessage);
     }
 
+    void logPaivitaYksilointitiedot(String henkiloOid) {
+        LogMessage.LogMessageBuilder logMessageBuilder1 = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("VTJ-tiedot päivitetty")
+                .setOperaatio(OppijanumerorekisteriOperation.TUNNISTUSTIETOJEN_PAIVITYS);
+        finishLogging(logMessageBuilder1);
+        LogMessage.LogMessageBuilder logMessageBuilder2 = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTITIETOJEN_PAIVITYS);
+        finishLogging(logMessageBuilder2);
+    }
+
     // Set the method calling user id and log.
     private void finishLogging(LogMessage.LogMessageBuilder builder) {
         Optional<String> oid = this.userDetailsHelper.findCurrentUserOid();

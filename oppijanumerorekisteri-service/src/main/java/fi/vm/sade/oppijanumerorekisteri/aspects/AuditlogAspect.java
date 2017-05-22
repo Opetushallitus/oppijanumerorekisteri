@@ -30,4 +30,12 @@ public class AuditlogAspect {
         }
         return result;
     }
+
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.YksilointiService.paivitaYksilointitiedot(*))" +
+            "&& args(henkiloOid)", argNames = "proceedingJoinPoint, henkiloOid")
+    private Object logPaivitaYksilointitiedot(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid) throws Throwable {
+        Object result = proceedingJoinPoint.proceed();
+        auditlogAspectHelper.logPaivitaYksilointitiedot(henkiloOid);
+        return result;
+    }
 }

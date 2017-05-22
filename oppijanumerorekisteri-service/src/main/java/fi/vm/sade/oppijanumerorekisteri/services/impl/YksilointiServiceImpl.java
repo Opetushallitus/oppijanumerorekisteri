@@ -5,7 +5,9 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -336,6 +338,26 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .filter(stringNotEmpty)
                 .filter(hetu -> !hetu.equals(original))
                 .ifPresent(consumer);
+    }
+
+    @Override
+    @Transactional
+    public void paivitaYksilointitiedot(String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if (!henkilo.isYksiloityVTJ()) {
+            throw new ValidationException("Henkilöä " + henkiloOid + " ei ole yksilöity");
+        }
+
+        String hetu = henkilo.getHetu();
+        if (hetu == null || hetu.isEmpty()) {
+            throw new DataInconsistencyException("Henkilöllä " + henkiloOid + " ei ole hetua vaikka yksilöinti on suoritettu");
+        }
+        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(hetu)
+                .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + hetu));
+
+        logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
+        paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+        henkilo.setVtjsynced(new Date());
     }
 
     @Override
