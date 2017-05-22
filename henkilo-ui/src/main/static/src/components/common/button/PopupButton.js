@@ -29,8 +29,6 @@ export default class PopupButton extends React.Component {
         );
     };
 
-
-
     createPopup() {
         const closeButtonStyles = {
             float: 'right',

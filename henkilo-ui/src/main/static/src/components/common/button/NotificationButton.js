@@ -12,7 +12,7 @@ class NotificationButton extends React.Component {
         super(props);
         this.state = {
             styles: {
-                top: 0,
+                bottom: 0,
                 left: 0,
             },
         }
@@ -20,10 +20,11 @@ class NotificationButton extends React.Component {
 
     componentDidMount() {
         this.L = this.props.l10n[this.props.locale];
+        const rects = this.inputElement.getClientRects()[0];
         this.setState({
             styles: {
-                top: this.inputElement.getClientRects()[0].top + -200 + 'px',
-                left: this.inputElement.getClientRects()[0].left + 'px',
+                top: rects.top - (rects.bottom - rects.top) + -150 + 'px',
+                left: rects.left + 'px',
             }
         });
     };

@@ -29,7 +29,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                     passive: organisation.passivoitu,
                     id: organisation.oid,
                 })),
-        }
+        };
     };
 
     render() {
