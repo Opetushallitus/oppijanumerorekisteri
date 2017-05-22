@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+
+import java.util.Collection;
 
 public interface IdentificationService {
 
@@ -20,5 +23,11 @@ public interface IdentificationService {
      * @return kaikki nykyiset henkilön tunnistetiedot
      */
     Iterable<IdentificationDto> create(String oid, IdentificationDto identification);
+
+    /**
+     * Käsittelee tunnistamattomat henkilöt liittämälle ne oikeisiin oideihin.
+     *
+     */
+    Collection<Henkilo> identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis);
 
 }

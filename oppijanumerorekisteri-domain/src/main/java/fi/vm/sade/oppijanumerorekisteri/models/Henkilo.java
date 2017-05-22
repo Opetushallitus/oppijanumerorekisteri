@@ -3,16 +3,15 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 import org.hibernate.annotations.BatchSize;
 
+@Builder(builderClassName = "builder")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -82,6 +81,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(nullable = false)
     private boolean yksilointiYritetty;
+
+    @Column(name = "ei_yksiloida", nullable = false)
+    private boolean eiYksiloida;
 
     @Column(nullable = false)
     private boolean duplicate;
@@ -172,5 +174,37 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public void setTurvakielto(Boolean turvakielto) {
         this.turvakielto = turvakielto;
+    }
+
+    /**
+     * If an unidentified person already has reference data there must be an inconsistency in the data.
+     * Those cases must be solved by officials.
+     */
+    public Boolean hasDataInconsistency() {
+        return !yksiloityVTJ && !hetu.isEmpty() && yksilointitieto != null;
+    }
+
+    public Boolean hasFakeSSN() {
+        return hetu.charAt(7) == '9';
+    }
+
+    public Boolean isBlackListed() {
+        return isEiYksiloida();
+    }
+
+    /* Initialize default values for lombok builder */
+    public static class builder {
+        private Boolean yksiloity = false;
+        private Boolean yksiloityVTJ = false;
+        private Boolean yksilointiYritetty = false;
+        private Boolean eiYksiloida = false;
+        private Boolean duplicate = false;
+        private Boolean eiSuomalaistaHetua = false;
+        private Boolean turvakielto = false;
+
+        /* "1" is male ja "2" is female; No idea why this defaults to male.
+         * Making this an enum (optionally with a third "unknown/unspecified" value) might be a better solution. */
+        private String sukupuoli = "1";
+
     }
 }

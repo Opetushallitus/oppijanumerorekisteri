@@ -4,6 +4,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
 public interface YksilointiService {
 
+    Henkilo yksiloiManuaalisesti(final Henkilo henkilo);
+
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 
     /**

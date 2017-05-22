@@ -338,4 +338,16 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .fetchOne());
     }
 
+    @Override
+    public Collection<Henkilo> findUnidentified(long limit, long offset) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return jpa()
+                .from(qHenkilo)
+                .where(
+                        qHenkilo.yksiloityVTJ.eq(false),
+                        qHenkilo.hetu.isNotNull(),
+                        qHenkilo.hetu.ne("")
+                ).offset(offset).limit(limit).select(qHenkilo).distinct().fetch();
+    }
+
 }
