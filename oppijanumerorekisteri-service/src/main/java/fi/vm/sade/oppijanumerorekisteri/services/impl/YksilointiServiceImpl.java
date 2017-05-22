@@ -1,8 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.auditlog.Audit;
-import static fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage.builder;
-import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
@@ -51,7 +48,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final KoodistoClient koodistoClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
-    private final Audit audit;
 
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final String RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE = "yhteystietotyyppi8";
@@ -66,7 +62,6 @@ public class YksilointiServiceImpl implements YksilointiService {
                                  VtjClient vtjClient,
                                  KoodistoClient koodistoClient,
                                  OppijanumerorekisteriProperties oppijanumerorekisteriProperties,
-                                 Audit audit,
                                  KansalaisuusRepository kansalaisuusRepository,
                                  KielisyysRepository kielisyysRepository,
                                  YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository,
@@ -76,7 +71,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         this.userDetailsHelper = userDetailsHelper;
         this.vtjClient = vtjClient;
         this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
-        this.audit = audit;
         this.kansalaisuusRepository = kansalaisuusRepository;
         this.kielisyysRepository = kielisyysRepository;
         this.koodistoClient = koodistoClient;
@@ -349,7 +343,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Override
     @Transactional
     public void paivitaYksilointitiedot(String henkiloOid) {
-        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
         if (!henkilo.isYksiloityVTJ()) {
             throw new ValidationException("Henkilöä " + henkiloOid + " ei ole yksilöity");
@@ -364,19 +357,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
-        audit.log(builder()
-                .id(kayttajaOid)
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("VTJ-tiedot päivitetty")
-                .setOperaatio(OppijanumerorekisteriOperation.TUNNISTUSTIETOJEN_PAIVITYS)
-                .build());
-
         henkilo.setVtjsynced(new Date());
-        audit.log(builder()
-                .id(kayttajaOid)
-                .kohdehenkiloOid(henkiloOid)
-                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTITIETOJEN_PAIVITYS)
-                .build());
     }
 
     @Override
