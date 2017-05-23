@@ -27,7 +27,5 @@ export const fetchOmattiedot = () => async dispatch => {
 };
 
 export const fetchHenkiloOrganisaatiosForCurrentUser = () => async dispatch => {
-    await dispatch(fetchOmattiedot());
     await dispatch(fetchHenkiloOrganisaatios());
 };
-
