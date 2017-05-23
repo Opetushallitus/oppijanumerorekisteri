@@ -365,6 +365,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             // käyttäjän muokkaukset
             henkiloUpdateDto.getYhteystiedotRyhma().forEach(yhteystiedotRyhmaDto -> {
                 YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
+                yhteystiedotRyhma.setId(null);
                 henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
             });
             // lisätään read-only ryhmät takaisin
