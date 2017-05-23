@@ -2,16 +2,17 @@ import './HenkilohakuPage.css'
 import React from 'react'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
+import WideBlueNotification from "../common/notifications/WideBlueNotification";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
         L: React.PropTypes.object.isRequired,
-        usertypeprops: React.PropTypes.shape({
-            withoutOrganisation: React.PropTypes.bool.isRequired,
-            subOrganisations: React.PropTypes.bool.isRequired,
+        initialCriteria: React.PropTypes.shape({
+            subOrganisation: React.PropTypes.bool.isRequired,
+            noOrganisation: React.PropTypes.bool.isRequired,
             passivoitu: React.PropTypes.bool.isRequired,
             dublicates: React.PropTypes.bool.isRequired,
-        }).isRequired,
+        }),
     };
 
     constructor(props) {
@@ -33,9 +34,10 @@ class HenkilohakuPage extends React.Component {
 
         this.state = {
             henkilohakuModel: {
-                ...props.usertypeprops
+                ...props.initialCriteria
             },
             henkilohakuResult: [],
+            showNoDataMessage: true,
         };
 
     };
@@ -44,7 +46,12 @@ class HenkilohakuPage extends React.Component {
         return <div className="borderless-wrapper">
             <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
             <input className="oph-input" />
-            <HenkilohakuFilters L={this.L}/>
+            <HenkilohakuFilters noOrganisationAction={this.setFilterCriteria('noOrganisation').bind(this)}
+                                suborganisationAction={this.setFilterCriteria('subOrganisation').bind(this)}
+                                duplikaatitAction={this.setFilterCriteria('dublicates').bind(this)}
+                                passiivisetAction={this.setFilterCriteria('passivoitu').bind(this)}
+                                initialValues={this.state.henkilohakuModel}
+                                L={this.L} />
             {
                 this.state.henkilohakuResult.length
                     ?
@@ -55,6 +62,12 @@ class HenkilohakuPage extends React.Component {
                            striped />
                 : null
             }
+            {
+                this.state.showNoDataMessage
+                    ? <WideBlueNotification closeAction={() => this.setState({showNoDataMessage: false})}
+                                            message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
+                    : null
+            }
         </div>;
     };
 
@@ -64,6 +77,15 @@ class HenkilohakuPage extends React.Component {
             [headingKeys[1]]: henkilo.kayttajatieto.username,
             [headingKeys[2]]: <ul>{henkilo.henkiloOrgs.map(organisaatio => <li>{organisaatio.organisaatioOid}</li>)}</ul>,
         }));
+    };
+
+    setFilterCriteria(criteriaKey) {
+        return (event) => this.setState({
+            henkilohakuModel: {
+                ...this.state.henkilohakuModel,
+                [criteriaKey]: event.target.checked,
+            },
+        });
     };
 }
 
