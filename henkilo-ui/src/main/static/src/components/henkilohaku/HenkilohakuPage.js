@@ -46,10 +46,10 @@ class HenkilohakuPage extends React.Component {
         return <div className="borderless-wrapper">
             <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
             <input className="oph-input" />
-            <HenkilohakuFilters noOrganisationAction={this.setFilterCriteria('noOrganisation').bind(this)}
-                                suborganisationAction={this.setFilterCriteria('subOrganisation').bind(this)}
-                                duplikaatitAction={this.setFilterCriteria('dublicates').bind(this)}
-                                passiivisetAction={this.setFilterCriteria('passivoitu').bind(this)}
+            <HenkilohakuFilters noOrganisationAction={this.setCheckedFilterCriteria('noOrganisation').bind(this)}
+                                suborganisationAction={this.setCheckedFilterCriteria('subOrganisation').bind(this)}
+                                duplikaatitAction={this.setCheckedFilterCriteria('dublicates').bind(this)}
+                                passiivisetAction={this.setCheckedFilterCriteria('passivoitu').bind(this)}
                                 initialValues={this.state.henkilohakuModel}
                                 L={this.L} />
             {
@@ -79,7 +79,7 @@ class HenkilohakuPage extends React.Component {
         }));
     };
 
-    setFilterCriteria(criteriaKey) {
+    setCheckedFilterCriteria(criteriaKey) {
         return (event) => this.setState({
             henkilohakuModel: {
                 ...this.state.henkilohakuModel,

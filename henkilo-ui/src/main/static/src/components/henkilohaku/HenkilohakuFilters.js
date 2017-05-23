@@ -1,6 +1,13 @@
 import './HenkilohakuFilters.css'
 import React from 'react'
 import {Collapse} from 'react-collapse'
+import OphCheckboxInline from "./criterias/OphCheckboxInline";
+import SubOrganisationCheckbox from "./criterias/SubOrganisationCheckbox";
+import NoOrganisationCheckbox from "./criterias/NoOrganisationCheckbox";
+import PassiivisetOrganisationCheckbox from "./criterias/PassiivisetOrganisationCheckbox";
+import DuplikaatitOrganisationCheckbox from "./criterias/DuplikaatitOrganisationCheckbox";
+import OphInline from "./criterias/OphInline";
+import OphSelect from "../common/select/OphSelect";
 
 class HenkilohakuFilters extends React.Component {
     static propTypes = {
@@ -34,31 +41,30 @@ class HenkilohakuFilters extends React.Component {
             </a>
             <Collapse isOpened={this.state.isOpen}>
                 <div className="henkilohakufilters-wrapper">
-                    <div className="oph-field oph-field-inline">
-                        <label className="oph-label oph-bold" aria-describedby="field-text">
-                            {this.L['HENKILOHAKU_FILTERS_HAEMYOS']}
-                        </label>
-                        <label className="oph-checkable" htmlFor="subOrganisaatioCriteria">
-                            <input id="subOrganisaatioCriteria" type="checkbox" className="oph-checkable-input"
-                                   onChange={this.props.suborganisationAction} checked={this.props.initialValues.subOrganisation} />
-                            <span className="oph-checkable-text"> {this.L['HENKILOHAKU_FILTERS_ALIORGANISAATIOISTA']}</span>
-                        </label>
-                        <label className="oph-checkable" htmlFor="noOrganisaatioCriteria">
-                            <input id="noOrganisaatioCriteria" type="checkbox" className="oph-checkable-input"
-                                   onChange={this.props.noOrganisationAction} checked={this.props.initialValues.noOrganisation} />
-                            <span className="oph-checkable-text"> {this.L['HENKILOHAKU_FILTERS_ILMANORGANISAATIOTA']}</span>
-                        </label>
-                        <label className="oph-checkable" htmlFor="passiivisetCriteria">
-                            <input id="passiivisetCriteria" type="checkbox" className="oph-checkable-input"
-                                   onChange={this.props.passiivisetAction} checked={this.props.initialValues.passivoitu} />
-                            <span className="oph-checkable-text"> {this.L['HENKILOHAKU_FILTERS_PASSIIVISET']}</span>
-                        </label>
-                        <label className="oph-checkable" htmlFor="duplikaatitCriteria">
-                            <input id="duplikaatitCriteria" type="checkbox" className="oph-checkable-input"
-                                   onChange={this.props.duplikaatitAction} checked={this.props.initialValues.dublicates} />
-                            <span className="oph-checkable-text"> {this.L['HENKILOHAKU_FILTERS_DUPLIKAATIT']}</span>
-                        </label>
-                    </div>
+                    <OphCheckboxInline text={this.L['HENKILOHAKU_FILTERS_HAEMYOS']} >
+                        <SubOrganisationCheckbox L={this.L}
+                                                 subOrganisationValue={this.props.initialValues.subOrganisation}
+                                                 subOrganisationAction={this.props.suborganisationAction}/>
+                        <NoOrganisationCheckbox L={this.L}
+                                                noOrganisationValue={this.props.initialValues.noOrganisation}
+                                                noOrganisationAction={this.props.noOrganisationAction} />
+                        <PassiivisetOrganisationCheckbox L={this.L}
+                                                         passiivisetValue={this.props.initialValues.passivoitu}
+                                                         passiivisetAction={this.props.passiivisetAction} />
+                        <DuplikaatitOrganisationCheckbox L={this.L}
+                                                         duplikaatitValue={this.props.initialValues.dublicates}
+                                                         duplikaatitAction={this.props.duplikaatitAction} />
+                    </OphCheckboxInline>
+                    <OphInline>
+                        <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">{this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIOLLA']}</label>
+                        <div style={{width: "200px", marginRight: "32px"}}>
+                            <OphSelect id="organisationFilter" />
+                        </div>
+                        <label className="oph-label demo-label-inline oph-bold" htmlFor="kayttooikeusryhmaFilter">{this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}</label>
+                        <div style={{width: "200px"}}>
+                            <OphSelect id="kayttooikeusryhmaFilter" />
+                        </div>
+                    </OphInline>
                 </div>
             </Collapse>
         </div>;
