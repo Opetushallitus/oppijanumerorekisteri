@@ -6,7 +6,7 @@ import Loader from "../components/common/icons/Loader";
 import moment from 'moment'
 
 
-class App extends React.Component{
+class App extends React.Component {
     render() {
         if(this.isInitialized()) {
             moment.locale(this.props.locale);
@@ -14,15 +14,16 @@ class App extends React.Component{
         }
         return (
             this.isInitialized()
-                ? <div className="oph-typography mainContainer">
-                <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
-                               l10n={this.props.l10n.localisations[this.props.locale]} />
-                <div>
-                    {this.props.children}
+                ?
+                <div className="oph-typography mainContainer">
+                    <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
+                                   l10n={this.props.l10n.localisations[this.props.locale]} />
+                    <div>
+                        {this.props.children}
+                    </div>
                 </div>
-            </div>
-                : <div><Loader /></div>
-        )
+                : <Loader />
+        );
     };
 
     isInitialized() {

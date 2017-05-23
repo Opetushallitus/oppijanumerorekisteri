@@ -20,7 +20,7 @@ class Table extends React.Component {
                 React.PropTypes.string,
                 React.PropTypes.object,
                 React.PropTypes.bool,
-            ]).isRequired)),
+            ]).isRequired)).isRequired,
         noDataText: React.PropTypes.string.isRequired,
         striped: React.PropTypes.bool,
     };

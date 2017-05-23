@@ -9,7 +9,7 @@ import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
-import {updateNavigation} from "../../actions/navigation.actions";
+import {updateHenkiloNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../../configuration/navigationconfigurations";
 import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
 import EditButton from "../common/henkilo/buttons/EditButton";
@@ -34,7 +34,7 @@ class OppijaViewContainer extends React.Component {
             this.props.router.push('/admin/' + this.props.oidHenkilo);
         }
         else {
-            this.props.updateNavigation(oppijaNavi(this.props.oidHenkilo), '/henkilo');
+            this.props.updateHenkiloNavigation(oppijaNavi(this.props.oidHenkilo));
 
             this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.fetchYhteystietotyypitKoodisto();
@@ -103,4 +103,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, updateHenkiloAndRefetch, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateNavigation})(OppijaViewContainer);
+    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation})(OppijaViewContainer);

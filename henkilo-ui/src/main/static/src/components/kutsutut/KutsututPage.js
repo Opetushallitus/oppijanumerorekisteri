@@ -34,7 +34,7 @@ export default class KutsututPage extends React.Component {
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
                     locale={this.props.locale}></KutsututTable>}
 
-                {this.state.confirmDeleteFor != null && <Modal show={this.state.confirmDeleteFor != null} onClose={this.cancelInvitationCancellation.bind(this)}
+                {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>
                     <div className="confirmation-modal">
                         <h2>{L['PERUUTA_KUTSU_VAHVISTUS']}</h2>
