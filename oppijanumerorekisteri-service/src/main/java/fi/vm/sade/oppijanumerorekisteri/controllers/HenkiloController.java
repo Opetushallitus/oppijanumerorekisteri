@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
@@ -312,6 +313,15 @@ public class HenkiloController {
     @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
     public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.disableYksilointi(oid, palvelutunniste);
+    }
+
+    @GetMapping("/{oid}/slaves")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")
+    public List<HenkiloReadDto> findSlavesByMasterOid(@PathVariable String oid) {
+        return this.henkiloService.findSlavesByMasterOid(oid);
     }
 
 }

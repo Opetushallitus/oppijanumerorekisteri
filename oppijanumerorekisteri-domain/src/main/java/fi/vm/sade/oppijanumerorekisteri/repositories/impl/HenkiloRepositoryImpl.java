@@ -338,4 +338,19 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .fetchOne());
     }
 
+    @Override
+    public List<Henkilo> findSlavesByMasterOid(String henkiloOid) {
+        QHenkilo qMaster = new QHenkilo("master");
+        QHenkilo qSlave = new QHenkilo("slave");
+        QHenkiloViite qHenkiloViite = QHenkiloViite.henkiloViite;
+
+        return jpa()
+                .from(qMaster, qHenkiloViite, qSlave)
+                .where(qMaster.oidHenkilo.eq(qHenkiloViite.masterOid))
+                .where(qSlave.oidHenkilo.eq(qHenkiloViite.slaveOid))
+                .where(qMaster.oidHenkilo.eq(henkiloOid))
+                .select(qSlave)
+                .fetch();
+    }
+
 }

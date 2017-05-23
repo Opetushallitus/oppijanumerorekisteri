@@ -530,4 +530,12 @@ public class HenkiloServiceImpl implements HenkiloService {
         return mapper.map(henkilo, HenkiloReadDto.class);
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloReadDto> findSlavesByMasterOid(String masterOid) {
+        List<Henkilo> henkilos = this.henkiloJpaRepository.findSlavesByMasterOid(masterOid);
+        return henkilos.stream().map( h -> mapper.map(h, HenkiloReadDto.class)).collect(Collectors.toList());
+    }
+
 }

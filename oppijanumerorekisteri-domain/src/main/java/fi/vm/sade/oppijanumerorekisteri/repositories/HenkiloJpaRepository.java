@@ -93,4 +93,6 @@ public interface HenkiloJpaRepository {
 
     Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu);
 
+    List<Henkilo> findSlavesByMasterOid(String henkiloOid);
+
 }
