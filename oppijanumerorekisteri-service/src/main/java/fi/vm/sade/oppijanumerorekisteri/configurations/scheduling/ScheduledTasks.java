@@ -1,18 +1,18 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.scheduling;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import java.util.Collections;
 
 /**
  * Ajastusten konfigurointi.
@@ -24,14 +24,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @RequiredArgsConstructor
 public class ScheduledTasks {
 
-    @Value("${vtj-service.url}")
-    private String vtjServiceUrl;
-
-    @Value("${oppijanumerorekisteri.scheduling.configuration.batch.limit}")
-    private Long BATCH_LIMIT;
-
-    @Value("${oppijanumerorekisteri.scheduling.configuration.batch.delay-time-in-millis}")
-    private Long VTJ_REQUEST_DELAY_IN_MILLIS;
+    private OppijanumerorekisteriProperties.Scheduling.Yksilointi properties;
 
     @Autowired
     private IdentificationService identificationService;
@@ -39,28 +32,28 @@ public class ScheduledTasks {
     @Autowired
     private HenkiloJpaRepository henkiloJpaRepository;
 
-    @Scheduled(cron = "${oppijanumerorekisteri.scheduling.configuration.yksilointi}")
+    @Autowired
+    public void setProperties(OppijanumerorekisteriProperties properties) {
+        this.properties = properties.getScheduling().getYksilointi();
+    }
+
+    @Scheduled(cron = "${oppijanumerorekisteri.scheduling.yksilointi.cron}")
+    @Transactional
     public void startYksilointiTask() {
-        if (isEmpty(vtjServiceUrl)) {
-            log.info("Skipping identification job - VTJ url is empty!");
+        if (!properties.getEnabled()) {
             return;
         }
+
         log.info("Identification started...");
         long start = System.currentTimeMillis();
 
-        try {
-            Long offset = 0L;
-            Collection<Henkilo> unidentified = henkiloJpaRepository.findUnidentified(BATCH_LIMIT, offset);
-            while(!unidentified.isEmpty()) {
-                identificationService.identifyHenkilos(unidentified, VTJ_REQUEST_DELAY_IN_MILLIS);
-                offset += BATCH_LIMIT;
-                unidentified = henkiloJpaRepository.findUnidentified(BATCH_LIMIT, offset);
-            }
-
-        } catch (Exception e) {
-            log.error("Identification sync service failed!", e);
-        } catch (Throwable t) {
-            log.error("Internal error, throwable catched", t);
+        Long offset = 0L;
+        Collection<Henkilo> unidentified = henkiloJpaRepository.findUnidentified(properties.getBatchSize(), offset);
+        henkiloJpaRepository.findOidByHetu("111111-9138");
+        while (!unidentified.isEmpty()) {
+            identificationService.identifyHenkilos(unidentified, properties.getVtjRequestDelayInMillis());
+            offset += properties.getBatchSize();
+            unidentified = henkiloJpaRepository.findUnidentified(properties.getBatchSize(), offset);
         }
 
         long duration = System.currentTimeMillis() - start;

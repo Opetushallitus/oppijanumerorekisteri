@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -12,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
@@ -73,14 +73,13 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     public Collection<Henkilo> identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
-        List<Henkilo> identified = unidentified.stream()
-            .filter(henkilo -> isProcessable(henkilo))
+        return unidentified.stream()
+            .filter(this::isProcessable)
             .map(henkilo -> {
                 waitBetweenRequests(vtjRequestDelayInMillis);
                 log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
                 return identifyHenkilo(henkilo);
             }).collect(Collectors.toList());
-        return identified;
     }
 
     private boolean isProcessable(Henkilo henkilo) {
@@ -133,9 +132,8 @@ public class IdentificationServiceImpl implements IdentificationService {
                 henkilo.setYksilointiYritetty(true);
             }
             return henkiloRepository.save(henkilo);
-        } catch (Exception e) {
-            log.error("Unknown internal error. Possibly a connection problem to VTJ service" +
-                    "or other internal error for henkilo {}!", henkilo.getOidHenkilo());
+        } catch (HttpConnectionException e) {
+            log.error("VTJ service could not be reached!");
             return henkilo;
         }
     }

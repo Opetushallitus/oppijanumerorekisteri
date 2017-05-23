@@ -60,3 +60,10 @@ authentication:
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000
+  scheduling:
+    enabled: true
+    yksilointi:
+      enabled: true
+      cron: "0 */15 * * * *"
+      batch-size: 300
+      vtj-request-delay-in-millis: 200

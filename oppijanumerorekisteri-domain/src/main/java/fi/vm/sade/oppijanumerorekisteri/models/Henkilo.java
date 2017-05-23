@@ -111,6 +111,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija")
     private String kasittelijaOid;
 
+    // Koodisto uses value "1" for male and "2" for female.
     private String sukupuoli;
 
     private LocalDate syntymaaika;
@@ -192,7 +193,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         return isEiYksiloida();
     }
 
-    /* Initialize default values for lombok builder */
+    // Initialize default values for lombok builder
     public static class builder {
         private Boolean yksiloity = false;
         private Boolean yksiloityVTJ = false;
@@ -202,8 +203,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         private Boolean eiSuomalaistaHetua = false;
         private Boolean turvakielto = false;
 
-        /* "1" is male ja "2" is female; No idea why this defaults to male.
-         * Making this an enum (optionally with a third "unknown/unspecified" value) might be a better solution. */
         private String sukupuoli = "1";
 
     }
