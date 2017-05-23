@@ -40,9 +40,9 @@ class StaticUtils extends React.Component {
         let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma
             .filter((yhteystiedotRyhma, idx) => {
                 const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto
-                    .filter(yhteystieto => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi)[0].yhteystietoArvo;
+                    .filter(yhteystieto => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi)[0];
                 if(yhteystiedotRyhmaIndex === null && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus
-                    && yhteystietoByTyyppi && yhteystietoByTyyppi !== '') {
+                    && yhteystietoByTyyppi && yhteystietoByTyyppi.yhteystietoArvo && yhteystietoByTyyppi.yhteystietoArvo !== '') {
                     yhteystiedotRyhmaIndex = idx;
                     return true;
                 }
