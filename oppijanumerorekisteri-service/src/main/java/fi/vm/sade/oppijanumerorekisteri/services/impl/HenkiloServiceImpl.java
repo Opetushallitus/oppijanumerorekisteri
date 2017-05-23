@@ -343,6 +343,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setHetu(null);
             henkiloUpdateDto.setAidinkieli(null);
             henkiloUpdateDto.setKansalaisuus(null);
+            henkiloUpdateDto.setSyntymaaika(null);
         }
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
