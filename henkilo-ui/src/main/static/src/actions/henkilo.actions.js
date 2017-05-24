@@ -14,7 +14,10 @@ import {
     FETCH_HENKILO_ORGANISAATIOS_REQUEST,
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_FAILURE, VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
-    VTJ_OVERRIDE_HENKILO_FAILURE
+    VTJ_OVERRIDE_HENKILO_FAILURE,
+    FETCH_HENKILO_SLAVES_REQUEST,
+    FETCH_HENKILO_SLAVES_SUCCESS,
+    FETCH_HENKILO_SLAVES_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -169,4 +172,20 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         })
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
+};
+
+const requestHenkiloSlaves = (oidHenkilo) => ({ type: FETCH_HENKILO_SLAVES_REQUEST, oidHenkilo});
+const requestHenkiloSlavesSuccess = (slaves) => ({ type: FETCH_HENKILO_SLAVES_SUCCESS, slaves});
+const requestHenkiloSlavesFailure = (oidHenkilo) => ({ type: FETCH_HENKILO_SLAVES_FAILURE, oidHenkilo});
+
+export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
+    dispatch(requestHenkiloSlaves(oidHenkilo));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.slaves', oidHenkilo);
+    try {
+        const henkiloSlaves = await http.get(url);
+        dispatch(requestHenkiloSlavesSuccess(henkiloSlaves));
+    } catch (error) {
+        dispatch(requestHenkiloSlavesFailure(oidHenkilo));
+        throw error;
+    }
 };

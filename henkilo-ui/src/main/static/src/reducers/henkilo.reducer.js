@@ -3,6 +3,7 @@ import {
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS, FETCH_HENKILO_ORGANISAATIOS_FAILURE,
     UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE, UPDATE_HENKILO_REQUEST,
+    FETCH_HENKILO_SLAVES_REQUEST, FETCH_HENKILO_SLAVES_SUCCESS, FETCH_HENKILO_SLAVES_FAILURE
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 
@@ -12,8 +13,8 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
 };
 
 export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
-    henkiloOrgs: [], kayttajatieto: {}, henkiloOrganisaatiosLoading: true,
-    henkiloOrganisaatios: []}, action) => {
+    henkiloOrgs: [], kayttajatieto: {}, henkiloOrganisaatiosLoading: true, buttonNotifications: {}, notifications: [],
+    henkiloOrganisaatios: [], slaves: [], slavesLoading: false}, action) => {
 
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
@@ -46,6 +47,12 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
                 henkiloOrganisaatiosLoading: false,
                 henkiloOrganisaatios: action.henkiloOrganisaatios
             });
+        case FETCH_HENKILO_SLAVES_REQUEST:
+            return Object.assign({}, state, {slavesLoading: true});
+        case FETCH_HENKILO_SLAVES_SUCCESS:
+            return Object.assign({}, state, {slavesLoading: false, slaves: action.slaves });
+        case FETCH_HENKILO_SLAVES_FAILURE:
+            return Object.assign({}, state, {slavesLoading: false, slaves: []});
         default:
             return state;
     }
