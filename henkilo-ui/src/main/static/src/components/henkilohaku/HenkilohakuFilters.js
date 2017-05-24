@@ -78,7 +78,7 @@ class HenkilohakuFilters extends React.Component {
                         <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">
                             {this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIOLLA']}
                         </label>
-                        <div style={{width: "200px", marginRight: "32px"}}>
+                        <div style={{width: "30%", marginRight: "32px"}}>
                             <OrganisaatioSelection id="organisationFilter"
                                                    L={this.L}
                                                    locale={this.props.locale}
@@ -89,7 +89,7 @@ class HenkilohakuFilters extends React.Component {
                         <label className="oph-label demo-label-inline oph-bold" htmlFor="kayttooikeusryhmaFilter">
                             {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
                         </label>
-                        <div style={{width: "200px", marginLeft: "32px"}}>
+                        <div style={{width: "30%", marginLeft: "32px"}}>
                             <OphSelect id="kayttooikeusryhmaFilter"
                                        options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({value: kayttooikeusryhma.id,
                                            label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)}))}
@@ -103,7 +103,5 @@ class HenkilohakuFilters extends React.Component {
         </div>;
     };
 }
-
-
 
 export default HenkilohakuFilters;

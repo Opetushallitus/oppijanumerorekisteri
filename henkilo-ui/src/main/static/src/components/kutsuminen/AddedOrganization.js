@@ -50,13 +50,14 @@ class AddedOrganisation extends React.Component {
                     <label htmlFor="org">
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
-
-                    <OrganisaatioSelection organisaatios={orgs}
-                                           selectedOrganisaatioOid={selectedOrganisaatioOid}
-                                           locale={this.props.locale}
-                                           index={this.props.index}
-                                           selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                           L={L} />
+                    <div className="organisaatioSelection-container">
+                        <OrganisaatioSelection organisaatios={orgs}
+                                               selectedOrganisaatioOid={selectedOrganisaatioOid}
+                                               locale={this.props.locale}
+                                               index={this.props.index}
+                                               selectOrganisaatio={this.selectOrganisaatio.bind(this)}
+                                               L={L} />
+                    </div>
                 </div>
 
                 <div className="row permissions-row">
