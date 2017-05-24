@@ -17,7 +17,6 @@ import {
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 import EditButton from "../common/henkilo/buttons/EditButton";
-import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
 import HakaButton from "../common/henkilo/buttons/HakaButton";
 import PasswordButton from "../common/henkilo/buttons/PasswordButton";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";

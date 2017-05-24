@@ -36,6 +36,11 @@
     white-space: inherit !important;
 }
 
+/* Moves no data text bit lower */
+.ReactTable .rt-noData {
+    top: 115% !important;
+}
+
 /* Fading out background highlight */
 @-webkit-keyframes fadeIt {
     0%   { background-color: #e6ffc1; }
