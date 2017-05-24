@@ -14,7 +14,6 @@ import {oppijaNavi} from "../../configuration/navigationconfigurations";
 import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
 import EditButton from "../common/henkilo/buttons/EditButton";
 import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
-import HakaButton from "../common/henkilo/buttons/HakaButton";
 import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
 import Syntymaaika from "../common/henkilo/labelvalues/Syntymaaika";
 import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
@@ -24,6 +23,7 @@ import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
 import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
+
 
 
 class OppijaViewContainer extends React.Component {
@@ -82,7 +82,6 @@ class OppijaViewContainer extends React.Component {
             <EditButton editAction={edit} L={this.L} />,
             <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} yksiloiAction={this.props.yksiloiHenkilo} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
-            <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} />,
         ];
     };
 }

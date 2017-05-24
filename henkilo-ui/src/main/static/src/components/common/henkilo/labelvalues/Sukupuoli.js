@@ -1,10 +1,12 @@
 import React from 'react'
 import LabelValue from "./LabelValue"
+import StaticUtils from "../../StaticUtils";
 
 const Sukupuoli = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_SUKUPUOLI',
     value: props.henkilo.henkilo.sukupuoli,
     inputValue: 'sukupuoli',
+    disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo)
 }} />;
 
 Sukupuoli.propTypes = {
