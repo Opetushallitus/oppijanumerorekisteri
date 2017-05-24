@@ -1,4 +1,5 @@
 
-#duplikaatit tr:nth-child(2) {
-    /*background-color: lightgrey;*/
+#duplikaatit tr:nth-child(odd) {
+    background-color: #F7F7F7;
 }
+
