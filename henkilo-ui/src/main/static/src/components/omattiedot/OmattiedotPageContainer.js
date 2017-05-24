@@ -4,7 +4,7 @@ import OmattiedotPage from './OmattiedotPage';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo
+    updatePassword, yksiloiHenkilo,
 } from "../../actions/henkilo.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";

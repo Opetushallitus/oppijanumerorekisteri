@@ -2,9 +2,9 @@ import React from 'react'
 import PopupButton from "../../button/PopupButton";
 import PasswordPopupContent from "../../button/PasswordPopupContent";
 
-const PasswordButton = ({L, oidHenkilo, updatePassword}) =>
+const PasswordButton = ({L, oidHenkilo, updatePassword, styles}) =>
     <PopupButton popupClass={'oph-popup-default oph-popup-top oph-popup-password'}
-             popupStyle={{ bottom: '-5px', left: '795px', width: '18rem' }}
+             popupStyle={styles}
              popupTitle={<h3 style={{textAlign: 'left'}}>{L['SALASANA_ASETA']}</h3>}
              popupContent={<PasswordPopupContent henkiloOid={oidHenkilo}
                                                  L={L}

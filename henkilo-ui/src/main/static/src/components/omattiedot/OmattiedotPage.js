@@ -19,6 +19,7 @@ import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import Sukupuoli from "../common/henkilo/labelvalues/Sukupuoli";
+import PasswordButton from "../common/henkilo/buttons/PasswordButton";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -155,7 +156,8 @@ export default class OmattiedotPage extends React.Component {
     _readOnlyButtons(edit) {
         const L = this.props.l10n[this.props.locale];
         return [
-            <EditButton editAction={edit} L={L} />
+            <EditButton editAction={edit} L={L} />,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={L} updatePassword={this.props.updatePassword} styles={{ bottom: '-5px', left: '0', width: '18rem' }}/>
         ];
     }
 }

@@ -2,8 +2,8 @@ import React from 'react'
 import PopupButton from "../../button/PopupButton";
 import HakatunnistePopupContent from "../../button/HakaPopupContent";
 
-const HakaButton = ({L, oidHenkilo, position}) =>
-    <PopupButton popupStyle={position}
+const HakaButton = ({L, oidHenkilo, styles}) =>
+    <PopupButton popupStyle={styles}
                  popupTitle={<h4>{L['HAKATUNNISTEET']}:</h4>}
                  popupContent={<HakatunnistePopupContent henkiloOid={oidHenkilo}
                                                          L={L} />}>
@@ -13,8 +13,7 @@ const HakaButton = ({L, oidHenkilo, position}) =>
 HakaButton.propTypes = {
     L: React.PropTypes.object,
     oidHenkilo: React.PropTypes.string,
-    position: React.PropTypes.shape({ top: React.PropTypes.string,
-        right: React.PropTypes.string, bottom: React.PropTypes.string, left: React.PropTypes.string })
+    styles: React.PropTypes.object
 };
 
 export default HakaButton;
