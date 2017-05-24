@@ -2,7 +2,8 @@ import {
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE, FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS, FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
     FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS,
-    FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS
+    FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS,
+    FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
 } from "../actions/actiontypes";
 
 export const kayttooikeus = (state = {
@@ -12,7 +13,9 @@ export const kayttooikeus = (state = {
                                  kayttooikeusAnomus: [],
                                  allowedKayttooikeus: {},
                                  grantableKayttooikeus: {},
-                                 grantableKayttooikeusLoading: true
+                                 grantableKayttooikeusLoading: true,
+                                 allKayttooikeusryhmas: [],
+                                 allKayttooikeusryhmasLoading: true,
                              },
                              action) => {
     switch(action.type) {
@@ -37,6 +40,8 @@ export const kayttooikeus = (state = {
             return Object.assign({}, state, {grantableKayttooikeusLoading: true,});
         case FETCH_GRANTABLE_SUCCESS:
             return Object.assign({}, state, {grantableKayttooikeusLoading: false, grantableKayttooikeus: action.data});
+        case FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS:
+            return Object.assign({}, state, {allKayttooikeusryhmas: action.data, allKayttooikeusryhmasLoading: false});
         default:
             return state;
     }

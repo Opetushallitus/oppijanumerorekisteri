@@ -22,7 +22,9 @@ import {
     CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
     CREATE_KAYTTOOIKEUSANOMUS_SUCCESS,
     CREATE_KAYTTOOIKEUSANOMUS_FAILURE, REMOVE_KAYTTOOIKEUS_REQUEST, REMOVE_KAYTTOOIKEUS_SUCCESS,
-    REMOVE_KAYTTOOIKEUS_FAILURE, FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS, FETCH_GRANTABLE_FAILURE
+    REMOVE_KAYTTOOIKEUS_FAILURE, FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS, FETCH_GRANTABLE_FAILURE,
+    FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST, FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
+    FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
@@ -188,3 +190,18 @@ export const getGrantablePrivileges = (henkiloOid) => dispatch => {
         .catch(error => dispatch(getGrantablePrivilegesFailure(error)));
 };
 
+// All kayttooikeusryhmas
+const fetchAllKayttooikeusryhmaRequest = () => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST});
+const fetchAllKayttooikeusryhmaSuccess = data => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS, data});
+const fetchAllKayttooikeusryhmaFailure = error => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE, error});
+
+export const fetchAllKayttooikeusryhma = () => (dispatch, getState) => {
+    // Fetch data only once
+    if(!getState().kayttooikeus.allKayttooikeusryhmas.length) {
+        dispatch(fetchAllKayttooikeusryhmaRequest());
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all');
+        http.get(url)
+            .then(data => dispatch(fetchAllKayttooikeusryhmaSuccess(data)))
+            .catch(error => dispatch(fetchAllKayttooikeusryhmaFailure(error)));
+    }
+};
