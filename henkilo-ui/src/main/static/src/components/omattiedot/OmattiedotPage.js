@@ -157,7 +157,7 @@ export default class OmattiedotPage extends React.Component {
         const L = this.props.l10n[this.props.locale];
         return [
             <EditButton editAction={edit} L={L} />,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={L} updatePassword={this.props.updatePassword} styles={{ bottom: '-5px', left: '0', width: '18rem' }}/>
+            <PasswordButton oidHenkilo={this.props.omattiedot.data.oid} L={L} updatePassword={this.props.updatePassword} styles={{ bottom: '-5px', left: '0', width: '18rem' }}/>
         ];
     }
 }
