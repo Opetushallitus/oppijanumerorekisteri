@@ -13,7 +13,7 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-public class OppijaCriteria {
+public class OppijaCriteria implements OppijanumerorekisteriCriteria {
 
     private String hakutermi;
     private Boolean passivoitu;

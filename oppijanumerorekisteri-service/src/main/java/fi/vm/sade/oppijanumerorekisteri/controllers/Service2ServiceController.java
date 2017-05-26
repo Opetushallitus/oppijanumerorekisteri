@@ -1,13 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuCriteria;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystiedotDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
@@ -135,4 +128,12 @@ public class Service2ServiceController {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
+    @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PostMapping("/henkilo/perustiedotAsAdmin")
+    public Iterable<HenkiloHakuDto> listAsAdmin(@RequestParam(required = false) Long offset,
+                                                @RequestParam(required = false) Long limit,
+                                                @Validated @RequestBody HenkiloHakuCriteriaDto criteria) {
+        return henkiloService.list(criteria, offset, limit);
+    }
 }
