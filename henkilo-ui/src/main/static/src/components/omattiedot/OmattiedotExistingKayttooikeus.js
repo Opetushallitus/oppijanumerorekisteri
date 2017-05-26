@@ -60,7 +60,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 [headingList[3]]: dateformat(new Date(uusittavaKayttooikeusRyhma.voimassaPvm), this.L['PVM_FORMAATTI']),
                 [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + ' / '
                 + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
-                [headingList[6]]: this.props.notifications.existingKayttooikeus.some(notification => {
+                [headingList[5]]: this.props.notifications.existingKayttooikeus.some(notification => {
                     return notification.ryhmaIdList
                         .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
                         && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
