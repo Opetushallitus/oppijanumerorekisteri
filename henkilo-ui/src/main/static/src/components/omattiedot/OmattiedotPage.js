@@ -2,7 +2,7 @@ import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import R from 'ramda';
-import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
+import OmattiedotExistingKayttooikeus from "./OmattiedotExistingKayttooikeus";
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
@@ -61,7 +61,7 @@ export default class OmattiedotPage extends React.Component {
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                            : <OmattiedotExistingKayttooikeus {...this.props} />
                     }
                 </div>
                 <div className="wrapper">
