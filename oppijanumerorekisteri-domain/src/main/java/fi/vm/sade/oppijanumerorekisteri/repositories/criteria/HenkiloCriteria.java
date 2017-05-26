@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import lombok.*;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class HenkiloCriteria implements OppijanumerorekisteriCriteria {
 
     public Predicate condition(QHenkilo henkilo) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (henkiloOids != null) {
+        if (!CollectionUtils.isEmpty(henkiloOids)) {
             builder.and(henkilo.oidHenkilo.in(henkiloOids));
         }
         if (StringUtils.hasLength(this.hetu)) {
