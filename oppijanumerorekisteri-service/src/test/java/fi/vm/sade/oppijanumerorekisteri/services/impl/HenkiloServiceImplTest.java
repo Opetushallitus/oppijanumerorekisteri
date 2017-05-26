@@ -89,7 +89,7 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldReturnThrowWhenNoHenkilo() {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(emptyList());
 
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
@@ -100,7 +100,7 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldThrowWhenMultipleHenkilo() {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(Arrays.asList(
                         HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build(),
                         HenkiloHakuDto.builder().oidHenkilo("5.6.7.8").build()
@@ -114,7 +114,7 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldReturnHenkiloWhenPermissionGranted() throws IOException {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
         when(permissionChecker.isAllowedToAccessPerson(any(), any(), any()))
                 .thenReturn(true);
@@ -127,7 +127,7 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldThrowWhenPermissionDenied() throws IOException {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyInt(), anyInt()))
+        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
         when(permissionChecker.isAllowedToAccessPerson(any(), any(), any()))
                 .thenReturn(false);

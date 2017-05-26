@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import java.util.Collection;
@@ -27,7 +28,7 @@ public interface HenkiloJpaRepository {
      * @param criteria hakukriteerit
      * @return henkilot
      */
-    List<HenkiloHakuDto> findBy(HenkiloCriteria criteria);
+    List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria);
 
     /**
      * Yleiskäyttöinen henkilöhaku.
@@ -37,7 +38,7 @@ public interface HenkiloJpaRepository {
      * @param offset sivutuksen offset
      * @return henkilot
      */
-    List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset);
+    List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
 
     /**
      * Yleiskäyttöinen henkilöhaku.
@@ -47,7 +48,7 @@ public interface HenkiloJpaRepository {
      * @param offset sivutuksen offset
      * @return henkilot
      */
-    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
+//    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
 
     /**
      * Henkilöiden perustietojen ja yhteystietojen hakutoiminto. Henkilöllä voi
