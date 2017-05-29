@@ -50,7 +50,7 @@ public class HenkiloUpdatePostValidator implements Validator {
             }
         }
 
-        if(henkiloUpdateDto.getKutsumanimi() != null) {
+        if(henkiloUpdateDto.getKutsumanimi() != null && henkiloUpdateDto.getEtunimet() != null) {
             KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
             if (!kutsumanimiValidator.isValid(henkiloUpdateDto.getKutsumanimi())) {
                 errors.rejectValue("kutsumanimi",
