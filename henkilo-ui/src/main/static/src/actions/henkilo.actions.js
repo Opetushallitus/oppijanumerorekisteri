@@ -17,7 +17,14 @@ import {
     VTJ_OVERRIDE_HENKILO_FAILURE,
     FETCH_HENKILO_SLAVES_REQUEST,
     FETCH_HENKILO_SLAVES_SUCCESS,
+<<<<<<< b5f668493220da78b6fe03f13e2c33b83f976f7a
     FETCH_HENKILO_SLAVES_FAILURE
+=======
+    FETCH_HENKILO_SLAVES_FAILURE,
+    VTJ_OVERRIDE_HENKILO_REQUEST,
+    VTJ_OVERRIDE_HENKILO_SUCCESS,
+    VTJ_OVERRIDE_HENKILO_FAILURE
+>>>>>>> KJHH-1015: Fix syntax error
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
