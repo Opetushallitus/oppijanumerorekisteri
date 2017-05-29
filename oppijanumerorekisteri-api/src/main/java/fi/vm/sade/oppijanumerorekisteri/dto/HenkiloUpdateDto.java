@@ -41,4 +41,6 @@ public class HenkiloUpdateDto {
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
+
+    private HenkiloTyyppi henkiloTyyppi;
 }
