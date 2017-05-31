@@ -99,7 +99,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria) {
+    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit) {
         KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
         if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
             // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
@@ -107,7 +107,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
-        return henkiloJpaRepository.findBy(henkiloCriteria);
+        return henkiloJpaRepository.findBy(henkiloCriteria, limit, offset);
     }
 
     @Override
