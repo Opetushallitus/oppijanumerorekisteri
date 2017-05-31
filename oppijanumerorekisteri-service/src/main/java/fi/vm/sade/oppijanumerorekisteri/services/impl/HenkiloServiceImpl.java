@@ -112,8 +112,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
-        return this.henkiloJpaRepository.findBy(this.createHenkiloCriteria(criteria), limit, offset);
+    public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
+        return this.henkiloJpaRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
     }
 
     @Override

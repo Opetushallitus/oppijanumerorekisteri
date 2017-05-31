@@ -1,10 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
@@ -49,6 +45,8 @@ public interface HenkiloJpaRepository {
      * @return henkilot
      */
 //    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
+
+    List<HenkiloHakuPerustietoDto> findPerustietoBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
 
     /**
      * Henkilöiden perustietojen ja yhteystietojen hakutoiminto. Henkilöllä voi
