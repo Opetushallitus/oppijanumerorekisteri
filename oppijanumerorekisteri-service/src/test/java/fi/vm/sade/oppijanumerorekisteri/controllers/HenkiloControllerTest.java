@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,16 +20,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
+
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import java.util.Date;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -68,6 +68,21 @@ public class HenkiloControllerTest {
     public void list() throws Exception {
         this.mvc.perform(get("/henkilo?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "1.2.3.4.5")
+    public void listData() throws Exception {
+        String content = "{\"number\":1,\"size\":20,\"numberOfElements\":1,\"last\":true,\"results\":[" +
+                "{\"oidHenkilo\":\"arpa\",\"hetu\":\"arpa\",\"etunimet\":\"kuutio\",\"kutsumanimi\":\"081296-967T\",\"sukunimi\":\"1.2.3.4.5\",\"yksiloity\":true,\"yksiloityVTJ\":true}" +
+                "]}";
+        HenkiloHakuCriteria crit = new HenkiloHakuCriteria();
+        List<HenkiloHakuDto> resp = new ArrayList<>();
+        HenkiloHakuDto henkiloHakuDto = new HenkiloHakuDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5", true, true);
+        resp.add(henkiloHakuDto);
+        given(this.henkiloService.list(Mockito.anyObject(), Mockito.anyInt(), Mockito.anyInt())).willReturn(Slice.of(1, 20, resp));
+
+        this.mvc.perform(get("/henkilo").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk()).andExpect(content().json(content));
     }
 
     @Test

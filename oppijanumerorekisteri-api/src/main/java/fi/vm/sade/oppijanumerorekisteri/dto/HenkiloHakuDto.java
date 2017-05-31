@@ -18,5 +18,7 @@ public class HenkiloHakuDto {
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;
+    private Boolean yksiloity;
+    private Boolean yksiloityVTJ;
 
 }
