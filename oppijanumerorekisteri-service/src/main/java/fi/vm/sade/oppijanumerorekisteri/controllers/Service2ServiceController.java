@@ -104,8 +104,10 @@ public class Service2ServiceController {
 
     @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
     @PostMapping("/henkilo/perustiedot")
-    public Iterable<HenkiloHakuDto> list(@RequestBody HenkiloHakuCriteria criteria) {
-        return henkiloService.list(criteria);
+    public Iterable<HenkiloHakuDto> list(@Validated @RequestBody HenkiloHakuCriteria criteria,
+                                         @RequestParam(required = false) Long offset,
+                                         @RequestParam(required = false) Long amount) {
+        return henkiloService.list(criteria, offset, amount);
     }
 
     @ApiOperation("Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä")

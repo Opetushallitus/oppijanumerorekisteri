@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface HenkiloService {
 
-    Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria);
+    Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit);
 
     @Transactional(readOnly = true)
     Iterable<HenkiloHakuDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long amount);
