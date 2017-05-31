@@ -4,6 +4,7 @@ import fi.vm.sade.generic.rest.CachingRestClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,7 @@ public class VtjClientImpl implements VtjClient {
         try {
             return Optional.ofNullable(restClient.get(vtjUrl, YksiloityHenkilo.class));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new HttpConnectionException();
         }
     }
 

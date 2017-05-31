@@ -93,4 +93,6 @@ public interface HenkiloJpaRepository {
 
     Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu);
 
+    Collection<Henkilo> findUnidentified(long limit, long offset);
+
 }

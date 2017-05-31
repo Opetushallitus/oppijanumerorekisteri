@@ -79,7 +79,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private Henkilo getHenkiloByOid(String oid) {
-        return this.henkiloRepository.findByOidHenkilo(oid)
+        return henkiloRepository.findByOidHenkilo(oid)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found by oid " + oid));
     }
 
@@ -87,6 +87,12 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setModified(new Date());
         henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
         return henkiloRepository.save(henkilo);
+    }
+
+    @Override
+    @Transactional
+    public Henkilo yksiloiManuaalisesti(final Henkilo henkilo) {
+        return yksiloiManuaalisesti(henkilo.getOidHenkilo());
     }
 
     @Override
@@ -100,7 +106,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         // Remove yksilointitieto if henkilo was yksiloity succesfully.
         if (henkilo != null && henkilo.isYksiloityVTJ() && henkilo.getYksilointitieto() != null) {
-            this.yksilointitietoRepository.delete(henkilo.getYksilointitieto());
+            yksilointitietoRepository.delete(henkilo.getYksilointitieto());
             henkilo.setYksilointitieto(null);
             henkilo.setModified(new Date());
         }
@@ -113,7 +119,7 @@ public class YksilointiServiceImpl implements YksilointiService {
          * might change in the future, if Henkilo's data must contain all what
          * VTJ has to offer but that's still uncertain
          */
-        YksiloityHenkilo yksiloityHenkilo = this.vtjClient.fetchHenkilo(henkilo.getHetu())
+        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
                 .orElseThrow(() ->
                         new NotFoundException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
@@ -127,7 +133,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                     + "--Annettu kutsumanimi: " + henkilo.getKutsumanimi() + ", VTJ: " + yksiloityHenkilo.getKutsumanimi() + "\n"
                     + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ: " + yksiloityHenkilo.getSukunimi());
 
-            this.addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
+            addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
         }
         else {
             logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
@@ -135,7 +141,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setOppijanumero(henkilo.getOidHenkilo());
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
-            this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+            paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
 
             henkilo.setYksiloityVTJ(true);
             //OPHASPA-1820 kumotaan pärstäyksilöinti
@@ -158,7 +164,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             String[] etunimet = yksiloityHenkilo.getEtunimi().toLowerCase().split(" ");
             for (String etunimi : etunimet) {
                 if (stringEvaluator.getDistance(henkilo.getKutsumanimi(), etunimi)
-                        > this.oppijanumerorekisteriProperties.getEtunimiThreshold()) {
+                        > oppijanumerorekisteriProperties.getEtunimiThreshold()) {
                     etunimiMatch = true;
                     break;
                 }
@@ -166,7 +172,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         return new NimienYhtenevyys(etunimiMatch, sukunimiMatch
-                >= this.oppijanumerorekisteriProperties.getSukunimiThreshold());
+                >= oppijanumerorekisteriProperties.getSukunimiThreshold());
     }
 
     private static class NimienYhtenevyys {
@@ -187,7 +193,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointitieto.setEtunimet(yksiloityHenkilo.getEtunimi());
         yksilointitieto.setKutsumanimi(yksiloityHenkilo.getKutsumanimi());
         yksilointitieto.setSukunimi(yksiloityHenkilo.getSukunimi());
-        yksilointitieto.setSukupuoli(this.maaritaSukupuoli(yksiloityHenkilo));
+        yksilointitieto.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
         yksilointitieto.setTurvakielto(yksiloityHenkilo.isTurvakielto());
 
         Optional.ofNullable(yksiloityHenkilo.getKansalaisuusKoodit()).filter(collectionNotEmpty)
@@ -203,7 +209,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .filter(yHenkilo -> (yHenkilo.getOsoitteet() != null && !yHenkilo.getOsoitteet().isEmpty()) ||
                         !StringUtils.isEmpty(yHenkilo.getSahkoposti()))
                 .filter(yHenkilo -> HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi()))
-                .map(yHenkilo -> this.addYhteystiedot(yHenkilo, henkilo.getAsiointiKieli()))
+                .map(yHenkilo -> addYhteystiedot(yHenkilo, henkilo.getAsiointiKieli()))
                 .ifPresent(yhteystiedotRyhmas -> yhteystiedotRyhmas.forEach(yksilointitieto::addYhteystiedotRyhma));
 
         yksilointitieto.setHenkilo(henkilo);
@@ -222,13 +228,13 @@ public class YksilointiServiceImpl implements YksilointiService {
     private Set<Kansalaisuus> findOrCreateKansalaisuus(@NotNull List<String> kansalaisuusKoodit) {
         return kansalaisuusKoodit.stream()
                 .filter(kansalaisuusKoodi ->
-                        this.isKansalaisuusKoodiValid(Collections.singletonList(kansalaisuusKoodi)))
-                .map(this.kansalaisuusRepository::findOrCreate).collect(Collectors.toSet());
+                        isKansalaisuusKoodiValid(Collections.singletonList(kansalaisuusKoodi)))
+                .map(kansalaisuusRepository::findOrCreate).collect(Collectors.toSet());
     }
 
     private Kielisyys findOrCreateKielisyys(final String kieliKoodi) {
-        return this.kielisyysRepository.findByKieliKoodi(kieliKoodi)
-                .orElseGet(() -> this.kielisyysRepository.save(Kielisyys.builder().kieliKoodi(kieliKoodi).build()));
+        return kielisyysRepository.findByKieliKoodi(kieliKoodi)
+                .orElseGet(() -> kielisyysRepository.save(Kielisyys.builder().kieliKoodi(kieliKoodi).build()));
     }
 
     private Set<YhteystiedotRyhma> addYhteystiedot(YksiloityHenkilo yksiloityHenkilo, Kielisyys asiointiKieli) {
@@ -282,15 +288,15 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
 
         // person's existing ssn has changed
-        this.updateIfYksiloityValueNotNull(henkilo.getHetu(), yksiloityHenkilo.getHetu(), henkilo::setHetu);
+        updateIfYksiloityValueNotNull(henkilo.getHetu(), yksiloityHenkilo.getHetu(), henkilo::setHetu);
 
-        this.updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
-        this.updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
+        updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
+        updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
         // Sometimes this might null or empty in VTJ data, in that case the original value is kept
-        this.updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
+        updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
-                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(this.findOrCreateKielisyys(kieliKoodi)));
+                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(findOrCreateKielisyys(kieliKoodi)));
 
         henkilo.setTurvakielto(yksiloityHenkilo.isTurvakielto());
         henkilo.setSyntymaaika(HetuUtils.dateFromHetu(yksiloityHenkilo.getHetu()));
@@ -301,10 +307,10 @@ public class YksilointiServiceImpl implements YksilointiService {
         Optional.ofNullable(yksiloityHenkilo.getKansalaisuusKoodit()).filter(collectionNotEmpty)
                 .ifPresent(kansalaisuuskoodis -> {
                     henkilo.clearKansalaisuus();
-                    this.findOrCreateKansalaisuus(kansalaisuuskoodis).forEach(henkilo::addKansalaisuus);
+                    findOrCreateKansalaisuus(kansalaisuuskoodis).forEach(henkilo::addKansalaisuus);
                 });
 
-        henkilo.setSukupuoli(this.maaritaSukupuoli(yksiloityHenkilo));
+        henkilo.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
         henkilo.setModified(new Date());
     }
 
@@ -313,20 +319,20 @@ public class YksilointiServiceImpl implements YksilointiService {
         iterator.forEachRemaining(yhteystiedotRyhmaI -> Optional.ofNullable(yhteystiedotRyhmaI)
                 .filter(yhteystiedotRyhma -> yhteystiedotRyhma.getRyhmaAlkuperaTieto().equals(RYHMAALKUPERA_VTJ))
                 .ifPresent(yhteystiedotRyhma -> {
-                    yhteystiedotRyhma.getYhteystieto().forEach(this.yhteystietoRepository::delete);
+                    yhteystiedotRyhma.getYhteystieto().forEach(yhteystietoRepository::delete);
                     yhteystiedotRyhma.clearYhteystieto();
-                    this.yhteystiedotRyhmaRepository.delete(yhteystiedotRyhmaI);
+                    yhteystiedotRyhmaRepository.delete(yhteystiedotRyhmaI);
                     iterator.remove();
                 }));
         Optional.of(henkilo.getHenkiloTyyppi()).filter(HenkiloTyyppi.OPPIJA::equals)
                 .filter(henkiloTyyppi -> !CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) ||
                         !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti()))
                 .ifPresent(henkiloTyyppi ->
-                        henkilo.addAllYhteystiedotRyhmas(this.addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli())));
+                        henkilo.addAllYhteystiedotRyhmas(addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli())));
     }
 
     private boolean isKansalaisuusKoodiValid(List<String> kansalaisuusKoodiList) {
-        List<String> koodiTypeList = this.koodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 1, true);
+        List<String> koodiTypeList = koodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 1, true);
         // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
         return !(kansalaisuusKoodiList != null && !kansalaisuusKoodiList.stream()
                 .allMatch(kansalaisuus -> koodiTypeList.stream()

@@ -29,6 +29,7 @@ public class EntityUtils {
                 kasittelija, yhteystietoArvo, syntymaAika);
     }
 
+    /* NOTE: This function feels a bit pointless. We could just directly call the builder instead of passing 15 parameters to a "utility" function. */
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
@@ -39,14 +40,25 @@ public class EntityUtils {
         Kansalaisuus kansalaisuus = new Kansalaisuus();
         kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
 
-        YhteystiedotRyhma yhteystiedotRyhma = EntityUtils.createYhteystiedotRyhma(yhteystietoArvo);
-
-        Henkilo henkilo = new Henkilo(oidHenkilo, hetu, henkiloTyyppi, etunimet, kutsumanimi, sukunimi, aidinkieli, aidinkieli,
-                luontiMuokkausSyncedPvm, luontiMuokkausSyncedPvm, lastVtjSynced, passivoitu, false, false, false, false, false,
-                Sets.newHashSet(aidinkieli), Sets.newHashSet(kansalaisuus), null, kasittelija, "1", syntymaAika,
-                null, null, null, null, null, false, null, null);
-        henkilo.setYhteystiedotRyhma(Sets.newHashSet(yhteystiedotRyhma));
-        return henkilo;
+        return Henkilo.builder()
+                .oidHenkilo(oidHenkilo)
+                .hetu(hetu)
+                .henkiloTyyppi(henkiloTyyppi)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .aidinkieli(aidinkieli)
+                .asiointiKieli(aidinkieli)
+                .created(luontiMuokkausSyncedPvm)
+                .modified(luontiMuokkausSyncedPvm)
+                .vtjsynced(lastVtjSynced)
+                .passivoitu(passivoitu)
+                .kielisyys(Sets.newHashSet(aidinkieli))
+                .kansalaisuus(Sets.newHashSet(kansalaisuus))
+                .yhteystiedotRyhma(Sets.newHashSet(EntityUtils.createYhteystiedotRyhma(yhteystietoArvo)))
+                .kasittelijaOid(kasittelija)
+                .syntymaaika(syntymaAika)
+                .build();
     }
 
     static public YhteystiedotRyhma createYhteystiedotRyhma(String yhteystietoArvo) {
