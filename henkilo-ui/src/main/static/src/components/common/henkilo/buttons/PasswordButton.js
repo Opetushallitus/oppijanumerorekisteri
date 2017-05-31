@@ -3,7 +3,7 @@ import PopupButton from "../../button/PopupButton";
 import PasswordPopupContent from "../../button/PasswordPopupContent";
 
 const PasswordButton = ({L, oidHenkilo, updatePassword, styles}) =>
-    <PopupButton popupClass={'oph-popup-default oph-popup-top oph-popup-password'}
+    <PopupButton popupClass={'oph-popup-default oph-popup-bottom oph-popup-password'}
              popupStyle={styles}
              popupTitle={<h3 style={{textAlign: 'left'}}>{L['SALASANA_ASETA']}</h3>}
              popupContent={<PasswordPopupContent henkiloOid={oidHenkilo}
