@@ -106,8 +106,7 @@ public class HenkiloControllerTest {
     public void henkiloOidHetuNimiByHetuDuplicateHetus() throws Exception {
         given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willThrow(new DuplicateHetuException());
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isInternalServerError())
-                .andExpect(status().reason("duplicate_hetu_undeterministic_behaviour"));
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -253,8 +252,7 @@ public class HenkiloControllerTest {
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloService.updateHenkilo(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("illegal_argument_value"));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -298,8 +296,7 @@ public class HenkiloControllerTest {
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_method_argument"));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
