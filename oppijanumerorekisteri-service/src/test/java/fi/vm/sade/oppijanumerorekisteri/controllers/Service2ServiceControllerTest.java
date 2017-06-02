@@ -163,8 +163,7 @@ public class Service2ServiceControllerTest  {
                 "\"hetu\": \"081296-967T\"}";
         given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_method_argument"));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -177,8 +176,7 @@ public class Service2ServiceControllerTest  {
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason("bad_request_persistence"));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
