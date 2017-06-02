@@ -99,15 +99,15 @@ public class GlobalExceptionHandler {
         return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    // 400 Bad Request
     @ExceptionHandler(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException.class)
-    public ResponseEntity badRequestServiceValidationException(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException ve) {
-        ve.setStackTrace(new StackTraceElement[0]);
-        return ResponseEntity.badRequest().body(ve);
+    public ResponseEntity badRequestServiceValidationException(fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException ve, HttpServletRequest request) {
+        logger.error(ve.getMessage(), ve);
+        return constructErrorResponse(ve, HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<Map<String, Object>> unprocessableEntityException(UnprocessableEntityException exception, HttpServletRequest request) {
+        logger.error(exception.getMessage(), exception);
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Map<String, Object> body = constructErrorBody(exception, status, request);
         Errors errors = exception.getErrors();
@@ -135,9 +135,10 @@ public class GlobalExceptionHandler {
         return body;
     }
 
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "duplicate_hetu_undeterministic_behaviour")
     @ExceptionHandler(DuplicateHetuException.class)
-    public void internalErrorDuplicateHetuException() {
+    public ResponseEntity<Map<String, Object>> internalErrorDuplicateHetuException(DuplicateHetuException exception, HttpServletRequest request) {
+        logger.error(exception.getMessage(), exception);
+        return constructErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler(DataInconsistencyException.class)
