@@ -63,34 +63,40 @@ public class GlobalExceptionHandler {
     public void unauthorized() {
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_hibernate_constraint") // 400 Bad request.
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
-    public void badRequestHibernateConstraintViolatingRequest() {
+    public ResponseEntity<Map<String, Object>> badRequestHibernateConstraintViolatingRequest(ConstraintViolationException e, HttpServletRequest request) {
+        logger.error(e.getMessage(), e);
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_jpa_constraint") // 400 Bad request.
     @ExceptionHandler(ConstraintViolationException.class)
-    public void badRequestJpaConstraintViolationException() {
+    public ResponseEntity<Map<String, Object>> badRequestJpaConstraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
+        logger.error(e.getMessage(), e);
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_persistence") // 400 Bad Request
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public void badRequestDataIntegrityViolationException() {
+    public ResponseEntity<Map<String, Object>> badRequestDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest request) {
+        logger.error(e.getMessage(), e);
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_method_argument") // 400 Bad Request
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public void badRequestMethodArgumentNotValidException() {
+    public ResponseEntity<Map<String, Object>> badRequestMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
+        logger.error(e.getMessage(), e);
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "bad_request_illegal_argument") // 400 Bad Request
     @ExceptionHandler(IllegalArgumentException.class)
-    public void badRequestIllegalArgumentException() {
+    public ResponseEntity<Map<String, Object>> badRequestIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+        logger.error(e.getMessage(), e);
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "illegal_argument_value") // 400 Bad Request
     @ExceptionHandler(ValidationException.class)
-    public void badRequestValidationException() {
+    public ResponseEntity<Map<String, Object>> badRequestValidationException(ValidationException e, HttpServletRequest request) {
+        logger.error(e.getMessage(), e);
+        return constructErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
     // 400 Bad Request
