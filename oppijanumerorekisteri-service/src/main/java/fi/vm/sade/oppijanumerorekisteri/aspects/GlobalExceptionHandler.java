@@ -6,9 +6,9 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
+import java.util.*;
+
 import static java.util.stream.Collectors.toList;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -117,6 +117,8 @@ public class GlobalExceptionHandler {
         body.put("fieldErrors", errors.getFieldErrors().stream()
                 .map(this::constructFieldError)
                 .collect(toList()));
+        logger.error(body.toString(), exception);
+
         return ResponseEntity.status(status).body(body);
     }
 
