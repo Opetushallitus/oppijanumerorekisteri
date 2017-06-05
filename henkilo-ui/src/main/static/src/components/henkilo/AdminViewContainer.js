@@ -84,7 +84,7 @@ class AdminViewContainer extends React.Component {
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Kayttajanimi {...props} />,
+                    <Kayttajanimi {...props} disabled={true} />,
                     <TyoSahkoposti {...props} henkiloUpdate={henkiloUpdate} />,
                     <TyoPuhelin {...props} henkiloUpdate={henkiloUpdate} />,
                 ],

@@ -115,7 +115,7 @@ export default class OmattiedotPage extends React.Component {
                 <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
             ],
             [
-                <Kayttajanimi {...props} />,
+                <Kayttajanimi {...props} disabled={false} />,
             ],
         ];
     };

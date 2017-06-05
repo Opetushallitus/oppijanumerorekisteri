@@ -80,7 +80,7 @@ class VirkailijaViewContainer extends React.Component {
                     <TyoPuhelin {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Kayttajanimi {...props} />,
+                    <Kayttajanimi {...props} disabled={true} />,
                 ],
             ]
         };
