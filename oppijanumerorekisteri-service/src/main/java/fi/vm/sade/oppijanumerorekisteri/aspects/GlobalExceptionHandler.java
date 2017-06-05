@@ -107,7 +107,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<Map<String, Object>> unprocessableEntityException(UnprocessableEntityException exception, HttpServletRequest request) {
-        logger.error(exception.getMessage(), exception);
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Map<String, Object> body = constructErrorBody(exception, status, request);
         Errors errors = exception.getErrors();
