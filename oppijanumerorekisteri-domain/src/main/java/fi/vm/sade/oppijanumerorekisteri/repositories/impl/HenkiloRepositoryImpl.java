@@ -75,7 +75,9 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.hetu,
                         qHenkilo.etunimet,
                         qHenkilo.kutsumanimi,
-                        qHenkilo.sukunimi
+                        qHenkilo.sukunimi,
+                        qHenkilo.yksiloity,
+                        qHenkilo.yksiloityVTJ
         ));
 
         query.where(criteria.condition(qHenkilo));
