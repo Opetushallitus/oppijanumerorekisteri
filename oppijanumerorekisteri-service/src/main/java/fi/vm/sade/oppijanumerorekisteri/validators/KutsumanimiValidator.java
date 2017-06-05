@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.validators;
 
 import static java.util.Objects.requireNonNull;
+
+import java.util.Arrays;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
@@ -15,6 +17,11 @@ public final class KutsumanimiValidator {
     }
 
     public boolean isValid(String kutsumanimi) {
+
+        if(Arrays.asList(etunimet.split(" ")).contains(kutsumanimi) == true) {
+            return true;
+        }
+
         int beginIndex = etunimet.indexOf(kutsumanimi);
         if (beginIndex == -1) {
             return false;
