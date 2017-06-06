@@ -1,6 +1,10 @@
 spring:
   cache:
     type: EHCACHE
+  jpa:
+    properties:
+      hibernate:
+        dialect: fi.vm.sade.oppijanumerorekisteri.repositories.impl.PostgreSQLDialect
 server:
   contextPath: /oppijanumerorekisteri-service
 flyway:

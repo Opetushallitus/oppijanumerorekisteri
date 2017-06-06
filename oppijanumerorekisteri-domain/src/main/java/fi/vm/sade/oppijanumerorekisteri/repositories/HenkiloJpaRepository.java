@@ -95,4 +95,6 @@ public interface HenkiloJpaRepository {
 
     List<Henkilo> findSlavesByMasterOid(String henkiloOid);
 
+    List<Henkilo> findDuplicates(Henkilo henkilo);
+
 }

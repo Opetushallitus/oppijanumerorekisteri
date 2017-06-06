@@ -6,6 +6,8 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanTemplate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
@@ -22,14 +24,12 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
+import javafx.beans.binding.BooleanExpression;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
@@ -40,8 +40,9 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteyst
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
-import java.util.Collection;
+
 import static java.util.stream.Collectors.toList;
+import static org.springframework.data.repository.query.QueryLookupStrategy.Key.create;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
@@ -351,6 +352,34 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .where(qMaster.oidHenkilo.eq(henkiloOid))
                 .select(qSlave)
                 .fetch();
+    }
+
+    @Override
+    public List<Henkilo> findDuplicates(Henkilo henkilo) {
+        QHenkilo qHenkilo = new QHenkilo("master");
+
+        em.createNativeQuery("SELECT set_limit(0.6)").getSingleResult();
+        BooleanTemplate where = Expressions.booleanTemplate(
+                "trgm_match({0} || ' ' || {1} || ' ' || {2}, {3}) = true",
+                qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, Expressions.constant(getAllNames(henkilo)) );
+
+        BooleanTemplate orderBy = Expressions.booleanTemplate(
+                "similarity({0} || ' ' || {1} || ' ' || {2}, {3})",
+                qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, Expressions.constant(getAllNames(henkilo)) );
+
+        return jpa()
+                .from(qHenkilo)
+                .where(where.and(qHenkilo.oidHenkilo.ne(qHenkilo.oidHenkilo))
+                        .and(qHenkilo.passivoitu.eq(false))
+                        .and(qHenkilo.duplicate.eq(false)))
+                .orderBy(orderBy.desc())
+                .select(qHenkilo)
+                .fetch();
+
+    }
+
+    private String getAllNames(Henkilo henkilo) {
+        return henkilo.getEtunimet() + " " + henkilo.getKutsumanimi() + " " + henkilo.getSukunimi();
     }
 
 }

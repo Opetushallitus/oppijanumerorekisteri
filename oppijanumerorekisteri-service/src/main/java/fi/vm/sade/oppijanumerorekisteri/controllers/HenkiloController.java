@@ -324,4 +324,21 @@ public class HenkiloController {
         return this.henkiloService.findSlavesByMasterOid(oid);
     }
 
+    @GetMapping("/{oid}/duplicates")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
+    public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid) {
+        return this.henkiloService.findDuplicates(oid);
+    }
+
+    @PostMapping("/{oid}/link")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
+    public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids) {
+        return this.henkiloService.linkHenkilos(oid, slaveOids);
+    }
+
 }

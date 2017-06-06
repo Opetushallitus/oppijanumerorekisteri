@@ -67,4 +67,8 @@ public interface HenkiloService {
     Henkilo createHenkilo(Henkilo henkiloCreate);
 
     List<HenkiloReadDto> findSlavesByMasterOid(String oid);
+
+    List<HenkiloDuplicateDto> findDuplicates(String oid);
+
+    List<String> linkHenkilos(String masterOid, List<String> slaveOids);
 }

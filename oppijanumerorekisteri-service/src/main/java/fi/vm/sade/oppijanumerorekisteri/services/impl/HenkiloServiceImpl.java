@@ -27,6 +27,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,8 @@ import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
+
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
@@ -530,12 +533,119 @@ public class HenkiloServiceImpl implements HenkiloService {
         return mapper.map(henkilo, HenkiloReadDto.class);
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloReadDto> findSlavesByMasterOid(String masterOid) {
         List<Henkilo> henkilos = this.henkiloJpaRepository.findSlavesByMasterOid(masterOid);
         return henkilos.stream().map( h -> mapper.map(h, HenkiloReadDto.class)).collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloDuplicateDto> findDuplicates(String oid) {
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
+
+        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplicates(henkilo);
+
+        return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional
+    public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
+        Date modificationDate = new Date();
+        similarHenkiloOids = similarHenkiloOids.stream().filter( oid -> !henkiloOid.equals(oid)).distinct().collect(toList());
+
+        Henkilo master = determineMasterHenkilo(henkiloOid, similarHenkiloOids);
+        master.setPassivoitu(false);
+        master.setDuplicate(false);
+        master.setModified(modificationDate);
+
+        List<String> slaveOids = similarHenkiloOids;
+        if(!henkiloOid.equals(master.getOidHenkilo())) {
+            // If person changed, make the original one of the slaves
+            // (and if the resolved master was one of the original slaves, remove that):
+            slaveOids.remove(master.getOidHenkilo());
+            slaveOids.add(henkiloOid);
+        }
+
+        // If master previously was a slave, preserve the two-level hierarchy also in this way so that
+        // this new master will become the master of it's previous master (and its possible other slaves):
+        slaveOids.addAll(
+                this.henkiloViiteRepository.findBySlaveOid(master.getOidHenkilo())
+                .stream()
+                .map(HenkiloViite::getMasterOid).collect(toSet()));
+
+        java.util.function.Predicate<HenkiloViite> relatesToGivenMaster = viite -> master.getOidHenkilo().equals(viite.getMasterOid());
+
+        for (String slaveOid : slaveOids) {
+
+            List<HenkiloViite> existingViittees = this.henkiloViiteRepository.findBySlaveOid(slaveOid);
+            existingViittees.stream().filter(relatesToGivenMaster.negate())
+                    .forEach(viite -> {
+                        // If given slave already linked to another master, update the related (old) master
+                        this.henkiloDataRepository.findByOidHenkilo(viite.getMasterOid()).ifPresent( henkilo -> henkilo.setModified(modificationDate));
+                        // and remove this other viite:
+                        this.henkiloViiteRepository.delete(viite);
+                    });
+
+            if (existingViittees.stream().anyMatch(relatesToGivenMaster)) {
+                // No need to add new viite (already linked to the given master):
+                continue;
+            }
+
+            HenkiloViite viite = new HenkiloViite();
+            viite.setMasterOid(master.getOidHenkilo());
+            viite.setSlaveOid(slaveOid);
+            this.henkiloViiteRepository.save(viite);
+
+            Henkilo duplicateHenkilo = this.henkiloDataRepository.findByOidHenkilo(slaveOid).orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slaveOid) );
+            duplicateHenkilo.setDuplicate(true);
+            duplicateHenkilo.setPassivoitu(true);
+            duplicateHenkilo.setModified(modificationDate);
+
+            // Preserve two-level hierarchy, re-link slave's slaves to new master
+            this.henkiloViiteRepository.getDuplicateOids(slaveOid).forEach( slavesSlave -> {
+                if (slavesSlave.getSlaveOid().equals(master.getOidHenkilo())) {
+                    this.henkiloViiteRepository.delete(slavesSlave);
+                } else {
+                    Henkilo slaveSlaveHenkilo = this.henkiloDataRepository.findByOidHenkilo(slavesSlave.getSlaveOid()).orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slavesSlave.getSlaveOid()));
+                    slaveSlaveHenkilo.setModified(modificationDate);
+                    slavesSlave.setMasterOid(master.getOidHenkilo());
+                }
+            });
+        }
+
+        return slaveOids;
+    }
+
+    private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
+        Henkilo originalMaster = this.henkiloDataRepository.findByOidHenkilo(henkiloOid).orElseThrow( () -> new NotFoundException("User with oid " + henkiloOid + " was not found"));
+        List<Henkilo> candidates = this.henkiloDataRepository.findByOidHenkiloIsIn(similarHenkiloOids);
+
+        /* Positively identified Henkilo MUST ALWAYS be the master
+         * and only one identified Henkilo can be in the similarHenkiloList/masterHenkilo
+         * since it would cause ambiguous behavior in linking
+         */
+        List<Henkilo> allHenkilos = new ArrayList<Henkilo>(candidates);
+        allHenkilos.add(originalMaster);
+        if(hasMoreThanOneIdentifiedHenkilo(allHenkilos)) {
+            throw new ForbiddenException("More than one identified Henkilo");
+        }
+
+        // if there is one identified henkilo, set him as master - otherwise master will be the henkilo whos oid was given as first parameter
+        return candidates
+                .stream()
+                .reduce( originalMaster, (currentMaster, candidate) -> isHenkiloIdentified(candidate) ? candidate : currentMaster );
+    }
+
+    private boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
+        return henkilos.stream().filter( h -> isHenkiloIdentified(h) ).count() > 1;
+    }
+
+    private boolean isHenkiloIdentified(Henkilo henkilo) {
+        return henkilo.isYksiloity() || henkilo.isYksiloityVTJ();
+    }
+
 
 }

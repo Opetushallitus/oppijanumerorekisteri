@@ -393,7 +393,7 @@ public class HenkiloServiceTest {
                 new HenkiloViiteDto("OID", "MASTER")));
         List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
         assertThat(results.size()).isEqualTo(1);
-        assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
+        assertThat(results.get(0).getSlaveOid()).isEqualTo("OID");
         assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
         
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(emptyList());
