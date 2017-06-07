@@ -17,18 +17,10 @@ class HenkiloViewOrganisationContent extends React.Component{
     constructor(props) {
         super(props);
 
-        const organisations = this.props.henkilo.henkiloOrgs;
         this.L = this.props.l10n[this.props.locale];
         this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
-            organisationInfo: organisations.map(organisation =>
-                ({name: organisation.nimi[this.props.locale],
-                    typesFlat: organisation.tyypit && organisation.tyypit.reduce((type1, type2) => type1.concat(', ', type2)),
-                    role: organisation.tehtavanimike,
-                    passive: organisation.passivoitu,
-                    id: organisation.oid,
-                })),
         };
     };
 
@@ -45,7 +37,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                     </label>
                     <div className="henkiloViewContent">
                         <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
-                            {this.state.organisationInfo.map((values, idx) =>
+                            {this.flatOrganisations(this.props.henkilo.henkiloOrgs).map((values, idx) =>
                                 !values.passive || this.state.showPassive
                                     ?
                                     <div key={idx}>
@@ -78,6 +70,17 @@ class HenkiloViewOrganisationContent extends React.Component{
 
     passivoiHenkiloOrganisation(organisationOid) {
         this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);
+    };
+
+    flatOrganisations(organisations) {
+        return organisations.map(organisation =>
+            ({
+                name: organisation.nimi[this.props.locale],
+                typesFlat: organisation.tyypit && organisation.tyypit.reduce((type1, type2) => type1.concat(', ', type2)),
+                role: organisation.tehtavanimike,
+                passive: organisation.passivoitu,
+                id: organisation.oid,
+            }));
     };
 }
 
