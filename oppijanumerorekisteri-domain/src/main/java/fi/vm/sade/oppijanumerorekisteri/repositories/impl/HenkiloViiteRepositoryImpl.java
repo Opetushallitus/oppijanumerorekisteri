@@ -81,4 +81,13 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
                 .select(qViite)
                 .fetch();
     }
+
+    @Override
+    public void removeByMasterOidAndSlaveOid(String masterOid, String slaveOid) {
+        QHenkiloViite qViite = QHenkiloViite.henkiloViite;
+        jpa()
+            .delete(qViite)
+            .where(qViite.masterOid.eq(masterOid).and(qViite.slaveOid.eq(slaveOid)))
+                .execute();
+    }
 }

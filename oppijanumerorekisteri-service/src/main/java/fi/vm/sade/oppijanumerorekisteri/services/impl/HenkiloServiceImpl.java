@@ -647,5 +647,11 @@ public class HenkiloServiceImpl implements HenkiloService {
         return henkilo.isYksiloity() || henkilo.isYksiloityVTJ();
     }
 
+    @Override
+    @Transactional
+    public void unlinkHenkilo(String oid, String slaveOid) {
+        this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);
+    }
+
 
 }

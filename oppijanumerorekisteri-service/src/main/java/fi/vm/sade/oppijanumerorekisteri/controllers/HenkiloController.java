@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
@@ -339,6 +338,13 @@ public class HenkiloController {
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids) {
         return this.henkiloService.linkHenkilos(oid, slaveOids);
+    }
+
+    @DeleteMapping("/{oid}/unlink/{slaveOid}")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
+    public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
+        this.henkiloService.unlinkHenkilo(oid, slaveOid);
     }
 
 }
