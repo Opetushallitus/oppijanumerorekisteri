@@ -52,7 +52,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         return this.props.kayttooikeus.kayttooikeusAnomus
             .map((haettuKayttooikeusRyhma, idx) => ({
                 [headingList[0]]: dateformat(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm), this.L['PVM_FORMAATTI']),
-                [headingList[1]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale],
+                [headingList[1]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale]
+                + ' ('+ StaticUtils.flatArray(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit) + ')',
                 [headingList[2]]: haettuKayttooikeusRyhma.kayttoOikeusRyhma.description.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[3]]: <span>{dateformat(this.dates[idx].alkupvm, this.L['PVM_FORMAATTI'])}</span>,
@@ -60,9 +61,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                          onChange={(event) => {this.dates[idx].loppupvm =
                                              StaticUtils.ddmmyyyyToDate(event.target.value);}} />,
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
-                [headingList[6]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx)
-
-                    ,
+                [headingList[6]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));
     };
 

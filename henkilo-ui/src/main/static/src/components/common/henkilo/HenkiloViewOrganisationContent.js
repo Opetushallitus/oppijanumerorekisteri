@@ -2,6 +2,7 @@ import './HenkiloViewOrganisationContent.css'
 import React from 'react'
 import Columns from 'react-columns'
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
+import StaticUtils from "../StaticUtils";
 
 class HenkiloViewOrganisationContent extends React.Component{
     static propTypes = {
@@ -76,7 +77,7 @@ class HenkiloViewOrganisationContent extends React.Component{
         return organisations.map(organisation =>
             ({
                 name: organisation.nimi[this.props.locale],
-                typesFlat: organisation.tyypit && organisation.tyypit.reduce((type1, type2) => type1.concat(', ', type2)),
+                typesFlat: StaticUtils.flatArray(organisation.tyypit),
                 role: organisation.tehtavanimike,
                 passive: organisation.passivoitu,
                 id: organisation.oid,
