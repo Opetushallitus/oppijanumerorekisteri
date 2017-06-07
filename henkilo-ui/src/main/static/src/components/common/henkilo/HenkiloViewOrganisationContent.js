@@ -36,7 +36,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                         <input id="showPassive" type="checkbox" className="oph-checkable-input" onChange={() => this.setState({showPassive: !this.state.showPassive})} />
                         <span className="oph-checkable-text"> {this.L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
                     </label>
-                    <div className="henkiloViewContent">
+                    <div className="organisationContentWrapper">
                         <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
                             {this.flatOrganisations(this.props.henkilo.henkiloOrgs).map((values, idx) =>
                                 !values.passive || this.state.showPassive

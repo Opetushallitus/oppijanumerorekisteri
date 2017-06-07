@@ -4,7 +4,6 @@ import ConfirmButton from "../../button/ConfirmButton";
 const YksiloiHetutonButton = ({henkilo, L, yksiloiAction}) =>
     !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.hetu
         ? <ConfirmButton key="yksilointi"
-                         big
                          action={() => yksiloiAction(henkilo.henkilo.oidHenkilo)}
                          normalLabel={L['YKSILOI_LINKKI']}
                          confirmLabel={L['YKSILOI_LINKKI_CONFIRM']}
