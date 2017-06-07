@@ -18,6 +18,7 @@ import {
     VTJ_OVERRIDE_HENKILO_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
+import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
 
 const requestHenkilo = oid => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
@@ -162,6 +163,7 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
         .then(() => {
             dispatch(receivePassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
             dispatch(fetchHenkiloOrgs(oidHenkilo));
+            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         })
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
