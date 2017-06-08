@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
@@ -35,9 +37,18 @@ public class AuditlogAspectHelper {
     }
 
     void logUpdateHenkilo(HenkiloUpdateDto henkilo, Object returnHenkilo) {
+        String changedHenkilo;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            changedHenkilo = mapper.writeValueAsString(henkilo);
+        } catch (JsonProcessingException e) {
+            changedHenkilo = "Failed to serialize HenkiloUpdateDto!";
+        }
+
         LogMessage.LogMessageBuilder logMessage = builder()
                 .kohdehenkiloOid(henkilo.getOidHenkilo())
                 .lisatieto("Muokattu olemassa olevaa henkilöä.")
+                .muutettuUusi("HenkiloUpdateDto: " + changedHenkilo)
                 .setOperaatio(OppijanumerorekisteriOperation.UPDATE_HENKILO);
         finishLogging(logMessage);
     }
