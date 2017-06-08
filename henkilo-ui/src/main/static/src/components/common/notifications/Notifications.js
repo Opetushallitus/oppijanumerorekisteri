@@ -2,7 +2,7 @@ import React from 'react'
 import WideGreenNotification from "./WideGreenNotification";
 import WideRedNotification from "./WideRedNotification";
 
-const Notifications = ({notifications, L, closeAction}) => <div>
+const Notifications = ({notifications, L, closeAction, styles}) => <div style={styles}>
     {notifications.filter(notification => notification.type === 'ok').map(notification =>
         <WideGreenNotification message={L[notification.notL10nMessage]} closeAction={() =>
             closeAction(notification.type, notification.organisaatioOid && notification.ryhmaIdList

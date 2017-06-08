@@ -1,13 +1,18 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import Notifications from "../notifications/Notifications"
 import './PasswordPopupContent.css';
 
 export default class PasswordPopupContent extends React.Component {
 
     static propTypes = {
-        henkiloOid: React.PropTypes.string.isRequired,
+        oidHenkilo: React.PropTypes.string.isRequired,
         L: React.PropTypes.object.isRequired,
-        updatePassword: React.PropTypes.func.isRequired
+        updatePassword: React.PropTypes.func.isRequired,
+        notifications: React.PropTypes.shape({
+            updatePassword: React.PropTypes.array.isRequired,
+        }),
+        removeNotification: React.PropTypes.func,
     };
 
     constructor(props) {
@@ -16,7 +21,7 @@ export default class PasswordPopupContent extends React.Component {
             password: '',
             passwordValid: null,
             passwordConfirmed: '',
-            passwordConfirmedValid: null
+            passwordConfirmedValid: null,
         }
     }
 
@@ -45,17 +50,25 @@ export default class PasswordPopupContent extends React.Component {
                                value={this.state.passwordConfirmed} onChange={this.handlePasswordConfirmedChange.bind(this)} />
                     </div>
                     <p>{L['SALASANA_SAANTO']}</p>
-                    <button className='oph-button oph-button-primary' disabled={this.state.passwordValid !== true || this.state.passwordConfirmedValid !== true}
+                    <button className='oph-button oph-button-primary'
+                            disabled={this.state.passwordValid !== true || this.state.passwordConfirmedValid !== true}
                             onClick={() => this.changePassword()}>{L['SALASANA_ASETA']}</button>
+                    <div className="clear"/>
+                    <Notifications notifications={this.props.notifications.updatePassword}
+                       L={L} styles={{marginTop: '10px', wordBreak: 'normal'}}
+                       closeAction={(status, id) => this.props.removeNotification(status, 'updatePassword', id)} />
                 </div>);
     }
 
     handlePasswordChange(event) {
-        this.setState({password: event.target.value, passwordValid: this.validatePassword(event.target.value)});
+        this.setState({password: event.target.value,
+            passwordValid: this.validatePassword(event.target.value),
+            passwordConfirmedValid: false});
     }
 
     handlePasswordConfirmedChange(event) {
-        this.setState({passwordConfirmed: event.target.value, passwordConfirmedValid: this.validateConfirmedPassword(event.target.value)});
+        this.setState({passwordConfirmed: event.target.value,
+            passwordConfirmedValid: this.validateConfirmedPassword(event.target.value)});
     }
 
     validatePassword(password) {
@@ -67,7 +80,8 @@ export default class PasswordPopupContent extends React.Component {
     }
 
     changePassword() {
-        this.props.updatePassword(this.props.henkiloOid, this.state.password);
+        this.props.updatePassword(this.props.oidHenkilo, this.state.password);
+        this.setState({passwordButtonClicked: true});
     }
 
     /**
