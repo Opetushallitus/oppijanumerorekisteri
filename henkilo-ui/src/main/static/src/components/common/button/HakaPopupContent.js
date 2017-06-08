@@ -30,12 +30,12 @@ export default class HakatunnistePopupContent extends React.Component {
 
     render() {
         const L = this.props.L ? this.props.L : this.props.l10n[this.props.locale];
-        return (<div>
+        return (<div className="hakapopupcontent">
             <ul>
                 {this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>
-                        (<li key={hakatunniste}>{hakatunniste} <a className="remove"
+                        (<li className="tag" key={hakatunniste}><span>{hakatunniste}</span> <a className="remove"
                             onClick={ () => this.removeHakatunniste(hakatunniste)}>{L['POISTA']}</a>
-                        </li>)) : <h4>{L['EI_HAKATUNNUKSIA']}</h4> }
+                        </li>)) : <h4 className="hakapopup">{L['EI_HAKATUNNUKSIA']}</h4> }
             </ul>
             <div className="oph-field oph-field-is-required">
                 <input type="text"
@@ -45,7 +45,7 @@ export default class HakatunnistePopupContent extends React.Component {
                        value={this.state.newTunnisteValue}
                        onChange={this.handleChange.bind(this)}
                        onKeyPress={ (e) => e.key === 'Enter' ? this.addHakatunniste() : null}/>
-                <button className="oph-button oph-button-primary"
+                <button className="save oph-button oph-button-primary"
                         onClick={() => this.addHakatunniste()}>{L['TALLENNA_TUNNUS']}</button>
             </div>
         </div>);
@@ -59,6 +59,7 @@ export default class HakatunnistePopupContent extends React.Component {
         if (this.state.newTunnisteValue.length > 0) {
             const tunnisteet = this.state.hakatunnisteet.slice(0);
             tunnisteet.push(this.state.newTunnisteValue);
+            console.log(tunnisteet);
             this.saveHakatunnisteet(tunnisteet);
             this.setState({newTunnisteValue: ''});
         }

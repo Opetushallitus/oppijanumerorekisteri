@@ -1,4 +1,5 @@
 import React from 'react'
+import './PopupButton.css';
 
 export default class PopupButton extends React.Component {
 
@@ -33,11 +34,13 @@ export default class PopupButton extends React.Component {
         const closeButtonStyles = {
             float: 'right',
             clear: 'right',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            marginTop: '-20px',
+            marginRight: '-20px'
         };
 
         return (
-            <div className={`oph-popup ${this.props.popupClass}`} style={this.props.popupStyle}>
+            <div className={`oph-popup ${this.props.popupClass} popup-paddings`} style={this.props.popupStyle}>
                 <div className="oph-popup-arrow"></div>
                 <div style={closeButtonStyles}><i className="fa fa-times" onClick={() => this.closePopup()}></i></div>
                 <div className="oph-popup-title">{this.props.popupTitle} </div>
