@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +15,10 @@ import java.util.Optional;
 
 public interface HenkiloService {
 
-    Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria);
+    Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit);
+
+    @Transactional(readOnly = true)
+    Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long amount);
 
     Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
 

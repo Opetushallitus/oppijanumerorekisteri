@@ -99,7 +99,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria) {
+    public Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit) {
         KayttooikeudetDto kayttooikeudet = getKayttooikeudet(criteria);
         if (kayttooikeudet.getOids().map(Collection::isEmpty).orElse(false)) {
             // käyttäjällä ei ole oikeuksia yhdenkään henkilön tietoihin
@@ -107,7 +107,13 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
-        return henkiloJpaRepository.findBy(henkiloCriteria);
+        return henkiloJpaRepository.findBy(henkiloCriteria, limit, offset);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
+        return this.henkiloJpaRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
     }
 
     @Override
@@ -121,8 +127,8 @@ public class HenkiloServiceImpl implements HenkiloService {
         HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
         // haetaan yksi ylimääräinen rivi, jotta voidaan päätellä onko seuraavaa viipaletta
-        int limit = count + 1;
-        int offset = (page - 1) * count;
+        Long limit = count + 1L;
+        Long offset = (page - 1L) * count;
         return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
     }
 
@@ -147,7 +153,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         OppijaCriteria criteria = OppijaCriteria.builder()
                 .passivoitu(false).duplikaatti(false)
                 .hakutermi(hakutermi).build();
-        List<HenkiloHakuDto> henkilot = henkiloJpaRepository.findBy(criteria, 1, 0);
+        List<HenkiloHakuDto> henkilot = henkiloJpaRepository.findBy(criteria, 1L, 0L);
 
         if (henkilot.isEmpty() || henkilot.size() > 1) {
             throw new NotFoundException("Henkilöä ei löytynyt hakuehdoilla");
@@ -178,8 +184,12 @@ public class HenkiloServiceImpl implements HenkiloService {
         return kayttooikeusClient.getHenkiloKayttooikeudet(kayttajaOid, organisaatioCriteria);
     }
 
-    private HenkiloCriteria createHenkiloCriteria(HenkiloHakuCriteria criteria, KayttooikeudetDto kayttooikeudet) {
-        HenkiloCriteria henkiloCriteria = mapper.map(criteria, HenkiloCriteria.class);
+    private HenkiloCriteria createHenkiloCriteria(Object criteria) {
+        return this.mapper.map(criteria, HenkiloCriteria.class);
+    }
+
+    private HenkiloCriteria createHenkiloCriteria(Object criteria, KayttooikeudetDto kayttooikeudet) {
+        HenkiloCriteria henkiloCriteria = this.createHenkiloCriteria(criteria);
         kayttooikeudet.getOids().ifPresent(henkiloOids -> {
             if (isEmpty(henkiloCriteria.getHenkiloOids())) {
                 henkiloCriteria.setHenkiloOids(henkiloOids);

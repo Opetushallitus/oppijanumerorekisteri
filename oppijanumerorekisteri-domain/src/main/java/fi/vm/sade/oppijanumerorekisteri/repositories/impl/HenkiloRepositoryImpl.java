@@ -7,29 +7,21 @@ import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QExternalId;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
@@ -40,54 +32,19 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteyst
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
-import java.util.Collection;
+
 import static java.util.stream.Collectors.toList;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
 
     @Override
-    public List<HenkiloHakuDto> findBy(HenkiloCriteria criteria) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-
-        JPAQuery<HenkiloHakuDto> query = jpa().from(qHenkilo)
-                .select(Projections.constructor(HenkiloHakuDto.class,
-                        qHenkilo.oidHenkilo,
-                        qHenkilo.hetu,
-                        qHenkilo.etunimet,
-                        qHenkilo.kutsumanimi,
-                        qHenkilo.sukunimi
-        ));
-
-        query.where(criteria.condition(qHenkilo));
-        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
-
-        return query.fetch();
+    public List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria) {
+        return this.findBy(criteria, null, null);
     }
 
     @Override
-    public List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-
-        JPAQuery<HenkiloHakuDto> query = jpa().from(qHenkilo)
-                .select(Projections.constructor(HenkiloHakuDto.class,
-                        qHenkilo.oidHenkilo,
-                        qHenkilo.hetu,
-                        qHenkilo.etunimet,
-                        qHenkilo.kutsumanimi,
-                        qHenkilo.sukunimi
-        ));
-
-        query.where(criteria.condition(qHenkilo));
-        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
-        query.limit(limit);
-        query.offset(offset);
-
-        return query.fetch();
-    }
-
-    @Override
-    public List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset) {
+    public List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
 
         JPAQuery<HenkiloHakuDto> query = jpa().from(qHenkilo)
@@ -99,13 +56,45 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.sukunimi
                 ));
 
-        query.where(criteria.condition(qHenkilo));
-        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
-        query.limit(limit);
-        query.offset(offset);
+        this.createQuery(criteria, limit, offset, qHenkilo, query);
 
         return query.fetch();
     }
+
+    @Override
+    public List<HenkiloHakuPerustietoDto> findPerustietoBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<HenkiloHakuPerustietoDto> query = jpa().from(qHenkilo)
+                .select(Projections.constructor(HenkiloHakuPerustietoDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi,
+                        qHenkilo.yksiloityVTJ,
+                        qHenkilo.yksiloity,
+                        qHenkilo.passivoitu,
+                        qHenkilo.duplicate
+                ));
+
+        this.createQuery(criteria, limit, offset, qHenkilo, query);
+
+        return query.fetch();
+    }
+
+    private void createQuery(OppijanumerorekisteriCriteria criteria, Long limit, Long offset, QHenkilo qHenkilo,
+                             JPAQuery<?> query) {
+        query.where(criteria.condition(qHenkilo));
+        query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
+        if(limit != null) {
+            query.limit(limit);
+        }
+        if(offset != null) {
+            query.offset(offset);
+        }
+    }
+
 
     @Override
     public List<HenkiloYhteystietoDto> findWithYhteystiedotBy(HenkiloCriteria criteria) {
@@ -238,7 +227,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
             henkiloDto.setAsiointiKieli(stringAsiointikieliMap.get(henkiloDto.getOidHenkilo()));
             henkiloDto.setAidinkieli(stringAidinkieliMap.get(henkiloDto.getOidHenkilo()));
             if (stringKansalaisuusMap.get(henkiloDto.getOidHenkilo()) != null) {
-                henkiloDto.setKansalaisuus(stringKansalaisuusMap.get(henkiloDto.getOidHenkilo()).stream().collect(Collectors.toSet()));
+                henkiloDto.setKansalaisuus(new HashSet<>(stringKansalaisuusMap.get(henkiloDto.getOidHenkilo())));
             }
         });
         return henkiloDtoList;
@@ -312,10 +301,9 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QIdentification qIdentification = QIdentification.identification;
 
-        List<Predicate> predicates = identifications.stream().map(identification -> {
-            return qIdentification.idpEntityId.eq(identification.getIdpEntityId())
-                    .and(qIdentification.identifier.eq(identification.getIdentifier()));
-        }).collect(toList());
+        List<Predicate> predicates = identifications.stream().map(identification ->
+                qIdentification.idpEntityId.eq(identification.getIdpEntityId())
+                .and(qIdentification.identifier.eq(identification.getIdentifier()))).collect(toList());
 
         return jpa()
                 .from(qHenkilo)
