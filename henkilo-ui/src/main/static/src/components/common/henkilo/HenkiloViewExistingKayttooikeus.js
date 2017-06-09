@@ -56,7 +56,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map((uusittavaKayttooikeusRyhma, idx) => {
                 const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid];
-                const tyyppi = organisaatio.organisaatiotyypit ? `${organisaatio.tyypit.join(',')}` : `${organisaatio.ryhmatyypit.join(',')}`;
+                const tyyppi = organisaatio.tyypit ? `${organisaatio.tyypit.join(',')}` : `${organisaatio.ryhmatyypit.join(',')}`;
                 const organisaatioTyyppiLabel = tyyppi.length > 0 ? `(${tyyppi})` : '';
                 return {
                     [headingList[0]]: organisaatio.nimi[this.props.locale] + ' ' + organisaatioTyyppiLabel +
