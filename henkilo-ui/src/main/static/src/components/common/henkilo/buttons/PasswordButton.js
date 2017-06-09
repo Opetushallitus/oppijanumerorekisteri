@@ -1,21 +1,35 @@
 import React from 'react'
+import {connect} from 'react-redux';
 import PopupButton from "../../button/PopupButton";
 import PasswordPopupContent from "../../button/PasswordPopupContent";
+import {updatePassword} from "../../../../actions/henkilo.actions";
+import {removeNotification} from "../../../../actions/notifications.actions";
 
-const PasswordButton = ({L, oidHenkilo, updatePassword, styles}) =>
-    <PopupButton popupClass={'oph-popup-default oph-popup-bottom oph-popup-password'}
-             popupStyle={styles}
-             popupTitle={<h3 style={{textAlign: 'left'}}>{L['SALASANA_ASETA']}</h3>}
-             popupContent={<PasswordPopupContent henkiloOid={oidHenkilo}
-                                                 L={L}
-                                                 updatePassword={updatePassword}/>}>
-        {L['SALASANA_ASETA']}
-    </PopupButton>;
+class PasswordButton extends React.Component {
+
+    render() {
+        const props = {...this.props};
+
+        return <PopupButton popupClass={'oph-popup-default oph-popup-bottom oph-popup-password'}
+            popupStyle={props.styles}
+            popupTitle={<h3 style={{textAlign: 'left'}}>{props.L['SALASANA_ASETA']}</h3>}
+            popupContent={<PasswordPopupContent {...props}/>}>
+                {props.L['SALASANA_ASETA']}
+        </PopupButton>;
+    }
+
+}
 
 PasswordButton.propTypes = {
     L: React.PropTypes.object,
-    oidHenkilo: React.PropTypes.string,
-    updatePassword: React.PropTypes.func,
+    styles: React.PropTypes.object,
 };
 
-export default PasswordButton;
+const mapStateToProps = (state) => {
+    return {
+        notifications: state.notifications,
+        updatePassword,
+    };
+};
+
+export default connect(mapStateToProps, {updatePassword, removeNotification})(PasswordButton);

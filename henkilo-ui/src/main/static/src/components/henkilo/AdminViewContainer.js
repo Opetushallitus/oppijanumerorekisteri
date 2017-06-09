@@ -98,7 +98,7 @@ class AdminViewContainer extends React.Component {
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} L={this.L} />,
             <VtjOverrideButton henkilo={this.props.henkilo} L={this.L} overrideAction={this.props.overrideHenkiloVtjData} />,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} updatePassword={this.props.updatePassword} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
         ];
 
     };
