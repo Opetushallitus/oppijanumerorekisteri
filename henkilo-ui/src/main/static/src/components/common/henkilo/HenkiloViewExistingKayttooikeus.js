@@ -54,35 +54,43 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     createRows(headingList) {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
-            .map((uusittavaKayttooikeusRyhma, idx) => ({
-                [headingList[0]]: this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid].nimi[this.props.locale] +
-                (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
-                [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
-                    .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
-                [headingList[3]]: dateformat(new Date(uusittavaKayttooikeusRyhma.voimassaPvm), this.L['PVM_FORMAATTI']),
-                [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + ' / '
-                + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
-                [headingList[5]]: <div>
-                    <div style={{display: 'table-cell', paddingRight: '10px'}}>
-                        <input className="oph-input" defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
-                               onChange={(event) => {this.dates[idx].loppupvm =
-                                   StaticUtils.ddmmyyyyToDate(event.target.value);}} />
-                    </div>
-                    <div style={{display: 'table-cell'}}>
-                        <MyonnaButton myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
-                            uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo} L={this.L}/>
-                    </div>
-                </div>,
-                [headingList[6]]: this.props.notifications.existingKayttooikeus.some(notification => {
-                    console.log(notification);
-                    console.log(uusittavaKayttooikeusRyhma);
-                    return notification.ryhmaIdList
-                        .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
-                        && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
-                }),
+            .map((uusittavaKayttooikeusRyhma, idx) => {
+                const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid];
+                const tyyppi = organisaatio.organisaatiotyypit ? `${organisaatio.organisaatiotyypit.join(',')}` : `${organisaatio.ryhmatyypit.join(',')}`;
+                const organisaatioTyyppiLabel = tyyppi.length > 0 ? `(${tyyppi})` : '';
+                return {
+                    [headingList[0]]: organisaatio.nimi[this.props.locale] + ' ' + organisaatioTyyppiLabel +
+                    (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
+                    [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
+                        .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
+                    [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
+                    [headingList[3]]: dateformat(new Date(uusittavaKayttooikeusRyhma.voimassaPvm), this.L['PVM_FORMAATTI']),
+                    [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + ' / '
+                    + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
+                    [headingList[5]]: <div>
+                        <div style={{display: 'table-cell', paddingRight: '10px'}}>
+                            <input className="oph-input"
+                                   defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
+                                   onChange={(event) => {
+                                       this.dates[idx].loppupvm =
+                                           StaticUtils.ddmmyyyyToDate(event.target.value);
+                                   }}/>
+                        </div>
+                        <div style={{display: 'table-cell'}}>
+                            <MyonnaButton
+                                myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
+                                    uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo}
+                                L={this.L}/>
+                        </div>
+                    </div>,
+                    [headingList[6]]: this.props.notifications.existingKayttooikeus.some(notification => {
+                        return notification.ryhmaIdList
+                            .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
+                            && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
+                    }),
 
-            }));
+                }
+            });
     };
 
     render() {

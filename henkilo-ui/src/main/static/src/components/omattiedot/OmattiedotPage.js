@@ -124,9 +124,11 @@ export default class OmattiedotPage extends React.Component {
         if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
                 .map(organisaatio => {
+                    const label = organisaatio.nimi[this.props.locale] ? organisaatio.nimi[this.props.locale] :
+                        organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
+
                     return {
-                        label: organisaatio.nimi[this.props.locale] ? organisaatio.nimi[this.props.locale] :
-                            organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '',
+                        label: `${label} (${organisaatio.organisaatiotyypit.join(',')})` ,
                         value: organisaatio.oid
                     };
                 });
