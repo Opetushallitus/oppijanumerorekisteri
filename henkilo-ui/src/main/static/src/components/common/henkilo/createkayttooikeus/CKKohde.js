@@ -1,3 +1,4 @@
+import './CKKohde.css'
 import React from 'react'
 import OrganisaatioSelection from "../../../kutsuminen/OrganisaatioSelection";
 
@@ -7,7 +8,7 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
         </td>
         <td>
-            <div>
+            <div className="kohdeOrganisaatio">
                 <OrganisaatioSelection L={L}
                                        organisaatios={organisationData}
                                        selectOrganisaatio={organisationAction}
@@ -15,7 +16,7 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
                                        locale={locale} />
             </div>
 
-            <div>
+            <div className="kohdeRyhma">
                 <OrganisaatioSelection L={L}
                                        organisaatios={organisationData}
                                        selectOrganisaatio={organisationAction}

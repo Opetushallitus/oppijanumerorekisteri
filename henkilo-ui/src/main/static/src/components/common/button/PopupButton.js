@@ -23,7 +23,7 @@ export default class PopupButton extends React.Component {
         return (
             <div style={wrapperStyle}>
                 <button onClick={this.show.bind(this)}
-                        className="oph-button oph-button-primary oph-button-big"
+                        className="oph-button oph-button-primary"
                         type="button">{this.props.children}</button>
                 { this.state.show ? this.createPopup() : null }
             </div>

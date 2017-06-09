@@ -1,3 +1,7 @@
+.ReactTable {
+    margin-bottom: 25px;
+}
+
 .ReactTable.table {
     border: 0;
 }
@@ -38,7 +42,7 @@
 
 /* Moves no data text bit lower */
 .ReactTable .rt-noData {
-    top: 115% !important;
+    top: 140% !important;
 }
 
 /* Fading out background highlight */

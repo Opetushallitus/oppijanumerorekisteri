@@ -156,10 +156,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                     </div>
                     <div className="anomus-requirements">
                         <ShowText show={!this._validOrganisaatioOrRyhmaSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</p></ShowText>
-                        <ShowText show={!this._validTehtavanimikeSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_TEHTAVANIMIKE']}</p></ShowText>
                         <ShowText show={!this._validEmailSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_EMAIL']}</p></ShowText>
                         <ShowText show={!this._validKayttooikeusryhmaSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</p></ShowText>
-                        <ShowText show={!this._validPerustelutSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_PERUSTELUT']}</p></ShowText>
                     </div>
                 </div>
 

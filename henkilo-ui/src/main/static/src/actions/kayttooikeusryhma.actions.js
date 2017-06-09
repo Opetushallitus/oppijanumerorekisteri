@@ -24,6 +24,7 @@ import {
     CREATE_KAYTTOOIKEUSANOMUS_FAILURE
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
+import {fetchHenkiloOrgs} from "./henkilo.actions";
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
 const receiveAllKayttooikeusryhmasForHenkilo = (henkiloOid, kayttooikeus) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
@@ -124,6 +125,7 @@ export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) =
         .then(() => {
             dispatch(receiveAddKayttooikeusToHenkilo(organisaatioOid, payload.map(payload => payload.id)));
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
+            dispatch(fetchHenkiloOrgs(henkiloOid));
         })
         .catch(() => dispatch(errorAddKayttooikeusToHenkilo(organisaatioOid, payload.map(payload => payload.id))));
 };

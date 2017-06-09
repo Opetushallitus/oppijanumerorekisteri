@@ -84,7 +84,7 @@ class HenkiloViewContactContent extends React.Component{
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button key="contactEdit" big action={this._edit.bind(this)}>{L['MUOKKAA_LINKKI']}</Button>
+                        <Button key="contactEdit" action={this._edit.bind(this)}>{L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
                         <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
