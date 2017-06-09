@@ -6,8 +6,6 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanTemplate;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
@@ -24,7 +22,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
-import javafx.beans.binding.BooleanExpression;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +38,10 @@ import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import static java.util.stream.Collectors.toList;
-import static org.springframework.data.repository.query.QueryLookupStrategy.Key.create;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
@@ -354,32 +353,24 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .fetch();
     }
 
+    // NOTE: native postgres query
     @Override
     public List<Henkilo> findDuplicates(Henkilo henkilo) {
-        QHenkilo qHenkilo = new QHenkilo("master");
-
         em.createNativeQuery("SELECT set_limit(0.6)").getSingleResult();
-        BooleanTemplate where = Expressions.booleanTemplate(
-                "trgm_match({0} || ' ' || {1} || ' ' || {2}, {3}) = true",
-                qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, Expressions.constant(getAllNames(henkilo)) );
-
-        BooleanTemplate orderBy = Expressions.booleanTemplate(
-                "similarity({0} || ' ' || {1} || ' ' || {2}, {3})",
-                qHenkilo.etunimet, qHenkilo.kutsumanimi, qHenkilo.sukunimi, Expressions.constant(getAllNames(henkilo)) );
-
-        return jpa()
-                .from(qHenkilo)
-                .where(where.and(qHenkilo.oidHenkilo.ne(qHenkilo.oidHenkilo))
-                        .and(qHenkilo.passivoitu.eq(false))
-                        .and(qHenkilo.duplicate.eq(false)))
-                .orderBy(orderBy.desc())
-                .select(qHenkilo)
-                .fetch();
-
+        Query henkiloTypedQuery = this.em.createNativeQuery("" +
+                "SELECT h1.* \n" +
+                "FROM henkilo h1 \n" +
+                "WHERE (h1.etunimet || h1.kutsumanimi || h1.sukunimi) % :nimet \n" +
+//                "  AND h1.oidhenkilo != h2.oidhenkilo \n" +
+                "  AND h1.passivoitu = FALSE \n" +
+                "  AND h1.duplicate = FALSE \n" +
+                "ORDER BY similarity(h1.etunimet || h1.kutsumanimi || h1.sukunimi, :nimet) DESC \n", Henkilo.class)
+                .setParameter("nimet", getAllNames(henkilo));
+        return (List<Henkilo>)henkiloTypedQuery.getResultList();
     }
 
     private String getAllNames(Henkilo henkilo) {
-        return henkilo.getEtunimet() + " " + henkilo.getKutsumanimi() + " " + henkilo.getSukunimi();
+        return henkilo.getEtunimet() + henkilo.getKutsumanimi() + henkilo.getSukunimi();
     }
 
 }

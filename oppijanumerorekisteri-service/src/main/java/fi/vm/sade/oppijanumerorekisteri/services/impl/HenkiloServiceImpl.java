@@ -547,7 +547,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         List<Henkilo> candidates = this.henkiloJpaRepository.findDuplicates(henkilo);
 
-        return new ArrayList<>();
+        return this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class);
     }
 
     @Override
