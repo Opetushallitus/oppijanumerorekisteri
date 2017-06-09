@@ -89,7 +89,7 @@ class VirkailijaViewContainer extends React.Component {
         this._readOnlyButtons = (edit) => [
             <EditButton editAction={edit} L={this.L} />,
             <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}/>,
-            <PasswordButton {...props} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
         ];
 
     };
