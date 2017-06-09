@@ -5,7 +5,6 @@ const VtjOverrideButton = ({henkilo, L, overrideAction}) =>{
     console.log();
     return henkilo.henkilo.yksiloityVTJ && henkilo.henkilo.hetu
         ? <ConfirmButton key="vtjOverride"
-                         big
                          action={() => overrideAction(henkilo.henkilo.oidHenkilo)}
                          normalLabel={L['VTJ_OVERRIDE_LINKKI']}
                          confirmLabel={L['VTJ_OVERRIDE_LINKKI_CONFIRM']}

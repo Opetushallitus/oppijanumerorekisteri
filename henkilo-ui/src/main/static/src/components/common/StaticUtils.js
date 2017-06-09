@@ -82,6 +82,10 @@ class StaticUtils extends React.Component {
     static hasHetuAndIsYksiloity(henkilo) {
         return !!henkilo.henkilo.hetu && henkilo.henkilo.yksiloityVTJ;
     }
+
+    static flatArray(arr) {
+        return arr ? arr.reduce((type1, type2) => type1.concat(', ', type2)) : '';
+    }
 }
 
 export default StaticUtils;

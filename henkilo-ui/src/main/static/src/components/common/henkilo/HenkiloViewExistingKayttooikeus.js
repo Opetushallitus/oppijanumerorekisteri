@@ -56,7 +56,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map((uusittavaKayttooikeusRyhma, idx) => {
                 const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid];
-                const tyyppi = organisaatio.organisaatiotyypit ? `${organisaatio.organisaatiotyypit.join(',')}` : `${organisaatio.ryhmatyypit.join(',')}`;
+                const tyyppi = organisaatio.tyypit ? `${organisaatio.tyypit.join(',')}` : `${organisaatio.ryhmatyypit.join(',')}`;
                 const organisaatioTyyppiLabel = tyyppi.length > 0 ? `(${tyyppi})` : '';
                 return {
                     [headingList[0]]: organisaatio.nimi[this.props.locale] + ' ' + organisaatioTyyppiLabel +
@@ -79,7 +79,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton
                                 myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
-                                    uusittavaKayttooikeusRyhma.organisaatioOid)} henkilo={this.props.henkilo}
+                                    uusittavaKayttooikeusRyhma.organisaatioOid)}
+                                henkilo={this.props.henkilo}
                                 L={this.L}/>
                         </div>
                     </div>,
@@ -88,7 +89,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
                     }),
-
                 }
             });
     };

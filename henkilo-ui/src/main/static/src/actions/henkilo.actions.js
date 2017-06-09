@@ -18,6 +18,7 @@ import {
     VTJ_OVERRIDE_HENKILO_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
+import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
 
 const requestHenkilo = oid => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
@@ -114,10 +115,11 @@ const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({
     organisations: organisations,
     receivedAt: Date.now()
 });
-export const fetchHenkiloOrgs = oid => (dispatch, getState) => {
-    oid = oid || getState().omattiedot.data.oid;
-    dispatch(requestHenkiloOrgs(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oid);
+// Fetch organisations for given henkilo (non hierarchical). If no oid given user current user oid.
+export const fetchHenkiloOrgs = oidHenkilo => (dispatch, getState) => {
+    oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
+    dispatch(requestHenkiloOrgs(oidHenkilo));
+    const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
     return http.get(url).then(json => {
         dispatch(fetchOrganisations(json.map(orgHenkilo => orgHenkilo.organisaatioOid)))
             .then(organisationsAction => dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached)));
@@ -161,6 +163,7 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
         .then(() => {
             dispatch(receivePassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
             dispatch(fetchHenkiloOrgs(oidHenkilo));
+            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         })
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
