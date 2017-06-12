@@ -1,10 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage;
 import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
 import fi.vm.sade.oppijanumerorekisteri.configurations.AuditlogConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,14 +28,68 @@ public class AuditlogAspectHelper {
         this.userDetailsHelper = userDetailsHelper;
     }
 
-    void logHenkiloPerustietoDto(OppijanumerorekisteriOperation operation, HenkiloPerustietoDto henkiloPerustietoDto,
-                                 Object returnHenkiloPerustietoDto) {
+    void logCreateHenkilo(Henkilo henkilo, Object returnHenkilo) {
         LogMessage.LogMessageBuilder logMessage = builder()
-                .setOperaatio(operation);
-        if (returnHenkiloPerustietoDto instanceof HenkiloPerustietoDto) {
-            logMessage.kohdehenkiloOid(((HenkiloPerustietoDto)returnHenkiloPerustietoDto).getOidHenkilo());
+                .kohdehenkiloOid(henkilo.getOidHenkilo())
+                .lisatieto("Luotu uusi henkilö.")
+                .setOperaatio(OppijanumerorekisteriOperation.CREATE_HENKILO);
+        finishLogging(logMessage);
+    }
+
+    void logUpdateHenkilo(HenkiloUpdateDto henkilo, Object returnHenkilo) {
+        String changedHenkilo;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            changedHenkilo = mapper.writeValueAsString(henkilo);
+        } catch (JsonProcessingException e) {
+            changedHenkilo = "Failed to serialize HenkiloUpdateDto!";
         }
-        this.finishLogging(logMessage);
+
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkilo.getOidHenkilo())
+                .lisatieto("Muokattu olemassa olevaa henkilöä.")
+                .muutettuUusi("HenkiloUpdateDto: " + changedHenkilo)
+                .setOperaatio(OppijanumerorekisteriOperation.UPDATE_HENKILO);
+        finishLogging(logMessage);
+    }
+
+    void logDisableHenkilo(String henkiloOid, Object returnHenkilo) {
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Passivoidaan henkilö.")
+                .setOperaatio(OppijanumerorekisteriOperation.PASSIVOI_HENKILO);
+        finishLogging(logMessage);
+    }
+
+    void logCreateIdentification(String henkiloOid, IdentificationDto identification, Object returnIdentifications) {
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Luotu henkilölle uusi tunnistetieto.")
+                .setOperaatio(OppijanumerorekisteriOperation.TUNNISTUSTIETOJEN_PAIVITYS);
+        finishLogging(logMessage);
+    }
+
+    void logInitiateYksilointi(String henkiloOid, Object returnHenkilo) {
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Aloitettu henkilon yksilointi.")
+                .setOperaatio(OppijanumerorekisteriOperation.MANUAALINEN_YKSILOINTI);
+        finishLogging(logMessage);
+    }
+
+    void logEnableYksilointi(String henkiloOid, String palvelutunniste, Object result) {
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Yksilointi asetettu päälle.")
+                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTI_PAALLE);
+        finishLogging(logMessage);
+    }
+
+    void logDisableYksilointi(String henkiloOid, String palvelutunniste, Object result) {
+        LogMessage.LogMessageBuilder logMessageBuilder = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Yksilointi asetettu pois päältä.")
+                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTI_POIS_PAALTA);
     }
 
     void logPaivitaYksilointitiedot(String henkiloOid) {

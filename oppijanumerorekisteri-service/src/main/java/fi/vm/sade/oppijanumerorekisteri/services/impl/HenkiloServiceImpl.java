@@ -216,13 +216,14 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public void disableHenkilo(String oid) throws IOException {
+    public Henkilo disableHenkilo(String oid) throws IOException {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid)
                 .orElseThrow(() -> new NotFoundException("Henkilö not found"));
         henkilo.setPassivoitu(true);
         String kasittelija = SecurityContextHolder.getContext().getAuthentication().getName();
 
         this.kayttooikeusClient.passivoiHenkilo(oid, kasittelija);
+        return henkilo;
     }
 
 
