@@ -7,6 +7,7 @@ import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpired
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewCreateKayttooikeus from "../common/henkilo/HenkiloViewCreateKayttooikeus";
 import Loader from "../common/icons/Loader";
+import HenkiloViewContactContent from "../common/henkilo/HenkiloViewContactContent";
 
 class VirkailijaViewPage extends React.Component {
     constructor(props) {
@@ -29,6 +30,14 @@ class VirkailijaViewPage extends React.Component {
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
                                                       readOnlyButtons={this.props.readOnlyButtons} />
+                    }
+                </div>
+                <div className="wrapper">
+                    {
+                        this.props.henkilo.henkiloLoading
+                        || this.props.koodisto.yhteystietotyypitKoodistoLoading
+                            ? <Loader />
+                            : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
                 </div>
                 <div className="wrapper">

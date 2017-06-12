@@ -24,8 +24,6 @@ import Etunimet from "../common/henkilo/labelvalues/Etunimet";
 import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
 import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
 import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
-import TyoSahkoposti from "../common/henkilo/labelvalues/TyoSahkoposti";
-import TyoPuhelin from "../common/henkilo/labelvalues/TyoPuhelin";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import {removeNotification} from "../../actions/notifications.actions";
 import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
@@ -85,8 +83,6 @@ class AdminViewContainer extends React.Component {
                 ],
                 [
                     <Kayttajanimi {...props} disabled={true} />,
-                    <TyoSahkoposti {...props} henkiloUpdate={henkiloUpdate} />,
-                    <TyoPuhelin {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
             ]
         };
