@@ -2,7 +2,7 @@
 import VirkailijaDuplikaatitPage from './VirkailijaDuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
-import {fetchHenkilo, fetchHenkiloSlaves} from '../../../actions/henkilo.actions';
+import {fetchHenkilo, fetchHenkiloDuplicates} from '../../../actions/henkilo.actions';
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 
 class VirkailijaDuplikaatitContainer extends React.Component {
@@ -12,7 +12,7 @@ class VirkailijaDuplikaatitContainer extends React.Component {
     async componentDidMount() {
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
-        await this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
+        this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
     }
 
     render() {
@@ -29,4 +29,4 @@ const mapStateToProps = (state, ownProps) => ({
     henkilo: state.henkilo
 });
 
-export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot, fetchHenkiloSlaves})(VirkailijaDuplikaatitContainer);
+export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot, fetchHenkiloDuplicates})(VirkailijaDuplikaatitContainer);

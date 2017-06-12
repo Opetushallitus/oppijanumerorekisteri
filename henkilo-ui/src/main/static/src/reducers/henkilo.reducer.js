@@ -3,9 +3,12 @@ import {
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS, FETCH_HENKILO_ORGANISAATIOS_FAILURE,
     UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE, UPDATE_HENKILO_REQUEST,
-    FETCH_HENKILO_SLAVES_REQUEST, FETCH_HENKILO_SLAVES_SUCCESS, FETCH_HENKILO_SLAVES_FAILURE
+    FETCH_HENKILO_SLAVES_REQUEST, FETCH_HENKILO_SLAVES_SUCCESS, FETCH_HENKILO_SLAVES_FAILURE,
+    UPDATE_HENKILO_UNLINK_REQUEST, UPDATE_HENKILO_UNLINK_SUCCESS, UPDATE_HENKILO_UNLINK_FAILURE,
+    FETCH_HENKILO_DUPLICATES_REQUEST, FETCH_HENKILO_DUPLICATES_SUCCESS, FETCH_HENKILO_DUPLICATES_FAILURE
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
+import R from 'ramda';
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
     return henkiloOrgs.map(henkiloOrg =>
@@ -13,8 +16,8 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
 };
 
 export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
-    henkiloOrgs: [], kayttajatieto: {}, henkiloOrganisaatiosLoading: true, buttonNotifications: {}, notifications: [],
-    henkiloOrganisaatios: [], slaves: [], slavesLoading: false}, action) => {
+    henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
+    henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false}, action) => {
 
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
@@ -53,6 +56,20 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
             return Object.assign({}, state, {slavesLoading: false, slaves: action.slaves });
         case FETCH_HENKILO_SLAVES_FAILURE:
             return Object.assign({}, state, {slavesLoading: false, slaves: []});
+        case UPDATE_HENKILO_UNLINK_REQUEST:
+            return Object.assign({}, state, {unlinkingLoading: true});
+        case UPDATE_HENKILO_UNLINK_SUCCESS:
+            const slaves = R.filter( slave => slave.oidHenkilo !== action.unlinkedSlaveOid, state.slaves);
+            return Object.assign({}, state, {unlinkingLoading: false, slaves});
+        case UPDATE_HENKILO_UNLINK_FAILURE:
+            return Object.assign({}, state, {unlinkingLoading: false});
+        case FETCH_HENKILO_DUPLICATES_REQUEST:
+            return Object.assign({}, state, {duplicatesLoading: true});
+        case FETCH_HENKILO_DUPLICATES_SUCCESS:
+            const duplicates = R.filter( duplicate => duplicate.oidHenkilo !== action.masterOid, action.duplicates);
+            return Object.assign({}, state, {duplicatesLoading: false, duplicates});
+        case FETCH_HENKILO_DUPLICATES_FAILURE:
+            return Object.assign({}, state, {duplicatesLoading: false});
         default:
             return state;
     }

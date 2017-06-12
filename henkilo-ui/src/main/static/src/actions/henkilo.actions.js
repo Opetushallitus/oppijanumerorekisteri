@@ -15,6 +15,9 @@ import {
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_FAILURE, VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
     VTJ_OVERRIDE_HENKILO_FAILURE,
+    FETCH_HENKILO_DUPLICATES_REQUEST,
+    FETCH_HENKILO_DUPLICATES_SUCCESS,
+    FETCH_HENKILO_DUPLICATES_FAILURE,
     FETCH_HENKILO_SLAVES_REQUEST,
     FETCH_HENKILO_SLAVES_SUCCESS,
     FETCH_HENKILO_SLAVES_FAILURE,
@@ -177,9 +180,25 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
 
-const requestHenkiloSlaves = (oidHenkilo) => ({ type: FETCH_HENKILO_SLAVES_REQUEST, oidHenkilo});
-const requestHenkiloSlavesSuccess = (slaves) => ({ type: FETCH_HENKILO_SLAVES_SUCCESS, slaves});
-const requestHenkiloSlavesFailure = (oidHenkilo) => ({ type: FETCH_HENKILO_SLAVES_FAILURE, oidHenkilo});
+const requestHenkiloDuplicates = (oidHenkilo) => ({type: FETCH_HENKILO_DUPLICATES_REQUEST, oidHenkilo});
+const requestHenkiloDuplicatesSuccess = (masterOid, duplicates) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, masterOid, duplicates});
+const requestHenkiloDuplicatesFailure = () => ({type: FETCH_HENKILO_DUPLICATES_FAILURE});
+
+export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
+    dispatch(requestHenkiloDuplicates(oidHenkilo));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
+    try {
+        const duplicates = await http.get(url);
+        dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates));
+    } catch (error) {
+        dispatch(requestHenkiloDuplicatesFailure());
+        throw error;
+    }
+};
+
+const requestHenkiloSlaves = (oidHenkilo) => ({type: FETCH_HENKILO_SLAVES_REQUEST, oidHenkilo});
+const requestHenkiloSlavesSuccess = (slaves) => ({type: FETCH_HENKILO_SLAVES_SUCCESS, slaves});
+const requestHenkiloSlavesFailure = (oidHenkilo) => ({type: FETCH_HENKILO_SLAVES_FAILURE, oidHenkilo});
 
 export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
     dispatch(requestHenkiloSlaves(oidHenkilo));
@@ -194,16 +213,17 @@ export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
 };
 
 const updateHenkiloUnlink = (masterOid, slaveOid) => ({type: UPDATE_HENKILO_UNLINK_REQUEST, masterOid, slaveOid});
-const updateHenkiloUnlinkSuccess = () => ({ type: UPDATE_HENKILO_UNLINK_SUCCESS });
+const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid) => ({ type: UPDATE_HENKILO_UNLINK_SUCCESS, unlinkedSlaveOid });
 const updateHenkiloUnlinkFailure = () => ({ type: UPDATE_HENKILO_UNLINK_FAILURE });
 
 export const unlinkHenkilo = (masterOid, slaveOid) => async(dispatch) => {
     dispatch(updateHenkiloUnlink(masterOid, slaveOid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink');
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink', masterOid, slaveOid);
     try {
         await http.delete(url);
-        dispatch(updateHenkiloUnlinkSuccess());
+        dispatch(updateHenkiloUnlinkSuccess(slaveOid));
     } catch (error) {
         dispatch(updateHenkiloUnlinkFailure());
+        throw error;
     }
 };

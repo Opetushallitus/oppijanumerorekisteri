@@ -10,13 +10,11 @@ export default class LinkitetytHenkilot extends React.Component {
 
     valueGroup() {
         return <div> {this.props.henkilo.slaves.map((slave, index) =>
-            <div key={index}>{slave.etunimet} {slave.sukunimi} - <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>Poista
-                linkitys</TextButton></div>)}
+            <div key={index}>{slave.etunimet} {slave.sukunimi} - <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>{this.props.L['HENKILO_POISTA_LINKITYS']}</TextButton></div>)}
         </div>;
     }
 
     async removeLink(masterOid, slaveOid) {
-        console.log(this);
         await this.props.unlinkHenkilo(masterOid, slaveOid);
         this.props.fetchHenkiloSlaves(masterOid);
     }
