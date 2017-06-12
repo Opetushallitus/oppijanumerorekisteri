@@ -17,14 +17,10 @@ import {
     VTJ_OVERRIDE_HENKILO_FAILURE,
     FETCH_HENKILO_SLAVES_REQUEST,
     FETCH_HENKILO_SLAVES_SUCCESS,
-<<<<<<< b5f668493220da78b6fe03f13e2c33b83f976f7a
-    FETCH_HENKILO_SLAVES_FAILURE
-=======
     FETCH_HENKILO_SLAVES_FAILURE,
-    VTJ_OVERRIDE_HENKILO_REQUEST,
-    VTJ_OVERRIDE_HENKILO_SUCCESS,
-    VTJ_OVERRIDE_HENKILO_FAILURE
->>>>>>> KJHH-1015: Fix syntax error
+    UPDATE_HENKILO_UNLINK_SUCCESS,
+    UPDATE_HENKILO_UNLINK_REQUEST,
+    UPDATE_HENKILO_UNLINK_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -194,5 +190,20 @@ export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
     } catch (error) {
         dispatch(requestHenkiloSlavesFailure(oidHenkilo));
         throw error;
+    }
+};
+
+const updateHenkiloUnlink = (masterOid, slaveOid) => ({type: UPDATE_HENKILO_UNLINK_REQUEST, masterOid, slaveOid});
+const updateHenkiloUnlinkSuccess = () => ({ type: UPDATE_HENKILO_UNLINK_SUCCESS });
+const updateHenkiloUnlinkFailure = () => ({ type: UPDATE_HENKILO_UNLINK_FAILURE });
+
+export const unlinkHenkilo = (masterOid, slaveOid) => async(dispatch) => {
+    dispatch(updateHenkiloUnlink(masterOid, slaveOid));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink');
+    try {
+        await http.delete(url);
+        dispatch(updateHenkiloUnlinkSuccess());
+    } catch (error) {
+        dispatch(updateHenkiloUnlinkFailure());
     }
 };

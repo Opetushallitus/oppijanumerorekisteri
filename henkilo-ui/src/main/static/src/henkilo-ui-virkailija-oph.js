@@ -40,6 +40,7 @@ export default {
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo.slaves": "oppijanumerorekisteri-service/henkilo/$1/slaves",
+    "oppijanumerorekisteri-service.henkilo.unlink": "oppijanumerorekisteri-service/henkilo/$1/unlink/$2",
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
     "oppijanumerorekisteri-service.henkilo.delete": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteri-service/henkilo/$1/yksiloi",

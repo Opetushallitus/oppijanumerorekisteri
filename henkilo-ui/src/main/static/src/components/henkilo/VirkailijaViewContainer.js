@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto, updatePassword,
+    updateAndRefetchKayttajatieto, updatePassword, fetchHenkiloSlaves, unlinkHenkilo
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -27,6 +27,7 @@ import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
 import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
 import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
+import LinkitetytHenkilot from "../common/henkilo/labelvalues/LinkitetytHenkilot";
 import {removeNotification} from "../../actions/notifications.actions";
 
 
@@ -72,6 +73,8 @@ class VirkailijaViewContainer extends React.Component {
             const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
                 updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
                 L: this.L, locale: this.props.locale,};
+            const linkitetytHenkilotProps = {henkilo: this.props.henkilo, L: this.L, unlinkHenkilo: this.props.unlinkHenkilo,
+                fetchHenkiloSlaves: this.props.fetchHenkiloSlaves };
             return [
                 [
                     <Sukunimi {...props} autofocus={true} />,
@@ -84,6 +87,7 @@ class VirkailijaViewContainer extends React.Component {
                 ],
                 [
                     <Kayttajanimi {...props} disabled={true} />,
+                    <LinkitetytHenkilot {...linkitetytHenkilotProps}></LinkitetytHenkilot>
                 ],
             ]
         };
@@ -119,4 +123,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges,})(VirkailijaViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges, fetchHenkiloSlaves, unlinkHenkilo})(VirkailijaViewContainer);
