@@ -33,6 +33,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     notL10nMessage: 'NOTIFICATION_SALASANA_OK_TOPIC',
                     notL10nTopic: 'NOTIFICATION_SALASANA_OK_TOPIC',
                     notL10nText: 'NOTIFICATION_SALASANA_OK_TEXT',
+                    id: 1
                 }],
             };
         case UPDATE_PASSWORD_FAILURE:
@@ -40,9 +41,10 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                 ...state,
                 updatePassword: [{
                     type: 'error',
-                    notL10nMessage: 'NOTIFICATION_SALASANA_OK_TOPIC',
+                    notL10nMessage: 'NOTIFICATION_SALASANA_ERROR_TOPIC',
                     notL10nTopic: 'NOTIFICATION_SALASANA_ERROR_TOPIC',
                     notL10nText: 'NOTIFICATION_SALASANA_ERROR_TEXT',
+                    id: 1
                 }],
             };
         case NOTIFICATION_REMOVED:

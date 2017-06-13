@@ -25,8 +25,13 @@ export default class PasswordPopupContent extends React.Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.passwordInput.focus();
+    }
+
+    componentWillUnmount() {
+        this.props.removeNotification('ok', 'updatePassword', 1);
+        this.props.removeNotification('error', 'updatePassword', 1);
     }
 
     render() {
