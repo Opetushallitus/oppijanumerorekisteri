@@ -28,6 +28,7 @@ import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 
 class OppijaViewContainer extends React.Component {
     componentDidMount() {
+        window.externalPermissionService = this.props.externalPermissionService;
         if(this.props.isAdmin) {
             this.props.router.push('/admin/' + this.props.oidHenkilo);
         }
@@ -90,6 +91,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
         oidHenkilo: ownProps.params['oid'],
+        externalPermissionService: ownProps.location.query.permissionCheckService,
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
