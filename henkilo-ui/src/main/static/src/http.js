@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import PropertySingleton from './globals/PropertySingleton'
 
 const parseResponse = response => {
     if(response.status < 300) {
@@ -17,7 +18,7 @@ export const http = {
         credentials: 'include',
         mode: 'cors',
         headers: {
-            "External-Permission-Service": window.externalPermissionService ? window.externalPermissionService : '',
+            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
     }).then(parseResponse),
     delete: (url, externalPermissionService) => fetch(url, {
@@ -25,7 +26,7 @@ export const http = {
         credentials: 'include',
         mode: 'cors',
         headers: {
-            "External-Permission-Service": window.externalPermissionService ? window.externalPermissionService : '',
+            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
     }).then(parseResponse),
     put: (url, payload, externalPermissionService) => fetch(url, {
@@ -34,7 +35,7 @@ export const http = {
         body: JSON.stringify(payload),
         headers: {
             'Content-Type': 'application/json',
-            "External-Permission-Service": window.externalPermissionService ? window.externalPermissionService : '',
+            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
         mode: 'cors',
     }).then(parseResponse),
@@ -44,7 +45,7 @@ export const http = {
         body: JSON.stringify(payload),
         headers: {
             'Content-Type': 'application/json',
-            "External-Permission-Service": window.externalPermissionService ? window.externalPermissionService : '',
+            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
         mode: 'cors',
     }).then(parseResponse),

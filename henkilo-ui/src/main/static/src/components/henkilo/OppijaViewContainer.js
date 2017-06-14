@@ -23,12 +23,13 @@ import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
 import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
-
+import PropertySingleton from '../../globals/PropertySingleton'
 
 
 class OppijaViewContainer extends React.Component {
     componentDidMount() {
-        window.externalPermissionService = this.props.externalPermissionService;
+        PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+
         if(this.props.isAdmin) {
             this.props.router.push('/admin/' + this.props.oidHenkilo);
         }
