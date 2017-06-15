@@ -85,7 +85,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 <Button action={this.cancelAnomus.bind(this, haettuKayttooikeusRyhma, idx)}>{this.L['HENKILO_KAYTTOOIKEUSANOMUS_PERU']}</Button>
             </div>
         </div>
-    }
+    };
 
     anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx) {
         return <div>
@@ -99,7 +99,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             </div>
 
         </div>
-    }
+    };
 
     async cancelAnomus(haettuKayttooikeusRyhma, idx) {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');

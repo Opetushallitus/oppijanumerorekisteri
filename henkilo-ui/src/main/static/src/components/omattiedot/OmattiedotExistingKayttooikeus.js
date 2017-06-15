@@ -1,7 +1,6 @@
 import React from 'react'
 import Table from '../common/table/Table'
 import moment from 'moment'
-import StaticUtils from "../common/StaticUtils";
 import Notifications from "../common/notifications/Notifications";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
@@ -29,23 +28,22 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || heading.key}));
 
-        this.dates = this.props.kayttooikeus.kayttooikeus
-            .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
-            .map(kayttooikeusAnomus => ({
-                alkupvm: Date.now(),
-                loppupvm: StaticUtils.datePlusOneYear(Date.now())
-            }));
-
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
-                alkupvm: moment(this.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
-                loppupvm: moment(this.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
+                alkupvm: this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
+                loppupvm: this.state.dates[idx].loppupvm.format(this.L['PVM_DBFORMAATTI']),
             }]);
         };
-
-        this.createRows(this.headingList.map(heading => heading.key));
+        this.state = {
+            dates: this.props.kayttooikeus.kayttooikeus
+                .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
+                .map(kayttooikeusAnomus => ({
+                    alkupvm: moment(),
+                    loppupvm: moment().add(1, 'years'),
+                })),
+        }
     };
 
     createRows(headingList) {
@@ -56,8 +54,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
                 [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[2]]: moment(new Date(uusittavaKayttooikeusRyhma.alkuPvm)).format(),
-                [headingList[3]]: moment(new Date(uusittavaKayttooikeusRyhma.voimassaPvm)).format(),
+                [headingList[2]]: moment(uusittavaKayttooikeusRyhma.alkuPvm).format(),
+                [headingList[3]]: moment(uusittavaKayttooikeusRyhma.voimassaPvm).format(),
                 [headingList[4]]: moment(uusittavaKayttooikeusRyhma.kasitelty).format() + ' / '
                 + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
                 [headingList[5]]: this.props.notifications.existingKayttooikeus.some(notification => {
@@ -70,6 +68,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     };
 
     render() {
+        this.createRows(this.headingList.map(heading => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
                 <Notifications notifications={this.props.notifications.existingKayttooikeus}
