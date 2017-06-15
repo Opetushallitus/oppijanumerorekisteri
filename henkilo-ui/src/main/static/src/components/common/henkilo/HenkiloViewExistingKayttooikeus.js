@@ -63,7 +63,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this.setState({
             dates: dates,
         });
-    }
+    };
 
     createRows(headingList) {
         this._rows = this.props.kayttooikeus.kayttooikeus
