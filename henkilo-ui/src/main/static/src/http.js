@@ -21,7 +21,7 @@ export const http = {
             "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
     }).then(parseResponse),
-    delete: (url, externalPermissionService) => fetch(url, {
+    delete: (url) => fetch(url, {
         method: 'DELETE',
         credentials: 'include',
         mode: 'cors',
@@ -29,7 +29,7 @@ export const http = {
             "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
     }).then(parseResponse),
-    put: (url, payload, externalPermissionService) => fetch(url, {
+    put: (url, payload) => fetch(url, {
         credentials: 'include',
         method: 'PUT',
         body: JSON.stringify(payload),
@@ -39,7 +39,7 @@ export const http = {
         },
         mode: 'cors',
     }).then(parseResponse),
-    post: (url, payload, externalPermissionService) => fetch(url, {
+    post: (url, payload) => fetch(url, {
         credentials: 'include',
         method: 'POST',
         body: JSON.stringify(payload),

@@ -1,5 +1,5 @@
 import React from 'react'
-import dateformat from 'dateformat'
+import DatePicker from 'react-datepicker'
 
 const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L}) =>
     <tr key="kayttooikeusKestoField">
@@ -9,13 +9,19 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
         <td>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
-                <input className="oph-input" defaultValue={dateformat(alkaaInitValue, L['PVM_FORMAATTI'])}
-                       onChange={alkaaPvmAction} />
+                <DatePicker className="oph-input"
+                            onChange={alkaaPvmAction}
+                            selected={alkaaInitValue}
+                            showYearDropdown
+                            showWeekNumbers />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
-                <input className="oph-input" defaultValue={dateformat(paattyyInitValue, L['PVM_FORMAATTI'])}
-                       onChange={paattyyPvmAction} />
+                <DatePicker className="oph-input"
+                            onChange={paattyyPvmAction}
+                            selected={paattyyInitValue}
+                            showYearDropdown
+                            showWeekNumbers />
             </div>
         </td>
         <td/>

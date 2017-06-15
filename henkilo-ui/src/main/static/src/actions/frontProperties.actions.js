@@ -13,7 +13,7 @@ const receivedFrontProperties = () => ({
 export const fetchFrontProperties = () => (dispatch) => {
     dispatch(requestFrontProperties());
     urls.addProperties(frontUrls);
-    urls.load({overrides: '/henkilo-ui/config/frontProperties',})
+    return urls.load({overrides: '/henkilo-ui/config/frontProperties',})
         .then(() => {
             dispatch(receivedFrontProperties());
             // Fetch localisations

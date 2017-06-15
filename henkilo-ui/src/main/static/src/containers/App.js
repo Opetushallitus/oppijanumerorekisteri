@@ -3,13 +3,17 @@ import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 import Loader from "../components/common/icons/Loader";
+import moment from 'moment'
 
 
 class App extends React.Component{
     render() {
+        if(this.isInitialized()) {
+            moment.locale(this.props.locale);
+            moment.defaultFormat = this.props.l10n.localisations[this.props.locale]['PVM_FORMAATTI'];
+        }
         return (
-            this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
-                && this.props.omattiedot !== undefined && this.props.prequelsNotLoadedCount === 0
+            this.isInitialized()
                 ? <div className="oph-typography mainContainer">
                 <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
                                l10n={this.props.l10n.localisations[this.props.locale]} />
@@ -20,6 +24,11 @@ class App extends React.Component{
                 : <div><Loader /></div>
         )
     };
+
+    isInitialized() {
+        return this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
+        && this.props.omattiedot !== undefined && this.props.prequelsNotLoadedCount === 0;
+    }
 
     componentDidMount() {
         this.props.fetchFrontProperties();

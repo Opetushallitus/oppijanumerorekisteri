@@ -21,7 +21,8 @@ import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
     CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
     CREATE_KAYTTOOIKEUSANOMUS_SUCCESS,
-    CREATE_KAYTTOOIKEUSANOMUS_FAILURE
+    CREATE_KAYTTOOIKEUSANOMUS_FAILURE, REMOVE_KAYTTOOIKEUS_REQUEST, REMOVE_KAYTTOOIKEUS_SUCCESS,
+    REMOVE_KAYTTOOIKEUS_FAILURE
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
@@ -146,4 +147,21 @@ export const createKayttooikeusanomus = (anomusData) => async dispatch => {
         console.error(`Failed creating new kayttooikeusanomus for henkilo: ${anomusData.anojaOid}`, error);
         throw error;
     }
+};
+
+// Remove käyttöoikeus from henkilo in given organisation
+const removePrivilegeRequest = data => ({type: REMOVE_KAYTTOOIKEUS_REQUEST, ...data});
+const removePrivilegeSuccess = data => ({type: REMOVE_KAYTTOOIKEUS_SUCCESS, ...data});
+const removePrivilegeFailure = (error, data) => ({type: REMOVE_KAYTTOOIKEUS_FAILURE, error, ...data});
+
+export const removePrivilege = (oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId) => dispatch => {
+    const data = {oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId};
+    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-remove', oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId);
+    dispatch(removePrivilegeRequest(data));
+    http.delete(url)
+        .then(() => {
+            dispatch(removePrivilegeSuccess(data));
+            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
+        })
+        .catch(error => dispatch(removePrivilegeFailure(error, data)));
 };

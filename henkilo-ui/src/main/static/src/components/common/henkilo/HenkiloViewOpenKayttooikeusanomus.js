@@ -1,13 +1,14 @@
 import './HenkiloViewOpenKayttooikeusanomus.css'
 import React from 'react'
 import Table from '../table/Table'
-import dateformat from 'dateformat'
-import StaticUtils from "../StaticUtils";
-import MyonnaButton from "./buttons/MyonnaButton";
-import HylkaaButton from "./buttons/HylkaaButton";
-import Button from "../button/Button";
-import { urls } from "oph-urls-js";
-import { http } from "../../../http";
+import moment from 'moment'
+import DatePicker from 'react-datepicker'
+import StaticUtils from "../StaticUtils"
+import MyonnaButton from "./buttons/MyonnaButton"
+import HylkaaButton from "./buttons/HylkaaButton"
+import Button from "../button/Button"
+import { urls } from "oph-urls-js"
+import { http } from "../../../http"
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -34,32 +35,45 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
-        this.dates = this.props.kayttooikeus.kayttooikeusAnomus.map(kayttooikeusAnomus => ({
-            alkupvm: Date.now(),
-            loppupvm: StaticUtils.datePlusOneYear(Date.now())
-        }));
 
         this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
-                dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
-                dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
+                this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
+                this.state.dates[idx].loppupvm.format(this.L['PVM_DBFORMAATTI']),
                 this.props.oidHenkilo);
         };
+
+        this.state = {
+            dates: this.props.kayttooikeus.kayttooikeusAnomus.map(kayttooikeusAnomus => ({
+                alkupvm: moment(),
+                loppupvm: moment().add(1, 'years'),
+            })),
+        }
+    };
+
+    loppupvmAction(value, idx) {
+        const dates = [...this.state.dates];
+        dates[idx].loppupvm = value;
+        this.setState({
+            dates: dates,
+        });
     };
 
     createRows() {
         const headingList = this.headingList.map(heading => heading.key);
-        return this.props.kayttooikeus.kayttooikeusAnomus
+        this._rows = this.props.kayttooikeus.kayttooikeusAnomus
             .map((haettuKayttooikeusRyhma, idx) => ({
-                [headingList[0]]: dateformat(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm), this.L['PVM_FORMAATTI']),
+                [headingList[0]]: moment(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm)).format(),
                 [headingList[1]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale]
                 + ' ('+ StaticUtils.flatArray(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit) + ')',
                 [headingList[2]]: haettuKayttooikeusRyhma.kayttoOikeusRyhma.description.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[3]]: <span>{dateformat(this.dates[idx].alkupvm, this.L['PVM_FORMAATTI'])}</span>,
-                [headingList[4]]: <input className="oph-input" defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
-                                         onChange={(event) => {this.dates[idx].loppupvm =
-                                             StaticUtils.ddmmyyyyToDate(event.target.value);}} />,
+                [headingList[3]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
+                [headingList[4]]: <DatePicker className="oph-input"
+                                              onChange={(value) => this.loppupvmAction(value, idx)}
+                                              selected={this.state.dates[idx].loppupvm}
+                                              showYearDropdown
+                                              showWeekNumbers />,
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
                 [headingList[6]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));
@@ -71,13 +85,13 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 <Button action={this.cancelAnomus.bind(this, haettuKayttooikeusRyhma, idx)}>{this.L['HENKILO_KAYTTOOIKEUSANOMUS_PERU']}</Button>
             </div>
         </div>
-    }
+    };
 
     anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx) {
         return <div>
             <div style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                    'MYONNETTY', idx)} henkilo={this.props.henkilo} L={this.L}/>
+                    'MYONNETTY', idx)} L={this.L}/>
             </div>
             <div style={{display: 'table-cell'}}>
                 <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
@@ -85,7 +99,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             </div>
 
         </div>
-    }
+    };
 
     async cancelAnomus(haettuKayttooikeusRyhma, idx) {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
@@ -94,6 +108,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     }
 
     render() {
+        this.createRows();
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>
@@ -102,7 +117,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                     </div>
                     <div>
                         <Table headings={this.tableHeadings}
-                               data={this.createRows()}
+                               data={this._rows}
                                noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']} />
                     </div>
                 </div>

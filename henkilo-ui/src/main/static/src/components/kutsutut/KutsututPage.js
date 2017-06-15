@@ -1,5 +1,5 @@
 import React from 'react';
-import dateformat from 'dateformat';
+import moment from 'moment';
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import './KutsututPage.css';
@@ -55,7 +55,7 @@ export default class KutsututPage extends React.Component {
                             </tr>
                             <tr>
                                 <th>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
-                                <td>{dateformat(new Date(this.state.confirmDeleteFor.aikaleima), L['PVM_FORMAATTI'])}</td>
+                                <td>{moment(new Date(this.state.confirmDeleteFor.aikaleima)).format()}</td>
                             </tr>
                             </tbody>
                         </table>

@@ -1,7 +1,7 @@
 import './HenkiloViewUserContent.css'
 import React from 'react'
 import Columns from 'react-columns'
-import dateformat from 'dateformat'
+import moment from 'moment'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 
@@ -111,7 +111,7 @@ class HenkiloViewUserContent extends React.Component{
         const fieldpath = event.target.name;
         this.setState({
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, fieldpath,
-                dateformat(StaticUtils.ddmmyyyyToDate(value), this.props.l10n[this.props.locale]['PVM_DBFORMAATTI'])),
+                moment(StaticUtils.ddmmyyyyToDate(value)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI'])),
         });
     };
 

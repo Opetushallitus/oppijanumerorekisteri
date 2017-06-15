@@ -1,54 +1,68 @@
 import './HenkiloViewExpiredKayttooikeus.css'
 import React from 'react'
 import Table from '../table/Table'
-import dateformat from 'dateformat'
-import StaticUtils from "../StaticUtils";
+import moment from 'moment'
+import DatePicker from "react-datepicker";
 import MyonnaButton from "./buttons/MyonnaButton";
 import Notifications from "../notifications/Notifications";
+import SuljeButton from "./buttons/SuljeButton";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
+        oidHenkilo: React.PropTypes.string.isRequired,
         kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
         notifications: React.PropTypes.shape({
             existingKayttooikeus: React.PropTypes.array.isRequired,
         }),
         removeNotification: React.PropTypes.func,
+        removePrivilege: React.PropTypes.func,
     };
 
     constructor(props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        this.headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA', minWidth: 200,},
+        this.headingList = [
+            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA', minWidth: 200,},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS', minWidth: 150,},
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125,},
-            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 125, notSortable: true},
+            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 150, notSortable: true},
+            {key: 'HENKILO_KAYTTOOIKEUS_SULJE', notSortable: true},
             {key: 'HIGHLIGHT', hide: true}
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || heading.key}));
 
-        this.dates = this.props.kayttooikeus.kayttooikeus
-            .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
-            .map(kayttooikeusAnomus => ({
-                alkupvm: Date.now(),
-                loppupvm: StaticUtils.datePlusOneYear(Date.now())
-            }));
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
-                alkupvm: dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
-                loppupvm: dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
+                alkupvm: moment(this.state.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
+                loppupvm: moment(this.state.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
             }]);
         };
 
-        this.createRows(this.headingList.map(heading => heading.key));
+        this.state = {
+            dates: this.props.kayttooikeus.kayttooikeus
+                .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
+                .map(kayttooikeusAnomus => ({
+                    alkupvm: moment(),
+                    loppupvm: moment().add(1, 'years')
+                })),
+        };
+    };
+
+    loppupvmAction(value, idx) {
+        const dates = [...this.state.dates];
+        dates[idx].loppupvm = value;
+        this.setState({
+            dates: dates,
+        });
     };
 
     createRows(headingList) {
@@ -63,28 +77,29 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
                     [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                         .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                    [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
-                    [headingList[3]]: dateformat(new Date(uusittavaKayttooikeusRyhma.voimassaPvm), this.L['PVM_FORMAATTI']),
-                    [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + ' / '
+                    [headingList[2]]: moment(new Date(uusittavaKayttooikeusRyhma.alkuPvm)).format(),
+                    [headingList[3]]: moment(new Date(uusittavaKayttooikeusRyhma.voimassaPvm)).format(),
+                    [headingList[4]]: moment(uusittavaKayttooikeusRyhma.kasitelty).format() + ' / '
                     + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
                     [headingList[5]]: <div>
                         <div style={{display: 'table-cell', paddingRight: '10px'}}>
-                            <input className="oph-input"
-                                   defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
-                                   onChange={(event) => {
-                                       this.dates[idx].loppupvm =
-                                           StaticUtils.ddmmyyyyToDate(event.target.value);
-                                   }}/>
+                            <DatePicker className="oph-input"
+                                        onChange={(value) => this.loppupvmAction(value, idx)}
+                                        selected={this.state.dates[idx].loppupvm}
+                                        showYearDropdown
+                                        showWeekNumbers />
                         </div>
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton
                                 myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
                                     uusittavaKayttooikeusRyhma.organisaatioOid)}
-                                henkilo={this.props.henkilo}
                                 L={this.L}/>
                         </div>
                     </div>,
-                    [headingList[6]]: this.props.notifications.existingKayttooikeus.some(notification => {
+                    [headingList[6]]: <SuljeButton suljeAction={() => this.props.removePrivilege(this.props.oidHenkilo,
+                        uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)}
+                                                   L={this.L} />,
+                    [headingList[7]]: this.props.notifications.existingKayttooikeus.some(notification => {
                         return notification.ryhmaIdList
                             .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
@@ -94,6 +109,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     };
 
     render() {
+        this.createRows(this.headingList.map(heading => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
                 <Notifications notifications={this.props.notifications.existingKayttooikeus}
