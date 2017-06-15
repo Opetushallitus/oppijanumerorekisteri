@@ -1,5 +1,5 @@
 import React from 'react';
-import dateformat from 'dateformat';
+import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
@@ -52,7 +52,7 @@ export default class KutsututTable extends React.Component {
     }
 
     createKutsuLahetettyCell(kutsu) {
-        return dateformat(new Date(kutsu.aikaleima), this.props.L['PVM_FORMAATTI']);
+        return moment(new Date(kutsu.aikaleima)).format();
     }
 
     createPeruutaCell(kutsu) {

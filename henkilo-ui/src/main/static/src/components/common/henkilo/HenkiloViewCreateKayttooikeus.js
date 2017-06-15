@@ -1,7 +1,7 @@
 import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
 import StaticUtils from "../StaticUtils"
-import dateformat from 'dateformat';
+import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component'
 import CKKohde from "./createkayttooikeus/CKKohde";
 import CKKesto from "./createkayttooikeus/CKKesto";
@@ -82,8 +82,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
                 this.state.selectedList.map(selected => ({
                     id: selected.value,
                     kayttoOikeudenTila: 'MYONNA',
-                    alkupvm: dateformat(this.kayttooikeusModel.alkupvm, this.L['PVM_DBFORMAATTI']),
-                    loppupvm: dateformat(this.kayttooikeusModel.loppupvm, this.L['PVM_DBFORMAATTI']),
+                    alkupvm: moment(this.kayttooikeusModel.alkupvm).format(this.L['PVM_DBFORMAATTI']),
+                    loppupvm: moment(this.kayttooikeusModel.loppupvm).format(this.L['PVM_DBFORMAATTI']),
                 })));
             // clear
             this.kayttooikeusModel = this.initialKayttooikeusModel();

@@ -1,7 +1,7 @@
 import './HenkiloViewExpiredKayttooikeus.css'
 import React from 'react'
 import Table from '../table/Table'
-import dateformat from 'dateformat'
+import moment from 'moment'
 import StaticUtils from "../StaticUtils";
 import MyonnaButton from "./buttons/MyonnaButton";
 import Notifications from "../notifications/Notifications";
@@ -48,8 +48,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
-                alkupvm: dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
-                loppupvm: dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
+                alkupvm: moment(this.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
+                loppupvm: moment(this.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
             }]);
         };
 
@@ -68,14 +68,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     (uusittavaKayttooikeusRyhma.tehtavanimike ? ' / ' + uusittavaKayttooikeusRyhma.tehtavanimike : ''),
                     [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                         .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                    [headingList[2]]: dateformat(new Date(uusittavaKayttooikeusRyhma.alkuPvm), this.L['PVM_FORMAATTI']),
-                    [headingList[3]]: dateformat(new Date(uusittavaKayttooikeusRyhma.voimassaPvm), this.L['PVM_FORMAATTI']),
-                    [headingList[4]]: dateformat(uusittavaKayttooikeusRyhma.kasitelty, this.L['PVM_FORMAATTI']) + ' / '
+                    [headingList[2]]: moment(new Date(uusittavaKayttooikeusRyhma.alkuPvm)).format(),
+                    [headingList[3]]: moment(new Date(uusittavaKayttooikeusRyhma.voimassaPvm)).format(),
+                    [headingList[4]]: moment(uusittavaKayttooikeusRyhma.kasitelty).format() + ' / '
                     + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
                     [headingList[5]]: <div>
                         <div style={{display: 'table-cell', paddingRight: '10px'}}>
                             <input className="oph-input"
-                                   defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
+                                   defaultValue={moment(this.dates[idx].loppupvm).format()}
                                    onChange={(event) => {
                                        this.dates[idx].loppupvm =
                                            StaticUtils.ddmmyyyyToDate(event.target.value);

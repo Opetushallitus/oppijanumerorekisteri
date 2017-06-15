@@ -1,5 +1,5 @@
 import React from 'react'
-import dateformat from 'dateformat'
+import moment from 'moment'
 import LabelValue from "./LabelValue"
 import StaticUtils from "../../StaticUtils";
 
@@ -7,7 +7,7 @@ const Syntymaaika = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_SYNTYMAAIKA',
     inputValue: 'syntymaaika',
     date: true,
-    value: dateformat(new Date(props.henkilo.henkilo.syntymaaika), props.L['PVM_FORMAATTI']),
+    value: moment(new Date(props.henkilo.henkilo.syntymaaika)).format(),
     disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
 }} />;
 

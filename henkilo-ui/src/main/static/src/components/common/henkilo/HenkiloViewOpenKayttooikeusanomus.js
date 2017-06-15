@@ -1,7 +1,7 @@
 import './HenkiloViewOpenKayttooikeusanomus.css'
 import React from 'react'
 import Table from '../table/Table'
-import dateformat from 'dateformat'
+import moment from 'moment'
 import StaticUtils from "../StaticUtils";
 import MyonnaButton from "./buttons/MyonnaButton";
 import HylkaaButton from "./buttons/HylkaaButton";
@@ -41,8 +41,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
         this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
-                dateformat(this.dates[idx].alkupvm, this.L['PVM_DBFORMAATTI']),
-                dateformat(this.dates[idx].loppupvm, this.L['PVM_DBFORMAATTI']),
+                moment(this.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
+                moment(this.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
                 this.props.oidHenkilo);
         };
     };
@@ -51,13 +51,13 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         const headingList = this.headingList.map(heading => heading.key);
         return this.props.kayttooikeus.kayttooikeusAnomus
             .map((haettuKayttooikeusRyhma, idx) => ({
-                [headingList[0]]: dateformat(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm), this.L['PVM_FORMAATTI']),
+                [headingList[0]]: moment(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm)).format(),
                 [headingList[1]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale]
                 + ' ('+ StaticUtils.flatArray(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit) + ')',
                 [headingList[2]]: haettuKayttooikeusRyhma.kayttoOikeusRyhma.description.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[3]]: <span>{dateformat(this.dates[idx].alkupvm, this.L['PVM_FORMAATTI'])}</span>,
-                [headingList[4]]: <input className="oph-input" defaultValue={dateformat(this.dates[idx].loppupvm, this.L['PVM_FORMAATTI'])}
+                [headingList[3]]: <span>{moment(this.dates[idx].alkupvm).format()}</span>,
+                [headingList[4]]: <input className="oph-input" defaultValue={moment(this.dates[idx].loppupvm).format()}
                                          onChange={(event) => {this.dates[idx].loppupvm =
                                              StaticUtils.ddmmyyyyToDate(event.target.value);}} />,
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],

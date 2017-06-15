@@ -1,5 +1,5 @@
 import React from 'react'
-import dateformat from 'dateformat'
+import moment from 'moment'
 
 const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L}) =>
     <tr key="kayttooikeusKestoField">
@@ -9,12 +9,12 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
         <td>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
-                <input className="oph-input" defaultValue={dateformat(alkaaInitValue, L['PVM_FORMAATTI'])}
+                <input className="oph-input" defaultValue={moment(alkaaInitValue).format()}
                        onChange={alkaaPvmAction} />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
-                <input className="oph-input" defaultValue={dateformat(paattyyInitValue, L['PVM_FORMAATTI'])}
+                <input className="oph-input" defaultValue={moment(paattyyInitValue).format()}
                        onChange={paattyyPvmAction} />
             </div>
         </td>

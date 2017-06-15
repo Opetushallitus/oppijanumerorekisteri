@@ -1,7 +1,7 @@
 import './HenkiloViewExistingKayttooikeus.css'
 import React from 'react'
 import Table from '../table/Table'
-import dateformat from 'dateformat'
+import moment from 'moment'
 
 class HenkiloViewExpiredKayttooikeus extends React.Component {
     static propTypes = {
@@ -32,8 +32,8 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
                 [headingList[1]]: kayttooikeus.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: this.L[kayttooikeus.tila],
-                [headingList[3]]: dateformat(new Date(kayttooikeus.voimassaPvm), this.L['PVM_FORMAATTI']),
-                [headingList[4]]: dateformat(kayttooikeus.kasitelty, this.L['PVM_FORMAATTI']) + ' / ' + kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid,
+                [headingList[3]]: moment(new Date(kayttooikeus.voimassaPvm)).format(),
+                [headingList[4]]: moment(kayttooikeus.kasitelty).format() + ' / ' + kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid,
             }));
     };
 
