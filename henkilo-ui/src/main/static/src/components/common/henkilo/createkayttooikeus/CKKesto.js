@@ -13,7 +13,7 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             onChange={alkaaPvmAction}
                             selected={alkaaInitValue}
                             showYearDropdown
-                            showWeekNumbers dateFormats="DD.MM.YYYY" />
+                            showWeekNumbers />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
