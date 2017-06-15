@@ -1,4 +1,5 @@
 import React from 'react'
+import DatePicker from 'react-datepicker'
 import moment from 'moment'
 
 const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L}) =>
@@ -9,13 +10,15 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
         <td>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
-                <input className="oph-input" defaultValue={moment(alkaaInitValue).format()}
-                       onChange={alkaaPvmAction} />
+                <DatePicker className="oph-input"
+                            onChange={alkaaPvmAction}
+                            selected={moment(alkaaInitValue)} />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
-                <input className="oph-input" defaultValue={moment(paattyyInitValue).format()}
-                       onChange={paattyyPvmAction} />
+                <DatePicker className="oph-input"
+                            onChange={paattyyPvmAction}
+                            selected={moment(paattyyInitValue)} />
             </div>
         </td>
         <td/>

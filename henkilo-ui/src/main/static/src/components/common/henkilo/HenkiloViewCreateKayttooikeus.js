@@ -1,6 +1,5 @@
 import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
-import StaticUtils from "../StaticUtils"
 import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component'
 import CKKohde from "./createkayttooikeus/CKKohde";
@@ -24,8 +23,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
         this.initialKayttooikeusModel = () => ({
             kayttokohdeOrganisationOid: '',
             myonnettavatOikeudet: [],
-            alkupvm: new Date(),
-            loppupvm: StaticUtils.datePlusOneYear(new Date()),
+            alkupvm: moment(),
+            loppupvm: moment().add(1, 'years'),
         });
         this.initialState = {
             selectedList: [],
@@ -69,12 +68,12 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
             this.setState(newState);
         };
 
-        this.kestoAlkaaAction = (event) => {
-            this.kayttooikeusModel.alkupvm = StaticUtils.ddmmyyyyToDate(event.target.value);
+        this.kestoAlkaaAction = (value) => {
+            this.kayttooikeusModel.alkupvm = value;
         };
 
-        this.kestoPaattyyAction = (event) => {
-            this.kayttooikeusModel.loppupvm = StaticUtils.ddmmyyyyToDate(event.target.value);
+        this.kestoPaattyyAction = (value) => {
+            this.kayttooikeusModel.loppupvm = value;
         };
 
         this.createKayttooikeusAction = () => {

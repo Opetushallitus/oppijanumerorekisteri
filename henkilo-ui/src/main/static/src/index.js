@@ -12,6 +12,7 @@ import './reset.css';
 import './general-style.css';
 import 'oph-virkailija-style-guide/oph-styles.css'
 import './index.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 let store = configureStore();
 const browserHistory = useRouterHistory(createHistory)({
