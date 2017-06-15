@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
@@ -64,6 +65,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final PermissionChecker permissionChecker;
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final HenkiloCreatePostValidator henkiloCreatePostValidator;
+    private final HakuappClient hakuappClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
@@ -83,7 +85,8 @@ public class HenkiloServiceImpl implements HenkiloService {
                               HenkiloUpdatePostValidator henkiloUpdatePostValidator,
                               HenkiloCreatePostValidator henkiloCreatePostValidator,
                               OppijanumerorekisteriProperties oppijanumerorekisteriProperties,
-                              KayttooikeusClient kayttooikeusClient) {
+                              KayttooikeusClient kayttooikeusClient,
+                              HakuappClient hakuappClient) {
         this.henkiloJpaRepository = henkiloJpaRepository;
         this.henkiloDataRepository = henkiloDataRepository;
         this.henkiloViiteRepository = henkiloViiteRepository;
@@ -98,6 +101,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         this.henkiloCreatePostValidator = henkiloCreatePostValidator;
         this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
         this.kayttooikeusClient = kayttooikeusClient;
+        this.hakuappClient = hakuappClient;
     }
 
     @Override
@@ -544,10 +548,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
-
         List<Henkilo> candidates = this.henkiloJpaRepository.findDuplicates(henkilo);
-
-        return this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class);
+        List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class);
+        Set<String> duplicateOids = henkiloDuplicateDtos.stream().map( h -> h.getOidHenkilo() ).collect(toSet());
+        Map<String, List<Map<String, Object>>> hakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
+        henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakemukset.get(h.getOidHenkilo())));
+        return henkiloDuplicateDtos;
     }
 
     @Override

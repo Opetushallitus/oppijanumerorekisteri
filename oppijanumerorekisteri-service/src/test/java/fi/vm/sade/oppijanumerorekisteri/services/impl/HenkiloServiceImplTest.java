@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
+import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
@@ -77,6 +78,8 @@ public class HenkiloServiceImplTest {
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
     @Mock
     private KayttooikeusClient kayttooikeusClient;
+    @Mock
+    private HakuappClient hakuappClient;
 
     @Before
     public void setup() {
@@ -84,7 +87,7 @@ public class HenkiloServiceImplTest {
                 orikaConfiguration, yhteystietoConverter, oidGenerator,
                 userDetailsHelper, kielisyysRepository, kansalaisuusRepository,
                 permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties,
-                kayttooikeusClient);
+                kayttooikeusClient, hakuappClient);
     }
 
     @Test

@@ -57,6 +57,9 @@ authentication:
   vtj:
     username: {{authentication_app_username_to_vtj}}
     password: {{authentication_app_password_to_vtj}}
+  hakuapp:
+    username: {{authentication_app_username_to_haku}}
+    password: {{authentication_app_password_to_haku}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000
