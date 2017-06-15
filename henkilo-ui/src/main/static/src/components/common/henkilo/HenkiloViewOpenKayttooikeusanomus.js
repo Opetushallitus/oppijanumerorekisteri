@@ -77,7 +77,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         return <div>
             <div style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                    'MYONNETTY', idx)} henkilo={this.props.henkilo} L={this.L}/>
+                    'MYONNETTY', idx)} L={this.L}/>
             </div>
             <div style={{display: 'table-cell'}}>
                 <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(

@@ -13,7 +13,8 @@ import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, updateHaettuKayttooikeusryhma
+    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, removePrivilege,
+    updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 import EditButton from "../common/henkilo/buttons/EditButton";
@@ -111,4 +112,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification,})(VirkailijaViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, removePrivilege})(VirkailijaViewContainer);
