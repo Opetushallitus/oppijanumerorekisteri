@@ -1,6 +1,5 @@
 import React from 'react'
 import DatePicker from 'react-datepicker'
-import moment from 'moment'
 
 const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L}) =>
     <tr key="kayttooikeusKestoField">

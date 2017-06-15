@@ -37,24 +37,33 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || heading.key}));
 
-        this.dates = this.props.kayttooikeus.kayttooikeus
-            .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
-            .map(kayttooikeusAnomus => ({
-                alkupvm: moment(),
-                loppupvm: moment().add(1, 'years')
-            }));
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
-                alkupvm: moment(this.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
-                loppupvm: moment(this.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
+                alkupvm: moment(this.state.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
+                loppupvm: moment(this.state.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
             }]);
         };
 
-        this.createRows(this.headingList.map(heading => heading.key));
+        this.state = {
+            dates: this.props.kayttooikeus.kayttooikeus
+                .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
+                .map(kayttooikeusAnomus => ({
+                    alkupvm: moment(),
+                    loppupvm: moment().add(1, 'years')
+                })),
+        };
     };
+
+    loppupvmAction(value, idx) {
+        const dates = [...this.state.dates];
+        dates[idx].loppupvm = value;
+        this.setState({
+            dates: dates,
+        });
+    }
 
     createRows(headingList) {
         this._rows = this.props.kayttooikeus.kayttooikeus
@@ -75,8 +84,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     [headingList[5]]: <div>
                         <div style={{display: 'table-cell', paddingRight: '10px'}}>
                             <DatePicker className="oph-input"
-                                        onChange={(value) => {this.dates[idx].loppupvm = value}}
-                                        selected={this.dates[idx].loppupvm}
+                                        onChange={(value) => this.loppupvmAction(value, idx)}
+                                        selected={this.state.dates[idx].loppupvm}
                                         showYearDropdown
                                         showWeekNumbers />
                         </div>
@@ -100,6 +109,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     };
 
     render() {
+        this.createRows(this.headingList.map(heading => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
                 <Notifications notifications={this.props.notifications.existingKayttooikeus}
