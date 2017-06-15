@@ -1,10 +1,34 @@
-import React from 'react';
+import React from 'react'
+import {connect} from 'react-redux'
+import Loader from '../components/common/icons/Loader'
+import AnomusPage from '../components/anomus/AnomusPage'
+import {fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
+import {updateHaettuKayttooikeusryhma} from '../actions/kayttooikeusryhma.actions'
 
-const AnomusPageContainer = () => (
-    <div className="header">
-        <h2>Hyväksymättömät käyttöoikeusanomukset</h2>
-    </div>
-);
+class AnomusPageContainer extends React.Component {
+    componentDidMount() {
+        this.props.fetchHaetutKayttooikeusryhmat();
+    }
+    render() {
+        return (
+          <div className="header">
+            { this.props.haetutKayttooikeusryhmatLoading ? <Loader /> : <AnomusPage {...this.props}></AnomusPage> }
+          </div>
+        );
+    }
+};
 
-export default AnomusPageContainer;
+const mapStateToProps = (state) => {
+    return {
+        l10n: state.l10n.localisations,
+        locale: state.locale,
+        kayttooikeus: {
+            kayttooikeusAnomus: state.haetutKayttooikeusryhmat.data,
+            grantableKayttooikeusLoading: true,
+        },
+        organisaatioCache: state.organisaatio.cached,
+        haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.loading,
+    };
+};
 
+export default connect(mapStateToProps, {fetchHaetutKayttooikeusryhmat, updateHaettuKayttooikeusryhma})(AnomusPageContainer);
