@@ -12,13 +12,17 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
                 <DatePicker className="oph-input"
                             onChange={alkaaPvmAction}
-                            selected={moment(alkaaInitValue)} />
+                            selected={alkaaInitValue}
+                            showYearDropdown
+                            showWeekNumbers dateFormats="DD.MM.YYYY" />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
                 <DatePicker className="oph-input"
                             onChange={paattyyPvmAction}
-                            selected={moment(paattyyInitValue)} />
+                            selected={paattyyInitValue}
+                            showYearDropdown
+                            showWeekNumbers />
             </div>
         </td>
         <td/>

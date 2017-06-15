@@ -2,7 +2,7 @@ import './HenkiloViewExpiredKayttooikeus.css'
 import React from 'react'
 import Table from '../table/Table'
 import moment from 'moment'
-import StaticUtils from "../StaticUtils";
+import DatePicker from "react-datepicker";
 import MyonnaButton from "./buttons/MyonnaButton";
 import Notifications from "../notifications/Notifications";
 import SuljeButton from "./buttons/SuljeButton";
@@ -40,8 +40,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this.dates = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map(kayttooikeusAnomus => ({
-                alkupvm: Date.now(),
-                loppupvm: StaticUtils.datePlusOneYear(Date.now())
+                alkupvm: moment(),
+                loppupvm: moment().add(1, 'years')
             }));
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
@@ -74,12 +74,11 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
                     [headingList[5]]: <div>
                         <div style={{display: 'table-cell', paddingRight: '10px'}}>
-                            <input className="oph-input"
-                                   defaultValue={moment(this.dates[idx].loppupvm).format()}
-                                   onChange={(event) => {
-                                       this.dates[idx].loppupvm =
-                                           StaticUtils.ddmmyyyyToDate(event.target.value);
-                                   }}/>
+                            <DatePicker className="oph-input"
+                                        onChange={(value) => {this.dates[idx].loppupvm = value}}
+                                        selected={this.dates[idx].loppupvm}
+                                        showYearDropdown
+                                        showWeekNumbers />
                         </div>
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton
