@@ -88,12 +88,12 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
-                .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
+                .json("[{\"slaveOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{\"henkiloOids\": [\"CHILD\"]}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
-                .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
+                .json("[{\"slaveOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
     }
 
     @Test
