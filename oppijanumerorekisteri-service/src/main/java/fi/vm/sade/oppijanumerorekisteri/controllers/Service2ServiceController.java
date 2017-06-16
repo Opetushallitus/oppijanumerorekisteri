@@ -1,13 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuCriteria;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHetuAndOidDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystiedotDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkilonYhteystiedotViewDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
@@ -111,8 +104,10 @@ public class Service2ServiceController {
 
     @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
     @PostMapping("/henkilo/perustiedot")
-    public Iterable<HenkiloHakuDto> list(@RequestBody HenkiloHakuCriteria criteria) {
-        return henkiloService.list(criteria);
+    public Iterable<HenkiloHakuDto> list(@Validated @RequestBody HenkiloHakuCriteria criteria,
+                                         @RequestParam(required = false) Long offset,
+                                         @RequestParam(required = false) Long amount) {
+        return henkiloService.list(criteria, offset, amount);
     }
 
     @ApiOperation("Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä")
@@ -135,4 +130,12 @@ public class Service2ServiceController {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
+    @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PostMapping("/henkilo/perustiedotAsAdmin")
+    public Iterable<HenkiloHakuPerustietoDto> listAsAdmin(@RequestParam(required = false) Long offset,
+                                                @RequestParam(required = false) Long limit,
+                                                @Validated @RequestBody HenkiloHakuCriteriaDto criteria) {
+        return this.henkiloService.list(criteria, offset, limit);
+    }
 }

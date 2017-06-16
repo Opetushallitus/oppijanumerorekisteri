@@ -42,19 +42,22 @@ public class HenkiloUpdatePostValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
-        String kasittelijaOid = this.userDetailsHelper.getCurrentUserOid();
 
-        Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
-        if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloUpdateDto.getHetu())) {
-            errors.rejectValue("hetu", "socialsecuritynr.already.exists");
+        if(henkiloUpdateDto.getHetu() != null) {
+            Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
+            if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloUpdateDto.getHetu())) {
+                errors.rejectValue("hetu", "socialsecuritynr.already.exists");
+            }
         }
 
-        KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
-        if (!kutsumanimiValidator.isValid(henkiloUpdateDto.getKutsumanimi())) {
-            errors.rejectValue("kutsumanimi",
-                    "kutsumanimi.must.exist.in.etunimet",
-                    new Object[]{henkiloUpdateDto.getKutsumanimi(), henkiloUpdateDto.getEtunimet()},
-                    "Kutsumanimen on oltava osa etunimeä");
+        if(henkiloUpdateDto.getKutsumanimi() != null && henkiloUpdateDto.getEtunimet() != null) {
+            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
+            if (!kutsumanimiValidator.isValid(henkiloUpdateDto.getKutsumanimi())) {
+                errors.rejectValue("kutsumanimi",
+                        "kutsumanimi.must.exist.in.etunimet",
+                        new Object[]{henkiloUpdateDto.getKutsumanimi(), henkiloUpdateDto.getEtunimet()},
+                        "Kutsumanimen on oltava osa etunimeä");
+            }
         }
 
         KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);

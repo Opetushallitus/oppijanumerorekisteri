@@ -1,13 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import java.util.Collection;
@@ -27,7 +24,7 @@ public interface HenkiloJpaRepository {
      * @param criteria hakukriteerit
      * @return henkilot
      */
-    List<HenkiloHakuDto> findBy(HenkiloCriteria criteria);
+    List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria);
 
     /**
      * Yleiskäyttöinen henkilöhaku.
@@ -37,7 +34,7 @@ public interface HenkiloJpaRepository {
      * @param offset sivutuksen offset
      * @return henkilot
      */
-    List<HenkiloHakuDto> findBy(HenkiloCriteria criteria, long limit, long offset);
+    List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
 
     /**
      * Yleiskäyttöinen henkilöhaku.
@@ -47,7 +44,9 @@ public interface HenkiloJpaRepository {
      * @param offset sivutuksen offset
      * @return henkilot
      */
-    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
+//    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
+
+    List<HenkiloHakuPerustietoDto> findPerustietoBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
 
     /**
      * Henkilöiden perustietojen ja yhteystietojen hakutoiminto. Henkilöllä voi
@@ -96,5 +95,7 @@ public interface HenkiloJpaRepository {
     List<Henkilo> findSlavesByMasterOid(String henkiloOid);
 
     List<Henkilo> findDuplicates(Henkilo henkilo);
+
+    Collection<Henkilo> findUnidentified(long limit, long offset);
 
 }

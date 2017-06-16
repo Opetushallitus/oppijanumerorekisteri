@@ -103,7 +103,8 @@ public class DtoUtils {
 
         return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu,
                 syntymaAika, "1", asiointikieli, aidinkieli,
-                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
+                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)),
+                HenkiloTyyppi.VIRKAILIJA);
     }
 
     public static YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(String yhteystietoArvo) {

@@ -51,7 +51,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findBy() {
         HenkiloCriteria criteria = new HenkiloCriteria();
 
-        List<HenkiloHakuDto> henkilot = this.jpaRepository.findBy(criteria, 5, 0);
+        List<HenkiloHakuDto> henkilot = this.jpaRepository.findBy(criteria, 5L, 0L);
 
         assertThat(henkilot).isEmpty();
     }

@@ -381,7 +381,7 @@ public class HenkiloServiceTest {
         assertThat(argument.getValue().getYhteystiedotRyhma())
                 .extracting("id", "ryhmaAlkuperaTieto", "ryhmaKuvaus")
                 .containsExactlyInAnyOrder(
-                        tuple(1L, "alkupera2", "yhteystietotyyppi7"),
+                        tuple(null, "alkupera2", "yhteystietotyyppi7"),
                         tuple(yhteystiedotRyhmaId, "alkupera1", "yhteystietotyyppi5"));
 
         assertThat(argument.getValue().getYhteystiedotRyhma())
