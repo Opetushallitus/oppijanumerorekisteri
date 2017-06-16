@@ -7,7 +7,9 @@ import {updateHaettuKayttooikeusryhma} from '../actions/kayttooikeusryhma.action
 
 class AnomusPageContainer extends React.Component {
     componentDidMount() {
-        this.props.fetchHaetutKayttooikeusryhmat();
+        this.props.fetchHaetutKayttooikeusryhmat({
+            tilat: ['ANOTTU']
+        });
     }
     render() {
         return (
