@@ -2,7 +2,7 @@ import React from 'react';
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
 import R from 'ramda';
-
+import DuplikaattiColumn from './DuplikaattiColumn';
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 
@@ -75,37 +75,21 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     <span>{master.muutHakemukset}</span>
                     <span><input type="checkbox" disabled={true} checked={true}/></span>
                 </div>
-                { duplicates.map( (duplicate) => {
-                const hakemus = duplicate.hakemukset ? R.head(duplicate.hakemukset) : null;
-                const muutHakemukset = duplicate.hakemukset ? R.tail(duplicate.hakemukset) : null;
-                const contactInformation = hakemus ? this._parseContactInformation(locale, hakemus, koodisto) : {} ;
-                return <div className="person" key={duplicate.oidHenkilo}>
-                    <span className="type">{L['DUPLIKAATIT_DUPLIKAATTI']}</span>
-                    <span>{duplicate.hetu}</span>
-                    <span>{duplicate.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</span>
-                    <span>{duplicate.kutsumanimi}</span>
-                    <span>{duplicate.etunimet}</span>
-                    <span>{duplicate.sukunimi}</span>
-                    <span>{duplicate.sukupuoli === '2' ? L['HENKILO_YHTEISET_NAINEN'] : L['HENKILO_YHTEISET_MIES']}</span>
-                    <span>{duplicate.syntymaaika}</span>
-                    <span>{duplicate.oidHenkilo}</span>
-                    <span>{contactInformation.kansalaisuus}</span>
-                    <span>{contactInformation.aidinkieli}</span>
-                    <span>{contactInformation.matkapuhelinnumero}</span>
-                    <span>{contactInformation.sahkoposti}</span>
-                    <span>{contactInformation.lahiosoite}</span>
-                    <span>{contactInformation.postinumero}</span>
-                    <span>{contactInformation.passinumero}</span>
-                    <span>{contactInformation.kansallinenIdTunnus}</span>
-                    <span>{hakemus ? L[`DUPLIKAATIT_STATE_${hakemus.state}`] : ''}</span>
-                    <span>{hakemus ? hakemus.oid : ''}</span>
-                    <span>{muutHakemukset}</span>
-                    <span><input type="checkbox" onChange={this._setSelection.bind(this, duplicate.oidHenkilo)}/></span>
-                </div>
-                })}`
+                { duplicates.map((duplicate) => 
+                    <DuplikaattiColumn
+                        henkilo={duplicate}
+                        koodisto={koodisto}
+                        L={L}
+                        locale={locale}
+                        key={duplicate.oidHenkilo}
+                        classNames={{'person': true}}
+                        setSelection={this.setSelection.bind(this)}>
+                    </DuplikaattiColumn>
+                )}
 
             </div>
-            <Button disabled={this.state.selectedDuplicates.length === 0} action={this._link.bind(this)}>{L['DUPLIKAATIT_YHDISTA']}</Button>
+            <Button disabled={this.state.selectedDuplicates.length === 0}
+                    action={this._link.bind(this)}>{L['DUPLIKAATIT_YHDISTA']}</Button>
         </div>
     }
 
@@ -114,35 +98,14 @@ export default class HenkiloViewDuplikaatit extends React.Component {
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
     }
-    
-    _setSelection(oid) {
+
+    setSelection(oid) {
         const selectedDuplicates = R.contains(oid, this.state.selectedDuplicates) ?
-            R.reject( duplicateOid => duplicateOid === oid, this.state.selectedDuplicates) :
-            R.append(oid, this.state.selectedDuplicates) ;
-        this.setState({ selectedDuplicates });
+            R.reject(duplicateOid => duplicateOid === oid, this.state.selectedDuplicates) :
+            R.append(oid, this.state.selectedDuplicates);
+        this.setState({selectedDuplicates});
     }
 
-    _parseContactInformation(locale, hakemus, koodisto) {
-        const henkilotiedot = hakemus.answers.henkilotiedot;
-        const kansalaisuusLowercase = henkilotiedot.kansalaisuus ? henkilotiedot.kansalaisuus.toLowerCase() : undefined;
-        const maatjavaltioKoodisto = R.find( item => item.value === kansalaisuusLowercase, koodisto.maatjavaltiot1);
-        const kansalaisuus = maatjavaltioKoodisto[locale];
-        const aidinkieliLowercase = henkilotiedot.aidinkieli ? henkilotiedot.aidinkieli.toLowerCase() : undefined;
-        const aidinkieliKoodisto = R.find( item => item.value === aidinkieliLowercase, koodisto.kieli);
-        const aidinkieli = aidinkieliKoodisto[locale];
-
-        return {
-            matkapuhelinnumero: henkilotiedot.matkapuhelinnumero1,
-            sahkoposti: henkilotiedot['Sähköposti'],
-            lahiosoite: henkilotiedot.lahiosoite,
-            postinumero: henkilotiedot.Postinumero,
-            passinumero: henkilotiedot.passinumero,
-            kansallinenIdTunnus: henkilotiedot.kansallinenIdTunnus,
-            kansalaisuus,
-            aidinkieli
-
-        }
-    }
 
 }
 

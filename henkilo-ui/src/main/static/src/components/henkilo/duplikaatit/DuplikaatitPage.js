@@ -11,8 +11,9 @@ export default class DuplikaatitPage extends React.Component {
 
     render() {
         const L = this.props.l10n[this.props.locale];
+        console.log(this.props);
         return <div className="wrapper">
-            <h3>{L['DUPLIKAATIT_HEADER']}</h3>
+            <h3>{L['DUPLIKAATIT_HEADER']}, {this.props.henkilo.henkilo.kutsumanimi} {this.props.henkilo.henkilo.sukunimi}</h3>
             <HenkiloViewDuplikaatit {...this.props}></HenkiloViewDuplikaatit>
         </div>
 

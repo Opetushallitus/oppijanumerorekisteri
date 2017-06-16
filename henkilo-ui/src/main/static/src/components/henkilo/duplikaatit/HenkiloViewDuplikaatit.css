@@ -12,55 +12,10 @@
 }
 
 
-#duplicates .person {
-    display: inline-block;
-    margin-left: 3px;
-    margin-top: 13px;
-    border: 1px solid rgba(212, 219, 226, 0.51);
-    border-radius: 2px;
-    padding: .8em 0;
-    padding-top: .4em;
-    vertical-align: top;
+.person.header > span:nth-child(1n) {
+    background: white;
 }
 
-#duplicates .person > span {
-    display: block;
-    height: 25px;
-    line-height: 25px;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-#duplicates .person > span.type {
-    text-transform: uppercase;
-    color: rgba(0, 0, 0, 0.66);
-    font-weight: normal;
-    text-align: center;
-    font-size: 12px;
-}
-
-#duplicates .person.header {
-    border: 0;
-    padding-left: 0;
-    margin-left: 0;
-    margin-top: 14px;
-}
-
-#duplicates .person > span:nth-child(2n) {
+.person.header > span:nth-child(2n) {
     background: #fbfbfb;
 }
-
-#duplicates .person.master {
-    font-weight: bold;
-    margin-left: -4px;
-}
-
-#duplicates .person.duplicate {
-    /* background: #f7f7f7; */
-}
-
-#duplicates .person > span:first-child {
-    height: 30px;
-    line-height: 30px;
-}
-
