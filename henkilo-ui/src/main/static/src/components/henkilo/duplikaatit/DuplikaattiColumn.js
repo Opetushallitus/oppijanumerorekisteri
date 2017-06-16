@@ -14,7 +14,8 @@ export default class DuplikaattiColumn extends React.Component {
         koodisto: React.PropTypes.object.isRequired,
         setSelection: React.PropTypes.func.isRequired,
         classNames: React.PropTypes.object,
-        isDisabled: React.PropTypes.bool
+        isDisabled: React.PropTypes.bool,
+        header: React.PropTypes.string.isRequired
     };
 
     componentWillMount() {
@@ -31,7 +32,7 @@ export default class DuplikaattiColumn extends React.Component {
         const L = this.props.L;
 
         return <div className={styleClasses}>
-            <span className="type">{L['DUPLIKAATIT_DUPLIKAATTI']}</span>
+            <span className="type">{L[this.props.header]}</span>
             <span>{henkilo.hetu}</span>
             <span>{henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</span>
             <span>{henkilo.kutsumanimi}</span>

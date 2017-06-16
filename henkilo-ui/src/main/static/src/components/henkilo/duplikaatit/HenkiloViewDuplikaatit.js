@@ -56,6 +56,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     henkilo={master}
                     koodisto={koodisto}
                     L={L}
+                    header={'DUPLIKAATIT_HENKILON_TIEDOT'}
                     locale={locale}
                     classNames={{'person': true, master: true}}
                     isDisabled={true}
@@ -66,6 +67,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                         henkilo={duplicate}
                         koodisto={koodisto}
                         L={L}
+                        header={'DUPLIKAATIT_DUPLIKAATTI'}
                         locale={locale}
                         key={duplicate.oidHenkilo}
                         isDisabled={false}
