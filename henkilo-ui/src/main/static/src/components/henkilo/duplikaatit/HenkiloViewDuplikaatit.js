@@ -52,36 +52,23 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     <span>{L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
                     <span>{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
                 </div>
-                <div className="person master">
-                    <span className="type">{L['DUPLIKAATIT_HENKILON_TIEDOT']}</span>
-                    <span>{master.hetu}</span>
-                    <span>{master.yksiloity || master.yksiloityVTJ ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</span>
-                    <span>{master.kutsumanimi}</span>
-                    <span>{master.etunimet}</span>
-                    <span>{master.sukunimi}</span>
-                    <span>{master.sukupuoli === '2' ? L['HENKILO_YHTEISET_NAINEN'] : L['HENKILO_YHTEISET_MIES']}</span>
-                    <span>{master.syntymaaika}</span>
-                    <span>{master.oidHenkilo}</span>
-                    <span>{master.kansalaisuus}</span>
-                    <span>{master.asiointiKieli ? master.asiointiKieli.kieliTyyppi : ''}</span>
-                    <span>{master.matkapuhelinnumero}</span>
-                    <span>{master.sahkopostiosoite}</span>
-                    <span>{master.osoite}</span>
-                    <span>{master.postinumero}</span>
-                    <span>{master.passinnumero}</span>
-                    <span>{master.kansallinenId}</span>
-                    <span>{master.hakemuksentila}</span>
-                    <span>{master.oidHakemus}</span>
-                    <span>{master.muutHakemukset}</span>
-                    <span><input type="checkbox" disabled={true} checked={true}/></span>
-                </div>
-                { duplicates.map((duplicate) => 
+                <DuplikaattiColumn
+                    henkilo={master}
+                    koodisto={koodisto}
+                    L={L}
+                    locale={locale}
+                    classNames={{'person': true, master: true}}
+                    isDisabled={true}
+                    setSelection={this.setSelection.bind(this)}>
+                </DuplikaattiColumn>
+                { duplicates.map((duplicate) =>
                     <DuplikaattiColumn
                         henkilo={duplicate}
                         koodisto={koodisto}
                         L={L}
                         locale={locale}
                         key={duplicate.oidHenkilo}
+                        isDisabled={false}
                         classNames={{'person': true}}
                         setSelection={this.setSelection.bind(this)}>
                     </DuplikaattiColumn>
