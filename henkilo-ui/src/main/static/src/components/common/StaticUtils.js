@@ -1,12 +1,6 @@
 import React from 'react'
 
 class StaticUtils extends React.Component {
-    static datePlusOneYear(date) {
-        const result = new Date(date);
-        result.setDate(result.getDate() + 365);
-        return result;
-    };
-
     static ddmmyyyyToDate(date) {
         const from = date.split(".");
         return new Date(from[2], from[1]-1, from[0]);
@@ -81,11 +75,21 @@ class StaticUtils extends React.Component {
 
     static hasHetuAndIsYksiloity(henkilo) {
         return !!henkilo.henkilo.hetu && henkilo.henkilo.yksiloityVTJ;
-    }
+    };
 
     static flatArray(arr) {
-        return arr ? arr.reduce((type1, type2) => type1.concat(', ', type2)) : '';
-    }
+        return arr && arr.length ? arr.reduce((type1, type2) => type1.concat(', ', type2)) : '';
+    };
+
+    static defaultOrganisaatio = (organisaatioOid, l10n) => ({
+        oid: organisaatioOid,
+        nimi: {
+            fi: (l10n && l10n['fi'] && l10n['fi']['ORGANISAATIO_NIMI_EI_LOYDY']) || 'EI LÖYTYNYT NIMEÄ',
+            sv: (l10n && l10n['sv'] && l10n['sv']['ORGANISAATIO_NIMI_EI_LOYDY']) || 'NAMNET HITTADES INTE ',
+            en: (l10n && l10n['en'] && l10n['en']['ORGANISAATIO_NIMI_EI_LOYDY']) || 'NAME NOT FOUND',
+        },
+        tyypit: [],
+    });
 }
 
 export default StaticUtils;

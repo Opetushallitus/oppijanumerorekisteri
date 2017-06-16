@@ -4,10 +4,11 @@ import {
     FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS, FETCH_HENKILO_ORGANISAATIOS_FAILURE,
     UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE,
 } from "../actions/actiontypes";
+import StaticUtils from '../components/common/StaticUtils'
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
-    return henkiloOrgs.filter(henkiloOrg => Object.keys(organisations).indexOf(henkiloOrg.organisaatioOid) !== -1)
-        .map(henkiloOrg => Object.assign({}, henkiloOrg, organisations[henkiloOrg.organisaatioOid]));
+    return henkiloOrgs.map(henkiloOrg =>
+        Object.assign({}, henkiloOrg, organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid)));
 };
 
 export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},

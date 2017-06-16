@@ -42,7 +42,7 @@ class HenkiloViewOrganisationContent extends React.Component{
                                 !values.passive || this.state.showPassive
                                     ?
                                     <div key={idx}>
-                                        <div><span className="oph-bold">{values.name} ({values.typesFlat})</span></div>
+                                        <div><span className="oph-bold">{values.name} {values.typesFlat}</span></div>
                                         <div className="labelValue">
                                             <span className="oph-bold">{this.L['HENKILO_ORGTUNNISTE']}:</span>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -77,7 +77,7 @@ class HenkiloViewOrganisationContent extends React.Component{
         return organisations.map(organisation =>
             ({
                 name: organisation.nimi[this.props.locale],
-                typesFlat: StaticUtils.flatArray(organisation.tyypit),
+                typesFlat: organisation.tyypit.length ? '(' + StaticUtils.flatArray(organisation.tyypit) + ')' : '',
                 role: organisation.tehtavanimike,
                 passive: organisation.passivoitu,
                 id: organisation.oid,

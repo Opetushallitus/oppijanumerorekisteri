@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import MyonnaButton from "./buttons/MyonnaButton";
 import Notifications from "../notifications/Notifications";
 import SuljeButton from "./buttons/SuljeButton";
+import StaticUtils from '../StaticUtils'
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -69,7 +70,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
             .map((uusittavaKayttooikeusRyhma, idx) => {
-                const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid];
+                const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid]
+                    || StaticUtils.defaultOrganisaatio(uusittavaKayttooikeusRyhma.organisaatioOid, this.props.l10n);
                 const tyyppi = organisaatio.tyypit ? `${organisaatio.tyypit.join(',')}` : `${organisaatio.ryhmatyypit.join(',')}`;
                 const organisaatioTyyppiLabel = tyyppi.length > 0 ? `(${tyyppi})` : '';
                 return {

@@ -2,6 +2,7 @@ import './HenkiloViewExistingKayttooikeus.css'
 import React from 'react'
 import Table from '../table/Table'
 import moment from 'moment'
+import StaticUtils from '../StaticUtils'
 
 class HenkiloViewExpiredKayttooikeus extends React.Component {
     static propTypes = {
@@ -28,7 +29,8 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
     createRows(headingList) {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(kayttooikeus => kayttooikeus.tila === 'SULJETTU').map(kayttooikeus => ({
-                [headingList[0]]: this.props.organisaatioCache[kayttooikeus.organisaatioOid].nimi[this.props.locale],
+                [headingList[0]]: (this.props.organisaatioCache[kayttooikeus.organisaatioOid]
+                || StaticUtils.defaultOrganisaatio(kayttooikeus.organisaatioOid, this.props.l10n)).nimi[this.props.locale],
                 [headingList[1]]: kayttooikeus.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: this.L[kayttooikeus.tila],

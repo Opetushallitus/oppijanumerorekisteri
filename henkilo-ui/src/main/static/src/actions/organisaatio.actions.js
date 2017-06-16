@@ -50,5 +50,7 @@ export const fetchOrganisations = (oidOrganisations) => ((dispatch, getState) =>
         const url = urls.url('organisaatio-service.organisaatio.ByOid', oidOrganisation);
         return http.get(url);
     });
-    return Promise.all(promises).then(json => dispatch(receiveOrganisations(json)));
+    return Promise.all(promises.map(p => p.catch(e => e)))
+        .then(json => dispatch(receiveOrganisations(json)))
+        .catch(e => console.error(e));
 });
