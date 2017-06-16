@@ -36,7 +36,7 @@ public class HakuappClientImpl implements HakuappClient {
         cachingRestClient.setUsername(authenticationProperties.getHakuapp().getUsername());
         cachingRestClient.setPassword(authenticationProperties.getHakuapp().getPassword());
     }
-2
+
     @Override
     public Map<String, List<Map<String, Object>>> fetchApplicationsByOid(Set<String> oids) {
         String url = this.urlConfiguration.url("haku-app.applications");
