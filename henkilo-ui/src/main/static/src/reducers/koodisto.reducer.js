@@ -2,7 +2,7 @@ import {
     FETCH_KANSALAISUUSKOODISTO_REQUEST, FETCH_KANSALAISUUSKOODISTO_SUCCESS, FETCH_KIELIKOODISTO_REQUEST,
     FETCH_KIELIKOODISTO_SUCCESS,
     FETCH_SUKUPUOLIKOODISTO_REQUEST, FETCH_SUKUPUOLIKOODISTO_SUCCESS, FETCH_YHTEYSTIETOTYYPITKOODISTO_REQUEST,
-    FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS
+    FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS, FETCH_MAATJAVALTIOTKOODISTO_REQUEST, FETCH_MAATJAVALTIOTKOODISTO_SUCCESS,
 } from "../actions/actiontypes";
 import StaticUtils from "../components/common/StaticUtils";
 
@@ -15,7 +15,7 @@ const mapKoodistoValuesByLocale = (koodisto) => koodisto.map(koodi =>
 
 export const koodisto = (state = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,
                              yhteystietotyypitKoodistoLoading: true, kieli: [], kansalaisuus: [], sukupuoli: [],
-                             yhteystietotyypit: [], }, action) => {
+                             yhteystietotyypit: [], maatjavaltiot1KoodistoLoading: true, maatjavaltiot1: []}, action) => {
     switch (action.type) {
         case FETCH_KANSALAISUUSKOODISTO_REQUEST:
             return Object.assign({}, state, {kansalaisuusKoodistoLoading: true});
@@ -33,6 +33,10 @@ export const koodisto = (state = {kieliKoodistoLoading: true, kansalaisuusKoodis
             return Object.assign({}, state, {yhteystietotyypitKoodistoLoading: true});
         case FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS:
             return Object.assign({}, state, {yhteystietotyypitKoodistoLoading: false, yhteystietotyypit: mapKoodistoValuesByLocale(action.yhteystietotyypit)});
+        case FETCH_MAATJAVALTIOTKOODISTO_REQUEST:
+            return Object.assign({}, state, {maatjavaltiot1KoodistoLoading: true});
+        case FETCH_MAATJAVALTIOTKOODISTO_SUCCESS:
+            return Object.assign({}, state, {maatjavaltiot1KoodistoLoading: false, maatjavaltiot1: mapKoodistoValuesByLocale(action.maatjavaltiot1)});
         default:
             return state;
     }

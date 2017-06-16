@@ -2,7 +2,7 @@
 import React from 'react';
 import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
 
-export default class VirkailijaDuplikaatitPage extends React.Component {
+export default class DuplikaatitPage extends React.Component {
 
     static proptypes = {
         l10n: React.PropTypes.object.isRequired,
