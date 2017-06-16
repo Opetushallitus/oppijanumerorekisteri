@@ -48,7 +48,10 @@ export const fetchOrganisations = (oidOrganisations) => ((dispatch, getState) =>
     const promises = oidOrganisations.filter(oidOrganisation => Object.keys(getState().organisaatio.cached).indexOf(oidOrganisation) === -1)
         .map(oidOrganisation => {
         const url = urls.url('organisaatio-service.organisaatio.ByOid', oidOrganisation);
-        return http.get(url);
+        return http.get(url).catch(error => {
+            console.log('Organisaation lataus epäonnistui', error);
+            return {oid: oidOrganisation, nimi: {fi: oidOrganisation, en: oidOrganisation, sv: oidOrganisation}};
+        });
     });
     return Promise.all(promises.map(p => p.catch(e => e)))
         .then(json => dispatch(receiveOrganisations(json)))
