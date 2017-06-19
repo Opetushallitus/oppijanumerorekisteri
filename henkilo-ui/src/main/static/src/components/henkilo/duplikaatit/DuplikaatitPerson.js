@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import './DuplikaatitPerson.css';
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
+import {urls} from 'oph-urls-js';
 
 export default class DuplikaatitPrimaryInformation extends React.Component {
 
@@ -53,7 +54,7 @@ export default class DuplikaatitPrimaryInformation extends React.Component {
             <span>{contactInformation.passinumero}</span>
             <span>{contactInformation.kansallinenIdTunnus}</span>
             <span>{hakemus ? hakemus.state : ''}</span>
-            <span>{hakemus ? hakemus.oid : ''}</span>
+            <span>{hakemus ? <a className="oph-link" href={`/haku-app/virkailija/hakemus/${hakemus.oid}`}>{hakemus.oid}</a> : ''}</span>
             <span>{muutHakemukset.length > 0 ? <DuplikaatitApplicationsPopup
                         popupContent={<DuplikaatitPersonOtherApplications
                         hakemukset={muutHakemukset}

@@ -27,7 +27,7 @@ export default class DuplikaatitPersonOtherApplications extends React.Component 
                     <span>{secondaryInformation.passinumero}</span>
                     <span>{secondaryInformation.kansallinenIdTunnus}</span>
                     <span>{hakemus ? hakemus.state : ''}</span>
-                    <span>{hakemus ? hakemus.oid : ''}</span>
+                    <span>{hakemus ? <a className="oph-link" href={`/haku-app/virkailija/hakemus/${hakemus.oid}`}>{hakemus.oid}</a> : ''}</span>
                 </div>
             })}
         </div>

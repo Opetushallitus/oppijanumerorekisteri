@@ -59,6 +59,6 @@ export default {
     "koodisto-service.koodisto.kansalaisuus": "koodisto-service/rest/json/maatjavaltiot2/koodi",
     "koodisto-service.koodisto.sukupuoli": "koodisto-service/rest/json/sukupuoli/koodi",
     "koodisto-service.koodisto.yhteystietotyypit": "koodisto-service/rest/json/yhteystietotyypit/koodi",
-    "koodisto-service.koodisto.maatjavaltiot1": "koodisto-service/rest/json/maatjavaltiot1/koodi"
+    "koodisto-service.koodisto.maatjavaltiot1": "koodisto-service/rest/json/maatjavaltiot1/koodi",
 
 }
