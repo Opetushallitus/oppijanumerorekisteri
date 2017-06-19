@@ -55,10 +55,6 @@
     margin-left: -4px;
 }
 
-.person.duplicate {
-    /* background: #f7f7f7; */
-}
-
 .person > span:first-child {
     height: 30px;
     line-height: 30px;

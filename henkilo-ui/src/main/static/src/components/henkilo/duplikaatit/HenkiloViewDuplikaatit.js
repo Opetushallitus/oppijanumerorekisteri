@@ -2,7 +2,7 @@ import React from 'react';
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
 import R from 'ramda';
-import DuplikaattiColumn from './DuplikaattiColumn';
+import DuplikaatitPerson from './DuplikaatitPerson';
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 
@@ -52,28 +52,28 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     <span>{L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
                     <span>{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
                 </div>
-                <DuplikaattiColumn
+                <DuplikaatitPerson
                     henkilo={master}
                     koodisto={koodisto}
                     L={L}
                     header={'DUPLIKAATIT_HENKILON_TIEDOT'}
                     locale={locale}
                     classNames={{'person': true, master: true}}
-                    isDisabled={true}
+                    isMaster={true}
                     setSelection={this.setSelection.bind(this)}>
-                </DuplikaattiColumn>
+                </DuplikaatitPerson>
                 { duplicates.map((duplicate) =>
-                    <DuplikaattiColumn
+                    <DuplikaatitPerson
                         henkilo={duplicate}
                         koodisto={koodisto}
                         L={L}
                         header={'DUPLIKAATIT_DUPLIKAATTI'}
                         locale={locale}
                         key={duplicate.oidHenkilo}
-                        isDisabled={false}
+                        isMaster={false}
                         classNames={{'person': true}}
                         setSelection={this.setSelection.bind(this)}>
-                    </DuplikaattiColumn>
+                    </DuplikaatitPerson>
                 )}
 
             </div>

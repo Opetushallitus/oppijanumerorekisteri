@@ -3,9 +3,11 @@ import React from 'react';
 import {Link} from 'react-router';
 import R from 'ramda';
 import classNames from 'classnames';
-import './DuplikaattiColumn.css';
+import './DuplikaatitPerson.css';
+import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
+import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
 
-export default class DuplikaattiColumn extends React.Component {
+export default class DuplikaatitPrimaryInformation extends React.Component {
 
     static propTypes = {
         henkilo: React.PropTypes.object.isRequired,
@@ -14,12 +16,13 @@ export default class DuplikaattiColumn extends React.Component {
         koodisto: React.PropTypes.object.isRequired,
         setSelection: React.PropTypes.func.isRequired,
         classNames: React.PropTypes.object,
-        isDisabled: React.PropTypes.bool,
-        header: React.PropTypes.string.isRequired
+        isMaster: React.PropTypes.bool,
+        header: React.PropTypes.string.isRequired,
+        styleClasses: React.PropTypes.string
     };
 
     componentWillMount() {
-        this.setState({checkboxValue: this.props.isDisabled})
+        this.setState({checkboxValue: this.props.isMaster})
     }
 
     render() {
@@ -49,10 +52,19 @@ export default class DuplikaattiColumn extends React.Component {
             <span>{contactInformation.postinumero}</span>
             <span>{contactInformation.passinumero}</span>
             <span>{contactInformation.kansallinenIdTunnus}</span>
-            <span>{hakemus ? L[`DUPLIKAATIT_STATE_${hakemus.state}`] : ''}</span>
+            <span>{hakemus ? hakemus.state : ''}</span>
             <span>{hakemus ? hakemus.oid : ''}</span>
-            <span>{muutHakemukset.map(muuHakemus => <div key={muuHakemus.oid}>{muuHakemus.oid}</div>)}</span>
-            <span><input type="checkbox" disabled={this.props.isDisabled} checked={this.state.checkboxValue} onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}/></span>
+            <span>{muutHakemukset.length > 0 ? <DuplikaatitApplicationsPopup
+                        popupContent={<DuplikaatitPersonOtherApplications
+                        hakemukset={muutHakemukset}
+                        koodisto={this.props.koodisto}
+                        locale={this.props.locale}
+                        L={this.props.L}
+                    ></DuplikaatitPersonOtherApplications>}>
+                    {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
+                </DuplikaatitApplicationsPopup> : null}</span>
+            <span><input type="checkbox" disabled={this.props.isMaster} checked={this.state.checkboxValue}
+                         onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}/></span>
         </div>;
     }
 
@@ -84,6 +96,8 @@ export default class DuplikaattiColumn extends React.Component {
 
         }
     }
+
+
 
 }
 

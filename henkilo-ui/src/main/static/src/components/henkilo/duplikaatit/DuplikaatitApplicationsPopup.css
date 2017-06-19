@@ -1,0 +1,30 @@
+
+.other-applications {
+    width: auto !important;
+    padding: 0 !important;
+    white-space: nowrap;
+    left: 200px;
+    bottom: -2px;
+}
+
+.other-applications .oph-popup-arrow {
+    margin-top: 267px !important;
+}
+
+.other-applications .application {
+    display: inline-block;
+    border-left: 1px solid rgba(212, 219, 226, 0.51);
+    padding-bottom: 26px;
+}
+
+.application > span {
+    display: block;
+    height: 25px;
+    line-height: 25px;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.application > span:nth-child(2n + 1) {
+    background: #fbfbfb;
+}

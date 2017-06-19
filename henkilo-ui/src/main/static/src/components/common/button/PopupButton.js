@@ -5,6 +5,7 @@ export default class PopupButton extends React.Component {
 
     static propTypes = {
         popupStyle: React.PropTypes.object,
+        closeButtonStyles: React.PropTypes.object,
         popupTitle: React.PropTypes.element,
         popupContent: React.PropTypes.element,
         popupClass: React.PropTypes.string
