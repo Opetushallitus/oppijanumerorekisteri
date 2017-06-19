@@ -25,7 +25,7 @@ class AdminViewPage extends React.Component {
                         || this.props.koodisto.kansalaisuusKoodistoLoading
                         || this.props.koodisto.sukupuoliKoodistoLoading
                         || this.props.henkilo.kayttajatietoLoading
-                        ||this.props.koodisto.yhteystietotyypitKoodistoLoading
+                        || this.props.koodisto.yhteystietotyypitKoodistoLoading
                             ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}

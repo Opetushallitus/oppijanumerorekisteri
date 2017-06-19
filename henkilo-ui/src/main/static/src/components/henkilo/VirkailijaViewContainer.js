@@ -13,7 +13,8 @@ import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, removePrivilege,
+    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, getGrantablePrivileges,
+    removePrivilege,
     updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
@@ -47,6 +48,8 @@ class VirkailijaViewContainer extends React.Component {
             this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
             this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+            // Not admin so fetch grantable kayttooikeusryhmas by organisation.
+            this.props.getGrantablePrivileges();
         }
     };
 
@@ -112,4 +115,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification, removePrivilege})(VirkailijaViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges,})(VirkailijaViewContainer);

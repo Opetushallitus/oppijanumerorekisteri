@@ -17,7 +17,10 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
         updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
         isOmattiedot: React.PropTypes.bool,
-        kayttooikeus: React.PropTypes.shape({kayttooikeusAnomus: React.PropTypes.array.isRequired}),
+        kayttooikeus: React.PropTypes.shape({
+            kayttooikeusAnomus: React.PropTypes.array.isRequired,
+            grantableKayttooikeus: React.PropTypes.object.isRequired,
+        }),
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
     };
 
@@ -91,11 +94,16 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         return <div>
             <div style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                    'MYONNETTY', idx)} L={this.L}/>
+                    'MYONNETTY', idx)}
+                              L={this.L}
+                              disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.id)} />
             </div>
             <div style={{display: 'table-cell'}}>
                 <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
-                    haettuKayttooikeusRyhma.id, 'HYLATTY', idx)} L={this.L} henkilo={this.props.henkilo} />
+                    haettuKayttooikeusRyhma.id, 'HYLATTY', idx)}
+                              L={this.L}
+                              henkilo={this.props.henkilo}
+                              disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.id)} />
             </div>
 
         </div>
@@ -106,6 +114,10 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         await http.put(url, haettuKayttooikeusRyhma.id);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
     }
+
+    hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
+        return this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid] && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === -1
+    };
 
     render() {
         this.createRows();

@@ -11,6 +11,7 @@ class ConfirmButton extends React.Component {
         normalLabel: React.PropTypes.string.isRequired,
         confirmLabel: React.PropTypes.string.isRequired,
         id: React.PropTypes.string.isRequired,
+        disabled: React.PropTypes.bool,
     };
 
     constructor(props) {
@@ -33,12 +34,17 @@ class ConfirmButton extends React.Component {
         return (
             !this.state.confirmState
                 ?
-                <NotificationButton className={this.props.className} {...this.props} action={() => {this.setState({confirmState: true})}}
-                        disabled={this.state.disabled}>
+                <NotificationButton className={this.props.className}
+                                    {...this.props}
+                                    action={() => {this.setState({confirmState: true})}}
+                                    disabled={this.state.disabled || this.props.disabled}>
                     {this.props.normalLabel}
                 </NotificationButton>
                 : // Never show error message after confirm state
-                <NotificationButton className={this.props.className} confirm {...confirmProps} errorMessage={null} id={this.props.id}>
+                <NotificationButton className={this.props.className}
+                                    confirm {...confirmProps}
+                                    errorMessage={null}
+                                    id={this.props.id}>
                     {this.props.confirmLabel}
                 </NotificationButton>
         );
