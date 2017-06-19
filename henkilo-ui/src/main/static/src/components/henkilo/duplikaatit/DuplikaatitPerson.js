@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import './DuplikaatitPerson.css';
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
-import {urls} from 'oph-urls-js';
 
 export default class DuplikaatitPrimaryInformation extends React.Component {
 
