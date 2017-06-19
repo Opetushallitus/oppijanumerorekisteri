@@ -669,8 +669,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional
     public void unlinkHenkilo(String oid, String slaveOid) {
+        Date modificationDate = new Date();
+        Henkilo slave = this.henkiloDataRepository.findByOidHenkilo(slaveOid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));;
+        slave.setDuplicate(false);
+        slave.setPassivoitu(false);
+        slave.setModified(modificationDate);
         this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);
     }
-
 
 }
