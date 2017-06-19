@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import Loader from '../components/common/icons/Loader'
 import AnomusPage from '../components/anomus/AnomusPage'
 import {fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
+import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
 import {updateHaettuKayttooikeusryhma} from '../actions/kayttooikeusryhma.actions'
 
 class AnomusPageContainer extends React.Component {
@@ -10,6 +11,7 @@ class AnomusPageContainer extends React.Component {
         this.props.fetchHaetutKayttooikeusryhmat({
             tilat: ['ANOTTU']
         });
+        this.props.fetchAllOrganisaatios();
     }
     render() {
         return (
@@ -30,7 +32,8 @@ const mapStateToProps = (state) => {
         },
         organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.loading,
+        organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
     };
 };
 
-export default connect(mapStateToProps, {fetchHaetutKayttooikeusryhmat, updateHaettuKayttooikeusryhma})(AnomusPageContainer);
+export default connect(mapStateToProps, {fetchHaetutKayttooikeusryhmat, fetchAllOrganisaatios, updateHaettuKayttooikeusryhma})(AnomusPageContainer);

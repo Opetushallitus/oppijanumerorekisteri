@@ -7,7 +7,7 @@ class AnomusPage extends React.Component {
     render() {
         return (
           <div>
-            <HaetutKayttooikeusRyhmatHakuForm onSubmit={this.onSubmit}></HaetutKayttooikeusRyhmatHakuForm>
+            <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit}></HaetutKayttooikeusRyhmatHakuForm>
             <HenkiloViewOpenKayttooikeusanomus {...this.props}></HenkiloViewOpenKayttooikeusanomus>
           </div>
         );
