@@ -11,6 +11,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HenkiloViiteDto implements Serializable {
-    private String slaveOid;
+    private String henkiloOid;
     private String masterOid;
 }

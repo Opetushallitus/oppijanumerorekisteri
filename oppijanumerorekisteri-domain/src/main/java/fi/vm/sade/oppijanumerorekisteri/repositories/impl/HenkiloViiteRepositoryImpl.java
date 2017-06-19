@@ -46,7 +46,7 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
             // Find all slaves for the master oids
             result = jpa().select(Projections.bean(HenkiloViiteDto.class,
                     henkiloViite.masterOid.as("masterOid"),
-                    henkiloViite.slaveOid.as("slaveOid")))
+                    henkiloViite.slaveOid.as("henkiloOid")))
                     .from(henkiloViite)
                     .where(henkiloViite.masterOid.in(masters))
                     .fetch();
@@ -55,7 +55,7 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
             // Find all
             result = jpa().select(Projections.bean(HenkiloViiteDto.class,
                     henkiloViite.masterOid.as("masterOid"),
-                    henkiloViite.slaveOid.as("slaveOid")))
+                    henkiloViite.slaveOid.as("henkiloOid")))
                     .from(henkiloViite)
                     .fetch();
         }
@@ -64,11 +64,11 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         List<String> existingHenkilos = jpa().select(henkilo.oidHenkilo)
                 .from(henkilo)
                 .where(henkilo.oidHenkilo.in(result.stream().flatMap(henkiloViiteDto ->
-                        Stream.of(henkiloViiteDto.getSlaveOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())))
+                        Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())))
                 .fetch();
 
         return result.stream().filter(henkiloViiteDto ->
-                existingHenkilos.containsAll(Sets.newHashSet(henkiloViiteDto.getSlaveOid(), henkiloViiteDto.getMasterOid())))
+                existingHenkilos.containsAll(Sets.newHashSet(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())))
                 .collect(Collectors.toList());
     }
 

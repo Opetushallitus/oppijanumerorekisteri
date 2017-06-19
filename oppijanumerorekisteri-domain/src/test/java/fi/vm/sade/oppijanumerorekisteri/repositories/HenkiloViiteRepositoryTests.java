@@ -43,7 +43,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         List<HenkiloViiteDto> results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(singletonList("1.2.3.4.0"))).build());
         assertThat(results).hasSize(2);
-        assertThat(results.stream().map(HenkiloViiteDto::getSlaveOid).collect(toSet()))
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
                 .contains("1.2.3.4.1", "1.2.3.4.2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
                 .allMatch(isEqual("1.2.3.4.0"));
@@ -57,7 +57,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(henkiloOids).build());
         assertThat(results).hasSize(3);
-        assertThat(results.stream().map(HenkiloViiteDto::getSlaveOid).collect(toSet()))
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
                 .contains("1.2.3.4.1", "1.2.3.4.2", "1.2.3.6.1");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
                 .contains("1.2.3.4.0", "1.2.3.6.0");
@@ -66,7 +66,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(singletonList("1.2.3.4.1"))).build());
         assertThat(results).hasSize(2);
-        assertThat(results.stream().map(HenkiloViiteDto::getSlaveOid).collect(toSet()))
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
                 .contains("1.2.3.4.1", "1.2.3.4.2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
                 .allMatch(isEqual("1.2.3.4.0"));
@@ -74,7 +74,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         // Search without search terms (returns all graphs):
         results = this.henkiloViiteRepository.findBy(new HenkiloCriteria());
         assertThat(results).hasSize(4);
-        assertThat(results.stream().map(HenkiloViiteDto::getSlaveOid).collect(toSet()))
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
                 .contains("1.2.3.4.1", "1.2.3.4.2", "1.2.3.5.1", "1.2.3.6.1");
 
         // Cause 1.2.3.4.2 to have two masters (ROOT and 1.2.3.6.0) (error in db):
@@ -87,7 +87,7 @@ public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
         results = this.henkiloViiteRepository.findBy(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(singletonList("1.2.3.4.2"))).build());
         assertThat(results).hasSize(3); // just one extra row
-        assertThat(results.stream().map(HenkiloViiteDto::getSlaveOid).collect(toSet()))
+        assertThat(results.stream().map(HenkiloViiteDto::getHenkiloOid).collect(toSet()))
                 .contains("1.2.3.4.1", "1.2.3.4.2");
         assertThat(results.stream().map(HenkiloViiteDto::getMasterOid).collect(toSet()))
                 .contains("1.2.3.4.0");
