@@ -4,7 +4,7 @@ import Loader from '../components/common/icons/Loader'
 import AnomusPage from '../components/anomus/AnomusPage'
 import {fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
 import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
-import {updateHaettuKayttooikeusryhma} from '../actions/kayttooikeusryhma.actions'
+import {updateHaettuKayttooikeusryhmaInAnomukset} from '../actions/kayttooikeusryhma.actions'
 
 class AnomusPageContainer extends React.Component {
     componentDidMount() {
@@ -36,4 +36,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchHaetutKayttooikeusryhmat, fetchAllOrganisaatios, updateHaettuKayttooikeusryhma})(AnomusPageContainer);
+export default connect(mapStateToProps, {fetchHaetutKayttooikeusryhmat, fetchAllOrganisaatios, updateHaettuKayttooikeusryhmaInAnomukset})(AnomusPageContainer);

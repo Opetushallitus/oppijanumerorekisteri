@@ -26,6 +26,7 @@ import {
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
+import {fetchHaetutKayttooikeusryhmat} from './anomus.actions';
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
 const receiveAllKayttooikeusryhmasForHenkilo = (henkiloOid, kayttooikeus) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
@@ -80,7 +81,15 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
         }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
 };
 
-
+export const updateHaettuKayttooikeusryhmaInAnomukset = (id, kayttoOikeudenTila, alkupvm, loppupvm, parameters) => dispatch => {
+    dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
+    const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
+    http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm,})
+        .then(() => {
+            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
+            dispatch(fetchHaetutKayttooikeusryhmat(parameters));
+        }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
+};
 
 //KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
 const requestOrganisaatioKayttooikeusryhmat = (organisaatioOid) => ({type: FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST, organisaatioOid});
