@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import Loader from '../components/common/icons/Loader'
 import AnomusPage from '../components/anomus/AnomusPage'
 import {fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
 import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
