@@ -33,8 +33,8 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     onChange = (event) => {
         const q = event.target.value;
         this.setState({q: q});
-        if (q.length >= 3) {
-            this.props.onSubmit({q: this.state.q});
+        if (q.length === 0 || q.length >= 3) {
+            this.props.onSubmit({q: q});
         }
     }
 
