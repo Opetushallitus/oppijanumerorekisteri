@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Field from '../common/field/Field';
 import OphSelect from '../common/select/OphSelect'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
+import './HaetutKayttooikeusRyhmatHakuForm.css';
 
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     constructor(props) {
@@ -17,22 +18,30 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     render() {
         const L = this.props.l10n[this.props.locale];
         return (
-          <form>
-              <Field inputValue={this.state.q}
-                     changeAction={this.onChange}
-                     placeholder="Vähintään kolme merkkiä..."></Field>
-              <OphSelect noResultsText={ `${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}` }
-                         placeholder={L['OMATTIEDOT_ORGANISAATIO']}
-                         onChange={this.organisaatioOnChange}
-                         onBlurResetsInput={false}
-                         options={this.state.selectableOrganisaatiot}
-                         onInputChange={this.organisaatioOnInputChange}
-                         value={this.state.selectedOrganisaatio}></OphSelect>
-              <BooleanRadioButtonGroup value={this.state.onlyRoot}
-                                       onChange={this.onlyRootOnChange}
-                                       trueLabel="Vain OPH"
-                                       falseLabel="Näytä kaikki"></BooleanRadioButtonGroup>
-          </form>
+            <form>
+                <div className="flex-horizontal">
+                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
+                        <Field inputValue={this.state.q}
+                               changeAction={this.onChange}
+                               placeholder="Vähintään kolme merkkiä..."></Field>
+                    </div>
+                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
+                        <OphSelect noResultsText={ `${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}` }
+                                   placeholder={L['OMATTIEDOT_ORGANISAATIO']}
+                                   onChange={this.organisaatioOnChange}
+                                   onBlurResetsInput={false}
+                                   options={this.state.selectableOrganisaatiot}
+                                   onInputChange={this.organisaatioOnInputChange}
+                                   value={this.state.selectedOrganisaatio}></OphSelect>
+                    </div>
+                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
+                        <BooleanRadioButtonGroup value={this.state.onlyRoot}
+                                                 onChange={this.onlyRootOnChange}
+                                                 trueLabel="Vain OPH"
+                                                 falseLabel="Näytä kaikki"></BooleanRadioButtonGroup>
+                    </div>
+                </div>
+            </form>
         );
     }
 
