@@ -13,11 +13,12 @@ public final class KutsumanimiValidator {
     private final String etunimet;
 
     public KutsumanimiValidator(String etunimet) {
-        this.etunimet = requireNonNull(etunimet);
+        this.etunimet = etunimet.toLowerCase();
     }
 
     public boolean isValid(String kutsumanimi) {
 
+        kutsumanimi = kutsumanimi.toLowerCase();
         if(Arrays.asList(etunimet.split(" ")).contains(kutsumanimi) == true) {
             return true;
         }
