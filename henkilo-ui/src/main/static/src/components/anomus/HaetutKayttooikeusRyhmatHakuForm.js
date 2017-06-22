@@ -11,7 +11,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
         this.state = {
             q: '',
             selectableOrganisaatiot: [],
-            onlyRoot: false,
+            naytaKaikki: true,
         };
     }
 
@@ -19,11 +19,11 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
         const L = this.props.l10n[this.props.locale];
         return (
             <form>
-                <div className="flex-horizontal">
+                <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <Field inputValue={this.state.q}
                                changeAction={this.onChange}
-                               placeholder="Vähintään kolme merkkiä..."></Field>
+                               placeholder="Hae henkilöä"></Field>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OphSelect noResultsText={ `${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}` }
@@ -35,10 +35,10 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                                    value={this.state.selectedOrganisaatio}></OphSelect>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
-                        <BooleanRadioButtonGroup value={this.state.onlyRoot}
-                                                 onChange={this.onlyRootOnChange}
-                                                 trueLabel="Vain OPH"
-                                                 falseLabel="Näytä kaikki"></BooleanRadioButtonGroup>
+                        <BooleanRadioButtonGroup value={this.state.naytaKaikki}
+                                                 onChange={this.naytaKaikkiOnChange}
+                                                 trueLabel="Näytä kaikki"
+                                                 falseLabel="Näytä OPH"></BooleanRadioButtonGroup>
                     </div>
                 </div>
             </form>
@@ -77,14 +77,14 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     }
 
     organisaatioOnChange = (organisaatio) => {
-        this.setState({selectedOrganisaatio: organisaatio, onlyRoot: false});
+        this.setState({selectedOrganisaatio: organisaatio, naytaKaikki: true});
         const organisaatioOid = organisaatio.value;
         this.props.onSubmit({organisaatioOids: organisaatioOid});
     }
 
-    onlyRootOnChange = (onlyRoot) => {
-        const organisaatioOids = onlyRoot ? [this.props.rootOrganisaatioOid] : null;
-        this.setState({selectedOrganisaatio: null, onlyRoot: onlyRoot});
+    naytaKaikkiOnChange = (naytaKaikki) => {
+        const organisaatioOids = naytaKaikki ? null : [this.props.rootOrganisaatioOid];
+        this.setState({selectedOrganisaatio: null, naytaKaikki: naytaKaikki});
         this.props.onSubmit({organisaatioOids: organisaatioOids});
     }
 };
