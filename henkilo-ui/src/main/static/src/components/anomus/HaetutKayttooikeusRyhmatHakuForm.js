@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Field from '../common/field/Field';
 import OphSelect from '../common/select/OphSelect'
+import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             q: '',
-            selectableOrganisaatiot: []
+            selectableOrganisaatiot: [],
+            onlyRoot: false,
         };
     }
 
@@ -26,6 +28,10 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                          options={this.state.selectableOrganisaatiot}
                          onInputChange={this.organisaatioOnInputChange}
                          value={this.state.selectedOrganisaatio}></OphSelect>
+              <BooleanRadioButtonGroup value={this.state.onlyRoot}
+                                       onChange={this.onlyRootOnChange}
+                                       trueLabel="Vain OPH"
+                                       falseLabel="Näytä kaikki"></BooleanRadioButtonGroup>
           </form>
         );
     }
@@ -62,15 +68,22 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     }
 
     organisaatioOnChange = (organisaatio) => {
-        this.setState({selectedOrganisaatio: organisaatio});
+        this.setState({selectedOrganisaatio: organisaatio, onlyRoot: false});
         const organisaatioOid = organisaatio.value;
         this.props.onSubmit({organisaatioOids: organisaatioOid});
+    }
+
+    onlyRootOnChange = (onlyRoot) => {
+        const organisaatioOids = onlyRoot ? [this.props.rootOrganisaatioOid] : null;
+        this.setState({selectedOrganisaatio: null, onlyRoot: onlyRoot});
+        this.props.onSubmit({organisaatioOids: organisaatioOids});
     }
 };
 
 HaetutKayttooikeusRyhmatHakuForm.propTypes = {
     onSubmit: PropTypes.func.isRequired,
     organisaatiot: PropTypes.array.isRequired,
+    rootOrganisaatioOid: PropTypes.string.isRequired,
     locale: PropTypes.string.isRequired,
     l10n: PropTypes.object.isRequired,
 };

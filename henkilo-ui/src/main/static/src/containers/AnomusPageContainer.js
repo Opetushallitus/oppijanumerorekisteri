@@ -32,6 +32,7 @@ const mapStateToProps = (state) => {
         organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.loading,
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
+        rootOrganisaatioOid: '1.2.246.562.10.00000000001',
     };
 };
 
