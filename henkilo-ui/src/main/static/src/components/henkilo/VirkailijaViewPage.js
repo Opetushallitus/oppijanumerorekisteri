@@ -43,6 +43,7 @@ class VirkailijaViewPage extends React.Component {
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloOrgsLoading
+                        || this.props.kayttooikeus.grantableKayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
