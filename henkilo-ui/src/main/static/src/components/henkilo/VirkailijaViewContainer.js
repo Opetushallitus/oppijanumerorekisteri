@@ -32,6 +32,9 @@ import {removeNotification} from "../../actions/notifications.actions";
 
 class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
+        if(this.props.oidHenkilo === this.props.ownOid) {
+            this.props.router.push('/omattiedot');
+        }
         if(this.props.isAdmin) {
             this.props.router.push('/admin/' + this.props.oidHenkilo);
         }
@@ -107,6 +110,7 @@ const mapStateToProps = (state, ownProps) => {
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
         isAdmin: state.omattiedot.isAdmin,
+        ownOid: state.omattiedot.data.oid,
     };
 };
 
