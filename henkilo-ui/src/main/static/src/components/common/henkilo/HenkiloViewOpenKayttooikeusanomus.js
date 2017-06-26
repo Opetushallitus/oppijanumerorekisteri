@@ -115,8 +115,11 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
     }
 
+    // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
     hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
-        return !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid] && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
+        return !this.props.kayttooikeus.grantableKayttooikeusLoading
+            && !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
+            && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
     };
 
     render() {
