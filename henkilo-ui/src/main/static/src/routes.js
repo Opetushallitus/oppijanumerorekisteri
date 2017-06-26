@@ -6,7 +6,7 @@ import KutsuminenPage from './containers/KutsuminenPage';
 import AnomustListPageContainer from './containers/AnomusPageContainer';
 import OppijaViewContainer from './components/henkilo/OppijaViewContainer';
 import VirkailijaViewContainer from "./components/henkilo/VirkailijaViewContainer";
-import OmattiedotContainer from "./components/omattiedot/OmattiedotPage";
+import OmattiedotContainer from "./components/omattiedot/OmattiedotPageContainer";
 import AdminViewContainer from "./components/henkilo/AdminViewContainer";
 import HenkilohakuContainer from "./components/henkilohaku/HenkilohakuContainer";
 
