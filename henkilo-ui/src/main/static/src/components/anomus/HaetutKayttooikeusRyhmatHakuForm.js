@@ -5,11 +5,14 @@ import OphSelect from '../common/select/OphSelect'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 
+/**
+ * Haettujen käyttöoikeusryhmien hakulomake.
+ */
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            q: '',
+            hakutermi: '',
             selectableOrganisaatiot: [],
             naytaKaikki: true,
         };
@@ -21,39 +24,39 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
             <form>
                 <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
-                        <Field inputValue={this.state.q}
-                               changeAction={this.onChange}
-                               placeholder="Hae henkilöä"></Field>
+                        <Field inputValue={this.state.hakutermi}
+                               changeAction={this.onHakutermiChange}
+                               placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}></Field>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OphSelect noResultsText={ `${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}` }
-                                   placeholder={L['OMATTIEDOT_ORGANISAATIO']}
-                                   onChange={this.organisaatioOnChange}
+                                   placeholder={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']}
+                                   onChange={this.onOrganisaatioChange}
                                    onBlurResetsInput={false}
                                    options={this.state.selectableOrganisaatiot}
-                                   onInputChange={this.organisaatioOnInputChange}
+                                   onInputChange={this.onOrganisaatioInputChange}
                                    value={this.state.selectedOrganisaatio}></OphSelect>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <BooleanRadioButtonGroup value={this.state.naytaKaikki}
-                                                 onChange={this.naytaKaikkiOnChange}
-                                                 trueLabel="Näytä kaikki"
-                                                 falseLabel="Näytä OPH"></BooleanRadioButtonGroup>
+                                                 onChange={this.onNaytaKaikkiChange}
+                                                 trueLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']}
+                                                 falseLabel={L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']}></BooleanRadioButtonGroup>
                     </div>
                 </div>
             </form>
         );
     }
 
-    onChange = (event) => {
-        const q = event.target.value;
-        this.setState({q: q});
-        if (q.length === 0 || q.length >= 3) {
-            this.props.onSubmit({q: q});
+    onHakutermiChange = (event) => {
+        const hakutermi = event.target.value;
+        this.setState({hakutermi: hakutermi});
+        if (hakutermi.length === 0 || hakutermi.length >= 3) {
+            this.props.onSubmit({q: hakutermi});
         }
     }
 
-    organisaatioOnInputChange = (value) => {
+    onOrganisaatioInputChange = (value) => {
         if (value.length >= 3) {
             this.setState({selectableOrganisaatiot: this.getSelectableOrganisaatiot(value)});
         } else {
@@ -70,22 +73,23 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     getOrganisaatioAsSelectable = (organisaatio) => {
         const nimi = organisaatio.nimi[this.props.locale] ? organisaatio.nimi[this.props.locale] :
           organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
+        // Select-komponentin käyttämä formaatti
         return {
             label: `${nimi} (${organisaatio.organisaatiotyypit.join(',')})` ,
             value: organisaatio.oid
         };
     }
 
-    organisaatioOnChange = (organisaatio) => {
+    onOrganisaatioChange = (organisaatio) => {
         this.setState({selectedOrganisaatio: organisaatio, naytaKaikki: true});
         const organisaatioOid = organisaatio.value;
         this.props.onSubmit({organisaatioOids: organisaatioOid});
     }
 
-    naytaKaikkiOnChange = (naytaKaikki) => {
-        const organisaatioOids = naytaKaikki ? null : [this.props.rootOrganisaatioOid];
+    onNaytaKaikkiChange = (naytaKaikki) => {
+        const organisaatioOid = naytaKaikki ? null : this.props.rootOrganisaatioOid;
         this.setState({selectedOrganisaatio: null, naytaKaikki: naytaKaikki});
-        this.props.onSubmit({organisaatioOids: organisaatioOids});
+        this.props.onSubmit({organisaatioOids: organisaatioOid});
     }
 };
 

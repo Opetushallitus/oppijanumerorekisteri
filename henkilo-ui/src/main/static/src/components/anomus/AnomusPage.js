@@ -1,7 +1,11 @@
 import React from 'react';
+import Loader from '../common/icons/Loader'
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm'
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 
+/**
+ * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
+ */
 class AnomusPage extends React.Component {
     constructor(props) {
         super(props);
@@ -14,9 +18,17 @@ class AnomusPage extends React.Component {
         return (
           <div>
             <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit}></HaetutKayttooikeusRyhmatHakuForm>
-            <HenkiloViewOpenKayttooikeusanomus {...this.props} updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma}></HenkiloViewOpenKayttooikeusanomus>
+            {
+                this.props.haetutKayttooikeusryhmatLoading ? <Loader /> :
+                  <HenkiloViewOpenKayttooikeusanomus {...this.props} updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma}></HenkiloViewOpenKayttooikeusanomus>
+            }
           </div>
         );
+    }
+
+    componentDidMount() {
+        this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
+        this.props.fetchAllOrganisaatios();
     }
 
     onSubmit = (criteria) => {

@@ -6,16 +6,10 @@ import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
 import {updateHaettuKayttooikeusryhmaInAnomukset} from '../actions/kayttooikeusryhma.actions'
 
 class AnomusPageContainer extends React.Component {
-    componentDidMount() {
-        this.props.fetchHaetutKayttooikeusryhmat({
-            tilat: ['ANOTTU']
-        });
-        this.props.fetchAllOrganisaatios();
-    }
     render() {
         return (
           <div className="header">
-            { this.props.haetutKayttooikeusryhmatLoading ? <Loader /> : <AnomusPage {...this.props}></AnomusPage> }
+            <AnomusPage {...this.props}></AnomusPage>
           </div>
         );
     }
@@ -36,4 +30,8 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchHaetutKayttooikeusryhmat, fetchAllOrganisaatios, updateHaettuKayttooikeusryhmaInAnomukset})(AnomusPageContainer);
+export default connect(mapStateToProps, {
+        fetchHaetutKayttooikeusryhmat,
+        fetchAllOrganisaatios,
+        updateHaettuKayttooikeusryhmaInAnomukset
+    })(AnomusPageContainer);
