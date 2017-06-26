@@ -11,6 +11,9 @@ class HenkiloViewOrganisationContent extends React.Component{
         readOnly: React.PropTypes.bool.isRequired,
         showPassive: React.PropTypes.bool,
         locale: React.PropTypes.string.isRequired,
+        kayttooikeus: React.PropTypes.shape({
+            grantableKayttooikeus: React.PropTypes.object.isRequired,
+        }).isRequired,
 
         passivoiHenkiloOrg: React.PropTypes.func.isRequired,
     };
@@ -57,7 +60,8 @@ class HenkiloViewOrganisationContent extends React.Component{
                                             <PassivoiOrganisaatioButton passive={values.passive}
                                                                         id={values.id}
                                                                         L={this.L}
-                                                                        passivoiOrgAction={this.passivoiHenkiloOrganisation.bind(this)} />
+                                                                        passivoiOrgAction={this.passivoiHenkiloOrganisation.bind(this)}
+                                                                        disabled={this.hasNoPermission(values.id)} />
                                         </div>
                                     </div>
                                     : null
@@ -68,6 +72,13 @@ class HenkiloViewOrganisationContent extends React.Component{
             </div>
         )
     };
+
+    // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
+    hasNoPermission(organisaatioOid) {
+        return !this.props.kayttooikeus.grantableKayttooikeusLoading
+            && !this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid];
+    };
+
 
     passivoiHenkiloOrganisation(organisationOid) {
         this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);

@@ -25,7 +25,7 @@ class VirkailijaViewPage extends React.Component {
                         || this.props.koodisto.kansalaisuusKoodistoLoading
                         || this.props.koodisto.sukupuoliKoodistoLoading
                         || this.props.henkilo.kayttajatietoLoading
-                        ||this.props.koodisto.yhteystietotyypitKoodistoLoading
+                        || this.props.koodisto.yhteystietotyypitKoodistoLoading
                             ? <Loader />
                             : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
@@ -43,6 +43,7 @@ class VirkailijaViewPage extends React.Component {
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloOrgsLoading
+                        || this.props.kayttooikeus.grantableKayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
@@ -50,6 +51,7 @@ class VirkailijaViewPage extends React.Component {
                 <div className="wrapper" ref={(ref) => this.existingKayttooikeusRef = ref}>
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
+                        || this.props.kayttooikeus.grantableKayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewExistingKayttooikeus {...this.props} />
                     }
@@ -57,6 +59,7 @@ class VirkailijaViewPage extends React.Component {
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
+                        || this.props.kayttooikeus.grantableKayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
                     }

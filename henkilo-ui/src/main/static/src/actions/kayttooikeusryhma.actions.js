@@ -22,7 +22,7 @@ import {
     CREATE_KAYTTOOIKEUSANOMUS_REQUEST,
     CREATE_KAYTTOOIKEUSANOMUS_SUCCESS,
     CREATE_KAYTTOOIKEUSANOMUS_FAILURE, REMOVE_KAYTTOOIKEUS_REQUEST, REMOVE_KAYTTOOIKEUS_SUCCESS,
-    REMOVE_KAYTTOOIKEUS_FAILURE
+    REMOVE_KAYTTOOIKEUS_FAILURE, FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS, FETCH_GRANTABLE_FAILURE
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
@@ -165,3 +165,17 @@ export const removePrivilege = (oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId
         })
         .catch(error => dispatch(removePrivilegeFailure(error, data)));
 };
+
+// Get all privileges user can grant
+const getGrantablePrivilegesRequest = () => ({type: FETCH_GRANTABLE_REQUEST});
+const getGrantablePrivilegesSuccess = data => ({type: FETCH_GRANTABLE_SUCCESS, data});
+const getGrantablePrivilegesFailure = (error) => ({type: FETCH_GRANTABLE_FAILURE, error});
+
+export const getGrantablePrivileges = (henkiloOid) => dispatch => {
+    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-list-grantable', henkiloOid);
+    dispatch(getGrantablePrivilegesRequest());
+    http.get(url)
+        .then((data) => dispatch(getGrantablePrivilegesSuccess(data)))
+        .catch(error => dispatch(getGrantablePrivilegesFailure(error)));
+};
+

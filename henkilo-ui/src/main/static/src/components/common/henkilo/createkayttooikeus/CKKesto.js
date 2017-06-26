@@ -1,5 +1,6 @@
 import React from 'react'
 import DatePicker from 'react-datepicker'
+import moment from 'moment'
 
 const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L}) =>
     <tr key="kayttooikeusKestoField">
@@ -13,7 +14,8 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             onChange={alkaaPvmAction}
                             selected={alkaaInitValue}
                             showYearDropdown
-                            showWeekNumbers />
+                            showWeekNumbers
+                            filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
@@ -21,7 +23,8 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             onChange={paattyyPvmAction}
                             selected={paattyyInitValue}
                             showYearDropdown
-                            showWeekNumbers />
+                            showWeekNumbers
+                            filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
             </div>
         </td>
         <td/>

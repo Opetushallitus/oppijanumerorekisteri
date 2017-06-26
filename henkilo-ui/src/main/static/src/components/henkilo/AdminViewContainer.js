@@ -38,6 +38,10 @@ import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
 
 class AdminViewContainer extends React.Component {
     componentDidMount() {
+        if(this.props.oidHenkilo === this.props.ownOid) {
+            this.props.router.push('/omattiedot');
+        }
+
         this.props.updateNavigation(adminNavi(this.props.oidHenkilo), '/henkilo');
 
         this.props.fetchHenkilo(this.props.oidHenkilo);
@@ -112,6 +116,7 @@ const mapStateToProps = (state, ownProps) => {
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
+        ownOid: state.omattiedot.data.oid,
     };
 };
 

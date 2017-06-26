@@ -13,7 +13,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         l10n: React.PropTypes.object.isRequired,
         locale: React.PropTypes.string.isRequired,
         oidHenkilo: React.PropTypes.string.isRequired,
-        kayttooikeus: React.PropTypes.shape({kayttooikeus: React.PropTypes.array.isRequired}).isRequired,
+        kayttooikeus: React.PropTypes.shape({
+            kayttooikeus: React.PropTypes.array.isRequired,
+            grantableKayttooikeus: React.PropTypes.object.isRequired,
+        }).isRequired,
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
         notifications: React.PropTypes.shape({
             existingKayttooikeus: React.PropTypes.array.isRequired,
@@ -89,18 +92,21 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                                         onChange={(value) => this.loppupvmAction(value, idx)}
                                         selected={this.state.dates[idx].loppupvm}
                                         showYearDropdown
-                                        showWeekNumbers />
+                                        showWeekNumbers
+                                        filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
                         </div>
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton
                                 myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
                                     uusittavaKayttooikeusRyhma.organisaatioOid)}
-                                L={this.L}/>
+                                L={this.L}
+                                disabled={this.hasNoPermission(uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)} />
                         </div>
                     </div>,
                     [headingList[6]]: <SuljeButton suljeAction={() => this.props.removePrivilege(this.props.oidHenkilo,
                         uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)}
-                                                   L={this.L} />,
+                                                   L={this.L}
+                                                   disabled={this.hasNoPermission(uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)} />,
                     [headingList[7]]: this.props.notifications.existingKayttooikeus.some(notification => {
                         return notification.ryhmaIdList
                             .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
@@ -108,6 +114,13 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     }),
                 }
             });
+    };
+
+    // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
+    hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
+        return !this.props.kayttooikeus.grantableKayttooikeusLoading
+            && !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
+            && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
     };
 
     render() {

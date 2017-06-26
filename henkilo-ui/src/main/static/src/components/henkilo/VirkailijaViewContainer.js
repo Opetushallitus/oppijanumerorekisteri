@@ -13,7 +13,8 @@ import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
-    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, removePrivilege,
+    fetchAllKayttooikeusryhmasForHenkilo, fetchAllowedKayttooikeusryhmasForOrganisation, getGrantablePrivileges,
+    removePrivilege,
     updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
@@ -31,6 +32,9 @@ import {removeNotification} from "../../actions/notifications.actions";
 
 class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
+        if(this.props.oidHenkilo === this.props.ownOid) {
+            this.props.router.push('/omattiedot');
+        }
         if(this.props.isAdmin) {
             this.props.router.push('/admin/' + this.props.oidHenkilo);
         }
@@ -47,6 +51,8 @@ class VirkailijaViewContainer extends React.Component {
             this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
             this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+
+            this.props.getGrantablePrivileges(this.props.oidHenkilo);
         }
     };
 
@@ -104,6 +110,7 @@ const mapStateToProps = (state, ownProps) => {
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
         isAdmin: state.omattiedot.isAdmin,
+        ownOid: state.omattiedot.data.oid,
     };
 };
 
@@ -112,4 +119,4 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification, removePrivilege})(VirkailijaViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges,})(VirkailijaViewContainer);
