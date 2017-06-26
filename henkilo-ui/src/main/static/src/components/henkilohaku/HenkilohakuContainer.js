@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
+import {henkilohaku} from "../../actions/henkilohaku.actions";
 
 class HenkilohakuContainer extends React.Component {
     static propTypes = {
@@ -40,7 +41,9 @@ class HenkilohakuContainer extends React.Component {
                                locale={this.props.locale}
                                initialCriteria={this.initialCriteria}
                                henkilo={this.props.henkilo}
-                               kayttooikeusryhmas={this.props.kayttooikeus.allKayttooikeusryhmas} />
+                               kayttooikeusryhmas={this.props.kayttooikeus.allKayttooikeusryhmas}
+                               henkilohakuAction={this.props.henkilohaku}
+                               henkilohakuResult={this.props.henkilohakuResult} />
             : <Loader />
     };
 }
@@ -52,8 +55,10 @@ const mapStateToProps = (state, ownProps) => {
         isAdmin: state.omattiedot.isAdmin,
         henkilo: state.henkilo,
         kayttooikeus: state.kayttooikeus,
+        henkilohakuResult: state.henkilohakuState.result,
     };
 };
 
 
-export default connect(mapStateToProps, {fetchHenkiloOrganisaatiosForCurrentUser, fetchAllKayttooikeusryhma})(HenkilohakuContainer);
+export default connect(mapStateToProps, {fetchHenkiloOrganisaatiosForCurrentUser, fetchAllKayttooikeusryhma,
+    henkilohaku})(HenkilohakuContainer);

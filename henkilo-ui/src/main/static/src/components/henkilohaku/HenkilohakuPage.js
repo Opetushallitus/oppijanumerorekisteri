@@ -3,6 +3,7 @@ import React from 'react'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
+import HenkilohakuButton from "./HenkilohakuButton";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -18,6 +19,8 @@ class HenkilohakuPage extends React.Component {
             henkiloOrganisaatios: React.PropTypes.array.isRequired,
         }),
         kayttooikeusryhmas: React.PropTypes.array.isRequired,
+        henkilohakuAction: React.PropTypes.func.isRequired,
+        henkilohakuResult: React.PropTypes.array.isRequired,
     };
 
     constructor(props) {
@@ -42,8 +45,8 @@ class HenkilohakuPage extends React.Component {
                 ...props.initialCriteria,
                 organisaatioOid: undefined,
                 kayttooikeusryhmaId: undefined,
+                nameQuery: undefined,
             },
-            henkilohakuResult: [],
             showNoDataMessage: true,
         };
 
@@ -52,7 +55,8 @@ class HenkilohakuPage extends React.Component {
     render() {
         return <div className="borderless-wrapper">
                 <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
-                <input className="oph-input" />
+                <HenkilohakuButton searchAction={this.searchQuery.bind(this)}
+                                   setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)} />
                 <HenkilohakuFilters noOrganisationAction={this.setCheckedFilterCriteria('noOrganisation').bind(this)}
                                     suborganisationAction={this.setCheckedFilterCriteria('subOrganisation').bind(this)}
                                     duplikaatitAction={this.setCheckedFilterCriteria('dublicates').bind(this)}
@@ -62,12 +66,12 @@ class HenkilohakuPage extends React.Component {
                                     locale={this.props.locale}
                                     organisaatioList={this.props.henkilo.henkiloOrganisaatios}
                                     selectedOrganisation={this.state.henkilohakuModel.organisaatioOid}
-                                    organisaatioSelectAction={this.updateToState('organisaatioOid').bind(this)}
+                                    organisaatioSelectAction={this.updateToSearchModel('organisaatioOid').bind(this)}
                                     kayttooikeusryhmas={this.props.kayttooikeusryhmas}
                                     selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
-                                    kayttooikeusSelectionAction={this.updateToState('kayttooikeusryhmaId').bind(this)} />
+                                    kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
                 {
-                    this.state.henkilohakuResult.length
+                    this.props.henkilohakuResult.length
                         ?
                         <Table headings={this.headingTemplate.map(template =>
                             Object.assign({}, template, {label: this.L[template.key] || template.key}))}
@@ -86,21 +90,27 @@ class HenkilohakuPage extends React.Component {
     };
 
     createRows(headingKeys) {
-        return this.state.henkilohakuResult.map((henkilo, idx) => ({
-            [headingKeys[0]]: henkilo.sukunimi + ', ' + henkilo.etunimet,
-            [headingKeys[1]]: henkilo.kayttajatieto.username,
-            [headingKeys[2]]: <ul>{henkilo.henkiloOrgs.map(organisaatio => <li>{organisaatio.organisaatioOid}</li>)}</ul>,
+        return this.props.henkilohakuResult.map((henkilo, idx) => ({
+            [headingKeys[0]]: henkilo.nimi,
+            [headingKeys[1]]: henkilo.kayttajatunnus,
+            [headingKeys[2]]: <ul>{henkilo.organisaatioNimiList.map(organisaatio => <li>{organisaatio}</li>)}</ul>,
         }));
     };
 
-    updateToState(key) {
+    updateToSearchModel(key) {
         return (org) => this.setState({
             henkilohakuModel: {
                 ...this.state.henkilohakuModel,
                 [key]: org.value
             }
         });
-    }
+    };
+
+    searchQuery() {
+        if(this.state.henkilohakuModel.nameQuery) {
+            this.props.henkilohakuAction(this.state.henkilohakuModel);
+        }
+    };
 
     setCheckedFilterCriteria(criteriaKey) {
         return (event) => this.setState({
