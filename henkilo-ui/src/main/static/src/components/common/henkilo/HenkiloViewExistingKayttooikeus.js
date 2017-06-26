@@ -116,7 +116,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     };
 
     hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
-        return this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid] && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === -1
+        return !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid] && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
     };
 
     render() {

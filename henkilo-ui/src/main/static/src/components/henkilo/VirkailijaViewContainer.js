@@ -48,8 +48,8 @@ class VirkailijaViewContainer extends React.Component {
             this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
             this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloOrganisaatiosForCurrentUser();
-            // Not admin so fetch grantable kayttooikeusryhmas by organisation.
-            this.props.getGrantablePrivileges();
+
+            this.props.getGrantablePrivileges(this.props.oidHenkilo);
         }
     };
 

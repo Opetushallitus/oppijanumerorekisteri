@@ -171,8 +171,8 @@ const getGrantablePrivilegesRequest = () => ({type: FETCH_GRANTABLE_REQUEST});
 const getGrantablePrivilegesSuccess = data => ({type: FETCH_GRANTABLE_SUCCESS, data});
 const getGrantablePrivilegesFailure = (error) => ({type: FETCH_GRANTABLE_FAILURE, error});
 
-export const getGrantablePrivileges = () => dispatch => {
-    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-list-grantable');
+export const getGrantablePrivileges = (henkiloOid) => dispatch => {
+    const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-list-grantable', henkiloOid);
     dispatch(getGrantablePrivilegesRequest());
     http.get(url)
         .then((data) => dispatch(getGrantablePrivilegesSuccess(data)))

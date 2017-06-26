@@ -36,7 +36,7 @@ export const kayttooikeus = (state = {
         case FETCH_GRANTABLE_REQUEST:
             return Object.assign({}, state, {grantableKayttooikeusLoading: true,});
         case FETCH_GRANTABLE_SUCCESS:
-            return Object.assign({}, state, {grantableKayttooikeusLoading: false, grantableKayttooikeus: action.data.kayttooikeusByOrganisation});
+            return Object.assign({}, state, {grantableKayttooikeusLoading: false, grantableKayttooikeus: action.data});
         default:
             return state;
     }
