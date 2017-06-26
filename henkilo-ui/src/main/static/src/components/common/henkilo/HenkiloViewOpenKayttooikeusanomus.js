@@ -76,7 +76,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                               onChange={(value) => this.loppupvmAction(value, idx)}
                                               selected={this.state.dates[idx].loppupvm}
                                               showYearDropdown
-                                              showWeekNumbers />,
+                                              showWeekNumbers
+                                              filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />,
                 [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
                 [headingList[6]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));

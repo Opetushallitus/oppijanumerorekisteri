@@ -92,7 +92,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                                         onChange={(value) => this.loppupvmAction(value, idx)}
                                         selected={this.state.dates[idx].loppupvm}
                                         showYearDropdown
-                                        showWeekNumbers />
+                                        showWeekNumbers
+                                        filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
                         </div>
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton
