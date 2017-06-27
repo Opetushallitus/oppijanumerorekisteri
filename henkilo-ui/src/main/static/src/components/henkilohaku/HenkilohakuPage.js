@@ -21,6 +21,7 @@ class HenkilohakuPage extends React.Component {
         kayttooikeusryhmas: React.PropTypes.array.isRequired,
         henkilohakuAction: React.PropTypes.func.isRequired,
         henkilohakuResult: React.PropTypes.array.isRequired,
+        router: React.PropTypes.object.isRequired,
     };
 
     constructor(props) {
@@ -29,6 +30,10 @@ class HenkilohakuPage extends React.Component {
         this.L = this.props.l10n[this.props.locale];
 
         this.headingTemplate = [
+            {
+                key: 'HENKILOHAKU_OIDHENKILO_HIDDEN',
+                hide: true,
+            },
             {
                 key: 'HENKILOHAKU_NIMI',
             },
@@ -78,7 +83,13 @@ class HenkilohakuPage extends React.Component {
                                 Object.assign({}, template, {label: this.L[template.key] || template.key}))}
                                    data={this.createRows(this.headingTemplate.map(template => template.key))}
                                    noDataText=""
-                                   striped />
+                                   striped
+                                   getTdProps={(state, rowInfo, column, instance) => {
+                                       return {
+                                           onClick: e => this.props.router.push('/virkailija/' +
+                                               rowInfo.rowValues['HENKILOHAKU_OIDHENKILO_HIDDEN'])
+                                       }
+                            }} />
                         </div>
                         : null
                 }
@@ -93,9 +104,10 @@ class HenkilohakuPage extends React.Component {
 
     createRows(headingKeys) {
         return this.props.henkilohakuResult.map((henkilo, idx) => ({
-            [headingKeys[0]]: henkilo.nimi,
-            [headingKeys[1]]: henkilo.kayttajatunnus,
-            [headingKeys[2]]: <ul>{henkilo.organisaatioNimiList.map(organisaatio => <li>{organisaatio}</li>)}</ul>,
+            [headingKeys[0]]: henkilo.oidHenkilo,
+            [headingKeys[1]]: henkilo.nimi,
+            [headingKeys[2]]: henkilo.kayttajatunnus,
+            [headingKeys[3]]: <ul>{henkilo.organisaatioNimiList.map(organisaatio => <li>{organisaatio}</li>)}</ul>,
         }));
     };
 

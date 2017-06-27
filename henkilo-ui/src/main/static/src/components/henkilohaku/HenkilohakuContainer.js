@@ -43,7 +43,8 @@ class HenkilohakuContainer extends React.Component {
                                henkilo={this.props.henkilo}
                                kayttooikeusryhmas={this.props.kayttooikeus.allKayttooikeusryhmas}
                                henkilohakuAction={this.props.henkilohaku}
-                               henkilohakuResult={this.props.henkilohakuResult} />
+                               henkilohakuResult={this.props.henkilohakuResult}
+                               router={this.props.router} />
             : <Loader />
     };
 }
