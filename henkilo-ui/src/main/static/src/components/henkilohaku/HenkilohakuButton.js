@@ -4,7 +4,6 @@ import ReactTimeout from 'react-timeout'
 class HenkilohakuButton extends React.Component {
     static propTypes = {
         setSearchQueryAction: React.PropTypes.func.isRequired,
-        searchAction: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -19,18 +18,19 @@ class HenkilohakuButton extends React.Component {
 
     render() {
         return <input className="oph-input"
+                      autoFocus
                       onKeyUp={this.typewatch.bind(this)} />;
     };
 
     typewatch(event) {
-        this.props.setSearchQueryAction(event.target);
+        const value = event.target;
         if(this.state.timeoutEvent !== null) {
             this.props.clearTimeout(this.state.timeoutEvent);
         }
         this.setState({
             timeoutEvent: this.props.setTimeout(() => {
                 this.setState({timeoutEvent: null});
-                this.props.searchAction();
+                this.props.setSearchQueryAction(value);
             }, this.timeout),
         });
     };

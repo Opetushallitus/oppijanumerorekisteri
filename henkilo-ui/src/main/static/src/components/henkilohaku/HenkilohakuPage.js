@@ -64,12 +64,11 @@ class HenkilohakuPage extends React.Component {
     render() {
         return <div className="borderless-wrapper">
                 <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
-                <HenkilohakuButton searchAction={this.searchQuery.bind(this)}
-                                   setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)} />
-                <HenkilohakuFilters noOrganisationAction={this.setCheckedFilterCriteria('noOrganisation').bind(this)}
-                                    suborganisationAction={this.setCheckedFilterCriteria('subOrganisation').bind(this)}
-                                    duplikaatitAction={this.setCheckedFilterCriteria('dublicates').bind(this)}
-                                    passiivisetAction={this.setCheckedFilterCriteria('passivoitu').bind(this)}
+                <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)} />
+                <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
+                                    suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
+                                    duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
+                                    passiivisetAction={this.updateToSearchModel('passivoitu', true).bind(this)}
                                     initialValues={this.state.henkilohakuModel}
                                     l10n={this.props.l10n}
                                     locale={this.props.locale}
@@ -116,13 +115,15 @@ class HenkilohakuPage extends React.Component {
         }));
     };
 
-    updateToSearchModel(key) {
-        return (org) => this.setState({
-            henkilohakuModel: {
-                ...this.state.henkilohakuModel,
-                [key]: org.value
-            }
-        });
+    updateToSearchModel(key, isEvent) {
+        return (entity) => {
+            this.setState({
+                henkilohakuModel: {
+                    ...this.state.henkilohakuModel,
+                    [key]: !isEvent ? entity.value : entity.target.checked
+                }
+            }, this.searchQuery); // Do query when model updates.
+        }
     };
 
     searchQuery() {
@@ -131,14 +132,6 @@ class HenkilohakuPage extends React.Component {
         }
     };
 
-    setCheckedFilterCriteria(criteriaKey) {
-        return (event) => this.setState({
-            henkilohakuModel: {
-                ...this.state.henkilohakuModel,
-                [criteriaKey]: event.target.checked,
-            },
-        });
-    };
 }
 
 export default HenkilohakuPage;
