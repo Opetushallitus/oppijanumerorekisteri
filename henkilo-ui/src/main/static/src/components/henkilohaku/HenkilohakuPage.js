@@ -52,9 +52,13 @@ class HenkilohakuPage extends React.Component {
                 kayttooikeusryhmaId: undefined,
                 nameQuery: undefined,
             },
-            showNoDataMessage: true,
+            showNoDataMessage: false,
         };
 
+    };
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({showNoDataMessage: !nextProps.henkilohakuResult.length});
     };
 
     render() {
@@ -107,7 +111,8 @@ class HenkilohakuPage extends React.Component {
             [headingKeys[0]]: henkilo.oidHenkilo,
             [headingKeys[1]]: henkilo.nimi,
             [headingKeys[2]]: henkilo.kayttajatunnus,
-            [headingKeys[3]]: <ul>{henkilo.organisaatioNimiList.map(organisaatio => <li>{organisaatio}</li>)}</ul>,
+            [headingKeys[3]]: <ul>{henkilo.organisaatioNimiList.map(organisaatio =>
+                <li>{organisaatio.localisedLabels[this.props.locale] || organisaatio.identifier}</li>)}</ul>,
         }));
     };
 
