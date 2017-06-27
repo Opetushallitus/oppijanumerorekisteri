@@ -42,7 +42,6 @@ class AdminViewContainer extends React.Component {
             this.props.router.push('/omattiedot');
         }
 
-        this.props.updateNavigation(adminNavi(this.props.oidHenkilo), '/henkilo');
         this.props.updateHenkiloNavigation(adminNavi(this.props.oidHenkilo));
 
         this.props.fetchHenkilo(this.props.oidHenkilo);

@@ -32,7 +32,7 @@ export default class KutsututPage extends React.Component {
                     L={L}
                     kutsus={kutsuResponse.result}
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
-                    locale={this.props.locale}></KutsututTable>}
+                    locale={this.props.locale}/>}
 
                 {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>

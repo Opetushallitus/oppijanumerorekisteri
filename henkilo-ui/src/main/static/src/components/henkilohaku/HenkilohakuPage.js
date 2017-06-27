@@ -73,11 +73,13 @@ class HenkilohakuPage extends React.Component {
                 {
                     this.props.henkilohakuResult.length
                         ?
-                        <Table headings={this.headingTemplate.map(template =>
-                            Object.assign({}, template, {label: this.L[template.key] || template.key}))}
-                               data={this.createRows(this.headingTemplate.map(template => template.key))}
-                               noDataText=""
-                               striped />
+                        <div className="henkilohakuTableWrapper">
+                            <Table headings={this.headingTemplate.map(template =>
+                                Object.assign({}, template, {label: this.L[template.key] || template.key}))}
+                                   data={this.createRows(this.headingTemplate.map(template => template.key))}
+                                   noDataText=""
+                                   striped />
+                        </div>
                         : null
                 }
                 {
