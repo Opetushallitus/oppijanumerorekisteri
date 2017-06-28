@@ -4,6 +4,7 @@ import ReactTimeout from 'react-timeout'
 class HenkilohakuButton extends React.Component {
     static propTypes = {
         setSearchQueryAction: React.PropTypes.func.isRequired,
+        defaultNameQuery: React.PropTypes.string,
     };
 
     constructor(props) {
@@ -19,6 +20,7 @@ class HenkilohakuButton extends React.Component {
     render() {
         return <input className="oph-input"
                       autoFocus
+                      defaultValue={this.props.defaultNameQuery || ''}
                       onKeyUp={this.typewatch.bind(this)} />;
     };
 

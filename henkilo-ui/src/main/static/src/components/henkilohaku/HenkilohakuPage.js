@@ -20,7 +20,9 @@ class HenkilohakuPage extends React.Component {
         }),
         kayttooikeusryhmas: React.PropTypes.array.isRequired,
         henkilohakuAction: React.PropTypes.func.isRequired,
+        updateFilters: React.PropTypes.func.isRequired,
         henkilohakuResult: React.PropTypes.array.isRequired,
+        henkiloHakuFilters: React.PropTypes.object.isRequired,
         router: React.PropTypes.object.isRequired,
     };
 
@@ -61,10 +63,23 @@ class HenkilohakuPage extends React.Component {
         this.setState({showNoDataMessage: !nextProps.henkilohakuResult.length});
     };
 
+    // To preserve filter settings over page changes.
+    componentWillMount() {
+        if(Object.keys(this.props.henkiloHakuFilters).length) {
+            this.setState({henkilohakuModel: this.props.henkiloHakuFilters});
+        }
+    };
+
+    // To preserve filter settings over page changes.
+    componentWillUnmount() {
+        this.props.updateFilters(this.state.henkilohakuModel);
+    };
+
     render() {
         return <div className="borderless-wrapper">
                 <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
-                <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)} />
+                <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
+                                   defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
                 <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
                                     suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
                                     duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}

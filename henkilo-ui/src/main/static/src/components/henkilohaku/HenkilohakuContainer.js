@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
-import {henkilohaku} from "../../actions/henkilohaku.actions";
+import {henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
 
 class HenkilohakuContainer extends React.Component {
     static propTypes = {
@@ -43,7 +43,9 @@ class HenkilohakuContainer extends React.Component {
                                henkilo={this.props.henkilo}
                                kayttooikeusryhmas={this.props.kayttooikeus.allKayttooikeusryhmas}
                                henkilohakuAction={this.props.henkilohaku}
-                               henkilohakuResult={this.props.henkilohakuResult}
+                               henkilohakuResult={this.props.henkilohakuState.result}
+                               henkiloHakuFilters={this.props.henkilohakuState.filters}
+                               updateFilters={this.props.updateFilters}
                                router={this.props.router} />
             : <Loader />
     };
@@ -56,10 +58,10 @@ const mapStateToProps = (state, ownProps) => {
         isAdmin: state.omattiedot.isAdmin,
         henkilo: state.henkilo,
         kayttooikeus: state.kayttooikeus,
-        henkilohakuResult: state.henkilohakuState.result,
+        henkilohakuState: state.henkilohakuState,
     };
 };
 
 
 export default connect(mapStateToProps, {fetchHenkiloOrganisaatiosForCurrentUser, fetchAllKayttooikeusryhma,
-    henkilohaku})(HenkilohakuContainer);
+    henkilohaku, updateFilters})(HenkilohakuContainer);
