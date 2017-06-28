@@ -7,5 +7,6 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import java.util.List;
 
 public interface HenkiloViiteRepository extends QueryDslPredicateExecutor, JpaRepository<HenkiloViite, Long>, HenkiloViiteRepositoryCustom {
+    List<HenkiloViite> findByMasterOid(String masterOid);
     List<HenkiloViite> findBySlaveOid(String slaveOid);
 }

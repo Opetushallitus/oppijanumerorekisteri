@@ -28,7 +28,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -624,7 +623,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             duplicateHenkilo.setModified(modificationDate);
 
             // Preserve two-level hierarchy, re-link slave's slaves to new master
-            this.henkiloViiteRepository.getDuplicateOids(slaveOid).forEach( slavesSlave -> {
+            this.henkiloViiteRepository.findByMasterOid(slaveOid).forEach( slavesSlave -> {
                 if (slavesSlave.getSlaveOid().equals(master.getOidHenkilo())) {
                     this.henkiloViiteRepository.delete(slavesSlave);
                 } else {
