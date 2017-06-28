@@ -31,12 +31,12 @@ import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
+import static java.util.stream.Collectors.joining;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
@@ -351,17 +351,19 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         Query henkiloTypedQuery = this.em.createNativeQuery("" +
                 "SELECT h1.* \n" +
                 "FROM henkilo h1 \n" +
-                "WHERE (h1.etunimet || h1.kutsumanimi || h1.sukunimi) % :nimet \n" +
+                "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
 //                "  AND h1.oidhenkilo != h2.oidhenkilo \n" +
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
-                "ORDER BY similarity(h1.etunimet || h1.kutsumanimi || h1.sukunimi, :nimet) DESC \n", Henkilo.class)
+                "ORDER BY similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) DESC \n", Henkilo.class)
                 .setParameter("nimet", getAllNames(henkilo));
         return (List<Henkilo>)henkiloTypedQuery.getResultList();
     }
 
     private String getAllNames(Henkilo henkilo) {
-        return henkilo.getEtunimet() + henkilo.getKutsumanimi() + henkilo.getSukunimi();
+        return Stream.of(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi())
+                .filter(Objects::nonNull)
+                .collect(joining(" "));
     }
 
     public Collection<Henkilo> findUnidentified(long limit, long offset) {
