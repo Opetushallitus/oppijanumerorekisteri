@@ -73,10 +73,9 @@ label.required::after{
 }
 
 .borderless-wrapper {
-    padding: 40px;
+    padding: 30px;
     background-color: white;
     margin-bottom: 40px;
-    margin-right: 5%;
 }
 
 .clickable {

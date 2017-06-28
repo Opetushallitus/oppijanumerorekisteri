@@ -144,7 +144,9 @@ class HenkilohakuPage extends React.Component {
     };
 
     searchQuery() {
-        if(this.state.henkilohakuModel.nameQuery) {
+        if(this.state.henkilohakuModel.nameQuery
+            || this.state.henkilohakuModel.organisaatioOid
+            || this.state.henkilohakuModel.kayttooikeusryhmaId) {
             this.props.henkilohakuAction(this.state.henkilohakuModel);
         }
     };

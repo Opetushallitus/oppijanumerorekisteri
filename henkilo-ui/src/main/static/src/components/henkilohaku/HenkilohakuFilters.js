@@ -1,6 +1,5 @@
 import './HenkilohakuFilters.css'
 import React from 'react'
-import Collapse from 'react-collapse'
 import OphCheckboxInline from "./criterias/OphCheckboxInline";
 import SubOrganisationCheckbox from "./criterias/SubOrganisationCheckbox";
 import NoOrganisationCheckbox from "./criterias/NoOrganisationCheckbox";
@@ -47,59 +46,50 @@ class HenkilohakuFilters extends React.Component {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-
-        this.state = {
-            isOpen: true,
-        };
     };
 
     render() {
         return <div>
-            <a style={{cursor: "pointer"}} onClick={() => this.setState({isOpen: !this.state.isOpen,})} >
-                {this.L['HENKILOHAKU_LISAVAIHTOEHDOT']}
-            </a>
-            <Collapse isOpened={this.state.isOpen}>
-                <div className="henkilohakufilters-wrapper">
-                    <OphCheckboxInline text={this.L['HENKILOHAKU_FILTERS_HAEMYOS']} >
-                        <SubOrganisationCheckbox L={this.L}
-                                                 subOrganisationValue={this.props.initialValues.subOrganisation}
-                                                 subOrganisationAction={this.props.suborganisationAction}/>
-                        <NoOrganisationCheckbox L={this.L}
-                                                noOrganisationValue={this.props.initialValues.noOrganisation}
-                                                noOrganisationAction={this.props.noOrganisationAction} />
-                        <PassiivisetOrganisationCheckbox L={this.L}
-                                                         passiivisetValue={this.props.initialValues.passivoitu}
-                                                         passiivisetAction={this.props.passiivisetAction} />
-                        <DuplikaatitOrganisationCheckbox L={this.L}
-                                                         duplikaatitValue={this.props.initialValues.dublicates}
-                                                         duplikaatitAction={this.props.duplikaatitAction} />
-                    </OphCheckboxInline>
-                    <OphInline>
-                        <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">
-                            {this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIOLLA']}
-                        </label>
-                        <div style={{width: "30%", marginRight: "32px"}}>
-                            <OrganisaatioSelection id="organisationFilter"
-                                                   L={this.L}
-                                                   locale={this.props.locale}
-                                                   organisaatios={this.props.organisaatioList}
-                                                   selectOrganisaatio={this.props.organisaatioSelectAction}
-                                                   selectedOrganisaatioOid={this.props.selectedOrganisation} />
-                        </div>
-                        <label className="oph-label demo-label-inline oph-bold" htmlFor="kayttooikeusryhmaFilter">
-                            {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
-                        </label>
-                        <div style={{width: "30%", marginLeft: "32px"}}>
-                            <OphSelect id="kayttooikeusryhmaFilter"
-                                       options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({value: kayttooikeusryhma.id,
-                                           label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)}))}
-                                       value={this.props.selectedKayttooikeus}
-                                       placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                                       onChange={this.props.kayttooikeusSelectionAction} />
-                        </div>
-                    </OphInline>
-                </div>
-            </Collapse>
+            <div className="henkilohakufilters-wrapper">
+                <OphCheckboxInline text={this.L['HENKILOHAKU_FILTERS_HAEMYOS']} >
+                    <SubOrganisationCheckbox L={this.L}
+                                             subOrganisationValue={this.props.initialValues.subOrganisation}
+                                             subOrganisationAction={this.props.suborganisationAction}/>
+                    <NoOrganisationCheckbox L={this.L}
+                                            noOrganisationValue={this.props.initialValues.noOrganisation}
+                                            noOrganisationAction={this.props.noOrganisationAction} />
+                    <PassiivisetOrganisationCheckbox L={this.L}
+                                                     passiivisetValue={this.props.initialValues.passivoitu}
+                                                     passiivisetAction={this.props.passiivisetAction} />
+                    <DuplikaatitOrganisationCheckbox L={this.L}
+                                                     duplikaatitValue={this.props.initialValues.dublicates}
+                                                     duplikaatitAction={this.props.duplikaatitAction} />
+                </OphCheckboxInline>
+                <OphInline>
+                    <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">
+                        {this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIOLLA']}
+                    </label>
+                    <div className="henkilohaku-select">
+                        <OrganisaatioSelection id="organisationFilter"
+                                               L={this.L}
+                                               locale={this.props.locale}
+                                               organisaatios={this.props.organisaatioList}
+                                               selectOrganisaatio={this.props.organisaatioSelectAction}
+                                               selectedOrganisaatioOid={this.props.selectedOrganisation} />
+                    </div>
+                    <label className="oph-label demo-label-inline oph-bold" htmlFor="kayttooikeusryhmaFilter">
+                        {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
+                    </label>
+                    <div className="henkilohaku-select">
+                        <OphSelect id="kayttooikeusryhmaFilter"
+                                   options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({value: kayttooikeusryhma.id,
+                                       label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)}))}
+                                   value={this.props.selectedKayttooikeus}
+                                   placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                                   onChange={this.props.kayttooikeusSelectionAction} />
+                    </div>
+                </OphInline>
+            </div>
         </div>;
     };
 }

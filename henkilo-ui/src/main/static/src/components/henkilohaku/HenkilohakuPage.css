@@ -8,7 +8,7 @@
 }
 
 .henkilohakuTableWrapper .ReactTable .rt-thead.-header {
-    border: 1px solid #d5d5d5;
+    border-bottom: 1px solid #d5d5d5;
 }
 
 .henkilohakuTableWrapper .ReactTable .rt-resizable-header.-cursor-pointer.rt-th {

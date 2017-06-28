@@ -10,7 +10,7 @@ class HenkilohakuButton extends React.Component {
     constructor(props) {
         super(props);
 
-        this.timeout = 1000;
+        this.timeout = 200;
 
         this.state = {
             timeoutEvent: null,
