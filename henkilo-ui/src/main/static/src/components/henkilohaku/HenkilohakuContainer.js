@@ -46,6 +46,7 @@ class HenkilohakuContainer extends React.Component {
                                henkilohakuResult={this.props.henkilohakuState.result}
                                henkiloHakuFilters={this.props.henkilohakuState.filters}
                                updateFilters={this.props.updateFilters}
+                               henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
                                router={this.props.router} />
             : <Loader />
     };

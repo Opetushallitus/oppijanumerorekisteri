@@ -4,6 +4,7 @@ import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
 import HenkilohakuButton from "./HenkilohakuButton";
+import Loader from "../common/icons/Loader";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -23,6 +24,7 @@ class HenkilohakuPage extends React.Component {
         updateFilters: React.PropTypes.func.isRequired,
         henkilohakuResult: React.PropTypes.array.isRequired,
         henkiloHakuFilters: React.PropTypes.object.isRequired,
+        henkilohakuLoading: React.PropTypes.bool.isRequired,
         router: React.PropTypes.object.isRequired,
     };
 
@@ -60,7 +62,7 @@ class HenkilohakuPage extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
-        this.setState({showNoDataMessage: !nextProps.henkilohakuResult.length});
+        this.setState({showNoDataMessage: !nextProps.henkilohakuResult.length && !nextProps.henkilohakuLoading});
     };
 
     // To preserve filter settings over page changes.
@@ -109,7 +111,7 @@ class HenkilohakuPage extends React.Component {
                                        }
                             }} />
                         </div>
-                        : null
+                        : this.props.henkilohakuLoading ? <Loader /> : null
                 }
                 {
                     this.state.showNoDataMessage
