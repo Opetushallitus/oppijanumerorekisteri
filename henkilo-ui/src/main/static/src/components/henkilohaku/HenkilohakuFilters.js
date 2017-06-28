@@ -1,6 +1,6 @@
 import './HenkilohakuFilters.css'
 import React from 'react'
-import {Collapse} from 'react-collapse'
+import Collapse from 'react-collapse'
 import OphCheckboxInline from "./criterias/OphCheckboxInline";
 import SubOrganisationCheckbox from "./criterias/SubOrganisationCheckbox";
 import NoOrganisationCheckbox from "./criterias/NoOrganisationCheckbox";
