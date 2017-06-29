@@ -12,6 +12,7 @@ class Field extends React.Component {
         password: React.PropTypes.bool,
         disabled: React.PropTypes.bool,
         autofocus: React.PropTypes.bool,
+        placeholder: React.PropTypes.string,
     };
 
     constructor() {
@@ -42,6 +43,7 @@ class Field extends React.Component {
                              defaultValue={this.props.children}
                              {...type}
                              autoFocus={this.props.autofocus}
+                             placeholder={this.props.placeholder}
                              disabled={this.props.disabled} />
         )
     }

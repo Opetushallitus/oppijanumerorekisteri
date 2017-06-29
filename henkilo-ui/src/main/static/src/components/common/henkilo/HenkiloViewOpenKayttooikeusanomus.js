@@ -9,6 +9,7 @@ import HylkaaButton from "./buttons/HylkaaButton"
 import Button from "../button/Button"
 import { urls } from "oph-urls-js"
 import { http } from "../../../http"
+import {toLocalizedText} from '../../../localizabletext'
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -22,6 +23,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             grantableKayttooikeus: React.PropTypes.object.isRequired,
         }),
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
+        piilotaNimi: React.PropTypes.bool,
     };
 
     constructor(props) {
@@ -29,6 +31,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [{key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU'},
+            {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: this.props.piilotaNimi},
             {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220,},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220,},
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
@@ -67,19 +70,19 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         this._rows = this.props.kayttooikeus.kayttooikeusAnomus
             .map((haettuKayttooikeusRyhma, idx) => ({
                 [headingList[0]]: moment(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm)).format(),
-                [headingList[1]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale]
+                [headingList[1]]: haettuKayttooikeusRyhma.anomus.henkilo.etunimet + ' ' + haettuKayttooikeusRyhma.anomus.henkilo.sukunimi,
+                [headingList[2]]: this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi[this.props.locale]
                 + ' ('+ StaticUtils.flatArray(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit) + ')',
-                [headingList[2]]: haettuKayttooikeusRyhma.kayttoOikeusRyhma.description.texts
-                    .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[3]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
-                [headingList[4]]: <DatePicker className="oph-input"
+                [headingList[3]]: toLocalizedText(this.props.locale, haettuKayttooikeusRyhma.kayttoOikeusRyhma.description, haettuKayttooikeusRyhma.kayttoOikeusRyhma.name),
+                [headingList[4]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
+                [headingList[5]]: <DatePicker className="oph-input"
                                               onChange={(value) => this.loppupvmAction(value, idx)}
                                               selected={this.state.dates[idx].loppupvm}
                                               showYearDropdown
                                               showWeekNumbers
                                               filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />,
-                [headingList[5]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
-                [headingList[6]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
+                [headingList[6]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
+                [headingList[7]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));
     };
 
@@ -141,5 +144,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         );
     };
 }
+
+HenkiloViewOpenKayttooikeusanomus.defaultProps = {
+    piilotaNimi: true,
+};
 
 export default HenkiloViewOpenKayttooikeusanomus;

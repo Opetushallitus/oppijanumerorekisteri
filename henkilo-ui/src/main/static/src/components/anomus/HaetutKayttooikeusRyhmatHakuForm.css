@@ -1,0 +1,9 @@
+.haetut-kayttooikeusryhmat-form-item {
+    margin: 0 5px;
+}
+
+.haetut-kayttooikeusryhmat-form-item fieldset label {
+    /* ylikirjoitetaan index.css:n pari epäsopivaa defaulttia */
+    float: none;
+    min-width: 0;
+}

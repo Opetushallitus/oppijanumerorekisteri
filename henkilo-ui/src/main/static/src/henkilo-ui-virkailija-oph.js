@@ -33,6 +33,7 @@ export default {
     "kayttooikeus-service.kayttooikeusryhma.organisaatio": "kayttooikeus-service/kayttooikeusryhma/organisaatio/$1",
     "kayttooikeus-service.virkailija-ui.basePath": "kayttooikeus-service/virkailija",
     "kayttooikeus-service.prequel": "kayttooikeus-service/cas/prequel",
+    "kayttooikeus-service.anomus.haetut-kayttooikeusryhmat": "kayttooikeus-service/kayttooikeusanomus/haettuKayttoOikeusRyhma",
 
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",

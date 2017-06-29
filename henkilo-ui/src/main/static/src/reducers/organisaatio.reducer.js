@@ -2,14 +2,19 @@ import {FETCH_ORGANISATIONS_SUCCESS, FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_
 
 import StaticUtils from '../components/common/StaticUtils'
 
-export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: [], cached: {}}, action) => {
+const initialState = {
+    numHits: 0,
+    organisaatiot: []
+};
+
+export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: initialState, cached: {}}, action) => {
     switch(action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
-            return Object.assign({}, state, { organisaatioLoading: true, organisaatiot: [] });
+            return Object.assign({}, state, { organisaatioLoading: true, organisaatiot: initialState });
         case FETCH_ALL_ORGANISAATIOS_SUCCESS:
             return Object.assign({}, state, { organisaatioLoading: false, organisaatiot: action.organisaatios });
         case FETCH_ALL_ORGANISAATIOS_FAILURE:
-            return Object.assign({}, state, { organisaatioLoading: false, organisaatiot: [] });
+            return Object.assign({}, state, { organisaatioLoading: false, organisaatiot: initialState });
         case FETCH_ORGANISATIONS_SUCCESS:
             const uncachedOrganisaatios = action.organisations.filter(organisaatio =>
                 Object.keys(state.cached).indexOf(organisaatio.oid) === -1)
