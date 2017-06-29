@@ -113,8 +113,8 @@ class HenkilohakuPage extends React.Component {
                                    getTdProps={(state, rowInfo, column, instance) => {
                                        return {
                                            onClick: e => this.props.router.push('/virkailija/' +
-                                               rowInfo.rowValues['HENKILOHAKU_OIDHENKILO_HIDDEN']),
-                                           style: {cursor: "pointer"},
+                                               rowInfo.row['HENKILOHAKU_OIDHENKILO_HIDDEN']),
+                                           style: {cursor: "pointer"}
                                        }
                                    }} />
                         </div>
