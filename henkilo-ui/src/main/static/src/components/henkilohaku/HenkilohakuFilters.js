@@ -9,6 +9,7 @@ import OphInline from "./criterias/OphInline";
 import OphSelect from "../common/select/OphSelect";
 import OrganisaatioSelection from "../kutsuminen/OrganisaatioSelection";
 import StaticUtils from "../common/StaticUtils";
+import CloseButton from "../common/button/CloseButton";
 
 class HenkilohakuFilters extends React.Component {
     static propTypes = {
@@ -77,6 +78,8 @@ class HenkilohakuFilters extends React.Component {
                                                selectOrganisaatio={this.props.organisaatioSelectAction}
                                                selectedOrganisaatioOid={this.props.selectedOrganisation} />
                     </div>
+                    <CloseButton closeAction={() => this.props.organisaatioSelectAction({value: undefined})} />
+
                     <label className="oph-label demo-label-inline oph-bold" htmlFor="kayttooikeusryhmaFilter">
                         {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
                     </label>
@@ -88,6 +91,7 @@ class HenkilohakuFilters extends React.Component {
                                    placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                                    onChange={this.props.kayttooikeusSelectionAction} />
                     </div>
+                    <CloseButton closeAction={() => this.props.kayttooikeusSelectionAction({value: undefined})} />
                 </OphInline>
             </div>
         </div>;

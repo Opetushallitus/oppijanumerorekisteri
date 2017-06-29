@@ -14,8 +14,5 @@
 
 .henkilohakufilters-wrapper .henkilohaku-select {
     min-width: 30%;
-}
-
-.henkilohakufilters-wrapper .henkilohaku-select:first-of-type {
     margin-right: 10px;
 }
