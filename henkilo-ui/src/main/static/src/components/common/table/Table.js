@@ -45,7 +45,7 @@ class Table extends React.Component {
                             columns={
                                 this.props.headings.map(heading => ({
                                     getHeaderProps: this.getHeaderProps,
-                                    header: props => {
+                                    Header: props => {
                                         return (<span className="oph-bold">
                                             {heading.label} {!heading.notSortable ? props.column.sorting.desc !== undefined
                                             ? (props.column.sorting.desc ? <SortAscIcon/> : <SortDescIcon/>)
