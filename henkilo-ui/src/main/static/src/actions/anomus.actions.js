@@ -7,7 +7,7 @@ const requestHaetutKayttooikeusryhmat = () => ({type: FETCH_HAETUT_KAYTTOOIKEUSR
 const receiveHaetutKayttooikeusryhmatSuccess = (json) => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS, haetutKayttooikeusryhmat: json});
 const receiveHaetutKayttooikeusryhmatFailure = () => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE});
 
-export const fetchHaetutKayttooikeusryhmat = (parameters) => async dispatch => {
+export const fetchHaetutKayttooikeusryhmat = (parameters) => dispatch => {
         dispatch(requestHaetutKayttooikeusryhmat());
         const url = urls.url('kayttooikeus-service.anomus.haetut-kayttooikeusryhmat', parameters);
         return http.get(url)
