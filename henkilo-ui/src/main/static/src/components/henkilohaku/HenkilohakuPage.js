@@ -22,6 +22,7 @@ class HenkilohakuPage extends React.Component {
         kayttooikeusryhmas: React.PropTypes.array.isRequired,
         henkilohakuAction: React.PropTypes.func.isRequired,
         updateFilters: React.PropTypes.func.isRequired,
+        emptyHenkilohakuResult: React.PropTypes.func.isRequired,
         henkilohakuResult: React.PropTypes.array.isRequired,
         henkiloHakuFilters: React.PropTypes.object.isRequired,
         henkilohakuLoading: React.PropTypes.bool.isRequired,
@@ -49,6 +50,7 @@ class HenkilohakuPage extends React.Component {
             {
                 key: 'HENKILOHAKU_ORGANISAATIO',
                 notSortable: true,
+
             },
         ];
 
@@ -152,6 +154,7 @@ class HenkilohakuPage extends React.Component {
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
+            this.props.emptyHenkilohakuResult();
             this.props.henkilohakuAction(this.state.henkilohakuModel);
         }
     };

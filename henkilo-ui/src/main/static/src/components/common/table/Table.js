@@ -64,8 +64,7 @@ class Table extends React.Component {
                                 return {
                                     className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null,
                                 }}}
-                            getTdProps={this.props.getTdProps}
-                />
+                            getTdProps={this.props.getTdProps} />
             </div>
         );
     };

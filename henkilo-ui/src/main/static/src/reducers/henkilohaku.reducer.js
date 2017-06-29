@@ -1,4 +1,5 @@
 import {
+    EMPTY_HENKILOHAKU_RESULT,
     HENKILOHAKU_FAILURE, HENKILOHAKU_REQUEST, HENKILOHAKU_SUCCESS,
     UPDATE_HENKILOHAKU_FILTERS
 } from "../actions/actiontypes";
@@ -13,6 +14,8 @@ export const henkilohakuState = (state = { filters: {}, henkilohakuLoading: fals
             return Object.assign({}, state, {henkilohakuLoading: false, });
         case UPDATE_HENKILOHAKU_FILTERS:
             return Object.assign({}, state, {filters: action.filters,});
+        case EMPTY_HENKILOHAKU_RESULT:
+            return Object.assign({}, state, {result: []});
         default:
             return state;
     }
