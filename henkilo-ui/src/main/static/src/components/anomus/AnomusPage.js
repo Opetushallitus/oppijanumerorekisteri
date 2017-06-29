@@ -20,7 +20,7 @@ class AnomusPage extends React.Component {
             <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit}></HaetutKayttooikeusRyhmatHakuForm>
             {
                 this.props.haetutKayttooikeusryhmatLoading ? <Loader /> :
-                  <HenkiloViewOpenKayttooikeusanomus {...this.props} updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma}></HenkiloViewOpenKayttooikeusanomus>
+                  <HenkiloViewOpenKayttooikeusanomus {...this.props} updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma} piilotaNimi={false}></HenkiloViewOpenKayttooikeusanomus>
             }
           </div>
         );
