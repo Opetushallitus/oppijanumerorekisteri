@@ -4,6 +4,7 @@ import AnomusPage from '../components/anomus/AnomusPage'
 import {fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
 import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
 import {updateHaettuKayttooikeusryhmaInAnomukset} from '../actions/kayttooikeusryhma.actions'
+import PropertySingleton from '../globals/PropertySingleton'
 
 class AnomusPageContainer extends React.Component {
     render() {
@@ -26,7 +27,7 @@ const mapStateToProps = (state) => {
         organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.loading,
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
-        rootOrganisaatioOid: '1.2.246.562.10.00000000001',
+        rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
     };
 };
 

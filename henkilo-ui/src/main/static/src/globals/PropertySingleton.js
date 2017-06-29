@@ -2,6 +2,7 @@ class PropertySingleton {
     constructor() {
         this.state = {
             externalPermissionService: '',
+            rootOrganisaatioOid: '1.2.246.562.10.00000000001',
         };
     };
 
