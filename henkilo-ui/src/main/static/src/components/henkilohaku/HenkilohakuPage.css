@@ -25,8 +25,17 @@
 
 .henkilohakuTableWrapper .ReactTable.table .rt-tbody .rt-td {
     border-right: 1px solid #d5d5d5 !important;
+    padding: 20px;
 }
 
 .henkilohakuTableWrapper .ReactTable.table .rt-tbody .rt-td:last-child {
     border-right: 0 !important;
+}
+
+.henkilohakuTableWrapper .ReactTable.table .rt-tbody .rt-td li {
+    padding-bottom: 10px;
+}
+
+.henkilohakuTableWrapper {
+    margin-top: 20px;
 }

@@ -40,12 +40,15 @@ class HenkilohakuPage extends React.Component {
             },
             {
                 key: 'HENKILOHAKU_NIMI',
+                maxWidth: 400,
             },
             {
                 key: 'HENKILOHAKU_KAYTTAJATUNNUS',
+                maxWidth: 200,
             },
             {
                 key: 'HENKILOHAKU_ORGANISAATIO',
+                notSortable: true,
             },
         ];
 
