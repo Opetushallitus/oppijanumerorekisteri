@@ -104,12 +104,14 @@ class HenkilohakuPage extends React.Component {
                                    data={this.createRows(this.headingTemplate.map(template => template.key))}
                                    noDataText=""
                                    striped
+                                   highlight
                                    getTdProps={(state, rowInfo, column, instance) => {
                                        return {
                                            onClick: e => this.props.router.push('/virkailija/' +
-                                               rowInfo.rowValues['HENKILOHAKU_OIDHENKILO_HIDDEN'])
+                                               rowInfo.rowValues['HENKILOHAKU_OIDHENKILO_HIDDEN']),
+                                           style: {cursor: "pointer"},
                                        }
-                            }} />
+                                   }} />
                         </div>
                         : this.props.henkilohakuLoading ? <Loader /> : null
                 }

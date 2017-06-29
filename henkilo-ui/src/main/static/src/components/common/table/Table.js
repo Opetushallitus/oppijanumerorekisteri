@@ -23,12 +23,15 @@ class Table extends React.Component {
             ]).isRequired)).isRequired,
         noDataText: React.PropTypes.string.isRequired,
         striped: React.PropTypes.bool,
+        highlight: React.PropTypes.bool,
+        getTdProps: React.PropTypes.func,
     };
 
     render() {
         const classname = classNames({
             table: true,
             "-striped": this.props.striped,
+            "-highlight": this.props.highlight,
         });
         return (
             <div>
