@@ -5,6 +5,7 @@ import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.
 import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import {emptyHenkilohakuResult, henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
+import {removeNotification} from "../../actions/notifications.actions";
 
 class HenkilohakuContainer extends React.Component {
     static propTypes = {
@@ -48,7 +49,9 @@ class HenkilohakuContainer extends React.Component {
                                updateFilters={this.props.updateFilters}
                                henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
                                emptyHenkilohakuResult={this.props.emptyHenkilohakuResult}
-                               router={this.props.router} />
+                               router={this.props.router}
+                               notifications={this.props.notifications}
+                               removeNotification={this.props.removeNotification} />
             : <Loader />
     };
 }
@@ -61,9 +64,10 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         kayttooikeus: state.kayttooikeus,
         henkilohakuState: state.henkilohakuState,
+        notifications: state.notifications.henkilohakuNotifications,
     };
 };
 
 
 export default connect(mapStateToProps, {fetchHenkiloOrganisaatiosForCurrentUser, fetchAllKayttooikeusryhma,
-    henkilohaku, updateFilters, emptyHenkilohakuResult})(HenkilohakuContainer);
+    henkilohaku, updateFilters, emptyHenkilohakuResult, removeNotification})(HenkilohakuContainer);

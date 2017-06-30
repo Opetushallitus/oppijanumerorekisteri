@@ -6,6 +6,7 @@ import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
 import HenkilohakuButton from "./HenkilohakuButton";
 import Loader from "../common/icons/Loader";
+import WideRedNotification from "../common/notifications/WideRedNotification";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -28,6 +29,12 @@ class HenkilohakuPage extends React.Component {
         henkiloHakuFilters: React.PropTypes.object.isRequired,
         henkilohakuLoading: React.PropTypes.bool.isRequired,
         router: React.PropTypes.object.isRequired,
+        notifications: React.PropTypes.arrayOf(React.PropTypes.shape({
+            type: React.PropTypes.string.isRequired,
+            id: React.PropTypes.string.isRequired,
+            notL10nMessage: React.PropTypes.string.isRequired,
+        }).isRequired).isRequired,
+        removeNotification: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -97,51 +104,55 @@ class HenkilohakuPage extends React.Component {
 
     render() {
         return <div className="borderless-wrapper">
-                <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
-                <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
-                                   defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
-                <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
-                                    suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
-                                    duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
-                                    passiivisetAction={this.updateToSearchModel('passivoitu', true).bind(this)}
-                                    initialValues={this.state.henkilohakuModel}
-                                    l10n={this.props.l10n}
-                                    locale={this.props.locale}
-                                    organisaatioList={this.props.henkilo.henkiloOrganisaatios}
-                                    selectedOrganisation={this.state.henkilohakuModel.organisaatioOid}
-                                    organisaatioSelectAction={this.updateToSearchModel('organisaatioOid').bind(this)}
-                                    kayttooikeusryhmas={this.props.kayttooikeusryhmas}
-                                    selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
-                                    kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
-                {
-                    this.props.henkilohakuResult.length
-                        ?
-                        <div className="henkilohakuTableWrapper">
-                            <Table headings={this.headingTemplate.map(template =>
-                                Object.assign({}, template, {label: this.L[template.key] || template.key}))}
-                                   data={this.createRows(this.headingTemplate.map(template => template.key))}
-                                   noDataText=""
-                                   striped
-                                   highlight
-                                   getTdProps={(state, rowInfo, column, instance) => {
-                                       return {
-                                           onClick: e => this.props.router.push('/virkailija/' +
-                                               rowInfo.row['HENKILOHAKU_OIDHENKILO_HIDDEN']),
-                                           style: {cursor: "pointer"}
-                                       }
-                                   }}
-                                   manual
-                                   defaultSorted={this.state.sorted}
-                                   onFetchData={this.onTableFetch.bind(this)} />
-                        </div>
-                        : this.props.henkilohakuLoading ? <Loader /> : null
-                }
-                {
-                    this.state.showNoDataMessage
-                        ? <WideBlueNotification closeAction={() => this.setState({showNoDataMessage: false})}
-                                                message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
-                        : null
-                }
+            {this.props.notifications.filter(notification => notification.type === 'error').map(notification =>
+                <WideRedNotification closeAction={() => this.props.removeNotification('error', 'henkilohakuNotifications', 'HENKILOHAKU_ERROR')}
+                                     message={this.L[notification.notL10nMessage]} /> )
+            }
+            <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
+            <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
+                               defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
+            <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
+                                suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
+                                duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
+                                passiivisetAction={this.updateToSearchModel('passivoitu', true).bind(this)}
+                                initialValues={this.state.henkilohakuModel}
+                                l10n={this.props.l10n}
+                                locale={this.props.locale}
+                                organisaatioList={this.props.henkilo.henkiloOrganisaatios}
+                                selectedOrganisation={this.state.henkilohakuModel.organisaatioOid}
+                                organisaatioSelectAction={this.updateToSearchModel('organisaatioOid').bind(this)}
+                                kayttooikeusryhmas={this.props.kayttooikeusryhmas}
+                                selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
+                                kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
+            {
+                this.props.henkilohakuResult.length
+                    ?
+                    <div className="henkilohakuTableWrapper">
+                        <Table headings={this.headingTemplate.map(template =>
+                            Object.assign({}, template, {label: this.L[template.key] || template.key}))}
+                               data={this.createRows(this.headingTemplate.map(template => template.key))}
+                               noDataText=""
+                               striped
+                               highlight
+                               getTdProps={(state, rowInfo, column, instance) => {
+                                   return {
+                                       onClick: e => this.props.router.push('/virkailija/' +
+                                           rowInfo.row['HENKILOHAKU_OIDHENKILO_HIDDEN']),
+                                       style: {cursor: "pointer"}
+                                   }
+                               }}
+                               manual
+                               defaultSorted={this.state.sorted}
+                               onFetchData={this.onTableFetch.bind(this)} />
+                    </div>
+                    : this.props.henkilohakuLoading ? <Loader /> : null
+            }
+            {
+                this.state.showNoDataMessage
+                    ? <WideBlueNotification closeAction={() => this.setState({showNoDataMessage: false})}
+                                            message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
+                    : null
+            }
             <VisibilitySensor onChange={(isVisible) => { if(isVisible) this.searchQuery(true)}}
                               active={!this.state.allFetched && !this.props.henkilohakuLoading}
                               resizeDelay={500}
@@ -150,7 +161,7 @@ class HenkilohakuPage extends React.Component {
                     <div>{isVisible ? <Loader/> : null}</div>
                 }
             </VisibilitySensor>
-            </div>;
+        </div>;
     };
 
     onTableFetch(tableState, instance) {
