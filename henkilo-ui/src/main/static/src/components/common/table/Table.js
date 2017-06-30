@@ -24,7 +24,10 @@ class Table extends React.Component {
         noDataText: React.PropTypes.string.isRequired,
         striped: React.PropTypes.bool,
         highlight: React.PropTypes.bool,
+        manual: React.PropTypes.bool,
+        onFetchData: React.PropTypes.func,
         getTdProps: React.PropTypes.func,
+        defaultSorted: React.PropTypes.array,
     };
 
     render() {
@@ -38,7 +41,9 @@ class Table extends React.Component {
                 <ReactTable className={classname}
                             showPagination={false}
                             resizable={false}
+                            manual={this.props.manual}
                             pageSize={this.props.data.length}
+                            defaultSorted={this.props.defaultSorted || []}
                             loadingText=""
                             noDataText={this.props.noDataText || ''}
                             data={this.props.data}
@@ -64,7 +69,8 @@ class Table extends React.Component {
                                 return {
                                     className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null,
                                 }}}
-                            getTdProps={this.props.getTdProps} />
+                            getTdProps={this.props.getTdProps}
+                            onFetchData={this.props.onFetchData} />
             </div>
         );
     };

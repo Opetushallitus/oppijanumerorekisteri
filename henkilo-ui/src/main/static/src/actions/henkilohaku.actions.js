@@ -9,9 +9,9 @@ const henkilohakuRequest = (filters) => ({type: HENKILOHAKU_REQUEST, filters});
 const henkilohakuSuccess = (data) => ({type: HENKILOHAKU_SUCCESS, data,});
 const henkilohakuFailure = error => ({type: HENKILOHAKU_FAILURE, error});
 
-export const henkilohaku = (payload) => (dispatch) => {
+export const henkilohaku = (payload, queryParams) => (dispatch) => {
     dispatch(henkilohakuRequest(payload));
-    const url = urls.url('kayttooikeus-service.henkilo.henkilohaku');
+    const url = urls.url('kayttooikeus-service.henkilo.henkilohaku', queryParams ? queryParams : {});
     http.post(url, payload)
         .then(data => dispatch(henkilohakuSuccess(data)))
         .catch(error => dispatch(henkilohakuFailure(error)));
@@ -19,7 +19,4 @@ export const henkilohaku = (payload) => (dispatch) => {
 
 export const updateFilters = filters => dispatch => dispatch({type: UPDATE_HENKILOHAKU_FILTERS, filters});
 
-export const emptyHenkilohakuResult = () => dispatch => {
-    console.log('dsfklsklsdfklsdf');
-    dispatch({type: EMPTY_HENKILOHAKU_RESULT,});
-};
+export const emptyHenkilohakuResult = () => dispatch => dispatch({type: EMPTY_HENKILOHAKU_RESULT,});

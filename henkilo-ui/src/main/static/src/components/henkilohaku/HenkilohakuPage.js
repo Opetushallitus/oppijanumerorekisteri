@@ -40,11 +40,11 @@ class HenkilohakuPage extends React.Component {
                 hide: true,
             },
             {
-                key: 'HENKILOHAKU_NIMI',
+                key: 'HENKILO_NIMI',
                 maxWidth: 400,
             },
             {
-                key: 'HENKILOHAKU_KAYTTAJATUNNUS',
+                key: 'USERNAME',
                 maxWidth: 200,
             },
             {
@@ -62,6 +62,9 @@ class HenkilohakuPage extends React.Component {
                 nameQuery: undefined,
             },
             showNoDataMessage: false,
+            table: {
+                sorted: [],
+            }
         };
 
     };
@@ -116,7 +119,10 @@ class HenkilohakuPage extends React.Component {
                                                rowInfo.row['HENKILOHAKU_OIDHENKILO_HIDDEN']),
                                            style: {cursor: "pointer"}
                                        }
-                                   }} />
+                                   }}
+                                   manual
+                                   defaultSorted={this.state.table.sorted}
+                                   onFetchData={this.onTableFetch.bind(this)} />
                         </div>
                         : this.props.henkilohakuLoading ? <Loader /> : null
                 }
@@ -127,6 +133,24 @@ class HenkilohakuPage extends React.Component {
                         : null
                 }
             </div>;
+    };
+
+    onTableFetch(tableState, instance) {
+        console.log(tableState);
+        console.log(instance);
+        const sort = tableState.sorted[0];
+        const stateSort = this.state.table.sorted[0];
+        if(sort) {
+            this.setState({
+                table: {
+                    ...this.state.table,
+                    sorted: [Object.assign({}, sort)],
+                },
+            });
+            if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
+                this.searchQuery({orderBy: sort.desc ? sort.id + '_DESC' : sort.id + "_ASC"});
+            }
+        }
     };
 
     createRows(headingKeys) {
@@ -150,12 +174,12 @@ class HenkilohakuPage extends React.Component {
         }
     };
 
-    searchQuery() {
+    searchQuery(queryParams) {
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
             this.props.emptyHenkilohakuResult();
-            this.props.henkilohakuAction(this.state.henkilohakuModel);
+            this.props.henkilohakuAction(this.state.henkilohakuModel, queryParams);
         }
     };
 
