@@ -1,5 +1,6 @@
 import './HenkilohakuPage.css'
 import React from 'react'
+import VisibilitySensor from 'react-visibility-sensor'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
@@ -72,8 +73,9 @@ class HenkilohakuPage extends React.Component {
     componentWillReceiveProps(nextProps) {
         const newState = {
             showNoDataMessage: !nextProps.henkilohakuResult.length && !nextProps.henkilohakuLoading,
-            allFetched: nextProps.henkilohakuResult.length < 100
-            || nextProps.henkilohakuResult.length === this.props.henkilohakuResult.length,
+            allFetched: !nextProps.henkilohakuLoading
+            && (nextProps.henkilohakuResult.length < 100
+            || nextProps.henkilohakuResult.length === this.props.henkilohakuResult.length),
         };
         if(newState.allFetched) {
             newState.page = 0;
@@ -140,14 +142,14 @@ class HenkilohakuPage extends React.Component {
                                                 message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                         : null
                 }
-            {
-                <button disabled={this.state.allFetched}
-                        onClick={() => this.setState({page: this.state.page+1}, () => this.searchQuery({
-                                // offset: 100,
-                                // orderBy: this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC",
-                            },
-                            true))}>Hae lisää</button>
-            }
+            <VisibilitySensor onChange={(isVisible) => { if(isVisible) this.searchQuery(true)}}
+                              active={!this.state.allFetched && !this.props.henkilohakuLoading}
+                              resizeDelay={500}
+                              delayedCall>
+                {({isVisible}) =>
+                    <div>{isVisible ? <Loader/> : null}</div>
+                }
+            </VisibilitySensor>
             </div>;
     };
 
@@ -161,7 +163,7 @@ class HenkilohakuPage extends React.Component {
             });
             // If sort state changed fetch new data
             if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
-                this.searchQuery({orderBy: sort.desc ? sort.id + '_DESC' : sort.id + "_ASC"});
+                this.searchQuery();
             }
         }
     };
@@ -187,16 +189,21 @@ class HenkilohakuPage extends React.Component {
         }
     };
 
-    searchQuery(queryParams, shouldNotClear) {
-        queryParams = queryParams || {};
+    searchQuery(shouldNotClear) {
+        const queryParams = {};
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
             if(!shouldNotClear) {
                 this.props.emptyHenkilohakuResult();
             }
-            queryParams.offset = this.state.page * 100;
-            this.props.henkilohakuAction(this.state.henkilohakuModel, queryParams);
+            this.setState({page: this.state.page+1},
+                () => this.props.henkilohakuAction(this.state.henkilohakuModel, Object.assign(queryParams, {
+                    offset: shouldNotClear ? 100*this.state.page : 0,
+                    orderBy: this.state.sorted.length
+                        ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
+                        : undefined,
+                })));
         }
     };
 
