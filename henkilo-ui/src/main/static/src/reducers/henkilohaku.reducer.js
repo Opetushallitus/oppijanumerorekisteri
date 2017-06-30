@@ -9,7 +9,7 @@ export const henkilohakuState = (state = { filters: {}, henkilohakuLoading: fals
         case HENKILOHAKU_REQUEST:
             return Object.assign({}, state, {henkilohakuLoading: true, filters: action.filters, });
         case HENKILOHAKU_SUCCESS:
-            return Object.assign({}, state, {henkilohakuLoading: false, result: action.data, });
+            return Object.assign({}, state, {henkilohakuLoading: false, result: [...state.result, ...action.data], });
         case HENKILOHAKU_FAILURE:
             return Object.assign({}, state, {henkilohakuLoading: false, });
         case UPDATE_HENKILOHAKU_FILTERS:

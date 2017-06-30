@@ -62,15 +62,23 @@ class HenkilohakuPage extends React.Component {
                 nameQuery: undefined,
             },
             showNoDataMessage: false,
-            table: {
-                sorted: [],
-            }
+            allFetched: true,
+            page: 0,
+            sorted: [],
         };
 
     };
 
     componentWillReceiveProps(nextProps) {
-        this.setState({showNoDataMessage: !nextProps.henkilohakuResult.length && !nextProps.henkilohakuLoading});
+        const newState = {
+            showNoDataMessage: !nextProps.henkilohakuResult.length && !nextProps.henkilohakuLoading,
+            allFetched: nextProps.henkilohakuResult.length < 100
+            || nextProps.henkilohakuResult.length === this.props.henkilohakuResult.length,
+        };
+        if(newState.allFetched) {
+            newState.page = 0;
+        }
+        this.setState(newState);
     };
 
     // To preserve filter settings over page changes.
@@ -121,7 +129,7 @@ class HenkilohakuPage extends React.Component {
                                        }
                                    }}
                                    manual
-                                   defaultSorted={this.state.table.sorted}
+                                   defaultSorted={this.state.sorted}
                                    onFetchData={this.onTableFetch.bind(this)} />
                         </div>
                         : this.props.henkilohakuLoading ? <Loader /> : null
@@ -132,21 +140,26 @@ class HenkilohakuPage extends React.Component {
                                                 message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                         : null
                 }
+            {
+                <button disabled={this.state.allFetched}
+                        onClick={() => this.setState({page: this.state.page+1}, () => this.searchQuery({
+                                // offset: 100,
+                                // orderBy: this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC",
+                            },
+                            true))}>Hae lisää</button>
+            }
             </div>;
     };
 
     onTableFetch(tableState, instance) {
-        console.log(tableState);
-        console.log(instance);
         const sort = tableState.sorted[0];
-        const stateSort = this.state.table.sorted[0];
+        const stateSort = this.state.sorted[0];
+        // Update sort state
         if(sort) {
             this.setState({
-                table: {
-                    ...this.state.table,
-                    sorted: [Object.assign({}, sort)],
-                },
+                sorted: [Object.assign({}, sort)],
             });
+            // If sort state changed fetch new data
             if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
                 this.searchQuery({orderBy: sort.desc ? sort.id + '_DESC' : sort.id + "_ASC"});
             }
@@ -174,11 +187,15 @@ class HenkilohakuPage extends React.Component {
         }
     };
 
-    searchQuery(queryParams) {
+    searchQuery(queryParams, shouldNotClear) {
+        queryParams = queryParams || {};
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
-            this.props.emptyHenkilohakuResult();
+            if(!shouldNotClear) {
+                this.props.emptyHenkilohakuResult();
+            }
+            queryParams.offset = this.state.page * 100;
             this.props.henkilohakuAction(this.state.henkilohakuModel, queryParams);
         }
     };
