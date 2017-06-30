@@ -52,7 +52,7 @@ class Table extends React.Component {
                                     getHeaderProps: this.getHeaderProps,
                                     Header: props => {
                                         return (<span className="oph-bold">
-                                            {heading.label} {!heading.notSortable ? props.column.sorting.desc !== undefined
+                                            {heading.label} {props.column.sortable ? props.column.sorting.desc !== undefined
                                             ? (props.column.sorting.desc ? <SortAscIcon/> : <SortDescIcon/>)
                                             : <SortIconNone/>
                                             : null}
@@ -76,10 +76,8 @@ class Table extends React.Component {
     };
 
     getHeaderProps(state, rowInfo, column) {
-        const sorting = state.sorting && state.sorting.length
-            ? state.sorting.filter(sorting => {
-                return column.id === sorting.id;
-            })[0]
+        const sorting = state.sorted && state.sorted.length
+            ? state.sorted.filter(sorting => column.id === sorting.id)[0]
             : undefined;
         column.sorting = {desc: sorting && sorting.desc};
         return {};
