@@ -13,16 +13,18 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
@@ -30,17 +32,6 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final UserDetailsHelper userDetailsHelper;
     private final OrikaConfiguration mapper;
     private final YksilointiService yksilointiService;
-
-    public IdentificationServiceImpl(HenkiloRepository henkiloRepository,
-            HenkiloJpaRepository henkiloJpaRepository,
-            UserDetailsHelper userDetailsHelper,
-            OrikaConfiguration mapper, YksilointiService yksilointiService) {
-        this.henkiloRepository = henkiloRepository;
-        this.henkiloJpaRepository = henkiloJpaRepository;
-        this.userDetailsHelper = userDetailsHelper;
-        this.mapper = mapper;
-        this.yksilointiService = yksilointiService;
-    }
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid).orElseThrow(()
@@ -72,14 +63,16 @@ public class IdentificationServiceImpl implements IdentificationService {
         return henkiloRepository.save(henkilo);
     }
 
-    public Collection<Henkilo> identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
-        return unidentified.stream()
+    @Override
+    @Transactional
+    public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
+        unidentified.stream()
             .filter(this::isProcessable)
-            .map(henkilo -> {
-                waitBetweenRequests(vtjRequestDelayInMillis);
+            .forEach(henkilo -> {
+                this.waitBetweenRequests(vtjRequestDelayInMillis);
                 log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
-                return identifyHenkilo(henkilo);
-            }).collect(Collectors.toList());
+                this.identifyHenkilo(henkilo);
+            });
     }
 
     private boolean isProcessable(Henkilo henkilo) {
@@ -116,26 +109,25 @@ public class IdentificationServiceImpl implements IdentificationService {
         }
     }
 
-    private Henkilo identifyHenkilo(Henkilo henkilo) {
-        try {
-            henkilo = yksilointiService.yksiloiManuaalisesti(henkilo);
+    private void identifyHenkilo(Henkilo henkilo) {
+            Optional<Henkilo> h = yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
             if (!henkilo.isYksiloityVTJ()) {
                 log.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
             }
             log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
-            return henkiloRepository.save(henkilo);
-        } catch (NotFoundException e) {
-            log.error("Henkilo {} not found in VTJ.", henkilo.getOidHenkilo());
+        if(!h.isPresent()) {
+            Henkilo changableHenkilo = this.henkiloRepository.findByOidHenkilo(henkilo.getOidHenkilo())
+                    .orElseThrow(NotFoundException::new);
             if (henkilo.isYksilointiYritetty()) {
                 henkilo.setEiYksiloida(true);
-            } else {
+            }
+            else {
                 henkilo.setYksilointiYritetty(true);
             }
-            return henkiloRepository.save(henkilo);
-        } catch (HttpConnectionException e) {
-            log.error("VTJ service could not be reached!");
-            return henkilo;
         }
+//        } catch (HttpConnectionException e) {
+//            log.error("VTJ service could not be reached!");
+//        }
     }
 
 }

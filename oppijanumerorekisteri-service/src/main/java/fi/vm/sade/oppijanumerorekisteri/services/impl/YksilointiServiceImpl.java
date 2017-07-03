@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
@@ -91,8 +92,12 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     @Override
     @Transactional
-    public Henkilo yksiloiManuaalisesti(final Henkilo henkilo) {
-        return yksiloiManuaalisesti(henkilo.getOidHenkilo());
+    public Optional<Henkilo> yksiloiAutomaattisesti(final String henkiloOid) {
+        try {
+            return Optional.ofNullable(this.yksiloiManuaalisesti(henkiloOid));
+        } catch (NotFoundException | HttpConnectionException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

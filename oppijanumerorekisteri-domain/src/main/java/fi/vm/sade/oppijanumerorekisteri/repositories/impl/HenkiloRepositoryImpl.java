@@ -31,7 +31,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 
 import static java.util.stream.Collectors.toList;
 
@@ -327,6 +326,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<Henkilo> findUnidentified(long limit, long offset) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return jpa()
@@ -335,7 +335,10 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.yksiloityVTJ.eq(false),
                         qHenkilo.hetu.isNotNull(),
                         qHenkilo.hetu.ne("")
-                ).offset(offset).limit(limit).select(qHenkilo).distinct().fetch();
+                ).offset(offset)
+                .limit(limit)
+                .select(qHenkilo)
+                .fetch();
     }
 
 }
