@@ -92,9 +92,9 @@ class StaticUtils extends React.Component {
     static defaultOrganisaatio = (organisaatioOid, l10n) => ({
         oid: organisaatioOid,
         nimi: {
-            fi: (l10n && l10n['fi'] && l10n['fi']['ORGANISAATIO_NIMI_EI_LOYDY']) || 'EI LÖYTYNYT NIMEÄ',
-            sv: (l10n && l10n['sv'] && l10n['sv']['ORGANISAATIO_NIMI_EI_LOYDY']) || 'NAMNET HITTADES INTE ',
-            en: (l10n && l10n['en'] && l10n['en']['ORGANISAATIO_NIMI_EI_LOYDY']) || 'NAME NOT FOUND',
+            fi: (l10n && l10n['fi'] && l10n['fi']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
+            sv: (l10n && l10n['sv'] && l10n['sv']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
+            en: (l10n && l10n['en'] && l10n['en']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
         },
         tyypit: [],
     });
