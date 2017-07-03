@@ -7,6 +7,7 @@ import WideBlueNotification from "../common/notifications/WideBlueNotification";
 import HenkilohakuButton from "./HenkilohakuButton";
 import Loader from "../common/icons/Loader";
 import WideRedNotification from "../common/notifications/WideRedNotification";
+import StaticUtils from "../common/StaticUtils";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -185,7 +186,8 @@ class HenkilohakuPage extends React.Component {
             [headingKeys[1]]: henkilo.nimi || '',
             [headingKeys[2]]: henkilo.kayttajatunnus || '',
             [headingKeys[3]]: <ul>{henkilo.organisaatioNimiList.map((organisaatio, idx2) =>
-                <li key={idx2}>{organisaatio.localisedLabels[this.props.locale] || organisaatio.identifier}</li>)}</ul>,
+                <li key={idx2}>{(organisaatio.localisedLabels[this.props.locale] || organisaatio.identifier)
+                + ' ' + StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L, true)}</li>)}</ul>,
         }));
     };
 

@@ -81,6 +81,14 @@ class StaticUtils extends React.Component {
         return arr && arr.length ? arr.reduce((type1, type2) => type1.concat(', ', type2)) : '';
     };
 
+    static getOrganisaatiotyypitFlat(tyypit, L, uppercase) {
+        return tyypit && tyypit.length
+            ? '(' + tyypit
+                .map(tyyppi => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)
+                .reduce((type1, type2) => type1.concat(', ', type2)) + ')'
+            : '';
+    };
+
     static defaultOrganisaatio = (organisaatioOid, l10n) => ({
         oid: organisaatioOid,
         nimi: {
