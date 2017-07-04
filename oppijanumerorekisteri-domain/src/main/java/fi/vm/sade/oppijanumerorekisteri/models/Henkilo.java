@@ -181,16 +181,16 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
      * If an unidentified person already has reference data there must be an inconsistency in the data.
      * Those cases must be solved by officials.
      */
-    public Boolean hasDataInconsistency() {
-        return !yksiloityVTJ && !hetu.isEmpty() && yksilointitieto != null;
+    public Boolean hasNoDataInconsistency() {
+        return !(!yksiloityVTJ && !hetu.isEmpty() && yksilointitieto != null);
     }
 
-    public Boolean hasFakeSSN() {
-        return hetu.charAt(7) == '9';
+    public Boolean hasNoFakeHetu() {
+        return !(hetu.charAt(7) == '9');
     }
 
-    public Boolean isBlackListed() {
-        return isEiYksiloida();
+    public Boolean isNotBlackListed() {
+        return !isEiYksiloida();
     }
 
     // Initialize default values for lombok builder

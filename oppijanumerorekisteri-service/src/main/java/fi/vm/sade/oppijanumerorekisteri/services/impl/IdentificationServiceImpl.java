@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -14,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import lombok.RequiredArgsConstructor;
@@ -67,35 +65,32 @@ public class IdentificationServiceImpl implements IdentificationService {
     @Transactional
     public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
         unidentified.stream()
-            .filter(this::isProcessable)
-            .forEach(henkilo -> {
-                this.waitBetweenRequests(vtjRequestDelayInMillis);
-                log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
-                this.identifyHenkilo(henkilo);
-            });
+                .peek(this::logFaults)
+                .filter(Henkilo::isNotBlackListed)
+                .filter(Henkilo::hasNoDataInconsistency)
+                .filter(Henkilo::hasNoFakeHetu)
+                .forEach(henkilo -> {
+                    this.waitBetweenRequests(vtjRequestDelayInMillis);
+                    log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
+                    this.identifyHenkilo(henkilo);
+                });
     }
 
-    private boolean isProcessable(Henkilo henkilo) {
-        if (henkilo.isBlackListed()) {
+    private void logFaults(Henkilo henkilo) {
+        if (!henkilo.isNotBlackListed()) {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
-            return false;
         }
-
-        if (henkilo.hasDataInconsistency()) {
+        if (!henkilo.hasNoDataInconsistency()) {
             log.warn("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
-            return false;
         }
-
         /*
          * Fake SSNs (900-series) are skipped since they have no counterpart in VTJ database, e.g. 123456-912X.
          * NOTE: If test environment VTJ is fixed change this restriction to only apply for production environment since
          * test environment uses the 900-series SSNs.
          */
-        if (henkilo.hasFakeSSN()) {
+        if (!henkilo.hasNoFakeHetu()) {
             log.info("Henkilo {} is using a fake SSN and cannot be identified.", henkilo.getOidHenkilo());
-            return false;
         }
-        return true;
     }
 
     /**
@@ -110,19 +105,20 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private void identifyHenkilo(Henkilo henkilo) {
-            Optional<Henkilo> h = yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
-            if (!henkilo.isYksiloityVTJ()) {
-                log.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
-            }
-            log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
+        Optional<Henkilo> h = this.yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
+        if (!henkilo.isYksiloityVTJ()) {
+            log.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
+        }
+        log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
         if(!h.isPresent()) {
+            // No guarantee that henkilo parameter is persisted
             Henkilo changableHenkilo = this.henkiloRepository.findByOidHenkilo(henkilo.getOidHenkilo())
                     .orElseThrow(NotFoundException::new);
-            if (henkilo.isYksilointiYritetty()) {
-                henkilo.setEiYksiloida(true);
+            if (changableHenkilo.isYksilointiYritetty()) {
+                changableHenkilo.setEiYksiloida(true);
             }
             else {
-                henkilo.setYksilointiYritetty(true);
+                changableHenkilo.setYksilointiYritetty(true);
             }
         }
 //        } catch (HttpConnectionException e) {
