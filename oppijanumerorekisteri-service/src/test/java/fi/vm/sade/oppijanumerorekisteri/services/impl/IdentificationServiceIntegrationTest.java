@@ -1,10 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import org.assertj.core.util.Sets;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +21,38 @@ import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
 @Transactional
 public class IdentificationServiceIntegrationTest {
     @MockBean
-    private YksilointiService yksilointiService;
+    private VtjClient vtjClient;
+
+    @MockBean
+    private KoodistoClient koodistoClient;
 
     @Autowired
     private IdentificationService identificationService;
 
     @Autowired
     private EntityManager entityManager;
+
+    @Before
+    public void setup() {
+        MockVtjClient mockVtjClient = new MockVtjClient();
+        mockVtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+        MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
+
+        given(this.vtjClient.fetchHenkilo(anyString()))
+                .willReturn(mockVtjClient.fetchHenkilo(""));
+        given(this.koodistoClient.getKoodiValuesForKoodisto(anyString(), anyInt(), anyBoolean()))
+                .willReturn(mockKoodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 0, true));
+    }
 
     @Test
     public void identifyHenkilos() {
@@ -43,6 +62,10 @@ public class IdentificationServiceIntegrationTest {
                 .created(new Date())
                 .modified(new Date())
                 .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
+                .etunimet("Teppo Taneli")
+                .kutsumanimi("Teppo")
+                .sukunimi("Testaaja")
+                .yhteystiedotRyhma(Sets.newHashSet())
                 .build();
         this.entityManager.persist(henkiloWithFakeSSN);
 
@@ -52,6 +75,10 @@ public class IdentificationServiceIntegrationTest {
                 .created(new Date())
                 .modified(new Date())
                 .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
+                .etunimet("Teppo Taneli")
+                .kutsumanimi("Teppo")
+                .sukunimi("Testaaja")
+                .yhteystiedotRyhma(Sets.newHashSet())
                 .eiYksiloida(true)
                 .build();
         this.entityManager.persist(henkiloInBlacklist);
@@ -62,6 +89,10 @@ public class IdentificationServiceIntegrationTest {
                 .created(new Date())
                 .modified(new Date())
                 .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
+                .etunimet("Teppo Taneli")
+                .kutsumanimi("Teppo")
+                .sukunimi("Testaaja")
+                .yhteystiedotRyhma(Sets.newHashSet())
                 .build();
         this.entityManager.persist(henkiloNotFoundInVTJ);
 
@@ -71,19 +102,17 @@ public class IdentificationServiceIntegrationTest {
                 .created(new Date())
                 .modified(new Date())
                 .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
+                .etunimet("Teppo Taneli")
+                .kutsumanimi("Teppo")
+                .sukunimi("Testaaja")
+                .yhteystiedotRyhma(Sets.newHashSet())
                 .yksiloityVTJ(true)
                 .build();
         this.entityManager.persist(henkiloEverythingOK);
 
         List<Henkilo> unidentifiedHenkilos = Arrays.asList(henkiloWithFakeSSN, henkiloInBlacklist, henkiloNotFoundInVTJ, henkiloEverythingOK);
 
-//        when(henkiloRepository.save(any(Henkilo.class))).then(AdditionalAnswers.returnsFirstArg());
-        given(yksilointiService.yksiloiAutomaattisesti(henkiloNotFoundInVTJ.getOidHenkilo()))
-                .willReturn(Optional.empty());
-        given(this.yksilointiService.yksiloiAutomaattisesti(eq(henkiloEverythingOK.getOidHenkilo())))
-                .willReturn(Optional.of(henkiloEverythingOK));
-
-        identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
+        this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
 //        assertThat(identifiedHenkilos).hasSize(2).contains(henkiloEverythingOK, henkiloNotFoundInVTJ);
         assertThat(henkiloEverythingOK.isYksiloityVTJ()).isTrue();

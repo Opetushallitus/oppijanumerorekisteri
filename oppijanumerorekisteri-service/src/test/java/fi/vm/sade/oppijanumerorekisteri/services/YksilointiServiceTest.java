@@ -42,11 +42,16 @@ public class YksilointiServiceTest {
         YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
         YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
 
-        this.yksilointiService = new YksilointiServiceImpl(henkiloRepository, yksilointitietoRepository,
+        this.yksilointiService = new YksilointiServiceImpl(henkiloRepository,
+                kansalaisuusRepository,
+                kielisyysRepository,
+                yhteystiedotRyhmaRepository,
+                yhteystietoRepository,
+                yksilointitietoRepository,
                 userDetailsHelper,
-                this.vtjClient, mockKoodistoClient, oppijanumerorekisteriProperties,
-                kansalaisuusRepository, kielisyysRepository, yhteystiedotRyhmaRepository,
-                yhteystietoRepository);
+                this.vtjClient,
+                mockKoodistoClient,
+                oppijanumerorekisteriProperties);
 
         when(kielisyysRepository.findByKieliKoodi(anyString()))
                 .thenReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));

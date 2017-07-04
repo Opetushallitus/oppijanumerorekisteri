@@ -15,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,23 +33,10 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toSet;
 
 @Service
+@RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
     private static final Logger logger = LoggerFactory.getLogger(YksilointiService.class);
     private static final String KIELIKOODI_SV = "sv";
-
-    private final YksilointitietoRepository yksilointitietoRepository;
-    private final HenkiloRepository henkiloRepository;
-    private final KansalaisuusRepository kansalaisuusRepository;
-    private final KielisyysRepository kielisyysRepository;
-    private final YhteystietoRepository yhteystietoRepository;
-    private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
-
-    private final UserDetailsHelper userDetailsHelper;
-
-    private final VtjClient vtjClient;
-    private final KoodistoClient koodistoClient;
-
-    private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     public static final String RYHMAALKUPERA_VTJ = "alkupera1";
     private static final String RYHMAKUVAUS_VTJ_SAHKOINEN_OSOITE = "yhteystietotyyppi8";
@@ -56,28 +44,19 @@ public class YksilointiServiceImpl implements YksilointiService {
     private static final Predicate<String> stringNotEmpty = it -> !StringUtils.isEmpty(it);
     private static final Predicate<Collection> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
 
-    @Autowired
-    public YksilointiServiceImpl(HenkiloRepository henkiloRepository,
-                                 YksilointitietoRepository yksilointitietoRepository,
-                                 UserDetailsHelper userDetailsHelper,
-                                 VtjClient vtjClient,
-                                 KoodistoClient koodistoClient,
-                                 OppijanumerorekisteriProperties oppijanumerorekisteriProperties,
-                                 KansalaisuusRepository kansalaisuusRepository,
-                                 KielisyysRepository kielisyysRepository,
-                                 YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository,
-                                 YhteystietoRepository yhteystietoRepository) {
-        this.henkiloRepository = henkiloRepository;
-        this.yksilointitietoRepository = yksilointitietoRepository;
-        this.userDetailsHelper = userDetailsHelper;
-        this.vtjClient = vtjClient;
-        this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
-        this.kansalaisuusRepository = kansalaisuusRepository;
-        this.kielisyysRepository = kielisyysRepository;
-        this.koodistoClient = koodistoClient;
-        this.yhteystiedotRyhmaRepository = yhteystiedotRyhmaRepository;
-        this.yhteystietoRepository = yhteystietoRepository;
-    }
+    private final HenkiloRepository henkiloRepository;
+    private final KansalaisuusRepository kansalaisuusRepository;
+    private final KielisyysRepository kielisyysRepository;
+    private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
+    private final YhteystietoRepository yhteystietoRepository;
+    private final YksilointitietoRepository yksilointitietoRepository;
+
+    private final UserDetailsHelper userDetailsHelper;
+
+    private final VtjClient vtjClient;
+    private final KoodistoClient koodistoClient;
+
+    private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid)

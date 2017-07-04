@@ -146,6 +146,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     }
 
     public void clearKansalaisuus() {
+        if(this.kansalaisuus == null) {
+            this.kansalaisuus = new HashSet<>();
+        }
         this.kansalaisuus.clear();
     }
 
