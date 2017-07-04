@@ -9,3 +9,11 @@ spring:
 host:
   host-cas: localhost
   host-virkailija: localhost
+oppijanumerorekisteri:
+  swagger:
+    enabled: false
+mock:
+  ldap: true
+cas:
+  send-renew: false
+  key: oppijanumerorekisteri-service
