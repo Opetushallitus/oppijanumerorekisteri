@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.*;
 
+// Non-transactional in order to emulate how the real method call works.
 @RunWith(SpringRunner.class)
 @IntegrationTest
 @Sql("/sql/yksilointi-test.sql")
