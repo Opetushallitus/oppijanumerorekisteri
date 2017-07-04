@@ -17,3 +17,7 @@ mock:
 cas:
   send-renew: false
   key: oppijanumerorekisteri-service
+# for debugging hibernate
+#logging:
+#  level:
+#    org.hibernate: DEBUG

@@ -8,8 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
-import org.assertj.core.util.Lists;
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
