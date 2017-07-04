@@ -3,24 +3,25 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
-import org.assertj.core.util.Sets;
+import org.assertj.core.util.Lists;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.Arrays;
-import java.util.Date;
+import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -28,10 +29,12 @@ import static org.mockito.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
-@Transactional
+@Sql("/sql/yksilointi-test.sql")
 public class IdentificationServiceIntegrationTest {
     @MockBean
     private VtjClient vtjClient;
+
+    private MockVtjClient mockVtjClient;
 
     @MockBean
     private KoodistoClient koodistoClient;
@@ -40,83 +43,40 @@ public class IdentificationServiceIntegrationTest {
     private IdentificationService identificationService;
 
     @Autowired
+    private HenkiloRepository henkiloRepository;
+
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Before
     public void setup() {
-        MockVtjClient mockVtjClient = new MockVtjClient();
-        mockVtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+        this.mockVtjClient = new MockVtjClient();
+        this.mockVtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
         MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
 
-        given(this.vtjClient.fetchHenkilo(anyString()))
-                .willReturn(mockVtjClient.fetchHenkilo(""));
         given(this.koodistoClient.getKoodiValuesForKoodisto(anyString(), anyInt(), anyBoolean()))
                 .willReturn(mockKoodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 0, true));
     }
 
     @Test
     public void identifyHenkilos() {
-        Henkilo henkiloWithFakeSSN = Henkilo.builder()
-                .hetu("111111-985K")
-                .oidHenkilo("FakeSSN")
-                .created(new Date())
-                .modified(new Date())
-                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
-                .etunimet("Teppo Taneli")
-                .kutsumanimi("Teppo")
-                .sukunimi("Testaaja")
-                .yhteystiedotRyhma(Sets.newHashSet())
-                .build();
-        this.entityManager.persist(henkiloWithFakeSSN);
+        @SuppressWarnings("unchedked")
+        List<Henkilo> unidentifiedHenkilos = this.entityManager.createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
 
-        Henkilo henkiloInBlacklist = Henkilo.builder()
-                .hetu("111111-1234")
-                .oidHenkilo("Blacklisted")
-                .created(new Date())
-                .modified(new Date())
-                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
-                .etunimet("Teppo Taneli")
-                .kutsumanimi("Teppo")
-                .sukunimi("Testaaja")
-                .yhteystiedotRyhma(Sets.newHashSet())
-                .eiYksiloida(true)
-                .build();
-        this.entityManager.persist(henkiloInBlacklist);
-
-        Henkilo henkiloNotFoundInVTJ = Henkilo.builder()
-                .hetu("111111-1235")
-                .oidHenkilo("NotInVTJ")
-                .created(new Date())
-                .modified(new Date())
-                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
-                .etunimet("Teppo Taneli")
-                .kutsumanimi("Teppo")
-                .sukunimi("Testaaja")
-                .yhteystiedotRyhma(Sets.newHashSet())
-                .build();
-        this.entityManager.persist(henkiloNotFoundInVTJ);
-
-        Henkilo henkiloEverythingOK = Henkilo.builder()
-                .hetu("111111-1236")
-                .oidHenkilo("EverythingOK")
-                .created(new Date())
-                .modified(new Date())
-                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
-                .etunimet("Teppo Taneli")
-                .kutsumanimi("Teppo")
-                .sukunimi("Testaaja")
-                .yhteystiedotRyhma(Sets.newHashSet())
-                .yksiloityVTJ(true)
-                .build();
-        this.entityManager.persist(henkiloEverythingOK);
-
-        List<Henkilo> unidentifiedHenkilos = Arrays.asList(henkiloWithFakeSSN, henkiloInBlacklist, henkiloNotFoundInVTJ, henkiloEverythingOK);
+        given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
+        given(this.vtjClient.fetchHenkilo("010101-123N"))
+                .willReturn(this.mockVtjClient.fetchHenkilo(""));
 
         this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
-//        assertThat(identifiedHenkilos).hasSize(2).contains(henkiloEverythingOK, henkiloNotFoundInVTJ);
-        assertThat(henkiloEverythingOK.isYksiloityVTJ()).isTrue();
-        assertThat(henkiloNotFoundInVTJ.isYksiloityVTJ()).isFalse();
+        Henkilo notFoundVtjResult = (Henkilo)this.entityManager.createNativeQuery("SELECT * FROM henkilo WHERE hetu = '111111-1235'", Henkilo.class).getSingleResult();
+        Henkilo everythingOkResult = (Henkilo)this.entityManager.createNativeQuery("SELECT * FROM henkilo WHERE hetu = '010101-123N'", Henkilo.class).getSingleResult();
+
+        assertThat(everythingOkResult.isYksiloityVTJ()).isTrue();
+        assertThat(everythingOkResult.getKutsumanimi()).isEqualTo("Teppo");
+
+        assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
+        assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
     }
 
 }

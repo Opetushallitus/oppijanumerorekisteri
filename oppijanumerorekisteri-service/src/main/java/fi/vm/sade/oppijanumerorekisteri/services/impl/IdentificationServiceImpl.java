@@ -105,12 +105,9 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private void identifyHenkilo(Henkilo henkilo) {
-        Optional<Henkilo> h = this.yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
-        if (!henkilo.isYksiloityVTJ()) {
-            log.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
-        }
+        Optional<Henkilo> yksiloityHenkilo = this.yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
         log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
-        if(!h.isPresent()) {
+        if(!yksiloityHenkilo.isPresent()) {
             // No guarantee that henkilo parameter is persisted
             Henkilo changableHenkilo = this.henkiloRepository.findByOidHenkilo(henkilo.getOidHenkilo())
                     .orElseThrow(NotFoundException::new);
@@ -121,9 +118,6 @@ public class IdentificationServiceImpl implements IdentificationService {
                 changableHenkilo.setYksilointiYritetty(true);
             }
         }
-//        } catch (HttpConnectionException e) {
-//            log.error("VTJ service could not be reached!");
-//        }
     }
 
 }

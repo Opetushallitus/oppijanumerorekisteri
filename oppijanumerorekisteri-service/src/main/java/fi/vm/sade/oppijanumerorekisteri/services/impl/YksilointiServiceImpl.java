@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -70,10 +71,14 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Optional<Henkilo> yksiloiAutomaattisesti(final String henkiloOid) {
         try {
-            return Optional.ofNullable(this.yksiloiManuaalisesti(henkiloOid));
+            Henkilo henkilo = this.yksiloiManuaalisesti(henkiloOid);
+            if (!henkilo.isYksiloityVTJ()) {
+                logger.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
+            }
+            return Optional.of(henkilo);
         } catch (NotFoundException | HttpConnectionException e) {
             return Optional.empty();
         }
