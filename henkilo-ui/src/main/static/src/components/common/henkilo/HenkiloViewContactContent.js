@@ -3,10 +3,10 @@ import React from 'react'
 import Columns from 'react-columns'
 import Field from '../field/Field';
 import Button from "../button/Button";
-import OphSelect from '../select/OphSelect'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
-import AbstractViewContainer from "../../../containers/henkilo/AbstractViewContainer";
+import PropertySingleton from '../../../globals/PropertySingleton'
+import AddIcon from "../icons/AddIcon";
 
 class HenkiloViewContactContent extends React.Component{
     static propTypes = {
@@ -20,6 +20,8 @@ class HenkiloViewContactContent extends React.Component{
 
     constructor(props) {
         super(props);
+
+        this.L = this.props.l10n[this.props.locale];
 
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.contactInfoTemplate = [
@@ -38,56 +40,57 @@ class HenkiloViewContactContent extends React.Component{
         };
     };
 
-    render() {
-        const L = this.props.l10n[this.props.locale];
-        return (
-            <div className="henkiloViewUserContentWrapper">
-                <div>
-                    <div className="right" style={{width: "20%"}}>
-                        { !this.state.readOnly
-                            ? <div>
-                                <OphSelect onChange={this._createYhteystiedotRyhma.bind(this)}
-                                           options={AbstractViewContainer.creatableYhteystietotyypit(this.props.koodisto.yhteystietotyypit)
-                                               .map((yhteystietotyyppi, idx) =>
-                                                   ({value: yhteystietotyyppi.value, label:yhteystietotyyppi[this.props.locale]}))}
-                                           placeholder={L['HENKILO_LUOYHTEYSTIETO']} />
-                            </div>
+    createContent() {
+        const content = this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
+            <div key={idx}>
+                <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name}</span>
+                { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
+                    <div key={idx2} id={yhteystietoFlat.label}>
+                        { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
+                            ? <Columns columns={2} className="labelValue">
+                                <span className="oph-bold">{this.L[yhteystietoFlat.label]}</span>
+                                <Field inputValue={yhteystietoFlat.inputValue}
+                                       changeAction={this._updateModelField.bind(this)}
+                                       readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
+                                    {yhteystietoFlat.value}
+                                </Field>
+                            </Columns>
                             : null
                         }
                     </div>
+                ) }
+            </div>
+        );
+        if(!this.state.readOnly) {
+            content.push(
+                <div className="contact-content-add-new"
+                     onClick={() => this._createYhteystiedotRyhma(PropertySingleton.getState().TYOOSOITE)}
+                     key="add-new">
+                    <span className="oph-bold oph-blue-lighten-1"><AddIcon /> {this.L['HENKILO_LUOYHTEYSTIETO']}</span>
+                </div>);
+        }
+        return content;
+    };
+
+    render() {
+        return (
+            <div className="henkiloViewUserContentWrapper">
+                <div>
                     <div className="header">
-                        <p className="oph-h2 oph-bold">{L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
+                        <p className="oph-h2 oph-bold">{this.L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
                     </div>
                     <div className="henkiloViewContent">
-                        <Columns queries={[{columns: 3, query: 'min-width: 200px'}]} gap="10px" >
-                            {this.state.contactInfo.map((yhteystiedotRyhmaFlat, idx) =>
-                                    <div key={idx}>
-                                        <p className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name}</p>
-                                        { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
-                                            <div key={idx2} id={yhteystietoFlat.label}>
-                                                { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
-                                                    ? <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
-                                                        <span className="oph-bold">{L[yhteystietoFlat.label]}</span>
-                                                        <Field inputValue={yhteystietoFlat.inputValue}
-                                                               changeAction={this._updateModelField.bind(this)}
-                                                               readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
-                                                            {yhteystietoFlat.value}
-                                                        </Field>
-                                                    </Columns>
-                                                    : null}
-                                            </div>
-                                        ) }
-                                    </div>
-                            )}
+                        <Columns columns={3} gap="25px" >
+                            {this.createContent()}
                         </Columns>
                     </div>
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button key="contactEdit" action={this._edit.bind(this)}>{L['MUOKKAA_LINKKI']}</Button>
+                        <Button key="contactEdit" action={this._edit.bind(this)}>{this.L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
+                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={this.L} />
                     </div>
                 }
             </div>
@@ -119,12 +122,12 @@ class HenkiloViewContactContent extends React.Component{
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
     };
 
-    _createYhteystiedotRyhma(event) {
+    _createYhteystiedotRyhma(yhteystietoryhmaTyyppi) {
         this.henkiloUpdate.yhteystiedotRyhma.push({
             readOnly: false,
             ryhmaAlkuperaTieto: "alkupera2", // Virkailija
-            ryhmaKuvaus: event.value,
-            yhteystieto: []
+            ryhmaKuvaus: yhteystietoryhmaTyyppi,
+            yhteystieto: [],
         });
         const contactInfo = this._updateYhteystiedot(this.henkiloUpdate, this.contactInfoTemplate,
             this.props.koodisto.yhteystietotyypit, this.props.locale);

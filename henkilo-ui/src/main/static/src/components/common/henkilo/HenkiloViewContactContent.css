@@ -18,3 +18,18 @@
     margin-right: 15px;
     float: left;
 }
+
+.contact-content-add-new {
+    border: 1px dashed #d5d5d5;
+    width: 100%;
+    height: 324px;
+    cursor: pointer;
+    padding: 5px 0;
+    display: table;
+}
+
+.contact-content-add-new > span {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
