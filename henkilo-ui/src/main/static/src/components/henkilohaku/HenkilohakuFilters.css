@@ -1,0 +1,18 @@
+.henkilohakufilters-wrapper {
+    padding: 5px 0;
+    margin-top: 5px;
+}
+
+.henkilohakufilters-wrapper label {
+    margin-bottom: 0;
+}
+
+.henkilohakufilters-wrapper .oph-field.oph-field-inline > label.oph-label {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.henkilohakufilters-wrapper .henkilohaku-select {
+    min-width: 30%;
+    margin-right: 10px;
+}

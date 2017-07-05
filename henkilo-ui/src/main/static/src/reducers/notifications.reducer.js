@@ -1,10 +1,11 @@
 import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, UPDATE_PASSWORD_SUCCESS,
     UPDATE_PASSWORD_FAILURE, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
-    VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE
+    VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE
 } from "../actions/actiontypes";
 
-export const notifications = (state={existingKayttooikeus: [], buttonNotifications: [], updatePassword: []}, action) => {
+export const notifications = (state={existingKayttooikeus: [], buttonNotifications: [], updatePassword: [],
+    henkilohakuNotifications: []}, action) => {
     switch (action.type) {
         case ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS:
             return {
@@ -47,10 +48,19 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     id: 1
                 }],
             };
+        case HENKILOHAKU_FAILURE:
+            return {
+                ...state,
+                henkilohakuNotifications: [...state.henkilohakuNotifications, {
+                    type: 'error',
+                    notL10nMessage: 'HENKILOHAKU_ERROR',
+                    id: 'HENKILOHAKU_ERROR',
+                }],
+            };
         case NOTIFICATION_REMOVED:
             let removeNotifications;
             // For button notifications (remove all)
-            removeNotifications = state[action.group].filter(notification => action.id === action.id);
+            removeNotifications = state[action.group].filter(notification => notification.id === action.id);
             // For kayttooikeus table notifications (remove single one)
             if(!removeNotifications) {
                 removeNotifications  = action.id

@@ -8,7 +8,7 @@ import {
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
-import {updateNavigation} from "../../actions/navigation.actions";
+import {updateHenkiloNavigation} from "../../actions/navigation.actions";
 import {virkailijaNavi} from "../../configuration/navigationconfigurations";
 import {
     addKayttooikeusToHenkilo,
@@ -39,7 +39,7 @@ class VirkailijaViewContainer extends React.Component {
             this.props.router.push('/admin/' + this.props.oidHenkilo);
         }
         else {
-            this.props.updateNavigation(virkailijaNavi(this.props.oidHenkilo), '/henkilo');
+            this.props.updateHenkiloNavigation(virkailijaNavi(this.props.oidHenkilo));
 
             this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
@@ -116,7 +116,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
-    fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateNavigation,
+    fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
     addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges,})(VirkailijaViewContainer);

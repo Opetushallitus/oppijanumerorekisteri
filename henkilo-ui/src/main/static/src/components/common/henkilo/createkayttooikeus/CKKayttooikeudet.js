@@ -1,12 +1,13 @@
 import React from 'react'
 import OphSelect from "../../select/OphSelect";
+import StaticUtils from "../../StaticUtils";
 
 const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale}) => {
     const filteredOptions = kayttooikeusData && kayttooikeusData.filter(kayttooikeus =>
         selectedList.indexOf(kayttooikeus.ryhmaId) === -1)
             .map(kayttooikeus => ({
                 value: kayttooikeus.ryhmaId,
-                label: kayttooikeus.ryhmaNames.texts.filter(text => text.lang.toLowerCase() === locale)[0].text,
+                label: StaticUtils.getLocalisedText(kayttooikeus.ryhmaNames, locale),
             }));
     return <tr key="kayttooikeusKayttooikeudetField">
         <td>

@@ -20,31 +20,39 @@ class Table extends React.Component {
                 React.PropTypes.string,
                 React.PropTypes.object,
                 React.PropTypes.bool,
-            ]).isRequired)),
+            ]).isRequired)).isRequired,
         noDataText: React.PropTypes.string.isRequired,
         striped: React.PropTypes.bool,
+        highlight: React.PropTypes.bool,
+        manual: React.PropTypes.bool,
+        onFetchData: React.PropTypes.func,
+        getTdProps: React.PropTypes.func,
+        defaultSorted: React.PropTypes.array,
     };
 
     render() {
         const classname = classNames({
             table: true,
             "-striped": this.props.striped,
+            "-highlight": this.props.highlight,
         });
         return (
             <div>
                 <ReactTable className={classname}
                             showPagination={false}
                             resizable={false}
+                            manual={this.props.manual}
                             pageSize={this.props.data.length}
+                            defaultSorted={this.props.defaultSorted || []}
                             loadingText=""
                             noDataText={this.props.noDataText || ''}
                             data={this.props.data}
                             columns={
                                 this.props.headings.map(heading => ({
                                     getHeaderProps: this.getHeaderProps,
-                                    header: props => {
+                                    Header: props => {
                                         return (<span className="oph-bold">
-                                            {heading.label} {!heading.notSortable ? props.column.sorting.desc !== undefined
+                                            {heading.label} {props.column.sortable ? props.column.sorting.desc !== undefined
                                             ? (props.column.sorting.desc ? <SortAscIcon/> : <SortDescIcon/>)
                                             : <SortIconNone/>
                                             : null}
@@ -61,16 +69,15 @@ class Table extends React.Component {
                                 return {
                                     className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null,
                                 }}}
-                />
+                            getTdProps={this.props.getTdProps}
+                            onFetchData={this.props.onFetchData} />
             </div>
         );
     };
 
     getHeaderProps(state, rowInfo, column) {
-        const sorting = state.sorting && state.sorting.length
-            ? state.sorting.filter(sorting => {
-                return column.id === sorting.id;
-            })[0]
+        const sorting = state.sorted && state.sorted.length
+            ? state.sorted.filter(sorting => column.id === sorting.id)[0]
             : undefined;
         column.sorting = {desc: sorting && sorting.desc};
         return {};

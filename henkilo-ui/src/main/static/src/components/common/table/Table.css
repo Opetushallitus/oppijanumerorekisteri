@@ -6,13 +6,13 @@
     border: 0;
 }
 
-.ReactTable .rt-thead.-header{
+.ReactTable .rt-thead.-header {
     box-shadow: none !important;
     border-bottom: 1px solid #d5d5d5;
 }
 
 .ReactTable .rt-tbody .rt-tr-group {
-    border: 0 !important;
+    border-bottom: 0 !important;
 }
 
 .ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
@@ -25,7 +25,6 @@
 
 .ReactTable .rt-thead .rt-tr {
     text-align: left !important;
-
 }
 
 .ReactTable .rt-tbody .rt-td {
@@ -40,7 +39,7 @@
     white-space: inherit !important;
 }
 
-/* Moves no data text bit lower */
+/* Moves no data text little bit lower */
 .ReactTable .rt-noData {
     top: 140% !important;
 }

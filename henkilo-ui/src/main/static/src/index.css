@@ -72,6 +72,12 @@ label.required::after{
     margin-bottom: 40px;
 }
 
+.borderless-wrapper {
+    padding: 30px;
+    background-color: white;
+    margin-bottom: 40px;
+}
+
 .clickable {
     cursor: pointer;
 }

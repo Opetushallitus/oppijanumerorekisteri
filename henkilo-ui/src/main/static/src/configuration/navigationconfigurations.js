@@ -3,7 +3,7 @@ export const mainNavigation = [
     {path: '/anomukset', label: 'Käyttöoikeusanomukset'},
     {path: '/kutsutut', label: 'Kutsutut'},
     {path: '/kutsulomake', label: 'Virkailijan kutsuminen Opintopolkuun'},
-    {path: '/henkilo', label: 'Henkilöhaku'},
+    {path: '/henkilohaku', label: 'Henkilöhaku'},
     {path: '/omattiedot', label: 'Omat tiedot'}
 ];
 
