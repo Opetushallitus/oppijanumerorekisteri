@@ -28,6 +28,6 @@ public interface IdentificationService {
      * Käsittelee tunnistamattomat henkilöt liittämälle ne oikeisiin oideihin.
      *
      */
-    Collection<Henkilo> identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis);
+    void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis);
 
 }

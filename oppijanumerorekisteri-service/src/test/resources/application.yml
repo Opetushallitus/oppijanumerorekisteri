@@ -1,2 +1,23 @@
 flyway:
   enabled: false
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:bootexample;MODE=PostgreSQL
+  autoconfigure:
+    exclude: org.spring
+host:
+  host-cas: localhost
+  host-virkailija: localhost
+oppijanumerorekisteri:
+  swagger:
+    enabled: false
+mock:
+  ldap: true
+cas:
+  send-renew: false
+  key: oppijanumerorekisteri-service
+# for debugging hibernate
+#logging:
+#  level:
+#    org.hibernate: DEBUG

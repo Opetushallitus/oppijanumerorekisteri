@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -13,16 +12,17 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @Slf4j
+@RequiredArgsConstructor
 public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
@@ -30,17 +30,6 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final UserDetailsHelper userDetailsHelper;
     private final OrikaConfiguration mapper;
     private final YksilointiService yksilointiService;
-
-    public IdentificationServiceImpl(HenkiloRepository henkiloRepository,
-            HenkiloJpaRepository henkiloJpaRepository,
-            UserDetailsHelper userDetailsHelper,
-            OrikaConfiguration mapper, YksilointiService yksilointiService) {
-        this.henkiloRepository = henkiloRepository;
-        this.henkiloJpaRepository = henkiloJpaRepository;
-        this.userDetailsHelper = userDetailsHelper;
-        this.mapper = mapper;
-        this.yksilointiService = yksilointiService;
-    }
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid).orElseThrow(()
@@ -72,37 +61,36 @@ public class IdentificationServiceImpl implements IdentificationService {
         return henkiloRepository.save(henkilo);
     }
 
-    public Collection<Henkilo> identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
-        return unidentified.stream()
-            .filter(this::isProcessable)
-            .map(henkilo -> {
-                waitBetweenRequests(vtjRequestDelayInMillis);
-                log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
-                return identifyHenkilo(henkilo);
-            }).collect(Collectors.toList());
+    @Override
+    @Transactional
+    public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
+        unidentified.stream()
+                .peek(this::logFaults)
+                .filter(Henkilo::isNotBlackListed)
+                .filter(Henkilo::hasNoDataInconsistency)
+                .filter(Henkilo::hasNoFakeHetu)
+                .forEach(henkilo -> {
+                    this.waitBetweenRequests(vtjRequestDelayInMillis);
+                    log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
+                    this.identifyHenkilo(henkilo);
+                });
     }
 
-    private boolean isProcessable(Henkilo henkilo) {
-        if (henkilo.isBlackListed()) {
+    private void logFaults(Henkilo henkilo) {
+        if (!henkilo.isNotBlackListed()) {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
-            return false;
         }
-
-        if (henkilo.hasDataInconsistency()) {
+        if (!henkilo.hasNoDataInconsistency()) {
             log.warn("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
-            return false;
         }
-
         /*
          * Fake SSNs (900-series) are skipped since they have no counterpart in VTJ database, e.g. 123456-912X.
          * NOTE: If test environment VTJ is fixed change this restriction to only apply for production environment since
          * test environment uses the 900-series SSNs.
          */
-        if (henkilo.hasFakeSSN()) {
+        if (!henkilo.hasNoFakeHetu()) {
             log.info("Henkilo {} is using a fake SSN and cannot be identified.", henkilo.getOidHenkilo());
-            return false;
         }
-        return true;
     }
 
     /**
@@ -116,25 +104,19 @@ public class IdentificationServiceImpl implements IdentificationService {
         }
     }
 
-    private Henkilo identifyHenkilo(Henkilo henkilo) {
-        try {
-            henkilo = yksilointiService.yksiloiManuaalisesti(henkilo);
-            if (!henkilo.isYksiloityVTJ()) {
-                log.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
+    private void identifyHenkilo(Henkilo henkilo) {
+        Optional<Henkilo> yksiloityHenkilo = this.yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
+        log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
+        if(!yksiloityHenkilo.isPresent()) {
+            // No guarantee that henkilo parameter is persisted
+            Henkilo changableHenkilo = this.henkiloRepository.findByOidHenkilo(henkilo.getOidHenkilo())
+                    .orElseThrow(NotFoundException::new);
+            if (changableHenkilo.isYksilointiYritetty()) {
+                changableHenkilo.setEiYksiloida(true);
             }
-            log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
-            return henkiloRepository.save(henkilo);
-        } catch (NotFoundException e) {
-            log.error("Henkilo {} not found in VTJ.", henkilo.getOidHenkilo());
-            if (henkilo.isYksilointiYritetty()) {
-                henkilo.setEiYksiloida(true);
-            } else {
-                henkilo.setYksilointiYritetty(true);
+            else {
+                changableHenkilo.setYksilointiYritetty(true);
             }
-            return henkiloRepository.save(henkilo);
-        } catch (HttpConnectionException e) {
-            log.error("VTJ service could not be reached!");
-            return henkilo;
         }
     }
 

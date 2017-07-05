@@ -64,6 +64,6 @@ oppijanumerorekisteri:
     enabled: true
     yksilointi:
       enabled: true
-      cron: "0 */15 * * * *"
+      fixed-delay-in-millis: 900000
       batch-size: 300
       vtj-request-delay-in-millis: 200
