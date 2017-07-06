@@ -45,10 +45,11 @@ class HenkiloViewContactContent extends React.Component{
     createContent() {
         const content = this.state.contactInfo
             .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1)
+            .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.henkiloUiId) === -1)
             .map((yhteystiedotRyhmaFlat, idx) =>
                 <div key={idx}>
                     <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} <CrossButton
-                        clearAction={() => this._removeYhteystieto(yhteystiedotRyhmaFlat.id)} /></span>
+                        clearAction={() => this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} /></span>
                     { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
                         <div key={idx2} id={yhteystietoFlat.label}>
                             { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
@@ -103,9 +104,8 @@ class HenkiloViewContactContent extends React.Component{
     };
 
     _removeYhteystieto(id) {
-        const newYhteystietoRemoveList = [...this.state.yhteystietoRemoveList, id];
         this.setState({
-            yhteystietoRemoveList: newYhteystietoRemoveList,
+            yhteystietoRemoveList: [...this.state.yhteystietoRemoveList, id],
         });
     };
 
@@ -113,7 +113,7 @@ class HenkiloViewContactContent extends React.Component{
         this.setState({readOnly: false});
         this._preEditData = {
             contactInfo: this.state.contactInfo,
-        }
+        };
     };
 
     _discard() {
@@ -127,7 +127,7 @@ class HenkiloViewContactContent extends React.Component{
 
     _update() {
         this.state.yhteystietoRemoveList.forEach(yhteystietoId => this.henkiloUpdate.yhteystiedotRyhma
-            .splice(this.henkiloUpdate.yhteystiedotRyhma.findIndex(yhteystieto => yhteystieto.id === yhteystietoId), 1));
+            .splice(this.henkiloUpdate.yhteystiedotRyhma.findIndex(yhteystieto => yhteystieto.id === yhteystietoId || yhteystieto.henkiloUiId === yhteystietoId), 1));
         this.setState({yhteystietoRemoveList: []});
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     };
@@ -139,16 +139,18 @@ class HenkiloViewContactContent extends React.Component{
     };
 
     _createYhteystiedotRyhma(yhteystietoryhmaTyyppi) {
+        const henkiloUiId = 'henkilo_ui_id_' + PropertySingleton.getNewId();
         const newYhteystiedotRyhma = {
             readOnly: false,
             ryhmaAlkuperaTieto: "alkupera2", // Virkailija
             ryhmaKuvaus: yhteystietoryhmaTyyppi,
             yhteystieto: this.contactInfoTemplate.map(template => ({yhteystietoTyyppi: template.label})),
+            henkiloUiId: henkiloUiId,
         };
         this.henkiloUpdate.yhteystiedotRyhma.push(newYhteystiedotRyhma);
         const contactInfo = [...this.state.contactInfo,
             this.createFlatYhteystieto(this.contactInfoTemplate, [], this.henkiloUpdate.yhteystiedotRyhma.length-1,
-                newYhteystiedotRyhma, this.props.koodisto.yhteystietotyypit, this.props.locale)
+                newYhteystiedotRyhma, this.props.koodisto.yhteystietotyypit, this.props.locale, henkiloUiId)
         ];
         this.setState({
             contactInfo: contactInfo
@@ -169,20 +171,21 @@ class HenkiloViewContactContent extends React.Component{
                 return yhteystietoFlatList;
             });
 
-    createFlatYhteystieto(contactInfoTemplate, yhteystietoList, idx, yhteystiedotRyhma, yhteystietotyypit, locale) {
+    createFlatYhteystieto(contactInfoTemplate, yhteystietoList, idx, yhteystiedotRyhma, yhteystietotyypit, locale, henkiloUiId) {
         return {
             value: contactInfoTemplate.map(((template, idx2) => (
                 {
                     label: template.label,
                     value: yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0]
                     && yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0].yhteystietoArvo,
-                    inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo'
+                    inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo',
                 }
             ))),
             name: yhteystiedotRyhma.ryhmaKuvaus && yhteystietotyypit.filter(kieli =>
             kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
             readOnly: yhteystiedotRyhma.readOnly,
             id: yhteystiedotRyhma.id,
+            henkiloUiId: henkiloUiId,
         };
     }
 }
