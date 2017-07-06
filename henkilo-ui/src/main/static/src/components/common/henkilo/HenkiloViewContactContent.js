@@ -84,7 +84,7 @@ class HenkiloViewContactContent extends React.Component{
 
     render() {
         return (
-            <div className="henkiloViewUserContentWrapper">
+            <div className="henkiloViewUserContentWrapper contact-content">
                 <div>
                     <div className="header">
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
