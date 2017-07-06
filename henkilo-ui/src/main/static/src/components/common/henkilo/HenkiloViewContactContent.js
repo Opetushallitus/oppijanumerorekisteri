@@ -48,8 +48,12 @@ class HenkiloViewContactContent extends React.Component{
             .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.henkiloUiId) === -1)
             .map((yhteystiedotRyhmaFlat, idx) =>
                 <div key={idx}>
-                    <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} <CrossButton
-                        clearAction={() => this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} /></span>
+                    <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} {
+                        !this.state.readOnly
+                            ? <CrossButton clearAction={() =>
+                            this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} />
+                            : null
+                    }</span>
                     { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
                         <div key={idx2} id={yhteystietoFlat.label}>
                             { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
