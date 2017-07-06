@@ -45,7 +45,7 @@ export const fetchAllRyhmas = () => async dispatch => {
 const requestOrganisations = oidOrganisations => ({type: FETCH_ORGANISATIONS_REQUEST, oidOrganisations});
 const receiveOrganisations = (json) => ({type: FETCH_ORGANISATIONS_SUCCESS, organisations: json, receivedAt: Date.now()});
 export const fetchOrganisations = (oidOrganisations) => ((dispatch, getState) => {
-    oidOrganisations = R.uniq(oidOrganisations)
+    oidOrganisations = R.uniq(oidOrganisations);
     dispatch(requestOrganisations(oidOrganisations));
     const promises = oidOrganisations.filter(oidOrganisation => Object.keys(getState().organisaatio.cached).indexOf(oidOrganisation) === -1)
         .map(oidOrganisation => {

@@ -25,7 +25,6 @@ class HenkilohakuPage extends React.Component {
         kayttooikeusryhmas: React.PropTypes.array.isRequired,
         henkilohakuAction: React.PropTypes.func.isRequired,
         updateFilters: React.PropTypes.func.isRequired,
-        emptyHenkilohakuResult: React.PropTypes.func.isRequired,
         henkilohakuResult: React.PropTypes.array.isRequired,
         henkiloHakuFilters: React.PropTypes.object.isRequired,
         henkilohakuLoading: React.PropTypes.bool.isRequired,
@@ -126,7 +125,7 @@ class HenkilohakuPage extends React.Component {
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
             {
-                this.props.henkilohakuResult.length
+                this.props.henkilohakuResult.length && !this.props.henkilohakuLoading
                     ?
                     <div className="henkilohakuTableWrapper">
                         <Table headings={this.headingTemplate.map(template =>
@@ -146,7 +145,7 @@ class HenkilohakuPage extends React.Component {
                                defaultSorted={this.state.sorted}
                                onFetchData={this.onTableFetch.bind(this)} />
                     </div>
-                    : this.props.henkilohakuLoading ? <Loader /> : null
+                    : !this.state.allFetched ? <Loader /> : null
             }
             {
                 this.state.showNoDataMessage
@@ -154,7 +153,7 @@ class HenkilohakuPage extends React.Component {
                                             message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                     : null
             }
-            <VisibilitySensor onChange={(isVisible) => { if(isVisible) this.searchQuery(true)}}
+            <VisibilitySensor onChange={(isVisible) => { if(isVisible && !this.props.henkilohakuLoading && !this.state.allFetched) {this.searchQuery(true);} }}
                               active={!this.state.allFetched && !this.props.henkilohakuLoading}
                               resizeDelay={500}
                               delayedCall>
@@ -207,16 +206,13 @@ class HenkilohakuPage extends React.Component {
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
-            if(!shouldNotClear) {
-                this.props.emptyHenkilohakuResult();
-            }
             this.setState({page: this.state.page+1},
                 () => this.props.henkilohakuAction(this.state.henkilohakuModel, Object.assign(queryParams, {
                     offset: shouldNotClear ? 100*this.state.page : 0,
                     orderBy: this.state.sorted.length
                         ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
                         : undefined,
-                })));
+                }), shouldNotClear));
         }
     };
 

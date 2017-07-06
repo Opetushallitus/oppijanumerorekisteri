@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
 import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
-import {emptyHenkilohakuResult, henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
+import {henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
 import {removeNotification} from "../../actions/notifications.actions";
 
 class HenkilohakuContainer extends React.Component {
@@ -48,7 +48,6 @@ class HenkilohakuContainer extends React.Component {
                                henkiloHakuFilters={this.props.henkilohakuState.filters}
                                updateFilters={this.props.updateFilters}
                                henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
-                               emptyHenkilohakuResult={this.props.emptyHenkilohakuResult}
                                router={this.props.router}
                                notifications={this.props.notifications}
                                removeNotification={this.props.removeNotification} />
@@ -70,4 +69,4 @@ const mapStateToProps = (state, ownProps) => {
 
 
 export default connect(mapStateToProps, {fetchHenkiloOrganisaatiosForCurrentUser, fetchAllKayttooikeusryhma,
-    henkilohaku, updateFilters, emptyHenkilohakuResult, removeNotification})(HenkilohakuContainer);
+    henkilohaku, updateFilters, removeNotification})(HenkilohakuContainer);
