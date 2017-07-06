@@ -52,7 +52,7 @@ export const fetchOrganisations = (oidOrganisations) => ((dispatch, getState) =>
         const url = urls.url('organisaatio-service.organisaatio.ByOid', oidOrganisation);
         return http.get(url).catch(error => {
             console.log('Organisaation lataus epäonnistui', error);
-            return {oid: oidOrganisation, nimi: {fi: oidOrganisation, en: oidOrganisation, sv: oidOrganisation}};
+            return {oid: oidOrganisation, nimi: {fi: oidOrganisation, en: oidOrganisation, sv: oidOrganisation}, tyypit: []};
         });
     });
     return Promise.all(promises.map(p => p.catch(e => e)))

@@ -183,7 +183,7 @@ class HenkilohakuPage extends React.Component {
     createRows(headingKeys) {
         return this.props.henkilohakuResult.map((henkilo, idx) => ({
             [headingKeys[0]]: henkilo.oidHenkilo || '',
-            [headingKeys[1]]: henkilo.nimi || '',
+            [headingKeys[1]]: <span className="oph-blue-lighten-1">{henkilo.nimi || ''}</span>,
             [headingKeys[2]]: henkilo.kayttajatunnus || '',
             [headingKeys[3]]: <ul>{henkilo.organisaatioNimiList.map((organisaatio, idx2) =>
                 <li key={idx2}>{(organisaatio.localisedLabels[this.props.locale] || organisaatio.identifier)
