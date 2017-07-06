@@ -7,6 +7,7 @@ import MyonnaButton from "./buttons/MyonnaButton";
 import Notifications from "../notifications/Notifications";
 import SuljeButton from "./buttons/SuljeButton";
 import StaticUtils from '../StaticUtils'
+import HaeJatkoaikaaButton from "../../omattiedot/HaeJatkoaikaaButton";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -23,6 +24,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         }),
         removeNotification: React.PropTypes.func,
         removePrivilege: React.PropTypes.func,
+        isOmattiedot: React.PropTypes.bool,
     };
 
     constructor(props) {
@@ -35,11 +37,12 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125,},
-            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 150, notSortable: true},
-            {key: 'HENKILO_KAYTTOOIKEUS_SULJE', notSortable: true},
-            {key: 'HIGHLIGHT', hide: true}
+            {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 150, notSortable: true, hide: this.props.isOmattiedot},
+            {key: 'HENKILO_KAYTTOOIKEUS_SULJE', notSortable: true, hide: this.props.isOmattiedot},
+            {key: 'HIGHLIGHT', hide: true},
+            {key: 'HENKILO_KAYTTOOIKEUS_ANO_JATKOAIKA', notSortable: true, hide: true}//!this.props.isOmattiedot},
         ];
-        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || heading.key}));
+        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || ''}));
 
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
@@ -110,6 +113,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
                     }),
+                    [headingList[8]]: <HaeJatkoaikaaButton haeJatkoaikaaAction={() => {}} />,
                 }
             });
     };

@@ -75,12 +75,14 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 + ' ' + StaticUtils.getOrganisaatiotyypitFlat(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit, this.L),
                 [headingList[3]]: toLocalizedText(this.props.locale, haettuKayttooikeusRyhma.kayttoOikeusRyhma.description, haettuKayttooikeusRyhma.kayttoOikeusRyhma.name),
                 [headingList[4]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
-                [headingList[5]]: <DatePicker className="oph-input"
-                                              onChange={(value) => this.loppupvmAction(value, idx)}
-                                              selected={this.state.dates[idx].loppupvm}
-                                              showYearDropdown
-                                              showWeekNumbers
-                                              filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />,
+                [headingList[5]]: !this.props.isOmattiedot
+                    ? <DatePicker className="oph-input"
+                                  onChange={(value) => this.loppupvmAction(value, idx)}
+                                  selected={this.state.dates[idx].loppupvm}
+                                  showYearDropdown
+                                  showWeekNumbers
+                                  filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
+                    : this.state.dates[idx].loppupvm.format(),
                 [headingList[6]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
                 [headingList[7]]: this.props.isOmattiedot ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx) : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));

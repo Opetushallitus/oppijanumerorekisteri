@@ -2,7 +2,6 @@ import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
 import R from 'ramda';
-import OmattiedotExistingKayttooikeus from "./OmattiedotExistingKayttooikeus";
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
@@ -20,6 +19,7 @@ import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import Sukupuoli from "../common/henkilo/labelvalues/Sukupuoli";
 import PasswordButton from "../common/henkilo/buttons/PasswordButton";
+import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -29,8 +29,8 @@ export default class OmattiedotPage extends React.Component {
         this.state = {
             confirmPassivointi: false,
             confirmYksilointi: false,
-        }
-    }
+        };
+    };
 
     render() {
         const isUserContentLoading = this.props.henkilo.henkiloLoading || this.props.henkilo.kayttajatietoLoading
@@ -61,7 +61,7 @@ export default class OmattiedotPage extends React.Component {
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <OmattiedotExistingKayttooikeus {...this.props} />
+                            : <HenkiloViewExistingKayttooikeus {...this.props} isOmattiedot />
                     }
                 </div>
                 <div className="wrapper">
@@ -70,7 +70,6 @@ export default class OmattiedotPage extends React.Component {
                             ? <Loader />
                             : <HenkiloViewOpenKayttooikeusanomus isOmattiedot={true} {...this.props} />
                     }
-
                 </div>
                 <div className="wrapper">
                     {
@@ -88,12 +87,11 @@ export default class OmattiedotPage extends React.Component {
                                 ryhmaOptions={this._parseRyhmaOptions.call(this)}
                                 kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}/>
                     }
-
                 </div>
 
             </div>
         )
-    }
+    };
 
     _createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
         const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
@@ -134,7 +132,7 @@ export default class OmattiedotPage extends React.Component {
                 });
         }
         return [];
-    }
+    };
 
     _parseKayttooikeusryhmaOptions() {
         return this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat.map( kayttooikeusryhma => {
@@ -145,7 +143,7 @@ export default class OmattiedotPage extends React.Component {
                 label: label.text
             };
         });
-    }
+    };
 
     _parseRyhmaOptions() {
         return this.props.ryhmas ?
@@ -153,7 +151,7 @@ export default class OmattiedotPage extends React.Component {
                 label: ryhma.nimi[this.props.locale],
                 value: ryhma.oid
             })) : [];
-    }
+    };
 
     _readOnlyButtons(edit) {
         const L = this.props.l10n[this.props.locale];
@@ -161,6 +159,6 @@ export default class OmattiedotPage extends React.Component {
             <EditButton editAction={edit} L={L} />,
             <PasswordButton oidHenkilo={this.props.omattiedot.data.oid} L={L} updatePassword={this.props.updatePassword} styles={{ top: '3rem', left: '0', width: '18rem' }}/>
         ];
-    }
+    };
 }
 
