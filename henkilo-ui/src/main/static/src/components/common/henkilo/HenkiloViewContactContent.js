@@ -49,7 +49,7 @@ class HenkiloViewContactContent extends React.Component{
             .map((yhteystiedotRyhmaFlat, idx) =>
                 <div key={idx}>
                     <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} {
-                        !this.state.readOnly
+                        !this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly
                             ? <CrossButton clearAction={() =>
                             this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} />
                             : null
