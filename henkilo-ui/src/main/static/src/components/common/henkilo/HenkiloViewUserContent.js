@@ -41,7 +41,7 @@ class HenkiloViewUserContent extends React.Component{
     render() {
         const L = this.props.l10n[this.props.locale];
         return (
-            <div className="henkiloViewUserContentWrapper">
+            <div className="henkiloViewUserContentWrapper user-content">
                     <div>
                         <div className="header">
                             <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>

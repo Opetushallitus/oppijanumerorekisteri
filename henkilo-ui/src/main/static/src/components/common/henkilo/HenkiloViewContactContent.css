@@ -1,20 +1,43 @@
-.henkiloViewEditButtons {
-    display: inline-block;
-    width: 100%;
-}
-
-.henkiloViewEditButtons button {
+.contact-content .henkiloViewEditButtons button {
     margin-right: 15px;
     float: right;
 }
 
-.henkiloViewButtons {
+.contact-content .henkiloViewEditButtons {
+    display: inline-block;
+    width: 100%;
+}
+
+.contact-content .henkiloViewButtons {
     display: inline-block;
     width: 100%;
     margin-top: 25px;
 }
 
-.henkiloViewButtons > div > button {
+.contact-content .henkiloViewButtons > div > button {
     margin-right: 15px;
     float: left;
+}
+
+.contact-content .henkiloViewEditButtons > div > button {
+    float: none;
+}
+
+.contact-content .henkiloViewEditButtons > div > .edit-button-update-button {
+    float: left;
+}
+
+.contact-content-add-new {
+    border: 1px dashed #d5d5d5;
+    width: 95%;
+    height: 324px;
+    cursor: pointer;
+    padding: 5px 0;
+    display: table;
+}
+
+.contact-content-add-new > span {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
 }

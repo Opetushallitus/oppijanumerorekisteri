@@ -1,20 +1,25 @@
-.henkiloViewEditButtons {
+.user-content .henkiloViewEditButtons {
     display: inline-block;
     width: 100%;
 }
 
-.henkiloViewEditButtons button {
+.user-content .henkiloViewEditButtons button {
     margin-right: 15px;
     float: right;
 }
 
-.henkiloViewButtons {
+.user-content .henkiloViewButtons {
     display: inline-block;
     width: 100%;
     margin-top: 25px;
 }
 
-.henkiloViewButtons > div > div > button {
+.user-content .henkiloViewButtons > div > div > button {
+    margin-right: 15px;
+    float: left;
+}
+
+.user-content .henkiloViewButtons > div > button {
     margin-right: 15px;
     float: left;
 }

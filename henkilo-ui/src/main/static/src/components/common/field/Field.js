@@ -39,6 +39,7 @@ class Field extends React.Component {
                                  disabled={this.props.disabled} />
                     : <input className={className}
                              name={this.props.inputValue}
+                             key={this.props.inputValue}
                              onChange={this.props.changeAction}
                              defaultValue={this.props.children}
                              {...type}
