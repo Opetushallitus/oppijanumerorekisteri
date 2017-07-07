@@ -8,6 +8,7 @@ import Notifications from "../notifications/Notifications";
 import SuljeButton from "./buttons/SuljeButton";
 import StaticUtils from '../StaticUtils'
 import HaeJatkoaikaaButton from "../../omattiedot/HaeJatkoaikaaButton";
+import EmailSelect from "./select/EmailSelect";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -40,7 +41,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 150, notSortable: true, hide: this.props.isOmattiedot},
             {key: 'HENKILO_KAYTTOOIKEUS_SULJE', notSortable: true, hide: this.props.isOmattiedot},
             {key: 'HIGHLIGHT', hide: true},
-            {key: 'HENKILO_KAYTTOOIKEUS_ANO_JATKOAIKA', notSortable: true, hide: true}//!this.props.isOmattiedot},
+            {key: 'HENKILO_KAYTTOOIKEUS_ANO_JATKOAIKA', notSortable: true, hide: !this.props.isOmattiedot},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || ''}));
 
@@ -61,6 +62,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     alkupvm: moment(),
                     loppupvm: moment().add(1, 'years')
                 })),
+            emailSelection: '',
         };
     };
 
@@ -113,7 +115,12 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
                     }),
-                    [headingList[8]]: <HaeJatkoaikaaButton haeJatkoaikaaAction={() => {}} />,
+                    [headingList[8]]: <div>
+                        <EmailSelect  changeEmailAction={(value) => {this.setState({emailSelection: value});}}
+                                      emailSelection={this.state.emailSelection}/>
+                        <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(uusittavaKayttooikeusRyhma)}
+                                             disabled={this.state.emailSelection === ''} />
+                    </div>,
                 }
             });
     };
@@ -144,6 +151,21 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             </div>
         );
     };
+
+    async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma) {
+        const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
+        const anomusData = {
+            organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
+            email: this.state.emailSelection,
+            tehtavaNimike: '',
+            perustelut: 'Uusiminen',
+            kayttooikeusRyhmaIds,
+            anojaOid: this.props.oidHenkilo
+        };
+        await this.props.createKayttooikeusanomus(anomusData);
+        this.setState({emailSelection: '',});
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
+    }
 
 }
 

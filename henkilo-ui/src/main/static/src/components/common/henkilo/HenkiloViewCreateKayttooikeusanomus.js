@@ -5,6 +5,9 @@ import Button from '../button/Button';
 import R from 'ramda';
 import {ShowText} from '../../common/ShowText';
 import Select from 'react-select';
+import IconButton from "../button/IconButton";
+import CrossCircleIcon from "../icons/CrossCircleIcon";
+import EmailSelect from "./select/EmailSelect";
 
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -33,14 +36,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             perustelut: '',
             kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
-            emailOptions: [],
         }
-    }
-
-    componentDidMount() {
-        this.setState({
-            emailOptions: this._parseEmailOptions(this.props.henkilo)
-        });
     }
 
     render() {
@@ -61,17 +57,17 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                                onBlurResetsInput={false}
                                options={this.state.organisaatioOptions}
                                onInputChange={this.inputChange.bind(this)}
-                               value={this.state.organisaatioSelection}></OphSelect>
+                               value={this.state.organisaatioSelection}/>
                 </div>
             </div>
 
             <div className="oph-field oph-field-inline">
-                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"></label>
+                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
                 <div className="oph-input-container">
                     <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
                                options={this.props.ryhmaOptions}
                                value={this.state.ryhmaSelection}
-                               placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}></OphSelect>
+                               placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}/>
                 </div>
             </div>
 
@@ -93,17 +89,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                     {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
                 </label>
 
-                <div className="oph-input-container">
-                    <OphSelect placeholder={L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
-                               options={this.state.emailOptions}
-                               value={this.state.emailSelection}
-                               onChange={this._changeEmail.bind(this)}
-                               onInputChange={this._changeEmailInput.bind(this)}
-                               onBlurResetsInput={false}
-                               onInputKeyDown={this._changeEmailEnterKey.bind(this)}
-                               noResultsText={L['OMATTIEDOT_KIRJOITA_SAHKOPOSTI']}
-                    ></OphSelect>
-                </div>
+                <EmailSelect changeEmailAction={this._changeEmail.bind(this)} emailSelection={this.state.emailSelection} />
 
             </div>
 
@@ -116,18 +102,19 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
 
                     <Select placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
-                               noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
-                               options={kayttooikeusRyhmaOptions}
-                               onChange={this._addKayttooikeusryhmaSelection.bind(this)}
-                    ></Select>
+                            noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
+                            options={kayttooikeusRyhmaOptions}
+                            onChange={this._addKayttooikeusryhmaSelection.bind(this)}
+                    />
 
                     <ul className="selected-permissions">
                         {this.state.kayttooikeusryhmaSelections.map( (kayttooikeusRyhmaSelection, index) => {
                             return (
                                 <li key={index}>
                                     {kayttooikeusRyhmaSelection.label}
-                                    <i className="fa fa-times-circle right remove-icon"
-                                       onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)} aria-hidden="true"></i>
+                                    <IconButton clearAction={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
+                                       <CrossCircleIcon />
+                                    </IconButton>
                                 </li>
                             )
                         })}
@@ -141,14 +128,18 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                 </label>
 
                 <div className="oph-input-container">
-                    <textarea className="oph-input" value={this.state.perustelut}
-                              onChange={this._changePerustelut.bind(this)} name="perustelut" id="perustelut" cols="30"
-                              rows="10"></textarea>
+                    <textarea className="oph-input"
+                              value={this.state.perustelut}
+                              onChange={this._changePerustelut.bind(this)}
+                              name="perustelut"
+                              id="perustelut"
+                              cols="30"
+                              rows="10"/>
                 </div>
             </div>
 
             <div className="oph-field oph-field-inline">
-                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"></label>
+                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
                 <div className="oph-input-container">
                     <div className="anomus-button">
                         <Button action={this._createKayttooikeusAnomus.bind(this)}
@@ -170,19 +161,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         this.setState({emailSelection: value});
     }
 
-    _changeEmailEnterKey(event) {
-        if (event.keyCode === 13) {
-            const emailOptions = this.state.emailOptions;
-            const newEmail = event.target.value;
-            emailOptions.push({value: newEmail, label: newEmail});
-            this.setState({emailOptions: emailOptions, emailSelection: newEmail.value});
-        }
-    }
-
-    _changeEmailInput(value) {
-        this.setState({emailSelection: '', newEmail: value});
-    }
-
     _changeTehtavanimike(event) {
         this.setState({tehtavanimike: event.target.value});
     }
@@ -199,18 +177,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     _changeRyhmaSelection(selection) {
         this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelections: []});
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
-    }
-
-    _parseEmailOptions(henkilo) {
-        let emails = [];
-        henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
-            yhteystietoRyhma.yhteystieto.forEach(yhteys => {
-                if (yhteys.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
-                    emails.push(yhteys.yhteystietoArvo);
-                }
-            })
-        });
-        return emails.map(email => ({value: email, label: email}));
     }
 
     inputChange(value) {
@@ -275,7 +241,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelections);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
-            email: this.state.emailSelection.value,
+            email: this.state.emailSelection,
             tehtavaNimike: this.state.tehtavanimike,
             perustelut: this.state.perustelut,
             kayttooikeusRyhmaIds,

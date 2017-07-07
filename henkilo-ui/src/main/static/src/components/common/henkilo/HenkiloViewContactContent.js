@@ -7,7 +7,8 @@ import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 import PropertySingleton from '../../../globals/PropertySingleton'
 import AddIcon from "../icons/AddIcon";
-import CrossButton from "../button/CrossButton";
+import IconButton from "../button/IconButton";
+import CrossIcon from "../icons/CrossIcon";
 
 class HenkiloViewContactContent extends React.Component{
     static propTypes = {
@@ -50,8 +51,10 @@ class HenkiloViewContactContent extends React.Component{
                 <div key={idx}>
                     <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} {
                         !this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly
-                            ? <CrossButton clearAction={() =>
-                            this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} />
+                            ? <IconButton clearAction={() =>
+                            this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} >
+                            <CrossIcon />
+                        </IconButton>
                             : null
                     }</span>
                     { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
