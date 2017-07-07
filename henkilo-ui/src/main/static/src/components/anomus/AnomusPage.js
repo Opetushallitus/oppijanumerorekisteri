@@ -12,24 +12,27 @@ class AnomusPage extends React.Component {
         this.state = {
             parameters: {tilat: ['ANOTTU']}
         };
-    }
+    };
 
     render() {
         return (
           <div>
-            <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit}></HaetutKayttooikeusRyhmatHakuForm>
+            <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit.bind(this)}/>
             {
-                this.props.haetutKayttooikeusryhmatLoading ? <Loader /> :
-                  <HenkiloViewOpenKayttooikeusanomus {...this.props} updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma} piilotaNimi={false}></HenkiloViewOpenKayttooikeusanomus>
+                this.props.haetutKayttooikeusryhmatLoading
+                    ? <Loader />
+                    : <HenkiloViewOpenKayttooikeusanomus {...this.props}
+                                                         updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma}
+                                                         piilotaNimi={false} />
             }
           </div>
         );
-    }
+    };
 
     componentDidMount() {
         this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
         this.props.fetchAllOrganisaatios();
-    }
+    };
 
     onSubmit = (criteria) => {
         const parameters = Object.assign({}, this.state.parameters, criteria);
@@ -37,11 +40,11 @@ class AnomusPage extends React.Component {
             parameters: parameters
         });
         this.props.fetchHaetutKayttooikeusryhmat(parameters);
-    }
+    };
 
     updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm) => {
         this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, this.state.parameters);
-    }
-};
+    };
+}
 
 export default AnomusPage;

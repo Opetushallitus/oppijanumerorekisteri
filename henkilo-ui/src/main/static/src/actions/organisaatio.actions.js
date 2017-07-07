@@ -12,7 +12,7 @@ const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGA
 const requestAllOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_FAILURE, error});
 
 export const fetchAllOrganisaatios = () => async dispatch => {
-    const url = urls.url('organisaatio-service.organisaatiot',  true, true, false);
+    const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: true, lakkautetut: false});
     dispatch(requestAllOrganisaatios());
     try {
         const organisaatiot = await http.get(url);
