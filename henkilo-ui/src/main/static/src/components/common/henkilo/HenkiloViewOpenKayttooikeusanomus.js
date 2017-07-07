@@ -23,7 +23,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             grantableKayttooikeus: React.PropTypes.object.isRequired,
         }),
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
-        piilotaNimi: React.PropTypes.bool,
+        isAnomusView: React.PropTypes.bool,
     };
 
     constructor(props) {
@@ -31,12 +31,12 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [{key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU'},
-            {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: this.props.piilotaNimi},
-            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220,},
-            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220,},
-            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50,},
+            {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: !this.props.isAnomusView, notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220, notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220, notSortable: this.props.isAnomusView,},
+            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50, notSortable: this.props.isAnomusView},
             {key: 'EMPTY_PLACEHOLDER', minWidth: 150, notSortable: true,},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
@@ -54,7 +54,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
-        }
+        };
     };
 
     loppupvmAction(value, idx) {
@@ -146,9 +146,5 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         );
     };
 }
-
-HenkiloViewOpenKayttooikeusanomus.defaultProps = {
-    piilotaNimi: true,
-};
 
 export default HenkiloViewOpenKayttooikeusanomus;

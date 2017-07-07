@@ -36,7 +36,8 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <Field inputValue={this.state.hakutermi}
                                changeAction={this.onHakutermiChange.bind(this)}
-                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}>
+                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
+                               autofocus>
                             {this.state.hakutermi}
                         </Field>
                     </div>

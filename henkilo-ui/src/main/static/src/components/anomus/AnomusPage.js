@@ -23,7 +23,7 @@ class AnomusPage extends React.Component {
                     ? <Loader />
                     : <HenkiloViewOpenKayttooikeusanomus {...this.props}
                                                          updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma}
-                                                         piilotaNimi={false} />
+                                                         isAnomusView={true} />
             }
           </div>
         );
