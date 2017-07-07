@@ -14,6 +14,22 @@ class AnomusPage extends React.Component {
         };
     };
 
+    static propTypes = {
+        kayttooikeus: React.PropTypes.shape({
+            kayttooikeusAnomus: React.PropTypes.array.isRequired,
+            grantableKayttooikeus: React.PropTypes.object.isRequired,
+            grantableKayttooikeusLoading: React.PropTypes.bool.isRequired,
+        }).isRequired,
+    };
+
+    componentDidMount() {
+        this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
+        // For organisation filtering. Should fetch only user's organisations for normal users.
+        if(this.props.isAdmin) {
+            this.props.fetchAllOrganisaatios();
+        }
+    };
+
     render() {
         return (
           <div>
@@ -22,24 +38,19 @@ class AnomusPage extends React.Component {
                 this.props.haetutKayttooikeusryhmatLoading
                     ? <Loader />
                     : <HenkiloViewOpenKayttooikeusanomus {...this.props}
-                                                         updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma}
+                                                         updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
                                                          isAnomusView={true} />
             }
           </div>
         );
     };
 
-    componentDidMount() {
-        this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
-        this.props.fetchAllOrganisaatios();
-    };
-
     onSubmit = (criteria) => {
         const parameters = Object.assign({}, this.state.parameters, criteria);
         this.setState({
-            parameters: parameters
-        });
-        this.props.fetchHaetutKayttooikeusryhmat(parameters);
+                parameters: parameters
+            },
+            () => this.props.fetchHaetutKayttooikeusryhmat(parameters));
     };
 
     updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm) => {

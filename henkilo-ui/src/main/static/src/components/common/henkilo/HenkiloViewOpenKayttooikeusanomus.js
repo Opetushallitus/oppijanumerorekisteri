@@ -40,8 +40,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             {key: 'EMPTY_PLACEHOLDER', minWidth: 150, notSortable: true,},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
-
-
+        
         this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
                 this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
@@ -119,7 +118,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
         await http.put(url, haettuKayttooikeusRyhma.id);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
-    }
+    };
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
     hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
