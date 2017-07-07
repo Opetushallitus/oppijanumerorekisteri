@@ -241,7 +241,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelections);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
-            email: this.state.emailSelection.value,
+            email: this.state.emailSelection,
             tehtavaNimike: this.state.tehtavanimike,
             perustelut: this.state.perustelut,
             kayttooikeusRyhmaIds,
