@@ -22,7 +22,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
         };
     };
 
-    propTypes = {
+    static propTypes = {
         onSubmit: React.PropTypes.func.isRequired,
         locale: React.PropTypes.string.isRequired,
         l10n: React.PropTypes.array.isRequired,
@@ -35,8 +35,10 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                 <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <Field inputValue={this.state.hakutermi}
-                               changeAction={this.onHakutermiChange}
-                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}/>
+                               changeAction={this.onHakutermiChange.bind(this)}
+                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}>
+                            {this.state.hakutermi}
+                        </Field>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OphSelect noResultsText={ `${this.L['SYOTA_VAHINTAAN']} 3 ${this.L['MERKKIA']}` }
