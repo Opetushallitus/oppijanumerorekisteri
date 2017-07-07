@@ -161,10 +161,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         this.setState({emailSelection: value});
     }
 
-    // _changeEmailInput(value) {
-    //     this.setState({emailSelection: '', newEmail: value});
-    // }
-
     _changeTehtavanimike(event) {
         this.setState({tehtavanimike: event.target.value});
     }

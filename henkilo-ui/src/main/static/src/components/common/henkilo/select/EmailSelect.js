@@ -5,7 +5,7 @@ import OphSelect from "../../select/OphSelect";
 class EmailSelect extends React.Component {
     static propTypes = {
         changeEmailAction: React.PropTypes.func.isRequired,
-        emailSelection: React.PropTypes.object.isRequired,
+        emailSelection: React.PropTypes.string.isRequired,
 
         l10n: React.PropTypes.array,
         locale: React.PropTypes.string,
@@ -33,7 +33,7 @@ class EmailSelect extends React.Component {
             <OphSelect placeholder={this.L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
                        options={this.state.emailOptions}
                        value={this.props.emailSelection}
-                       onChange={this.props.changeEmailAction}
+                       onChange={(entity) => this.props.changeEmailAction(entity.value)}
                        // onInputChange={this._changeEmailInput.bind(this)}
                        onBlurResetsInput={false}
                        onInputKeyDown={this._changeEmailEnterKey.bind(this)}
@@ -57,8 +57,8 @@ class EmailSelect extends React.Component {
     _changeEmailEnterKey(event) {
         if (event.keyCode === 13) {
             const emailOptions = this.state.emailOptions;
-            const newEmail = event.target.value;
-            emailOptions.push({value: newEmail, label: newEmail});
+            const newEmail = {value: event.target.value, label: event.target.value};
+            emailOptions.push();
             this.setState({emailOptions: emailOptions,});
             this.props.changeEmailAction(newEmail.value);
         }
