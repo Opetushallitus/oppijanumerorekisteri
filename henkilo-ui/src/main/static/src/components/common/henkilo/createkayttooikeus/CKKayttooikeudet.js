@@ -7,7 +7,7 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
         selectedList.indexOf(kayttooikeus.ryhmaId) === -1)
             .map(kayttooikeus => ({
                 value: kayttooikeus.ryhmaId,
-                label: StaticUtils.getLocalisedText(kayttooikeus.ryhmaNames, locale),
+                label: StaticUtils.getLocalisedText(kayttooikeus.ryhmaNames.texts, locale),
             }));
     return <tr key="kayttooikeusKayttooikeudetField">
         <td>
