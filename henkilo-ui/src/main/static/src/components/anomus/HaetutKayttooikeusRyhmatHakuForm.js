@@ -25,7 +25,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     propTypes = {
         onSubmit: React.PropTypes.func.isRequired,
         locale: React.PropTypes.string.isRequired,
-        l10n: React.PropTypes.l10n.isRequired,
+        l10n: React.PropTypes.array.isRequired,
         organisaatiot: React.PropTypes.array.isRequired,
     };
 
