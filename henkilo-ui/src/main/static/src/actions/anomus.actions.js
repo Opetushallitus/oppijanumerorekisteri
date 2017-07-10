@@ -1,7 +1,10 @@
 import {http} from '../http';
 import {urls} from 'oph-urls-js';
 import {fetchOrganisations} from "./organisaatio.actions";
-import {FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST, FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS, FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE} from './actiontypes';
+import {
+    FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST, FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS,
+    FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE, CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT
+} from './actiontypes';
 
 const requestHaetutKayttooikeusryhmat = () => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST});
 const receiveHaetutKayttooikeusryhmatSuccess = (json) => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS, haetutKayttooikeusryhmat: json});
@@ -17,3 +20,5 @@ export const fetchHaetutKayttooikeusryhmat = (parameters) => dispatch => {
               .then(() => dispatch(receiveHaetutKayttooikeusryhmatSuccess(haetutKayttooikeusryhmat)));
         }).catch(() => dispatch(receiveHaetutKayttooikeusryhmatFailure()));
     };
+
+export const clearHaetutKayttooikeusryhmat = () => dispatch => dispatch({type: CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT});

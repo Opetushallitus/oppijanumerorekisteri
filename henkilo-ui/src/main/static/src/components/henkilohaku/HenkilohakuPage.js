@@ -1,6 +1,5 @@
 import './HenkilohakuPage.css'
 import React from 'react'
-import VisibilitySensor from 'react-visibility-sensor'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
@@ -143,7 +142,11 @@ class HenkilohakuPage extends React.Component {
                                }}
                                manual
                                defaultSorted={this.state.sorted}
-                               onFetchData={this.onTableFetch.bind(this)} />
+                               onFetchData={this.onTableFetch.bind(this)}
+                               fetchMoreSettings={{
+                                   isActive: !this.state.allFetched && !this.props.henkilohakuLoading,
+                                   fetchMoreAction: () => this.searchQuery(true),
+                               }} />
                     </div>
                     : !this.state.allFetched ? <Loader /> : null
             }
@@ -153,14 +156,6 @@ class HenkilohakuPage extends React.Component {
                                             message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                     : null
             }
-            <VisibilitySensor onChange={(isVisible) => { if(isVisible && !this.props.henkilohakuLoading && !this.state.allFetched) {this.searchQuery(true);} }}
-                              active={!this.state.allFetched && !this.props.henkilohakuLoading}
-                              resizeDelay={500}
-                              delayedCall>
-                {({isVisible}) =>
-                    <div>{isVisible ? <Loader/> : null}</div>
-                }
-            </VisibilitySensor>
         </div>;
     };
 

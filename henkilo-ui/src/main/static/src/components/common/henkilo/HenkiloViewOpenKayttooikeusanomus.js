@@ -29,6 +29,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             defaultSorted: React.PropTypes.array.isRequired,
             onFetchData: React.PropTypes.func.isRequired,
         }),
+        fetchMoreSettings: React.PropTypes.object,
     };
 
     constructor(props) {
@@ -144,7 +145,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                         <Table headings={this.tableHeadings}
                                data={this._rows}
                                noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']}
-                               {...this.props.manualSortSettings} />
+                               {...this.props.manualSortSettings}
+                               fetchMoreSettings={this.props.fetchMoreSettings} />
                     </div>
                 </div>
             </div>
