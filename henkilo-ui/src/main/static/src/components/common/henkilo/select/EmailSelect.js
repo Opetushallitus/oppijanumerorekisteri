@@ -7,7 +7,7 @@ class EmailSelect extends React.Component {
         changeEmailAction: React.PropTypes.func.isRequired,
         emailSelection: React.PropTypes.string.isRequired,
 
-        l10n: React.PropTypes.array,
+        l10n: React.PropTypes.object,
         locale: React.PropTypes.string,
         henkilo: React.PropTypes.object,
     };

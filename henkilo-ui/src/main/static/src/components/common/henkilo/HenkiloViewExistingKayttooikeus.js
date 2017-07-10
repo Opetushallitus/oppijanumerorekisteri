@@ -1,5 +1,6 @@
 import './HenkiloViewExpiredKayttooikeus.css'
 import React from 'react'
+import update from 'react-addons-update'
 import Table from '../table/Table'
 import moment from 'moment'
 import DatePicker from "react-datepicker";
@@ -62,7 +63,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     alkupvm: moment(),
                     loppupvm: moment().add(1, 'years')
                 })),
-            emailSelection: '',
+            emailSelection: this.props.kayttooikeus.kayttooikeus
+                .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
+                .map(uusittavaKayttooikeusRyhma => ''),
         };
     };
 
@@ -116,10 +119,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
                     }),
                     [headingList[8]]: <div>
-                        <EmailSelect  changeEmailAction={(value) => {this.setState({emailSelection: value});}}
-                                      emailSelection={this.state.emailSelection}/>
-                        <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(uusittavaKayttooikeusRyhma)}
-                                             disabled={this.state.emailSelection === ''} />
+                        <EmailSelect  changeEmailAction={(value) => {this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: value}}),});}}
+                                      emailSelection={this.state.emailSelection[idx]}/>
+                        <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx)}
+                                             disabled={this.state.emailSelection[idx] === ''} />
                     </div>,
                 }
             });
@@ -152,20 +155,20 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         );
     };
 
-    async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma) {
+    async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
-            email: this.state.emailSelection,
+            email: this.state.emailSelection[idx],
             tehtavaNimike: '',
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: this.props.oidHenkilo
         };
         await this.props.createKayttooikeusanomus(anomusData);
-        this.setState({emailSelection: '',});
+        this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: ''}}),});
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
-    }
+    };
 
 }
 
