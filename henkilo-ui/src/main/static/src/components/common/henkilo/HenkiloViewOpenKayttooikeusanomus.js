@@ -24,13 +24,18 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         }),
         organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
         isAnomusView: React.PropTypes.bool,
+        manualSortSettings: React.PropTypes.shape({
+            manual: React.PropTypes.bool.isRequired,
+            defaultSorted: React.PropTypes.array.isRequired,
+            onFetchData: React.PropTypes.func.isRequired,
+        }),
     };
 
     constructor(props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        this.headingList = [{key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU'},
+        this.headingList = [{key: 'ANOTTU_PVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: !this.props.isAnomusView, notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220, notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220, notSortable: this.props.isAnomusView,},
@@ -138,7 +143,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                     <div>
                         <Table headings={this.tableHeadings}
                                data={this._rows}
-                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']} />
+                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']}
+                               {...this.props.manualSortSettings} />
                     </div>
                 </div>
             </div>
