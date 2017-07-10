@@ -14,7 +14,7 @@ class AnomusPage extends React.Component {
                 tilat: ['ANOTTU'],
                 orderBy: 'ANOTTU_PVM_DESC',
             },
-            sorted: [],
+            sorted: [{id: 'ANOTTU_PVM', desc: true}],
         };
     };
 
