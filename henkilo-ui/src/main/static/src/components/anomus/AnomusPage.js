@@ -19,7 +19,7 @@ class AnomusPage extends React.Component {
                 orderBy: 'ANOTTU_PVM_DESC',
                 limit: this.defaultLimit,
             },
-            sorted: [{id: 'ANOTTU_PVM', desc: true}],
+            sorted: [{id: 'ANOTTU_PVM', desc: false}],
             allFetched: false,
             page: 0,
         };
