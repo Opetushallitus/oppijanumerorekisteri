@@ -6,6 +6,7 @@ import WideBlueNotification from "../common/notifications/WideBlueNotification";
 import HenkilohakuButton from "./HenkilohakuButton";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
+import Loader from "../common/icons/Loader";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -33,6 +34,7 @@ class HenkilohakuPage extends React.Component {
             notL10nMessage: React.PropTypes.string.isRequired,
         }).isRequired).isRequired,
         removeNotification: React.PropTypes.func.isRequired,
+        clearHenkilohaku: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -127,7 +129,7 @@ class HenkilohakuPage extends React.Component {
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
             {
-                this.initialised && this.props.henkilohakuResult.length
+                this.initialised && !this.state.showNoDataMessage
                     ? <div className="henkilohakuTableWrapper">
                         <Table headings={this.headingTemplate.map(template =>
                             Object.assign({}, template, {label: this.L[template.key] || template.key}))}
@@ -151,7 +153,10 @@ class HenkilohakuPage extends React.Component {
                                }}
                                isLoading={this.props.henkilohakuLoading } />
                     </div>
-                    : this.state.showNoDataMessage
+                    : this.props.henkilohakuLoading ? <Loader /> : null
+            }
+            {
+                this.state.showNoDataMessage
                     ? <WideBlueNotification closeAction={() => this.setState({showNoDataMessage: false})}
                                             message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                     : null
@@ -197,6 +202,9 @@ class HenkilohakuPage extends React.Component {
     };
 
     searchQuery(shouldNotClear) {
+        if(!shouldNotClear) {
+            this.props.clearHenkilohaku();
+        }
         const queryParams = {};
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
@@ -208,8 +216,7 @@ class HenkilohakuPage extends React.Component {
                         orderBy: this.state.sorted.length
                             ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
                             : undefined,
-                    }),
-                    shouldNotClear));
+                    })));
         }
     };
 
