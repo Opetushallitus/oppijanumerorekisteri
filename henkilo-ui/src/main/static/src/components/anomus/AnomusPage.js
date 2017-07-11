@@ -18,6 +18,7 @@ class AnomusPage extends React.Component {
                 tilat: ['ANOTTU'],
                 orderBy: 'ANOTTU_PVM_DESC',
                 limit: this.defaultLimit,
+                showOwnAnomus: false,
             },
             sorted: [{id: 'ANOTTU_PVM', desc: false}],
             allFetched: false,
@@ -44,14 +45,10 @@ class AnomusPage extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         const newState = {
-            // showNoDataMessage: !nextProps.henkilohakuResult.length && !nextProps.henkilohakuLoading,
             allFetched: !nextProps.haetutKayttooikeusryhmatLoading
             && (nextProps.kayttooikeus.kayttooikeusAnomus.length < this.defaultLimit
             || nextProps.kayttooikeus.kayttooikeusAnomus.length === this.props.kayttooikeus.kayttooikeusAnomus.length),
         };
-        // if(newState.allFetched) {
-        //     newState.parameters.offset = 0;
-        // }
         this.setState(newState);
     };
 
@@ -104,9 +101,9 @@ class AnomusPage extends React.Component {
         }
         const parameters = Object.assign({}, this.state.parameters, criteria);
         parameters.orderBy = this.state.sorted.length
-            ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
+            ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_ASC' : this.state.sorted[0].id + "_DESC")
             : this.state.parameters.orderBy;
-        parameters.offset = shouldNotClear ? this.state.defaultLimit * (this.state.page+1) : this.defaultOffset;
+        parameters.offset = shouldNotClear ? this.defaultLimit * (this.state.page+1) : this.defaultOffset;
         this.setState({
             parameters: parameters,
             page: shouldNotClear ? this.state.page+1 : 0,
