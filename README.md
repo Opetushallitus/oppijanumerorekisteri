@@ -27,6 +27,9 @@ Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla 
 
 Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oidia kysyvät rajapinnat toimivat oikein.
 
+### Lombok
+Käytössä on lombok joten IDE tarvitsee pluginin ymmärtääkseen tämän annotaatioita.
+
 ## Lokaalin CAS palvelimen kanssa
 1) Hae luokalta `authentication`-projektin `common.properties`-tiedosto ja lisää se omaan oph-configuration-hakemistoosi nimellä `cas.properties`
 2) Käännä authentication projecti `mvn clean package`
