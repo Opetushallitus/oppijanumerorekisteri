@@ -89,7 +89,7 @@ class Table extends React.Component {
                                   delayedCall
                                   partialVisibility>
                     {({isVisible}) =>
-                        <div style={{height: "20px"}} />
+                        <div style={{visibility: "hidden"}}>invisible</div>
                     }
                 </VisibilitySensor>
                 { this.props.isLoading ? <Loader /> : null }

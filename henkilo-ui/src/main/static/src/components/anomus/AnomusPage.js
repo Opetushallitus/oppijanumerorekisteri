@@ -20,7 +20,7 @@ class AnomusPage extends React.Component {
                 limit: this.defaultLimit,
                 showOwnAnomus: false,
             },
-            sorted: [{id: 'ANOTTU_PVM', desc: false}],
+            sorted: [{id: 'ANOTTU_PVM', desc: true}],
             allFetched: false,
             page: 0,
             kayttooikeus: {},
@@ -92,12 +92,13 @@ class AnomusPage extends React.Component {
         // Update sort state
         if(sort) {
             this.setState({
-                sorted: [Object.assign({}, sort)],
-            });
-            // If sort state changed fetch new data
-            if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
-                this.onSubmit();
-            }
+                    sorted: [Object.assign({}, sort)],
+                },
+                // If sort state changed fetch new data
+                () => {if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
+                    this.onSubmit();
+                }});
+
         }
     };
 
@@ -111,7 +112,7 @@ class AnomusPage extends React.Component {
         }
         const parameters = Object.assign({}, this.state.parameters, criteria);
         parameters.orderBy = this.state.sorted.length
-            ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_ASC' : this.state.sorted[0].id + "_DESC")
+            ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
             : this.state.parameters.orderBy;
         parameters.offset = shouldNotClear ? this.defaultLimit * (this.state.page+1) : this.defaultOffset;
         this.setState({
