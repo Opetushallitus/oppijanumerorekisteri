@@ -35,6 +35,7 @@ class Table extends React.Component {
             fetchMoreAction: React.PropTypes.func.isRequired,
             isActive: React.PropTypes.bool.isRequired,
         }),
+        isLoading: React.PropTypes.bool,
     };
 
     static defaultProps = {
@@ -85,11 +86,13 @@ class Table extends React.Component {
                 <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction();} }}
                                   active={this.props.fetchMoreSettings.isActive}
                                   resizeDelay={500}
-                                  delayedCall>
+                                  delayedCall
+                                  partialVisibility>
                     {({isVisible}) =>
-                        <div>{isVisible ? <Loader /> : 'not visible or inactive'}</div>
+                        <div style={{height: "20px"}} />
                     }
                 </VisibilitySensor>
+                { this.props.isLoading ? <Loader /> : null }
             </div>
         );
     };

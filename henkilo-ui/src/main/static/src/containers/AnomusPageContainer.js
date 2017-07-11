@@ -20,11 +20,7 @@ const mapStateToProps = (state) => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,
-        kayttooikeus: {
-            kayttooikeusAnomus: state.haetutKayttooikeusryhmat.data,
-            grantableKayttooikeus: {},
-            grantableKayttooikeusLoading: true,
-        },
+        kayttooikeusAnomus: state.haetutKayttooikeusryhmat.data,
         organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.loading,
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,

@@ -21,8 +21,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         kayttooikeus: React.PropTypes.shape({
             kayttooikeusAnomus: React.PropTypes.array.isRequired,
             grantableKayttooikeus: React.PropTypes.object.isRequired,
+            grantableKayttooikeusLoading: React.PropTypes.bool.isRequired,
         }),
-        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
+        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})).isRequired,
         isAnomusView: React.PropTypes.bool,
         manualSortSettings: React.PropTypes.shape({
             manual: React.PropTypes.bool.isRequired,
@@ -30,6 +31,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             onFetchData: React.PropTypes.func.isRequired,
         }),
         fetchMoreSettings: React.PropTypes.object,
+        tableLoading: React.PropTypes.bool,
     };
 
     constructor(props) {
@@ -60,6 +62,15 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 loppupvm: moment().add(1, 'years'),
             })),
         };
+    };
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            dates: nextProps.kayttooikeus.kayttooikeusAnomus.map(kayttooikeusAnomus => ({
+                alkupvm: moment(),
+                loppupvm: moment().add(1, 'years'),
+            })),
+        });
     };
 
     loppupvmAction(value, idx) {
@@ -146,7 +157,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                data={this._rows}
                                noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']}
                                {...this.props.manualSortSettings}
-                               fetchMoreSettings={this.props.fetchMoreSettings} />
+                               fetchMoreSettings={this.props.fetchMoreSettings}
+                               isLoading={this.props.tableLoading} />
                     </div>
                 </div>
             </div>

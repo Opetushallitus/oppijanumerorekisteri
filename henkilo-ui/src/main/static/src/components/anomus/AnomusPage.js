@@ -23,16 +23,19 @@ class AnomusPage extends React.Component {
             sorted: [{id: 'ANOTTU_PVM', desc: false}],
             allFetched: false,
             page: 0,
+            kayttooikeus: {},
         };
     };
 
     static propTypes = {
-        kayttooikeus: React.PropTypes.shape({
-            kayttooikeusAnomus: React.PropTypes.array.isRequired,
-            grantableKayttooikeus: React.PropTypes.object.isRequired,
-            grantableKayttooikeusLoading: React.PropTypes.bool.isRequired,
-        }).isRequired,
+        l10n: React.PropTypes.object.isRequired,
+        locale: React.PropTypes.string.isRequired,
+        kayttooikeusAnomus: React.PropTypes.array.isRequired,
+        organisaatioCache: React.PropTypes.object.isRequired,
         clearHaetutKayttooikeusryhmat: React.PropTypes.func.isRequired,
+        fetchAllOrganisaatios: React.PropTypes.func.isRequired,
+        fetchHaetutKayttooikeusryhmat: React.PropTypes.func.isRequired,
+        isAdmin: React.PropTypes.bool.isRequired,
     };
 
     componentDidMount() {
@@ -44,12 +47,15 @@ class AnomusPage extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
-        const newState = {
+        this.setState({
             allFetched: !nextProps.haetutKayttooikeusryhmatLoading
-            && (nextProps.kayttooikeus.kayttooikeusAnomus.length < this.defaultLimit
-            || nextProps.kayttooikeus.kayttooikeusAnomus.length === this.props.kayttooikeus.kayttooikeusAnomus.length),
-        };
-        this.setState(newState);
+            && (nextProps.kayttooikeusAnomus.length < this.defaultLimit
+            || nextProps.kayttooikeusAnomus.length === this.props.kayttooikeusAnomus.length),
+        });
+
+        if(!this.props.haetutKayttooikeusryhmatLoading) {
+            this.initialised = true;
+        }
     };
 
     render() {
@@ -57,9 +63,12 @@ class AnomusPage extends React.Component {
           <div>
               <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit.bind(this)}/>
               {
-                  this.props.haetutKayttooikeusryhmatLoading
+                  this.props.haetutKayttooikeusryhmatLoading && !this.initialised
                       ? <Loader />
-                      : <HenkiloViewOpenKayttooikeusanomus {...this.props}
+                      : <HenkiloViewOpenKayttooikeusanomus kayttooikeus={{kayttooikeusAnomus: this.props.kayttooikeusAnomus, grantableKayttooikeus: {},grantableKayttooikeusLoading: true,}}
+                                                           l10n={this.props.l10n}
+                                                           locale={this.props.locale}
+                                                           organisaatioCache={this.props.organisaatioCache}
                                                            updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
                                                            isAnomusView={true}
                                                            manualSortSettings={{
@@ -70,7 +79,8 @@ class AnomusPage extends React.Component {
                                                            fetchMoreSettings={{
                                                                isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
                                                                fetchMoreAction: this.onSubmitWithoutClear.bind(this),
-                                                           }} />
+                                                           }}
+                                                           tableLoading={this.props.haetutKayttooikeusryhmatLoading} />
               }
           </div>
         );

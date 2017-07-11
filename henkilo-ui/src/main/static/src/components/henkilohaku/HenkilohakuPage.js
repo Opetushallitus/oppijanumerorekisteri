@@ -4,7 +4,6 @@ import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
 import HenkilohakuButton from "./HenkilohakuButton";
-import Loader from "../common/icons/Loader";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
 
@@ -40,7 +39,7 @@ class HenkilohakuPage extends React.Component {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-
+        this.initialised = false;
         this.headingTemplate = [
             {
                 key: 'HENKILOHAKU_OIDHENKILO_HIDDEN',
@@ -82,9 +81,13 @@ class HenkilohakuPage extends React.Component {
             allFetched: !nextProps.henkilohakuLoading
             && (nextProps.henkilohakuResult.length < 100
             || nextProps.henkilohakuResult.length === this.props.henkilohakuResult.length),
+            initialised: nextProps.henkilohakuResult.length,
         };
         if(newState.allFetched) {
             newState.page = 0;
+        }
+        if(nextProps.henkilohakuResult.length) {
+            this.initialised = true;
         }
         this.setState(newState);
     };
@@ -124,9 +127,8 @@ class HenkilohakuPage extends React.Component {
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
             {
-                this.props.henkilohakuResult.length && !this.props.henkilohakuLoading
-                    ?
-                    <div className="henkilohakuTableWrapper">
+                this.initialised && this.props.henkilohakuResult.length
+                    ? <div className="henkilohakuTableWrapper">
                         <Table headings={this.headingTemplate.map(template =>
                             Object.assign({}, template, {label: this.L[template.key] || template.key}))}
                                data={this.createRows(this.headingTemplate.map(template => template.key))}
@@ -146,12 +148,10 @@ class HenkilohakuPage extends React.Component {
                                fetchMoreSettings={{
                                    isActive: !this.state.allFetched && !this.props.henkilohakuLoading,
                                    fetchMoreAction: () => this.searchQuery(true),
-                               }} />
+                               }}
+                               isLoading={this.props.henkilohakuLoading } />
                     </div>
-                    : !this.state.allFetched ? <Loader /> : null
-            }
-            {
-                this.state.showNoDataMessage
+                    : this.state.showNoDataMessage
                     ? <WideBlueNotification closeAction={() => this.setState({showNoDataMessage: false})}
                                             message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                     : null
@@ -202,12 +202,14 @@ class HenkilohakuPage extends React.Component {
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
             this.setState({page: this.state.page+1},
-                () => this.props.henkilohakuAction(this.state.henkilohakuModel, Object.assign(queryParams, {
-                    offset: shouldNotClear ? 100*this.state.page : 0,
-                    orderBy: this.state.sorted.length
-                        ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
-                        : undefined,
-                }), shouldNotClear));
+                () => this.props.henkilohakuAction(this.state.henkilohakuModel,
+                    Object.assign(queryParams, {
+                        offset: shouldNotClear ? 100*this.state.page : 0,
+                        orderBy: this.state.sorted.length
+                            ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
+                            : undefined,
+                    }),
+                    shouldNotClear));
         }
     };
 
