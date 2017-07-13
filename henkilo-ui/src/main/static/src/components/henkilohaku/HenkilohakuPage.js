@@ -129,7 +129,7 @@ class HenkilohakuPage extends React.Component {
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
             {
-                this.initialised && !this.state.showNoDataMessage
+                (this.initialised && !this.state.showNoDataMessage) || this.props.henkilohakuResult.length
                     ? <div className="henkilohakuTableWrapper">
                         <Table headings={this.headingTemplate.map(template =>
                             Object.assign({}, template, {label: this.L[template.key] || template.key}))}
