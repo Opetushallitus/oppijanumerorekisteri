@@ -3,7 +3,7 @@ import React from 'react'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
-import HenkilohakuButton from "./HenkilohakuButton";
+import DelayedSearchInput from "./DelayedSearchInput";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
 import Loader from "../common/icons/Loader";
@@ -113,8 +113,8 @@ class HenkilohakuPage extends React.Component {
                                      message={this.L[notification.notL10nMessage]} /> )
             }
             <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
-            <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
-                               defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
+            <DelayedSearchInput setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
+                                defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
             <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
                                 suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
                                 duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}

@@ -1,13 +1,14 @@
+/**
+ * Haettujen käyttöoikeusryhmien hakulomake.
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Field from '../common/field/Field';
 import OphSelect from '../common/select/OphSelect'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 import './HaetutKayttooikeusRyhmatHakuForm.css';
+import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 
-/**
- * Haettujen käyttöoikeusryhmien hakulomake.
- */
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     constructor(props) {
         super(props);
@@ -33,12 +34,15 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
             <form>
                 <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
-                        <Field inputValue={this.state.hakutermi}
-                               changeAction={this.onHakutermiChange.bind(this)}
-                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
-                               autofocus>
-                            {this.state.hakutermi}
-                        </Field>
+                        <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
+                                            defaultNameQuery={this.state.hakutermi}
+                                            placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']} />
+                        {/*<Field inputValue={this.state.hakutermi}*/}
+                               {/*changeAction={this.onHakutermiChange.bind(this)}*/}
+                               {/*placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}*/}
+                               {/*autofocus>*/}
+                            {/*{this.state.hakutermi}*/}
+                        {/*</Field>*/}
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OphSelect noResultsText={ `${this.L['SYOTA_VAHINTAAN']} 3 ${this.L['MERKKIA']}` }
@@ -61,7 +65,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     }
 
     onHakutermiChange = (event) => {
-        const hakutermi = event.target.value;
+        const hakutermi = event.value;
         this.setState({hakutermi: hakutermi});
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
             this.props.onSubmit({q: hakutermi});
