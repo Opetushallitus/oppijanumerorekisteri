@@ -44,7 +44,7 @@ class App extends React.Component {
 
         frontProperties: PropTypes.shape({
             initialized: React.PropTypes.bool,
-            properties: React.array,
+            properties: React.PropTypes.array,
         }).isRequired,
         l10n: PropTypes.shape({
             l10nInitialized: React.PropTypes.bool,

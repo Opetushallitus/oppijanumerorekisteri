@@ -1,11 +1,13 @@
 import './Table.css'
 import React from 'react'
+import VisibilitySensor from 'react-visibility-sensor'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import SortAscIcon from "../icons/SortAscIcon";
 import SortDescIcon from "../icons/SortDescIcon";
 import SortIconNone from "../icons/SortIconNone";
 import classNames from 'classnames/bind';
+import Loader from "../icons/Loader";
 
 class Table extends React.Component {
     static propTypes = {
@@ -28,6 +30,16 @@ class Table extends React.Component {
         onFetchData: React.PropTypes.func,
         getTdProps: React.PropTypes.func,
         defaultSorted: React.PropTypes.array,
+
+        fetchMoreSettings: React.PropTypes.shape({
+            fetchMoreAction: React.PropTypes.func.isRequired,
+            isActive: React.PropTypes.bool.isRequired,
+        }),
+        isLoading: React.PropTypes.bool,
+    };
+
+    static defaultProps = {
+        fetchMoreSettings: {},
     };
 
     render() {
@@ -71,6 +83,16 @@ class Table extends React.Component {
                                 }}}
                             getTdProps={this.props.getTdProps}
                             onFetchData={this.props.onFetchData} />
+                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction();} }}
+                                  active={this.props.fetchMoreSettings.isActive}
+                                  resizeDelay={500}
+                                  delayedCall
+                                  partialVisibility>
+                    {({isVisible}) =>
+                        <div style={{visibility: "hidden"}}>invisible</div>
+                    }
+                </VisibilitySensor>
+                { this.props.isLoading ? <Loader /> : null }
             </div>
         );
     };

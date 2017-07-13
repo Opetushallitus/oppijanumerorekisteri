@@ -1,21 +1,19 @@
-.henkilohakuTableWrapper .rt-thead.-header {
-    background-color: #eee;
-}
-
 .henkilohakuTableWrapper .rt-thead.-header .-sort-desc,
 .henkilohakuTableWrapper .rt-thead.-header .-sort-asc {
     background-color: #def2ff;
 }
 
 .henkilohakuTableWrapper .ReactTable .rt-thead.-header {
+    background-color: #eee;
     border-bottom: 1px solid #d5d5d5;
 }
 
-.henkilohakuTableWrapper .ReactTable .rt-resizable-header.-cursor-pointer.rt-th {
+.henkilohakuTableWrapper .ReactTable .rt-resizable-header.rt-th {
     border-right: 1px solid #d5d5d5 !important;
+    line-height: 40px;
 }
 
-.henkilohakuTableWrapper .ReactTable .rt-resizable-header.-cursor-pointer.rt-th:last-child {
+.henkilohakuTableWrapper .ReactTable .rt-resizable-header.rt-th:last-child {
     border-right: 0 !important;
 }
 

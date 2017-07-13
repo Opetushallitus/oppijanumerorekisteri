@@ -21,27 +21,35 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         kayttooikeus: React.PropTypes.shape({
             kayttooikeusAnomus: React.PropTypes.array.isRequired,
             grantableKayttooikeus: React.PropTypes.object.isRequired,
+            grantableKayttooikeusLoading: React.PropTypes.bool.isRequired,
         }),
-        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
-        piilotaNimi: React.PropTypes.bool,
+        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})).isRequired,
+        isAnomusView: React.PropTypes.bool,
+        manualSortSettings: React.PropTypes.shape({
+            manual: React.PropTypes.bool.isRequired,
+            defaultSorted: React.PropTypes.array.isRequired,
+            onFetchData: React.PropTypes.func.isRequired,
+        }),
+        fetchMoreSettings: React.PropTypes.object,
+        tableLoading: React.PropTypes.bool,
+        striped: React.PropTypes.bool,
     };
 
     constructor(props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        this.headingList = [{key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU'},
-            {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: this.props.piilotaNimi},
-            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220,},
-            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220,},
-            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50,},
+        this.headingList = [{key: 'ANOTTU_PVM'},
+            {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: !this.props.isAnomusView, notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220, notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220, notSortable: this.props.isAnomusView,},
+            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50, notSortable: this.props.isAnomusView},
             {key: 'EMPTY_PLACEHOLDER', minWidth: 150, notSortable: true,},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
-
-
+        
         this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
                 this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
@@ -54,7 +62,16 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
-        }
+        };
+    };
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            dates: nextProps.kayttooikeus.kayttooikeusAnomus.map(kayttooikeusAnomus => ({
+                alkupvm: moment(),
+                loppupvm: moment().add(1, 'years'),
+            })),
+        });
     };
 
     loppupvmAction(value, idx) {
@@ -119,7 +136,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
         await http.put(url, haettuKayttooikeusRyhma.id);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
-    }
+    };
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
     hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
@@ -139,16 +156,16 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                     <div>
                         <Table headings={this.tableHeadings}
                                data={this._rows}
-                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']} />
+                               noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']}
+                               {...this.props.manualSortSettings}
+                               fetchMoreSettings={this.props.fetchMoreSettings}
+                               isLoading={this.props.tableLoading}
+                               striped={this.props.striped} />
                     </div>
                 </div>
             </div>
         );
     };
 }
-
-HenkiloViewOpenKayttooikeusanomus.defaultProps = {
-    piilotaNimi: true,
-};
 
 export default HenkiloViewOpenKayttooikeusanomus;

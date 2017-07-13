@@ -1,4 +1,5 @@
 import {
+    CLEAR_HENKILOHAKU,
     HENKILOHAKU_FAILURE, HENKILOHAKU_REQUEST, HENKILOHAKU_SUCCESS,
     UPDATE_HENKILOHAKU_FILTERS
 } from "../actions/actiontypes";
@@ -10,12 +11,14 @@ export const henkilohakuState = (state = { filters: {}, henkilohakuLoading: fals
         case HENKILOHAKU_SUCCESS:
             return Object.assign({}, state, {
                 henkilohakuLoading: false,
-                result: action.noClearOldData ? [...state.result, ...action.data] : action.data,
+                result: [...state.result, ...action.data],
             });
         case HENKILOHAKU_FAILURE:
             return Object.assign({}, state, {henkilohakuLoading: false, });
         case UPDATE_HENKILOHAKU_FILTERS:
             return Object.assign({}, state, {filters: action.filters,});
+        case CLEAR_HENKILOHAKU:
+            return Object.assign({}, state, {result: []});
         default:
             return state;
     }

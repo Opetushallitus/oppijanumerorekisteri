@@ -1,13 +1,12 @@
 import './HenkilohakuPage.css'
 import React from 'react'
-import VisibilitySensor from 'react-visibility-sensor'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
-import HenkilohakuButton from "./HenkilohakuButton";
-import Loader from "../common/icons/Loader";
+import DelayedSearchInput from "./DelayedSearchInput";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
+import Loader from "../common/icons/Loader";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -35,13 +34,14 @@ class HenkilohakuPage extends React.Component {
             notL10nMessage: React.PropTypes.string.isRequired,
         }).isRequired).isRequired,
         removeNotification: React.PropTypes.func.isRequired,
+        clearHenkilohaku: React.PropTypes.func.isRequired,
     };
 
     constructor(props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-
+        this.initialised = false;
         this.headingTemplate = [
             {
                 key: 'HENKILOHAKU_OIDHENKILO_HIDDEN',
@@ -83,9 +83,13 @@ class HenkilohakuPage extends React.Component {
             allFetched: !nextProps.henkilohakuLoading
             && (nextProps.henkilohakuResult.length < 100
             || nextProps.henkilohakuResult.length === this.props.henkilohakuResult.length),
+            initialised: nextProps.henkilohakuResult.length,
         };
         if(newState.allFetched) {
             newState.page = 0;
+        }
+        if(nextProps.henkilohakuResult.length) {
+            this.initialised = true;
         }
         this.setState(newState);
     };
@@ -109,8 +113,8 @@ class HenkilohakuPage extends React.Component {
                                      message={this.L[notification.notL10nMessage]} /> )
             }
             <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
-            <HenkilohakuButton setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
-                               defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
+            <DelayedSearchInput setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
+                                defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
             <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
                                 suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
                                 duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
@@ -125,9 +129,8 @@ class HenkilohakuPage extends React.Component {
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
             {
-                this.props.henkilohakuResult.length && !this.props.henkilohakuLoading
-                    ?
-                    <div className="henkilohakuTableWrapper">
+                this.initialised && !this.state.showNoDataMessage
+                    ? <div className="henkilohakuTableWrapper">
                         <Table headings={this.headingTemplate.map(template =>
                             Object.assign({}, template, {label: this.L[template.key] || template.key}))}
                                data={this.createRows(this.headingTemplate.map(template => template.key))}
@@ -143,9 +146,14 @@ class HenkilohakuPage extends React.Component {
                                }}
                                manual
                                defaultSorted={this.state.sorted}
-                               onFetchData={this.onTableFetch.bind(this)} />
+                               onFetchData={this.onTableFetch.bind(this)}
+                               fetchMoreSettings={{
+                                   isActive: !this.state.allFetched && !this.props.henkilohakuLoading,
+                                   fetchMoreAction: () => this.searchQuery(true),
+                               }}
+                               isLoading={this.props.henkilohakuLoading } />
                     </div>
-                    : !this.state.allFetched ? <Loader /> : null
+                    : this.props.henkilohakuLoading ? <Loader /> : null
             }
             {
                 this.state.showNoDataMessage
@@ -153,14 +161,6 @@ class HenkilohakuPage extends React.Component {
                                             message={this.L['HENKILOHAKU_EI_TULOKSIA']} />
                     : null
             }
-            <VisibilitySensor onChange={(isVisible) => { if(isVisible && !this.props.henkilohakuLoading && !this.state.allFetched) {this.searchQuery(true);} }}
-                              active={!this.state.allFetched && !this.props.henkilohakuLoading}
-                              resizeDelay={500}
-                              delayedCall>
-                {({isVisible}) =>
-                    <div>{isVisible ? <Loader/> : null}</div>
-                }
-            </VisibilitySensor>
         </div>;
     };
 
@@ -202,17 +202,21 @@ class HenkilohakuPage extends React.Component {
     };
 
     searchQuery(shouldNotClear) {
+        if(!shouldNotClear) {
+            this.props.clearHenkilohaku();
+        }
         const queryParams = {};
         if(this.state.henkilohakuModel.nameQuery
             || this.state.henkilohakuModel.organisaatioOid
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
             this.setState({page: this.state.page+1},
-                () => this.props.henkilohakuAction(this.state.henkilohakuModel, Object.assign(queryParams, {
-                    offset: shouldNotClear ? 100*this.state.page : 0,
-                    orderBy: this.state.sorted.length
-                        ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
-                        : undefined,
-                }), shouldNotClear));
+                () => this.props.henkilohakuAction(this.state.henkilohakuModel,
+                    Object.assign(queryParams, {
+                        offset: shouldNotClear ? 100*this.state.page : 0,
+                        orderBy: this.state.sorted.length
+                            ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
+                            : undefined,
+                    })));
         }
     };
 

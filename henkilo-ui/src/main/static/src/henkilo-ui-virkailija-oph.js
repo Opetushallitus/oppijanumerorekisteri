@@ -46,7 +46,7 @@ export default {
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
 
     "organisaatio-service.baseUrl": "/",
-    "organisaatio-service.organisaatiot": "organisaatio-service/rest/organisaatio/v2/hae?aktiiviset=$1&suunnitellut=$2&lakkautetut=$3",
+    "organisaatio-service.organisaatiot": "organisaatio-service/rest/organisaatio/v2/hae",
     "organisaatio-service.organisaatio.ByOid": "organisaatio-service/rest/organisaatio/$1",
     "organisaatio-service.ryhmat": "organisaatio-service/rest/organisaatio/v2/ryhmat",
 
