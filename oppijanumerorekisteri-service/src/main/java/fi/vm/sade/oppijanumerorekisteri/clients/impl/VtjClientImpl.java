@@ -35,8 +35,13 @@ public class VtjClientImpl implements VtjClient {
         String vtjUrl = this.urlConfiguration.url("vtj-service.url", hetu);
         try {
             return Optional.ofNullable(restClient.get(vtjUrl, YksiloityHenkilo.class));
+        } catch (CachingRestClient.HttpException e) {
+            if(e.getStatusCode() == 404) {
+                return Optional.empty();
+            }
+            throw new HttpConnectionException(e.getMessage());
         } catch (IOException e) {
-            throw new HttpConnectionException();
+            throw new HttpConnectionException(e.getMessage());
         }
     }
 

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Ajastusten konfigurointi.
@@ -26,38 +25,33 @@ public class ScheduledTasks {
 
     private OppijanumerorekisteriProperties.Scheduling.Yksilointi properties;
 
-    @Autowired
-    private IdentificationService identificationService;
+    private final IdentificationService identificationService;
 
-    @Autowired
-    private HenkiloJpaRepository henkiloJpaRepository;
+    private final HenkiloJpaRepository henkiloJpaRepository;
 
     @Autowired
     public void setProperties(OppijanumerorekisteriProperties properties) {
         this.properties = properties.getScheduling().getYksilointi();
     }
 
-    @Scheduled(cron = "${oppijanumerorekisteri.scheduling.yksilointi.cron}")
-    @Transactional
+    @Scheduled(fixedDelayString = "${oppijanumerorekisteri.scheduling.yksilointi.fixed-delay-in-millis}")
     public void startYksilointiTask() {
-        if (!properties.getEnabled()) {
-            return;
+        if (properties.getEnabled()) {
+            log.info("Identification started...");
+            long start = System.currentTimeMillis();
+
+            Long offset = 0L;
+            Collection<Henkilo> unidentifiedHenkilos = henkiloJpaRepository.findUnidentified(properties.getBatchSize(), offset);
+            while (!unidentifiedHenkilos.isEmpty()) {
+                identificationService.identifyHenkilos(unidentifiedHenkilos, properties.getVtjRequestDelayInMillis());
+                offset += properties.getBatchSize();
+                unidentifiedHenkilos = henkiloJpaRepository.findUnidentified(properties.getBatchSize(), offset);
+            }
+
+            long duration = System.currentTimeMillis() - start;
+            log.info("Identification completed, duration: " + duration + "ms");
         }
 
-        log.info("Identification started...");
-        long start = System.currentTimeMillis();
-
-        Long offset = 0L;
-        Collection<Henkilo> unidentified = henkiloJpaRepository.findUnidentified(properties.getBatchSize(), offset);
-        henkiloJpaRepository.findOidByHetu("111111-9138");
-        while (!unidentified.isEmpty()) {
-            identificationService.identifyHenkilos(unidentified, properties.getVtjRequestDelayInMillis());
-            offset += properties.getBatchSize();
-            unidentified = henkiloJpaRepository.findUnidentified(properties.getBatchSize(), offset);
-        }
-
-        long duration = System.currentTimeMillis() - start;
-        log.info("Identification completed, duration: " + duration + "ms");
     }
 
 }

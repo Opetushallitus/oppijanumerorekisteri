@@ -1,10 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 public interface YksilointiService {
 
-    Henkilo yksiloiManuaalisesti(final Henkilo henkilo);
+    Optional<Henkilo> yksiloiAutomaattisesti(String henkiloOid);
 
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 

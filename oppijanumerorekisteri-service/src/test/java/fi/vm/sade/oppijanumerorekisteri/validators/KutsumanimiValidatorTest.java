@@ -24,6 +24,10 @@ public class KutsumanimiValidatorTest {
         validator = new KutsumanimiValidator("Manh Man");
         assertThat(validator.isValid("Man")).isTrue();
 
+        validator = new KutsumanimiValidator("Jorma teppo");
+        assertThat(validator.isValid("jorma")).isTrue();
+        assertThat(validator.isValid("Teppo")).isTrue();
+
     }
 
 }

@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindException;
@@ -41,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(HenkiloController.class)
+@ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
 public class HenkiloControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -145,7 +148,7 @@ public class HenkiloControllerTest {
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{" +
                 "  \"yhteystietotyyppi1\": {" +
-                "    \"sahkoposti\": \"testi@test.com\"," +
+                "    \"sahkoposti\": \"testi@test.com\"" +
                 "  }" +
                 "}";
         given(this.henkiloService.getHenkiloYhteystiedot("1.2.3.4.5")).willReturn(new HenkilonYhteystiedotViewDto()

@@ -366,6 +366,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .collect(joining(" "));
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public Collection<Henkilo> findUnidentified(long limit, long offset) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return jpa()
@@ -374,7 +376,10 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.yksiloityVTJ.eq(false),
                         qHenkilo.hetu.isNotNull(),
                         qHenkilo.hetu.ne("")
-                ).offset(offset).limit(limit).select(qHenkilo).distinct().fetch();
+                ).offset(offset)
+                .limit(limit)
+                .select(qHenkilo)
+                .fetch();
     }
 
 }
