@@ -32,8 +32,8 @@ class Table extends React.Component {
         defaultSorted: React.PropTypes.array,
 
         fetchMoreSettings: React.PropTypes.shape({
-            fetchMoreAction: React.PropTypes.func.isRequired,
-            isActive: React.PropTypes.bool.isRequired,
+            fetchMoreAction: React.PropTypes.func,
+            isActive: React.PropTypes.bool,
         }),
         isLoading: React.PropTypes.bool,
     };
@@ -83,7 +83,7 @@ class Table extends React.Component {
                                 }}}
                             getTdProps={this.props.getTdProps}
                             onFetchData={this.props.onFetchData} />
-                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction();} }}
+                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction && this.props.fetchMoreSettings.fetchMoreAction();} }}
                                   active={this.props.fetchMoreSettings.isActive}
                                   resizeDelay={500}
                                   delayedCall
