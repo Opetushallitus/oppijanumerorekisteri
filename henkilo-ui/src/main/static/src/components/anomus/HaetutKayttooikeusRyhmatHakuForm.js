@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Field from '../common/field/Field';
 import OphSelect from '../common/select/OphSelect'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 import './HaetutKayttooikeusRyhmatHakuForm.css';
