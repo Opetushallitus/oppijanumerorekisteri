@@ -15,11 +15,7 @@ public class YhteystietoConverter {
         Map<String,YhteystiedotDto> grouped = new TreeMap<>();
         results.forEach(yt -> {
             String ryhma = yt.getRyhmaKuvaus();
-            YhteystiedotDto tiedot = grouped.get(ryhma);
-            if (tiedot == null) {
-                tiedot = new YhteystiedotDto(yt.getRyhmaAlkuperaTieto(), yt.getReadOnly());
-                grouped.put(ryhma, tiedot);
-            }
+            YhteystiedotDto tiedot = grouped.computeIfAbsent(ryhma, k -> new YhteystiedotDto(yt.getRyhmaAlkuperaTieto(), yt.getReadOnly()));
             yt.getYhteystietoTyyppi().getSetter().set(tiedot, yt.getArvo());
         });
         return grouped;

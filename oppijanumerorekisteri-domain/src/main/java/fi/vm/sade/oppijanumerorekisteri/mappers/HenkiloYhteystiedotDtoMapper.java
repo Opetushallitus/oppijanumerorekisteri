@@ -9,6 +9,7 @@ import java.util.List;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import ma.glasnost.orika.CustomConverter;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Component;
 public class HenkiloYhteystiedotDtoMapper extends CustomConverter<List<HenkiloYhteystietoDto>, List<HenkiloYhteystiedotDto>> {
 
     @Override
-    public List<HenkiloYhteystiedotDto> convert(List<HenkiloYhteystietoDto> source, Type<? extends List<HenkiloYhteystiedotDto>> destinationType) {
+    public List<HenkiloYhteystiedotDto> convert(List<HenkiloYhteystietoDto> source,
+                                                Type<? extends List<HenkiloYhteystiedotDto>> destinationType,
+                                                MappingContext mappingContext) {
         return source.stream()
                 // ryhmitellään yhteystiedot henkilöittäin
                 .collect(groupingBy(HenkiloYhteystietoDto::getOidHenkilo, LinkedHashMap::new, toList()))
@@ -43,5 +46,4 @@ public class HenkiloYhteystiedotDtoMapper extends CustomConverter<List<HenkiloYh
                 .collect(toList()), YhteystietoDto.class));
         return destination;
     }
-
 }
