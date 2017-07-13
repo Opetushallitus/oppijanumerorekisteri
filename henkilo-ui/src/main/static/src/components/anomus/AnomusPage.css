@@ -1,13 +1,11 @@
-.anomus-table .table .rt-thead.-header {
-    background-color: #eee;
-}
-
 .anomus-table .ReactTable .rt-thead.-header {
+    background-color: #eee;
     border-bottom: 1px solid #d5d5d5;
 }
 
 .anomus-table .ReactTable .rt-resizable-header.rt-th {
     border-right: 1px solid #d5d5d5 !important;
+    line-height: 40px;
 }
 
 .anomus-table .ReactTable .rt-resizable-header.rt-th:last-child {
@@ -20,7 +18,7 @@
 
 .anomus-table .ReactTable.table .rt-tbody .rt-td {
     border-right: 1px solid #d5d5d5 !important;
-    padding: 10px;
+    padding: 5px;
 }
 
 .anomus-table .ReactTable.table .rt-tbody .rt-td:last-child {
