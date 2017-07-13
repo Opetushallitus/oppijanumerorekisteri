@@ -21,5 +21,4 @@ export default <Route path="/" component={App}>
     <Route path="/virkailija/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
     <Route path="/admin/:oid" component={AdminViewContainer} />
-    <Route path="/admin/:oid/duplikaatit" component={DuplikaatitContainer} />
 </Route>

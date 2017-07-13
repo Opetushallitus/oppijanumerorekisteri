@@ -18,5 +18,5 @@ export const virkailijaNavi = oid => [
 
 export const adminNavi = oid => [
     {path: '/admin/' + oid, label: 'Henkilön tiedot'},
-    {path: `/admin/${oid}/duplikaatit`, label: 'Hae duplikaatit'}
+    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit'}
 ];
