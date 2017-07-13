@@ -37,12 +37,6 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                             defaultNameQuery={this.state.hakutermi}
                                             placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']} />
-                        {/*<Field inputValue={this.state.hakutermi}*/}
-                               {/*changeAction={this.onHakutermiChange.bind(this)}*/}
-                               {/*placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}*/}
-                               {/*autofocus>*/}
-                            {/*{this.state.hakutermi}*/}
-                        {/*</Field>*/}
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OphSelect noResultsText={ `${this.L['SYOTA_VAHINTAAN']} 3 ${this.L['MERKKIA']}` }
