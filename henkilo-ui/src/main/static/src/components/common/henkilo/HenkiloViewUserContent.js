@@ -5,7 +5,7 @@ import moment from 'moment'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 
-class HenkiloViewUserContent extends React.Component{
+class HenkiloViewUserContent extends React.Component {
     static propTypes = {
         l10n: React.PropTypes.object.isRequired,
         henkilo: React.PropTypes.shape({
