@@ -1,7 +1,8 @@
-import React from 'react';
+import React from 'react'
+import './AnomusPage.css'
 import Loader from '../common/icons/Loader'
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm'
-import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
+import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus"
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -15,10 +16,10 @@ class AnomusPage extends React.Component {
 
         this.state = {
             parameters: {
-                tilat: ['ANOTTU'],
                 orderBy: 'ANOTTU_PVM_DESC',
                 limit: this.defaultLimit,
                 showOwnAnomus: false,
+                adminView: true,
             },
             sorted: [{id: 'ANOTTU_PVM', desc: true}],
             allFetched: false,
@@ -60,27 +61,35 @@ class AnomusPage extends React.Component {
 
     render() {
         return (
-          <div>
+          <div className="anomus-table">
               <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit.bind(this)}/>
               {
                   this.props.haetutKayttooikeusryhmatLoading && !this.initialised
                       ? <Loader />
-                      : <HenkiloViewOpenKayttooikeusanomus kayttooikeus={{kayttooikeusAnomus: this.props.kayttooikeusAnomus, grantableKayttooikeus: {},grantableKayttooikeusLoading: true,}}
-                                                           l10n={this.props.l10n}
-                                                           locale={this.props.locale}
-                                                           organisaatioCache={this.props.organisaatioCache}
-                                                           updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
-                                                           isAnomusView={true}
-                                                           manualSortSettings={{
-                                                               manual: true,
-                                                               defaultSorted: this.state.sorted,
-                                                               onFetchData: this.onTableFetch.bind(this)
-                                                           }}
-                                                           fetchMoreSettings={{
-                                                               isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
-                                                               fetchMoreAction: this.onSubmitWithoutClear.bind(this),
-                                                           }}
-                                                           tableLoading={this.props.haetutKayttooikeusryhmatLoading} />
+                      : <div>
+                      <HenkiloViewOpenKayttooikeusanomus
+                          kayttooikeus={{
+                              kayttooikeusAnomus: this.props.kayttooikeusAnomus,
+                              grantableKayttooikeus: {},
+                              grantableKayttooikeusLoading: true,
+                          }}
+                          l10n={this.props.l10n}
+                          locale={this.props.locale}
+                          organisaatioCache={this.props.organisaatioCache}
+                          updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
+                          isAnomusView={true}
+                          manualSortSettings={{
+                              manual: true,
+                              defaultSorted: this.state.sorted,
+                              onFetchData: this.onTableFetch.bind(this)
+                          }}
+                          fetchMoreSettings={{
+                              isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
+                              fetchMoreAction: this.onSubmitWithoutClear.bind(this),
+                          }}
+                          tableLoading={this.props.haetutKayttooikeusryhmatLoading}
+                          striped />
+                  </div>
               }
           </div>
         );

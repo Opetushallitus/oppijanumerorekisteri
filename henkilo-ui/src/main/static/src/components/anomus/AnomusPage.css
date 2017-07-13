@@ -1,0 +1,28 @@
+.anomus-table .table .rt-thead.-header {
+    background-color: #eee;
+}
+
+.anomus-table .ReactTable .rt-thead.-header {
+    border-bottom: 1px solid #d5d5d5;
+}
+
+.anomus-table .ReactTable .rt-resizable-header.rt-th {
+    border-right: 1px solid #d5d5d5 !important;
+}
+
+.anomus-table .ReactTable .rt-resizable-header.rt-th:last-child {
+    border-right: 0 !important;
+}
+
+.anomus-table .ReactTable.table {
+    border: 1px solid #d5d5d5;
+}
+
+.anomus-table .ReactTable.table .rt-tbody .rt-td {
+    border-right: 1px solid #d5d5d5 !important;
+    padding: 10px;
+}
+
+.anomus-table .ReactTable.table .rt-tbody .rt-td:last-child {
+    border-right: 0 !important;
+}

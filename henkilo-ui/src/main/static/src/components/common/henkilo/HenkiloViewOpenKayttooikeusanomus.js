@@ -32,6 +32,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         }),
         fetchMoreSettings: React.PropTypes.object,
         tableLoading: React.PropTypes.bool,
+        striped: React.PropTypes.bool,
     };
 
     constructor(props) {
@@ -158,7 +159,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                noDataText={this.L['HENKILO_KAYTTOOIKEUS_AVOIN_TYHJA']}
                                {...this.props.manualSortSettings}
                                fetchMoreSettings={this.props.fetchMoreSettings}
-                               isLoading={this.props.tableLoading} />
+                               isLoading={this.props.tableLoading}
+                               striped={this.props.striped} />
                     </div>
                 </div>
             </div>

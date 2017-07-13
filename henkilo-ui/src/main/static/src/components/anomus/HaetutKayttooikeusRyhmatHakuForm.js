@@ -4,7 +4,6 @@ import Field from '../common/field/Field';
 import OphSelect from '../common/select/OphSelect'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 import './HaetutKayttooikeusRyhmatHakuForm.css';
-import PropertySingleton from '../../globals/PropertySingleton'
 
 /**
  * Haettujen käyttöoikeusryhmien hakulomake.
@@ -18,7 +17,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
         this.state = {
             hakutermi: '',
             selectableOrganisaatiot: [],
-            naytaKaikki: true,
+            naytaKaikki: false,
         };
     };
 
@@ -100,9 +99,8 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     };
 
     onNaytaKaikkiChange = (naytaKaikki) => {
-        const organisaatioOid = naytaKaikki ? null : PropertySingleton.getState().rootOrganisaatioOid;
         this.setState({selectedOrganisaatio: null, naytaKaikki: naytaKaikki});
-        this.props.onSubmit({organisaatioOids: organisaatioOid});
+        this.props.onSubmit({adminView: !naytaKaikki});
     };
 }
 
