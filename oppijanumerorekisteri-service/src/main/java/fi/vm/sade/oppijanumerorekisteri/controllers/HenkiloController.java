@@ -9,7 +9,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
-import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,19 +34,16 @@ public class HenkiloController {
     private IdentificationService identificationService;
 
     private PermissionChecker permissionChecker;
-    private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final YksilointiService yksilointiService;
 
     @Autowired
     public HenkiloController(HenkiloService henkiloService,
                              IdentificationService identificationService,
                              PermissionChecker permissionChecker,
-                             HenkiloUpdatePostValidator henkiloUpdatePostValidator,
                              YksilointiService yksilointiService) {
         this.henkiloService = henkiloService;
         this.identificationService = identificationService;
         this.permissionChecker = permissionChecker;
-        this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
         this.yksilointiService = yksilointiService;
     }
 

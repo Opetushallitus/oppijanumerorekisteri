@@ -645,7 +645,7 @@ public class HenkiloServiceImpl implements HenkiloService {
          * and only one identified Henkilo can be in the similarHenkiloList/masterHenkilo
          * since it would cause ambiguous behavior in linking
          */
-        List<Henkilo> allHenkilos = new ArrayList<Henkilo>(candidates);
+        List<Henkilo> allHenkilos = new ArrayList<>(candidates);
         allHenkilos.add(originalMaster);
         if(hasMoreThanOneIdentifiedHenkilo(allHenkilos)) {
             throw new ForbiddenException("More than one identified Henkilo");
@@ -658,7 +658,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
-        return henkilos.stream().filter( h -> isHenkiloIdentified(h) ).count() > 1;
+        return henkilos.stream().filter(this::isHenkiloIdentified).count() > 1;
     }
 
     private boolean isHenkiloIdentified(Henkilo henkilo) {
@@ -669,7 +669,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional
     public void unlinkHenkilo(String oid, String slaveOid) {
         Date modificationDate = new Date();
-        Henkilo slave = this.henkiloDataRepository.findByOidHenkilo(slaveOid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));;
+        Henkilo slave = this.henkiloDataRepository.findByOidHenkilo(slaveOid)
+                .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));
         slave.setDuplicate(false);
         slave.setPassivoitu(false);
         slave.setModified(modificationDate);
