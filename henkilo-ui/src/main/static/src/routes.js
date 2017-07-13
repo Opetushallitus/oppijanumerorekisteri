@@ -10,7 +10,6 @@ import OmattiedotContainer from "./components/omattiedot/OmattiedotPageContainer
 import DuplikaatitContainer from "./components/henkilo/duplikaatit/DuplikaatitContainer";
 import AdminViewContainer from "./components/henkilo/AdminViewContainer";
 import HenkilohakuContainer from "./components/henkilohaku/HenkilohakuContainer";
-import VirkailijaDuplikaatitContainer from "./components/henkilo/duplikaatit/VirkailijaDuplikaatitContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
