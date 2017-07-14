@@ -3,16 +3,14 @@ package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.Projections;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
-import org.hibernate.type.StringType;
 import org.springframework.util.CollectionUtils;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite.henkiloViite;
@@ -71,5 +69,14 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         return result.stream().filter(henkiloViiteDto ->
                 existingHenkilos.containsAll(Sets.newHashSet(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void removeByMasterOidAndSlaveOid(String masterOid, String slaveOid) {
+        QHenkiloViite qViite = QHenkiloViite.henkiloViite;
+        jpa()
+            .delete(qViite)
+            .where(qViite.masterOid.eq(masterOid).and(qViite.slaveOid.eq(slaveOid)))
+                .execute();
     }
 }

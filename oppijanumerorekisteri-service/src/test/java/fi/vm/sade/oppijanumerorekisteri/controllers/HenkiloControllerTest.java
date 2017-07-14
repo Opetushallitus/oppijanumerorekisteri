@@ -71,6 +71,7 @@ public class HenkiloControllerTest {
     public void list() throws Exception {
         this.mvc.perform(get("/henkilo?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
+
     }
 
     @Test

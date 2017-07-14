@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface HenkiloViiteRepositoryCustom {
     List<HenkiloViiteDto> findBy(HenkiloCriteria criteria);
+    void removeByMasterOidAndSlaveOid(String masterOid, String slaveOid);
 }

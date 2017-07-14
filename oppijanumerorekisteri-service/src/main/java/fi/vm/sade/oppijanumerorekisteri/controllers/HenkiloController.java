@@ -9,7 +9,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
-import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,19 +34,16 @@ public class HenkiloController {
     private IdentificationService identificationService;
 
     private PermissionChecker permissionChecker;
-    private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final YksilointiService yksilointiService;
 
     @Autowired
     public HenkiloController(HenkiloService henkiloService,
                              IdentificationService identificationService,
                              PermissionChecker permissionChecker,
-                             HenkiloUpdatePostValidator henkiloUpdatePostValidator,
                              YksilointiService yksilointiService) {
         this.henkiloService = henkiloService;
         this.identificationService = identificationService;
         this.permissionChecker = permissionChecker;
-        this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
         this.yksilointiService = yksilointiService;
     }
 
@@ -312,6 +308,39 @@ public class HenkiloController {
     @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
     public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.disableYksilointi(oid, palvelutunniste);
+    }
+
+    @GetMapping("/{oid}/slaves")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")
+    public List<HenkiloReadDto> findSlavesByMasterOid(
+            @PathVariable String oid,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        return this.henkiloService.findSlavesByMasterOid(oid);
+    }
+
+    @GetMapping("/{oid}/duplicates")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
+    public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid) {
+        return this.henkiloService.findDuplicates(oid);
+    }
+
+    @PostMapping("/{oid}/link")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
+    public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids) {
+        return this.henkiloService.linkHenkilos(oid, slaveOids);
+    }
+
+    @DeleteMapping("/{oid}/unlink/{slaveOid}")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
+    public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
+        this.henkiloService.unlinkHenkilo(oid, slaveOid);
     }
 
 }

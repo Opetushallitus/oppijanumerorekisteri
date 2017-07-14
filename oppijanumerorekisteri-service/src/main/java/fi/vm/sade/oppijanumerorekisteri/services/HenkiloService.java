@@ -69,4 +69,12 @@ public interface HenkiloService {
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
     Henkilo createHenkilo(Henkilo henkiloCreate);
+
+    List<HenkiloReadDto> findSlavesByMasterOid(String oid);
+
+    List<HenkiloDuplicateDto> findDuplicates(String oid);
+
+    List<String> linkHenkilos(String masterOid, List<String> slaveOids);
+
+    void unlinkHenkilo(String oid, String slaveOid);
 }
