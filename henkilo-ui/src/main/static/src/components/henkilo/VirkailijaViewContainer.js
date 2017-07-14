@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto, updatePassword, fetchHenkiloSlaves, unlinkHenkilo
+    updateAndRefetchKayttajatieto, updatePassword, fetchHenkiloSlaves, unlinkHenkilo, clearHenkilo
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -34,6 +34,7 @@ import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
 class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
+        this.props.clearHenkilo();
         if(this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.push('/omattiedot');
         }
@@ -125,4 +126,5 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges, fetchHenkiloSlaves, unlinkHenkilo})(VirkailijaViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges, fetchHenkiloSlaves, unlinkHenkilo,
+    clearHenkilo})(VirkailijaViewContainer);

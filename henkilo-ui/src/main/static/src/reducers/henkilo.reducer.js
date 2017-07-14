@@ -7,7 +7,7 @@ import {
     UPDATE_HENKILO_UNLINK_REQUEST, UPDATE_HENKILO_UNLINK_SUCCESS, UPDATE_HENKILO_UNLINK_FAILURE,
     FETCH_HENKILO_DUPLICATES_REQUEST, FETCH_HENKILO_DUPLICATES_SUCCESS, FETCH_HENKILO_DUPLICATES_FAILURE,
     LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_REQUEST,
-    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE
+    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
@@ -17,10 +17,12 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
         Object.assign({}, henkiloOrg, organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid)));
 };
 
-export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
+const initialState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
     henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
     henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
-    linkingLoading: false, masterLoading: true, master: {}, }, action) => {
+    linkingLoading: false, masterLoading: true, master: {}, };
+
+export const henkilo = (state = {...initialState}, action) => {
 
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
@@ -85,6 +87,8 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
             return Object.assign({}, state, {linkingLoading: false});
         case LINK_HENKILOS_FAILURE:
             return Object.assign({}, state, {linkingLoading: false});
+        case CLEAR_HENKILO:
+            return Object.assign({}, state, {...initialState});
         default:
             return state;
     }

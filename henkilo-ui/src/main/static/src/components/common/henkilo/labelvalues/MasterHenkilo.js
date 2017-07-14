@@ -10,8 +10,8 @@ class MasterHenkilo extends React.Component {
         oidHenkilo: React.PropTypes.string.isRequired,
         henkilo: React.PropTypes.shape({
             master: React.PropTypes.shape({
-                kutsumanimi: React.PropTypes.string.isRequired,
-                sukunimi: React.PropTypes.string.isRequired,
+                kutsumanimi: React.PropTypes.string,
+                sukunimi: React.PropTypes.string,
             }).isRequired,
         }).isRequired,
     };

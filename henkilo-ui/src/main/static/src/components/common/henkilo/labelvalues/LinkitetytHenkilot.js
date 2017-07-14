@@ -9,11 +9,11 @@ export default class LinkitetytHenkilot extends React.Component {
             henkilo: React.PropTypes.shape({
                 oidHenkilo: React.PropTypes.string.isRequired,
             }).isRequired,
-            slaves: React.PropTypes.arrayOf({
+            slaves: React.PropTypes.arrayOf(React.PropTypes.shape({
                 kutsumanimi: React.PropTypes.string.isRequired,
                 sukunimi: React.PropTypes.string.isRequired,
                 oidHenkilo: React.PropTypes.string.isRequired,
-            }).isRequired,
+            })).isRequired,
         }).isRequired,
         L: React.PropTypes.object.isRequired,
         unlinkHenkilo: React.PropTypes.func.isRequired,

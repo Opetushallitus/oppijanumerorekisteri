@@ -6,7 +6,7 @@ import OphSelect from '../select/OphSelect'
 class Field extends React.Component {
     static propTypes = {
         readOnly: React.PropTypes.bool,
-        changeAction: React.PropTypes.func.isRequired,
+        changeAction: React.PropTypes.func,
         inputValue: React.PropTypes.string,
         selectValue: React.PropTypes.string,
         password: React.PropTypes.bool,
@@ -15,8 +15,9 @@ class Field extends React.Component {
         placeholder: React.PropTypes.string,
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
         this.state = {readOnly: true};
     }
 

@@ -26,7 +26,8 @@ import {
     UPDATE_HENKILO_UNLINK_FAILURE,
     LINK_HENKILOS_REQUEST,
     LINK_HENKILOS_SUCCESS,
-    LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST
+    LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST,
+    CLEAR_HENKILO
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -262,3 +263,5 @@ export const unlinkHenkilo = (masterOid, slaveOid) => async(dispatch) => {
         throw error;
     }
 };
+
+export const clearHenkilo = () => dispatch => dispatch({type: CLEAR_HENKILO});

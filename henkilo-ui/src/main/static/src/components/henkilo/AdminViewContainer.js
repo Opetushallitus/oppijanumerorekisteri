@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, overrideHenkiloVtjData, fetchHenkiloSlaves,
-    unlinkHenkilo
+    unlinkHenkilo, clearHenkilo
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -41,6 +41,7 @@ import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
 class AdminViewContainer extends React.Component {
     componentDidMount() {
+        this.props.clearHenkilo();
         if(this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.push('/omattiedot');
         }
@@ -133,4 +134,5 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification, overrideHenkiloVtjData, removePrivilege, fetchHenkiloSlaves, unlinkHenkilo})(AdminViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, overrideHenkiloVtjData, removePrivilege, fetchHenkiloSlaves, unlinkHenkilo,
+    clearHenkilo})(AdminViewContainer);

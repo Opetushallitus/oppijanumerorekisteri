@@ -21,7 +21,7 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
 LabelValue.propTypes = {
     values: React.PropTypes.shape({
         readOnly: React.PropTypes.bool,
-        value: React.PropTypes.string,
+        value: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
         label: React.PropTypes.string,
         showOnlyOnWrite: React.PropTypes.bool,
     }),
