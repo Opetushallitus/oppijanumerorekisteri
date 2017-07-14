@@ -37,7 +37,7 @@ export default class DuplikaatitPrimaryInformation extends React.Component {
         return <div className={styleClasses}>
             <span className="type">{L[this.props.header]}</span>
             <span>{henkilo.hetu}</span>
-            <span>{henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</span>
+            <span>{(henkilo.yksiloity || henkilo.yksiloityVTJ) ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</span>
             <span>{henkilo.kutsumanimi}</span>
             <span>{henkilo.etunimet}</span>
             <span>{henkilo.sukunimi}</span>
