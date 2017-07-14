@@ -1,5 +1,6 @@
 import './Button.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import ReactTimeout from 'react-timeout'
 import NotificationButton from "./NotificationButton";
@@ -7,11 +8,11 @@ import NotificationButton from "./NotificationButton";
 class ConfirmButton extends React.Component {
 
     static propTypes = {
-        action: React.PropTypes.func.isRequired,
-        normalLabel: React.PropTypes.string.isRequired,
-        confirmLabel: React.PropTypes.string.isRequired,
-        id: React.PropTypes.string.isRequired,
-        disabled: React.PropTypes.bool,
+        action: PropTypes.func.isRequired,
+        normalLabel: PropTypes.string.isRequired,
+        confirmLabel: PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
+        disabled: PropTypes.bool,
     };
 
     constructor(props) {

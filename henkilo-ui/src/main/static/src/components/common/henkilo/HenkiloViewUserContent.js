@@ -1,5 +1,6 @@
 import './HenkiloViewUserContent.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Columns from 'react-columns'
 import moment from 'moment'
 import StaticUtils from "../StaticUtils";
@@ -7,25 +8,25 @@ import EditButtons from "./buttons/EditButtons";
 
 class HenkiloViewUserContent extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.shape({
-            kayttajatieto: React.PropTypes.object.isRequired,
-            henkilo: React.PropTypes.object.isRequired
+        l10n: PropTypes.object.isRequired,
+        henkilo: PropTypes.shape({
+            kayttajatieto: PropTypes.object.isRequired,
+            henkilo: PropTypes.object.isRequired
         }).isRequired,
-        readOnly: React.PropTypes.bool.isRequired,
-        showPassive: React.PropTypes.bool,
-        locale: React.PropTypes.string.isRequired,
-        koodisto: React.PropTypes.shape({
-            sukupuoli: React.PropTypes.array,
-            kieli: React.PropTypes.array,
-            kansalaisuus: React.PropTypes.kansalaisuus
+        readOnly: PropTypes.bool.isRequired,
+        showPassive: PropTypes.bool,
+        locale: PropTypes.string.isRequired,
+        koodisto: PropTypes.shape({
+            sukupuoli: PropTypes.array,
+            kieli: PropTypes.array,
+            kansalaisuus: PropTypes.kansalaisuus
         }).isRequired,
-        passivoiHenkilo: React.PropTypes.func.isRequired,
-        yksiloiHenkilo: React.PropTypes.func.isRequired,
-        updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
+        passivoiHenkilo: PropTypes.func.isRequired,
+        yksiloiHenkilo: PropTypes.func.isRequired,
+        updateHenkiloAndRefetch: PropTypes.func.isRequired,
 
-        basicInfo: React.PropTypes.func.isRequired,
-        readOnlyButtons: React.PropTypes.func.isRequired,
+        basicInfo: PropTypes.func.isRequired,
+        readOnlyButtons: PropTypes.func.isRequired,
     };
 
     constructor(props) {

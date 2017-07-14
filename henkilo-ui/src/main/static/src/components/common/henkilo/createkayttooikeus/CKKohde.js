@@ -1,5 +1,6 @@
 import './CKKohde.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import OrganisaatioSelection from "../../../kutsuminen/OrganisaatioSelection";
 
 const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale}) =>
@@ -31,11 +32,11 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
     </tr>;
 
 CKKohde.propTypes = {
-    organisationData: React.PropTypes.array,
-    L: React.PropTypes.object,
-    organisationAction: React.PropTypes.func,
-    organisationValue: React.PropTypes.string,
-    locale: React.PropTypes.string,
+    organisationData: PropTypes.array,
+    L: PropTypes.object,
+    organisationAction: PropTypes.func,
+    organisationValue: PropTypes.string,
+    locale: PropTypes.string,
 };
 
 export default CKKohde;

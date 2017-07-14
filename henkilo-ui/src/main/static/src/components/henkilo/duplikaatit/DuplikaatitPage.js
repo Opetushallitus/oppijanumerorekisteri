@@ -1,12 +1,12 @@
-
 import React from 'react';
+import PropTypes from 'prop-types'
 import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
 
 export default class DuplikaatitPage extends React.Component {
 
     static proptypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.object.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.object.isRequired,
     };
 
     render() {

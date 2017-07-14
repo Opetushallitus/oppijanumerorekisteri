@@ -1,5 +1,6 @@
 import './HenkiloViewContactContent.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Columns from 'react-columns'
 import Field from '../field/Field';
 import Button from "../button/Button";
@@ -12,12 +13,12 @@ import CrossIcon from "../icons/CrossIcon";
 
 class HenkiloViewContactContent extends React.Component{
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.shape({henkilo: React.PropTypes.object.isRequired,}).isRequired,
-        readOnly: React.PropTypes.bool.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        koodisto: React.PropTypes.shape({yhteystietotyypit: React.PropTypes.array}).isRequired,
-        updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
+        l10n: PropTypes.object.isRequired,
+        henkilo: PropTypes.shape({henkilo: PropTypes.object.isRequired,}).isRequired,
+        readOnly: PropTypes.bool.isRequired,
+        locale: PropTypes.string.isRequired,
+        koodisto: PropTypes.shape({yhteystietotyypit: PropTypes.array}).isRequired,
+        updateHenkiloAndRefetch: PropTypes.func.isRequired,
     };
 
     constructor(props) {

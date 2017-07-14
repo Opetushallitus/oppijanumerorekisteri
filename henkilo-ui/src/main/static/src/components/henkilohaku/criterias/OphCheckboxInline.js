@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const OphCheckboxInline = ({text, children}) =>
     <div className="oph-field oph-field-inline">
@@ -9,7 +10,7 @@ const OphCheckboxInline = ({text, children}) =>
     </div>;
 
 OphCheckboxInline.propTypes = {
-    text: React.PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
 };
 
 export default OphCheckboxInline;

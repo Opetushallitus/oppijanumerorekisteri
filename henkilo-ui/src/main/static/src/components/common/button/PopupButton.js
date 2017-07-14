@@ -1,14 +1,15 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import './PopupButton.css';
 
 export default class PopupButton extends React.Component {
 
     static propTypes = {
-        popupStyle: React.PropTypes.object,
-        closeButtonStyles: React.PropTypes.object,
-        popupTitle: React.PropTypes.element,
-        popupContent: React.PropTypes.element,
-        popupClass: React.PropTypes.string
+        popupStyle: PropTypes.object,
+        closeButtonStyles: PropTypes.object,
+        popupTitle: PropTypes.element,
+        popupContent: PropTypes.element,
+        popupClass: PropTypes.string
     };
 
     constructor(props) {

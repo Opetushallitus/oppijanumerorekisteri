@@ -1,15 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import R from 'ramda';
 import './DuplikaatitPersonOtherApplications.css';
 
 export default class DuplikaatitPersonOtherApplications extends React.Component {
 
     static propTypes = {
-        hakemukset: React.PropTypes.array,
-        koodisto: React.PropTypes.object,
-        locale: React.PropTypes.string,
-        styleClasses: React.PropTypes.string,
-        L: React.PropTypes.object
+        hakemukset: PropTypes.array,
+        koodisto: PropTypes.object,
+        locale: PropTypes.string,
+        styleClasses: PropTypes.string,
+        L: PropTypes.object
     };
 
     render() {

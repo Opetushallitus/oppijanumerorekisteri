@@ -1,5 +1,6 @@
 import './CKHaeButton.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Button from "../../button/Button";
 
 const CKHaeButton = ({haeButtonAction, validationMessages, L}) =>
@@ -25,9 +26,9 @@ const CKHaeButton = ({haeButtonAction, validationMessages, L}) =>
     </tr>;
 
 CKHaeButton.propTypes = {
-    L: React.PropTypes.object,
-    haeButtonAction: React.PropTypes.func,
-    validationMessages: React.PropTypes.array,
+    L: PropTypes.object,
+    haeButtonAction: PropTypes.func,
+    validationMessages: PropTypes.array,
 };
 
 export default CKHaeButton;

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import languages from '../../configuration/languages';
 import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
@@ -6,10 +7,10 @@ import OphSelect from '../common/select/OphSelect';
 export class BasicInfo extends React.Component {
 
     static propTypes = {
-        basicInfo: React.PropTypes.object,
-        l10n: React.PropTypes.object,
-        setBasicInfo: React.PropTypes.func,
-        locale: React.PropTypes.string
+        basicInfo: PropTypes.object,
+        l10n: PropTypes.object,
+        setBasicInfo: PropTypes.func,
+        locale: PropTypes.string
     };
 
     render() {

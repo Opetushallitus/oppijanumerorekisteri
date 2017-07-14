@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import R from 'ramda';
 import Select from 'react-select';
@@ -19,14 +20,14 @@ import {getOrganisaatios} from "./OrganisaatioUtilities";
 class AddedOrganisation extends React.Component {
 
     static propTypes = {
-        changeOrganization: React.PropTypes.func,
-        l10n: React.PropTypes.object,
-        addedOrgs: React.PropTypes.array,
-        addedOrg: React.PropTypes.object,
-        orgs: React.PropTypes.array,
-        uiLang: React.PropTypes.object,
-        index: React.PropTypes.number,
-        locale: React.PropTypes.string
+        changeOrganization: PropTypes.func,
+        l10n: PropTypes.object,
+        addedOrgs: PropTypes.array,
+        addedOrg: PropTypes.object,
+        orgs: PropTypes.array,
+        uiLang: PropTypes.object,
+        index: PropTypes.number,
+        locale: PropTypes.string
     };
 
     render() {

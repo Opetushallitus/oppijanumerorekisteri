@@ -1,23 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import {Link} from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
 
 export default class LinkitetytHenkilot extends React.Component {
     static propTypes = {
-        henkilo: React.PropTypes.shape({
-            henkilo: React.PropTypes.shape({
-                oidHenkilo: React.PropTypes.string.isRequired,
+        henkilo: PropTypes.shape({
+            henkilo: PropTypes.shape({
+                oidHenkilo: PropTypes.string.isRequired,
             }).isRequired,
-            slaves: React.PropTypes.arrayOf(React.PropTypes.shape({
-                kutsumanimi: React.PropTypes.string.isRequired,
-                sukunimi: React.PropTypes.string.isRequired,
-                oidHenkilo: React.PropTypes.string.isRequired,
+            slaves: PropTypes.arrayOf(PropTypes.shape({
+                kutsumanimi: PropTypes.string.isRequired,
+                sukunimi: PropTypes.string.isRequired,
+                oidHenkilo: PropTypes.string.isRequired,
             })).isRequired,
         }).isRequired,
-        L: React.PropTypes.object.isRequired,
-        unlinkHenkilo: React.PropTypes.func.isRequired,
-        fetchHenkiloSlaves: React.PropTypes.func.isRequired,
+        L: PropTypes.object.isRequired,
+        unlinkHenkilo: PropTypes.func.isRequired,
+        fetchHenkiloSlaves: PropTypes.func.isRequired,
     };
 
     render() {

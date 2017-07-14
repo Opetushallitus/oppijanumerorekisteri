@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const wrapperStyles = {
   position: 'fixed',
@@ -14,9 +15,9 @@ const wrapperStyles = {
 
 export default class Modal extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    closeOnOuterClick: React.PropTypes.bool.isRequired,
+    show: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    closeOnOuterClick: PropTypes.bool.isRequired,
   };
 
   render() {

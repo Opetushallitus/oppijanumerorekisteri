@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue"
 import StaticUtils from "../../StaticUtils";
 
@@ -10,9 +11,9 @@ const Hetu = (props) => <LabelValue {...props} values={{
 }} />;
 
 Hetu.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        hetu: React.PropTypes.string,
-        yksiloityVTJ: React.PropTypes.bool,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        hetu: PropTypes.string,
+        yksiloityVTJ: PropTypes.bool,
     })}),
 };
 

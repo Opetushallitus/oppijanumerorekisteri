@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 import LabelValue from "./LabelValue"
 import StaticUtils from "../../StaticUtils";
@@ -12,11 +13,11 @@ const Syntymaaika = (props) => <LabelValue {...props} values={{
 }} />;
 
 Syntymaaika.propTypes = {
-    L: React.PropTypes.object,
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        syntymaaika: React.PropTypes.string,
-        hetu: React.PropTypes.string.isRequired,
-        yksiloityVTJ: React.PropTypes.bool.isRequired,
+    L: PropTypes.object,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        syntymaaika: PropTypes.string,
+        hetu: PropTypes.string.isRequired,
+        yksiloityVTJ: PropTypes.bool.isRequired,
     })}),
 };
 

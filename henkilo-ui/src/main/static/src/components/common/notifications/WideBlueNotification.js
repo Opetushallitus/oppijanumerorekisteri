@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const WideBlueNotification = ({message, closeAction}) => <div className="oph-alert oph-alert-info">
     <div className="oph-alert-container">
@@ -10,8 +11,8 @@ const WideBlueNotification = ({message, closeAction}) => <div className="oph-ale
 </div>;
 
 WideBlueNotification.propTypes = {
-    message: React.PropTypes.string,
-    closeAction: React.PropTypes.func.isRequired,
+    message: PropTypes.string,
+    closeAction: PropTypes.func.isRequired,
 };
 
 export default WideBlueNotification;

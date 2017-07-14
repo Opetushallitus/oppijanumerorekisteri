@@ -22,10 +22,10 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     };
 
     static propTypes = {
-        onSubmit: React.PropTypes.func.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        l10n: React.PropTypes.array.isRequired,
-        organisaatiot: React.PropTypes.array.isRequired,
+        onSubmit: PropTypes.func.isRequired,
+        locale: PropTypes.string.isRequired,
+        l10n: PropTypes.array.isRequired,
+        organisaatiot: PropTypes.array.isRequired,
     };
 
     render() {

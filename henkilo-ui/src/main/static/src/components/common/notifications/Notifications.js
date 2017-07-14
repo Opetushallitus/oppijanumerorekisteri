@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import WideGreenNotification from "./WideGreenNotification";
 import WideRedNotification from "./WideRedNotification";
 
@@ -16,12 +17,12 @@ const Notifications = ({notifications, L, closeAction, styles}) => <div style={s
 </div>;
 
 Notifications.propTypes = {
-    notifications: React.PropTypes.arrayOf(React.PropTypes.shape({
-        type: React.PropTypes.string.isRequired,
-        notL10nMessage: React.PropTypes.string,
+    notifications: PropTypes.arrayOf(PropTypes.shape({
+        type: PropTypes.string.isRequired,
+        notL10nMessage: PropTypes.string,
     })),
-    L: React.PropTypes.object.isRequired,
-    closeAction: React.PropTypes.func.isRequired,
+    L: PropTypes.object.isRequired,
+    closeAction: PropTypes.func.isRequired,
 };
 
 export default Notifications;

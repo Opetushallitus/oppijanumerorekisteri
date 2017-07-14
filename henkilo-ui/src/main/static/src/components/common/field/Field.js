@@ -1,18 +1,19 @@
 import './Field.css';
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 import OphSelect from '../select/OphSelect'
 
 class Field extends React.Component {
     static propTypes = {
-        readOnly: React.PropTypes.bool,
-        changeAction: React.PropTypes.func,
-        inputValue: React.PropTypes.string,
-        selectValue: React.PropTypes.string,
-        password: React.PropTypes.bool,
-        disabled: React.PropTypes.bool,
-        autofocus: React.PropTypes.bool,
-        placeholder: React.PropTypes.string,
+        readOnly: PropTypes.bool,
+        changeAction: PropTypes.func,
+        inputValue: PropTypes.string,
+        selectValue: PropTypes.string,
+        password: PropTypes.bool,
+        disabled: PropTypes.bool,
+        autofocus: PropTypes.bool,
+        placeholder: PropTypes.string,
     };
 
     constructor(props) {

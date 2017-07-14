@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 
 const VtjOverrideButton = ({henkilo, L, overrideAction}) =>{
@@ -13,13 +14,13 @@ const VtjOverrideButton = ({henkilo, L, overrideAction}) =>{
 };
 
 VtjOverrideButton.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        yksiloityVTJ: React.PropTypes.bool,
-        hetu: React.PropTypes.string,
-        oidHenkilo: React.PropTypes.string,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        yksiloityVTJ: PropTypes.bool,
+        hetu: PropTypes.string,
+        oidHenkilo: PropTypes.string,
     })}),
-    L: React.PropTypes.object,
-    overrideAction: React.PropTypes.func.isRequired,
+    L: PropTypes.object,
+    overrideAction: PropTypes.func.isRequired,
 };
 
 export default VtjOverrideButton;

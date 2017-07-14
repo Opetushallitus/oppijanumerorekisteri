@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
@@ -12,16 +13,16 @@ import EmailSelect from "./select/EmailSelect";
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        omattiedot: React.PropTypes.object.isRequired,
-        organisaatios: React.PropTypes.object.isRequired,
-        ryhmas: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.object.isRequired,
-        organisaatioOptions: React.PropTypes.array.isRequired,
-        ryhmaOptions: React.PropTypes.array.isRequired,
-        kayttooikeusryhmaOptions: React.PropTypes.array.isRequired,
-        fetchOrganisaatioKayttooikeusryhmat: React.PropTypes.func.isRequired
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        omattiedot: PropTypes.object.isRequired,
+        organisaatios: PropTypes.object.isRequired,
+        ryhmas: PropTypes.object.isRequired,
+        henkilo: PropTypes.object.isRequired,
+        organisaatioOptions: PropTypes.array.isRequired,
+        ryhmaOptions: PropTypes.array.isRequired,
+        kayttooikeusryhmaOptions: PropTypes.array.isRequired,
+        fetchOrganisaatioKayttooikeusryhmat: PropTypes.func.isRequired
     };
 
     constructor() {

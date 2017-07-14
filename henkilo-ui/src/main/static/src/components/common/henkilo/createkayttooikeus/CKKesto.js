@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
 
@@ -31,11 +32,11 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
     </tr>;
 
 CKKesto.propTypes = {
-    alkaaPvmAction: React.PropTypes.func,
-    paattyyPvmAction: React.PropTypes.func,
-    alkaaInitValue: React.PropTypes.object,
-    paattyyInitValue: React.PropTypes.object,
-    L: React.PropTypes.object,
+    alkaaPvmAction: PropTypes.func,
+    paattyyPvmAction: PropTypes.func,
+    alkaaInitValue: PropTypes.object,
+    paattyyInitValue: PropTypes.object,
+    L: PropTypes.object,
 };
 
 export default CKKesto;

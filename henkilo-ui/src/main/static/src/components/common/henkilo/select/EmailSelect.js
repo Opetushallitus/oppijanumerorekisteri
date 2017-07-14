@@ -1,15 +1,16 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import OphSelect from "../../select/OphSelect";
 
 class EmailSelect extends React.Component {
     static propTypes = {
-        changeEmailAction: React.PropTypes.func.isRequired,
-        emailSelection: React.PropTypes.string.isRequired,
+        changeEmailAction: PropTypes.func.isRequired,
+        emailSelection: PropTypes.string.isRequired,
 
-        l10n: React.PropTypes.object,
-        locale: React.PropTypes.string,
-        henkilo: React.PropTypes.object,
+        l10n: PropTypes.object,
+        locale: PropTypes.string,
+        henkilo: PropTypes.object,
     };
 
     constructor(props) {

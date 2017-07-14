@@ -1,14 +1,15 @@
 import './HenkiloViewExistingKayttooikeus.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Table from '../table/Table'
 import moment from 'moment'
 import StaticUtils from '../StaticUtils'
 
 class HenkiloViewExpiredKayttooikeus extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        organisaatioCache: PropTypes.objectOf(PropTypes.shape({nimi: PropTypes.object.isRequired,})),
     };
     constructor(props) {
         super(props);

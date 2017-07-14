@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue";
 
 const Kayttajanimi = (props) => <LabelValue {...props} values={{
@@ -9,10 +10,10 @@ const Kayttajanimi = (props) => <LabelValue {...props} values={{
 }} />;
 
 Kayttajanimi.propTypes = {
-    henkilo: React.PropTypes.shape({kayttajanimi: React.PropTypes.shape({
-        username: React.PropTypes.string,
+    henkilo: PropTypes.shape({kayttajanimi: PropTypes.shape({
+        username: PropTypes.string,
     })}),
-    disabled: React.PropTypes.bool.isRequired,
+    disabled: PropTypes.bool.isRequired,
 };
 
 export default Kayttajanimi;

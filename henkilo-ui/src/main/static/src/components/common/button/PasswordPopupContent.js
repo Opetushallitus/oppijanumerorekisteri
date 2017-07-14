@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 import Notifications from "../notifications/Notifications"
 import './PasswordPopupContent.css';
@@ -6,13 +7,13 @@ import './PasswordPopupContent.css';
 export default class PasswordPopupContent extends React.Component {
 
     static propTypes = {
-        oidHenkilo: React.PropTypes.string.isRequired,
-        L: React.PropTypes.object.isRequired,
-        updatePassword: React.PropTypes.func.isRequired,
-        notifications: React.PropTypes.shape({
-            updatePassword: React.PropTypes.array.isRequired,
+        oidHenkilo: PropTypes.string.isRequired,
+        L: PropTypes.object.isRequired,
+        updatePassword: PropTypes.func.isRequired,
+        notifications: PropTypes.shape({
+            updatePassword: PropTypes.array.isRequired,
         }),
-        removeNotification: React.PropTypes.func,
+        removeNotification: PropTypes.func,
     };
 
     constructor(props) {

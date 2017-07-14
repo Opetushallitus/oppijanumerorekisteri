@@ -1,5 +1,6 @@
 import './HenkilohakuPage.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import WideBlueNotification from "../common/notifications/WideBlueNotification";
@@ -10,31 +11,31 @@ import Loader from "../common/icons/Loader";
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        initialCriteria: React.PropTypes.shape({
-            subOrganisation: React.PropTypes.bool.isRequired,
-            noOrganisation: React.PropTypes.bool.isRequired,
-            passivoitu: React.PropTypes.bool.isRequired,
-            dublicates: React.PropTypes.bool.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        initialCriteria: PropTypes.shape({
+            subOrganisation: PropTypes.bool.isRequired,
+            noOrganisation: PropTypes.bool.isRequired,
+            passivoitu: PropTypes.bool.isRequired,
+            dublicates: PropTypes.bool.isRequired,
         }),
-        henkilo: React.PropTypes.shape({
-            henkiloOrganisaatios: React.PropTypes.array.isRequired,
+        henkilo: PropTypes.shape({
+            henkiloOrganisaatios: PropTypes.array.isRequired,
         }),
-        kayttooikeusryhmas: React.PropTypes.array.isRequired,
-        henkilohakuAction: React.PropTypes.func.isRequired,
-        updateFilters: React.PropTypes.func.isRequired,
-        henkilohakuResult: React.PropTypes.array.isRequired,
-        henkiloHakuFilters: React.PropTypes.object.isRequired,
-        henkilohakuLoading: React.PropTypes.bool.isRequired,
-        router: React.PropTypes.object.isRequired,
-        notifications: React.PropTypes.arrayOf(React.PropTypes.shape({
-            type: React.PropTypes.string.isRequired,
-            id: React.PropTypes.string.isRequired,
-            notL10nMessage: React.PropTypes.string.isRequired,
+        kayttooikeusryhmas: PropTypes.array.isRequired,
+        henkilohakuAction: PropTypes.func.isRequired,
+        updateFilters: PropTypes.func.isRequired,
+        henkilohakuResult: PropTypes.array.isRequired,
+        henkiloHakuFilters: PropTypes.object.isRequired,
+        henkilohakuLoading: PropTypes.bool.isRequired,
+        router: PropTypes.object.isRequired,
+        notifications: PropTypes.arrayOf(PropTypes.shape({
+            type: PropTypes.string.isRequired,
+            id: PropTypes.string.isRequired,
+            notL10nMessage: PropTypes.string.isRequired,
         }).isRequired).isRequired,
-        removeNotification: React.PropTypes.func.isRequired,
-        clearHenkilohaku: React.PropTypes.func.isRequired,
+        removeNotification: PropTypes.func.isRequired,
+        clearHenkilohaku: PropTypes.func.isRequired,
     };
 
     constructor(props) {

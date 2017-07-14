@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
 import R from 'ramda';
@@ -8,12 +9,12 @@ import Loader from "../../common/icons/Loader";
 export default class HenkiloViewDuplikaatit extends React.Component {
 
     static propTypes = {
-        oidHenkilo: React.PropTypes.string,
-        henkilo: React.PropTypes.object,
-        omattiedot: React.PropTypes.object,
-        l10n: React.PropTypes.object,
-        locale: React.PropTypes.string,
-        koodisto: React.PropTypes.object
+        oidHenkilo: PropTypes.string,
+        henkilo: PropTypes.object,
+        omattiedot: PropTypes.object,
+        l10n: PropTypes.object,
+        locale: PropTypes.string,
+        koodisto: PropTypes.object
     };
 
     constructor() {

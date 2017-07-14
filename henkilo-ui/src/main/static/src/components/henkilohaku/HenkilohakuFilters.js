@@ -1,5 +1,6 @@
 import './HenkilohakuFilters.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import OphCheckboxInline from "./criterias/OphCheckboxInline";
 import SubOrganisationCheckbox from "./criterias/SubOrganisationCheckbox";
 import NoOrganisationCheckbox from "./criterias/NoOrganisationCheckbox";
@@ -13,31 +14,31 @@ import CloseButton from "../common/button/CloseButton";
 
 class HenkilohakuFilters extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        initialValues: React.PropTypes.shape({
-            subOrganisation: React.PropTypes.bool.isRequired,
-            noOrganisation: React.PropTypes.bool.isRequired,
-            passivoitu: React.PropTypes.bool.isRequired,
-            dublicates: React.PropTypes.bool.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        initialValues: PropTypes.shape({
+            subOrganisation: PropTypes.bool.isRequired,
+            noOrganisation: PropTypes.bool.isRequired,
+            passivoitu: PropTypes.bool.isRequired,
+            dublicates: PropTypes.bool.isRequired,
         }).isRequired,
-        selectedOrganisation: React.PropTypes.string,
-        organisaatioList: React.PropTypes.array.isRequired,
-        selectedKayttooikeus: React.PropTypes.number,
+        selectedOrganisation: PropTypes.string,
+        organisaatioList: PropTypes.array.isRequired,
+        selectedKayttooikeus: PropTypes.number,
 
-        kayttooikeusSelectionAction: React.PropTypes.func.isRequired,
-        organisaatioSelectAction: React.PropTypes.func.isRequired,
-        suborganisationAction: React.PropTypes.func.isRequired,
-        noOrganisationAction: React.PropTypes.func.isRequired,
-        passiivisetAction: React.PropTypes.func.isRequired,
-        duplikaatitAction: React.PropTypes.func.isRequired,
+        kayttooikeusSelectionAction: PropTypes.func.isRequired,
+        organisaatioSelectAction: PropTypes.func.isRequired,
+        suborganisationAction: PropTypes.func.isRequired,
+        noOrganisationAction: PropTypes.func.isRequired,
+        passiivisetAction: PropTypes.func.isRequired,
+        duplikaatitAction: PropTypes.func.isRequired,
 
-        kayttooikeusryhmas: React.PropTypes.arrayOf(React.PropTypes.shape({
-            id: React.PropTypes.number.isRequired,
-            description: React.PropTypes.shape({
-                texts: React.PropTypes.arrayOf(React.PropTypes.shape({
-                    text: React.PropTypes.string,
-                    lang: React.PropTypes.string.isRequired,
+        kayttooikeusryhmas: PropTypes.arrayOf(PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            description: PropTypes.shape({
+                texts: PropTypes.arrayOf(PropTypes.shape({
+                    text: PropTypes.string,
+                    lang: PropTypes.string.isRequired,
                 }).isRequired),
             }).isRequired,
         }).isRequired).isRequired,

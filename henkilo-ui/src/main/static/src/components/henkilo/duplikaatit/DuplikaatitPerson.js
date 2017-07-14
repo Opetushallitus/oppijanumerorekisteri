@@ -1,5 +1,5 @@
-
 import React from 'react';
+import PropTypes from 'prop-types'
 import {Link} from 'react-router';
 import R from 'ramda';
 import classNames from 'classnames';
@@ -10,15 +10,15 @@ import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplicat
 export default class DuplikaatitPrimaryInformation extends React.Component {
 
     static propTypes = {
-        henkilo: React.PropTypes.object.isRequired,
-        L: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        koodisto: React.PropTypes.object.isRequired,
-        setSelection: React.PropTypes.func.isRequired,
-        classNames: React.PropTypes.object,
-        isMaster: React.PropTypes.bool,
-        header: React.PropTypes.string.isRequired,
-        styleClasses: React.PropTypes.string
+        henkilo: PropTypes.object.isRequired,
+        L: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        koodisto: PropTypes.object.isRequired,
+        setSelection: PropTypes.func.isRequired,
+        classNames: PropTypes.object,
+        isMaster: PropTypes.bool,
+        header: PropTypes.string.isRequired,
+        styleClasses: PropTypes.string
     };
 
     componentWillMount() {

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const DuplikaatitOrganisationCheckbox = ({L, duplikaatitValue, duplikaatitAction}) =>
     <label className="oph-checkable" htmlFor="duplikaatitCriteria">
@@ -8,9 +9,9 @@ const DuplikaatitOrganisationCheckbox = ({L, duplikaatitValue, duplikaatitAction
     </label>;
 
 DuplikaatitOrganisationCheckbox.propTypes = {
-    L: React.PropTypes.object.isRequired,
-    duplikaatitValue: React.PropTypes.bool.isRequired,
-    duplikaatitAction: React.PropTypes.func.isRequired,
+    L: PropTypes.object.isRequired,
+    duplikaatitValue: PropTypes.bool.isRequired,
+    duplikaatitAction: PropTypes.func.isRequired,
 };
 
 export default DuplikaatitOrganisationCheckbox;

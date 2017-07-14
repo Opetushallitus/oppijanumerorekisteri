@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
 import R from 'ramda';
@@ -7,10 +8,10 @@ import './HakaPopupContent.css';
 export default class HakatunnistePopupContent extends React.Component {
 
     static propTypes = {
-        henkiloOid: React.PropTypes.string.isRequired,
-        l10n: React.PropTypes.object,
-        locale: React.PropTypes.string,
-        L: React.PropTypes.object
+        henkiloOid: PropTypes.string.isRequired,
+        l10n: PropTypes.object,
+        locale: PropTypes.string,
+        L: PropTypes.object
     };
 
     constructor(props) {

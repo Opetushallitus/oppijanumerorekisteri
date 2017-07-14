@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue";
 
 const Oppijanumero = (props) => <LabelValue {...props} values={{
@@ -9,8 +10,8 @@ const Oppijanumero = (props) => <LabelValue {...props} values={{
 }} />;
 
 Oppijanumero.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        oidHenkilo: React.PropTypes.string,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        oidHenkilo: PropTypes.string,
     })}),
 };
 

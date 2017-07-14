@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import {fetchHenkiloMaster, unlinkHenkilo} from "../../../../actions/henkilo.actions"
@@ -7,11 +8,11 @@ import TextButton from "../../button/TextButton";
 
 class MasterHenkilo extends React.Component {
     static propTypes = {
-        oidHenkilo: React.PropTypes.string.isRequired,
-        henkilo: React.PropTypes.shape({
-            master: React.PropTypes.shape({
-                kutsumanimi: React.PropTypes.string,
-                sukunimi: React.PropTypes.string,
+        oidHenkilo: PropTypes.string.isRequired,
+        henkilo: PropTypes.shape({
+            master: PropTypes.shape({
+                kutsumanimi: PropTypes.string,
+                sukunimi: PropTypes.string,
             }).isRequired,
         }).isRequired,
     };

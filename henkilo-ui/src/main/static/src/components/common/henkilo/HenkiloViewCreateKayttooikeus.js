@@ -1,5 +1,6 @@
 import './HenkiloViewCreateKayttooikeus.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component'
 import CKKohde from "./createkayttooikeus/CKKohde";
@@ -9,11 +10,11 @@ import CKHaeButton from "./createkayttooikeus/CKHaeButton";
 
 class HenkiloViewCreateKayttooikeus extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        henkilo: React.PropTypes.shape({henkiloOrganisaatios: React.PropTypes.array.isRequired,}),
-        kayttooikeus: React.PropTypes.shape({allowedKayttooikeus: React.PropTypes.object}),
-        existingKayttooikeusRef: React.PropTypes.object.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        henkilo: PropTypes.shape({henkiloOrganisaatios: PropTypes.array.isRequired,}),
+        kayttooikeus: PropTypes.shape({allowedKayttooikeus: PropTypes.object}),
+        existingKayttooikeusRef: PropTypes.object.isRequired,
     };
 
     constructor(props) {

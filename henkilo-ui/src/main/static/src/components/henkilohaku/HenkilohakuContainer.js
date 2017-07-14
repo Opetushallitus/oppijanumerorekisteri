@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import HenkilohakuPage from "./HenkilohakuPage";
 import {connect} from 'react-redux';
 import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
@@ -9,8 +10,8 @@ import {removeNotification} from "../../actions/notifications.actions";
 
 class HenkilohakuContainer extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
     };
 
     constructor(props) {

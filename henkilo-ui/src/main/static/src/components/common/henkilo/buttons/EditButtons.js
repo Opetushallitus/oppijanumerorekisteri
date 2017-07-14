@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Button from "../../button/Button"
 
 const EditButtons = ({discardAction, updateAction, L}) =>
@@ -8,9 +9,9 @@ const EditButtons = ({discardAction, updateAction, L}) =>
     </div>;
 
 EditButtons.propTypes = {
-    discardAction: React.PropTypes.func,
-    updateAction: React.PropTypes.func,
-    L: React.PropTypes.object,
+    discardAction: PropTypes.func,
+    updateAction: PropTypes.func,
+    L: PropTypes.object,
 };
 
 export default EditButtons;

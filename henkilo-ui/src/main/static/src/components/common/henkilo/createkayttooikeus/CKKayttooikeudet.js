@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import OphSelect from "../../select/OphSelect";
 import StaticUtils from "../../StaticUtils";
 
@@ -43,12 +44,12 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
 };
 
 CKKayttooikeudet.propTypes = {
-    kayttooikeusData: React.PropTypes.array,
-    selectedList: React.PropTypes.array,
-    kayttooikeusAction: React.PropTypes.func,
-    close: React.PropTypes.func,
-    L: React.PropTypes.object,
-    locale: React.PropTypes.string,
+    kayttooikeusData: PropTypes.array,
+    selectedList: PropTypes.array,
+    kayttooikeusAction: PropTypes.func,
+    close: PropTypes.func,
+    L: PropTypes.object,
+    locale: PropTypes.string,
 };
 
 export default CKKayttooikeudet;

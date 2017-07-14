@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const SubOrganisationCheckbox = ({L, subOrganisationValue, subOrganisationAction}) =>
     <label className="oph-checkable" htmlFor="subOrganisaatioCriteria">
@@ -8,9 +9,9 @@ const SubOrganisationCheckbox = ({L, subOrganisationValue, subOrganisationAction
     </label>;
 
 SubOrganisationCheckbox.propTypes = {
-    L: React.PropTypes.object.isRequired,
-    subOrganisationValue: React.PropTypes.bool.isRequired,
-    subOrganisationAction: React.PropTypes.func.isRequired,
+    L: PropTypes.object.isRequired,
+    subOrganisationValue: PropTypes.bool.isRequired,
+    subOrganisationAction: PropTypes.func.isRequired,
 };
 
 export default SubOrganisationCheckbox;

@@ -1,5 +1,6 @@
 import './HenkiloViewExpiredKayttooikeus.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import update from 'react-addons-update'
 import Table from '../table/Table'
 import moment from 'moment'
@@ -13,20 +14,20 @@ import EmailSelect from "./select/EmailSelect";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        oidHenkilo: React.PropTypes.string.isRequired,
-        kayttooikeus: React.PropTypes.shape({
-            kayttooikeus: React.PropTypes.array.isRequired,
-            grantableKayttooikeus: React.PropTypes.object.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        oidHenkilo: PropTypes.string.isRequired,
+        kayttooikeus: PropTypes.shape({
+            kayttooikeus: PropTypes.array.isRequired,
+            grantableKayttooikeus: PropTypes.object.isRequired,
         }).isRequired,
-        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})),
-        notifications: React.PropTypes.shape({
-            existingKayttooikeus: React.PropTypes.array.isRequired,
+        organisaatioCache: PropTypes.objectOf(PropTypes.shape({nimi: PropTypes.object.isRequired,})),
+        notifications: PropTypes.shape({
+            existingKayttooikeus: PropTypes.array.isRequired,
         }),
-        removeNotification: React.PropTypes.func,
-        removePrivilege: React.PropTypes.func,
-        isOmattiedot: React.PropTypes.bool,
+        removeNotification: PropTypes.func,
+        removePrivilege: PropTypes.func,
+        isOmattiedot: PropTypes.bool,
     };
 
     constructor(props) {

@@ -1,11 +1,12 @@
 import React from 'react';
 import TextButton from '../../common/button/TextButton';
 import './DuplikaatitApplicationsPopup.css'
+import PropTypes from 'prop-types'
 
 export default class DuplikaatitApplicationsPopup extends React.Component {
 
     static propTypes = {
-        popupContent: React.PropTypes.element
+        popupContent: PropTypes.element
     };
 
     constructor(props) {

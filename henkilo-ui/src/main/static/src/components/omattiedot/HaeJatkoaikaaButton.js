@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import ConfirmButton from "../common/button/ConfirmButton";
 
@@ -10,8 +11,8 @@ const HaeJatkoaikaaButton = ({haeJatkoaikaaAction, l10n, locale, disabled}) =>
                    disabled={disabled} />;
 
 HaeJatkoaikaaButton.propTypes = {
-    haeJatkoaikaaAction: React.PropTypes.func.isRequired,
-    disabled: React.PropTypes.bool,
+    haeJatkoaikaaAction: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
