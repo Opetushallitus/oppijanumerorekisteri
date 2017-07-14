@@ -6,7 +6,8 @@ import {
     FETCH_HENKILO_SLAVES_REQUEST, FETCH_HENKILO_SLAVES_SUCCESS, FETCH_HENKILO_SLAVES_FAILURE,
     UPDATE_HENKILO_UNLINK_REQUEST, UPDATE_HENKILO_UNLINK_SUCCESS, UPDATE_HENKILO_UNLINK_FAILURE,
     FETCH_HENKILO_DUPLICATES_REQUEST, FETCH_HENKILO_DUPLICATES_SUCCESS, FETCH_HENKILO_DUPLICATES_FAILURE,
-    LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE
+    LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_REQUEST,
+    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
@@ -19,7 +20,7 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
 export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
     henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
     henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
-    linkingLoading: false}, action) => {
+    linkingLoading: false, masterLoading: true, master: {}, }, action) => {
 
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:
@@ -52,6 +53,12 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
                 henkiloOrganisaatiosLoading: false,
                 henkiloOrganisaatios: action.henkiloOrganisaatios
             });
+        case FETCH_HENKILO_MASTER_REQUEST:
+            return Object.assign({}, state, {masterLoading: true,});
+        case FETCH_HENKILO_MASTER_SUCCESS:
+            return Object.assign({}, state, {masterLoading: false, master: action.master,});
+        case FETCH_HENKILO_MASTER_FAILURE:
+            return Object.assign({}, state, {masterLoading: false,});
         case FETCH_HENKILO_SLAVES_REQUEST:
             return Object.assign({}, state, {slavesLoading: true});
         case FETCH_HENKILO_SLAVES_SUCCESS:
@@ -68,7 +75,7 @@ export const henkilo = (state = {henkiloLoading: true, henkiloOrgsLoading: true,
         case FETCH_HENKILO_DUPLICATES_REQUEST:
             return Object.assign({}, state, {duplicatesLoading: true});
         case FETCH_HENKILO_DUPLICATES_SUCCESS:
-            const duplicates = R.filter( duplicate => duplicate.oidHenkilo !== action.masterOid, action.duplicates);
+            const duplicates = R.filter( duplicate => duplicate.oidHenkilo !== action.master, action.duplicates);
             return Object.assign({}, state, {duplicatesLoading: false, duplicates});
         case FETCH_HENKILO_DUPLICATES_FAILURE:
             return Object.assign({}, state, {duplicatesLoading: false});

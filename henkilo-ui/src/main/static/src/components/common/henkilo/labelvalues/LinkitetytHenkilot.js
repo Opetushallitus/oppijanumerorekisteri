@@ -1,5 +1,4 @@
 import React from 'react';
-import './LinkitetytHenkilot.css'
 import {Link} from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
@@ -30,7 +29,7 @@ export default class LinkitetytHenkilot extends React.Component {
 
     valueGroup() {
         return <div> {this.props.henkilo.slaves.map((slave, index) =>
-            <div key={index} className="linkitetyt-henkilot-labelvalue">
+            <div key={index} className="nowrap">
                 <Link to={'/virkailija/' + slave.oidHenkilo}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
                 {this.props.L['HENKILO_POISTA_LINKITYS']}
             </TextButton>

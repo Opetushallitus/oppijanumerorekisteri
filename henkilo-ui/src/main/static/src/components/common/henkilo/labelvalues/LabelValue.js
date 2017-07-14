@@ -22,11 +22,14 @@ LabelValue.propTypes = {
     values: React.PropTypes.shape({
         readOnly: React.PropTypes.bool,
         value: React.PropTypes.string,
+        label: React.PropTypes.string,
+        showOnlyOnWrite: React.PropTypes.bool,
     }),
     readOnly: React.PropTypes.bool,
     updateModelFieldAction: React.PropTypes.func,
     updateDateFieldAction: React.PropTypes.func,
     autofocus: React.PropTypes.bool,
+    L: React.PropTypes.object.isRequired,
 };
 
 export default LabelValue;

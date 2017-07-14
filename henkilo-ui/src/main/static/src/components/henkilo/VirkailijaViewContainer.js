@@ -29,6 +29,7 @@ import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import LinkitetytHenkilot from "../common/henkilo/labelvalues/LinkitetytHenkilot";
 import {removeNotification} from "../../actions/notifications.actions";
+import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
 
 class VirkailijaViewContainer extends React.Component {
@@ -87,7 +88,8 @@ class VirkailijaViewContainer extends React.Component {
                 ],
                 [
                     <Kayttajanimi {...props} disabled={true} />,
-                    <LinkitetytHenkilot {...linkitetytHenkilotProps}></LinkitetytHenkilot>
+                    <LinkitetytHenkilot {...linkitetytHenkilotProps} />,
+                    <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
             ]
         };

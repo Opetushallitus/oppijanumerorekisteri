@@ -8,4 +8,3 @@ const LabelValueGroup = ({label, L, valueGroup}) => <div id={label}>
             </Columns>
         </div>;
 export default LabelValueGroup;
-

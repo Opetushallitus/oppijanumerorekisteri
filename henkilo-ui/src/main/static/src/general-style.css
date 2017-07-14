@@ -232,6 +232,10 @@ select option {
     padding: 5px 0;
 }
 
+.nowrap {
+    white-space: nowrap;
+}
+
 .header {
     margin-bottom: 20px;
 }

@@ -26,7 +26,7 @@ import {
     UPDATE_HENKILO_UNLINK_FAILURE,
     LINK_HENKILOS_REQUEST,
     LINK_HENKILOS_SUCCESS,
-    LINK_HENKILOS_FAILURE
+    LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -184,7 +184,7 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
 };
 
 const requestHenkiloDuplicates = (oidHenkilo) => ({type: FETCH_HENKILO_DUPLICATES_REQUEST, oidHenkilo});
-const requestHenkiloDuplicatesSuccess = (masterOid, duplicates) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, masterOid, duplicates});
+const requestHenkiloDuplicatesSuccess = (master, duplicates) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, master, duplicates});
 const requestHenkiloDuplicatesFailure = () => ({type: FETCH_HENKILO_DUPLICATES_FAILURE});
 
 export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
@@ -215,6 +215,22 @@ export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
     }
 };
 
+const requestHenkiloMaster = (oidHenkilo) => ({type: FETCH_HENKILO_MASTER_REQUEST, oidHenkilo});
+const requestHenkiloMasterSuccess = (master) => ({type: FETCH_HENKILO_MASTER_SUCCESS, master});
+const requestHenkiloMasterFailure = (oidHenkilo) => ({type: FETCH_HENKILO_MASTER_FAILURE, oidHenkilo});
+
+export const fetchHenkiloMaster = (oidHenkilo) => async (dispatch) => {
+    dispatch(requestHenkiloMaster(oidHenkilo));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.master', oidHenkilo);
+    try {
+        const henkiloMaster = await http.get(url);
+        dispatch(requestHenkiloMasterSuccess(henkiloMaster));
+    } catch (error) {
+        dispatch(requestHenkiloMasterFailure(oidHenkilo));
+        throw error;
+    }
+};
+
 const linkHenkilosRequest = (masterOid, slaveOids) => ({type: LINK_HENKILOS_REQUEST, masterOid, slaveOids});
 const linkHenkilosSuccess = (slaveOids) => ({type: LINK_HENKILOS_SUCCESS, slaveOids});
 const linkHenkilosFailure = () => ({type: LINK_HENKILOS_FAILURE});
@@ -230,7 +246,6 @@ export const linkHenkilos = (masterOid, slaveOids) => async(dispatch) => {
         throw error;
     }
 };
-
 
 const updateHenkiloUnlink = (masterOid, slaveOid) => ({type: UPDATE_HENKILO_UNLINK_REQUEST, masterOid, slaveOid});
 const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid) => ({ type: UPDATE_HENKILO_UNLINK_SUCCESS, unlinkedSlaveOid });

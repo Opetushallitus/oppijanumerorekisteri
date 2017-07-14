@@ -36,6 +36,7 @@ import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
 import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import AdminViewPage from "./AdminViewPage";
 import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
+import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
 
 class AdminViewContainer extends React.Component {
@@ -93,7 +94,8 @@ class AdminViewContainer extends React.Component {
                 ],
                 [
                     <Kayttajanimi {...props} disabled={true} />,
-                    <LinkitetytHenkilot {...linkitetytProps} />
+                    <LinkitetytHenkilot {...linkitetytProps} />,
+                    <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
             ]
         };
