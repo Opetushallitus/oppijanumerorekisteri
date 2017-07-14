@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
+import Loader from "../../common/icons/Loader";
 
 export default class DuplikaatitPage extends React.Component {
 
@@ -13,7 +14,7 @@ export default class DuplikaatitPage extends React.Component {
         const L = this.props.l10n[this.props.locale];
         return <div className="wrapper">
             <h3>{L['DUPLIKAATIT_HEADER']}, {this.props.henkilo.henkilo.kutsumanimi} {this.props.henkilo.henkilo.sukunimi}</h3>
-            <HenkiloViewDuplikaatit {...this.props} />
+            {!this.props.henkilo.henkiloLoading ? <HenkiloViewDuplikaatit {...this.props} /> : <Loader />}
         </div>
     }
 

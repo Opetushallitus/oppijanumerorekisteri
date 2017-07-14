@@ -20,11 +20,13 @@ export default class HenkiloViewDuplikaatit extends React.Component {
         notifications: PropTypes.array.isRequired,
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
         this.state = {
             selectedDuplicates: [],
             notifications: [],
+            yksiloitySelected: this.props.henkilo.henkilo.yksiloity || this.props.henkilo.henkilo.yksiloityVTJ,
         }
     }
 
@@ -77,7 +79,8 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                         key={duplicate.oidHenkilo}
                         isMaster={false}
                         classNames={{'person': true}}
-                        setSelection={this.setSelection.bind(this)}>
+                        setSelection={this.setSelection.bind(this)}
+                        yksiloitySelected={this.state.yksiloitySelected}>
                     </DuplikaatitPerson>
                 )}
                 { this.props.henkilo.duplicatesLoading ? <Loader /> : null }

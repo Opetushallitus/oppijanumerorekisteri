@@ -18,11 +18,16 @@ export default class DuplikaatitPrimaryInformation extends React.Component {
         classNames: PropTypes.object,
         isMaster: PropTypes.bool,
         header: PropTypes.string.isRequired,
-        styleClasses: PropTypes.string
+        styleClasses: PropTypes.string,
+        yksiloitySelected: PropTypes.bool,
     };
 
-    componentWillMount() {
-        this.setState({checkboxValue: this.props.isMaster})
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            checkboxValue: this.props.isMaster,
+        };
     }
 
     render() {
@@ -55,15 +60,15 @@ export default class DuplikaatitPrimaryInformation extends React.Component {
             <span>{hakemus ? hakemus.state : ''}</span>
             <span>{hakemus ? <a className="oph-link" href={`/haku-app/virkailija/hakemus/${hakemus.oid}`}>{hakemus.oid}</a> : ''}</span>
             <span>{muutHakemukset.length > 0 ? <DuplikaatitApplicationsPopup
-                        popupContent={<DuplikaatitPersonOtherApplications
-                        hakemukset={muutHakemukset}
-                        koodisto={this.props.koodisto}
-                        locale={this.props.locale}
-                        L={this.props.L}
-                    ></DuplikaatitPersonOtherApplications>}>
-                    {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
+                popupContent={<DuplikaatitPersonOtherApplications
+                    hakemukset={muutHakemukset}
+                    koodisto={this.props.koodisto}
+                    locale={this.props.locale}
+                    L={this.props.L}
+                />}>
+                {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
                 </DuplikaatitApplicationsPopup> : null}</span>
-            <span><input type="checkbox" disabled={this.props.isMaster} checked={this.state.checkboxValue}
+            <span><input type="checkbox" disabled={this.props.isMaster || (this.props.yksiloitySelected && this.props.henkilo.yksiloity)} checked={this.state.checkboxValue}
                          onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}/></span>
         </div>;
     }
