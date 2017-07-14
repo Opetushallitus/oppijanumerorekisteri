@@ -311,11 +311,11 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/slaves")
-    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
-            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
-            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")
-    public List<HenkiloReadDto> findSlavesByMasterOid(@PathVariable String oid) {
+    public List<HenkiloReadDto> findSlavesByMasterOid(
+            @PathVariable String oid,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloService.findSlavesByMasterOid(oid);
     }
 
