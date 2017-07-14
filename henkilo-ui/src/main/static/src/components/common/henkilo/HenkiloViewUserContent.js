@@ -31,6 +31,8 @@ class HenkiloViewUserContent extends React.Component {
     constructor(props) {
         super(props);
 
+        this.L = this.props.l10n[this.props.locale];
+
         this.state = {
             henkiloUpdate: JSON.parse(JSON.stringify(this.props.henkilo.henkilo)), // deep copy
             readOnly: this.props.readOnly,
@@ -39,12 +41,11 @@ class HenkiloViewUserContent extends React.Component {
     };
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         return (
             <div className="henkiloViewUserContentWrapper user-content">
                     <div>
                         <div className="header">
-                            <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>
+                            <p className="oph-h2 oph-bold">{this.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
                         </div>
                         <Columns columns={3} gap="10px">
                             {
@@ -64,7 +65,9 @@ class HenkiloViewUserContent extends React.Component {
                         {this.props.readOnlyButtons(this._edit.bind(this)).map((button, idx) => <div style={{display: 'inline-block'}} key={idx}>{button}</div>)}
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
+                        <EditButtons discardAction={this._discard.bind(this)}
+                                     updateAction={this._update.bind(this)}
+                                     L={this.L} />
                     </div>
                 }
             </div>
@@ -74,6 +77,20 @@ class HenkiloViewUserContent extends React.Component {
     _edit() {
         this.setState({readOnly: false});
     };
+
+    _additionalInfo() {
+        const info = [];
+        if(this.props.henkilo.henkilo.yksiloity) {
+            info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITY']);
+        }
+        if(this.props.henkilo.henkilo.yksiloityVTJ) {
+            info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ'])
+        }
+        if(this.props.henkilo.henkilo.duplicate) {
+            info.push(this.L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
+        }
+        return info.length ? ' (' + StaticUtils.flatArray(info) + ')' : '';
+    }
 
     _discard() {
         this.setState({
