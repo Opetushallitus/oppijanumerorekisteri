@@ -7,6 +7,8 @@ import {createHistory} from 'history'
 import { syncHistoryWithStore } from 'react-router-redux'
 import Root from './containers/Root'
 import configureStore from './store/configureStore'
+import routes from './routes'
+import { Router } from 'react-router'
 
 import './reset.css';
 import './general-style.css';
@@ -23,7 +25,10 @@ const history = syncHistoryWithStore(browserHistory, store);
 
 render(
     <Provider store={store}>
-        <Root history={history} />
+        <div>
+            <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
+            <Root history={history} />
+        </div>
     </Provider>,
   document.getElementById('root')
 );
