@@ -13,7 +13,7 @@ export default class DuplikaatitPage extends React.Component {
         const L = this.props.l10n[this.props.locale];
         return <div className="wrapper">
             <h3>{L['DUPLIKAATIT_HEADER']}, {this.props.henkilo.henkilo.kutsumanimi} {this.props.henkilo.henkilo.sukunimi}</h3>
-            <HenkiloViewDuplikaatit {...this.props}></HenkiloViewDuplikaatit>
+            <HenkiloViewDuplikaatit {...this.props} />
         </div>
 
 

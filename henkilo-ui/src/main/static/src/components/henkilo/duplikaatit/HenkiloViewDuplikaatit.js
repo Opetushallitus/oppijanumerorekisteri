@@ -3,6 +3,7 @@ import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
 import R from 'ramda';
 import DuplikaatitPerson from './DuplikaatitPerson';
+import Loader from "../../common/icons/Loader";
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 
@@ -31,7 +32,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
         return <div className="duplicates-view">
             <div id="duplicates">
                 <div className="person header">
-                    <span></span>
+                    <span/>
                     <span>{L['DUPLIKAATIT_HENKILOTUNNUS']}</span>
                     <span>{L['DUPLIKAATIT_YKSILOITY']}</span>
                     <span>{L['DUPLIKAATIT_KUTSUMANIMI']}</span>
@@ -60,8 +61,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     locale={locale}
                     classNames={{'person': true, master: true}}
                     isMaster={true}
-                    setSelection={this.setSelection.bind(this)}>
-                </DuplikaatitPerson>
+                    setSelection={this.setSelection.bind(this)}/>
                 { duplicates.map((duplicate) =>
                     <DuplikaatitPerson
                         henkilo={duplicate}
@@ -75,6 +75,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                         setSelection={this.setSelection.bind(this)}>
                     </DuplikaatitPerson>
                 )}
+                { this.props.henkilo.duplicatesLoading ? <Loader /> : null }
 
             </div>
             <Button disabled={this.state.selectedDuplicates.length === 0}
