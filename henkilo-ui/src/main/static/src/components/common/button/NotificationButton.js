@@ -1,11 +1,12 @@
 import Button from "./Button";
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import {removeNotification} from "../../../actions/notifications.actions";
 
 class NotificationButton extends React.Component {
     static propTypes = {
-        id: React.PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
     };
 
     constructor(props) {

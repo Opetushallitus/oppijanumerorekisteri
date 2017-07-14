@@ -1,17 +1,18 @@
 import './Button.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 
 class Button extends React.Component {
 
     static propTypes = {
-        action: React.PropTypes.func.isRequired,
-        disabled: React.PropTypes.bool,
-        href: React.PropTypes.string,
-        confirm: React.PropTypes.bool,
-        big: React.PropTypes.bool,
-        cancel: React.PropTypes.bool,
-        inputRef: React.PropTypes.func,
+        action: PropTypes.func.isRequired,
+        disabled: PropTypes.bool,
+        href: PropTypes.string,
+        confirm: PropTypes.bool,
+        big: PropTypes.bool,
+        cancel: PropTypes.bool,
+        inputRef: PropTypes.func,
     };
 
 

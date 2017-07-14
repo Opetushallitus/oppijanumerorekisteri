@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue"
 import StaticUtils from "../../StaticUtils";
 
@@ -10,8 +11,8 @@ const Sukupuoli = (props) => <LabelValue {...props} values={{
 }} />;
 
 Sukupuoli.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        sukupuoli: React.PropTypes.string,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        sukupuoli: PropTypes.string,
     })}),
 };
 

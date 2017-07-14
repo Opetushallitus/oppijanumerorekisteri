@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue"
 import StaticUtils from "../../StaticUtils";
 
@@ -24,18 +25,18 @@ const Kansalaisuus = (props) => <LabelValue {...props} values={
 } />;
 
 Kansalaisuus.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        kansalaisuus: React.PropTypes.array,
-        yksiloityVTJ: React.PropTypes.bool,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        kansalaisuus: PropTypes.array,
+        yksiloityVTJ: PropTypes.bool,
     })}),
-    koodisto: React.PropTypes.shape({
-        kansalaisuus: React.PropTypes.array,
+    koodisto: PropTypes.shape({
+        kansalaisuus: PropTypes.array,
     }),
-    locale: React.PropTypes.string,
-    henkiloUpdate: React.PropTypes.shape({
-        kansalaisuus: React.PropTypes.arrayOf(
-            React.PropTypes.shape({
-                kansalalaisuusKoodi: React.PropTypes.string,
+    locale: PropTypes.string,
+    henkiloUpdate: PropTypes.shape({
+        kansalaisuus: PropTypes.arrayOf(
+            PropTypes.shape({
+                kansalalaisuusKoodi: PropTypes.string,
             })
         )
     }),

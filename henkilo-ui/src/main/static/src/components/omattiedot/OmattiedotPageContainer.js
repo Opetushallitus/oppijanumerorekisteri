@@ -3,8 +3,9 @@ import {connect} from 'react-redux';
 import OmattiedotPage from './OmattiedotPage';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo,
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch,
+    updateAndRefetchKayttajatieto,
+    updatePassword, yksiloiHenkilo, clearHenkilo,
 } from "../../actions/henkilo.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
@@ -15,6 +16,8 @@ import { fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus } from '.
 class OmattiedotPageContainer extends React.Component {
 
     async componentDidMount() {
+        this.props.clearHenkilo();
+
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
@@ -56,4 +59,5 @@ const mapStateToProps = (state, ownProps) => {
 export default connect(mapStateToProps, {fetchOmattiedot, fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
     yksiloiHenkilo, updateAndRefetchKayttajatieto, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus})(OmattiedotPageContainer)
+    updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus,
+    clearHenkilo,})(OmattiedotPageContainer)

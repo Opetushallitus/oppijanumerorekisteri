@@ -5,8 +5,9 @@ import { Provider } from 'react-redux'
 import {useRouterHistory} from 'react-router'
 import {createHistory} from 'history'
 import { syncHistoryWithStore } from 'react-router-redux'
-import Root from './containers/Root'
 import configureStore from './store/configureStore'
+import routes from './routes'
+import { Router } from 'react-router'
 
 import './reset.css';
 import './general-style.css';
@@ -14,6 +15,7 @@ import 'oph-virkailija-style-guide/oph-styles.css'
 import './index.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './flex.css';
+import DevTools from "./containers/DevTools";
 
 let store = configureStore();
 const browserHistory = useRouterHistory(createHistory)({
@@ -23,7 +25,10 @@ const history = syncHistoryWithStore(browserHistory, store);
 
 render(
     <Provider store={store}>
-        <Root history={history} />
+        <div>
+            <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
+            {process.env.NODE_ENV !== 'production' ? <DevTools /> : null}
+        </div>
     </Provider>,
   document.getElementById('root')
 );

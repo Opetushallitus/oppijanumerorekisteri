@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types'
 import R from "ramda";
 import Modal from "../common/modal/Modal";
 import Button from "../common/button/Button";
@@ -10,13 +11,13 @@ import {urls} from 'oph-urls-js';
 export default class KutsuConfirmation extends React.Component {
 
     static propTypes = {
-        addedOrgs: React.PropTypes.array,
-        modalCloseFn: React.PropTypes.func,
-        modalOpen: React.PropTypes.bool,
-        basicInfo: React.PropTypes.object,
-        clearBasicInfo: React.PropTypes.func,
-        ready: React.PropTypes.func,
-        locale: React.PropTypes.string
+        addedOrgs: PropTypes.array,
+        modalCloseFn: PropTypes.func,
+        modalOpen: PropTypes.bool,
+        basicInfo: PropTypes.object,
+        clearBasicInfo: PropTypes.func,
+        ready: PropTypes.func,
+        locale: PropTypes.string
     };
 
     constructor() {

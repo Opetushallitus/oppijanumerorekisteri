@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
@@ -7,11 +8,11 @@ import Button from '../common/button/Button';
 export default class KutsututTable extends React.Component {
 
     static propTypes = {
-        fetchKutsus: React.PropTypes.func,
-        L: React.PropTypes.object,
-        kutsus: React.PropTypes.array,
-        cancelInvitation: React.PropTypes.func,
-        locale: React.PropTypes.string
+        fetchKutsus: PropTypes.func,
+        L: PropTypes.object,
+        kutsus: PropTypes.array,
+        cancelInvitation: PropTypes.func,
+        locale: PropTypes.string
     };
 
     render() {

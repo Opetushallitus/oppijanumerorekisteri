@@ -2,7 +2,8 @@ import React from 'react'
 import {connect} from 'react-redux';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, overrideHenkiloVtjData,
+    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, overrideHenkiloVtjData, fetchHenkiloSlaves,
+    unlinkHenkilo, clearHenkilo
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -23,6 +24,7 @@ import PasswordButton from "../common/henkilo/buttons/PasswordButton";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import Etunimet from "../common/henkilo/labelvalues/Etunimet";
 import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
+import LinkitetytHenkilot from "../common/henkilo/labelvalues/LinkitetytHenkilot";
 import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
 import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
@@ -34,10 +36,12 @@ import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
 import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import AdminViewPage from "./AdminViewPage";
 import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
+import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
 
 class AdminViewContainer extends React.Component {
     componentDidMount() {
+        this.props.clearHenkilo();
         if(this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.push('/omattiedot');
         }
@@ -46,6 +50,7 @@ class AdminViewContainer extends React.Component {
 
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
+        this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
@@ -72,6 +77,8 @@ class AdminViewContainer extends React.Component {
             const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
                 updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
                 L: this.L, locale: this.props.locale,};
+            const linkitetytProps = {henkilo: this.props.henkilo, L: this.L, unlinkHenkilo: this.props.unlinkHenkilo,
+                fetchHenkiloSlaves: this.props.fetchHenkiloSlaves};
             return [
                 [
                     <Sukunimi {...props} autofocus={true} />,
@@ -88,6 +95,8 @@ class AdminViewContainer extends React.Component {
                 ],
                 [
                     <Kayttajanimi {...props} disabled={true} />,
+                    <LinkitetytHenkilot {...linkitetytProps} />,
+                    <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
             ]
         };
@@ -125,4 +134,5 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
-    addKayttooikeusToHenkilo, removeNotification, overrideHenkiloVtjData, removePrivilege})(AdminViewContainer);
+    addKayttooikeusToHenkilo, removeNotification, overrideHenkiloVtjData, removePrivilege, fetchHenkiloSlaves, unlinkHenkilo,
+    clearHenkilo})(AdminViewContainer);

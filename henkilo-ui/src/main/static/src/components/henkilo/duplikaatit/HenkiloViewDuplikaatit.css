@@ -1,0 +1,21 @@
+
+/*#duplikaatit tr:nth-child(odd) {*/
+    /*background-color: #F7F7F7;*/
+/*}*/
+
+#duplicates {
+    padding: 1em;
+    padding-top: 0;
+    margin-left: 2em;
+    margin-right: 2em;
+    color: #4A4A4A;
+}
+
+
+.person.header > span:nth-child(1n) {
+    background: white;
+}
+
+.person.header > span:nth-child(2n) {
+    background: #fbfbfb;
+}

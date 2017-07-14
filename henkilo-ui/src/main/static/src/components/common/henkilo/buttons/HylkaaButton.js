@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 
 const HylkaaButton = ({L, hylkaaAction, henkilo, disabled}) =>
@@ -11,9 +12,9 @@ const HylkaaButton = ({L, hylkaaAction, henkilo, disabled}) =>
                    disabled={disabled} />;
 
 HylkaaButton.propTypes = {
-    L: React.PropTypes.object,
-    hylkaaAction: React.PropTypes.func,
-    henkilo: React.PropTypes.object,
+    L: PropTypes.object,
+    hylkaaAction: PropTypes.func,
+    henkilo: PropTypes.object,
 };
 
 export default HylkaaButton;

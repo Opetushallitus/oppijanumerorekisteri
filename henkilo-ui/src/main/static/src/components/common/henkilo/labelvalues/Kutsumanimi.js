@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue";
 
 const Kutsumanimi = (props) => <LabelValue {...props} values={{
@@ -7,8 +8,8 @@ const Kutsumanimi = (props) => <LabelValue {...props} values={{
     inputValue: 'kutsumanimi'}} />;
 
 Kutsumanimi.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        kutsumanimi: React.PropTypes.string,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        kutsumanimi: PropTypes.string,
     })}),
 };
 

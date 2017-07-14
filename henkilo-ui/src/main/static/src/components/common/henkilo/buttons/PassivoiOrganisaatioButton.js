@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 import Button from "../../button/Button";
 
@@ -13,11 +14,11 @@ const PassivoiOrganisaatioButton = ({passive, id, L, passivoiOrgAction, disabled
     : <Button disabled action={() => {}}>{L['HENKILO_ORG_PASSIVOITU']}</Button>;
 
 PassivoiOrganisaatioButton.propTypes = {
-    passive: React.PropTypes.bool.isRequired,
-    id: React.PropTypes.string.isRequired,
-    L: React.PropTypes.object.isRequired,
-    passivoiOrgAction: React.PropTypes.func.isRequired,
-    disabled: React.PropTypes.bool,
+    passive: PropTypes.bool.isRequired,
+    id: PropTypes.string.isRequired,
+    L: PropTypes.object.isRequired,
+    passivoiOrgAction: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 export default PassivoiOrganisaatioButton;

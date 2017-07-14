@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 import Button from "../../button/Button";
 
@@ -11,12 +12,12 @@ const PassivoiButton = ({henkilo, passivoiAction, L}) => henkilo.henkilo.passivo
                      id="passivoi" />;
 
 PassivoiButton.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        passivoitu: React.PropTypes.bool,
-        oidHenkilo: React.PropTypes.string,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        passivoitu: PropTypes.bool,
+        oidHenkilo: PropTypes.string,
     })}),
-    L: React.PropTypes.object,
-    passivoiAction: React.PropTypes.func.isRequired,
+    L: PropTypes.object,
+    passivoiAction: PropTypes.func.isRequired,
 };
 
 export default PassivoiButton;

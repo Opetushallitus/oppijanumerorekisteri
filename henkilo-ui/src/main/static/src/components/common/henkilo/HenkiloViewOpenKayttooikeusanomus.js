@@ -1,5 +1,6 @@
 import './HenkiloViewOpenKayttooikeusanomus.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Table from '../table/Table'
 import moment from 'moment'
 import DatePicker from 'react-datepicker'
@@ -13,26 +14,26 @@ import {toLocalizedText} from '../../../localizabletext'
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
 
-        updateHaettuKayttooikeusryhma: React.PropTypes.func.isRequired,
-        isOmattiedot: React.PropTypes.bool,
-        kayttooikeus: React.PropTypes.shape({
-            kayttooikeusAnomus: React.PropTypes.array.isRequired,
-            grantableKayttooikeus: React.PropTypes.object.isRequired,
-            grantableKayttooikeusLoading: React.PropTypes.bool.isRequired,
+        updateHaettuKayttooikeusryhma: PropTypes.func.isRequired,
+        isOmattiedot: PropTypes.bool,
+        kayttooikeus: PropTypes.shape({
+            kayttooikeusAnomus: PropTypes.array.isRequired,
+            grantableKayttooikeus: PropTypes.object.isRequired,
+            grantableKayttooikeusLoading: PropTypes.bool.isRequired,
         }),
-        organisaatioCache: React.PropTypes.objectOf(React.PropTypes.shape({nimi: React.PropTypes.object.isRequired,})).isRequired,
-        isAnomusView: React.PropTypes.bool,
-        manualSortSettings: React.PropTypes.shape({
-            manual: React.PropTypes.bool.isRequired,
-            defaultSorted: React.PropTypes.array.isRequired,
-            onFetchData: React.PropTypes.func.isRequired,
+        organisaatioCache: PropTypes.objectOf(PropTypes.shape({nimi: PropTypes.object.isRequired,})).isRequired,
+        isAnomusView: PropTypes.bool,
+        manualSortSettings: PropTypes.shape({
+            manual: PropTypes.bool.isRequired,
+            defaultSorted: PropTypes.array.isRequired,
+            onFetchData: PropTypes.func.isRequired,
         }),
-        fetchMoreSettings: React.PropTypes.object,
-        tableLoading: React.PropTypes.bool,
-        striped: React.PropTypes.bool,
+        fetchMoreSettings: PropTypes.object,
+        tableLoading: PropTypes.bool,
+        striped: PropTypes.bool,
     };
 
     constructor(props) {

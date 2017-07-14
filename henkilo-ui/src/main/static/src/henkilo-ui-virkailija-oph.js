@@ -39,6 +39,11 @@ export default {
 
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
+    "oppijanumerorekisteri-service.henkilo.slaves": "oppijanumerorekisteri-service/henkilo/$1/slaves",
+    "oppijanumerorekisteri-service.henkilo.master": "oppijanumerorekisteri-service/henkilo/$1/master",
+    "oppijanumerorekisteri-service.henkilo.link": "oppijanumerorekisteri-service/henkilo/$1/link",
+    "oppijanumerorekisteri-service.henkilo.unlink": "oppijanumerorekisteri-service/henkilo/$1/unlink/$2",
+    "oppijanumerorekisteri-service.henkilo.duplicates": "oppijanumerorekisteri-service/henkilo/$1/duplicates",
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
     "oppijanumerorekisteri-service.henkilo.delete": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteri-service/henkilo/$1/yksiloi",
@@ -54,7 +59,7 @@ export default {
     "koodisto-service.koodisto.kieli": "koodisto-service/rest/json/kieli/koodi",
     "koodisto-service.koodisto.kansalaisuus": "koodisto-service/rest/json/maatjavaltiot2/koodi",
     "koodisto-service.koodisto.sukupuoli": "koodisto-service/rest/json/sukupuoli/koodi",
-    "koodisto-service.koodisto.yhteystietotyypit": "koodisto-service/rest/json/yhteystietotyypit/koodi"
-
+    "koodisto-service.koodisto.yhteystietotyypit": "koodisto-service/rest/json/yhteystietotyypit/koodi",
+    "koodisto-service.koodisto.maatjavaltiot1": "koodisto-service/rest/json/maatjavaltiot1/koodi",
 
 }

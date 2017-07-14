@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import PopupButton from "../../button/PopupButton";
 import HakatunnistePopupContent from "../../button/HakaPopupContent";
 
@@ -12,9 +13,9 @@ const HakaButton = ({L, oidHenkilo, styles}) =>
     </PopupButton>;
 
 HakaButton.propTypes = {
-    L: React.PropTypes.object,
-    oidHenkilo: React.PropTypes.string,
-    styles: React.PropTypes.object
+    L: PropTypes.object,
+    oidHenkilo: PropTypes.string,
+    styles: PropTypes.object
 };
 
 export default HakaButton;

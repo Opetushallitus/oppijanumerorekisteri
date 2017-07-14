@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import AddedOrganization from './AddedOrganization';
 
@@ -15,10 +16,10 @@ export const AddedOrganizations = (props) =>
 
 
 AddedOrganizations.propTypes = {
-    key: React.PropTypes.string,
-    orgs: React.PropTypes.array,
-    addedOrgs: React.PropTypes.array,
-    addedOrg: React.PropTypes.object,
-    changeOrganization: React.PropTypes.func,
-    l10n: React.PropTypes.object,
+    key: PropTypes.string,
+    orgs: PropTypes.array,
+    addedOrgs: PropTypes.array,
+    addedOrg: PropTypes.object,
+    changeOrganization: PropTypes.func,
+    l10n: PropTypes.object,
 };

@@ -1,9 +1,10 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 import Loader from "../components/common/icons/Loader";
 import moment from 'moment'
+import PropTypes from 'prop-types'
 
 
 class App extends React.Component {
@@ -43,12 +44,12 @@ class App extends React.Component {
         children: PropTypes.node,
 
         frontProperties: PropTypes.shape({
-            initialized: React.PropTypes.bool,
-            properties: React.PropTypes.array,
+            initialized: PropTypes.bool,
+            properties: PropTypes.array,
         }).isRequired,
         l10n: PropTypes.shape({
-            l10nInitialized: React.PropTypes.bool,
-            localisationsInitialized: React.PropTypes.bool,
+            l10nInitialized: PropTypes.bool,
+            localisationsInitialized: PropTypes.bool,
         }).isRequired,
     };
 }

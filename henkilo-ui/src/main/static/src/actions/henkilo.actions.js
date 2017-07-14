@@ -14,7 +14,20 @@ import {
     FETCH_HENKILO_ORGANISAATIOS_REQUEST,
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_FAILURE, VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
-    VTJ_OVERRIDE_HENKILO_FAILURE
+    VTJ_OVERRIDE_HENKILO_FAILURE,
+    FETCH_HENKILO_DUPLICATES_REQUEST,
+    FETCH_HENKILO_DUPLICATES_SUCCESS,
+    FETCH_HENKILO_DUPLICATES_FAILURE,
+    FETCH_HENKILO_SLAVES_REQUEST,
+    FETCH_HENKILO_SLAVES_SUCCESS,
+    FETCH_HENKILO_SLAVES_FAILURE,
+    UPDATE_HENKILO_UNLINK_SUCCESS,
+    UPDATE_HENKILO_UNLINK_REQUEST,
+    UPDATE_HENKILO_UNLINK_FAILURE,
+    LINK_HENKILOS_REQUEST,
+    LINK_HENKILOS_SUCCESS,
+    LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST,
+    CLEAR_HENKILO
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -170,3 +183,85 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
         })
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
+
+const requestHenkiloDuplicates = (oidHenkilo) => ({type: FETCH_HENKILO_DUPLICATES_REQUEST, oidHenkilo});
+const requestHenkiloDuplicatesSuccess = (master, duplicates) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, master, duplicates});
+const requestHenkiloDuplicatesFailure = () => ({type: FETCH_HENKILO_DUPLICATES_FAILURE});
+
+export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
+    dispatch(requestHenkiloDuplicates(oidHenkilo));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
+    try {
+        const duplicates = await http.get(url);
+        dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates));
+    } catch (error) {
+        dispatch(requestHenkiloDuplicatesFailure());
+        throw error;
+    }
+};
+
+const requestHenkiloSlaves = (oidHenkilo) => ({type: FETCH_HENKILO_SLAVES_REQUEST, oidHenkilo});
+const requestHenkiloSlavesSuccess = (slaves) => ({type: FETCH_HENKILO_SLAVES_SUCCESS, slaves});
+const requestHenkiloSlavesFailure = (oidHenkilo) => ({type: FETCH_HENKILO_SLAVES_FAILURE, oidHenkilo});
+
+export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
+    dispatch(requestHenkiloSlaves(oidHenkilo));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.slaves', oidHenkilo);
+    try {
+        const henkiloSlaves = await http.get(url);
+        dispatch(requestHenkiloSlavesSuccess(henkiloSlaves));
+    } catch (error) {
+        dispatch(requestHenkiloSlavesFailure(oidHenkilo));
+        throw error;
+    }
+};
+
+const requestHenkiloMaster = (oidHenkilo) => ({type: FETCH_HENKILO_MASTER_REQUEST, oidHenkilo});
+const requestHenkiloMasterSuccess = (master) => ({type: FETCH_HENKILO_MASTER_SUCCESS, master});
+const requestHenkiloMasterFailure = (oidHenkilo) => ({type: FETCH_HENKILO_MASTER_FAILURE, oidHenkilo});
+
+export const fetchHenkiloMaster = (oidHenkilo) => async (dispatch) => {
+    dispatch(requestHenkiloMaster(oidHenkilo));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.master', oidHenkilo);
+    try {
+        const henkiloMaster = await http.get(url);
+        dispatch(requestHenkiloMasterSuccess(henkiloMaster));
+    } catch (error) {
+        dispatch(requestHenkiloMasterFailure(oidHenkilo));
+        throw error;
+    }
+};
+
+const linkHenkilosRequest = (masterOid, slaveOids) => ({type: LINK_HENKILOS_REQUEST, masterOid, slaveOids});
+const linkHenkilosSuccess = (slaveOids, notificationId) => ({type: LINK_HENKILOS_SUCCESS, slaveOids, notificationId});
+const linkHenkilosFailure = (notificationId) => ({type: LINK_HENKILOS_FAILURE, notificationId});
+
+export const linkHenkilos = (masterOid, slaveOids, notificationId) => async(dispatch) => {
+    dispatch(linkHenkilosRequest(masterOid, slaveOids));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.link', masterOid);
+    try {
+        await http.post(url, slaveOids);
+        dispatch(linkHenkilosSuccess(slaveOids, notificationId));
+    } catch (error) {
+        dispatch(linkHenkilosFailure(notificationId));
+        throw error;
+    }
+};
+
+const updateHenkiloUnlink = (masterOid, slaveOid) => ({type: UPDATE_HENKILO_UNLINK_REQUEST, masterOid, slaveOid});
+const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid) => ({ type: UPDATE_HENKILO_UNLINK_SUCCESS, unlinkedSlaveOid });
+const updateHenkiloUnlinkFailure = () => ({ type: UPDATE_HENKILO_UNLINK_FAILURE });
+
+export const unlinkHenkilo = (masterOid, slaveOid) => async(dispatch) => {
+    dispatch(updateHenkiloUnlink(masterOid, slaveOid));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink', masterOid, slaveOid);
+    try {
+        await http.delete(url);
+        dispatch(updateHenkiloUnlinkSuccess(slaveOid));
+    } catch (error) {
+        dispatch(updateHenkiloUnlinkFailure());
+        throw error;
+    }
+};
+
+export const clearHenkilo = () => dispatch => dispatch({type: CLEAR_HENKILO});

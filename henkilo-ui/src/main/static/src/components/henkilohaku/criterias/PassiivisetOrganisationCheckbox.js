@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const PassiivisetOrganisationCheckbox = ({L, passiivisetValue, passiivisetAction}) =>
     <label className="oph-checkable" htmlFor="passiivisetCriteria">
@@ -8,9 +9,9 @@ const PassiivisetOrganisationCheckbox = ({L, passiivisetValue, passiivisetAction
     </label>;
 
 PassiivisetOrganisationCheckbox.propTypes = {
-    L: React.PropTypes.object.isRequired,
-    passiivisetValue: React.PropTypes.bool.isRequired,
-    passiivisetAction: React.PropTypes.func.isRequired,
+    L: PropTypes.object.isRequired,
+    passiivisetValue: PropTypes.bool.isRequired,
+    passiivisetAction: PropTypes.func.isRequired,
 };
 
 export default PassiivisetOrganisationCheckbox;

@@ -1,12 +1,31 @@
 import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, UPDATE_PASSWORD_SUCCESS,
     UPDATE_PASSWORD_FAILURE, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
-    VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE
+    VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE, LINK_HENKILOS_SUCCESS,
+    LINK_HENKILOS_FAILURE
 } from "../actions/actiontypes";
 
+import PropertySingleton from '../globals/PropertySingleton'
+
 export const notifications = (state={existingKayttooikeus: [], buttonNotifications: [], updatePassword: [],
-    henkilohakuNotifications: []}, action) => {
+    henkilohakuNotifications: [], duplicatesNotifications: []}, action) => {
     switch (action.type) {
+        case LINK_HENKILOS_SUCCESS:
+            return Object.assign({}, state, {
+                duplicatesNotifications: [...state.duplicatesNotifications, {
+                    type: 'ok',
+                    notL10nMessage: 'DUPLIKAATIT_NOTIFICATION_ONNISTUI',
+                    id: action.notificationId || PropertySingleton.getNewId()
+                }],
+            });
+        case LINK_HENKILOS_FAILURE:
+            return Object.assign({}, state, {
+                duplicatesNotifications: [...state.duplicatesNotifications, {
+                    type: 'error',
+                    notL10nMessage: 'DUPLIKAATIT_NOTIFICATION_EPAONNISTUI',
+                    id: action.notificationId || PropertySingleton.getNewId()
+                }],
+            });
         case ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS:
             return {
                 ...state,
@@ -72,7 +91,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
         case YKSILOI_HENKILO_FAILURE:
         case DELETE_HENKILOORGS_FAILURE:
         case VTJ_OVERRIDE_HENKILO_FAILURE:
-            return Object.assign({}, state, {
+            return {
                 ...state,
                 buttonNotifications: [...state.buttonNotifications, {
                     type: 'error',
@@ -80,7 +99,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     notL10nText: action.buttonNotification.notL10nText,
                     id: action.buttonNotification.position,
                 }],
-            });
+            };
         default:
             return state;
     }

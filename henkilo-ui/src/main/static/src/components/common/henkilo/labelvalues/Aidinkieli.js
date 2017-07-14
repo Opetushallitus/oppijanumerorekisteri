@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue"
 import StaticUtils from "../../StaticUtils";
 
@@ -13,16 +14,16 @@ const Aidinkieli = (props) => <LabelValue {...props} values={{
 }} />;
 
 Aidinkieli.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        aidinkieli: React.PropTypes.object,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        aidinkieli: PropTypes.object,
     })}),
-    koodisto: React.PropTypes.shape({
-        kieli: React.PropTypes.array,
+    koodisto: PropTypes.shape({
+        kieli: PropTypes.array,
     }),
-    locale: React.PropTypes.string,
-    henkiloUpdate: React.PropTypes.shape({
-        aidinkieli: React.PropTypes.shape({
-            kieliKoodi: React.PropTypes.string,
+    locale: PropTypes.string,
+    henkiloUpdate: PropTypes.shape({
+        aidinkieli: PropTypes.shape({
+            kieliKoodi: PropTypes.string,
         }),
     }),
 };

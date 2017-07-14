@@ -1,0 +1,11 @@
+
+
+.text-button {
+    color: #159ecb;
+    cursor: pointer;
+}
+
+.text-button:hover {
+    color: #0a789c;
+}
+

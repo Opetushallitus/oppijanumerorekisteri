@@ -1,5 +1,6 @@
 import './Table.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import VisibilitySensor from 'react-visibility-sensor'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
@@ -11,31 +12,31 @@ import Loader from "../icons/Loader";
 
 class Table extends React.Component {
     static propTypes = {
-        headings: React.PropTypes.arrayOf(React.PropTypes.shape({
-            key: React.PropTypes.string.isRequired,
-            label: React.PropTypes.string.isRequired,
-            maxWidth: React.PropTypes.number,
-            minWidth: React.PropTypes.number,
+        headings: PropTypes.arrayOf(PropTypes.shape({
+            key: PropTypes.string.isRequired,
+            label: PropTypes.string.isRequired,
+            maxWidth: PropTypes.number,
+            minWidth: PropTypes.number,
         }).isRequired).isRequired,
-        data: React.PropTypes.arrayOf(React.PropTypes.objectOf(
-            React.PropTypes.oneOfType([
-                React.PropTypes.string,
-                React.PropTypes.object,
-                React.PropTypes.bool,
+        data: PropTypes.arrayOf(PropTypes.objectOf(
+            PropTypes.oneOfType([
+                PropTypes.string,
+                PropTypes.object,
+                PropTypes.bool,
             ]).isRequired)).isRequired,
-        noDataText: React.PropTypes.string.isRequired,
-        striped: React.PropTypes.bool,
-        highlight: React.PropTypes.bool,
-        manual: React.PropTypes.bool,
-        onFetchData: React.PropTypes.func,
-        getTdProps: React.PropTypes.func,
-        defaultSorted: React.PropTypes.array,
+        noDataText: PropTypes.string.isRequired,
+        striped: PropTypes.bool,
+        highlight: PropTypes.bool,
+        manual: PropTypes.bool,
+        onFetchData: PropTypes.func,
+        getTdProps: PropTypes.func,
+        defaultSorted: PropTypes.array,
 
-        fetchMoreSettings: React.PropTypes.shape({
-            fetchMoreAction: React.PropTypes.func.isRequired,
-            isActive: React.PropTypes.bool.isRequired,
+        fetchMoreSettings: PropTypes.shape({
+            fetchMoreAction: PropTypes.func,
+            isActive: PropTypes.bool,
         }),
-        isLoading: React.PropTypes.bool,
+        isLoading: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -83,7 +84,7 @@ class Table extends React.Component {
                                 }}}
                             getTdProps={this.props.getTdProps}
                             onFetchData={this.props.onFetchData} />
-                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction();} }}
+                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction && this.props.fetchMoreSettings.fetchMoreAction();} }}
                                   active={this.props.fetchMoreSettings.isActive}
                                   resizeDelay={500}
                                   delayedCall

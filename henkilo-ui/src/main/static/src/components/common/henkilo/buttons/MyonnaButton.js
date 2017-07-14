@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 
 const MyonnaButton = ({L, myonnaAction, disabled}) =>
@@ -10,9 +11,9 @@ const MyonnaButton = ({L, myonnaAction, disabled}) =>
                    disabled={disabled} />;
 
 MyonnaButton.propTypes = {
-    L: React.PropTypes.object.isRequired,
-    myonnaAction: React.PropTypes.func.isRequired,
-    disabled: React.PropTypes.bool,
+    L: PropTypes.object.isRequired,
+    myonnaAction: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 export default MyonnaButton;

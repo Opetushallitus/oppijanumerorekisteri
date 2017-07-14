@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue";
 
 const Asiointikieli = (props) => <LabelValue {...props} values={{
@@ -12,16 +13,16 @@ const Asiointikieli = (props) => <LabelValue {...props} values={{
 }} />;
 
 Asiointikieli.propTypes = {
-    henkilo: React.PropTypes.shape({henkilo: React.PropTypes.shape({
-        asiointikieli: React.PropTypes.object,
+    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
+        asiointikieli: PropTypes.object,
     })}),
-    koodisto: React.PropTypes.shape({
-        kieli: React.PropTypes.array,
+    koodisto: PropTypes.shape({
+        kieli: PropTypes.array,
     }),
-    locale: React.PropTypes.string,
-    henkiloUpdate: React.PropTypes.shape({
-        asiointiKieli: React.PropTypes.shape({
-            kieliKoodi: React.PropTypes.string,
+    locale: PropTypes.string,
+    henkiloUpdate: PropTypes.shape({
+        asiointiKieli: PropTypes.shape({
+            kieliKoodi: PropTypes.string,
         }),
     }),
 };

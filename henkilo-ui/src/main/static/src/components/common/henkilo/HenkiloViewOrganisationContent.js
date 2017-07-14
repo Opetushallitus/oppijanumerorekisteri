@@ -1,21 +1,22 @@
 import './HenkiloViewOrganisationContent.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Columns from 'react-columns'
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 import StaticUtils from "../StaticUtils";
 
 class HenkiloViewOrganisationContent extends React.Component{
     static propTypes = {
-        henkilo: React.PropTypes.shape({henkiloOrgs: React.PropTypes.Array}.isRequired),
-        l10n: React.PropTypes.object.isRequired,
-        readOnly: React.PropTypes.bool.isRequired,
-        showPassive: React.PropTypes.bool,
-        locale: React.PropTypes.string.isRequired,
-        kayttooikeus: React.PropTypes.shape({
-            grantableKayttooikeus: React.PropTypes.object.isRequired,
+        henkilo: PropTypes.shape({henkiloOrgs: PropTypes.Array}.isRequired),
+        l10n: PropTypes.object.isRequired,
+        readOnly: PropTypes.bool.isRequired,
+        showPassive: PropTypes.bool,
+        locale: PropTypes.string.isRequired,
+        kayttooikeus: PropTypes.shape({
+            grantableKayttooikeus: PropTypes.object.isRequired,
         }).isRequired,
 
-        passivoiHenkiloOrg: React.PropTypes.func.isRequired,
+        passivoiHenkiloOrg: PropTypes.func.isRequired,
     };
 
     constructor(props) {

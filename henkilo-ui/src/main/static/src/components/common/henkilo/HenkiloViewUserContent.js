@@ -1,35 +1,38 @@
 import './HenkiloViewUserContent.css'
 import React from 'react'
+import PropTypes from 'prop-types'
 import Columns from 'react-columns'
 import moment from 'moment'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 
-class HenkiloViewUserContent extends React.Component{
+class HenkiloViewUserContent extends React.Component {
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        henkilo: React.PropTypes.shape({
-            kayttajatieto: React.PropTypes.object.isRequired,
-            henkilo: React.PropTypes.object.isRequired
+        l10n: PropTypes.object.isRequired,
+        henkilo: PropTypes.shape({
+            kayttajatieto: PropTypes.object.isRequired,
+            henkilo: PropTypes.object.isRequired
         }).isRequired,
-        readOnly: React.PropTypes.bool.isRequired,
-        showPassive: React.PropTypes.bool,
-        locale: React.PropTypes.string.isRequired,
-        koodisto: React.PropTypes.shape({
-            sukupuoli: React.PropTypes.array,
-            kieli: React.PropTypes.array,
-            kansalaisuus: React.PropTypes.kansalaisuus
+        readOnly: PropTypes.bool.isRequired,
+        showPassive: PropTypes.bool,
+        locale: PropTypes.string.isRequired,
+        koodisto: PropTypes.shape({
+            sukupuoli: PropTypes.array,
+            kieli: PropTypes.array,
+            kansalaisuus: PropTypes.kansalaisuus
         }).isRequired,
-        passivoiHenkilo: React.PropTypes.func.isRequired,
-        yksiloiHenkilo: React.PropTypes.func.isRequired,
-        updateHenkiloAndRefetch: React.PropTypes.func.isRequired,
+        passivoiHenkilo: PropTypes.func.isRequired,
+        yksiloiHenkilo: PropTypes.func.isRequired,
+        updateHenkiloAndRefetch: PropTypes.func.isRequired,
 
-        basicInfo: React.PropTypes.func.isRequired,
-        readOnlyButtons: React.PropTypes.func.isRequired,
+        basicInfo: PropTypes.func.isRequired,
+        readOnlyButtons: PropTypes.func.isRequired,
     };
 
     constructor(props) {
         super(props);
+
+        this.L = this.props.l10n[this.props.locale];
 
         this.state = {
             henkiloUpdate: JSON.parse(JSON.stringify(this.props.henkilo.henkilo)), // deep copy
@@ -39,12 +42,11 @@ class HenkiloViewUserContent extends React.Component{
     };
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         return (
             <div className="henkiloViewUserContentWrapper user-content">
                     <div>
                         <div className="header">
-                            <p className="oph-h2 oph-bold">{L['HENKILO_PERUSTIEDOT_OTSIKKO']}</p>
+                            <p className="oph-h2 oph-bold">{this.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
                         </div>
                         <Columns columns={3} gap="10px">
                             {
@@ -64,7 +66,9 @@ class HenkiloViewUserContent extends React.Component{
                         {this.props.readOnlyButtons(this._edit.bind(this)).map((button, idx) => <div style={{display: 'inline-block'}} key={idx}>{button}</div>)}
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={L} />
+                        <EditButtons discardAction={this._discard.bind(this)}
+                                     updateAction={this._update.bind(this)}
+                                     L={this.L} />
                     </div>
                 }
             </div>
@@ -74,6 +78,20 @@ class HenkiloViewUserContent extends React.Component{
     _edit() {
         this.setState({readOnly: false});
     };
+
+    _additionalInfo() {
+        const info = [];
+        if(this.props.henkilo.henkilo.yksiloity) {
+            info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITY']);
+        }
+        if(this.props.henkilo.henkilo.yksiloityVTJ) {
+            info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ'])
+        }
+        if(this.props.henkilo.henkilo.duplicate) {
+            info.push(this.L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
+        }
+        return info.length ? ' (' + StaticUtils.flatArray(info) + ')' : '';
+    }
 
     _discard() {
         this.setState({

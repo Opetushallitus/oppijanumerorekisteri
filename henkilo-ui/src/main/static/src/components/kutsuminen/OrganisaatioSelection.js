@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import {toLocalizedText} from '../../localizabletext';
 import OphSelect from '../common/select/OphSelect';
 import './OrganisaatioSelection.css';
@@ -8,19 +9,19 @@ import {getOrganisaatios} from "./OrganisaatioUtilities";
 export default class OrganisaatioSelection extends React.Component {
 
     static propTypes = {
-        L: React.PropTypes.object.isRequired,
-        organisaatios: React.PropTypes.arrayOf(React.PropTypes.shape({
-            organisaatio: React.PropTypes.shape({
-                nimi: React.PropTypes.object.isRequired,
-                oid: React.PropTypes.string.isRequired,
-                parentOidPath: React.PropTypes.string, // Null for root organisation
-                tyypit: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+        L: PropTypes.object.isRequired,
+        organisaatios: PropTypes.arrayOf(PropTypes.shape({
+            organisaatio: PropTypes.shape({
+                nimi: PropTypes.object.isRequired,
+                oid: PropTypes.string.isRequired,
+                parentOidPath: PropTypes.string, // Null for root organisation
+                tyypit: PropTypes.arrayOf(PropTypes.string).isRequired,
             }).isRequired,
         })).isRequired,
-        selectOrganisaatio: React.PropTypes.func,
-        locale: React.PropTypes.string.isRequired,
-        selectedOrganisaatioOid: React.PropTypes.string,
-        isRyhma: React.PropTypes.bool,
+        selectOrganisaatio: PropTypes.func,
+        locale: PropTypes.string.isRequired,
+        selectedOrganisaatioOid: PropTypes.string,
+        isRyhma: PropTypes.bool,
     };
 
     constructor(props) {

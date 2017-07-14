@@ -1,11 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ReactTimeout from 'react-timeout'
 
 class DelayedSearchInput extends React.Component {
     static propTypes = {
-        setSearchQueryAction: React.PropTypes.func.isRequired,
-        defaultNameQuery: React.PropTypes.string,
-        placeholder: React.PropTypes.string,
+        setSearchQueryAction: PropTypes.func.isRequired,
+        defaultNameQuery: PropTypes.string,
+        placeholder: PropTypes.string,
     };
 
     constructor(props) {

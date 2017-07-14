@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 
 const SuljeButton = ({L, suljeAction, disabled}) =>
@@ -11,9 +12,9 @@ const SuljeButton = ({L, suljeAction, disabled}) =>
                    disabled={disabled} />;
 
 SuljeButton.propTypes = {
-    L: React.PropTypes.object,
-    suljeAction: React.PropTypes.func,
-    disabled: React.PropTypes.bool,
+    L: PropTypes.object,
+    suljeAction: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 export default SuljeButton;

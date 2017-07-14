@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import PopupButton from "../../button/PopupButton";
 import PasswordPopupContent from "../../button/PasswordPopupContent";
@@ -21,8 +22,8 @@ class PasswordButton extends React.Component {
 }
 
 PasswordButton.propTypes = {
-    L: React.PropTypes.object,
-    styles: React.PropTypes.object,
+    L: PropTypes.object,
+    styles: PropTypes.object,
 };
 
 const mapStateToProps = (state) => {

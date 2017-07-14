@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import './AnomusPage.css'
 import Loader from '../common/icons/Loader'
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm'
@@ -29,14 +30,14 @@ class AnomusPage extends React.Component {
     };
 
     static propTypes = {
-        l10n: React.PropTypes.object.isRequired,
-        locale: React.PropTypes.string.isRequired,
-        kayttooikeusAnomus: React.PropTypes.array.isRequired,
-        organisaatioCache: React.PropTypes.object.isRequired,
-        clearHaetutKayttooikeusryhmat: React.PropTypes.func.isRequired,
-        fetchAllOrganisaatios: React.PropTypes.func.isRequired,
-        fetchHaetutKayttooikeusryhmat: React.PropTypes.func.isRequired,
-        isAdmin: React.PropTypes.bool.isRequired,
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        kayttooikeusAnomus: PropTypes.array.isRequired,
+        organisaatioCache: PropTypes.object.isRequired,
+        clearHaetutKayttooikeusryhmat: PropTypes.func.isRequired,
+        fetchAllOrganisaatios: PropTypes.func.isRequired,
+        fetchHaetutKayttooikeusryhmat: PropTypes.func.isRequired,
+        isAdmin: PropTypes.bool.isRequired,
     };
 
     componentDidMount() {

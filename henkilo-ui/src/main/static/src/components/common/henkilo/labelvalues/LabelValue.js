@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Columns from 'react-columns'
 import Field from "../../field/Field";
 
@@ -19,14 +20,17 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
     : null;
 
 LabelValue.propTypes = {
-    values: React.PropTypes.shape({
-        readOnly: React.PropTypes.bool,
-        value: React.PropTypes.string,
+    values: PropTypes.shape({
+        readOnly: PropTypes.bool,
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+        label: PropTypes.string,
+        showOnlyOnWrite: PropTypes.bool,
     }),
-    readOnly: React.PropTypes.bool,
-    updateModelFieldAction: React.PropTypes.func,
-    updateDateFieldAction: React.PropTypes.func,
-    autofocus: React.PropTypes.bool,
+    readOnly: PropTypes.bool,
+    updateModelFieldAction: PropTypes.func,
+    updateDateFieldAction: PropTypes.func,
+    autofocus: PropTypes.bool,
+    L: PropTypes.object.isRequired,
 };
 
 export default LabelValue;
