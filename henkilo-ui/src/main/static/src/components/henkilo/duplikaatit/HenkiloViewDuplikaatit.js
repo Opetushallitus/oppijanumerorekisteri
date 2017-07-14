@@ -5,6 +5,8 @@ import Button from '../../common/button/Button';
 import R from 'ramda';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from "../../common/icons/Loader";
+import PropertySingleton from '../../../globals/PropertySingleton'
+import Notifications from "../../common/notifications/Notifications";
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 
@@ -14,13 +16,15 @@ export default class HenkiloViewDuplikaatit extends React.Component {
         omattiedot: PropTypes.object,
         l10n: PropTypes.object,
         locale: PropTypes.string,
-        koodisto: PropTypes.object
+        koodisto: PropTypes.object,
+        notifications: PropTypes.array.isRequired,
     };
 
     constructor() {
         super();
         this.state = {
-            selectedDuplicates: []
+            selectedDuplicates: [],
+            notifications: [],
         }
     }
 
@@ -77,6 +81,9 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     </DuplikaatitPerson>
                 )}
                 { this.props.henkilo.duplicatesLoading ? <Loader /> : null }
+                <Notifications L={L}
+                               notifications={this.props.notifications}
+                               closeAction={(status, id) => this.props.removeNotification(status, 'duplicatesNotifications', id)} />
 
             </div>
             <Button disabled={this.state.selectedDuplicates.length === 0}
@@ -85,7 +92,9 @@ export default class HenkiloViewDuplikaatit extends React.Component {
     }
 
     async _link() {
-        await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates);
+        const notificationId = PropertySingleton.getNewId();
+        this.setState({notifications: [...this.state.notifications, notificationId,]});
+        await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates, notificationId);
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
     }

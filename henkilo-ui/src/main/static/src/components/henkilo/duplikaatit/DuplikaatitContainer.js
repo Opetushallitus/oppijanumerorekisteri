@@ -7,6 +7,7 @@ import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import { fetchMaatJaValtiotKoodisto, fetchKieliKoodisto } from '../../../actions/koodisto.actions';
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import {virkailijaNavi} from "../../../configuration/navigationconfigurations";
+import {removeNotification} from "../../../actions/notifications.actions";
 
 class VirkailijaDuplikaatitContainer extends React.Component {
 
@@ -34,8 +35,9 @@ const mapStateToProps = (state, ownProps) => ({
     locale: state.locale,
     omattiedot: state.omattiedot,
     henkilo: state.henkilo,
-    koodisto: state.koodisto
+    koodisto: state.koodisto,
+    notifications: state.notifications.duplicatesNotifications,
 });
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot, fetchHenkiloDuplicates,
-    fetchMaatJaValtiotKoodisto, fetchKieliKoodisto, linkHenkilos, updateHenkiloNavigation})(VirkailijaDuplikaatitContainer);
+    fetchMaatJaValtiotKoodisto, fetchKieliKoodisto, linkHenkilos, updateHenkiloNavigation, removeNotification})(VirkailijaDuplikaatitContainer);

@@ -17,8 +17,6 @@ export default class KutsuOrganisaatios extends React.Component {
     render() {
         const L = this.props.l10n[this.props.locale];
 
-
-
         return (
             <fieldset className="add-to-organisation">
                 <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>

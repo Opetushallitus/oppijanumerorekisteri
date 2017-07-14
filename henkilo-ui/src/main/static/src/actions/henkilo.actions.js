@@ -233,17 +233,17 @@ export const fetchHenkiloMaster = (oidHenkilo) => async (dispatch) => {
 };
 
 const linkHenkilosRequest = (masterOid, slaveOids) => ({type: LINK_HENKILOS_REQUEST, masterOid, slaveOids});
-const linkHenkilosSuccess = (slaveOids) => ({type: LINK_HENKILOS_SUCCESS, slaveOids});
-const linkHenkilosFailure = () => ({type: LINK_HENKILOS_FAILURE});
+const linkHenkilosSuccess = (slaveOids, notificationId) => ({type: LINK_HENKILOS_SUCCESS, slaveOids, notificationId});
+const linkHenkilosFailure = (notificationId) => ({type: LINK_HENKILOS_FAILURE, notificationId});
 
-export const linkHenkilos = (masterOid, slaveOids) => async(dispatch) => {
+export const linkHenkilos = (masterOid, slaveOids, notificationId) => async(dispatch) => {
     dispatch(linkHenkilosRequest(masterOid, slaveOids));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.link', masterOid);
     try {
         await http.post(url, slaveOids);
-        dispatch(linkHenkilosSuccess(slaveOids));
+        dispatch(linkHenkilosSuccess(slaveOids, notificationId));
     } catch (error) {
-        dispatch(linkHenkilosFailure());
+        dispatch(linkHenkilosFailure(notificationId));
         throw error;
     }
 };
