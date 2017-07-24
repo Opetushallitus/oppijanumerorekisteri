@@ -11,7 +11,7 @@ const wrapperStyles = {
   zIndex: 99999,
   pointerEvents: 'auto',
   overflowY: 'auto'
-}
+};
 
 export default class Modal extends React.Component {
   static propTypes = {
@@ -25,7 +25,7 @@ export default class Modal extends React.Component {
       return (
         <div
           style={wrapperStyles}
-          onClick={this.hideOnOuterClick}
+          onClick={this.hideOnOuterClick.bind(this)}
           data-modal="true">
           {this.props.children}
         </div>

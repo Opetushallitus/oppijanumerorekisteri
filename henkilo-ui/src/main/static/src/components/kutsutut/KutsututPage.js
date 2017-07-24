@@ -67,7 +67,7 @@ export default class KutsututPage extends React.Component {
                                 {L['PERUUTA_KUTSUN_PERUUTTAMINEN']}
                             </Button>
                         </div>
-                        <div className="clear"></div>
+                        <div className="clear"/>
                     </div>
                 </Modal>}
             </div>);
