@@ -26,6 +26,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
         locale: PropTypes.string.isRequired,
         l10n: PropTypes.array.isRequired,
         organisaatiot: PropTypes.array.isRequired,
+        haetutKayttooikeusryhmatLoading: PropTypes.bool.isRequired,
     };
 
     render() {
@@ -35,7 +36,8 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                             defaultNameQuery={this.state.hakutermi}
-                                            placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']} />
+                                            placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
+                                            loading={this.props.haetutKayttooikeusryhmatLoading} />
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OphSelect noResultsText={ `${this.L['SYOTA_VAHINTAAN']} 3 ${this.L['MERKKIA']}` }

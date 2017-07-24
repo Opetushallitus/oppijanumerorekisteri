@@ -2,22 +2,35 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactTimeout from 'react-timeout'
 
+// Provides input with delay timer and single action queue.
 class DelayedSearchInput extends React.Component {
     static propTypes = {
         setSearchQueryAction: PropTypes.func.isRequired,
+        loading: PropTypes.bool.isRequired,
         defaultNameQuery: PropTypes.string,
         placeholder: PropTypes.string,
+        customTimeout: PropTypes.number,
     };
 
     constructor(props) {
         super(props);
 
-        this.timeout = 200;
+        this.timeout = this.props.customTimeout || 200;
 
         this.state = {
             timeoutEvent: null,
+            singleActionQueue: null,
         };
-    };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(!nextProps.loading && this.state.singleActionQueue !== null) {
+            this.state.singleActionQueue();
+            this.setState({
+                singleActionQueue: null,
+            });
+        }
+    }
 
     render() {
         return <input className="oph-input"
@@ -25,7 +38,7 @@ class DelayedSearchInput extends React.Component {
                       defaultValue={this.props.defaultNameQuery || ''}
                       onKeyUp={this.typewatch.bind(this)}
                       placeholder={this.props.placeholder} />;
-    };
+    }
 
     typewatch(event) {
         const value = event.target;
@@ -35,10 +48,15 @@ class DelayedSearchInput extends React.Component {
         this.setState({
             timeoutEvent: this.props.setTimeout(() => {
                 this.setState({timeoutEvent: null});
-                this.props.setSearchQueryAction(value);
+                if(this.props.loading) {
+                    this.setState({singleActionQueue: () => this.props.setSearchQueryAction(value),})
+                }
+                else {
+                    this.props.setSearchQueryAction(value);
+                }
             }, this.timeout),
         });
-    };
+    }
 }
 
 export default ReactTimeout(DelayedSearchInput);

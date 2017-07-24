@@ -115,7 +115,8 @@ class HenkilohakuPage extends React.Component {
             }
             <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
             <DelayedSearchInput setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
-                                defaultNameQuery={this.state.henkilohakuModel.nameQuery} />
+                                defaultNameQuery={this.state.henkilohakuModel.nameQuery}
+                                loading={this.props.henkilohakuLoading} />
             <HenkilohakuFilters noOrganisationAction={this.updateToSearchModel('noOrganisation', true).bind(this)}
                                 suborganisationAction={this.updateToSearchModel('subOrganisation', true).bind(this)}
                                 duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
