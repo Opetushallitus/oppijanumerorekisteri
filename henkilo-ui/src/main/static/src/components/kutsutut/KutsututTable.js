@@ -21,7 +21,7 @@ export default class KutsututTable extends React.Component {
             { key: 'KUTSUT_SAHKOPOSTI_OTSIKKO', label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'] },
             { key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO', label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'] },
             { key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'] },
-            { key: 'KUTSU_PERUUTA', label: '', notSortable: true}
+            { key: 'KUTSU_PERUUTA', label: L['KUTSUTUT_PERUUTA_KUTSU'], notSortable: true}
         ];
         
         const data = this.props.kutsus.map( kutsu => ({

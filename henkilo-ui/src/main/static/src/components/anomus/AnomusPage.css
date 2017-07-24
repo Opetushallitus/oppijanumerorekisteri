@@ -5,7 +5,6 @@
 
 .anomus-table .ReactTable .rt-resizable-header.rt-th {
     border-right: 1px solid #d5d5d5 !important;
-    line-height: 40px;
 }
 
 .anomus-table .ReactTable .rt-resizable-header.rt-th:last-child {

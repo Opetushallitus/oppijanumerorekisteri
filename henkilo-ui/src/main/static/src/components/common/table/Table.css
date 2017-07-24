@@ -6,42 +6,46 @@
     border: 0;
 }
 
-.ReactTable .rt-thead.-header {
-    box-shadow: none !important;
+.ReactTable.table .rt-resizable-header.rt-th {
+    line-height: 40px;
+}
+
+.ReactTable.table .rt-thead.-header {
+    box-shadow: none;
     border-bottom: 1px solid #d5d5d5;
 }
 
-.ReactTable .rt-tbody .rt-tr-group {
-    border-bottom: 0 !important;
+.ReactTable.table .rt-tbody .rt-tr-group {
+    border-bottom: 0;
 }
 
-.ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
-    box-shadow: none !important;
+.ReactTable.table .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
+    box-shadow: none;
 }
 
-.ReactTable .rt-thead .rt-th.-sort-asc, .ReactTable .rt-thead .rt-td.-sort-asc {
-    box-shadow: none !important;
+.ReactTable.table .rt-thead .rt-th.-sort-asc, .ReactTable .rt-thead .rt-td.-sort-asc {
+    box-shadow: none;
 }
 
-.ReactTable .rt-thead .rt-tr {
-    text-align: left !important;
+.ReactTable.table .rt-thead .rt-tr {
+    text-align: left;
 }
 
-.ReactTable .rt-tbody .rt-td {
-    border: 0 !important;
+.ReactTable.table .rt-tbody .rt-td {
+    border: 0;
 }
 
-.ReactTable .rt-thead .rt-th, .ReactTable .rt-thead .rt-td {
-    border: 0 !important;
+.ReactTable.table .rt-thead .rt-th, .ReactTable .rt-thead .rt-td {
+    border: 0;
 }
 
-.ReactTable .rt-th, .ReactTable .rt-td {
+.ReactTable.table .rt-th, .ReactTable .rt-td {
     white-space: inherit !important;
 }
 
 /* Moves no data text little bit lower */
-.ReactTable .rt-noData {
-    top: 140% !important;
+.ReactTable.table .rt-noData {
+    top: 140%;
 }
 
 /* Fading out background highlight */
