@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { AddedOrganizations } from './AddedOrganizations';
+import Button from "../common/button/Button";
 
 export default class KutsuOrganisaatios extends React.Component {
 
@@ -25,7 +26,7 @@ export default class KutsuOrganisaatios extends React.Component {
                                     l10n={this.props.l10n}
                                     locale={this.props.locale}/>
                 <div className="row">
-                    <a href="#" onClick={this.addEmptyOrganization.bind(this)}>{L['VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI']}</a>
+                    <Button href="#" action={this.addEmptyOrganization.bind(this)}>{L['VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI']}</Button>
                 </div>
             </fieldset>
         )
