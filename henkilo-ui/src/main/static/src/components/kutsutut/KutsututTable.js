@@ -4,6 +4,8 @@ import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
+import {http} from "../../http";
+import {urls} from 'oph-urls-js';
 
 export default class KutsututTable extends React.Component {
 
@@ -21,7 +23,8 @@ export default class KutsututTable extends React.Component {
             { key: 'KUTSUT_SAHKOPOSTI_OTSIKKO', label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'] },
             { key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO', label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'] },
             { key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'] },
-            { key: 'KUTSU_PERUUTA', label: L['KUTSUTUT_PERUUTA_KUTSU'], notSortable: true}
+            { key: 'KUTSUTUT_LAHETA_UUDELLEEN', label: L['KUTSUTUT_LAHETA_UUDELLEEN'], notSortable: true},
+            { key: 'KUTSU_PERUUTA', label: L['KUTSUTUT_PERUUTA_KUTSU'], notSortable: true},
         ];
         
         const data = this.props.kutsus.map( kutsu => ({
@@ -29,6 +32,7 @@ export default class KutsututTable extends React.Component {
             KUTSUT_SAHKOPOSTI_OTSIKKO: this.createSahkopostiCell(kutsu),
             KUTSUTUT_ORGANISAATIO_OTSIKKO: this.createOrganisaatiotCell(kutsu),
             KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: this.createKutsuLahetettyCell(kutsu),
+            KUTSUTUT_LAHETA_UUDELLEEN: this.createResendCell(kutsu),
             KUTSU_PERUUTA: this.createPeruutaCell(kutsu)
         }));
         
@@ -56,9 +60,25 @@ export default class KutsututTable extends React.Component {
         return moment(new Date(kutsu.aikaleima)).format();
     }
 
+    createResendCell(kutsu) {
+        const deleteUrl = urls.url('kayttooikeus-service.peruutaKutsu', kutsu.id);
+        const createUrl = urls.url('kayttooikeus-service.kutsu');
+        const resendAction = () => http.delete(deleteUrl)
+            .then(() => http.post(createUrl, kutsu))
+            .then(() => this.props.fetchKutsus());
+        return kutsu.tila === 'AVOIN' &&
+            <Button
+                    action={resendAction}>
+                {this.props.L['KUTSUTUT_LAHETA_UUDELLEEN_NAPPI']}
+            </Button>
+    }
+
     createPeruutaCell(kutsu) {
         return kutsu.tila === 'AVOIN' &&
-            <Button className="cancel" action={this.props.cancelInvitation(kutsu)}>{this.props.L['PERUUTA_KUTSU']}</Button>
+            <Button cancel
+                    action={this.props.cancelInvitation(kutsu)}>
+                {this.props.L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
+            </Button>
     }
 
 }

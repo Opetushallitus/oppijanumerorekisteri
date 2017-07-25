@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import moment from 'moment';
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
@@ -7,13 +8,21 @@ import KutsututTable from './KutsututTable';
 
 export default class KutsututPage extends React.Component {
 
-    constructor () {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             confirmDeleteFor: null,
         };
     }
+
+    static propTypes = {
+        l10n: PropTypes.object.isRequired,
+        locale: PropTypes.string.isRequired,
+        kutsuList: PropTypes.array.isRequired,
+        deleteKutsu: PropTypes.func.isRequired,
+        fetchKutsus: PropTypes.func.isRequired,
+    };
 
     render() {
         const L = this.props.l10n[this.props.locale];
