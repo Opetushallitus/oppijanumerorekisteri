@@ -52,7 +52,7 @@ export default class KutsututTable extends React.Component {
 
     createOrganisaatiotCell(kutsu) {
         return (<div>
-                { kutsu.organisaatiot.map(org => <div key={org.oid}>{org.nimi[this.props.locale]}</div>)}
+                { kutsu.organisaatiot.map(org => <div key={org.organisaatioOid}>{org.nimi[this.props.locale] || org.organisaatioOid}</div>)}
                 </div>);
     }
 

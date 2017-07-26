@@ -12,20 +12,20 @@ class BooleanRadioButtonGroup extends React.Component {
                     <label>
                         <input className="oph-radio-button-input"
                                type="radio"
-                               value={true}
-                               checked={this.props.value === true}
+                               value={false}
+                               checked={this.props.value === false}
                                onChange={this.onChange}
-                               />
-                        <span className="oph-radio-button-text">{this.props.trueLabel}</span>
+                        />
+                        <span className="oph-radio-button-text">{this.props.falseLabel}</span>
                     </label>
                     <label>
                         <input className="oph-radio-button-input"
                                type="radio"
-                               value={false}
-                               checked={this.props.value === false}
+                               value={true}
+                               checked={this.props.value === true}
                                onChange={this.onChange}
-                               />
-                        <span className="oph-radio-button-text">{this.props.falseLabel}</span>
+                        />
+                        <span className="oph-radio-button-text">{this.props.trueLabel}</span>
                     </label>
                 </div>
             </fieldset>

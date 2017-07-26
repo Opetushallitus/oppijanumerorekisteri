@@ -5,6 +5,7 @@ import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
+import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 
 export default class KutsututPage extends React.Component {
 
@@ -13,24 +14,31 @@ export default class KutsututPage extends React.Component {
 
         this.state = {
             confirmDeleteFor: null,
+            getOwnKutsus: false,
         };
     }
 
     static propTypes = {
         l10n: PropTypes.object.isRequired,
         locale: PropTypes.string.isRequired,
-        kutsuList: PropTypes.array.isRequired,
+        kutsus: PropTypes.object.isRequired,
         deleteKutsu: PropTypes.func.isRequired,
         fetchKutsus: PropTypes.func.isRequired,
     };
 
     render() {
         const L = this.props.l10n[this.props.locale];
-        const kutsuResponse = this.props.kutsuList;
+        const kutsuResponse = this.props.kutsus;
         return (
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
                     <h2>{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</h2>
+                    <span>
+                        <BooleanRadioButtonGroup value={this.state.getOwnKutsus}
+                                                 onChange={() => this.toggleFetchAll(!this.state.getOwnKutsus)}
+                                                 trueLabel={L['KUTSUTUT_KAIKKI_BUTTON']}
+                                                 falseLabel={L['KUTSUTUT_OMAT_BUTTON']} />
+                    </span>
                 </div>
                 {!kutsuResponse.loaded && <div className="loading">{L['LADATAAN']} </div>}
                 {kutsuResponse.loaded && !kutsuResponse.result.length > 0
@@ -98,6 +106,11 @@ export default class KutsututPage extends React.Component {
             this.setState({confirmDeleteFor: null});
         }
         this.props.fetchKutsus();
+    }
+
+    toggleFetchAll(getOwnKutsus) {
+        this.setState({getOwnKutsus: getOwnKutsus});
+        this.props.fetchKutsus(undefined, undefined, !getOwnKutsus);
     }
 }
 

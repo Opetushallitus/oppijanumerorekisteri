@@ -24,3 +24,13 @@
 .right {
     float: right;
 }
+
+.header h2 {
+    display: inline;
+}
+
+.header span {
+    display: inline-block;
+    vertical-align: bottom;
+    float: right;
+}

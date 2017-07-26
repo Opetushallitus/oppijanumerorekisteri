@@ -5,7 +5,7 @@ export const kutsuList = (state = {loaded: false, result: []}, action) => {
         case FETCH_KUTSU_REQUEST:
             return Object.assign({}, state, {loaded: false});
         case FETCH_KUTSU_SUCCESS:
-            return Object.assign({}, state, {result: action.kutsuList, loaded: true}, );
+            return Object.assign({}, state, {result: action.kutsus, loaded: true}, );
         default:
             return state;
     }

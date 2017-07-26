@@ -1,13 +1,13 @@
-.anomus-table .ReactTable .rt-thead.-header {
+.anomus-table .ReactTable.table .rt-thead.-header {
     background-color: #eee;
     border-bottom: 1px solid #d5d5d5;
 }
 
-.anomus-table .ReactTable .rt-resizable-header.rt-th {
+.anomus-table .ReactTable.table .rt-resizable-header.rt-th {
     border-right: 1px solid #d5d5d5 !important;
 }
 
-.anomus-table .ReactTable .rt-resizable-header.rt-th:last-child {
+.anomus-table .ReactTable.table .rt-resizable-header.rt-th:last-child {
     border-right: 0 !important;
 }
 

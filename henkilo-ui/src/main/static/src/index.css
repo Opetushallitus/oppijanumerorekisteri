@@ -10,11 +10,6 @@ fieldset {
     margin-bottom: 16px;
 }
 
-fieldset label {
-    float: left;
-    min-width: 150px;
-}
-
 fieldset input {
     margin: 10px 0 0;
 }

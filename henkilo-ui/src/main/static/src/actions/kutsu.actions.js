@@ -2,7 +2,6 @@ import { DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_
 
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
-import {} from './actiontypes';
 
 const requestDeleteKutsu = (id) => ({type: DELETE_KUTSU_REQUEST, id});
 const receiveDeleteKutsu = (id, json) => ({type: DELETE_KUTSU_SUCCESS, id, receivedAt: Date.now()});
@@ -13,10 +12,10 @@ export const deleteKutsu = (id) => (dispatch => {
 });
 
 const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
-const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsuList: json, receivedAt: Date.now()});
-export const fetchKutsus = (sortBy, direction) => dispatch => {
+const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});
+export const fetchKutsus = (sortBy, direction, onlyOwnKutsus) => dispatch => {
     dispatch(requestKutsus());
-    const url = urls.url('kayttooikeus-service.kutsu', {sortBy: sortBy, direction: direction});
+    const url = urls.url('kayttooikeus-service.kutsu', {sortBy, direction, onlyOwnKutsus: !!onlyOwnKutsus});
     http.get(url).then(json => {dispatch(receiveKutsus(json))});
 };
 
