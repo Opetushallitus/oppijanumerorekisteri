@@ -20,7 +20,7 @@ export default class KutsuOrganisaatios extends React.Component {
 
         return (
             <fieldset className="add-to-organisation">
-                <h2>{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</h2>
+                <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</span>
                 <AddedOrganizations orgs={this.props.orgs}
                                     addedOrgs={this.props.addedOrgs}
                                     l10n={this.props.l10n}

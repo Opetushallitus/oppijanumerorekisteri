@@ -7,7 +7,7 @@ export const naviState = (state = {naviTabs: [], backButton: null}, action) => {
     switch (action.type) {
         case UPDATE_NAVIGATION:
             // If component has updated navibar on mount
-            document.body.bgColor = "#f6f4f0";
+            document.body.bgColor = action.naviTabs.length ? "#f6f4f0" : "white";
             return Object.assign({}, state, {naviTabs: action.naviTabs, backButton: action.backLocation});
         case LOCATION_CHANGE:
             // Default navigation always before component mounts (only if location changes)

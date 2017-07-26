@@ -5,7 +5,7 @@ import HakatunnistePopupContent from "../../button/HakaPopupContent";
 
 const HakaButton = ({L, oidHenkilo, styles}) =>
     <PopupButton popupStyle={styles}
-                 popupTitle={<h3 style={{textAlign: 'left'}}>{L['HAKATUNNISTEET']}:</h3>}
+                 popupTitle={<span className="oph-h3 oph-strong" style={{textAlign: 'left'}}>{L['HAKATUNNISTEET']}:</span>}
                  popupClass={'oph-popup-default oph-popup-bottom'}
                  popupContent={<HakatunnistePopupContent henkiloOid={oidHenkilo}
                                                          L={L} />}>

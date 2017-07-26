@@ -20,7 +20,7 @@ export class BasicInfo extends React.Component {
         const languageOptions = languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
         return (
             <fieldset id="basicinfo">
-                <h2>{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</h2>
+                <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
                 <div className="oph-field oph-field-inline">
                     <label htmlFor="etunimi" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
                     <input type="text" id="etunimi" className="oph-input" aria-required="true" value={basicInfo.etunimi || ''}

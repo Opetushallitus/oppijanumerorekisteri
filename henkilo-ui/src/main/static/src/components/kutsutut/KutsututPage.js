@@ -32,7 +32,7 @@ export default class KutsututPage extends React.Component {
         return (
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
-                    <h2>{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</h2>
+                    <span className="oph-h2 oph-strong">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                     <span>
                         <BooleanRadioButtonGroup value={this.state.getOwnKutsus}
                                                  onChange={() => this.toggleFetchAll(!this.state.getOwnKutsus)}
@@ -54,7 +54,7 @@ export default class KutsututPage extends React.Component {
                 {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>
                     <div className="confirmation-modal">
-                        <h2>{L['PERUUTA_KUTSU_VAHVISTUS']}</h2>
+                        <span className="oph-h2 oph-strong">{L['PERUUTA_KUTSU_VAHVISTUS']}</span>
                         <table>
                             <tbody>
                             <tr>

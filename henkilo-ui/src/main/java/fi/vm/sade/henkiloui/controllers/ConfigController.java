@@ -19,7 +19,6 @@ public class ConfigController {
         this.urlProperties = urlProperties;
     }
     
-    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/frontProperties", method = RequestMethod.GET, produces = "text/plain")
     public String frontPropertiesJson() {
         return urlProperties.frontPropertiesToJson();

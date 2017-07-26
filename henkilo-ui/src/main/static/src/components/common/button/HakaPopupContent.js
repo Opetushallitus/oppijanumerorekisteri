@@ -36,7 +36,7 @@ export default class HakatunnistePopupContent extends React.Component {
                 {this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>
                         (<li className="tag" key={hakatunniste}><span>{hakatunniste}</span> <a className="remove"
                             onClick={ () => this.removeHakatunniste(hakatunniste)}>{L['POISTA']}</a>
-                        </li>)) : <h4 className="hakapopup">{L['EI_HAKATUNNUKSIA']}</h4> }
+                        </li>)) : <span className="oph-h4 oph-strong hakapopup">{L['EI_HAKATUNNUKSIA']}</span> }
             </ul>
             <div className="oph-field oph-field-is-required">
                 <input type="text"
