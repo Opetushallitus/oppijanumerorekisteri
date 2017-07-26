@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +21,9 @@ public class CasController {
             authorizations = @Authorization("login"),
             response = ResponseEntity.class)
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/prequel", method = RequestMethod.GET)
-    public ResponseEntity<String> requestGet() {
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+    @RequestMapping(value = "/prequel", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public String requestGet() {
+        return "ok";
     }
 
     @ApiOperation(value = "Auttaa CAS session avaamisessa oppijanumerorekisteriin.",
