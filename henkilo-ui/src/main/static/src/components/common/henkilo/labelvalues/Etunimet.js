@@ -11,11 +11,13 @@ const Etunimet = (props) => <LabelValue {...props} values={{
 }} />;
 
 Etunimet.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        etunimet: PropTypes.string,
-        hetu: PropTypes.string,
-        yksiloityVTJ: PropTypes.bool,
-    })}),
+    henkilo: PropTypes.shape({
+        henkilo: PropTypes.shape({
+            etunimet: PropTypes.string.isRequired,
+            hetu: PropTypes.string,
+            yksiloityVTJ: PropTypes.bool,
+        }).isRequired,
+    }).isRequired,
 };
 
 export default Etunimet;

@@ -109,18 +109,8 @@ class HenkiloViewUserContent extends React.Component {
     };
 
     _updateModelField(event) {
-        let value;
-        let fieldpath;
-        if(event.optionsName) {
-            value = event.value;
-            fieldpath = event.optionsName;
-        }
-        else {
-            value = event.target.value;
-            fieldpath = event.target.name;
-        }
         this.setState({
-            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, fieldpath, value),
+            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event),
         });
     };
 

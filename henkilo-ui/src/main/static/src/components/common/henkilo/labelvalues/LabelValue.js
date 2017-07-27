@@ -1,4 +1,5 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import Columns from 'react-columns'
 import Field from "../../field/Field";
@@ -30,7 +31,10 @@ LabelValue.propTypes = {
     updateModelFieldAction: PropTypes.func,
     updateDateFieldAction: PropTypes.func,
     autofocus: PropTypes.bool,
-    L: PropTypes.object.isRequired,
 };
 
-export default LabelValue;
+const mapStateToProps = (state, ownProps) => ({
+    L: state.l10n.localisations[state.locale],
+}) ;
+
+export default connect(mapStateToProps)(LabelValue);
