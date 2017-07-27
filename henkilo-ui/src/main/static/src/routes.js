@@ -11,6 +11,7 @@ import DuplikaatitContainer from "./components/henkilo/duplikaatit/DuplikaatitCo
 import AdminViewContainer from "./components/henkilo/AdminViewContainer";
 import HenkilohakuContainer from "./components/henkilohaku/HenkilohakuContainer";
 import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnistusInfoContainer";
+import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -23,4 +24,5 @@ export default <Route path="/" component={App}>
     <Route path="/omattiedot" component={OmattiedotContainer} />
     <Route path="/admin/:oid" component={AdminViewContainer} />
     <Route path="/vahvatunnistusinfo" component={VahvaTunnistusInfoContainer} />
+    <Route path="/rekisteroidy" component={RekisteroidyContainer} />
 </Route>
