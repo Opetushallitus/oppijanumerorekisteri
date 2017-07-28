@@ -5,7 +5,7 @@ class PropertySingleton {
             rootOrganisaatioOid: '1.2.246.562.10.00000000001',
             idRunner: 0,
             TYOOSOITE: 'yhteystietotyyppi2',
-            specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\/<>?]/,
+            specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\\/<>?]/,
         };
     };
 
