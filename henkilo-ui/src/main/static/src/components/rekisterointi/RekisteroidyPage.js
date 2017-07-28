@@ -6,6 +6,7 @@ import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import RekisteroidyOrganisaatiot from "./content/RekisteroidyOrganisaatiot";
 import StaticUtils from "../common/StaticUtils";
 import Button from "../common/button/Button";
+import PropertySingleton from "../../globals/PropertySingleton"
 
 class RekisteroidyPage extends React.Component {
     static propTypes = {
@@ -34,7 +35,8 @@ class RekisteroidyPage extends React.Component {
                 kayttajanimi: this.props.kutsu.sahkoposti.split('@')[0] || '',
                 password: '',
                 passwordAgain: '',
-            }
+            },
+            isValid: false,
         };
     }
 
@@ -55,20 +57,29 @@ class RekisteroidyPage extends React.Component {
             <Asiointikieli koodisto={this.props.koodisto}
                            henkiloUpdate={this.state.henkilo}
                            updateModelFieldAction={this.updatePayloadModelInput.bind(this)} />
-            <Button action={() => {}} disabled={this.isValid()} >
+            <Button action={() => {}} disabled={!this.state.isValid} >
                 {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
             </Button>
         </div>;
     }
 
     updatePayloadModelInput(event) {
+        const henkilo = StaticUtils.updateFieldByDotAnnotation(this.state.henkilo, event);
         this.setState({
-            henkilo: StaticUtils.updateFieldByDotAnnotation(this.state.henkilo, event),
+            henkilo: henkilo,
+            isValid: this.isValid(henkilo),
         });
     }
 
-    isValid() {
-        return false;
+    isValid(henkilo) {
+        const regex = PropertySingleton.getState().specialCharacterRegex;
+        return henkilo.etunimet.split(' ').filter(nimi => nimi === henkilo.kutsumanimi)
+            && henkilo.kayttajanimi !== ''
+            && henkilo.password === henkilo.passwordAgain
+            && henkilo.password !== ''
+            && henkilo.password.length > 7
+            && regex.exec(henkilo.password) !== null
+            && henkilo.asiointiKieli.kieliKoodi !== '';
     }
 }
 

@@ -26,11 +26,11 @@ class RekisteroidyPerustiedot extends React.Component {
         const henkilo = this.props.henkilo;
         return <div>
             <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
-            <Etunimet henkilo={henkilo} readOnly={true} />
-            <Sukunimi henkilo={henkilo} readOnly={true} />
-            <Kutsumanimi readOnly={false} autoFocus henkilo={henkilo} updateModelFieldAction={this.props.updatePayloadModel} />
-            <Kayttajanimi disabled={false} henkilo={{kayttajatieto: {username: henkilo.henkilo.kayttajanimi}}} updateModelFieldAction={this.props.updatePayloadModel} />
-            <Salasana disabled={false} updateModelFieldAction={this.props.updatePayloadModel} />
+            <Etunimet henkilo={henkilo} readOnly={true} required />
+            <Sukunimi henkilo={henkilo} readOnly={true} required />
+            <Kutsumanimi readOnly={false} autoFocus henkilo={henkilo} updateModelFieldAction={this.props.updatePayloadModel} required />
+            <Kayttajanimi disabled={false} henkilo={{kayttajatieto: {username: henkilo.henkilo.kayttajanimi}}} updateModelFieldAction={this.props.updatePayloadModel} required />
+            <Salasana disabled={false} updateModelFieldAction={this.props.updatePayloadModel} required />
         </div>
     }
 }
