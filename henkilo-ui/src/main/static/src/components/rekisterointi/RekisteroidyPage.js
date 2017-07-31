@@ -19,6 +19,7 @@ class RekisteroidyPage extends React.Component {
             sukunimi: PropTypes.string.isRequired,
             asiointikieli: PropTypes.string.isRequired,
         }).isRequired,
+        createHenkiloByToken: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -57,7 +58,7 @@ class RekisteroidyPage extends React.Component {
             <Asiointikieli koodisto={this.props.koodisto}
                            henkiloUpdate={this.state.henkilo}
                            updateModelFieldAction={this.updatePayloadModelInput.bind(this)} />
-            <Button action={() => {}} disabled={!this.state.isValid} >
+            <Button action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} >
                 {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
             </Button>
         </div>;
@@ -77,9 +78,14 @@ class RekisteroidyPage extends React.Component {
             && henkilo.kayttajanimi !== ''
             && henkilo.password === henkilo.passwordAgain
             && henkilo.password !== ''
-            && henkilo.password.length > 7
+            && henkilo.password.length >= PropertySingleton.getState().minimunPasswordLength
             && regex.exec(henkilo.password) !== null
             && henkilo.asiointiKieli.kieliKoodi !== '';
+    }
+
+    createHenkilo() {
+        const payload = {...this.state.henkilo};
+        this.props.createHenkiloByToken(this.props.kutsu.temporaryToken, payload);
     }
 }
 

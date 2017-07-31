@@ -1,6 +1,7 @@
 import {
     DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_KUTSU_SUCCESS,
-    FETCH_KUTSUBYTOKEN_REQUEST, FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE
+    FETCH_KUTSUBYTOKEN_REQUEST, FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE,
+    CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST
 } from './actiontypes';
 
 import {http} from "../http";
@@ -31,5 +32,16 @@ export const fetchKutsuByToken = (temporaryToken) => dispatch => {
     http.get(url)
         .then(json => {dispatch(kutsuByTokenSuccess({...json, temporaryToken}))})
         .catch(() => dispatch(kutsuByTokenFailure()));
+};
+
+const createHenkiloByTokenRequest = () => ({type: CREATE_HENKILOBYTOKEN_REQUEST});
+const createHenkiloByTokenSuccess = (oidHenkilo) => ({type: CREATE_HENKILOBYTOKEN_SUCCESS, oidHenkilo, receivedAt: Date.now()});
+const createHenkiloByTokenFailure = () => ({type: CREATE_HENKILOBYTOKEN_FAILURE, receivedAt: Date.now()});
+export const createHenkiloByToken = (temporaryToken, payload) => dispatch => {
+    dispatch(createHenkiloByTokenRequest());
+    const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
+    http.post(url, payload)
+        .then(json => {dispatch(createHenkiloByTokenSuccess(json))})
+        .catch(() => dispatch(createHenkiloByTokenFailure()));
 };
 

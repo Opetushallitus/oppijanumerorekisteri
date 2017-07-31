@@ -5,7 +5,7 @@ import {updateNavigation} from "../../actions/navigation.actions";
 import {emptyNavi} from "../../configuration/navigationconfigurations";
 import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
-import {fetchKutsuByToken} from "../../actions/kutsu.actions";
+import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
@@ -33,10 +33,11 @@ const mapStateToProps = (state, ownProps) => {
         L: state.l10n.localisations[state.locale],
         koodistoLoading: state.koodisto.kieliKoodistoLoading,
         koodisto: state.koodisto,
-        temporaryToken: ownProps.location.query['kutsuToken'],
+        temporaryToken: ownProps.location.query['temporaryKutsuToken'],
         tokenLoading: state.kutsuList.kutsuByTokenLoading,
         kutsu: state.kutsuList.kutsuByToken
     });
 };
 
-export default connect(mapStateToProps, {updateNavigation, fetchKieliKoodisto, fetchKutsuByToken})(RekisteroidyContainer);
+export default connect(mapStateToProps, {updateNavigation, fetchKieliKoodisto, fetchKutsuByToken, createHenkiloByToken,
+})(RekisteroidyContainer);
