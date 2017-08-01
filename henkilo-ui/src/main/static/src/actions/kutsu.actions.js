@@ -43,7 +43,7 @@ export const createHenkiloByToken = (temporaryToken, payload) => dispatch => {
     http.post(url, payload)
         .then(json => {
             dispatch(createHenkiloByTokenSuccess(json));
-            window.location = '/cas/login?authToken=' + json + '&service=' + urls.url('henkilo-ui.baseUrl') + 'virkailija-raamit';
+            window.location = '/cas/login?authToken=' + json + '&service=' + window.location.origin + '/virkailija-raamit';
         })
         .catch(() => dispatch(createHenkiloByTokenFailure()));
 };
