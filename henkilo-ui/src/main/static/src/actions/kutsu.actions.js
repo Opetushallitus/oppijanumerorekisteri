@@ -35,13 +35,16 @@ export const fetchKutsuByToken = (temporaryToken) => dispatch => {
 };
 
 const createHenkiloByTokenRequest = () => ({type: CREATE_HENKILOBYTOKEN_REQUEST});
-const createHenkiloByTokenSuccess = (oidHenkilo) => ({type: CREATE_HENKILOBYTOKEN_SUCCESS, oidHenkilo, receivedAt: Date.now()});
+const createHenkiloByTokenSuccess = (authToken) => ({type: CREATE_HENKILOBYTOKEN_SUCCESS, authToken, receivedAt: Date.now()});
 const createHenkiloByTokenFailure = () => ({type: CREATE_HENKILOBYTOKEN_FAILURE, receivedAt: Date.now()});
 export const createHenkiloByToken = (temporaryToken, payload) => dispatch => {
     dispatch(createHenkiloByTokenRequest());
     const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
     http.post(url, payload)
-        .then(json => {dispatch(createHenkiloByTokenSuccess(json))})
+        .then(json => {
+            dispatch(createHenkiloByTokenSuccess(json));
+            window.location = '/cas/login?authToken=' + json + '&service=' + urls.url('henkilo-ui.baseUrl') + 'virkailija-raamit';
+        })
         .catch(() => dispatch(createHenkiloByTokenFailure()));
 };
 
