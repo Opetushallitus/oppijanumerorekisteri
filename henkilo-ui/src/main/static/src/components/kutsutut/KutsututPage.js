@@ -33,7 +33,7 @@ export default class KutsututPage extends React.Component {
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
                     <span className="oph-h2 oph-strong">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
-                    <span>
+                    <span id="radiator">
                         <BooleanRadioButtonGroup value={this.state.getOwnKutsus}
                                                  onChange={() => this.toggleFetchAll(!this.state.getOwnKutsus)}
                                                  trueLabel={L['KUTSUTUT_KAIKKI_BUTTON']}
