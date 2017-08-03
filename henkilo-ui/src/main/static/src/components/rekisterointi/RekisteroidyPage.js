@@ -7,6 +7,7 @@ import RekisteroidyOrganisaatiot from "./content/RekisteroidyOrganisaatiot";
 import StaticUtils from "../common/StaticUtils";
 import Button from "../common/button/Button";
 import PropertySingleton from "../../globals/PropertySingleton"
+import Loader from "../common/icons/Loader";
 
 class RekisteroidyPage extends React.Component {
     static propTypes = {
@@ -58,9 +59,13 @@ class RekisteroidyPage extends React.Component {
             <Asiointikieli koodisto={this.props.koodisto}
                            henkiloUpdate={this.state.henkilo}
                            updateModelFieldAction={this.updatePayloadModelInput.bind(this)} />
-            <Button action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} >
-                {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
-            </Button>
+            {
+                this.props.authToken !== ''
+                    ? <div>{this.props.L['REKISTEROIDY_ODOTTAA_SYNKRONOINTIA']} <Loader /></div>
+                    : <Button action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} >
+                        {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
+                    </Button>
+            }
         </div>;
     }
 

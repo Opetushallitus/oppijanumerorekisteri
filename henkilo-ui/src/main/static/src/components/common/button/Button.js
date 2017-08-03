@@ -6,7 +6,7 @@ import classNames from 'classnames/bind';
 class Button extends React.Component {
 
     static propTypes = {
-        action: PropTypes.func.isRequired,
+        action: PropTypes.func,
         disabled: PropTypes.bool,
         href: PropTypes.string,
         confirm: PropTypes.bool,

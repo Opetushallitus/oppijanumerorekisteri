@@ -1,9 +1,9 @@
 import {
     FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST, FETCH_KUTSUBYTOKEN_REQUEST,
-    FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE
+    FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE,
 } from '../actions/actiontypes';
 
-export const kutsuList = (state = {loaded: false, result: [], kutsuByToken: {}, kutsuByTokenLoading: true}, action) => {
+export const kutsuList = (state = {loaded: false, result: [], kutsuByToken: {}, kutsuByTokenLoading: true,}, action) => {
     switch (action.type) {
         case FETCH_KUTSU_REQUEST:
             return Object.assign({}, state, {loaded: false});
