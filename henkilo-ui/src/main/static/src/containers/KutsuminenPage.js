@@ -44,7 +44,7 @@ class KutsuFormPage extends React.Component  {
         const {basicInfo} = this.state;
 
             if(this.props.omattiedot.omattiedotLoading || this.props.henkilo.henkiloOrganisaatiosLoading) {
-                return (<h2>Loading</h2>);
+                return (<span className="oph-h2 oph-strong">Loading</span>);
             } else {
                 return (
                     <form className="kutsuFormWrapper">

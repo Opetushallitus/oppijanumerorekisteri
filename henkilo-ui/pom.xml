@@ -23,6 +23,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <springfox.version>2.6.1</springfox.version>
+        <frontend-plugin.version>1.5</frontend-plugin.version>
+        <nodejs.version>v6.11.1</nodejs.version>
+
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
         <revision>default revision</revision>
@@ -141,7 +144,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>${frontend-plugin.version}</version>
                 <configuration>
                     <workingDirectory>src/main/static</workingDirectory>
                 </configuration>
@@ -153,7 +156,7 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v6.10.3</nodeVersion>
+                            <nodeVersion>${nodejs.version}</nodeVersion>
                         </configuration>
                     </execution>
 

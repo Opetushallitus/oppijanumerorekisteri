@@ -12,7 +12,7 @@ const CKHaeButton = ({haeButtonAction, validationMessages, L}) =>
                     {L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
                 </Button>
             </div>
-            <div  className="haeButtonWrapper">
+            <div className="haeButtonWrapper">
             <ul>
                 {
                     validationMessages.map((validationMessage, idx) =>

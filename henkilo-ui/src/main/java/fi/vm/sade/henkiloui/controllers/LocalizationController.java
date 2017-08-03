@@ -28,7 +28,6 @@ public class LocalizationController {
         this.messageSource = messageSource;
     }
 
-    @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = GET)
     public Map<String,Map<String,String>> list() {
         return LOCALES.get().collect(toMap(locale -> locale.getLanguage().toLowerCase(),

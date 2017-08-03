@@ -13,7 +13,7 @@ class PasswordButton extends React.Component {
 
         return <PopupButton popupClass={'oph-popup-default oph-popup-bottom oph-popup-password'}
             popupStyle={props.styles}
-            popupTitle={<h3 style={{textAlign: 'left'}}>{props.L['SALASANA_ASETA']}</h3>}
+                            popupTitle={<span className="oph-h3 oph-strong" style={{textAlign: 'left'}}>{props.L['SALASANA_ASETA']}</span>}
             popupContent={<PasswordPopupContent {...props}/>}>
                 {props.L['SALASANA_ASETA']}
         </PopupButton>;

@@ -10,9 +10,11 @@ const Kayttajanimi = (props) => <LabelValue {...props} values={{
 }} />;
 
 Kayttajanimi.propTypes = {
-    henkilo: PropTypes.shape({kayttajanimi: PropTypes.shape({
-        username: PropTypes.string,
-    })}),
+    henkilo: PropTypes.shape({
+        kayttajatieto: PropTypes.shape({
+            username: PropTypes.string.isRequired,
+        }).isRequired,
+    }).isRequired,
     disabled: PropTypes.bool.isRequired,
 };
 

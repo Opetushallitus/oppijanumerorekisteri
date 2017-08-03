@@ -18,7 +18,7 @@ class App extends React.Component {
                 ?
                 <div className="oph-typography mainContainer">
                     <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
-                                   l10n={this.props.l10n.localisations[this.props.locale]} />
+                                   L={this.props.l10n.localisations[this.props.locale]} />
                     <div>
                         {this.props.children}
                     </div>
@@ -29,7 +29,7 @@ class App extends React.Component {
 
     isInitialized() {
         return this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
-        && this.props.omattiedot !== undefined && this.props.prequelsNotLoadedCount === 0;
+        && this.props.omattiedotLoaded && this.props.prequelsNotLoadedCount === 0;
     }
 
     componentDidMount() {
@@ -64,6 +64,7 @@ const mapStateToProps = (state, ownProps) => {
         prequelsNotLoadedCount: state.prequels.notLoadedCount,
         locale: state.locale,
         omattiedot: state.omattiedot.data,
+        omattiedotLoaded: state.omattiedot.initialized,
     };
 };
 

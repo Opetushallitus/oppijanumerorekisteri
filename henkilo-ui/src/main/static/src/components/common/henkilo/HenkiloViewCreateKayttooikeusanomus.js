@@ -45,7 +45,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         const kayttooikeusRyhmaOptions = this.props.kayttooikeusryhmaOptions.filter( option => R.findIndex( R.propEq('value', option.value), this.state.kayttooikeusryhmaSelections ) < 0  );
 
         return (<div className="kayttooikeus-anomus-wrapper">
-            <h2 className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</h2>
+            <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
 
             <div className="oph-field oph-field-inline">
                 <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">

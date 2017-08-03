@@ -110,6 +110,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers("/swagger-resources/**").permitAll()
                     .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
                     .antMatchers("/v2/api-docs").permitAll()
+                    // To allow unauthorized user load the app where it's permitted
+                    .antMatchers("/favicon.ico").permitAll()
+                    .antMatchers("/static/js/*").permitAll()
+                    .antMatchers("/static/css/*").permitAll()
+                    .antMatchers("/config/frontProperties").permitAll()
+                    .antMatchers("/l10n").permitAll()
+                    .antMatchers("/vahvatunnistusinfo").permitAll()
+                    .antMatchers("/rekisteroidy").permitAll()
+                    // Admin domain
                     .antMatchers("/admin/**").hasRole("APP_HENKILONHALLINTA_OPHREKISTERI")
                     .anyRequest().authenticated()
                 .and()

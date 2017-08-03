@@ -29,7 +29,7 @@
     display: inline;
 }
 
-.header span {
+#kutsutut-page > .header > span#radiator {
     display: inline-block;
     vertical-align: bottom;
     float: right;

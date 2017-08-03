@@ -6,9 +6,20 @@ class StaticUtils extends React.Component {
         return new Date(from[2], from[1]-1, from[0]);
     };
 
-    static updateFieldByDotAnnotation(obj, path, value) {
+    static updateFieldByDotAnnotation(obj, event) {
+        let value;
+        let fieldpath;
+        if(event.optionsName) {
+            value = event.value;
+            fieldpath = event.optionsName;
+        }
+        else {
+            value = event.target.value;
+            fieldpath = event.target.name;
+        }
+
         let schema = obj;  // a moving reference to internal objects within obj
-        const pList = path.split('.');
+        const pList = fieldpath.split('.');
         const len = pList.length;
         for(let i = 0; i < len-1; i++) {
             let elem = pList[i];

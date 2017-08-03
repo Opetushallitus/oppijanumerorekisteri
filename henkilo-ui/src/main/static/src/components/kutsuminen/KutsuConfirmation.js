@@ -34,18 +34,16 @@ export default class KutsuConfirmation extends React.Component {
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
                 <div className="confirmation-modal">
                     <i className="fa fa-times-circle fa-2 clickable right" onClick={this.props.modalCloseFn}
-                       aria-hidden="true"></i>
-                    <h1>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</h1>
+                       aria-hidden="true"/>
+                    <span className="oph-h1 oph-strong">>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</span>
                     <p>{ L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI'] } {this.props.basicInfo.email}</p>
-                    <h2>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</h2>
+                    <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</span>
                     {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
                     <div className="row">
                         {this.state.sent ?
                             <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button> :
                             <Button action={this.sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
-
-
                     </div>
                 </div>
             </Modal>
@@ -61,7 +59,7 @@ export default class KutsuConfirmation extends React.Component {
         const orgName = toLocalizedText(this.props.locale, org.organisation.nimi);
         return (
             <div key={org.organisation.oid}>
-                <h3>{orgName}</h3>
+                <span className="oph-h3 oph-strong">{orgName}</span>
                 {org.selectedPermissions.map(this.renderAddedOrgPermission.bind(this))}
             </div>
         )
@@ -70,7 +68,7 @@ export default class KutsuConfirmation extends React.Component {
     renderAddedOrgPermission(permission) {
         return (
             <div key={permission.ryhmaId}>
-                <h4>{toLocalizedText(this.props.locale, permission.ryhmaNames)}</h4>
+                <span className="oph-h4 oph-strong">{toLocalizedText(this.props.locale, permission.ryhmaNames)}</span>
             </div>
         )
     }
