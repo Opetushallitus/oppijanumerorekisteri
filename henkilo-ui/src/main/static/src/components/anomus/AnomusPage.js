@@ -21,6 +21,7 @@ class AnomusPage extends React.Component {
                 limit: this.defaultLimit,
                 showOwnAnomus: false,
                 adminView: true,
+                anomuksenTilat: ['ANOTTU'],
             },
             sorted: [{id: 'ANOTTU_PVM', desc: true}],
             allFetched: false,
