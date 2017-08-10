@@ -97,4 +97,6 @@ public interface HenkiloJpaRepository {
 
     Collection<Henkilo> findUnidentified(long limit, long offset);
 
+    Iterable<String> findOidByYhteystieto(String arvo);
+
 }

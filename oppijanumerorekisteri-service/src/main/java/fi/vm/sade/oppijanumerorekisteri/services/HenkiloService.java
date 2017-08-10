@@ -26,6 +26,8 @@ public interface HenkiloService {
 
     HenkiloHakuDto getByHakutermi(String hakutermi, ExternalPermissionService externalPermissionService);
 
+    Iterable<String> listOidByYhteystieto(String arvo);
+
     Boolean getHasHetu();
 
     boolean getOidExists(String oid);
