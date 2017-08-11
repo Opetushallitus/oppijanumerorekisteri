@@ -382,4 +382,18 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .fetch();
     }
 
+    @Override
+    public Iterable<String> findOidByYhteystieto(String arvo) {
+        QYhteystieto qYhteystieto = QYhteystieto.yhteystieto;
+        QYhteystiedotRyhma qYhteystiedotRyhma = QYhteystiedotRyhma.yhteystiedotRyhma;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.yhteystiedotRyhma, qYhteystiedotRyhma)
+                .join(qYhteystiedotRyhma.yhteystieto, qYhteystieto)
+                .where(qYhteystieto.yhteystietoArvo.eq(arvo))
+                .select(qHenkilo.oidHenkilo).distinct().fetch();
+    }
+
 }

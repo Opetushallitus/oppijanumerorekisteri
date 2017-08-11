@@ -183,6 +183,12 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<String> listOidByYhteystieto(String arvo) {
+        return henkiloJpaRepository.findOidByYhteystieto(arvo);
+    }
+
     private KayttooikeudetDto getKayttooikeudet(HenkiloHakuCriteria criteria) {
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         OrganisaatioCriteria organisaatioCriteria = mapper.map(criteria, OrganisaatioCriteria.class);

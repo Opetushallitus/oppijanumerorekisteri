@@ -76,6 +76,13 @@ public class HenkiloController {
         return henkiloService.getByHakutermi(hakutermi, permissionService);
     }
 
+    @GetMapping("/yhteystieto={arvo}/oid")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Hakee henkilöiden OID:t yhteystiedon perusteella.")
+    public Iterable<String> getByYhteystieto(@PathVariable String arvo) {
+        return henkiloService.listOidByYhteystieto(arvo);
+    }
+
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {
