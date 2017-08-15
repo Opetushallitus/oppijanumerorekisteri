@@ -4,6 +4,8 @@ import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/TopNavigation'
 import Loader from "../components/common/icons/Loader";
 import moment from 'moment'
+import 'moment/locale/fi'
+import 'moment/locale/sv'
 import PropTypes from 'prop-types'
 
 
