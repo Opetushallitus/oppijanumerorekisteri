@@ -85,7 +85,10 @@ class HenkiloViewUserContent extends React.Component {
             info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITY']);
         }
         if(this.props.henkilo.henkilo.yksiloityVTJ) {
-            info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ'])
+            info.push(this.L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
+        }
+        if(!this.props.henkilo.henkilo.yksiloity && !this.props.henkilo.henkilo.yksiloityVTJ) {
+            info.push(this.L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
         }
         if(this.props.henkilo.henkilo.duplicate) {
             info.push(this.L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
