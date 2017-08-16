@@ -17,7 +17,6 @@ public interface HenkiloService {
 
     Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit);
 
-    @Transactional(readOnly = true)
     Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long amount);
 
     Slice<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, int page, int count);
