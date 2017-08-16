@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -60,7 +61,8 @@ public class IdentificationServiceIntegrationTest {
     @Test
     public void identifyHenkilos() {
         @SuppressWarnings("unchedked")
-        List<Henkilo> unidentifiedHenkilos = this.entityManager.createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
+        List<Henkilo> unidentifiedHenkilos = this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
 
         given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
         given(this.vtjClient.fetchHenkilo("010101-123N"))
@@ -68,14 +70,28 @@ public class IdentificationServiceIntegrationTest {
 
         this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
-        Henkilo notFoundVtjResult = (Henkilo)this.entityManager.createNativeQuery("SELECT * FROM henkilo WHERE hetu = '111111-1235'", Henkilo.class).getSingleResult();
-        Henkilo everythingOkResult = (Henkilo)this.entityManager.createNativeQuery("SELECT * FROM henkilo WHERE hetu = '010101-123N'", Henkilo.class).getSingleResult();
+        Henkilo notFoundVtjResult = (Henkilo)this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo WHERE hetu = '111111-1235'", Henkilo.class).getSingleResult();
+        Henkilo everythingOkResult = (Henkilo)this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo WHERE hetu = '010101-123N'", Henkilo.class).getSingleResult();
 
         assertThat(everythingOkResult.isYksiloityVTJ()).isTrue();
         assertThat(everythingOkResult.getKutsumanimi()).isEqualTo("Teppo");
 
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
+    }
+
+    @Test
+    public void setStrongIdentifiedHetu() {
+        HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
+                new HenkiloVahvaTunnistusDto("new hetu", "Teppo Taneli", "Testaaja");
+
+        this.identificationService.setStrongIdentifiedHetu("NoHetu", henkiloVahvaTunnistusDto);
+
+        Henkilo henkiloHetuUpdated = (Henkilo)this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo WHERE oidhenkilo = 'NoHetu'", Henkilo.class).getSingleResult();
+        assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("new hetu");
     }
 
 }

@@ -1,24 +1,33 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Lists;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -27,9 +36,13 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
     private final HenkiloJpaRepository henkiloJpaRepository;
+
     private final UserDetailsHelper userDetailsHelper;
+
     private final OrikaConfiguration mapper;
+
     private final YksilointiService yksilointiService;
+    private final HenkiloService henkiloService;
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid).orElseThrow(()
@@ -74,6 +87,49 @@ public class IdentificationServiceImpl implements IdentificationService {
                     log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
                     this.identifyHenkilo(henkilo);
                 });
+    }
+
+    @Override
+    @Transactional
+    public void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto) {
+        Henkilo henkilo = this.henkiloRepository.findByOidHenkilo(oidHenkilo)
+                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
+        List<Henkilo> henkilosWithSameHetu = this.henkiloRepository.findByHetu(henkiloVahvaTunnistusDto.getHetu());
+        // If another virkailija with same hetu exists => error
+        henkilosWithSameHetu.stream()
+                .filter((henkiloWithSameHetu) -> henkiloWithSameHetu.getHenkiloTyyppi() == HenkiloTyyppi.VIRKAILIJA)
+                .findAny()
+                .ifPresent((virkailijaWithSameHetu) -> {throw new DuplicateHetuException("Hetu already exists for other virkailija");});
+
+        // Oppija with same hetu => combine
+        henkilosWithSameHetu.stream()
+                .filter((henkiloWithSameHetu) -> henkiloWithSameHetu.getHenkiloTyyppi() == HenkiloTyyppi.OPPIJA)
+                .findAny()
+                .ifPresent((oppijaWithSameHetu) -> {
+                    this.henkiloService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
+                    this.setHetuIfValid(henkiloVahvaTunnistusDto, henkilo);
+                    oppijaWithSameHetu.setHetu(null);
+                });
+
+        // No current hetu and hetu not already used => set hetu
+        Optional.of(henkilosWithSameHetu)
+                .filter(List::isEmpty)
+                .ifPresent((emptyList) -> this.setHetuIfValid(henkiloVahvaTunnistusDto, henkilo));
+    }
+
+
+    private void setHetuIfValid(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
+        Optional.ofNullable(henkilo.getHetu())
+                .filter(StringUtils::hasLength)
+                .filter((hetu) -> !hetu.equals(henkiloVahvaTunnistusDto.getHetu()))
+                .ifPresent((existingDifferentHetu) -> {
+                    throw new DataInconsistencyException("Hetu does not match with the existing one");
+                });
+        Optional<String> validHetu = Optional.ofNullable(henkiloVahvaTunnistusDto.getHetu())
+                .filter((hetu) -> henkilo.getEtunimet().equals(henkiloVahvaTunnistusDto.getEtunimet()))
+                .filter((hetu) -> henkilo.getSukunimi().equals(henkiloVahvaTunnistusDto.getSukunimi()));
+        henkilo.setHetu(validHetu
+                .orElseThrow(() -> new DataInconsistencyException("Etunimet or sukunimi does not match with existing ones")));
     }
 
     private void logFaults(Henkilo henkilo) {
