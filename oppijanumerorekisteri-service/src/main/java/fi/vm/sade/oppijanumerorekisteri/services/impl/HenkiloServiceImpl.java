@@ -591,51 +591,61 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .stream()
                 .map(HenkiloViite::getMasterOid).collect(toSet()));
 
-        java.util.function.Predicate<HenkiloViite> relatesToGivenMaster = viite -> master.getOidHenkilo().equals(viite.getMasterOid());
-
         for (String slaveOid : slaveOids) {
-
-            List<HenkiloViite> existingViittees = this.henkiloViiteRepository.findBySlaveOid(slaveOid);
-            existingViittees.stream().filter(relatesToGivenMaster.negate())
-                    .forEach(viite -> {
-                        // If given slave already linked to another master, update the related (old) master
-                        this.henkiloDataRepository.findByOidHenkilo(viite.getMasterOid()).ifPresent( henkilo -> henkilo.setModified(modificationDate));
-                        // and remove this other viite:
-                        this.henkiloViiteRepository.delete(viite);
-                    });
-
-            if (existingViittees.stream().anyMatch(relatesToGivenMaster)) {
-                // No need to add new viite (already linked to the given master):
-                continue;
-            }
-
-            HenkiloViite viite = new HenkiloViite();
-            viite.setMasterOid(master.getOidHenkilo());
-            viite.setSlaveOid(slaveOid);
-            this.henkiloViiteRepository.save(viite);
-
-            Henkilo duplicateHenkilo = this.henkiloDataRepository.findByOidHenkilo(slaveOid).orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slaveOid) );
-            duplicateHenkilo.setDuplicate(true);
-            duplicateHenkilo.setPassivoitu(true);
-            duplicateHenkilo.setModified(modificationDate);
-
-            // Preserve two-level hierarchy, re-link slave's slaves to new master
-            this.henkiloViiteRepository.findByMasterOid(slaveOid).forEach( slavesSlave -> {
-                if (slavesSlave.getSlaveOid().equals(master.getOidHenkilo())) {
-                    this.henkiloViiteRepository.delete(slavesSlave);
-                } else {
-                    Henkilo slaveSlaveHenkilo = this.henkiloDataRepository.findByOidHenkilo(slavesSlave.getSlaveOid()).orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slavesSlave.getSlaveOid()));
-                    slaveSlaveHenkilo.setModified(modificationDate);
-                    slavesSlave.setMasterOid(master.getOidHenkilo());
-                }
-            });
+            this.linkHenkilos(modificationDate, master, viite -> master.getOidHenkilo().equals(viite.getMasterOid()), slaveOid);
         }
 
         return slaveOids;
     }
 
+    private void linkHenkilos(Date modificationDate,
+                              Henkilo master,
+                              java.util.function.Predicate<HenkiloViite> relatesToGivenMaster,
+                              String slaveOid) {
+        List<HenkiloViite> existingViittees = this.henkiloViiteRepository.findBySlaveOid(slaveOid);
+        existingViittees.stream().filter(relatesToGivenMaster.negate())
+                .forEach(viite -> {
+                    // If given slave already linked to another master, update the related (old) master
+                    this.henkiloDataRepository.findByOidHenkilo(viite.getMasterOid())
+                            .ifPresent( henkilo -> henkilo.setModified(modificationDate));
+                    // and remove this other viite:
+                    this.henkiloViiteRepository.delete(viite);
+                });
+
+        if (existingViittees.stream().anyMatch(relatesToGivenMaster)) {
+            // No need to add new viite (already linked to the given master):
+            return;
+        }
+
+        HenkiloViite viite = new HenkiloViite();
+        viite.setMasterOid(master.getOidHenkilo());
+        viite.setSlaveOid(slaveOid);
+        this.henkiloViiteRepository.save(viite);
+
+        Henkilo duplicateHenkilo = this.henkiloDataRepository.findByOidHenkilo(slaveOid)
+                .orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slaveOid) );
+        duplicateHenkilo.setDuplicate(true);
+        duplicateHenkilo.setPassivoitu(true);
+        // Doesn't throw even if user doesn't exists in kayttooikeus-service
+        this.kayttooikeusClient.passivoiHenkilo(duplicateHenkilo.getOidHenkilo(), this.userDetailsHelper.getCurrentUserOid());
+        duplicateHenkilo.setModified(modificationDate);
+
+        // Preserve two-level hierarchy, re-link slave's slaves to new master
+        this.henkiloViiteRepository.findByMasterOid(slaveOid).forEach( slavesSlave -> {
+            if (slavesSlave.getSlaveOid().equals(master.getOidHenkilo())) {
+                this.henkiloViiteRepository.delete(slavesSlave);
+            } else {
+                Henkilo slaveSlaveHenkilo = this.henkiloDataRepository.findByOidHenkilo(slavesSlave.getSlaveOid())
+                        .orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slavesSlave.getSlaveOid()));
+                slaveSlaveHenkilo.setModified(modificationDate);
+                slavesSlave.setMasterOid(master.getOidHenkilo());
+            }
+        });
+    }
+
     private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
-        Henkilo originalMaster = this.henkiloDataRepository.findByOidHenkilo(henkiloOid).orElseThrow( () -> new NotFoundException("User with oid " + henkiloOid + " was not found"));
+        Henkilo originalMaster = this.henkiloDataRepository.findByOidHenkilo(henkiloOid)
+                .orElseThrow( () -> new NotFoundException("User with oid " + henkiloOid + " was not found"));
         List<Henkilo> candidates = this.henkiloDataRepository.findByOidHenkiloIsIn(similarHenkiloOids);
 
         /* Positively identified Henkilo MUST ALWAYS be the master
