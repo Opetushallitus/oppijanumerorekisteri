@@ -38,7 +38,7 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/css/*").permitAll()
                 .antMatchers("/config/frontProperties").permitAll()
                 .antMatchers("/l10n").permitAll()
-                .antMatchers("/vahvatunnistusinfo").permitAll()
+                .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
                 .antMatchers("/rekisteroidy").permitAll()
                 // Admin domain
                 .antMatchers("/admin/**").hasAuthority("APP_HENKILONHALLINTA_OPHREKISTERI")
