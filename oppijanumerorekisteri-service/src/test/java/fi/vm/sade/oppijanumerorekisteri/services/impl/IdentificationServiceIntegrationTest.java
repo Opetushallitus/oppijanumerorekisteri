@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
@@ -9,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.*;
 
-// Non-transactional in order to emulate how the real method call works.
+// Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
+// See IdentificationServiceIntegrationTest2 if you want to add more tests.
 @RunWith(SpringRunner.class)
 @IntegrationTest
 @Sql("/sql/yksilointi-test.sql")
@@ -41,9 +45,6 @@ public class IdentificationServiceIntegrationTest {
 
     @Autowired
     private IdentificationService identificationService;
-
-    @Autowired
-    private HenkiloRepository henkiloRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -81,17 +82,4 @@ public class IdentificationServiceIntegrationTest {
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
     }
-
-    @Test
-    public void setStrongIdentifiedHetu() {
-        HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("new hetu", "Teppo Taneli", "Testaaja");
-
-        this.identificationService.setStrongIdentifiedHetu("NoHetu", henkiloVahvaTunnistusDto);
-
-        Henkilo henkiloHetuUpdated = (Henkilo)this.entityManager
-                .createNativeQuery("SELECT * FROM henkilo WHERE oidhenkilo = 'NoHetu'", Henkilo.class).getSingleResult();
-        assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("new hetu");
-    }
-
 }

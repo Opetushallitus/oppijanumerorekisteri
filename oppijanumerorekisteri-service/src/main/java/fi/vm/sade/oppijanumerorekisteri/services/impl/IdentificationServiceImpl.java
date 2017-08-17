@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import lombok.RequiredArgsConstructor;
@@ -92,12 +91,14 @@ public class IdentificationServiceImpl implements IdentificationService {
     @Override
     @Transactional
     public void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto) {
-        Henkilo henkilo = this.henkiloRepository.findByOidHenkilo(oidHenkilo)
+        Henkilo henkiloToUpdate = this.henkiloRepository.findByOidHenkilo(oidHenkilo)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
         List<Henkilo> henkilosWithSameHetu = this.henkiloRepository.findByHetu(henkiloVahvaTunnistusDto.getHetu());
+
         // If another virkailija with same hetu exists => error
         henkilosWithSameHetu.stream()
                 .filter((henkiloWithSameHetu) -> henkiloWithSameHetu.getHenkiloTyyppi() == HenkiloTyyppi.VIRKAILIJA)
+                .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
                 .findAny()
                 .ifPresent((virkailijaWithSameHetu) -> {throw new DuplicateHetuException("Hetu already exists for other virkailija");});
 
@@ -106,19 +107,18 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .filter((henkiloWithSameHetu) -> henkiloWithSameHetu.getHenkiloTyyppi() == HenkiloTyyppi.OPPIJA)
                 .findAny()
                 .ifPresent((oppijaWithSameHetu) -> {
-                    this.henkiloService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
-                    this.setHetuIfValid(henkiloVahvaTunnistusDto, henkilo);
                     oppijaWithSameHetu.setHetu(null);
+                    // Hetu is unique so we need to flush when moving it
+                    this.henkiloRepository.saveAndFlush(oppijaWithSameHetu);
+                    this.henkiloService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
                 });
 
         // No current hetu and hetu not already used => set hetu
-        Optional.of(henkilosWithSameHetu)
-                .filter(List::isEmpty)
-                .ifPresent((emptyList) -> this.setHetuIfValid(henkiloVahvaTunnistusDto, henkilo));
+        this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
     }
 
 
-    private void setHetuIfValid(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
+    private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
         Optional.ofNullable(henkilo.getHetu())
                 .filter(StringUtils::hasLength)
                 .filter((hetu) -> !hetu.equals(henkiloVahvaTunnistusDto.getHetu()))
