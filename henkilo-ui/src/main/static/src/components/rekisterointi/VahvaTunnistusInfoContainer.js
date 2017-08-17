@@ -10,13 +10,14 @@ class VahvaTunnistusInfoContainer extends React.Component {
     }
 
     render() {
-        return <VahvaTunnistusInfoPage />;
+        return <VahvaTunnistusInfoPage {...this.props}/>;
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    locale: state.locale,
-    L: state.l10n.localisations[state.locale],
+    L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
+    loginToken: ownProps.params['loginToken'],
+    locale: ownProps.params['locale'],
 });
 
 export default connect(mapStateToProps, {updateNavigation})(VahvaTunnistusInfoContainer);

@@ -28,5 +28,6 @@ cas:
 host:
   host-virkailija: https://{{host_virkailija}}
   host-cas: https://{{host_cas}}
+  host-shibboleth: https://{{host_tunnistus}}
 henkiloui:
   uses-ssl-proxy: true
