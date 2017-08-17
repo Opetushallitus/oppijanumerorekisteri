@@ -84,10 +84,9 @@ public class HenkiloServiceImplTest {
     @Before
     public void setup() {
         impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
-                orikaConfiguration, yhteystietoConverter, oidGenerator,
-                userDetailsHelper, kielisyysRepository, kansalaisuusRepository,
-                permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator, oppijanumerorekisteriProperties,
-                kayttooikeusClient, hakuappClient);
+                kielisyysRepository, kansalaisuusRepository, yhteystietoConverter, orikaConfiguration, oidGenerator,
+                userDetailsHelper,  permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator,
+                oppijanumerorekisteriProperties, kayttooikeusClient, hakuappClient);
     }
 
     @Test

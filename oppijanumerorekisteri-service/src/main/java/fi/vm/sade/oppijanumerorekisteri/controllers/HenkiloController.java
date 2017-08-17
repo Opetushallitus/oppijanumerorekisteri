@@ -350,4 +350,12 @@ public class HenkiloController {
         this.henkiloService.unlinkHenkilo(oid, slaveOid);
     }
 
+    @ApiOperation("Hae käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oidHenkilo, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @RequestMapping(value = "/{oidHenkilo}/asiointiKieli", method = RequestMethod.GET)
+    public String getAsiointikieli(@PathVariable String oidHenkilo,
+                                   @RequestHeader(value = "External-Permission-Service", required = false)
+                                           ExternalPermissionService permissionService) {
+        return this.henkiloService.getAsiointikieli(oidHenkilo);
+    }
 }
