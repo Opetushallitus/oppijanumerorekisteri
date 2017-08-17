@@ -27,7 +27,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +50,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import org.springframework.util.StringUtils;
 
 @Service
+@RequiredArgsConstructor
 public class HenkiloServiceImpl implements HenkiloService {
     private final HenkiloJpaRepository henkiloJpaRepository;
     private final HenkiloRepository henkiloDataRepository;
@@ -64,44 +65,12 @@ public class HenkiloServiceImpl implements HenkiloService {
     private final PermissionChecker permissionChecker;
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final HenkiloCreatePostValidator henkiloCreatePostValidator;
-    private final HakuappClient hakuappClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     private final KayttooikeusClient kayttooikeusClient;
+    private final HakuappClient hakuappClient;
 
-    @Autowired
-    public HenkiloServiceImpl(HenkiloJpaRepository henkiloJpaRepository,
-                              HenkiloRepository henkiloDataRepository,
-                              HenkiloViiteRepository henkiloViiteRepository,
-                              OrikaConfiguration mapper,
-                              YhteystietoConverter yhteystietoConverter,
-                              OidGenerator oidGenerator,
-                              UserDetailsHelper userDetailsHelper,
-                              KielisyysRepository kielisyysRepository,
-                              KansalaisuusRepository kansalaisuusRepository,
-                              PermissionChecker permissionChecker,
-                              HenkiloUpdatePostValidator henkiloUpdatePostValidator,
-                              HenkiloCreatePostValidator henkiloCreatePostValidator,
-                              OppijanumerorekisteriProperties oppijanumerorekisteriProperties,
-                              KayttooikeusClient kayttooikeusClient,
-                              HakuappClient hakuappClient) {
-        this.henkiloJpaRepository = henkiloJpaRepository;
-        this.henkiloDataRepository = henkiloDataRepository;
-        this.henkiloViiteRepository = henkiloViiteRepository;
-        this.yhteystietoConverter = yhteystietoConverter;
-        this.mapper = mapper;
-        this.oidGenerator = oidGenerator;
-        this.userDetailsHelper = userDetailsHelper;
-        this.kielisyysRepository = kielisyysRepository;
-        this.kansalaisuusRepository = kansalaisuusRepository;
-        this.permissionChecker = permissionChecker;
-        this.henkiloUpdatePostValidator = henkiloUpdatePostValidator;
-        this.henkiloCreatePostValidator = henkiloCreatePostValidator;
-        this.oppijanumerorekisteriProperties = oppijanumerorekisteriProperties;
-        this.kayttooikeusClient = kayttooikeusClient;
-        this.hakuappClient = hakuappClient;
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -692,6 +661,14 @@ public class HenkiloServiceImpl implements HenkiloService {
         slave.setPassivoitu(false);
         slave.setModified(modificationDate);
         this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getAsiointikieli(String oidHenkilo) {
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oidHenkilo)
+                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
+        return UserDetailsHelperImpl.getAsiointikieliOrDefault(henkilo);
     }
 
 }
