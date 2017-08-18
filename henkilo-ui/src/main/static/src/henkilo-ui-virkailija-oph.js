@@ -37,7 +37,6 @@ export default {
     "kayttooikeus-service.virkailija-ui.basePath": "kayttooikeus-service/virkailija",
     "kayttooikeus-service.prequel": "kayttooikeus-service/cas/prequel",
     "kayttooikeus-service.anomus.haetut-kayttooikeusryhmat": "kayttooikeus-service/kayttooikeusanomus/haettuKayttoOikeusRyhma",
-    "kayttooikeus-service.cas.tunnistus": "kayttooikeus-service/cas/tunnistus",
 
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
@@ -66,5 +65,6 @@ export default {
 
     "shibboleth.baseUrl": "/",
     "shibboleth.identification": "shibboleth/virkailija$1",
+    "shibboleth.kayttooikeus-service.cas.tunnistus": "kayttooikeus-service/cas/tunnistus",
 
 }
