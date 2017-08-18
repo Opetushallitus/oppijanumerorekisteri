@@ -19,6 +19,7 @@ class RekisteroidyPage extends React.Component {
             etunimi: PropTypes.string.isRequired,
             sukunimi: PropTypes.string.isRequired,
             asiointikieli: PropTypes.string.isRequired,
+            hakaIdentifier: PropTypes.string,
         }).isRequired,
         createHenkiloByToken: PropTypes.func.isRequired,
     };

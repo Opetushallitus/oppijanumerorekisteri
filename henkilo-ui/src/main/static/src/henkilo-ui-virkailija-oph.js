@@ -63,4 +63,8 @@ export default {
     "koodisto-service.koodisto.yhteystietotyypit": "koodisto-service/rest/json/yhteystietotyypit/koodi",
     "koodisto-service.koodisto.maatjavaltiot1": "koodisto-service/rest/json/maatjavaltiot1/koodi",
 
+    "shibboleth.baseUrl": "/",
+    "shibboleth.identification": "shibboleth/virkailija$1",
+    "shibboleth.kayttooikeus-service.cas.tunnistus": "kayttooikeus-service/cas/tunnistus",
+
 }

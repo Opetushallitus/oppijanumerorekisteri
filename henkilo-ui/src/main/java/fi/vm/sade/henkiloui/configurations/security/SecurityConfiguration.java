@@ -116,7 +116,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers("/static/css/*").permitAll()
                     .antMatchers("/config/frontProperties").permitAll()
                     .antMatchers("/l10n").permitAll()
-                    .antMatchers("/vahvatunnistusinfo").permitAll()
+                    .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
                     .antMatchers("/rekisteroidy").permitAll()
                     // Admin domain
                     .antMatchers("/admin/**").hasRole("APP_HENKILONHALLINTA_OPHREKISTERI")

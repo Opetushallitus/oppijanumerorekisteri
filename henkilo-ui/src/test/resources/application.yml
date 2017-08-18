@@ -1,6 +1,7 @@
 host:
   host-virkailija: localhost
   host-cas: localhost
+  host-shibboleth: localhost
 cas:
   ldap:
     url: ldap://localhost
