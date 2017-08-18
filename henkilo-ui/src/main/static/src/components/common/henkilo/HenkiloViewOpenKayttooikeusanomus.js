@@ -115,19 +115,20 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     };
 
     anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx) {
+        const noPermission = this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.kayttoOikeusRyhma.id);
         return <div>
             <div style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
                     'MYONNETTY', idx)}
                               L={this.L}
-                              disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.id)} />
+                              disabled={noPermission} />
             </div>
             <div style={{display: 'table-cell'}}>
                 <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
                     haettuKayttooikeusRyhma.id, 'HYLATTY', idx)}
                               L={this.L}
                               henkilo={this.props.henkilo}
-                              disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.id)} />
+                              disabled={noPermission} />
             </div>
 
         </div>
