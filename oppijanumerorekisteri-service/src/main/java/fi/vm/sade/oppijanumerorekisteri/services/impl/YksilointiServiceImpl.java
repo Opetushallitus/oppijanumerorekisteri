@@ -109,7 +109,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     @Override
     @Transactional
-    public HenkiloDto hetuttomanYksilointi(String henkiloOid) {
+    public Henkilo hetuttomanYksilointi(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
         if(!StringUtils.isEmpty(henkilo.getHetu())) {
             throw new IllegalArgumentException("Henkilöllä " + henkilo.getOidHenkilo() + " on hetu. Henkilöä ei voi yksilöidä hetuttomana.");
@@ -120,9 +120,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setModified(new Date());
         henkilo.setKasittelijaOid(this.userDetailsHelper.getCurrentUserOid());
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
-        HenkiloDto henkiloDto = new HenkiloDto();
-        mapper.map(henkilo, henkiloDto);
-        return henkiloDto;
+        return henkilo;
     }
 
     private Henkilo hetullisenYksilointi(Henkilo henkilo) {
@@ -374,7 +372,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     @Override
     @Transactional
-    public HenkiloDto puraHeikkoYksilointi(final String henkiloOid) {
+    public Henkilo puraHeikkoYksilointi(final String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
         if(!henkilo.isYksiloity() || henkilo.isYksiloityVTJ()) {
             throw new IllegalArgumentException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
@@ -387,9 +385,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setModified(new Date());
         }
 
-        HenkiloDto henkiloDto = new HenkiloDto();
-        mapper.map(henkilo, henkiloDto);
-        return henkiloDto;
+        return henkilo;
     }
 
     @Override

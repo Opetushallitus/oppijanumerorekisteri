@@ -295,9 +295,9 @@ public class HenkiloController {
             @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
             @Authorization("ROLE_APP_HENKILONHALLINTA_KKVASTUU"),
             @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI")})
-    public HenkiloDto yksiloiHetuton(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
+    public void yksiloiHetuton(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
     @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.yksilointiService.hetuttomanYksilointi(henkiloOid);
+        this.yksilointiService.hetuttomanYksilointi(henkiloOid);
     }
 
 
@@ -306,8 +306,8 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilön yksilöinnin purku.",
             notes = "Purkaa hetuttoman henkilön yksilöinnin",
             authorizations = {@Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI")})
-    public HenkiloDto puraYksilointi(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid) {
-        return this.yksilointiService.puraHeikkoYksilointi(henkiloOid);
+    public void puraYksilointi(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid) {
+        this.yksilointiService.puraHeikkoYksilointi(henkiloOid);
     }
 
     @PutMapping("/{oid}/yksilointitiedot")

@@ -27,7 +27,9 @@ public class YksilointiServiceTest {
     private YksilointiService yksilointiService;
 
     private final String henkiloOid = "1.2.246.562.24.27470134096";
+    private final String hetutonHenkiloOid = "1.2.246.562.24.27470134097";
     private Henkilo henkilo;
+    private Henkilo hetutonHenkilo;
 
     @Before
     public void setup() {
@@ -62,11 +64,17 @@ public class YksilointiServiceTest {
         when(kansalaisuusRepository.findOrCreate(anyString()))
                 .thenReturn(EntityUtils.createKansalaisuus("246"));
 
-        String hetu = "010101-123N";
+        String hetu = "010101-123N§";
         this.henkilo = EntityUtils.createHenkilo("Teppo Taneli", "Teppo", "Testaaja", hetu, this.henkiloOid,
                 false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(),
                 "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1990, 3, 23));
-        when(henkiloRepository.findByOidHenkilo(anyString())).thenReturn(Optional.of(this.henkilo));
+
+        this.hetutonHenkilo = EntityUtils.createHenkilo("Heikki Hetuton", "Teppo", "Testaaja", null, this.henkiloOid,
+                false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(),
+                "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1990, 3, 23));
+
+        when(henkiloRepository.findByOidHenkilo(henkiloOid)).thenReturn(Optional.of(henkilo));
+        when(henkiloRepository.findByOidHenkilo(hetutonHenkiloOid)).thenReturn(Optional.of(hetutonHenkilo));
     }
 
     @Test
@@ -190,6 +198,24 @@ public class YksilointiServiceTest {
     }
 
     @Test
-    public void
+    public void hetuttomanYksilointiOnnistuu() {
+        Date before = new Date();
+        Henkilo hlo = yksilointiService.hetuttomanYksilointi(this.hetutonHenkiloOid);
+        assertThat(hlo.getHetu()).isNullOrEmpty();
+        assertThat(hlo.isYksiloity()).isTrue();
+        assertThat(hlo.getModified()).isAfterOrEqualsTo(before);
+        assertThat(hlo.isDuplicate()).isFalse();
+        assertThat(hlo.getOppijanumero()).isEqualTo(hetutonHenkiloOid);
+    }
+
+    @Test
+    public void hetuttomanYksiloinninPurkaminenOnnistuu() {
+        yksilointiService.hetuttomanYksilointi(hetutonHenkiloOid);
+        Date before = new Date();
+        Henkilo purettu = yksilointiService.puraHeikkoYksilointi(hetutonHenkiloOid);
+        assertThat(purettu.isYksiloity()).isFalse();
+        assertThat(purettu.getModified()).isAfterOrEqualsTo(before);
+    }
+
 
 }

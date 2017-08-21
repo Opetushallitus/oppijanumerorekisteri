@@ -12,9 +12,9 @@ public interface YksilointiService {
 
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 
-    HenkiloDto hetuttomanYksilointi(String henkiloOid);
+    Henkilo hetuttomanYksilointi(String henkiloOid);
 
-    HenkiloDto puraHeikkoYksilointi(final String henkiloOid);
+    Henkilo puraHeikkoYksilointi(final String henkiloOid);
 
     /**
      * Päivittään yksilöidyn henkilön tiedot VTJ:stä.
