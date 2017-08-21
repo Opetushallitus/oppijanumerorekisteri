@@ -1,13 +1,14 @@
+import "./RekisteroidyPage.css"
 import React from 'react'
 import PropTypes from 'prop-types'
-import Columns from 'react-columns'
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot'
-import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import RekisteroidyOrganisaatiot from "./content/RekisteroidyOrganisaatiot";
 import StaticUtils from "../common/StaticUtils";
 import Button from "../common/button/Button";
 import PropertySingleton from "../../globals/PropertySingleton"
-import Loader from "../common/icons/Loader";
+import RekisteroidyHaka from "./content/RekisteroidyHaka";
+import Modal from "../common/modal/Modal";
+import LoadingBarTimer from "../common/loadingbar/LoadingBarTimer";
 
 class RekisteroidyPage extends React.Component {
     static propTypes = {
@@ -43,30 +44,47 @@ class RekisteroidyPage extends React.Component {
         };
     }
 
+    componentWillMount() {
+        if(this.props.kutsu.hakaIdentifier) {
+            this.createHenkilo();
+        }
+    }
+
     render() {
-        return <div className="borderless-wrapper">
-            <div className="header">
+        return <div className="borderless-colored-wrapper rekisteroidy-page">
+            <div className="header-borderless">
                 <p className="oph-h2 oph-bold">{this.props.L['REKISTEROIDY_OTSIKKO']}</p>
             </div>
-            <Columns columns={2} gap="25px">
-                <div>
+            <div className="wrapper">
+                <RekisteroidyOrganisaatiot organisaatiot={this.props.kutsu.organisaatiot} />
+            </div>
+            <div className="flex-horizontal">
+                <div className="wrapper flex-item-1">
                     <RekisteroidyPerustiedot henkilo={{henkilo: this.state.henkilo}}
+                                             koodisto={this.props.koodisto}
                                              updatePayloadModel={this.updatePayloadModelInput.bind(this)} />
-                </div>
-                <div>
-                    <RekisteroidyOrganisaatiot organisaatiot={this.props.kutsu.organisaatiot} />
-                </div>
-            </Columns>
-            <Asiointikieli koodisto={this.props.koodisto}
-                           henkiloUpdate={this.state.henkilo}
-                           updateModelFieldAction={this.updatePayloadModelInput.bind(this)} />
-            {
-                this.props.authToken !== ''
-                    ? <div>{this.props.L['REKISTEROIDY_ODOTTAA_SYNKRONOINTIA']} <Loader /></div>
-                    : <Button action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} >
+                    <Button action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} >
                         {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
                     </Button>
-            }
+                </div>
+                <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
+                    <span className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_VALITSE']}</span>
+                </div>
+                <div className="wrapper flex-item-1">
+                    <RekisteroidyHaka henkilo={{henkilo: this.state.henkilo}}
+                                      koodisto={this.props.koodisto}
+                                      updatePayloadModel={this.updatePayloadModelInput.bind(this)}
+                                      temporaryKutsuToken={this.props.kutsu.temporaryToken}
+                    />
+                </div>
+            </div>
+            <Modal show={this.props.authToken !== ''} closeOnOuterClick={false} onClose={() => {}}>
+                <div className="rekisteroidy-modal">
+                    <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_ODOTTAA_SYNKRONOINTIA_OTSIKKO']}</p>
+                    <p className="oph-h6 oph-bold">{this.props.L['REKISTEROIDY_ODOTTAA_SYNKRONOINTIA_TEKSTI']}</p>
+                    <LoadingBarTimer timeInSeconds={60} restartAfterFinished={true} />
+                </div>
+            </Modal>
         </div>;
     }
 
@@ -92,6 +110,11 @@ class RekisteroidyPage extends React.Component {
     createHenkilo() {
         const payload = {...this.state.henkilo};
         this.props.createHenkiloByToken(this.props.kutsu.temporaryToken, payload);
+    }
+
+    updateProgress() {
+        this.setState({progress: this.state.progress+.1});
+        return this.state.progress;
     }
 }
 

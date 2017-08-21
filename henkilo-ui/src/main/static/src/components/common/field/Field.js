@@ -27,7 +27,7 @@ class Field extends React.Component {
             {'field': true,
             [`${this.props.className}`]: this.props.className,
             'readOnly': this.props.readOnly,
-            'oph-input': !this.props.readOnly && !this.props.data});
+            'oph-input': !this.props.readOnly && !this.props.data},);
         const type = {type: this.props.password ? 'password' : false};
         return (
             this.props.readOnly

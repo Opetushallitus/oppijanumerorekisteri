@@ -18,7 +18,16 @@ const Salasana = (props) => <div>
         disabled: props.disabled,
         password: true,
     }} />
-    <span className="oph-h6">{props.L['REKISTEROIDY_PASSWORD_TEXT']}</span>
+    <LabelValue {...props}
+                readOnly={true}
+                required={false}
+                hideLabel={true}
+                values={{
+                    label: 'EMPTY_PLACEHOLDER',
+                    value: props.L['REKISTEROIDY_PASSWORD_TEXT'],
+                    className: 'oph-h6',
+                }}
+    />
 </div>;
 
 Salasana.propTypes = {

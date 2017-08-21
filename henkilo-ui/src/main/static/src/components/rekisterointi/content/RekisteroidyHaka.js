@@ -1,12 +1,10 @@
 import React from 'react'
+import {urls} from 'oph-urls-js';
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import Etunimet from "../../common/henkilo/labelvalues/Etunimet";
-import Sukunimi from "../../common/henkilo/labelvalues/Sukunimi";
-import Kutsumanimi from "../../common/henkilo/labelvalues/Kutsumanimi";
-import Kayttajanimi from "../../common/henkilo/labelvalues/Kayttajanimi";
-import Salasana from "../../common/henkilo/labelvalues/Salasana";
 import Asiointikieli from "../../common/henkilo/labelvalues/Asiointikieli";
+import IconButton from "../../common/button/IconButton";
+import HakaIcon from "../../common/icons/HakaIcon";
 
 class RekisteroidyPerustiedot extends React.Component {
     static propTypes = {
@@ -24,22 +22,19 @@ class RekisteroidyPerustiedot extends React.Component {
         koodisto: PropTypes.shape({
             kieli: PropTypes.array.isRequired,
         }).isRequired,
+        temporaryKutsuToken: PropTypes.string.isRequired,
     };
 
     render() {
-        const henkilo = this.props.henkilo;
+        const hakaLoginUrl = urls.url('cas.haka', {temporaryToken: this.props.temporaryKutsuToken} || {});
         return <div>
-            <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
-            <Etunimet henkilo={henkilo} readOnly={true} />
-            <Sukunimi henkilo={henkilo} readOnly={true} />
-            <Kutsumanimi readOnly={false} autoFocus henkilo={henkilo} updateModelFieldAction={this.props.updatePayloadModel} />
-            <Kayttajanimi disabled={false}
-                          henkilo={{kayttajatieto: {username: henkilo.henkilo.kayttajanimi}}}
-                          updateModelFieldAction={this.props.updatePayloadModel} />
-            <Salasana disabled={false} updateModelFieldAction={this.props.updatePayloadModel} />
+            <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
             <Asiointikieli koodisto={this.props.koodisto}
                            henkiloUpdate={this.props.henkilo.henkilo}
                            updateModelFieldAction={this.props.updatePayloadModel} />
+            <IconButton href={hakaLoginUrl}>
+                <HakaIcon />
+            </IconButton>
         </div>
     }
 }

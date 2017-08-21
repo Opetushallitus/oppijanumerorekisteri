@@ -1,0 +1,11 @@
+.rekisteroidy-page .modal .rekisteroidy-modal {
+    width: 50%;
+    position: relative;
+    margin: 2em auto;
+    padding: 2em;
+    background: #ffffff;
+}
+
+.rekisteroidy-modal p {
+    text-align: center;
+}

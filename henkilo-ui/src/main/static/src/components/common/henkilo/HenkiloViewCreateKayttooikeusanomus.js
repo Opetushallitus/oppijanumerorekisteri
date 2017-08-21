@@ -113,7 +113,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                             return (
                                 <li key={index}>
                                     {kayttooikeusRyhmaSelection.label}
-                                    <IconButton clearAction={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
+                                    <IconButton onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
                                        <CrossCircleIcon />
                                     </IconButton>
                                 </li>

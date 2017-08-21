@@ -10,7 +10,7 @@ const wrapperStyles = {
   background: 'rgba(0, 0, 0, 0.8)',
   zIndex: 99999,
   pointerEvents: 'auto',
-  overflowY: 'auto'
+  overflowY: 'auto',
 };
 
 export default class Modal extends React.Component {
@@ -23,12 +23,12 @@ export default class Modal extends React.Component {
   render() {
     if (this.props.show) {
       return (
-        <div
-          style={wrapperStyles}
-          onClick={this.hideOnOuterClick.bind(this)}
-          data-modal="true">
-          {this.props.children}
-        </div>
+          <div className="modal"
+               style={wrapperStyles}
+               onClick={this.hideOnOuterClick.bind(this)}
+               data-modal="true">
+              {this.props.children}
+          </div>
       )
     } else {
       return null
