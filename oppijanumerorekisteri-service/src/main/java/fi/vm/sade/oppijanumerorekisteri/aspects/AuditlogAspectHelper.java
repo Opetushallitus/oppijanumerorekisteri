@@ -77,6 +77,22 @@ public class AuditlogAspectHelper {
         finishLogging(logMessage);
     }
 
+    void logHetuttomanYksilointi(String henkiloOid, Object result) {
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Yksilöidään hetuton henkilo.")
+                .setOperaatio(OppijanumerorekisteriOperation.HETUTTOMAN_YKSILOINTI);
+        finishLogging(logMessage);
+    }
+
+    void logPuraYksilointi(String henkiloOid, Object result) {
+        LogMessage.LogMessageBuilder logMessage = builder()
+                .kohdehenkiloOid(henkiloOid)
+                .lisatieto("Puretaan hetuttoman henkilon yksilointi.")
+                .setOperaatio(OppijanumerorekisteriOperation.PURA_HETUTTOMAN_YKSILOINTI);
+        finishLogging(logMessage);
+    }
+
     void logEnableYksilointi(String henkiloOid, String palvelutunniste, Object result) {
         LogMessage.LogMessageBuilder logMessage = builder()
                 .kohdehenkiloOid(henkiloOid)

@@ -3,12 +3,14 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -51,7 +53,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
-
+    private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
 
     private final VtjClient vtjClient;
@@ -87,6 +89,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Override
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
+
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
 
         if (!StringUtils.isEmpty(henkilo.getHetu())) {
@@ -101,7 +104,41 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         return henkilo;
+
     }
+
+    @Override
+    @Transactional
+    public HenkiloDto hetuttomanYksilointi(String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if(!StringUtils.isEmpty(henkilo.getHetu())) {
+            throw new IllegalArgumentException("Henkilöllä " + henkilo.getOidHenkilo() + " on hetu. Henkilöä ei voi yksilöidä hetuttomana.");
+        }
+
+        henkilo.setYksiloity(true);
+        henkilo.setDuplicate(false);
+        henkilo.setModified(new Date());
+        henkilo.setKasittelijaOid(this.userDetailsHelper.getCurrentUserOid());
+        henkilo.setOppijanumero(henkilo.getOidHenkilo());
+        HenkiloDto henkiloDto = new HenkiloDto();
+        mapper.map(henkilo, henkiloDto);
+        return henkiloDto;
+    }
+
+    private Henkilo hetullisenYksilointi(Henkilo henkilo) {
+
+        henkilo = yksiloiHenkilo(henkilo);
+
+        // Remove yksilointitieto if henkilo was yksiloity succesfully.
+        if (henkilo != null && henkilo.isYksiloityVTJ() && henkilo.getYksilointitieto() != null) {
+            yksilointitietoRepository.delete(henkilo.getYksilointitieto());
+            henkilo.setYksilointitieto(null);
+            henkilo.setModified(new Date());
+        }
+
+        return henkilo;
+    }
+
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
         /* VTJ data for Henkilo contains a huge data set and parsing this data
@@ -333,6 +370,26 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .filter(stringNotEmpty)
                 .filter(hetu -> !hetu.equals(original))
                 .ifPresent(consumer);
+    }
+
+    @Override
+    @Transactional
+    public HenkiloDto puraHeikkoYksilointi(final String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if(!henkilo.isYksiloity() || henkilo.isYksiloityVTJ()) {
+            throw new IllegalArgumentException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
+        }
+
+        if(!StringUtils.isEmpty(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
+            throw new RuntimeException("Yksilöinnin purku epäonnistui");
+        } else {
+            henkilo.setYksiloity(false);
+            henkilo.setModified(new Date());
+        }
+
+        HenkiloDto henkiloDto = new HenkiloDto();
+        mapper.map(henkilo, henkiloDto);
+        return henkiloDto;
     }
 
     @Override

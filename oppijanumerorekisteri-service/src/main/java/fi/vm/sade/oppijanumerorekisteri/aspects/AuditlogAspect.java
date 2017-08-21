@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -67,6 +68,22 @@ public class AuditlogAspect {
     private Object logYksiloiManuaalisesti(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
         auditlogAspectHelper.logInitiateYksilointi(henkiloOid, result);
+        return result;
+    }
+
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.YksilointiService.hetuttomanYksilointi(*))" +
+            "&& args(henkiloOid)", argNames = "proceedingJoinPoint, henkiloOid")
+    private Object logHetuttomanYksilointi(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid) throws Throwable {
+        Object result = proceedingJoinPoint.proceed();
+        auditlogAspectHelper.logHetuttomanYksilointi(henkiloOid, result);
+        return result;
+    }
+
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.YksilointiService.puraHeikkoYksilointi(*))" +
+    "&& args(henkiloOid)", argNames = "proceedingJoinPoint, henkiloOid")
+    private Object logPuraHeikkoYksilointi(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid) throws Throwable {
+        Object result = proceedingJoinPoint.proceed();
+        auditlogAspectHelper.logPuraYksilointi(henkiloOid, result);
         return result;
     }
 
