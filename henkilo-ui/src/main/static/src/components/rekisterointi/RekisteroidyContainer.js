@@ -10,7 +10,7 @@ import Button from "../common/button/Button";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
-        this.props.updateNavigation(emptyNavi);
+        this.props.updateNavigation(emptyNavi, null, '#f6f4f0');
 
         this.props.fetchKieliKoodisto();
         this.props.fetchKutsuByToken(this.props.temporaryToken);

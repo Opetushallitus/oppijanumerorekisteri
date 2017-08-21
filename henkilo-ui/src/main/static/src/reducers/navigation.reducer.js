@@ -3,11 +3,11 @@ import {mainNavigation} from "../configuration/navigationconfigurations";
 
 const locationChanges = (state, action) => state.naviTabs.map(naviTab => naviTab.path).indexOf(action.payload.pathname) === -1;
 
-export const naviState = (state = {naviTabs: [], backButton: null}, action) => {
+export const naviState = (state = {naviTabs: [], backButton: null,}, action) => {
     switch (action.type) {
         case UPDATE_NAVIGATION:
-            // If component has updated navibar on mount
-            document.body.bgColor = action.naviTabs.length ? "#f6f4f0" : "white";
+            // If bgColor is not provided guess by if component has updated navibar on mount
+            document.body.bgColor = action.bgColor ? action.bgColor : action.naviTabs.length ? "#f6f4f0" : "white";
             return Object.assign({}, state, {naviTabs: action.naviTabs, backButton: action.backLocation});
         case LOCATION_CHANGE:
             // Default navigation always before component mounts (only if location changes)
