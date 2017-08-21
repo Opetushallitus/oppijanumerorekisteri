@@ -11,6 +11,7 @@ import {
     UPDATE_PASSWORD_SUCCESS, UPDATE_PASSWORD_FAILURE, YKSILOI_HENKILO_FAILURE,
     YKSILOI_HENKILO_REQUEST,
     YKSILOI_HENKILO_SUCCESS,
+    PURA_YKSILOINTI_REQUEST, PURA_YKSILOINTI_SUCCESS, PURA_YKSILOINTI_FAILURE,
     FETCH_HENKILO_ORGANISAATIOS_REQUEST,
     FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_FAILURE, VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
@@ -106,10 +107,28 @@ const errorYksiloiHenkilo = (error) => ({type: YKSILOI_HENKILO_FAILURE,
     buttonNotification: {position: 'yksiloi', notL10nMessage: 'YKSILOI_ERROR_TOPIC', notL10nText: 'YKSILOI_ERROR_TEXT'},});
 export const yksiloiHenkilo = (oid,) => (dispatch => {
     dispatch(requestYksiloiHenkilo(oid));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi', oid);
-    http.post(url).then(() => {dispatch(receiveYksiloiHenkilo(oid))})
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloihetuton', oid);
+    http.post(url).then(() => {
+        dispatch(receiveYksiloiHenkilo(oid));
+        dispatch(fetchHenkilo(oid))})
         .catch(e => dispatch(errorYksiloiHenkilo(e)));
 });
+
+const requestPuraYksilointi = (oid) => ({type: PURA_YKSILOINTI_REQUEST, oid});
+const receivePuraYksilointi = (oid) => ({type: PURA_YKSILOINTI_SUCCESS, oid});
+const errorPuraYksilointi = (error) => ({type: PURA_YKSILOINTI_FAILURE});
+export const puraYksilointi = (oid) => async (dispatch) => {
+    dispatch(requestPuraYksilointi(oid));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi.pura', oid);
+    try {
+        await http.post(url);
+        receivePuraYksilointi(oid);
+        dispatch(fetchHenkilo(oid))
+    } catch (error) {
+        errorPuraYksilointi(error);
+        console.error(`Pura yksilointi failed for henkilo ${oid} - ${error}`);
+    }
+};
 
 const requestOverrideHenkiloVtjData = (oid) => ({type: VTJ_OVERRIDE_HENKILO_REQUEST, oid});
 const receiveOverrideHenkiloVtjData = (oid) => ({type: VTJ_OVERRIDE_HENKILO_SUCCESS, oid, receivedAt: Date.now()});

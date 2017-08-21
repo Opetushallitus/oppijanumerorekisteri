@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
 
 const YksiloiHetutonButton = ({henkilo, L, yksiloiAction}) =>
-    !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.hetu
+    !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.hetu && !henkilo.henkilo.yksiloity
         ? <ConfirmButton key="yksilointi"
                          action={() => yksiloiAction(henkilo.henkilo.oidHenkilo)}
                          normalLabel={L['YKSILOI_LINKKI']}

@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, overrideHenkiloVtjData, fetchHenkiloSlaves,
+    updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, puraYksilointi, overrideHenkiloVtjData, fetchHenkiloSlaves,
     unlinkHenkilo, clearHenkilo
 } from "../../actions/henkilo.actions";
 import {
@@ -37,6 +37,7 @@ import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import AdminViewPage from "./AdminViewPage";
 import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
 import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
+import PuraHetuttomanYksilointiButton from "../common/henkilo/buttons/PuraHetuttomanYksilointi";
 
 
 class AdminViewContainer extends React.Component {
@@ -102,14 +103,21 @@ class AdminViewContainer extends React.Component {
         };
 
         // Basic info default buttons
-        this._readOnlyButtons = (edit) => [
-            <EditButton editAction={edit} L={this.L} />,
-            <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo} L={this.L} />,
-            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
-            <HakaButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} L={this.L} />,
-            <VtjOverrideButton henkilo={this.props.henkilo} L={this.L} overrideAction={this.props.overrideHenkiloVtjData} />,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
-        ];
+        this._readOnlyButtons = (edit) => ([
+                <EditButton editAction={edit} L={this.L}/>,
+                <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo}
+                                      L={this.L}/>,
+                <PuraHetuttomanYksilointiButton puraYksilointiAction={this.props.puraYksilointi} henkilo={this.props.henkilo} L={this.L}>
+                </PuraHetuttomanYksilointiButton>,
+                <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
+                <HakaButton oidHenkilo={this.props.oidHenkilo}
+                            styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} L={this.L}/>,
+                <VtjOverrideButton henkilo={this.props.henkilo} L={this.L}
+                                   overrideAction={this.props.overrideHenkiloVtjData}/>,
+                <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
+                                styles={{top: '3rem', left: '0', width: '18rem'}}/>,
+            ]);
+
 
     };
 }
@@ -125,13 +133,13 @@ const mapStateToProps = (state, ownProps) => {
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
-        ownOid: state.omattiedot.data.oid,
+        ownOid: state.omattiedot.data.oid
     };
 };
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKieliKoodisto,
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
-    fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
+    fetchKayttajatieto, updatePassword, passivoiHenkilo, yksiloiHenkilo, puraYksilointi, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
     addKayttooikeusToHenkilo, removeNotification, overrideHenkiloVtjData, removePrivilege, fetchHenkiloSlaves, unlinkHenkilo,
