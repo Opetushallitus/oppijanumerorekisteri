@@ -14,7 +14,6 @@ class RekisteroidyContainer extends React.Component {
 
         this.props.fetchKieliKoodisto();
         this.props.fetchKutsuByToken(this.props.temporaryToken);
-
     }
     constructor(props) {
         super(props);

@@ -44,6 +44,12 @@ class RekisteroidyPage extends React.Component {
         };
     }
 
+    componentWillMount() {
+        if(this.props.kutsu.hakaIdentifier) {
+            this.createHenkilo();
+        }
+    }
+
     render() {
         return <div className="borderless-colored-wrapper rekisteroidy-page">
             <div className="header-borderless">
@@ -67,7 +73,9 @@ class RekisteroidyPage extends React.Component {
                 <div className="wrapper flex-item-1">
                     <RekisteroidyHaka henkilo={{henkilo: this.state.henkilo}}
                                       koodisto={this.props.koodisto}
-                                      updatePayloadModel={this.updatePayloadModelInput.bind(this)} />
+                                      updatePayloadModel={this.updatePayloadModelInput.bind(this)}
+                                      temporaryKutsuToken={this.props.kutsu.temporaryToken}
+                    />
                 </div>
             </div>
             <Modal show={this.props.authToken !== ''} closeOnOuterClick={false} onClose={() => {}}>

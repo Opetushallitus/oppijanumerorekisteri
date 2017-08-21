@@ -52,8 +52,8 @@ class HenkiloViewContactContent extends React.Component{
                 <div key={idx}>
                     <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} {
                         !this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly
-                            ? <IconButton clearAction={() =>
-                            this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} >
+                            ? <IconButton onClick={() =>
+                                this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} >
                             <CrossIcon />
                         </IconButton>
                             : null

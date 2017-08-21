@@ -2,6 +2,7 @@ export default {
     "cas.baseUrl": "/",
     "cas.login": "/cas/login",
     "cas.me": "cas/me",
+    "cas.haka": "service-provider-app",
 
     "henkilo-ui.baseUrl": "/",
     "henkilo-ui.l10n": "henkilo-ui/l10n",
