@@ -109,9 +109,9 @@ class HenkilohakuPage extends React.Component {
 
     render() {
         return <div className="borderless-wrapper">
-            {this.props.notifications.filter(notification => notification.type === 'error').map(notification =>
-                <WideRedNotification closeAction={() => this.props.removeNotification('error', 'henkilohakuNotifications', 'HENKILOHAKU_ERROR')}
-                                     message={this.L[notification.notL10nMessage]} /> )
+            {this.props.notifications.filter(notification => notification.type === 'error').map( (notification, index) =>
+                <WideRedNotification key={index} closeAction={() => this.props.removeNotification('error', 'henkilohakuNotifications', 'HENKILOHAKU_ERROR')}
+                                     message={this.L[notification.notL10nMessage]} />)
             }
             <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
             <DelayedSearchInput setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
