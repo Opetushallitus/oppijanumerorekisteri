@@ -140,6 +140,18 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_henkilo_yksilointi_synkronointi"))
     private Set<YksilointiSynkronointi> yksilointiSynkronoinnit;
 
+    /**
+     * Oppijan organisaatiot. Huom! virkailijan organisaatiot ovat
+     * käyttöoikeuspalvelussa.
+     */
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @JoinTable(name = "henkilo_organisaatio",
+            joinColumns = @JoinColumn(name = "henkilo_id", referencedColumnName = "id"),
+            foreignKey = @ForeignKey(name = "fk_henkilo_organisaatio_henkilo"),
+            inverseJoinColumns = @JoinColumn(name = "organisaatio_id", referencedColumnName = "id"),
+            inverseForeignKey = @ForeignKey(name = "fk_henkilo_organisaatio_organisaatio"))
+    private Set<Organisaatio> organisaatiot;
+
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
     }
@@ -193,6 +205,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public Boolean isNotBlackListed() {
         return !isEiYksiloida();
+    }
+
+    public boolean addOrganisaatio(Organisaatio organisaatio) {
+        if (organisaatiot == null) {
+            organisaatiot = new HashSet<>();
+        }
+        return organisaatiot.add(organisaatio);
     }
 
     // Initialize default values for lombok builder
