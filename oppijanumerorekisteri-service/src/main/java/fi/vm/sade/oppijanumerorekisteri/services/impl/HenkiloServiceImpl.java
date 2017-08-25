@@ -13,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
@@ -272,14 +271,6 @@ public class HenkiloServiceImpl implements HenkiloService {
         return henkiloJpaRepository.findOidHetuNimiByHetu(hetu).orElseThrow(NotFoundException::new);
     }
 
-    private Optional<Henkilo> getHenkiloByHetu(String hetu) {
-        List<Henkilo> henkiloListByHetu = this.henkiloDataRepository.findByHetu(hetu);
-        if (henkiloListByHetu.size() > 1) {
-            throw new DuplicateHetuException("Duplicate hetus found. Result would be undeterministic.");
-        }
-        return henkiloListByHetu.stream().findFirst();
-    }
-
     @Override
     @Transactional
     public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
@@ -293,7 +284,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 dto -> Optional.ofNullable(dto.getOidHenkilo()).flatMap(oid -> Optional.of(getEntityByOid(oid))),
                 dto -> Optional.ofNullable(dto.getExternalIds()).flatMap(externalIds -> findUnique(henkiloJpaRepository.findByExternalIds(externalIds))),
                 dto -> Optional.ofNullable(dto.getIdentifications()).flatMap(identifications -> findUnique(henkiloJpaRepository.findByIdentifications(identifications))),
-                dto -> Optional.ofNullable(dto.getHetu()).flatMap(this::getHenkiloByHetu)
+                dto -> Optional.ofNullable(dto.getHetu()).flatMap(henkiloDataRepository::findByHetu)
         ).map(transformer -> transformer.apply(henkiloPerustietoDto))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -550,7 +541,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloReadDto getByHetu(String hetu) {
-        Henkilo henkilo = this.getHenkiloByHetu(hetu)
+        Henkilo henkilo = henkiloDataRepository.findByHetu(hetu)
                 .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
         return mapper.map(henkilo, HenkiloReadDto.class);
     }

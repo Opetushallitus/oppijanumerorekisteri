@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 // Note: can return only Henkilo objects
 @Transactional(propagation = Propagation.MANDATORY)
@@ -21,5 +20,5 @@ public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaReposit
 
     Optional<Henkilo> findByOidHenkilo(String henkiloOid);
 
-    List<Henkilo> findByHetu(String hetu);
+    Optional<Henkilo> findByHetu(String hetu);
 }

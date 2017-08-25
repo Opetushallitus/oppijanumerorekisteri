@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
@@ -134,12 +133,6 @@ public class GlobalExceptionHandler {
         body.put("field", fieldError.getField());
         body.put("rejectedValue", fieldError.getRejectedValue());
         return body;
-    }
-
-    @ExceptionHandler(DuplicateHetuException.class)
-    public ResponseEntity<Map<String, Object>> internalErrorDuplicateHetuException(DuplicateHetuException exception, HttpServletRequest request) {
-        logger.error(exception.getMessage(), exception);
-        return constructErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler(DataInconsistencyException.class)
