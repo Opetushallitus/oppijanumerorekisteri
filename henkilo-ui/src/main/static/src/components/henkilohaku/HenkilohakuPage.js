@@ -8,6 +8,7 @@ import DelayedSearchInput from "./DelayedSearchInput";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
 import Loader from "../common/icons/Loader";
+import R from 'ramda';
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -66,7 +67,7 @@ class HenkilohakuPage extends React.Component {
         this.state = {
             henkilohakuModel: {
                 ...props.initialCriteria,
-                organisaatioOid: undefined,
+                organisaatioOids: undefined,
                 kayttooikeusryhmaId: undefined,
                 nameQuery: undefined,
             },
@@ -125,8 +126,8 @@ class HenkilohakuPage extends React.Component {
                                 l10n={this.props.l10n}
                                 locale={this.props.locale}
                                 organisaatioList={this.props.henkilo.henkiloOrganisaatios}
-                                selectedOrganisation={this.state.henkilohakuModel.organisaatioOid}
-                                organisaatioSelectAction={this.updateToSearchModel('organisaatioOid').bind(this)}
+                                selectedOrganisation={this.state.henkilohakuModel.organisaatioOids}
+                                organisaatioSelectAction={this.updateToSearchModel('organisaatioOids').bind(this)}
                                 kayttooikeusryhmas={this.props.kayttooikeusryhmas}
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
@@ -209,16 +210,23 @@ class HenkilohakuPage extends React.Component {
         }
         const queryParams = {};
         if(this.state.henkilohakuModel.nameQuery
-            || this.state.henkilohakuModel.organisaatioOid
+            || this.state.henkilohakuModel.organisaatioOids
             || this.state.henkilohakuModel.kayttooikeusryhmaId) {
             this.setState({page: this.state.page+1},
-                () => this.props.henkilohakuAction(this.state.henkilohakuModel,
+                () => {
+
+                // turn organisaatioOids to array
+                const henkiloHakuModel = R.clone(this.state.henkilohakuModel);
+                henkiloHakuModel.organisaatioOids = henkiloHakuModel.organisaatioOids ? [henkiloHakuModel.organisaatioOids] : undefined;
+
+                return this.props.henkilohakuAction(henkiloHakuModel,
                     Object.assign(queryParams, {
                         offset: shouldNotClear ? 100*this.state.page : 0,
                         orderBy: this.state.sorted.length
                             ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC")
                             : undefined,
-                    })));
+                    }))
+        });
         }
     };
 

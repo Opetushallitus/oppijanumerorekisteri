@@ -17,7 +17,7 @@ class HenkilohakuContainer extends React.Component {
     constructor(props) {
         super(props);
 
-        this.initialCriteria = this.props.isAdmin
+        this.initialCriteria = this.props.omattiedot.isAdmin
             ? {
                 noOrganisation: true,
                 subOrganisation: true,
@@ -26,7 +26,7 @@ class HenkilohakuContainer extends React.Component {
             }
             : {
                 noOrganisation: false,
-                subOrganisation: false,
+                subOrganisation: true,
                 passivoitu: false,
                 dublicates: false,
             };
@@ -52,7 +52,8 @@ class HenkilohakuContainer extends React.Component {
                                router={this.props.router}
                                notifications={this.props.notifications}
                                removeNotification={this.props.removeNotification}
-                               clearHenkilohaku={this.props.clearHenkilohaku} />
+                               clearHenkilohaku={this.props.clearHenkilohaku}
+                               omattiedot={this.props.omattiedot}/>
             : <Loader />
     };
 }
@@ -61,11 +62,11 @@ const mapStateToProps = (state, ownProps) => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,
-        isAdmin: state.omattiedot.isAdmin,
         henkilo: state.henkilo,
         kayttooikeus: state.kayttooikeus,
         henkilohakuState: state.henkilohakuState,
         notifications: state.notifications.henkilohakuNotifications,
+        omattiedot: state.omattiedot
     };
 };
 
