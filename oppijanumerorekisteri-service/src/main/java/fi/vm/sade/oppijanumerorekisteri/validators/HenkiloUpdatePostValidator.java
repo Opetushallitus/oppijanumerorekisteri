@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -23,14 +24,18 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     private KoodistoService koodistoService;
 
+    private HenkiloRepository henkiloRepository;
+
     private HenkiloJpaRepository henkiloJpaRepository;
 
     @Autowired
     public HenkiloUpdatePostValidator(UserDetailsHelper userDetailsHelper,
                                       KoodistoService koodistoService,
+                                      HenkiloRepository henkiloRepository,
                                       HenkiloJpaRepository henkiloJpaRepository) {
         this.userDetailsHelper = userDetailsHelper;
         this.koodistoService = koodistoService;
+        this.henkiloRepository = henkiloRepository;
         this.henkiloJpaRepository = henkiloJpaRepository;
     }
 
@@ -44,9 +49,15 @@ public class HenkiloUpdatePostValidator implements Validator {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
 
         if(henkiloUpdateDto.getHetu() != null) {
-            Optional hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
+            Optional<String> hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
             if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloUpdateDto.getHetu())) {
-                errors.rejectValue("hetu", "socialsecuritynr.already.exists");
+                errors.rejectValue("hetu", "socialsecuritynr.already.set");
+            } else {
+                henkiloRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkilo -> {
+                    if (!henkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
+                        errors.rejectValue("hetu", "socialsecuritynr.already.exists");
+                    }
+                });
             }
         }
 
