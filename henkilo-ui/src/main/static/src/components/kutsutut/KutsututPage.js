@@ -6,15 +6,22 @@ import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
+import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 
 export default class KutsututPage extends React.Component {
 
     constructor(props) {
         super(props);
 
+        this.L = this.props.l10n[this.props.locale];
+
+        this.defaultLimit = 20;
+        this.defaultOffset = 0;
+
         this.state = {
             confirmDeleteFor: null,
             getOwnKutsus: false,
+            hakutermi: '',
         };
     }
 
@@ -27,26 +34,29 @@ export default class KutsututPage extends React.Component {
     };
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         const kutsuResponse = this.props.kutsus;
         return (
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
-                    <span className="oph-h2 oph-strong">{L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
+                    <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                     <span id="radiator">
                         <BooleanRadioButtonGroup value={this.state.getOwnKutsus}
                                                  onChange={() => this.toggleFetchAll(!this.state.getOwnKutsus)}
-                                                 trueLabel={L['KUTSUTUT_KAIKKI_BUTTON']}
-                                                 falseLabel={L['KUTSUTUT_OMAT_BUTTON']} />
+                                                 trueLabel={this.L['KUTSUTUT_KAIKKI_BUTTON']}
+                                                 falseLabel={this.L['KUTSUTUT_OMAT_BUTTON']} />
                     </span>
                 </div>
-                {!kutsuResponse.loaded && <div className="loading">{L['LADATAAN']} </div>}
+                <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
+                                    defaultNameQuery={this.state.hakutermi}
+                                    placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
+                                    loading={false} />
+                {!kutsuResponse.loaded && <div className="loading">{this.L['LADATAAN']} </div>}
                 {kutsuResponse.loaded && !kutsuResponse.result.length > 0
-                && <div className="noResults">{L['EI_KUTSUJA']}</div>}
+                && <div className="noResults">{this.L['EI_KUTSUJA']}</div>}
                 {kutsuResponse.loaded && kutsuResponse.result.length > 0
                 && <KutsututTable
                     fetchKutsus={this.props.fetchKutsus}
-                    L={L}
+                    L={this.L}
                     kutsus={kutsuResponse.result}
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
                     locale={this.props.locale}/>}
@@ -54,34 +64,34 @@ export default class KutsututPage extends React.Component {
                 {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>
                     <div className="confirmation-modal">
-                        <span className="oph-h2 oph-strong">{L['PERUUTA_KUTSU_VAHVISTUS']}</span>
+                        <span className="oph-h2 oph-strong">{this.L['PERUUTA_KUTSU_VAHVISTUS']}</span>
                         <table>
                             <tbody>
                             <tr>
-                                <th>{L['KUTSUT_NIMI_OTSIKKO']}</th>
+                                <th>{this.L['KUTSUT_NIMI_OTSIKKO']}</th>
                                 <td>{this.state.confirmDeleteFor.etunimi} {this.state.confirmDeleteFor.sukunimi}</td>
                             </tr>
                             <tr>
-                                <th>{L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</th>
+                                <th>{this.L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</th>
                                 <td>{this.state.confirmDeleteFor.sahkoposti}</td>
                             </tr>
                             <tr>
-                                <th>{L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
+                                <th>{this.L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
                                 <td>{this.state.confirmDeleteFor.organisaatiot.map(org =>
                                     <div className="kutsuOrganisaatio" key={org.oid}>{org.nimi[this.props.locale]}</div>)}</td>
                             </tr>
                             <tr>
-                                <th>{L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
+                                <th>{this.L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
                                 <td>{moment(new Date(this.state.confirmDeleteFor.aikaleima)).format()}</td>
                             </tr>
                             </tbody>
                         </table>
                         <div className="row">
                             <Button className="left action" action={this.cancelInvitationConfirmed.bind(this)}>
-                                {L['PERUUTA_KUTSU']}
+                                {this.L['PERUUTA_KUTSU']}
                             </Button>
                             <Button className="right cancel" action={this.cancelInvitationCancellation.bind(this)}>
-                                {L['PERUUTA_KUTSUN_PERUUTTAMINEN']}
+                                {this.L['PERUUTA_KUTSUN_PERUUTTAMINEN']}
                             </Button>
                         </div>
                         <div className="clear"/>
@@ -110,7 +120,15 @@ export default class KutsututPage extends React.Component {
 
     toggleFetchAll(getOwnKutsus) {
         this.setState({getOwnKutsus: getOwnKutsus});
-        this.props.fetchKutsus(undefined, undefined, !getOwnKutsus);
+        this.props.fetchKutsus(undefined, undefined, !getOwnKutsus, this.state.hakutermi);
+    }
+
+    onHakutermiChange(event) {
+        const hakutermi = event.value;
+        this.setState({hakutermi: hakutermi});
+        if (hakutermi.length === 0 || hakutermi.length >= 3) {
+            this.props.fetchKutsus(undefined, undefined, !this.state.getOwnKutsus, hakutermi);
+        }
     }
 }
 
