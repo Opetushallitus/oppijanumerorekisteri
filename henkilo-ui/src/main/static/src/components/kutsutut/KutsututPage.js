@@ -7,6 +7,8 @@ import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
+import OphSelect from "../common/select/OphSelect";
+import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
 
 export default class KutsututPage extends React.Component {
 
@@ -32,6 +34,7 @@ export default class KutsututPage extends React.Component {
         deleteKutsu: PropTypes.func.isRequired,
         fetchKutsus: PropTypes.func.isRequired,
         kutsuListLoading: PropTypes.bool.isRequired,
+        organisaatiot: PropTypes.array.isRequired,
     };
 
     render() {
@@ -51,7 +54,8 @@ export default class KutsututPage extends React.Component {
                                     defaultNameQuery={this.state.hakutermi}
                                     placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
                                     loading={this.props.kutsuListLoading} />
-
+                <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
+                                       organisaatiot={this.props.organisaatiot} />
                 {!kutsuResponse.loaded && <div className="loading">{this.L['LADATAAN']} </div>}
                 {kutsuResponse.loaded && !kutsuResponse.result.length > 0
                 && <div className="noResults">{this.L['EI_KUTSUJA']}</div>}
@@ -122,15 +126,22 @@ export default class KutsututPage extends React.Component {
 
     toggleFetchAll(getOwnKutsus) {
         this.setState({getOwnKutsus: getOwnKutsus});
-        this.props.fetchKutsus(undefined, undefined, !getOwnKutsus, this.state.hakutermi);
+        this.props.fetchKutsus(undefined, undefined, !getOwnKutsus, this.state.hakutermi, this.state.organisaatio.value);
     }
 
     onHakutermiChange(event) {
         const hakutermi = event.value;
         this.setState({hakutermi: hakutermi});
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
-            this.props.fetchKutsus(undefined, undefined, !this.state.getOwnKutsus, hakutermi);
+            this.props.fetchKutsus(undefined, undefined, !this.state.getOwnKutsus, hakutermi, this.state.organisaatio.value);
         }
     }
+
+    onOrganisaatioChange(organisaatio) {
+        this.setState({organisaatio,});
+        const organisaatioOid = organisaatio.value;
+        this.props.fetchKutsus(undefined, undefined, !this.state.getOwnKutsus, this.state.hakutermi, organisaatioOid);
+    }
+
 }
 

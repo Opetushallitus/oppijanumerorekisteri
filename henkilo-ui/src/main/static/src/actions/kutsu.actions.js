@@ -18,9 +18,15 @@ export const deleteKutsu = (id) => (dispatch => {
 
 const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
 const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});
-export const fetchKutsus = (sortBy, direction, onlyOwnKutsus, queryTerm) => dispatch => {
+export const fetchKutsus = (sortBy, direction, onlyOwnKutsus, queryTerm, organisaatioOid) => dispatch => {
     dispatch(requestKutsus());
-    const url = urls.url('kayttooikeus-service.kutsu', {sortBy, direction, onlyOwnKutsus: !!onlyOwnKutsus, queryTerm,});
+    const url = urls.url('kayttooikeus-service.kutsu', {
+        sortBy,
+        direction,
+        onlyOwnKutsus: !!onlyOwnKutsus,
+        queryTerm,
+        organisaatio: organisaatioOid
+    });
     http.get(url).then(json => {dispatch(receiveKutsus(json))});
 };
 

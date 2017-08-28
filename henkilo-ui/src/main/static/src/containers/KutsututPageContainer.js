@@ -19,6 +19,8 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         locale: state.locale,
         kutsuListLoading: !state.kutsuList.loaded,
+        organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
+        isAdmin: state.omattiedot.isAdmin,
     };
 };
 
