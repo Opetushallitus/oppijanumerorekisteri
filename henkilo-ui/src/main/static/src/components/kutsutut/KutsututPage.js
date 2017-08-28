@@ -7,7 +7,6 @@ import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
-import OphSelect from "../common/select/OphSelect";
 import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
 
 export default class KutsututPage extends React.Component {
@@ -24,6 +23,7 @@ export default class KutsututPage extends React.Component {
             confirmDeleteFor: null,
             getOwnKutsus: false,
             hakutermi: '',
+            organisaatio: null,
         };
     }
 
@@ -36,6 +36,12 @@ export default class KutsututPage extends React.Component {
         kutsuListLoading: PropTypes.bool.isRequired,
         organisaatiot: PropTypes.array.isRequired,
     };
+
+    componentWillMount() {
+        if(this.props.isAdmin) {
+            this.props.fetchAllOrganisaatios();
+        }
+    }
 
     render() {
         const kutsuResponse = this.props.kutsus;

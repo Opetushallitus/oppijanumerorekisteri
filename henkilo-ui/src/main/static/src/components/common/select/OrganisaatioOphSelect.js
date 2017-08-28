@@ -2,11 +2,20 @@ import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import OphSelect from "./OphSelect";
+import StaticUtils from "../StaticUtils";
 
 class OrganisaatioOphSelect extends React.Component {
     static propTypes = {
         onOrganisaatioChange: PropTypes.func.isRequired,
-        organisaatiot: PropTypes.array.isRequired, // TODO shape
+        organisaatiot: PropTypes.arrayOf(PropTypes.shape({
+            oid: PropTypes.string.isRequired,
+            organisaatiotyypit: PropTypes.array,
+            nimi: PropTypes.shape({
+                en: PropTypes.string,
+                fi: PropTypes.string,
+                sv: PropTypes.string,
+            }),
+        }).isRequired).isRequired,
     };
 
     constructor(props) {
@@ -16,6 +25,7 @@ class OrganisaatioOphSelect extends React.Component {
 
         this.state = {
             selectableOrganisaatiot: [],
+            selectedOrganisaatio: '',
         };
     }
 
@@ -23,12 +33,17 @@ class OrganisaatioOphSelect extends React.Component {
         return <div>
             <OphSelect noResultsText={ `${this.L['SYOTA_VAHINTAAN']} 3 ${this.L['MERKKIA']}` }
                        placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']}
-                       onChange={this.props.onOrganisaatioChange}
+                       onChange={this.onOrganisaatioChange.bind(this)}
                        onBlurResetsInput={false}
                        options={this.state.selectableOrganisaatiot}
                        onInputChange={this.onOrganisaatioInputChange}
                        value={this.state.selectedOrganisaatio}/>
         </div>;
+    }
+
+    onOrganisaatioChange(organisaatio) {
+        this.setState({selectedOrganisaatio: organisaatio.value});
+        this.props.onOrganisaatioChange(organisaatio);
     }
 
     onOrganisaatioInputChange = (value) => {
@@ -50,7 +65,7 @@ class OrganisaatioOphSelect extends React.Component {
             organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
         // Select-komponentin käyttämä formaatti
         return {
-            label: `${nimi} (${organisaatio.organisaatiotyypit.join(',')})` ,
+            label: nimi + ' ' + StaticUtils.getOrganisaatiotyypitFlat(organisaatio.organisaatiotyypit, this.L) ,
             value: organisaatio.oid
         };
     };
