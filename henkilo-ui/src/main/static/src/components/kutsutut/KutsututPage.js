@@ -31,6 +31,7 @@ export default class KutsututPage extends React.Component {
         kutsus: PropTypes.object.isRequired,
         deleteKutsu: PropTypes.func.isRequired,
         fetchKutsus: PropTypes.func.isRequired,
+        kutsuListLoading: PropTypes.bool.isRequired,
     };
 
     render() {
@@ -49,7 +50,8 @@ export default class KutsututPage extends React.Component {
                 <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                     defaultNameQuery={this.state.hakutermi}
                                     placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
-                                    loading={false} />
+                                    loading={this.props.kutsuListLoading} />
+
                 {!kutsuResponse.loaded && <div className="loading">{this.L['LADATAAN']} </div>}
                 {kutsuResponse.loaded && !kutsuResponse.result.length > 0
                 && <div className="noResults">{this.L['EI_KUTSUJA']}</div>}

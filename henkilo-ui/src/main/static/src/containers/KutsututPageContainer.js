@@ -17,7 +17,8 @@ const mapStateToProps = (state, ownProps) => {
         path: ownProps.location.pathname,
         kutsus: state.kutsuList,
         l10n: state.l10n.localisations,
-        locale: state.locale
+        locale: state.locale,
+        kutsuListLoading: !state.kutsuList.loaded,
     };
 };
 
