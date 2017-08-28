@@ -21,11 +21,13 @@ const mapStateToProps = (state) => {
         l10n: state.l10n.localisations,
         locale: state.locale,
         kayttooikeusAnomus: state.haetutKayttooikeusryhmat.data,
+        kayttooikeusAnomusLoading: state.haetutKayttooikeusryhmat.loading,
         organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.loading,
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
         isAdmin: state.omattiedot.isAdmin,
+
     };
 };
 

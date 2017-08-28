@@ -8,17 +8,18 @@ import {
 
 const requestHaetutKayttooikeusryhmat = () => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST});
 const receiveHaetutKayttooikeusryhmatSuccess = (json) => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS, haetutKayttooikeusryhmat: json});
-const receiveHaetutKayttooikeusryhmatFailure = () => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE});
+const receiveHaetutKayttooikeusryhmatFailure = (nimi) => ({type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE, nimi});
 
-export const fetchHaetutKayttooikeusryhmat = (parameters) => dispatch => {
+export const fetchHaetutKayttooikeusryhmat = (parameters) => async dispatch => {
         dispatch(requestHaetutKayttooikeusryhmat());
         const url = urls.url('kayttooikeus-service.anomus.haetut-kayttooikeusryhmat', parameters);
-        return http.get(url)
-          .then(haetutKayttooikeusryhmat => {
-              // ladataa vielä organisaatiot jotta "state.organisaatio.cached" alustetaan
-              dispatch(fetchOrganisations(haetutKayttooikeusryhmat.map(haettuKayttooikeusryhma => haettuKayttooikeusryhma.anomus.organisaatioOid)))
-              .then(() => dispatch(receiveHaetutKayttooikeusryhmatSuccess(haetutKayttooikeusryhmat)));
-        }).catch(() => dispatch(receiveHaetutKayttooikeusryhmatFailure()));
+        try {
+            const haetutKayttooikeusryhmat = await http.get(url);
+            await dispatch(fetchOrganisations(haetutKayttooikeusryhmat.map(haettuKayttooikeusryhma => haettuKayttooikeusryhma.anomus.organisaatioOid)));
+            dispatch(receiveHaetutKayttooikeusryhmatSuccess(haetutKayttooikeusryhmat))
+        } catch (error) {
+            dispatch(receiveHaetutKayttooikeusryhmatFailure());
+        }
     };
 
 export const clearHaetutKayttooikeusryhmat = () => dispatch => dispatch({type: CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT});

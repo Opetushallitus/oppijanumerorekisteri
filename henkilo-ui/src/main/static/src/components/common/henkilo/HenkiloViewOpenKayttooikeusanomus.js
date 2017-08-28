@@ -51,11 +51,11 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
         
-        this.updateHaettuKayttooikeusryhma = (id, tila, idx) => {
+        this.updateHaettuKayttooikeusryhma = (id, tila, idx, henkilo) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
                 this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
                 this.state.dates[idx].loppupvm.format(this.L['PVM_DBFORMAATTI']),
-                this.props.oidHenkilo);
+                this.props.oidHenkilo, henkilo);
         };
 
         this.state = {
@@ -116,16 +116,17 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
 
     anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx) {
         const noPermission = this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.kayttoOikeusRyhma.id);
+        const henkilo =haettuKayttooikeusRyhma.anomus.henkilo;
         return <div>
             <div style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                    'MYONNETTY', idx)}
+                    'MYONNETTY', idx, henkilo)}
                               L={this.L}
                               disabled={noPermission} />
             </div>
             <div style={{display: 'table-cell'}}>
                 <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
-                    haettuKayttooikeusRyhma.id, 'HYLATTY', idx)}
+                    haettuKayttooikeusRyhma.id, 'HYLATTY', idx, henkilo)}
                               L={this.L}
                               henkilo={this.props.henkilo}
                               disabled={noPermission} />

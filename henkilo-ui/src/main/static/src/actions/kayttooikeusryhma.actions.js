@@ -72,25 +72,30 @@ export const fetchAllKayttooikeusAnomusForHenkilo = henkiloOid => dispatch => {
 const requestHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST, id, });
 const receiveHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS, id, });
 const errorHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE, id });
-export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo) => dispatch => {
+export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo) => async dispatch => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
-    http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm,})
-        .then(() => {
-            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-            dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo));
-            dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
-        }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
+    try {
+        await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm,});
+        dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
+        dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo));
+        dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
+    } catch (error) {
+        dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
+    }
 };
 
-export const updateHaettuKayttooikeusryhmaInAnomukset = (id, kayttoOikeudenTila, alkupvm, loppupvm, parameters) => dispatch => {
+export const updateHaettuKayttooikeusryhmaInAnomukset =  (id, kayttoOikeudenTila, alkupvm, loppupvm, parameters) => async dispatch => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
-    http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm,})
-        .then(() => {
-            dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-            dispatch(fetchHaetutKayttooikeusryhmat(parameters));
-        }).catch(() => dispatch(errorHaettuKayttooikeusryhmaUpdate(id)));
+    try {
+        await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm});
+        dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
+        dispatch(fetchHaetutKayttooikeusryhmat(parameters));
+    } catch (error) {
+        dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
+        throw(error); // throw error to set notification in kayttooikeusanomukset
+    }
 };
 
 //KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
