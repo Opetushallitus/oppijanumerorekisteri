@@ -8,6 +8,7 @@ import { fetchHenkiloOrganisaatiosForCurrentUser } from '../actions/omattiedot.a
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
 import { browserHistory } from 'react-router';
 import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
+import Loader from '../components/common/icons/Loader';
 
 class KutsuFormPage extends React.Component  {
 
@@ -44,10 +45,11 @@ class KutsuFormPage extends React.Component  {
         const {basicInfo} = this.state;
 
             if(this.props.omattiedot.omattiedotLoading || this.props.henkilo.henkiloOrganisaatiosLoading) {
-                return (<span className="oph-h2 oph-strong">Loading</span>);
+                return (<div className="wrapper"><Loader /></div>);
             } else {
                 return (
-                    <form className="kutsuFormWrapper">
+                    <div>
+                    <form className="wrapper kutsuFormWrapper">
 
                         <span>{this.props.l10n[this.props.locale]['POISTA_MERKKIA']}</span>
                         <BasicInfo l10n={l10n}
@@ -74,6 +76,7 @@ class KutsuFormPage extends React.Component  {
                         </div>
                         <KutsuConfirmation {...confirmationProps} />
                     </form>
+                </div>
                 )
             }
     }
