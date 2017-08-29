@@ -75,7 +75,7 @@ class AnomusPage extends React.Component {
               { this.state.showHylkaysSuccess ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHylkaysSuccess: false})}></WideGreenNotification> : null }
               { this.state.showHyvaksyminenSuccess ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS'])} closeAction={() => this.setState({showHyvaksyminenSuccess: false})}></WideGreenNotification> : null }
               { this.state.showHylkaysFailure ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHylkaysSuccess: false})}></WideGreenNotification> : null }
-              { this.state.showHyvaksyminenFailure ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHylkaysSuccess: false})}></WideGreenNotification> : null }
+              { this.state.showHyvaksyminenFailure ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHyvaksyminenFailure: false})}></WideGreenNotification> : null }
 
               {
                   this.props.haetutKayttooikeusryhmatLoading && !this.initialised
@@ -147,9 +147,9 @@ class AnomusPage extends React.Component {
     async updateHaettuKayttooikeusryhma(id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo, henkilo) {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, this.state.parameters);
-            kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysSuccess: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyttySuccess: true, anomusModifiedHenkilo: henkilo});
+            kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysSuccess: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenSuccess: true, anomusModifiedHenkilo: henkilo});
         } catch (error) {
-            kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysFailure: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyttyFailure: true, anomusModifiedHenkilo: henkilo});
+            kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysFailure: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenFailure: true, anomusModifiedHenkilo: henkilo});
         }
     };
 
