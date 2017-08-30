@@ -2,19 +2,11 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DuplicateHetuException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
-import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @Transactional
@@ -103,7 +91,7 @@ public class IdentificationServiceIntegrationTest2 {
     }
 
     // Hetu already used by other virkailija
-    @Test(expected = DuplicateHetuException.class)
+    @Test(expected = RuntimeException.class)
     public void setStrongIdentifiedHetu() {
         HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
                 new HenkiloVahvaTunnistusDto("111111-1235", "Teppo", "Testaaja");
