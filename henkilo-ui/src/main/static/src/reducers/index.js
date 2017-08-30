@@ -34,7 +34,7 @@ const rootReducer = combineReducers({
     kayttooikeus,
     ryhmatState,
     OrganisaatioKayttooikeusryhmat,
-    organisaatio,
+    organisaatioOid: organisaatio,
     notifications,
     haetutKayttooikeusryhmat,
     henkilohakuState,

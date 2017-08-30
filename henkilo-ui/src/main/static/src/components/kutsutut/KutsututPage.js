@@ -19,11 +19,20 @@ export default class KutsututPage extends React.Component {
         this.defaultLimit = 20;
         this.defaultOffset = 0;
 
+        this.kutsuTableHeaderToSort = {
+            KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: 'AIKALEIMA',
+        };
+
         this.state = {
             confirmDeleteFor: null,
-            getOwnKutsus: false,
-            hakutermi: '',
-            organisaatio: null,
+            payload: {
+                onlyOwnKutsus: true,
+                searchTerm: '',
+                organisaatioOid: null,
+                tilas: ['AVOIN'],
+                sortBy: 'AIKALEIMA',
+                direction: 'DESC',
+            },
         };
     }
 
@@ -38,6 +47,7 @@ export default class KutsututPage extends React.Component {
     };
 
     componentWillMount() {
+        this.props.fetchKutsus(this.state.payload);
         if(this.props.isAdmin) {
             this.props.fetchAllOrganisaatios();
         }
@@ -50,14 +60,14 @@ export default class KutsututPage extends React.Component {
                 <div className="header">
                     <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                     <span id="radiator">
-                        <BooleanRadioButtonGroup value={this.state.getOwnKutsus}
-                                                 onChange={() => this.toggleFetchAll(!this.state.getOwnKutsus)}
+                        <BooleanRadioButtonGroup value={!this.state.payload.onlyOwnKutsus}
+                                                 onChange={() => this.toggleFetchAll(this.state.payload.onlyOwnKutsus)}
                                                  trueLabel={this.L['KUTSUTUT_KAIKKI_BUTTON']}
                                                  falseLabel={this.L['KUTSUTUT_OMAT_BUTTON']} />
                     </span>
                 </div>
                 <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
-                                    defaultNameQuery={this.state.hakutermi}
+                                    defaultNameQuery={this.state.payload.searchTerm}
                                     placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
                                     loading={this.props.kutsuListLoading} />
                 <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
@@ -67,11 +77,11 @@ export default class KutsututPage extends React.Component {
                 && <div className="noResults">{this.L['EI_KUTSUJA']}</div>}
                 {kutsuResponse.loaded && kutsuResponse.result.length > 0
                 && <KutsututTable
-                    fetchKutsus={this.props.fetchKutsus}
+                    fetchKutsus={this.fetchKutsus.bind(this)}
                     L={this.L}
                     kutsus={kutsuResponse.result}
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
-                    locale={this.props.locale}/>}
+                    locale={this.props.locale} />}
 
                 {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>
@@ -131,23 +141,38 @@ export default class KutsututPage extends React.Component {
     }
 
     toggleFetchAll(getOwnKutsus) {
-        this.setState({getOwnKutsus: getOwnKutsus});
-        this.props.fetchKutsus(undefined, undefined, !getOwnKutsus, this.state.hakutermi, this.state.organisaatio.value);
+        const newState = {payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}};
+        this.setState(newState);
+        this.props.fetchKutsus(newState.payload);
     }
 
     onHakutermiChange(event) {
         const hakutermi = event.value;
-        this.setState({hakutermi: hakutermi});
+        const newState = {payload: {...this.state.payload, searchTerm: hakutermi}};
+        this.setState(newState);
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
-            this.props.fetchKutsus(undefined, undefined, !this.state.getOwnKutsus, hakutermi, this.state.organisaatio.value);
+            this.props.fetchKutsus(newState.payload);
         }
     }
 
     onOrganisaatioChange(organisaatio) {
-        this.setState({organisaatio,});
         const organisaatioOid = organisaatio.value;
-        this.props.fetchKutsus(undefined, undefined, !this.state.getOwnKutsus, this.state.hakutermi, organisaatioOid);
+        const newState = {payload: {...this.state.payload, organisaatioOid},};
+        this.setState(newState);
+        this.props.fetchKutsus(newState.payload);
     }
 
+    fetchKutsus(sort, shouldNotClear) {
+        let sortBy = this.state.payload.sortBy;
+        let direction = this.state.payload.direction;
+        if(!shouldNotClear) {
+            this.props.clearKutsuList();
+        }
+        if(sort) {
+            sortBy = this.kutsuTableHeaderToSort[sort.id];
+            direction = sort.desc ? 'DESC' : 'ASC';
+        }
+        this.setState({payload: {...this.state.payload, sortBy, direction}}, this.props.fetchKutsus(this.state.payload));
+    }
 }
 

@@ -11,11 +11,21 @@ export default class KutsututTable extends React.Component {
 
     static propTypes = {
         fetchKutsus: PropTypes.func,
-        L: PropTypes.object,
+        L: PropTypes.object.isRequired,
         kutsus: PropTypes.array,
         cancelInvitation: PropTypes.func,
-        locale: PropTypes.string
+        locale: PropTypes.string.isRequired,
+        isLoading: PropTypes.bool.isRequired,
+        allFetched: PropTypes.bool.isRequired,
     };
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            sorted: [{id: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', desc: true}],
+        };
+    }
 
     render() {
         const L = this.props.L;
@@ -36,10 +46,21 @@ export default class KutsututTable extends React.Component {
             KUTSU_PERUUTA: this.createPeruutaCell(kutsu)
         }));
         
-        return (<div className="kutsututTableWrapper"><Table headings={headings}
-                       noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
-                       data={data}
-                       striped /></div>);
+        return <div className="kutsututTableWrapper">
+            <Table headings={headings}
+                   noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
+                   data={data}
+                   striped
+                   manual={true}
+                   defaultSorted={this.state.sorted}
+                   onFetchData={this.onTableFetch.bind(this)}
+                   fetchMoreSettings={{
+                       isActive: !this.props.allFetched && !this.props.isLoading,
+                       fetchMoreAction: this.onSubmitWithoutClear,
+                   }}
+                   tableLoading={this.props.isLoading}
+            />
+        </div>;
     }
 
     createNimiCell(kutsu) {
@@ -79,6 +100,26 @@ export default class KutsututTable extends React.Component {
                     action={this.props.cancelInvitation(kutsu)}>
                 {this.props.L['KUTSUTUT_PERUUTA_KUTSU_NAPPI']}
             </Button>
+    }
+
+    onTableFetch(tableState, instance) {
+        const sort = tableState.sorted[0];
+        const stateSort = this.state.sorted[0];
+        // Update sort state
+        if(sort) {
+            this.setState({
+                    sorted: [Object.assign({}, sort)],
+                },
+                // If sort state changed fetch new data
+                () => {if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
+                    this.props.fetchKutsus(sort);
+                }});
+
+        }
+    }
+
+    onSubmitWithoutClear() {
+        this.props.fetchKutsus(this.state.sorted[0], true);
     }
 
 }

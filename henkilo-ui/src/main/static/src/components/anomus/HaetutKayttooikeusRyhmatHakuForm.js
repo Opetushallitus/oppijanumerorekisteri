@@ -35,7 +35,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                 <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
-                                            defaultNameQuery={this.state.hakutermi}
+                                            defaultNameQuery={this.state.searchTerm}
                                             placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
                                             loading={this.props.haetutKayttooikeusryhmatLoading} />
                     </div>
@@ -56,7 +56,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
 
     onHakutermiChange = (event) => {
         const hakutermi = event.value;
-        this.setState({hakutermi: hakutermi});
+        this.setState({searchTerm: hakutermi});
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
             this.props.onSubmit({q: hakutermi});
         }

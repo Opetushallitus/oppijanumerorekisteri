@@ -5,9 +5,6 @@ import KutsututPage from '../components/kutsutut/KutsututPage';
 import {fetchAllOrganisaatios} from "../actions/organisaatio.actions";
 
 class KutsututPageContainer extends React.Component {
-    componentDidMount() {
-        this.props.fetchKutsus(undefined, undefined, true);
-    }
     render() {
         return <KutsututPage {...this.props} />;
     }
@@ -20,7 +17,7 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         locale: state.locale,
         kutsuListLoading: !state.kutsuList.loaded,
-        organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
+        organisaatiot: state.organisaatioOid.organisaatiot.organisaatiot,
         isAdmin: state.omattiedot.isAdmin,
     };
 };

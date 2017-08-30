@@ -114,7 +114,7 @@ const mapStateToProps = (state, ownProps) => {
         koodisto: state.koodisto,
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
-        organisaatioCache: state.organisaatio.cached,
+        organisaatioCache: state.organisaatioOid.cached,
         notifications: state.notifications,
         isAdmin: state.omattiedot.isAdmin,
         ownOid: state.omattiedot.data.oid,

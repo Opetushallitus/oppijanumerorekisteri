@@ -47,7 +47,7 @@ const receiveOrganisations = (json) => ({type: FETCH_ORGANISATIONS_SUCCESS, orga
 export const fetchOrganisations = (oidOrganisations) => ((dispatch, getState) => {
     oidOrganisations = R.uniq(oidOrganisations);
     dispatch(requestOrganisations(oidOrganisations));
-    const promises = oidOrganisations.filter(oidOrganisation => Object.keys(getState().organisaatio.cached).indexOf(oidOrganisation) === -1)
+    const promises = oidOrganisations.filter(oidOrganisation => Object.keys(getState().organisaatioOid.cached).indexOf(oidOrganisation) === -1)
         .map(oidOrganisation => {
         const url = urls.url('organisaatio-service.organisaatio.ByOid', oidOrganisation);
         return http.get(url).catch(error => {
