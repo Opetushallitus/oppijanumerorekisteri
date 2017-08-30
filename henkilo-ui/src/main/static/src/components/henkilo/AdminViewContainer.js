@@ -104,21 +104,19 @@ class AdminViewContainer extends React.Component {
 
         // Basic info default buttons
         this._readOnlyButtons = (edit) => ([
-                <EditButton editAction={edit} L={this.L}/>,
-                <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo}
-                                      L={this.L}/>,
-                <PuraHetuttomanYksilointiButton puraYksilointiAction={this.props.puraYksilointi} henkilo={this.props.henkilo} L={this.L}>
-                </PuraHetuttomanYksilointiButton>,
-                <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
-                <HakaButton oidHenkilo={this.props.oidHenkilo}
-                            styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} L={this.L}/>,
-                <VtjOverrideButton henkilo={this.props.henkilo} L={this.L}
-                                   overrideAction={this.props.overrideHenkiloVtjData}/>,
-                <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
-                                styles={{top: '3rem', left: '0', width: '18rem'}}/>,
-            ]);
-
-
+            <EditButton editAction={edit} L={this.L}/>,
+            <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo}
+                                  L={this.L}/>,
+            <PuraHetuttomanYksilointiButton puraYksilointiAction={this.props.puraYksilointi} henkilo={this.props.henkilo} L={this.L}>
+            </PuraHetuttomanYksilointiButton>,
+            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
+            <HakaButton oidHenkilo={this.props.oidHenkilo}
+                        styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} L={this.L}/>,
+            <VtjOverrideButton henkilo={this.props.henkilo} L={this.L}
+                               overrideAction={this.props.overrideHenkiloVtjData}/>,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
+                            styles={{top: '3rem', left: '0', width: '18rem'}}/>,
+        ]);
     };
 }
 

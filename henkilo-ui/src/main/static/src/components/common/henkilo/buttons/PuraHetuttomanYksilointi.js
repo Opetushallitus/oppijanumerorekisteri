@@ -19,9 +19,9 @@ PuraHetuttomanYksilointiButton.propTypes = {
             hetu: PropTypes.string,
             oidHenkilo: PropTypes.string
         }),
-        L: PropTypes.object,
-        puraYksilointiAction: PropTypes.func.isRequired
-    })
+    }),
+    L: PropTypes.object,
+    puraYksilointiAction: PropTypes.func.isRequired
 };
 
 export default PuraHetuttomanYksilointiButton;
