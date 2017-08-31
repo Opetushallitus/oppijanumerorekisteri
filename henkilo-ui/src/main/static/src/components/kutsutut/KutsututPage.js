@@ -73,19 +73,25 @@ export default class KutsututPage extends React.Component {
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
                     <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
-                    <span id="radiator">
+                </div>
+                <div className="flex-horizontal flex-align-center">
+                    <div className="flex-item-1">
+                        <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
+                                            defaultNameQuery={this.state.payload.searchTerm}
+                                            placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
+                                            loading={this.props.kutsuListLoading} />
+                    </div>
+                    <div className="flex-item-1">
+                        <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
+                                               organisaatiot={this.props.organisaatiot} />
+                    </div>
+                    <div className="flex-item-1" id="radiator">
                         <BooleanRadioButtonGroup value={!this.state.payload.onlyOwnKutsus}
                                                  onChange={() => this.toggleFetchAll(this.state.payload.onlyOwnKutsus)}
                                                  trueLabel={this.L['KUTSUTUT_KAIKKI_BUTTON']}
                                                  falseLabel={this.L['KUTSUTUT_OMAT_BUTTON']} />
-                    </span>
+                    </div>
                 </div>
-                <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
-                                    defaultNameQuery={this.state.payload.searchTerm}
-                                    placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
-                                    loading={this.props.kutsuListLoading} />
-                <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
-                                       organisaatiot={this.props.organisaatiot} />
                 <KutsututTable
                     fetchKutsus={this.fetchKutsus.bind(this)}
                     L={this.L}
