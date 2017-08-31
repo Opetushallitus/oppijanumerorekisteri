@@ -5,6 +5,7 @@ import { FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS, FETCH
     FETCH_ALL_RYHMAT_REQUEST, FETCH_ALL_RYHMAT_SUCCESS, FETCH_ALL_RYHMAT_FAILURE
 } from './actiontypes';
 import {FETCH_ORGANISATIONS_REQUEST, FETCH_ORGANISATIONS_SUCCESS} from "./actiontypes";
+import PropertySingleton from "../globals/PropertySingleton";
 
 
 const requestAllOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_REQUEST});
@@ -12,11 +13,16 @@ const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGA
 const requestAllOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_FAILURE, error});
 
 export const fetchAllOrganisaatios = () => async dispatch => {
-    const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: true, lakkautetut: false});
+    const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
+    const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid)
     dispatch(requestAllOrganisaatios());
     try {
         const organisaatiot = await http.get(url);
+        const rootOrganisation = await http.get(rootUrl);
+        organisaatiot.numHits += 1;
+        organisaatiot.organisaatiot.push(rootOrganisation);
         dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
+        dispatch({type: FETCH_ORGANISATIONS_SUCCESS, organisations: organisaatiot.organisaatiot});
     } catch (error) {
         dispatch(requestAllOrganisaatiosFailure(error));
         console.error('Fetching organisaatios failed', error);
