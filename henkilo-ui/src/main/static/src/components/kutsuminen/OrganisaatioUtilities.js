@@ -3,7 +3,7 @@ import {toLocalizedText} from '../../localizabletext';
 
 export const organisaatioHierarchyRoots = (orgs, locale) => {
     // First sort by name:
-    orgs = R.sortBy(org => toLocalizedText(locale, org.organisaatioOid.nimi), orgs);
+    orgs = R.sortBy(org => toLocalizedText(locale, org.organisaatio.nimi), orgs);
     const byOid = {};
     let lowestLevel = null;
     // Determine organization levels, lowest level, direct parent oid and map by oid:

@@ -38,7 +38,7 @@ class HenkilohakuContainer extends React.Component {
     }
 
     render() {
-        return !this.props.henkilo.henkiloOrganisaatiosLoading && !this.props.kayttooikeus.allKayttooikeusryhmasLoading
+        return (!this.props.henkilo.henkiloOrganisaatiosLoading && !this.props.kayttooikeus.allKayttooikeusryhmasLoading)
             ? <HenkilohakuPage l10n={this.props.l10n}
                                locale={this.props.locale}
                                initialCriteria={this.initialCriteria}

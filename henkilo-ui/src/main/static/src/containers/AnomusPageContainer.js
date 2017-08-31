@@ -22,9 +22,9 @@ const mapStateToProps = (state) => {
         locale: state.locale,
         kayttooikeusAnomus: state.haetutKayttooikeusryhmat.data,
         kayttooikeusAnomusLoading: state.haetutKayttooikeusryhmat.isLoading,
-        organisaatioCache: state.organisaatioOid.cached,
+        organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.isLoading,
-        organisaatiot: state.organisaatioOid.organisaatiot.organisaatiot,
+        organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
         isAdmin: state.omattiedot.isAdmin,
 

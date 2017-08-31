@@ -18,7 +18,7 @@ export const kutsuminenOrganisaatios = (state = [], action) => {
             return newOrganisaatios;
         case KUTSU_SET_ORGANISAATIO:
             newOrganisaatios[action.index] = {
-                oid: action.organisaatioOid.oid,
+                oid: action.organisaatio.oid,
                 organisation: action.organisaatioOid,
                 selectablePermissions: [],
                 selectedPermissions: [],
