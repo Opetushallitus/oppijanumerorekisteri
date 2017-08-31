@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {deleteKutsu, fetchKutsus} from '../actions/kutsu.actions';
+import {clearKutsuList, deleteKutsu, fetchKutsus} from '../actions/kutsu.actions';
 import KutsututPage from '../components/kutsutut/KutsututPage';
 import {fetchAllOrganisaatios} from "../actions/organisaatio.actions";
 
@@ -22,4 +22,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchKutsus, deleteKutsu, fetchAllOrganisaatios})(KutsututPageContainer)
+export default connect(mapStateToProps, {fetchKutsus, deleteKutsu, fetchAllOrganisaatios, clearKutsuList})(KutsututPageContainer)

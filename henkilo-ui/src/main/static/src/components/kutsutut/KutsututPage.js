@@ -21,6 +21,8 @@ export default class KutsututPage extends React.Component {
 
         this.kutsuTableHeaderToSort = {
             KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: 'AIKALEIMA',
+            KUTSUT_NIMI_OTSIKKO: 'NIMI',
+            KUTSUT_SAHKOPOSTI_OTSIKKO: 'SAHKOPOSTI',
         };
 
         this.state = {
@@ -33,6 +35,7 @@ export default class KutsututPage extends React.Component {
                 sortBy: 'AIKALEIMA',
                 direction: 'DESC',
             },
+            allFetched: false,
         };
     }
 
@@ -44,6 +47,7 @@ export default class KutsututPage extends React.Component {
         fetchKutsus: PropTypes.func.isRequired,
         kutsuListLoading: PropTypes.bool.isRequired,
         organisaatiot: PropTypes.array.isRequired,
+        clearKutsuList: PropTypes.func.isRequired,
     };
 
     componentWillMount() {
@@ -51,6 +55,14 @@ export default class KutsututPage extends React.Component {
         if(this.props.isAdmin) {
             this.props.fetchAllOrganisaatios();
         }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            allFetched: !nextProps.kutsuListLoading
+            && (nextProps.kutsus.result.length < this.defaultLimit
+                || nextProps.kutsus.result.length === this.props.kutsus.result.length),
+        });
     }
 
     render() {
@@ -72,16 +84,15 @@ export default class KutsututPage extends React.Component {
                                     loading={this.props.kutsuListLoading} />
                 <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
                                        organisaatiot={this.props.organisaatiot} />
-                {!kutsuResponse.loaded && <div className="loading">{this.L['LADATAAN']} </div>}
-                {kutsuResponse.loaded && !kutsuResponse.result.length > 0
-                && <div className="noResults">{this.L['EI_KUTSUJA']}</div>}
-                {kutsuResponse.loaded && kutsuResponse.result.length > 0
-                && <KutsututTable
+                <KutsututTable
                     fetchKutsus={this.fetchKutsus.bind(this)}
                     L={this.L}
                     kutsus={kutsuResponse.result}
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
-                    locale={this.props.locale} />}
+                    locale={this.props.locale}
+                    allFetched={this.state.allFetched}
+                    isLoading={this.props.kutsuListLoading}
+                />
 
                 {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
                                                                closeOnOuterClick={true}>
@@ -172,7 +183,8 @@ export default class KutsututPage extends React.Component {
             sortBy = this.kutsuTableHeaderToSort[sort.id];
             direction = sort.desc ? 'DESC' : 'ASC';
         }
-        this.setState({payload: {...this.state.payload, sortBy, direction}}, this.props.fetchKutsus(this.state.payload));
+        this.setState({payload: {...this.state.payload, sortBy, direction}},
+            () => this.props.fetchKutsus(this.state.payload));
     }
 }
 

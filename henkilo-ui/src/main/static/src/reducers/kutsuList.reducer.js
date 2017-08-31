@@ -1,6 +1,6 @@
 import {
     FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST, FETCH_KUTSUBYTOKEN_REQUEST,
-    FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE,
+    FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CLEAR_KUTSU_LIST,
 } from '../actions/actiontypes';
 
 export const kutsuList = (state = {loaded: false, result: [], kutsuByToken: {}, kutsuByTokenLoading: true,}, action) => {
@@ -18,6 +18,8 @@ export const kutsuList = (state = {loaded: false, result: [], kutsuByToken: {}, 
             });
         case FETCH_KUTSUBYTOKEN_FAILURE:
             return Object.assign({}, state, {kutsuByTokenLoading: false,});
+        case CLEAR_KUTSU_LIST:
+            return Object.assign({}, state, {result: []});
         default:
             return state;
     }

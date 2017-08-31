@@ -31,7 +31,7 @@ export default class KutsututTable extends React.Component {
         const L = this.props.L;
         const headings = [{ key: 'KUTSUT_NIMI_OTSIKKO', label: L['KUTSUT_NIMI_OTSIKKO'] },
             { key: 'KUTSUT_SAHKOPOSTI_OTSIKKO', label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'] },
-            { key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO', label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'] },
+            { key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO', label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'], notSortable: true, },
             { key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'] },
             { key: 'KUTSUTUT_LAHETA_UUDELLEEN', label: L['KUTSUTUT_LAHETA_UUDELLEEN'], notSortable: true},
             { key: 'KUTSU_PERUUTA', label: L['KUTSUTUT_PERUUTA_KUTSU'], notSortable: true},
@@ -56,7 +56,7 @@ export default class KutsututTable extends React.Component {
                    onFetchData={this.onTableFetch.bind(this)}
                    fetchMoreSettings={{
                        isActive: !this.props.allFetched && !this.props.isLoading,
-                       fetchMoreAction: this.onSubmitWithoutClear,
+                       fetchMoreAction: this.onSubmitWithoutClear.bind(this),
                    }}
                    tableLoading={this.props.isLoading}
             />
@@ -103,16 +103,16 @@ export default class KutsututTable extends React.Component {
     }
 
     onTableFetch(tableState, instance) {
-        const sort = tableState.sorted[0];
+        const newSort = tableState.sorted[0];
         const stateSort = this.state.sorted[0];
         // Update sort state
-        if(sort) {
+        if(newSort) {
             this.setState({
-                    sorted: [Object.assign({}, sort)],
+                    sorted: [Object.assign({}, newSort)],
                 },
                 // If sort state changed fetch new data
-                () => {if(!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
-                    this.props.fetchKutsus(sort);
+                () => {if(!stateSort || newSort.id !== stateSort.id || newSort.desc !== stateSort.desc) {
+                    this.props.fetchKutsus(newSort);
                 }});
 
         }
