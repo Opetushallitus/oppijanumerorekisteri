@@ -86,7 +86,7 @@ export default class KutsututTable extends React.Component {
         const createUrl = urls.url('kayttooikeus-service.kutsu');
         const resendAction = () => http.delete(deleteUrl)
             .then(() => http.post(createUrl, kutsu))
-            .then(() => this.props.fetchKutsus());
+            .then(() => this.props.fetchKutsus(this.state.sorted[0]));
         return kutsu.tila === 'AVOIN' &&
             <Button
                     action={resendAction}>

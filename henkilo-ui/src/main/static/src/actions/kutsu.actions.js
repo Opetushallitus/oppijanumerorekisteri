@@ -20,7 +20,7 @@ const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
 const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});
 export const fetchKutsus = (payload, offset, amount) => dispatch => {
     dispatch(requestKutsus());
-    const url = urls.url('kayttooikeus-service.kutsu', payload, offset, amount);
+    const url = urls.url('kayttooikeus-service.kutsu', {...payload, offset, amount});
     http.get(url).then(json => {dispatch(receiveKutsus(json))});
 };
 

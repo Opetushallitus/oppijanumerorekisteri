@@ -19,6 +19,8 @@ export default class KutsututPage extends React.Component {
         this.defaultLimit = 20;
         this.defaultOffset = 0;
 
+        this.offset = 0;
+
         this.kutsuTableHeaderToSort = {
             KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: 'AIKALEIMA',
             KUTSUT_NIMI_OTSIKKO: 'NIMI',
@@ -36,7 +38,6 @@ export default class KutsututPage extends React.Component {
                 direction: 'DESC',
             },
             allFetched: false,
-            offset: 0,
         };
     }
 
@@ -150,14 +151,16 @@ export default class KutsututPage extends React.Component {
             this.setState({confirmDeleteFor: null});
         }
         this.props.clearKutsuList();
-        this.props.fetchKutsus(this.state.payload, this.state.offset, this.defaultLimit);
+        this.offset = this.defaultOffset;
+        this.props.fetchKutsus(this.state.payload, this.defaultOffset, this.defaultLimit);
     }
 
     toggleFetchAll(getOwnKutsus) {
         const newState = {payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}};
         this.setState(newState);
         this.props.clearKutsuList();
-        this.props.fetchKutsus(newState.payload, this.state.offset, this.defaultLimit);
+        this.offset = this.defaultOffset;
+        this.props.fetchKutsus(newState.payload, this.defaultOffset, this.defaultLimit);
     }
 
     onHakutermiChange(event) {
@@ -166,7 +169,8 @@ export default class KutsututPage extends React.Component {
         this.setState(newState);
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
             this.props.clearKutsuList();
-            this.props.fetchKutsus(newState.payload, this.state.offset, this.defaultLimit);
+            this.offset = this.defaultOffset;
+            this.props.fetchKutsus(newState.payload, this.defaultOffset, this.defaultLimit);
         }
     }
 
@@ -175,7 +179,8 @@ export default class KutsututPage extends React.Component {
         const newState = {payload: {...this.state.payload, organisaatioOid},};
         this.setState(newState);
         this.props.clearKutsuList();
-        this.props.fetchKutsus(newState.payload, this.state.offset, this.defaultLimit);
+        this.offset = this.defaultOffset;
+        this.props.fetchKutsus(newState.payload, this.defaultOffset, this.defaultLimit);
     }
 
     fetchKutsus(sort, shouldNotClear) {
@@ -183,13 +188,17 @@ export default class KutsututPage extends React.Component {
         let direction = this.state.payload.direction;
         if(!shouldNotClear) {
             this.props.clearKutsuList();
+            this.offset = this.defaultOffset;
+        }
+        else {
+            this.offset += this.defaultLimit;
         }
         if(sort) {
             sortBy = this.kutsuTableHeaderToSort[sort.id];
             direction = sort.desc ? 'DESC' : 'ASC';
         }
         this.setState({payload: {...this.state.payload, sortBy, direction}},
-            () => this.props.fetchKutsus(this.state.payload, this.state.offset, this.defaultLimit));
+            () => this.props.fetchKutsus(this.state.payload, this.offset, this.defaultLimit));
     }
 }
 
