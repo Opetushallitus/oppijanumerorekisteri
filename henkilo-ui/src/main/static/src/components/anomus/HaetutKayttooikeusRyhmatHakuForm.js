@@ -63,7 +63,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     };
 
     onOrganisaatioChange = (organisaatio) => {
-        this.setState({selectedOrganisaatio: organisaatio, naytaKaikki: true});
+        this.setState({selectedOrganisaatio: organisaatio});
         const organisaatioOid = organisaatio.value;
         this.props.onSubmit({organisaatioOids: organisaatioOid});
     };
