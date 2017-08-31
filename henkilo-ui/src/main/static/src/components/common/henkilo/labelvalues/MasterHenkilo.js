@@ -30,7 +30,7 @@ class MasterHenkilo extends React.Component {
     render() {
         return <div>
             {
-                !this.props.loading && this.props.henkilo.master.oidHenkilo && this.props.oidHenkilo !== this.props.henkilo.master.oidHenkilo
+                !this.props.isLoading && this.props.henkilo.master.oidHenkilo && this.props.oidHenkilo !== this.props.henkilo.master.oidHenkilo
                     ?
                     <LabelValue
                         values={{
@@ -62,7 +62,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,
-        loading: state.henkilo.master.masterLoading,
+        isLoading: state.henkilo.master.masterLoading,
     };
 };
 

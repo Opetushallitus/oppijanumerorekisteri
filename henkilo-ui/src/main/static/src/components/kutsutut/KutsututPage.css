@@ -1,8 +1,9 @@
 
 #kutsutut-page h2 {
-     font-weight: bold;
-     font-size: 2em;
- }
+    font-weight: bold;
+    font-size: 2em;
+    display: inline;
+}
 
 .confirmation-modal table td, .confirmation-modal table th {
     padding: 10px;
@@ -24,13 +25,10 @@
 .right {
     float: right;
 }
-
-.header h2 {
-    display: inline;
+#kutsutut-page div.flex-item-1 {
+    margin-right: 5px;
 }
 
-#kutsutut-page > .header > span#radiator {
-    display: inline-block;
-    vertical-align: bottom;
-    float: right;
+#kutsutut-page #radiator {
+    margin-bottom: 2px;
 }

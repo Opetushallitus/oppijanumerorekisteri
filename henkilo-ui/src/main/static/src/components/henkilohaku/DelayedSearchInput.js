@@ -24,7 +24,7 @@ class DelayedSearchInput extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(!nextProps.loading && this.state.singleActionQueue !== null) {
+        if(!nextProps.isLoading && this.state.singleActionQueue !== null) {
             this.state.singleActionQueue();
             this.setState({
                 singleActionQueue: null,

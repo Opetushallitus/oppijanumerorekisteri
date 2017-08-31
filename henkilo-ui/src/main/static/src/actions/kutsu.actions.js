@@ -1,7 +1,7 @@
 import {
     DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_KUTSU_SUCCESS,
     FETCH_KUTSUBYTOKEN_REQUEST, FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE,
-    CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST, LOGIN_FAILED
+    CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST, LOGIN_FAILED, CLEAR_KUTSU_LIST
 } from './actiontypes';
 
 import {http} from "../http";
@@ -18,11 +18,13 @@ export const deleteKutsu = (id) => (dispatch => {
 
 const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
 const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});
-export const fetchKutsus = (sortBy, direction, onlyOwnKutsus) => dispatch => {
+export const fetchKutsus = (payload, offset, amount) => dispatch => {
     dispatch(requestKutsus());
-    const url = urls.url('kayttooikeus-service.kutsu', {sortBy, direction, onlyOwnKutsus: !!onlyOwnKutsus});
+    const url = urls.url('kayttooikeus-service.kutsu', {...payload, offset, amount});
     http.get(url).then(json => {dispatch(receiveKutsus(json))});
 };
+
+export const clearKutsuList = () => (dispatch) => dispatch({type: CLEAR_KUTSU_LIST});
 
 const kutsuByTokenRequest = () => ({type: FETCH_KUTSUBYTOKEN_REQUEST});
 const kutsuByTokenSuccess = (kutsu) => ({type: FETCH_KUTSUBYTOKEN_SUCCESS, kutsu, receivedAt: Date.now()});
