@@ -18,13 +18,13 @@ export const deleteKutsu = (id) => (dispatch => {
 
 const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
 const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});
-export const fetchKutsus = (payload) => dispatch => {
+export const fetchKutsus = (payload, offset, amount) => dispatch => {
     dispatch(requestKutsus());
-    const url = urls.url('kayttooikeus-service.kutsu', payload);
+    const url = urls.url('kayttooikeus-service.kutsu', payload, offset, amount);
     http.get(url).then(json => {dispatch(receiveKutsus(json))});
 };
 
-export const clearKutsuList = () => (dispatch) => ({type: CLEAR_KUTSU_LIST});
+export const clearKutsuList = () => (dispatch) => dispatch({type: CLEAR_KUTSU_LIST});
 
 const kutsuByTokenRequest = () => ({type: FETCH_KUTSUBYTOKEN_REQUEST});
 const kutsuByTokenSuccess = (kutsu) => ({type: FETCH_KUTSUBYTOKEN_SUCCESS, kutsu, receivedAt: Date.now()});

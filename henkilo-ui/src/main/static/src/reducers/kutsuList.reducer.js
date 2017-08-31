@@ -8,7 +8,7 @@ export const kutsuList = (state = {loaded: false, result: [], kutsuByToken: {}, 
         case FETCH_KUTSU_REQUEST:
             return Object.assign({}, state, {loaded: false});
         case FETCH_KUTSU_SUCCESS:
-            return Object.assign({}, state, {result: action.kutsus, loaded: true}, );
+            return Object.assign({}, state, {result: [...state.result, ...action.kutsus], loaded: true}, );
         case FETCH_KUTSUBYTOKEN_REQUEST:
             return Object.assign({}, state, {kutsuByTokenLoading: true,});
         case FETCH_KUTSUBYTOKEN_SUCCESS:

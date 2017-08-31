@@ -36,6 +36,7 @@ export default class KutsututPage extends React.Component {
                 direction: 'DESC',
             },
             allFetched: false,
+            offset: 0,
         };
     }
 
@@ -51,7 +52,7 @@ export default class KutsututPage extends React.Component {
     };
 
     componentWillMount() {
-        this.props.fetchKutsus(this.state.payload);
+        this.props.fetchKutsus(this.state.payload, this.defaultOffset, this.defaultLimit);
         if(this.props.isAdmin) {
             this.props.fetchAllOrganisaatios();
         }
@@ -148,13 +149,15 @@ export default class KutsututPage extends React.Component {
             this.props.deleteKutsu(this.state.confirmDeleteFor.id);
             this.setState({confirmDeleteFor: null});
         }
-        this.props.fetchKutsus();
+        this.props.clearKutsuList();
+        this.props.fetchKutsus(this.state.payload, this.state.offset, this.defaultLimit);
     }
 
     toggleFetchAll(getOwnKutsus) {
         const newState = {payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}};
         this.setState(newState);
-        this.props.fetchKutsus(newState.payload);
+        this.props.clearKutsuList();
+        this.props.fetchKutsus(newState.payload, this.state.offset, this.defaultLimit);
     }
 
     onHakutermiChange(event) {
@@ -162,7 +165,8 @@ export default class KutsututPage extends React.Component {
         const newState = {payload: {...this.state.payload, searchTerm: hakutermi}};
         this.setState(newState);
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
-            this.props.fetchKutsus(newState.payload);
+            this.props.clearKutsuList();
+            this.props.fetchKutsus(newState.payload, this.state.offset, this.defaultLimit);
         }
     }
 
@@ -170,7 +174,8 @@ export default class KutsututPage extends React.Component {
         const organisaatioOid = organisaatio.value;
         const newState = {payload: {...this.state.payload, organisaatioOid},};
         this.setState(newState);
-        this.props.fetchKutsus(newState.payload);
+        this.props.clearKutsuList();
+        this.props.fetchKutsus(newState.payload, this.state.offset, this.defaultLimit);
     }
 
     fetchKutsus(sort, shouldNotClear) {
@@ -184,7 +189,7 @@ export default class KutsututPage extends React.Component {
             direction = sort.desc ? 'DESC' : 'ASC';
         }
         this.setState({payload: {...this.state.payload, sortBy, direction}},
-            () => this.props.fetchKutsus(this.state.payload));
+            () => this.props.fetchKutsus(this.state.payload, this.state.offset, this.defaultLimit));
     }
 }
 
