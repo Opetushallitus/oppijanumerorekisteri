@@ -53,7 +53,7 @@ export default class KutsututPage extends React.Component {
     };
 
     componentWillMount() {
-        this.props.fetchKutsus(this.state.payload, this.defaultOffset, this.defaultLimit);
+        this.fetchKutsus();
         if(this.props.isAdmin) {
             this.props.fetchAllOrganisaatios();
         }
@@ -150,37 +150,28 @@ export default class KutsututPage extends React.Component {
             this.props.deleteKutsu(this.state.confirmDeleteFor.id);
             this.setState({confirmDeleteFor: null});
         }
-        this.props.clearKutsuList();
-        this.offset = this.defaultOffset;
-        this.props.fetchKutsus(this.state.payload, this.defaultOffset, this.defaultLimit);
+        this.fetchKutsus();
     }
 
     toggleFetchAll(getOwnKutsus) {
-        const newState = {payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}};
-        this.setState(newState);
-        this.props.clearKutsuList();
-        this.offset = this.defaultOffset;
-        this.props.fetchKutsus(newState.payload, this.defaultOffset, this.defaultLimit);
+        this.setState({payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}},
+            () => this.fetchKutsus());
     }
 
     onHakutermiChange(event) {
         const hakutermi = event.value;
-        const newState = {payload: {...this.state.payload, searchTerm: hakutermi}};
-        this.setState(newState);
-        if (hakutermi.length === 0 || hakutermi.length >= 3) {
-            this.props.clearKutsuList();
-            this.offset = this.defaultOffset;
-            this.props.fetchKutsus(newState.payload, this.defaultOffset, this.defaultLimit);
-        }
+        this.setState({payload: {...this.state.payload, searchTerm: hakutermi}},
+            () => {
+                if (hakutermi.length === 0 || hakutermi.length >= 3) {
+                    this.fetchKutsus();
+                }
+            });
     }
 
     onOrganisaatioChange(organisaatio) {
         const organisaatioOid = organisaatio.value;
-        const newState = {payload: {...this.state.payload, organisaatioOid},};
-        this.setState(newState);
-        this.props.clearKutsuList();
-        this.offset = this.defaultOffset;
-        this.props.fetchKutsus(newState.payload, this.defaultOffset, this.defaultLimit);
+        this.setState({payload: {...this.state.payload, organisaatioOid},},
+            () => this.fetchKutsus());
     }
 
     fetchKutsus(sort, shouldNotClear) {
