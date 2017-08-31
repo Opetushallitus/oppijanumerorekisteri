@@ -72,10 +72,18 @@ class AnomusPage extends React.Component {
         return (
           <div className="anomus-table">
               <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit.bind(this)}/>
-              { this.state.showHylkaysSuccess ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHylkaysSuccess: false})}></WideGreenNotification> : null }
-              { this.state.showHyvaksyminenSuccess ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS'])} closeAction={() => this.setState({showHyvaksyminenSuccess: false})}></WideGreenNotification> : null }
-              { this.state.showHylkaysFailure ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHylkaysSuccess: false})}></WideGreenNotification> : null }
-              { this.state.showHyvaksyminenFailure ? <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])} closeAction={() => this.setState({showHyvaksyminenFailure: false})}></WideGreenNotification> : null }
+              { this.state.showHylkaysSuccess
+              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
+                                        closeAction={() => this.setState({showHylkaysSuccess: false})}/> }
+              { this.state.showHyvaksyminenSuccess
+              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS'])}
+                                        closeAction={() => this.setState({showHyvaksyminenSuccess: false})}/> }
+              { this.state.showHylkaysFailure
+              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
+                                        closeAction={() => this.setState({showHylkaysSuccess: false})}/> }
+              { this.state.showHyvaksyminenFailure
+              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
+                                        closeAction={() => this.setState({showHyvaksyminenFailure: false})}/>}
 
               {
                   this.props.haetutKayttooikeusryhmatLoading && !this.initialised

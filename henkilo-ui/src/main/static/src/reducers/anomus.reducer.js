@@ -8,7 +8,7 @@ export const haetutKayttooikeusryhmat = (state = {isLoading: true, data: []}, ac
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST:
             return Object.assign({}, state, {isLoading: true});
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS:
-            return Object.assign({}, state, {isLoading: false, data: [...action.haetutKayttooikeusryhmat]});
+            return Object.assign({}, state, {isLoading: false, data: [...state.data, ...action.haetutKayttooikeusryhmat]});
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE:
             return Object.assign({}, state, {isLoading: false});
         case CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT:

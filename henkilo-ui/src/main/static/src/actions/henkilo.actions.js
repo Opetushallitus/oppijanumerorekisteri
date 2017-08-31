@@ -175,8 +175,8 @@ export const fetchHenkiloOrganisaatios = (oidHenkilo) => (dispatch, getState) =>
     http.get(url)
         .then(henkiloOrganisaatios => dispatch(receiveHenkiloOrganisaatiosSuccess( henkiloOrganisaatios )))
         .catch(error => {
-            dispatch(receiveHenkiloOrganisaatioFailure(error));
             console.error(`Failed fetching organisaatios for henkilo: ${oidHenkilo}: ${error}`);
+            dispatch(receiveHenkiloOrganisaatioFailure(error));
         });
 };
 
