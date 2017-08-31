@@ -47,6 +47,7 @@ import org.joda.time.DateTime;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import org.springframework.util.StringUtils;
 
 @Service
 public class HenkiloServiceImpl implements HenkiloService {
@@ -363,6 +364,11 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
+        // varmistetaan että tyhjä hetu tallentuu nullina
+        if (StringUtils.isEmpty(henkiloSaved.getHetu())) {
+            henkiloUpdateDto.setHetu(null);
+            henkiloSaved.setHetu(null);
+        }
         // This needs to be called in order to persist new yhteystiedotryhmas.
         this.henkiloDataRepository.save(henkiloSaved);
         return henkiloUpdateDto;
@@ -492,6 +498,10 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new UnprocessableEntityException(errors);
         }
 
+        // varmistetaan että tyhjä hetu tallentuu nullina
+        if (StringUtils.isEmpty(henkiloCreate.getHetu())) {
+            henkiloCreate.setHetu(null);
+        }
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
