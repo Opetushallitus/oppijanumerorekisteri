@@ -6,7 +6,7 @@ class VahvaTunnistusInfoPage extends React.Component {
     render() {
         const targetUrl = urls.url('shibboleth.kayttooikeus-service.cas.tunnistus', {
             loginToken: this.props.loginToken,
-            locale: this.props.locale
+            kielisyys: this.props.locale
         });
         const identificationUrl = urls.url('shibboleth.identification', this.props.locale.toUpperCase(), {target: targetUrl});
         return <div className="borderless-wrapper">
