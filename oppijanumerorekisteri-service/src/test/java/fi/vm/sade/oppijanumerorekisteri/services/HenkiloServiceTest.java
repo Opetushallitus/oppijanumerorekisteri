@@ -468,4 +468,72 @@ public class HenkiloServiceTest {
                 .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
     }
 
+    @Test
+    public void createHenkiloShouldSetEmptyHetuToNull() {
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloCreateDto input = new HenkiloCreateDto();
+        input.setHetu("");
+
+        HenkiloDto output = service.createHenkilo(input);
+
+        assertThat(output.getHetu()).isNull();
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isNull();
+    }
+
+    @Test
+    public void createHenkiloShouldSaveHetu() {
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloCreateDto input = new HenkiloCreateDto();
+        input.setHetu("310817A983J");
+
+        HenkiloDto output = service.createHenkilo(input);
+
+        assertThat(output.getHetu()).isEqualTo("310817A983J");
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isEqualTo("310817A983J");
+    }
+
+    @Test
+    public void updateHenkiloShouldSetEmptyHetuToNull() {
+        when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
+                .thenReturn(asList(new Henkilo()));
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloUpdateDto input = new HenkiloUpdateDto();
+        input.setHetu("");
+
+        HenkiloUpdateDto output = service.updateHenkilo(input);
+
+        assertThat(output.getHetu()).isNull();
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isNull();
+    }
+
+    @Test
+    public void updateHenkiloShouldSaveHetu() {
+        when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
+                .thenReturn(asList(new Henkilo()));
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloUpdateDto input = new HenkiloUpdateDto();
+        input.setHetu("310817A983J");
+
+        HenkiloUpdateDto output = service.updateHenkilo(input);
+
+        assertThat(output.getHetu()).isEqualTo("310817A983J");
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isEqualTo("310817A983J");
+    }
+
 }
