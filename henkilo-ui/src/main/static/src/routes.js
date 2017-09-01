@@ -23,6 +23,7 @@ export default <Route path="/" component={App}>
     <Route path="/virkailija/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
     <Route path="/admin/:oid" component={AdminViewContainer} />
+    <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
 </Route>
