@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -34,12 +37,21 @@ public class OppijaServiceImpl implements OppijaService {
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
+    private final UserDetailsHelper userDetailsHelper;
+    private final KayttooikeusClient kayttooikeusClient;
 
     @Override
     public OppijatReadDto getOrCreate(OppijatCreateDto dto) {
-        Organisaatio organisaatio = organisaatioService
-                .getByOid(dto.getOrganisaatioOid())
-                .orElseGet(() -> organisaatioService.create(dto.getOrganisaatioOid()));
+        // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
+        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
+        boolean passivoitu = false;
+        Set<Organisaatio> organisaatiot = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid, passivoitu).stream()
+                .map(organisaatio -> organisaatioService.getByOid(organisaatio.getOrganisaatioOid())
+                        .orElseGet(() -> organisaatioService.create(organisaatio.getOrganisaatioOid())))
+                .collect(toSet());
+        if (organisaatiot.isEmpty()) {
+            throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joihin oppijat liitetään", kayttajaOid));
+        }
 
         // validoidaan että hetut ovat uniikkeja
         Map<String, OppijaCreateDto> oppijatByHetu = dto.getHenkilot().stream()
@@ -53,13 +65,13 @@ public class OppijaServiceImpl implements OppijaService {
 
         Tuonti tuonti = mapper.map(dto, Tuonti.class);
         tuonti.setHenkilot(dto.getHenkilot().stream()
-                .map(oppija -> getOrCreate(oppija, henkilot.get(oppija.getHenkilo().getHetu()), organisaatio))
+                .map(oppija -> getOrCreate(oppija, henkilot.get(oppija.getHenkilo().getHetu()), organisaatiot))
                 .collect(toSet()));
         tuonti = tuontiRepository.save(tuonti);
         return mapper.map(tuonti, OppijatReadDto.class);
     }
 
-    private TuontiRivi getOrCreate(OppijaCreateDto oppija, Henkilo henkilo, Organisaatio organisaatio) {
+    private TuontiRivi getOrCreate(OppijaCreateDto oppija, Henkilo henkilo, Set<Organisaatio> organisaatiot) {
         // luodaan tarvittaessa uusi henkilö
         if (henkilo == null) {
             henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
@@ -67,8 +79,9 @@ public class OppijaServiceImpl implements OppijaService {
             henkilo = henkiloService.createHenkilo(henkilo);
         }
 
-        // liitetään henkilö organisaatioon
-        henkilo.addOrganisaatio(organisaatio);
+        // liitetään henkilö organisaatioihin
+        organisaatiot.stream().forEach(henkilo::addOrganisaatio);
+        henkilo = henkiloRepository.save(henkilo);
 
         TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
         rivi.setHenkilo(henkilo);

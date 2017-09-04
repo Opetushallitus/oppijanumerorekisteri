@@ -24,10 +24,6 @@ public class OppijatCreateDto {
     private String sahkoposti;
 
     @NotNull
-    @ApiModelProperty(value = "Organisaatio johon oppijat liitetään")
-    private String organisaatioOid;
-
-    @NotNull
     @Size(min = 1)
     @Valid
     private Collection<OppijaCreateDto> henkilot;

@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
@@ -10,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import static java.util.Collections.singletonList;
 import java.util.Date;
 import java.util.Optional;
 import static java.util.stream.Collectors.toSet;
@@ -21,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,6 +40,9 @@ public class OppijaServiceTest {
     @MockBean
     private OrganisaatioClient organisaatioClient;
 
+    @MockBean
+    private KayttooikeusClient kayttooikeusClient;
+
     @Autowired
     private OppijaService oppijaService;
 
@@ -46,12 +53,14 @@ public class OppijaServiceTest {
     public void setup() {
         when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("user1"));
         when(organisaatioClient.exists(any())).thenReturn(true);
+        when(kayttooikeusClient.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(
+                singletonList(OrganisaatioHenkiloDto.builder().organisaatioOid("1.2.3.4").build())
+        );
     }
 
     @Test
     public void getOrCreateShouldValidateHetuIsUnique() {
         OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .organisaatioOid("1.2.3.4")
                 .henkilot(Stream.of(
                         OppijaCreateDto.builder()
                                 .tunniste("tunniste1")
@@ -83,7 +92,6 @@ public class OppijaServiceTest {
     @Test
     public void getOrCreateShouldCreateNewHenkilo() {
         OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .organisaatioOid("1.2.3.4")
                 .henkilot(Stream.of(
                         OppijaCreateDto.builder()
                                 .tunniste("tunniste1")
@@ -120,7 +128,6 @@ public class OppijaServiceTest {
                 .build();
         henkiloRepository.save(henkilo);
         OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .organisaatioOid("1.2.3.4")
                 .henkilot(Stream.of(
                         OppijaCreateDto.builder()
                                 .tunniste("tunniste1")

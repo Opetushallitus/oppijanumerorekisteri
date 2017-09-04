@@ -20,9 +20,6 @@ public class OppijatReadDto {
     @ApiModelProperty(value = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
     private String sahkoposti;
 
-    @ApiModelProperty(value = "Organisaatio johon oppijat liitetään")
-    private String organisaatioOid;
-
     private Collection<OppijaReadDto> henkilot;
 
 }
