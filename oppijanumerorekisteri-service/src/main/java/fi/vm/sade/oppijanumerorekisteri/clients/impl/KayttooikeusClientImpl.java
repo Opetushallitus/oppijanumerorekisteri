@@ -19,6 +19,7 @@ import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import org.springframework.web.client.RestClientException;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -41,8 +42,7 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
 
     @Override
     public boolean checkUserPermissionToUser(String callingUserOid, String userOid, List<String> allowedRoles,
-                                             ExternalPermissionService externalPermissionService, Set<String> callingUserRoles)
-            throws IOException {
+                                             ExternalPermissionService externalPermissionService, Set<String> callingUserRoles) {
         PermissionCheckDto permissionCheckDto = new PermissionCheckDto();
         permissionCheckDto.setAllowedRoles(allowedRoles);
         permissionCheckDto.setCallingUserOid(callingUserOid);
@@ -50,15 +50,25 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         permissionCheckDto.setExternalPermissionService(externalPermissionService);
         permissionCheckDto.setUserOid(userOid);
         String url = this.urlConfiguration.url("kayttooikeus-service.s2s-checkUserPermissionToUser");
-        InputStream content = cachingRestClient.post(url, JSON, this.objectMapper.writeValueAsString(permissionCheckDto))
-                .getEntity().getContent();
-        return this.objectMapper.readerFor(Boolean.class).readValue(content);
+        Boolean content;
+        try {
+            content = this.objectMapper.readerFor(Boolean.class)
+                    .readValue(cachingRestClient.post(url, JSON, this.objectMapper.writeValueAsString(permissionCheckDto))
+                            .getEntity().getContent());
+        } catch (IOException e) {
+            throw new RestClientException(e.getMessage(), e);
+        }
+        return content;
     }
 
     @Override
-    public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) throws IOException {
+    public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) {
         String url = this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, kasittelijaOid);
-        cachingRestClient.delete(url);
+        try {
+            cachingRestClient.delete(url);
+        } catch (IOException e) {
+            throw new RestClientException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -77,8 +87,8 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
                 }
                 return kayttooikeudet;
             }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        } catch (IOException e) {
+            throw new RestClientException(e.getMessage(), e);
         }
     }
 

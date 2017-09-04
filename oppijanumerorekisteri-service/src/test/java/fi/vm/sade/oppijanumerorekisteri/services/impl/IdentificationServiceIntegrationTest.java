@@ -1,13 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.*;
 
-// Non-transactional in order to emulate how the real method call works.
+// Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
+// See IdentificationServiceIntegrationTest2 if you want to add more tests.
 @RunWith(SpringRunner.class)
 @IntegrationTest
 @Sql("/sql/yksilointi-test.sql")
@@ -40,9 +45,6 @@ public class IdentificationServiceIntegrationTest {
 
     @Autowired
     private IdentificationService identificationService;
-
-    @Autowired
-    private HenkiloRepository henkiloRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -60,7 +62,8 @@ public class IdentificationServiceIntegrationTest {
     @Test
     public void identifyHenkilos() {
         @SuppressWarnings("unchedked")
-        List<Henkilo> unidentifiedHenkilos = this.entityManager.createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
+        List<Henkilo> unidentifiedHenkilos = this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
 
         given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
         given(this.vtjClient.fetchHenkilo("010101-123N"))
@@ -68,8 +71,10 @@ public class IdentificationServiceIntegrationTest {
 
         this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
-        Henkilo notFoundVtjResult = (Henkilo)this.entityManager.createNativeQuery("SELECT * FROM henkilo WHERE hetu = '111111-1235'", Henkilo.class).getSingleResult();
-        Henkilo everythingOkResult = (Henkilo)this.entityManager.createNativeQuery("SELECT * FROM henkilo WHERE hetu = '010101-123N'", Henkilo.class).getSingleResult();
+        Henkilo notFoundVtjResult = (Henkilo)this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo WHERE hetu = '111111-1235'", Henkilo.class).getSingleResult();
+        Henkilo everythingOkResult = (Henkilo)this.entityManager
+                .createNativeQuery("SELECT * FROM henkilo WHERE hetu = '010101-123N'", Henkilo.class).getSingleResult();
 
         assertThat(everythingOkResult.isYksiloityVTJ()).isTrue();
         assertThat(everythingOkResult.getKutsumanimi()).isEqualTo("Teppo");
@@ -77,5 +82,4 @@ public class IdentificationServiceIntegrationTest {
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
     }
-
 }

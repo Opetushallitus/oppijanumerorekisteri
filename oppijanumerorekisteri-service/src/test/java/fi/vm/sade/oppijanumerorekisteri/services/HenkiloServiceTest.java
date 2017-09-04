@@ -86,9 +86,9 @@ public class HenkiloServiceTest {
         this.hakuappClient = Mockito.mock(HakuappClient.class);
 
         this.service = spy(new HenkiloServiceImpl(this.henkiloJpaRepositoryMock, henkiloDataRepositoryMock, henkiloViiteRepositoryMock,
-                mapper, new YhteystietoConverter(), mockOidGenerator, this.userDetailsHelperMock, this.kielisyysRepositoryMock,
-                this.kansalaisuusRepositoryMock, this.permissionCheckerMock,
-                henkiloUpdatePostValidatorMock, henkiloCreatePostValidatorMock, oppijanumerorekisteriProperties, kayttooikeusClient, hakuappClient));
+                this.kielisyysRepositoryMock, this.kansalaisuusRepositoryMock, new YhteystietoConverter(), mapper, mockOidGenerator,
+                this.userDetailsHelperMock, this.permissionCheckerMock, henkiloUpdatePostValidatorMock,
+                henkiloCreatePostValidatorMock, oppijanumerorekisteriProperties, kayttooikeusClient, hakuappClient));
     }
 
     @Test
