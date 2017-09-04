@@ -41,7 +41,6 @@ public class OppijaControllerTest {
     private OppijatCreateDto getValidOppijatCreateDto() {
         return OppijatCreateDto.builder()
                 .sahkoposti("example@example.com")
-                .organisaatioOid("1.2.3.4")
                 .henkilot(Stream.of(getValidOppijaCreateDto()).collect(toSet()))
                 .build();
     }

@@ -34,12 +34,6 @@ public class Tuonti extends IdentifiableAndVersionedEntity {
     @Column(name = "sahkoposti")
     private String sahkoposti;
 
-    /**
-     * Oppijoihin liitetty organisaatio.
-     */
-    @Column(name = "organisaatio_oid", nullable = false)
-    private String organisaatioOid;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tuonti_id", nullable = false, foreignKey = @ForeignKey(name = "fk_tuonti_rivi_tuonti"))
     private Set<TuontiRivi> henkilot;

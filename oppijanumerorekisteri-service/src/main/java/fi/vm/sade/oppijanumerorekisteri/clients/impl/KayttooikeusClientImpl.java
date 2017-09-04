@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.generic.rest.CachingRestClient;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
@@ -17,9 +18,11 @@ import java.util.Set;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
+import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import org.springframework.web.client.RestClientException;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -90,6 +93,25 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         } catch (IOException e) {
             throw new RestClientException(e.getMessage(), e);
         }
+    }
+
+    public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid) {
+        try {
+            String url = urlConfiguration.url("kayttooikeus-service.henkilo.organisaatiohenkilo", henkiloOid);
+            try (InputStream response = cachingRestClient.get(url)) {
+                return objectMapper.readValue(response, new TypeReference<List<OrganisaatioHenkiloDto>>() {});
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid, boolean passivoitu) {
+        return getOrganisaatioHenkilot(henkiloOid)
+                .stream()
+                .filter(organisaatio -> !organisaatio.isPassivoitu())
+                .collect(toList());
     }
 
 }
