@@ -39,32 +39,31 @@ export const fetchKutsuByToken = (temporaryToken) => dispatch => {
 
 const createHenkiloByTokenRequest = () => ({type: CREATE_HENKILOBYTOKEN_REQUEST});
 const createHenkiloByTokenSuccess = (authToken) => ({type: CREATE_HENKILOBYTOKEN_SUCCESS, authToken, receivedAt: Date.now()});
-const createHenkiloByTokenFailure = () => ({type: CREATE_HENKILOBYTOKEN_FAILURE, receivedAt: Date.now()});
+const createHenkiloByTokenFailure = (error) => ({type: CREATE_HENKILOBYTOKEN_FAILURE, receivedAt: Date.now(), error});
 export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getState) => {
     dispatch(createHenkiloByTokenRequest());
     const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
     http.post(url, payload)
         .then(authToken => {
-            dispatch(createHenkiloByTokenSuccess(authToken));
-            const casUrl = urls.url('cas.login', {authToken,});
-            http.get(casUrl).then(async loginPage => {
-                // Login failed
-                if(loginPage.indexOf('Log In Successful') === -1) {
-                    dispatch({type: LOGIN_FAILED});
-                }
-                else {
-                    // Wait until user data has been synced to ldap
-                    do {
-                        if(!getState().omattiedot.omattiedotLoading) {
-                            dispatch(fetchOmattiedot());
-                        }
-                        await new Promise(resolve => setTimeout(resolve, 4000));
-                    } while (getState().omattiedot.data === undefined);
-                    // Redirect to opintopolku root page
-                    window.location = window.location.origin;
-                }
-            });
-        })
-        .catch(() => dispatch(createHenkiloByTokenFailure()));
+                dispatch(createHenkiloByTokenSuccess(authToken));
+                const casUrl = urls.url('cas.login', {authToken,});
+                http.get(casUrl).then(async loginPage => {
+                    // Login failed
+                    if(loginPage.indexOf('Log In Successful') === -1) {
+                        dispatch({type: LOGIN_FAILED});
+                    }
+                    else {
+                        // Wait until user data has been synced to ldap
+                        do {
+                            if(!getState().omattiedot.omattiedotLoading) {
+                                dispatch(fetchOmattiedot());
+                            }
+                            await new Promise(resolve => setTimeout(resolve, 4000));
+                        } while (getState().omattiedot.data === undefined);
+                        // Redirect to opintopolku root page
+                        window.location = window.location.origin;
+                    }
+                });
+            },
+            error => dispatch(createHenkiloByTokenFailure(error)))
 };
-

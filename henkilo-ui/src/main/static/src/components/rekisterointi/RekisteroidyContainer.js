@@ -6,7 +6,7 @@ import {emptyNavi} from "../../configuration/navigationconfigurations";
 import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
 import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";
-import Button from "../common/button/Button";
+import RekisteroidyVirhe from "./content/RekisteroidyVirhe";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
@@ -24,22 +24,13 @@ class RekisteroidyContainer extends React.Component {
     render() {
         let page;
         if(this.props.loginFailed) {
-            page =
-                <div className="borderless-wrapper">
-                    {this.props.L['REKISTEROIDY_LOGIN_FAILED']}
-                    <div>
-                        <Button href="/">{this.props.L['REKISTEROIDY_KIRJAUTUMISSIVULLE']}</Button>
-                    </div>
-                </div>;
+            page = <RekisteroidyVirhe text={'REKISTEROIDY_LOGIN_FAILED'} buttonText={'REKISTEROIDY_KIRJAUTUMISSIVULLE'} />;
         }
         else if(this.loggedIn !== undefined) {
-            page =
-                <div className="borderless-wrapper">
-                    {this.props.L['REKISTEROIDY_KIRJAUTUNUT']}
-                </div>;
+            page = <RekisteroidyVirhe text={'REKISTEROIDY_KIRJAUTUNUT'} />;
         }
         else if(this.props.temporaryTokenInvalid) {
-            page = <div className="borderless-wrapper">{this.props.L['REKISTEROIDY_TEMP_TOKEN_INVALID']}</div>
+            page =  <RekisteroidyVirhe text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
         }
         else if(this.props.koodistoLoading || this.props.tokenLoading) {
             page = <Loader />;

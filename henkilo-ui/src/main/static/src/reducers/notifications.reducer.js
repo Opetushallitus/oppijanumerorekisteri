@@ -2,13 +2,26 @@ import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, UPDATE_PASSWORD_SUCCESS,
     UPDATE_PASSWORD_FAILURE, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
     VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE, LINK_HENKILOS_SUCCESS,
-    LINK_HENKILOS_FAILURE
+    LINK_HENKILOS_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE
 } from "../actions/actiontypes";
 
 import PropertySingleton from '../globals/PropertySingleton'
 
+const rekisteroidyErrors = {
+    UsernameAlreadyExistsException: {
+        notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
+        notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
+    },
+};
+
 export const notifications = (state={existingKayttooikeus: [], buttonNotifications: [], updatePassword: [],
     henkilohakuNotifications: [], duplicatesNotifications: []}, action) => {
+    const createButtonNotification = (type, buttonNotification) => ({
+        type: type,
+        notL10nMessage: buttonNotification.notL10nMessage,
+        notL10nText: buttonNotification.notL10nText,
+        id: buttonNotification.position,
+    });
     switch (action.type) {
         case LINK_HENKILOS_SUCCESS:
             return Object.assign({}, state, {
@@ -93,12 +106,17 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
         case VTJ_OVERRIDE_HENKILO_FAILURE:
             return {
                 ...state,
-                buttonNotifications: [...state.buttonNotifications, {
-                    type: 'error',
-                    notL10nMessage: action.buttonNotification.notL10nMessage,
-                    notL10nText: action.buttonNotification.notL10nText,
-                    id: action.buttonNotification.position,
-                }],
+                buttonNotifications: [...state.buttonNotifications, createButtonNotification('error', action.buttonNotification)],
+            };
+        case CREATE_HENKILOBYTOKEN_FAILURE:
+            const error = rekisteroidyErrors[action.error.errorType];
+            return {
+                ...state,
+                buttonNotifications: [...state.buttonNotifications, createButtonNotification('error', {
+                    notL10nMessage: error.notL10nMessage,
+                    notL10nText: error.notL10nText,
+                    position: 'rekisteroidyPage',
+                })],
             };
         default:
             return state;

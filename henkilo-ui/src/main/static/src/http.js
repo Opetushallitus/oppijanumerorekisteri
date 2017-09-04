@@ -1,53 +1,72 @@
 import fetch from 'isomorphic-fetch'
 import PropertySingleton from './globals/PropertySingleton'
 
-const parseResponse = response => {
-    if(response.status < 300) {
-        if(response.headers.get('content-type') && response.headers.get('content-type').toLowerCase().startsWith('application/json')) {
-            return response.json();
-        }
-        return response.text();
+const parseResponseBody = (response) => {
+    return new Promise((resolve) => ((response.headers.get('content-type')
+        && response.headers.get('content-type').toLowerCase().startsWith('application/json'))
+        ? response.json()
+        : response.text())
+        .then((data) => resolve({
+            status: response.status,
+            ok: response.ok,
+            data,
+        })));
+};
+
+const resolveResponse = (response, resolve, reject) => {
+    if (response.ok) {
+        return resolve(response.data);
     }
-    throw response;
+    // extract the error from the server's json
+    return reject(response.data);
+};
+
+const commonOptions = {
+    mode: 'cors',
+    headers: {
+        "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
+    },
+    credentials: 'include',
 };
 
 // externalPermissionService header is required only for users not having access through
 // normal privilege group but from SURE/HAKU
 export const http = {
-    get: (url) => fetch(url, {
-        credentials: 'include',
-        mode: 'cors',
-        headers: {
-            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
-        },
-    }).then(parseResponse),
-    delete: (url) => fetch(url, {
+    get: (url) => new Promise((resolve, reject) => fetch(url, {
+        ...commonOptions,
+        }).then(parseResponseBody)
+        .then((response) => resolveResponse(response, resolve, reject))
+        .catch((error) => reject({networkError: error.message,}))
+    ),
+    delete: (url) => new Promise((resolve, reject) => fetch(url, {
+        ...commonOptions,
         method: 'DELETE',
-        credentials: 'include',
-        mode: 'cors',
-        headers: {
-            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
-        },
-    }).then(parseResponse),
-    put: (url, payload) => fetch(url, {
-        credentials: 'include',
+        }).then(parseResponseBody)
+        .then((response) => resolveResponse(response, resolve, reject))
+        .catch((error) => reject({networkError: error.message,}))
+    ),
+    put: (url, payload) => new Promise((resolve, reject) => fetch(url, {
+        ...commonOptions,
         method: 'PUT',
         body: JSON.stringify(payload),
         headers: {
+            ...commonOptions.headers,
             'Content-Type': 'application/json',
-            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
-        mode: 'cors',
-    }).then(parseResponse),
-    post: (url, payload) => fetch(url, {
-        credentials: 'include',
+        }).then(parseResponseBody)
+        .then((response) => resolveResponse(response, resolve, reject))
+        .catch((error) => reject({networkError: error.message,}))
+    ),
+    post: (url, payload) => new Promise((resolve, reject) => fetch(url, {
+        ...commonOptions,
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
+            ...commonOptions.headers,
             'Content-Type': 'application/json',
-            "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
         },
-        mode: 'cors',
-    }).then(parseResponse),
-
+        }).then(parseResponseBody)
+        .then((response) => resolveResponse(response, resolve, reject))
+        .catch((error) => reject({networkError: error.message,}))
+    ),
 };

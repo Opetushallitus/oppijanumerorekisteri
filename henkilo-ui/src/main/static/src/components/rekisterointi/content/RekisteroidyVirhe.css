@@ -1,0 +1,12 @@
+.rekisteroidyVirheWrapper {
+    padding: 30px;
+    background-color: white;
+    border: #d5d5d5 solid 1px;
+    border-radius: 2px;
+    width: 300px;
+    margin: 40px auto;
+}
+
+#rekisteroidyVirhe > p {
+    margin-bottom: 10px;
+}

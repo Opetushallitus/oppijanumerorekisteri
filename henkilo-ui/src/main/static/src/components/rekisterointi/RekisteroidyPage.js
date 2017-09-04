@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot'
 import RekisteroidyOrganisaatiot from "./content/RekisteroidyOrganisaatiot";
 import StaticUtils from "../common/StaticUtils";
-import Button from "../common/button/Button";
 import PropertySingleton from "../../globals/PropertySingleton"
 import RekisteroidyHaka from "./content/RekisteroidyHaka";
 import Modal from "../common/modal/Modal";
 import LoadingBarTimer from "../common/loadingbar/LoadingBarTimer";
+import NotificationButton from "../common/button/NotificationButton";
 
 class RekisteroidyPage extends React.Component {
     static propTypes = {
@@ -63,9 +63,9 @@ class RekisteroidyPage extends React.Component {
                     <RekisteroidyPerustiedot henkilo={{henkilo: this.state.henkilo}}
                                              koodisto={this.props.koodisto}
                                              updatePayloadModel={this.updatePayloadModelInput.bind(this)} />
-                    <Button action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} >
+                    <NotificationButton action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} id="rekisteroidyPage" >
                         {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
-                    </Button>
+                    </NotificationButton>
                 </div>
                 <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
                     <span className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_VALITSE']}</span>
@@ -112,10 +112,6 @@ class RekisteroidyPage extends React.Component {
         this.props.createHenkiloByToken(this.props.kutsu.temporaryToken, payload);
     }
 
-    updateProgress() {
-        this.setState({progress: this.state.progress+.1});
-        return this.state.progress;
-    }
 }
 
 export default RekisteroidyPage;
