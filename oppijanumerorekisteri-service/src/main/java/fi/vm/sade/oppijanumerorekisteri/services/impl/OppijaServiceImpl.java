@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import java.util.Map;
@@ -23,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Set;
 
@@ -32,11 +32,11 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class OppijaServiceImpl implements OppijaService {
 
-    private final OrganisaatioService organisaatioService;
     private final HenkiloService henkiloService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
+    private final OrganisaatioRepository organisaatioRepository;
     private final UserDetailsHelper userDetailsHelper;
     private final KayttooikeusClient kayttooikeusClient;
 
@@ -46,8 +46,8 @@ public class OppijaServiceImpl implements OppijaService {
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         boolean passivoitu = false;
         Set<Organisaatio> organisaatiot = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid, passivoitu).stream()
-                .map(organisaatio -> organisaatioService.getByOid(organisaatio.getOrganisaatioOid())
-                        .orElseGet(() -> organisaatioService.create(organisaatio.getOrganisaatioOid())))
+                .map(organisaatio -> organisaatioRepository.findByOid(organisaatio.getOrganisaatioOid())
+                        .orElseGet(() -> organisaatioRepository.save(Organisaatio.builder().oid(organisaatio.getOrganisaatioOid()).build())))
                 .collect(toSet());
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joihin oppijat liitetään", kayttajaOid));
