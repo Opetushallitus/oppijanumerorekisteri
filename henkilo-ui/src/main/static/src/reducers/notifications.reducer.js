@@ -12,16 +12,26 @@ const rekisteroidyErrors = {
         notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
         notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
     },
+    PasswordException: {
+        notL10nMessage: 'REKISTEROIDY_PASSWORDEXCEPTION_OTSIKKO',
+        notL10nText: 'REKISTEROIDY_PASSWORDEXCEPTION_TEKSTI',
+    },
+    IllegalArgumentException: {
+        notL10nMessage: 'REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO',
+        notL10nText: 'REKISTEROIDY_ILLEGALARGUMENT_TEKSTI',
+    },
 };
+
+const createButtonNotification = (type, buttonNotification) => ({
+    type: type,
+    notL10nMessage: buttonNotification.notL10nMessage,
+    notL10nText: buttonNotification.notL10nText,
+    id: buttonNotification.position,
+    errorType: buttonNotification.errorType,
+});
 
 export const notifications = (state={existingKayttooikeus: [], buttonNotifications: [], updatePassword: [],
     henkilohakuNotifications: [], duplicatesNotifications: []}, action) => {
-    const createButtonNotification = (type, buttonNotification) => ({
-        type: type,
-        notL10nMessage: buttonNotification.notL10nMessage,
-        notL10nText: buttonNotification.notL10nText,
-        id: buttonNotification.position,
-    });
     switch (action.type) {
         case LINK_HENKILOS_SUCCESS:
             return Object.assign({}, state, {
@@ -116,6 +126,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     notL10nMessage: error.notL10nMessage,
                     notL10nText: error.notL10nText,
                     position: 'rekisteroidyPage',
+                    errorType: action.error.errorType,
                 })],
             };
         default:

@@ -7,6 +7,7 @@ import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
 import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";
 import RekisteroidyVirhe from "./content/RekisteroidyVirhe";
+import {removeNotification} from "../../actions/notifications.actions";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
@@ -60,4 +61,4 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps, {updateNavigation, fetchKieliKoodisto, fetchKutsuByToken, createHenkiloByToken,
-})(RekisteroidyContainer);
+removeNotification})(RekisteroidyContainer);

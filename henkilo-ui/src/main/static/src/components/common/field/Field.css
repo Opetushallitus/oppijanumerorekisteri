@@ -1,0 +1,6 @@
+input.field.field-error  {
+    background-color: #FFE9E9;
+    border-color: #EBB5B5;
+    border-width: 0.1em;
+    border-radius: 3px;
+}

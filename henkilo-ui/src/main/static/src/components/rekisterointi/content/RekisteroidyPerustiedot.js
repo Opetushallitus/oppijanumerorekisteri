@@ -24,6 +24,10 @@ class RekisteroidyPerustiedot extends React.Component {
         koodisto: PropTypes.shape({
             kieli: PropTypes.array.isRequired,
         }).isRequired,
+        notifications: PropTypes.arrayOf(PropTypes.shape({
+            type: PropTypes.string,
+            id: PropTypes.string,
+        })),
     };
 
     render() {
@@ -32,20 +36,40 @@ class RekisteroidyPerustiedot extends React.Component {
             <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_PERUSTIEDOT']}</p>
             <Etunimet henkilo={henkilo} readOnly={true} />
             <Sukunimi henkilo={henkilo} readOnly={true} />
-            <Kutsumanimi readOnly={false} autoFocus henkilo={henkilo} updateModelFieldAction={this.props.updatePayloadModel} />
+            <Kutsumanimi readOnly={false}
+                         autoFocus
+                         henkilo={henkilo}
+                         updateModelFieldAction={this.props.updatePayloadModel} />
             <Kayttajanimi disabled={false}
                           henkilo={{kayttajatieto: {username: henkilo.henkilo.kayttajanimi}}}
-                          updateModelFieldAction={this.props.updatePayloadModel} />
-            <Salasana disabled={false} updateModelFieldAction={this.props.updatePayloadModel} />
+                          updateModelFieldAction={this.props.updatePayloadModel}
+                          isError={this.isKayttajanimiError()} />
+            <Salasana disabled={false}
+                      updateModelFieldAction={this.props.updatePayloadModel}
+                      isError={this.isSalasanaError()} />
             <Asiointikieli koodisto={this.props.koodisto}
                            henkiloUpdate={this.props.henkilo.henkilo}
                            updateModelFieldAction={this.props.updatePayloadModel} />
         </div>
     }
+
+    isKayttajanimiError() {
+        return !!this.props.notifications.filter(notification =>
+            notification.id === 'rekisteroidyPage'
+            && (notification.errorType === 'UsernameAlreadyExistsException'
+            || notification.errorType === 'IllegalArgumentException'))[0];
+    }
+
+    isSalasanaError() {
+        return !!this.props.notifications.filter(notification =>
+            notification.id === 'rekisteroidyPage'
+            && notification.errorType === 'PasswordException')[0];
+    }
 }
 
 const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale],
+    notifications: state.notifications.buttonNotifications,
 });
 
 export default connect(mapStateToProps)(RekisteroidyPerustiedot);

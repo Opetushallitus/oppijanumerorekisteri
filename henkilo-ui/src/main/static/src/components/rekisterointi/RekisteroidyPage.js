@@ -8,7 +8,7 @@ import PropertySingleton from "../../globals/PropertySingleton"
 import RekisteroidyHaka from "./content/RekisteroidyHaka";
 import Modal from "../common/modal/Modal";
 import LoadingBarTimer from "../common/loadingbar/LoadingBarTimer";
-import NotificationButton from "../common/button/NotificationButton";
+import BottomNotificationButton from "../common/button/BottomNotificationButton";
 
 class RekisteroidyPage extends React.Component {
     static propTypes = {
@@ -23,6 +23,7 @@ class RekisteroidyPage extends React.Component {
             hakaIdentifier: PropTypes.string,
         }).isRequired,
         createHenkiloByToken: PropTypes.func.isRequired,
+        removeNotification: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -63,9 +64,11 @@ class RekisteroidyPage extends React.Component {
                     <RekisteroidyPerustiedot henkilo={{henkilo: this.state.henkilo}}
                                              koodisto={this.props.koodisto}
                                              updatePayloadModel={this.updatePayloadModelInput.bind(this)} />
-                    <NotificationButton action={this.createHenkilo.bind(this)} disabled={!this.state.isValid} id="rekisteroidyPage" >
+                    <BottomNotificationButton action={this.createHenkilo.bind(this)}
+                                              disabled={!this.state.isValid}
+                                              id="rekisteroidyPage" >
                         {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
-                    </NotificationButton>
+                    </BottomNotificationButton>
                 </div>
                 <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
                     <span className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_VALITSE']}</span>
@@ -108,6 +111,7 @@ class RekisteroidyPage extends React.Component {
     }
 
     createHenkilo() {
+        this.props.removeNotification('error', 'buttonNotifications', 'rekisteroidyPage');
         const payload = {...this.state.henkilo};
         this.props.createHenkiloByToken(this.props.kutsu.temporaryToken, payload);
     }

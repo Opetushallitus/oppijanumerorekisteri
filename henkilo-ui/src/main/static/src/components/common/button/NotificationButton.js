@@ -4,48 +4,45 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import {removeNotification} from "../../../actions/notifications.actions";
 
+// Do not use directly but by one of the wrappers of this class.
 class NotificationButton extends React.Component {
     static propTypes = {
         id: PropTypes.string.isRequired,
-    };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            styles: {
-                bottom: 0,
-                left: 0,
-            },
-        }
-    };
-
-    componentDidMount() {
-        this.L = this.props.l10n[this.props.locale];
-        const rects = this.inputElement.getClientRects()[0];
-        this.setState({
-            styles: {
-                top: rects.top - (rects.bottom - rects.top) + -150 + 'px',
-                left: rects.left + 'px',
-            }
-        });
+        inputRef: PropTypes.func.isRequired,
+        styles: PropTypes.shape({
+            top: PropTypes.string.isRequired,
+            left: PropTypes.string.isRequired,
+            position: PropTypes.string.isRequired,
+        }).isRequired,
+        arrowDirection: PropTypes.string.isRequired,
     };
 
     render() {
         const notification = this.props.notifications.filter(notification => notification.id === this.props.id)[0];
+        let arrowDirectionStyle;
+        let style = {...this.props.styles};
+        if(this.props.arrowDirection === 'down') {
+            arrowDirectionStyle = 'oph-popup oph-popup-error oph-popup-top';
+        }
+        else if(this.props.arrowDirection === 'up') {
+            arrowDirectionStyle = 'oph-popup oph-popup-error oph-popup-bottom';
+            style = {...style, marginBottom: '10px'};
+        }
         return <div className="popup-button">
-            <Button {...this.props} inputRef={el => this.inputElement = el}/>
+            <Button {...this.props}
+                    inputRef={this.props.inputRef} />
             {
                 notification
                     ?
-                    <div className="oph-popup oph-popup-error oph-popup-top"
-                         style={{position: 'absolute', top: this.state.styles.top, left: this.state.styles.left}}>
+                    <div className={arrowDirectionStyle}
+                         style={style}>
                         <button className="oph-button oph-button-close" type="button" title="Close" aria-label="Close"
                                 onClick={this.hide.bind(this)}>
                             <span aria-hidden="true">×</span>
                         </button>
                         <div className="oph-popup-arrow" />
-                        <div className="oph-popup-title">{this.L[notification.notL10nMessage]}</div>
-                        <div className="oph-popup-content">{this.L[notification.notL10nText]}</div>
+                        <div className="oph-popup-title">{this.props.L[notification.notL10nMessage]}</div>
+                        <div className="oph-popup-content">{this.props.L[notification.notL10nText]}</div>
                     </div>
                     : null
             }
@@ -62,6 +59,7 @@ const mapStateToProps = (state, ownProps) => {
         notifications: state.notifications.buttonNotifications,
         l10n: state.l10n.localisations,
         locale: state.locale,
+        L: state.l10n.localisations[state.locale],
     };
 };
 

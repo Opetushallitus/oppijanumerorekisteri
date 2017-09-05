@@ -7,6 +7,7 @@ const Kayttajanimi = (props) => <LabelValue {...props} values={{
     value: props.henkilo.kayttajatieto.username,
     inputValue: 'kayttajanimi',
     disabled: props.disabled,
+    isError: props.isError,
 }} />;
 
 Kayttajanimi.propTypes = {
@@ -16,6 +17,7 @@ Kayttajanimi.propTypes = {
         }).isRequired,
     }).isRequired,
     disabled: PropTypes.bool.isRequired,
+    isError: PropTypes.bool,
 };
 
 export default Kayttajanimi;

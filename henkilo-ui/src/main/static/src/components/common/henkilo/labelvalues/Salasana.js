@@ -10,6 +10,7 @@ const Salasana = (props) => <div>
         inputValue: 'password',
         disabled: props.disabled,
         password: true,
+        isError: props.isError,
     }} />
     <LabelValue {...props} values={{
         label: 'HENKILO_PASSWORDAGAIN',
@@ -17,6 +18,7 @@ const Salasana = (props) => <div>
         inputValue: 'passwordAgain',
         disabled: props.disabled,
         password: true,
+        isError: props.isError,
     }} />
     <LabelValue {...props}
                 readOnly={true}
@@ -32,6 +34,7 @@ const Salasana = (props) => <div>
 
 Salasana.propTypes = {
     disabled: PropTypes.bool,
+    isError: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => ({

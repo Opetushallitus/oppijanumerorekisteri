@@ -14,6 +14,7 @@ class Field extends React.Component {
         disabled: PropTypes.bool,
         autofocus: PropTypes.bool,
         placeholder: PropTypes.string,
+        isError: PropTypes.bool,
     };
 
     constructor(props) {
@@ -23,11 +24,13 @@ class Field extends React.Component {
     }
 
     render() {
-        const className = classNames(
-            {'field': true,
+        const className = classNames({
+            'field': true,
             [`${this.props.className}`]: this.props.className,
             'readOnly': this.props.readOnly,
-            'oph-input': !this.props.readOnly && !this.props.data},);
+            'oph-input': !this.props.readOnly && !this.props.data,
+            'field-error': this.props.isError,
+        });
         const type = {type: this.props.password ? 'password' : false};
         return (
             this.props.readOnly
