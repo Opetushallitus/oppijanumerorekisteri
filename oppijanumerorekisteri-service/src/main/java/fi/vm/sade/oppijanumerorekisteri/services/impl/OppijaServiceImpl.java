@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import java.util.Collection;
 import java.util.Set;
+import java.util.function.BinaryOperator;
 
 @Service
 @Transactional
@@ -42,50 +44,72 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     public OppijatReadDto getOrCreate(OppijatCreateDto dto) {
+        // validoidaan että hetut ovat uniikkeja
+        Map<String, OppijaCreateDto> oppijatByHetu = mapByHetu(dto.getHenkilot(), (u, v) -> {
+            throw new ValidationException(String.format("Duplikaatti hetu %s", u.getHenkilo().getHetu()));
+        });
+
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        boolean passivoitu = false;
-        Set<Organisaatio> organisaatiot = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid, passivoitu).stream()
-                .map(organisaatio -> organisaatioRepository.findByOid(organisaatio.getOrganisaatioOid())
-                        .orElseGet(() -> organisaatioRepository.save(Organisaatio.builder().oid(organisaatio.getOrganisaatioOid()).build())))
-                .collect(toSet());
+        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByHenkilo(kayttajaOid, false);
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joihin oppijat liitetään", kayttajaOid));
         }
-
-        // validoidaan että hetut ovat uniikkeja
-        Map<String, OppijaCreateDto> oppijatByHetu = dto.getHenkilot().stream()
-                .collect(toMap(t -> t.getHenkilo().getHetu(), identity(), (u, v) -> {
-                    throw new ValidationException(String.format("Duplikaatti hetu %s", u.getHenkilo().getHetu()));
-                }));
         // haetaan jo luodut henkilöt
-        Map<String, Henkilo> henkilot = henkiloRepository
-                .findByHetuIn(oppijatByHetu.keySet()).stream()
-                .collect(toMap(henkilo -> henkilo.getHetu(), identity()));
+        Map<String, Henkilo> henkiloByHetu = getAndMapByHetu(oppijatByHetu.keySet());
 
         Tuonti tuonti = mapper.map(dto, Tuonti.class);
+        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkiloByHetu);
         tuonti.setHenkilot(dto.getHenkilot().stream()
-                .map(oppija -> getOrCreate(oppija, henkilot.get(oppija.getHenkilo().getHetu()), organisaatiot))
+                .map(tuontiRiviHelper::map)
                 .collect(toSet()));
         tuonti = tuontiRepository.save(tuonti);
         return mapper.map(tuonti, OppijatReadDto.class);
     }
 
-    private TuontiRivi getOrCreate(OppijaCreateDto oppija, Henkilo henkilo, Set<Organisaatio> organisaatiot) {
-        // luodaan tarvittaessa uusi henkilö
-        if (henkilo == null) {
-            henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
-            henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
-            henkilo = henkiloService.createHenkilo(henkilo);
+    private Map<String, OppijaCreateDto> mapByHetu(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
+        return oppijat.stream().collect(toMap(t -> t.getHenkilo().getHetu(), identity(), mergeFunction));
+    }
+
+    private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid, boolean passivoitu) {
+        // haetaan henkilön organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
+        return kayttooikeusClient.getOrganisaatioHenkilot(henkiloOid, passivoitu).stream()
+                .map(organisaatio -> organisaatioRepository.findByOid(organisaatio.getOrganisaatioOid())
+                        .orElseGet(() -> organisaatioRepository.save(Organisaatio.builder().oid(organisaatio.getOrganisaatioOid()).build())))
+                .collect(toSet());
+    }
+
+    private Map<String, Henkilo> getAndMapByHetu(Set<String> hetut) {
+        return henkiloRepository
+                .findByHetuIn(hetut).stream()
+                .collect(toMap(henkilo -> henkilo.getHetu(), identity()));
+    }
+
+    @RequiredArgsConstructor
+    private class TuontiRiviHelper {
+
+        private final Set<Organisaatio> organisaatiot;
+        private final Map<String, Henkilo> henkilotByHetu;
+
+        public TuontiRivi map(OppijaCreateDto oppija) {
+            Henkilo henkilo = henkilotByHetu.get(oppija.getHenkilo().getHetu());
+
+            // luodaan tarvittaessa uusi henkilö
+            if (henkilo == null) {
+                henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
+                henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
+                henkilo = henkiloService.createHenkilo(henkilo);
+            }
+
+            // liitetään henkilö organisaatioihin
+            organisaatiot.stream().forEach(henkilo::addOrganisaatio);
+            henkilo = henkiloRepository.save(henkilo);
+
+            TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
+            rivi.setHenkilo(henkilo);
+            return rivi;
         }
 
-        // liitetään henkilö organisaatioihin
-        organisaatiot.stream().forEach(henkilo::addOrganisaatio);
-        henkilo = henkiloRepository.save(henkilo);
-
-        TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
-        rivi.setHenkilo(henkilo);
-        return rivi;
     }
 
     @Override
