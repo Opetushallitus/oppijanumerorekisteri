@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
@@ -38,9 +37,6 @@ public class OppijaServiceTest {
     private UserDetailsHelper userDetailsHelper;
 
     @MockBean
-    private OrganisaatioClient organisaatioClient;
-
-    @MockBean
     private KayttooikeusClient kayttooikeusClient;
 
     @Autowired
@@ -52,7 +48,6 @@ public class OppijaServiceTest {
     @Before
     public void setup() {
         when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("user1"));
-        when(organisaatioClient.exists(any())).thenReturn(true);
         when(kayttooikeusClient.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(
                 singletonList(OrganisaatioHenkiloDto.builder().organisaatioOid("1.2.3.4").build())
         );
