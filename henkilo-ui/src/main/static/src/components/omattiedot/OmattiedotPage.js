@@ -20,6 +20,7 @@ import Kayttajanimi from "../common/henkilo/labelvalues/Kayttajanimi";
 import Sukupuoli from "../common/henkilo/labelvalues/Sukupuoli";
 import PasswordButton from "../common/henkilo/buttons/PasswordButton";
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
+import PropertySingleton from "../../globals/PropertySingleton";
 
 export default class OmattiedotPage extends React.Component {
 
@@ -119,14 +120,16 @@ export default class OmattiedotPage extends React.Component {
     };
 
     _parseOrganisaatioOptions() {
+        const locale = this.props.locale;
         if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
                 .map(organisaatio => {
-                    const label = organisaatio.nimi[this.props.locale] ? organisaatio.nimi[this.props.locale] :
+                    const organisaatioName = organisaatio.nimi[locale] ? organisaatio.nimi[locale] :
                         organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
-
+                    const organisaatiotyypit = organisaatio.organisaatiotyypit ? organisaatio.organisaatiotyypit.join(',') : '';
+                    const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid ? `${organisaatioName} (${organisaatiotyypit})` : `${organisaatioName}`;
                     return {
-                        label: `${label} (${organisaatio.organisaatiotyypit.join(',')})` ,
+                        label,
                         value: organisaatio.oid
                     };
                 });
