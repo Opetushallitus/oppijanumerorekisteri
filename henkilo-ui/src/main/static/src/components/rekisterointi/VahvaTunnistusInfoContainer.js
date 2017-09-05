@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import VahvaTunnistusInfoPage from "./VahvaTunnistusInfoPage";
 import {updateNavigation} from "../../actions/navigation.actions";
 import {emptyNavi} from "../../configuration/navigationconfigurations";
+import VirhePage from "../common/error/VirhePage";
 
 class VahvaTunnistusInfoContainer extends React.Component {
     componentWillMount() {
@@ -10,7 +11,17 @@ class VahvaTunnistusInfoContainer extends React.Component {
     }
 
     render() {
-        return <VahvaTunnistusInfoPage {...this.props}/>;
+        return <div>
+            {
+                this.props.loginToken === 'vanha'
+                    ? <VirhePage theme="gray"
+                                 topic="VAHVATUNNISTUSINFO_VIRHE_TOKEN_OTSIKKO"
+                                 text="VAHVATUNNISTUSINFO_VIRHE_TOKEN_TEKSTI"
+                                 buttonText="VAHVATUNNISTUSINFO_VIRHE_TOKEN_LINKKI"
+                    />
+                    : <VahvaTunnistusInfoPage {...this.props}/>
+            }
+        </div>;
     }
 }
 
