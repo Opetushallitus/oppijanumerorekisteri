@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
@@ -12,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
@@ -24,19 +26,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
+import static java.util.Collections.emptyList;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OppijaServiceImpl implements OppijaService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OppijaServiceImpl.class);
+
     private final HenkiloService henkiloService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
+    private final HenkiloJpaRepository henkiloJpaRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
     private final UserDetailsHelper userDetailsHelper;
@@ -118,6 +127,24 @@ public class OppijaServiceImpl implements OppijaService {
         return tuontiRepository.findById(id)
                 .map(entity -> mapper.map(entity, OppijatReadDto.class))
                 .orElseThrow(() -> new NotFoundException("Oppijoiden tuontia ei löytynyt ID:llä " + id));
+    }
+
+    @Override
+    public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
+        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
+        boolean passivoitu = false;
+        Set<String> organisaatioOids = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid, passivoitu)
+                .stream()
+                .map(OrganisaatioHenkiloDto::getOrganisaatioOid)
+                .collect(toSet());
+        if (organisaatioOids.isEmpty()) {
+            LOGGER.warn("Käyttäjällä ({}) ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid);
+            return emptyList();
+        }
+
+        criteria.setOrRetainOrganisaatioOids(organisaatioOids);
+        LOGGER.info("Haetaan oppijat {}", criteria);
+        return henkiloJpaRepository.findOidsBy(criteria);
     }
 
 }
