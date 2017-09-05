@@ -27,15 +27,18 @@ import java.util.stream.Collectors;
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import static java.util.stream.Collectors.joining;
 
 import javax.persistence.Query;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 
 @Transactional(propagation = Propagation.MANDATORY)
@@ -62,6 +65,25 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         this.createQuery(criteria, limit, offset, qHenkilo, query);
 
         return query.fetch();
+    }
+
+    @Override
+    public Set<String> findOidsBy(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QOrganisaatio qOrganisaatio = QOrganisaatio.organisaatio;
+
+        JPAQuery<String> query = jpa().from(henkilo)
+                .join(henkilo.organisaatiot, qOrganisaatio)
+                .select(henkilo.oidHenkilo).distinct();
+
+        if (criteria.getMuokattuJalkeen() != null) {
+            query.where(qHenkilo.modified.goe(criteria.getMuokattuJalkeen().toDate()));
+        }
+        if (criteria.getOrganisaatioOids() != null) {
+            query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
+        }
+
+        return query.fetch().stream().collect(toSet());
     }
 
     @Override

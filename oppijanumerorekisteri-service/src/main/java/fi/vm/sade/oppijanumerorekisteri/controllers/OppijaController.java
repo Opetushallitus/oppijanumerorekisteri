@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
 import javax.validation.Valid;
@@ -33,6 +34,13 @@ public class OppijaController {
     @ApiOperation(value = "Oppijoiden haku eräajon ID:llä")
     public OppijatReadDto getByTuontiId(@PathVariable Long id) {
         return oppijaService.getByTuontiId(id);
+    }
+
+    @GetMapping("/oid")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Muuttuneiden oppijoiden haku")
+    public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
+        return oppijaService.listOidsBy(criteria);
     }
 
 }
