@@ -5,6 +5,7 @@ import {clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat} from '../a
 import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
 import {updateHaettuKayttooikeusryhmaInAnomukset} from '../actions/kayttooikeusryhma.actions'
 import PropertySingleton from '../globals/PropertySingleton'
+import {fetchOmattiedotOrganisaatios} from '../actions/omattiedot.actions'
 
 class AnomusPageContainer extends React.Component {
     render() {
@@ -27,7 +28,7 @@ const mapStateToProps = (state) => {
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
         isAdmin: state.omattiedot.isAdmin,
-
+        omattiedot: state.omattiedot
     };
 };
 
@@ -36,4 +37,5 @@ export default connect(mapStateToProps, {
     fetchAllOrganisaatios,
     updateHaettuKayttooikeusryhmaInAnomukset,
     clearHaetutKayttooikeusryhmat,
+    fetchOmattiedotOrganisaatios
 })(AnomusPageContainer);

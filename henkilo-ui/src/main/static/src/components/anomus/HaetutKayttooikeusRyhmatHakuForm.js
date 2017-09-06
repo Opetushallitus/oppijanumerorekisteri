@@ -27,9 +27,11 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
         l10n: PropTypes.array.isRequired,
         organisaatiot: PropTypes.array.isRequired,
         haetutKayttooikeusryhmatLoading: PropTypes.bool.isRequired,
+        omattiedot: PropTypes.object.isRequired
     };
 
     render() {
+        const organisaatios = this.parseUserOrganisaatios(this.props.organisaatiot);
         return (
             <form>
                 <div className="flex-horizontal flex-align-center">
@@ -41,7 +43,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
-                                               organisaatiot={this.props.organisaatiot} />
+                                               organisaatiot={organisaatios} />
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <BooleanRadioButtonGroup value={this.state.naytaKaikki}
@@ -52,6 +54,23 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                 </div>
             </form>
         );
+    }
+
+    // Find users organisaatios from all organisaatios
+    parseUserOrganisaatios(allOrganisaatios) {
+        const omatOrganisaatiot = this.props.omattiedot.organisaatios;
+        const organisaatioOids = [];
+        omatOrganisaatiot.forEach( organisaatio => {
+            this.parseChild(organisaatio.organisaatio, organisaatioOids)
+        });
+        return allOrganisaatios.filter( organisaatio => organisaatioOids.includes(organisaatio.oid));
+    }
+
+    parseChild(organisaatio, organisaatioOids) {
+        organisaatioOids.push(organisaatio.oid);
+        if(organisaatio.children.length > 0) {
+            organisaatio.children.forEach( organisaatio => this.parseChild(organisaatio, organisaatioOids));
+        }
     }
 
     onHakutermiChange = (event) => {
