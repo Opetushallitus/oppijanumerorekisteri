@@ -11,17 +11,19 @@ class VahvaTunnistusInfoContainer extends React.Component {
     }
 
     render() {
-        return <div>
-            {
-                this.props.loginToken === 'vanha'
-                    ? <VirhePage theme="gray"
-                                 topic="VAHVATUNNISTUSINFO_VIRHE_TOKEN_OTSIKKO"
-                                 text="VAHVATUNNISTUSINFO_VIRHE_TOKEN_TEKSTI"
-                                 buttonText="VAHVATUNNISTUSINFO_VIRHE_TOKEN_LINKKI"
-                    />
-                    : <VahvaTunnistusInfoPage {...this.props}/>
-            }
-        </div>;
+        if (this.props.loginToken === 'vanha') {
+            return <VirhePage theme="gray"
+                               topic="VAHVATUNNISTUSINFO_VIRHE_TOKEN_OTSIKKO"
+                               text="VAHVATUNNISTUSINFO_VIRHE_TOKEN_TEKSTI"
+                               buttonText="VAHVATUNNISTUSINFO_VIRHE_TOKEN_LINKKI" />;
+        }
+        else if(this.props.virhe) {
+            return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO"
+                              text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
+        }
+        else {
+            return <VahvaTunnistusInfoPage {...this.props} />;
+        }
     }
 }
 
