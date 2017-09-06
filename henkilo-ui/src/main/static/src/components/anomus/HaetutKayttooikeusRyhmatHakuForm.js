@@ -31,7 +31,8 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     };
 
     render() {
-        const organisaatios = this.props.omattiedot.isOphVirkailija ? this.props.organisaatiot : this.parseUserOrganisaatios(this.props.organisaatiot);
+        const organisaatios = this.props.omattiedot.isOphVirkailija || this.props.omattiedot.isAdmin ?
+            this.props.organisaatiot : this.parseUserOrganisaatios(this.props.organisaatiot);
         return (
             <form>
                 <div className="flex-horizontal flex-align-center">
