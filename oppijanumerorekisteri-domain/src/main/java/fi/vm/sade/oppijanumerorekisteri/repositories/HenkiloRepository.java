@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import java.util.Collection;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Repository
 public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaRepository<Henkilo, Long> {
     @EntityGraph("henkiloDto")
-    List<Henkilo> findByOidHenkiloIsIn(List<String> oidHenkilo);
+    List<Henkilo> findByOidHenkiloIsIn(Collection<String> oidHenkilo);
 
     Optional<Henkilo> findByOidHenkilo(String henkiloOid);
 

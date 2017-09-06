@@ -31,6 +31,8 @@ public class OppijaCreateDto {
     @AllArgsConstructor
     public static class HenkiloCreateDto {
 
+        private String oid;
+
         @NotNull
         @ValidateHetu
         private String hetu;

@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import static java.util.Collections.singletonList;
 import java.util.Date;
 import java.util.Optional;
@@ -44,6 +45,8 @@ public class OppijaServiceTest {
 
     @Autowired
     private HenkiloRepository henkiloRepository;
+    @Autowired
+    private TuontiRepository tuontiRepository;
 
     @Before
     public void setup() {
@@ -51,6 +54,41 @@ public class OppijaServiceTest {
         when(kayttooikeusClient.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(
                 singletonList(OrganisaatioHenkiloDto.builder().organisaatioOid("1.2.3.4").build())
         );
+        tuontiRepository.deleteAll();
+        henkiloRepository.deleteAll();
+    }
+
+    @Test
+    public void getOrCreateShouldValidateOidIsUnique() {
+        OppijatCreateDto createDto = OppijatCreateDto.builder()
+                .henkilot(Stream.of(
+                        OppijaCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
+                                        .oid("oid1")
+                                        .hetu("180897-945K")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build(),
+                        OppijaCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
+                                        .oid("oid1")
+                                        .hetu("060997-915N")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build())
+                        .collect(toSet()))
+                .build();
+
+        Throwable throwable = catchThrowable(() -> oppijaService.getOrCreate(createDto));
+
+        assertThat(throwable).isInstanceOf(ValidationException.class)
+                .hasMessage("Duplikaatti OID oid1");
     }
 
     @Test
@@ -106,6 +144,42 @@ public class OppijaServiceTest {
         assertThat(readDto.getHenkilot())
                 .extracting(OppijaReadDto::getTunniste)
                 .containsExactly("tunniste1");
+        assertThat(henkiloRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    public void getOrCreateShouldFindByOid() {
+        Henkilo henkilo = Henkilo.builder()
+                .oidHenkilo("oid2")
+                .etunimet("etu")
+                .kutsumanimi("suku")
+                .sukunimi("suku")
+                .henkiloTyyppi(HenkiloTyyppi.OPPIJA)
+                .created(new Date())
+                .modified(new Date())
+                .build();
+        henkiloRepository.save(henkilo);
+        OppijatCreateDto createDto = OppijatCreateDto.builder()
+                .henkilot(Stream.of(
+                        OppijaCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
+                                        .oid("oid2")
+                                        .hetu("180897-945K")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build())
+                        .collect(toSet()))
+                .build();
+
+        OppijatReadDto readDto = oppijaService.getOrCreate(createDto);
+
+        assertThat(readDto.getId()).isNotNull();
+        assertThat(readDto.getHenkilot())
+                .extracting(t -> t.getTunniste(), t -> t.getHenkilo().getOid())
+                .containsExactly(tuple("tunniste1", "oid2"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
     }
 
