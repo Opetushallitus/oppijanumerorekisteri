@@ -80,13 +80,13 @@ class AddedOrganisation extends React.Component {
                                 <li key={permission.ryhmaId}>
                                     {toLocalizedText(this.props.locale, permission.ryhmaNames)}
                                     <i className="fa fa-times-circle right remove-icon"
-                                       onClick={this.removePermission.bind(this, permission)} aria-hidden="true"></i>
+                                       onClick={this.removePermission.bind(this, permission)} aria-hidden="true"/>
                                 </li>
                             )
                         })}
                     </ul>
                 </div>
-                <div className="clear"></div>
+                <div className="clear"/>
             </div>
         )
     }

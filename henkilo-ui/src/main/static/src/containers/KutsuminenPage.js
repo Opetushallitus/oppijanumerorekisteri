@@ -6,7 +6,6 @@ import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import Button from '../components/common/button/Button';
 import { fetchHenkiloOrganisaatiosForCurrentUser } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
-import { browserHistory } from 'react-router';
 import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
 import Loader from '../components/common/icons/Loader';
 
@@ -39,7 +38,6 @@ class KutsuFormPage extends React.Component  {
             modalOpen: this.state.confirmationModalOpen,
             basicInfo: this.state.basicInfo,
             clearBasicInfo: this.clearBasicInfo.bind(this),
-            ready: (ok) => ok ? browserHistory.push('/kutsutut') : this.setState({ confirmationModalOpen: false })
         };
         const {l10n} = this.props;
         const {basicInfo} = this.state;

@@ -8,8 +8,8 @@ import { KUTSU_SET_ORGANISAATIO, KUTSU_ADD_ORGANISAATIO, KUTSU_REMOVE_ORGANISAAT
     FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE,
     ADD_ORGANISAATIO_PERMISSION, REMOVE_ORGANISAATIO_PERMISSION} from './actiontypes';
 
-export const kutsuSetOrganisaatio = (index, organisaatio) => dispatch => dispatch({type: KUTSU_SET_ORGANISAATIO, index, organisaatioOid: organisaatio});
-export const kutsuAddOrganisaatio = organisaatio => dispatch => dispatch({type: KUTSU_ADD_ORGANISAATIO, organisaatioOid: organisaatio});
+export const kutsuSetOrganisaatio = (index, organisaatio) => dispatch => dispatch({type: KUTSU_SET_ORGANISAATIO, index, organisaatio});
+export const kutsuAddOrganisaatio = organisaatio => dispatch => dispatch({type: KUTSU_ADD_ORGANISAATIO, organisaatio});
 export const kutsuRemoveOrganisaatio = organisaatioOid => dispatch => dispatch({type: KUTSU_REMOVE_ORGANISAATIO, organisaatioOid});
 export const kutsuClearOrganisaatios = () => dispatch => dispatch({type: KUTSU_CLEAR_ORGANISAATIOS});
 

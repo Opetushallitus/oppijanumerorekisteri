@@ -14,12 +14,12 @@ export const kutsuminenOrganisaatios = (state = [], action) => {
     let kutsu;
     switch (action.type) {
         case KUTSU_ADD_ORGANISAATIO:
-            newOrganisaatios.push(action.organisaatioOid);
+            newOrganisaatios.push(action.organisaatio);
             return newOrganisaatios;
         case KUTSU_SET_ORGANISAATIO:
             newOrganisaatios[action.index] = {
                 oid: action.organisaatio.oid,
-                organisation: action.organisaatioOid,
+                organisation: action.organisaatio,
                 selectablePermissions: [],
                 selectedPermissions: [],
                 permissionFetched: false

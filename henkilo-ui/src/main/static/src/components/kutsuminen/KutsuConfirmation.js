@@ -16,7 +16,6 @@ export default class KutsuConfirmation extends React.Component {
         modalOpen: PropTypes.bool,
         basicInfo: PropTypes.object,
         clearBasicInfo: PropTypes.func,
-        ready: PropTypes.func,
         locale: PropTypes.string
     };
 
