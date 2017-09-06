@@ -1,6 +1,6 @@
 export default {
     "cas.baseUrl": "/",
-    "cas.login": "/cas/login",
+    "cas.login": "cas/login",
     "cas.me": "cas/me",
     "cas.haka": "service-provider-app",
 
