@@ -30,8 +30,10 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriter
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
 import static java.util.Collections.emptyList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +55,10 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     public OppijatReadDto getOrCreate(OppijatCreateDto dto) {
+        // validoidaan että oidit ovat uniikkeja
+        Map<String, OppijaCreateDto> oppijatByOid = mapByOid(dto.getHenkilot(), (u, v) -> {
+            throw new ValidationException(String.format("Duplikaatti OID %s", u.getHenkilo().getOid()));
+        });
         // validoidaan että hetut ovat uniikkeja
         Map<String, OppijaCreateDto> oppijatByHetu = mapByHetu(dto.getHenkilot(), (u, v) -> {
             throw new ValidationException(String.format("Duplikaatti hetu %s", u.getHenkilo().getHetu()));
@@ -65,10 +71,11 @@ public class OppijaServiceImpl implements OppijaService {
             throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joihin oppijat liitetään", kayttajaOid));
         }
         // haetaan jo luodut henkilöt
-        Map<String, Henkilo> henkiloByHetu = getAndMapByHetu(oppijatByHetu.keySet());
+        Map<String, Henkilo> henkilotByOid = getAndMapByOid(oppijatByOid.keySet());
+        Map<String, Henkilo> henkilotByHetu = getAndMapByHetu(oppijatByHetu.keySet());
 
         Tuonti tuonti = mapper.map(dto, Tuonti.class);
-        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkiloByHetu);
+        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkilotByOid, henkilotByHetu);
         tuonti.setHenkilot(dto.getHenkilot().stream()
                 .map(tuontiRiviHelper::map)
                 .collect(toSet()));
@@ -76,8 +83,15 @@ public class OppijaServiceImpl implements OppijaService {
         return mapper.map(tuonti, OppijatReadDto.class);
     }
 
+    private Map<String, OppijaCreateDto> mapByOid(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
+        return oppijat.stream()
+                .filter(t -> t.getHenkilo().getOid() != null)
+                .collect(toMap(t -> t.getHenkilo().getOid(), identity(), mergeFunction));
+    }
+
     private Map<String, OppijaCreateDto> mapByHetu(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
-        return oppijat.stream().collect(toMap(t -> t.getHenkilo().getHetu(), identity(), mergeFunction));
+        return oppijat.stream()
+                .collect(toMap(t -> t.getHenkilo().getHetu(), identity(), mergeFunction));
     }
 
     private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid, boolean passivoitu) {
@@ -86,6 +100,12 @@ public class OppijaServiceImpl implements OppijaService {
                 .map(organisaatio -> organisaatioRepository.findByOid(organisaatio.getOrganisaatioOid())
                         .orElseGet(() -> organisaatioRepository.save(Organisaatio.builder().oid(organisaatio.getOrganisaatioOid()).build())))
                 .collect(toSet());
+    }
+
+    private Map<String, Henkilo> getAndMapByOid(Set<String> oids) {
+        return henkiloRepository
+                .findByOidHenkiloIsIn(oids).stream()
+                .collect(toMap(henkilo -> henkilo.getOidHenkilo(), identity()));
     }
 
     private Map<String, Henkilo> getAndMapByHetu(Set<String> hetut) {
@@ -98,10 +118,16 @@ public class OppijaServiceImpl implements OppijaService {
     private class TuontiRiviHelper {
 
         private final Set<Organisaatio> organisaatiot;
+        private final Map<String, Henkilo> henkilotByOid;
         private final Map<String, Henkilo> henkilotByHetu;
 
         public TuontiRivi map(OppijaCreateDto oppija) {
-            Henkilo henkilo = henkilotByHetu.get(oppija.getHenkilo().getHetu());
+            Henkilo henkiloByOid = henkilotByOid.get(oppija.getHenkilo().getOid());
+            Henkilo henkiloByHetu = henkilotByHetu.get(oppija.getHenkilo().getHetu());
+
+            Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu)
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
 
             // luodaan tarvittaessa uusi henkilö
             if (henkilo == null) {
