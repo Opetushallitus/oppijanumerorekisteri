@@ -42,6 +42,7 @@ class HenkilohakuFilters extends React.Component {
                 }).isRequired),
             }).isRequired,
         }).isRequired).isRequired,
+        omattiedot: PropTypes.object.isRequired
     };
 
     constructor(props) {
@@ -57,15 +58,20 @@ class HenkilohakuFilters extends React.Component {
                     <SubOrganisationCheckbox L={this.L}
                                              subOrganisationValue={this.props.initialValues.subOrganisation}
                                              subOrganisationAction={this.props.suborganisationAction}/>
-                    <NoOrganisationCheckbox L={this.L}
-                                            noOrganisationValue={this.props.initialValues.noOrganisation}
-                                            noOrganisationAction={this.props.noOrganisationAction} />
-                    <PassiivisetOrganisationCheckbox L={this.L}
-                                                     passiivisetValue={this.props.initialValues.passivoitu}
-                                                     passiivisetAction={this.props.passiivisetAction} />
-                    <DuplikaatitOrganisationCheckbox L={this.L}
-                                                     duplikaatitValue={this.props.initialValues.dublicates}
-                                                     duplikaatitAction={this.props.duplikaatitAction} />
+                    {
+                        this.props.omattiedot.isAdmin ?
+                    <OphInline>
+                        <NoOrganisationCheckbox L={this.L}
+                            noOrganisationValue={this.props.initialValues.noOrganisation}
+                            noOrganisationAction={this.props.noOrganisationAction} />
+                        <PassiivisetOrganisationCheckbox L={this.L}
+                             passiivisetValue={this.props.initialValues.passivoitu}
+                             passiivisetAction={this.props.passiivisetAction} />
+                        <DuplikaatitOrganisationCheckbox L={this.L}
+                             duplikaatitValue={this.props.initialValues.dublicates}
+                             duplikaatitAction={this.props.duplikaatitAction} />
+                    </OphInline>
+                     : null }
                 </OphCheckboxInline>
                 <OphInline>
                     <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">

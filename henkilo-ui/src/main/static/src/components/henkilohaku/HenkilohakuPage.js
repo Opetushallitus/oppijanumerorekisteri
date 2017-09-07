@@ -130,7 +130,8 @@ class HenkilohakuPage extends React.Component {
                                 organisaatioSelectAction={this.updateToSearchModel('organisaatioOids').bind(this)}
                                 kayttooikeusryhmas={this.props.kayttooikeusryhmas}
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
-                                kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)} />
+                                kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)}
+                                omattiedot={this.props.omattiedot} />
             {
                 (this.initialised && !this.state.showNoDataMessage) || this.props.henkilohakuResult.length
                     ? <div className="henkilohakuTableWrapper">
