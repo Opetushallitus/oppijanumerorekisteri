@@ -33,7 +33,6 @@ public class OppijaCreateDto {
 
         private String oid;
 
-        @NotNull
         @ValidateHetu
         private String hetu;
 

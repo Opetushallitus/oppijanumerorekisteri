@@ -91,6 +91,7 @@ public class OppijaServiceImpl implements OppijaService {
 
     private Map<String, OppijaCreateDto> mapByHetu(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
         return oppijat.stream()
+                .filter(t -> t.getHenkilo().getHetu() != null)
                 .collect(toMap(t -> t.getHenkilo().getHetu(), identity(), mergeFunction));
     }
 

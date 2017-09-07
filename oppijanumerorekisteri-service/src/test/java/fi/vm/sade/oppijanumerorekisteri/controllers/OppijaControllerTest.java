@@ -140,7 +140,7 @@ public class OppijaControllerTest {
     public void putOppijaShouldValidateHetu() throws Exception {
         OppijatCreateDto dto = getValidOppijatCreateDto();
         OppijaCreateDto oppijaCreateDto = getValidOppijaCreateDto();
-        oppijaCreateDto.getHenkilo().setHetu(null);
+        oppijaCreateDto.getHenkilo().setHetu("hetu1");
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toSet()));
 
         mvc.perform(put("/oppija")

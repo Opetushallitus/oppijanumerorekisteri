@@ -129,7 +129,6 @@ public class OppijaServiceTest {
                         OppijaCreateDto.builder()
                                 .tunniste("tunniste1")
                                 .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
-                                        .hetu("180897-945K")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
                                         .sukunimi("suku")
