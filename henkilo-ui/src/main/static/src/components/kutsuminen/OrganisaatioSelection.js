@@ -73,7 +73,7 @@ export default class OrganisaatioSelection extends React.Component {
     inputChange(value) {
         if (value.length >= 3) {
             const options = this.getOrganisationsOrRyhmas(getOrganisaatios(this.props.organisaatios, this.props.locale))
-                .filter(organisaatio => organisaatio.fullLocalizedName.indexOf(value) >= 0)
+                .filter(organisaatio => organisaatio.fullLocalizedName.toLowerCase().indexOf(value.toLowerCase()) >= 0)
                 .map(this.mapOrganisaatio.bind(this));
             this.setState({ options: options })
         } else {

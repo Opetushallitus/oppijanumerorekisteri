@@ -48,7 +48,7 @@ class OrganisaatioOphSelect extends React.Component {
 
     onOrganisaatioInputChange = (value) => {
         if (value.length >= 3) {
-            this.setState({selectableOrganisaatiot: this.getSelectableOrganisaatiot(value)});
+            this.setState({selectableOrganisaatiot: this.getSelectableOrganisaatiot(value.toLowerCase())});
         } else {
             this.setState({selectableOrganisaatiot: []});
         }
