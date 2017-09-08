@@ -23,23 +23,19 @@ class RekisteroidyContainer extends React.Component {
     }
 
     render() {
-        let page;
         if(this.props.loginFailed) {
-            page = <VirhePage text={'REKISTEROIDY_LOGIN_FAILED'} buttonText={'REKISTEROIDY_KIRJAUTUMISSIVULLE'} />;
+            return <VirhePage text={'REKISTEROIDY_LOGIN_FAILED'} buttonText={'REKISTEROIDY_KIRJAUTUMISSIVULLE'} />;
         }
         else if(this.loggedIn !== undefined) {
-            page = <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
+            return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
         }
         else if(this.props.temporaryTokenInvalid) {
-            page =  <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
+            return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
         }
         else if(this.props.koodistoLoading || this.props.tokenLoading) {
-            page = <Loader />;
+            return <Loader />;
         }
-        else {
-            page = <RekisteroidyPage {...this.props} />;
-        }
-        return <div>{ page }</div>;
+        return <RekisteroidyPage {...this.props} />;
     }
 }
 

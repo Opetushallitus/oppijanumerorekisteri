@@ -48,22 +48,23 @@ export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getS
                 dispatch(createHenkiloByTokenSuccess(authToken));
                 const casUrl = urls.url('cas.login', {authToken,});
                 http.get(casUrl).then(async loginPage => {
-                    // Login failed
-                    if(loginPage.indexOf('Log In Successful') === -1) {
-                        dispatch({type: LOGIN_FAILED});
-                    }
-                    else {
-                        // Wait until user data has been synced to ldap
-                        do {
-                            if(!getState().omattiedot.omattiedotLoading) {
-                                dispatch(fetchOmattiedot());
-                            }
-                            await new Promise(resolve => setTimeout(resolve, 4000));
-                        } while (getState().omattiedot.data === undefined);
-                        // Redirect to opintopolku root page
-                        window.location = window.location.origin;
-                    }
-                });
+                        // Login failed
+                        if(loginPage.indexOf('Log In Successful') === -1) {
+                            dispatch({type: LOGIN_FAILED});
+                        }
+                        else {
+                            // Wait until user data has been synced to ldap
+                            do {
+                                if(!getState().omattiedot.omattiedotLoading) {
+                                    dispatch(fetchOmattiedot());
+                                }
+                                await new Promise(resolve => setTimeout(resolve, 4000));
+                            } while (getState().omattiedot.data === undefined);
+                            // Redirect to opintopolku root page
+                            window.location = window.location.origin;
+                        }
+                    },
+                    () => dispatch({type: LOGIN_FAILED}));
             },
             error => dispatch(createHenkiloByTokenFailure(error)))
 };
