@@ -9,6 +9,7 @@ import Select from 'react-select';
 import IconButton from "../button/IconButton";
 import CrossCircleIcon from "../icons/CrossCircleIcon";
 import EmailSelect from "./select/EmailSelect";
+import WideBlueNotification from "../../common/notifications/WideBlueNotification";
 
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -33,102 +34,115 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             ryhmaSelection: '',
             emailSelection: '',
             kayttooikeusryhmaSelections: [],
-            tehtavanimike: '',
             perustelut: '',
             kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        const emailOptions = this._parseEmailOptions(nextProps.henkilo);
+        this.setState({emailOptions});
+        if (emailOptions.length === 1) {
+            this.setState({
+                emailSelection: emailOptions[0].value,
+                missingEmail: false,
+                showMissingEmailNotification: false
+            });
+        } else if (emailOptions.length > 1) {
+            this.setState({missingEmail: false, showMissingEmailNotification: false, emailSelection: ''});
+        } else {
+            this.setState({missingEmail: true, showMissingEmailNotification: true});
+        }
+    }
+
     render() {
         const L = this.props.l10n[this.props.locale];
-        const kayttooikeusRyhmaOptions = this.props.kayttooikeusryhmaOptions.filter( option => R.findIndex( R.propEq('value', option.value), this.state.kayttooikeusryhmaSelections ) < 0  );
+        const kayttooikeusRyhmaOptions = this.props.kayttooikeusryhmaOptions.filter(option => R.findIndex(R.propEq('value', option.value), this.state.kayttooikeusryhmaSelections) < 0);
 
         return (<div className="kayttooikeus-anomus-wrapper">
             <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
+            {this.state.showMissingEmailNotification ?
+                <WideBlueNotification message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']} closeAction={() => {
+                    this.setState({showMissingEmailNotification: false})
+                }}/> : null}
 
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                    {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
-                </label>
-                <div className="oph-input-container">
-                    <OphSelect noResultsText={ `${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}` }
-                               placeholder={L['OMATTIEDOT_ORGANISAATIO']}
-                               onChange={this._changeOrganisaatioSelection.bind(this)}
-                               onBlurResetsInput={false}
-                               options={this.state.organisaatioOptions}
-                               onInputChange={this.inputChange.bind(this)}
-                               value={this.state.organisaatioSelection}/>
+            {!this.state.missingEmail ? <div>
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                        {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
+                    </label>
+                    <div className="oph-input-container">
+                        <OphSelect noResultsText={`${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}`}
+                                   placeholder={L['OMATTIEDOT_ORGANISAATIO']}
+                                   onChange={this._changeOrganisaatioSelection.bind(this)}
+                                   onBlurResetsInput={false}
+                                   options={this.state.organisaatioOptions}
+                                   onInputChange={this.inputChange.bind(this)}
+                                   value={this.state.organisaatioSelection}/>
+                    </div>
                 </div>
-            </div>
 
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
-                <div className="oph-input-container">
-                    <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
-                               options={this.props.ryhmaOptions}
-                               value={this.state.ryhmaSelection}
-                               placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}/>
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
+                    <div className="oph-input-container">
+                        <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
+                                   options={this.props.ryhmaOptions}
+                                   value={this.state.ryhmaSelection}
+                                   placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}/>
+                    </div>
                 </div>
-            </div>
 
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label oph-bold oph-label-long" htmlFor="tehtavanimike"
-                       aria-describedby="field-text">
-                    {L['OMATTIEDOT_TEHTAVANIMIKE']}
-                </label>
+                {this.state.emailOptions && this.state.emailOptions.length > 1 ?
+                    <div className="oph-field oph-field-inline">
+                        <label className="oph-label oph-bold oph-label-long" htmlFor="email"
+                               aria-describedby="field-text">
+                            {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
+                        </label>
 
-                <div className="oph-input-container">
-                    <input id="tehtavanimike" className="oph-input" value={this.state.tehtavanimike}
-                           onChange={this._changeTehtavanimike.bind(this)} type="text"/>
+                        <EmailSelect changeEmailAction={this._changeEmail.bind(this)}
+                                     emailSelection={this.state.emailSelection}
+                                    emailOptions={this.state.emailOptions}/>
+                    </div> : null
+                }
+
+
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                        {L['OMATTIEDOT_ANOTTAVAT']}*
+                    </label>
+
+                    <div className="oph-input-container kayttooikeus-selection-wrapper">
+
+                        <Select placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
+                                noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
+                                options={kayttooikeusRyhmaOptions}
+                                onChange={this._addKayttooikeusryhmaSelection.bind(this)}
+                        />
+
+                        <ul className="selected-permissions">
+                            {this.state.kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
+                                return (
+                                    <li key={index}>
+                                        {kayttooikeusRyhmaSelection.label}
+                                        <IconButton
+                                            onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
+                                            <CrossCircleIcon/>
+                                        </IconButton>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" htmlFor="perustelut"
+                           aria-describedby="field-text">
+                        {L['OMATTIEDOT_PERUSTELUT']}
+                    </label>
 
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label oph-bold oph-label-long" htmlFor="email" aria-describedby="field-text">
-                    {L['OMATTIEDOT_SAHKOPOSTIOSOITE']}*
-                </label>
-
-                <EmailSelect changeEmailAction={this._changeEmail.bind(this)} emailSelection={this.state.emailSelection} />
-
-            </div>
-
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
-                    {L['OMATTIEDOT_ANOTTAVAT']}*
-                </label>
-
-                <div className="oph-input-container kayttooikeus-selection-wrapper">
-
-
-                    <Select placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
-                            noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
-                            options={kayttooikeusRyhmaOptions}
-                            onChange={this._addKayttooikeusryhmaSelection.bind(this)}
-                    />
-
-                    <ul className="selected-permissions">
-                        {this.state.kayttooikeusryhmaSelections.map( (kayttooikeusRyhmaSelection, index) => {
-                            return (
-                                <li key={index}>
-                                    {kayttooikeusRyhmaSelection.label}
-                                    <IconButton onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
-                                       <CrossCircleIcon />
-                                    </IconButton>
-                                </li>
-                            )
-                        })}
-                    </ul>
-                </div>
-            </div>
-
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label oph-bold oph-label-long" htmlFor="perustelut" aria-describedby="field-text">
-                    {L['OMATTIEDOT_PERUSTELUT']}
-                </label>
-
-                <div className="oph-input-container">
+                    <div className="oph-input-container">
                     <textarea className="oph-input"
                               value={this.state.perustelut}
                               onChange={this._changePerustelut.bind(this)}
@@ -136,34 +150,35 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                               id="perustelut"
                               cols="30"
                               rows="10"/>
-                </div>
-            </div>
-
-            <div className="oph-field oph-field-inline">
-                <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
-                <div className="oph-input-container">
-                    <div className="anomus-button">
-                        <Button action={this._createKayttooikeusAnomus.bind(this)}
-                                disabled={!this._isAnomusButtonDisabled()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
-                    </div>
-                    <div className="anomus-requirements">
-                        <ShowText show={!this._validOrganisaatioOrRyhmaSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</p></ShowText>
-                        <ShowText show={!this._validEmailSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_EMAIL']}</p></ShowText>
-                        <ShowText show={!this._validKayttooikeusryhmaSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</p></ShowText>
                     </div>
                 </div>
 
-            </div>
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
+                    <div className="oph-input-container">
+                        <div className="anomus-button">
+                            <Button action={this._createKayttooikeusAnomus.bind(this)}
+                                    disabled={!this._isAnomusButtonDisabled()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
+                        </div>
+                        <div className="anomus-requirements">
+                            <ShowText show={!this._validOrganisaatioOrRyhmaSelection()}><p>
+                                !{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</p></ShowText>
+                            <ShowText show={this.state.emailOptions && this.state.emailOptions.length > 1 && !this._validEmailSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_EMAIL']}</p>
+                            </ShowText>
+                            <ShowText show={!this._validKayttooikeusryhmaSelection()}><p>
+                                !{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</p></ShowText>
+                        </div>
+                    </div>
 
+                </div>
+
+            </div> : null
+            }
         </div>);
     }
 
     _changeEmail(value) {
         this.setState({emailSelection: value});
-    }
-
-    _changeTehtavanimike(event) {
-        this.setState({tehtavanimike: event.target.value});
     }
 
     _changePerustelut(event) {
@@ -183,7 +198,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     inputChange(value) {
         if (value.length >= 3) {
             this.setState({
-                organisaatioOptions: this.props.organisaatioOptions.filter( organisaatioOption => organisaatioOption.label.toLowerCase().indexOf(value) >= 0)
+                organisaatioOptions: this.props.organisaatioOptions.filter(organisaatioOption => organisaatioOption.label.toLowerCase().indexOf(value) >= 0)
             });
         } else {
             this.setState({organisaatioOptions: []});
@@ -193,7 +208,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     _isAnomusButtonDisabled() {
         return this._validOrganisaatioOrRyhmaSelection() &&
             this._validKayttooikeusryhmaSelection() &&
-            this._validEmailSelection;
+            this._validEmailSelection();
     }
 
     _validOrganisaatioOrRyhmaSelection() {
@@ -205,15 +220,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _validEmailSelection() {
-        return this.state.emailSelection !== '';
-    }
-
-    _validTehtavanimikeSelection() {
-        return this.state.tehtavanimike.length > 0;
-    }
-
-    _validPerustelutSelection() {
-        return this.state.perustelut.length > 0;
+        return this.state.emailSelection !== '' && !this.state.missingEmail;
     }
 
     _resetAnomusFormFields() {
@@ -227,6 +234,21 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         });
     }
 
+    _parseEmailOptions(henkilo) {
+        let emails = [];
+        if (henkilo.henkilo.yhteystiedotRyhma) {
+            henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
+                yhteystietoRyhma.yhteystieto.forEach(yhteys => {
+                    if (yhteys.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
+                        emails.push(yhteys.yhteystietoArvo);
+                    }
+                })
+            });
+        }
+
+        return emails.map(email => ({value: email, label: email}));
+    };
+
     _addKayttooikeusryhmaSelection(kayttooikeusryhmaSelection) {
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;
         kayttooikeusryhmaSelections.push(kayttooikeusryhmaSelection);
@@ -234,7 +256,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection) {
-        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter( selection => selection.value !== kayttooikeusryhmaSelection.value );
+        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter(selection => selection.value !== kayttooikeusryhmaSelection.value);
         this.setState({kayttooikeusryhmaSelections});
     }
 
@@ -243,7 +265,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
             email: this.state.emailSelection,
-            tehtavaNimike: this.state.tehtavanimike,
             perustelut: this.state.perustelut,
             kayttooikeusRyhmaIds,
             anojaOid: this.props.omattiedot.data.oid

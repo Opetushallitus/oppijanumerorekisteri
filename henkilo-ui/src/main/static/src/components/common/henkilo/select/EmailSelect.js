@@ -7,7 +7,7 @@ class EmailSelect extends React.Component {
     static propTypes = {
         changeEmailAction: PropTypes.func.isRequired,
         emailSelection: PropTypes.string.isRequired,
-
+        emailOptions: PropTypes.array.isRequired,
         l10n: PropTypes.object,
         locale: PropTypes.string,
         henkilo: PropTypes.object,
@@ -15,54 +15,20 @@ class EmailSelect extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.L = this.props.l10n[this.props.locale];
-
-        this.state = {
-            emailOptions: [],
-        };
-    };
-
-    componentDidMount() {
-        this.setState({
-            emailOptions: EmailSelect._parseEmailOptions(this.props.henkilo)
-        });
     };
 
     render() {
         return <div className="oph-input-container">
             <OphSelect placeholder={this.L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
-                       options={this.state.emailOptions}
+                       options={this.props.emailOptions}
                        value={this.props.emailSelection}
                        onChange={(entity) => this.props.changeEmailAction(entity.value)}
                        // onInputChange={this._changeEmailInput.bind(this)}
                        onBlurResetsInput={false}
-                       onInputKeyDown={this._changeEmailEnterKey.bind(this)}
-                       noResultsText={this.L['OMATTIEDOT_KIRJOITA_SAHKOPOSTI']}
+                       noResultsText={this.L['OMATTIEDOT_HAE_OLEMASSAOLEVA_SAHKOPOSTI']}
             />
         </div>;
-    };
-
-    static _parseEmailOptions(henkilo) {
-        let emails = [];
-        henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
-            yhteystietoRyhma.yhteystieto.forEach(yhteys => {
-                if (yhteys.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
-                    emails.push(yhteys.yhteystietoArvo);
-                }
-            })
-        });
-        return emails.map(email => ({value: email, label: email}));
-    };
-
-    _changeEmailEnterKey(event) {
-        if (event.keyCode === 13) {
-            const emailOptions = this.state.emailOptions;
-            const newEmail = {value: event.target.value, label: event.target.value};
-            emailOptions.push();
-            this.setState({emailOptions: emailOptions,});
-            this.props.changeEmailAction(newEmail.value);
-        }
     };
 
 }

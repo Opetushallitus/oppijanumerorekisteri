@@ -11,6 +11,7 @@ import SuljeButton from "./buttons/SuljeButton";
 import StaticUtils from '../StaticUtils'
 import HaeJatkoaikaaButton from "../../omattiedot/HaeJatkoaikaaButton";
 import EmailSelect from "./select/EmailSelect";
+import WideBlueNotification from "../../common/notifications/WideBlueNotification";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -28,7 +29,24 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         removeNotification: PropTypes.func,
         removePrivilege: PropTypes.func,
         isOmattiedot: PropTypes.bool,
+
     };
+
+    componentWillReceiveProps(nextProps) {
+        const emailOptions = this._parseEmailOptions(nextProps.henkilo);
+        this.setState({ emailOptions });
+        if(emailOptions.length === 1) {
+            this.setState({
+                emailSelection: emailOptions[0],
+                missingEmail: false,
+                showMissingEmailNotification: false
+            });
+        } else if(emailOptions.length > 1) {
+            this.setState({missingEmail: false, showMissingEmailNotification: false});
+        } else {
+            this.setState({missingEmail: true, showMissingEmailNotification: true});
+        }
+    }
 
     constructor(props) {
         super(props);
@@ -46,7 +64,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_ANO_JATKOAIKA', notSortable: true, hide: !this.props.isOmattiedot},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || ''}));
-
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
@@ -67,6 +84,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             emailSelection: this.props.kayttooikeus.kayttooikeus
                 .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
                 .map(uusittavaKayttooikeusRyhma => ''),
+            emailOptions: this._parseEmailOptions(this.props.henkilo),
+            missingEmail: false
         };
     };
 
@@ -120,10 +139,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
                     }),
                     [headingList[8]]: <div>
-                        <EmailSelect  changeEmailAction={(value) => {this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: value}}),});}}
-                                      emailSelection={this.state.emailSelection[idx]}/>
+                        {
+                            this.state.emailOptions.length > 1 ?
+                                <EmailSelect changeEmailAction={(value) => {this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: value}}),});}}
+                                             emailSelection={this.state.emailSelection[idx]}
+                                             emailOptions={this.state.emailOptions}/> : null
+                        }
                         <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx)}
-                                             disabled={this.state.emailSelection[idx] === ''} />
+                                             disabled={this.state.emailSelection[idx] === '' || this.state.emailOptions.length === 0} />
                     </div>,
                 }
             });
@@ -140,12 +163,15 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this.createRows(this.headingList.map(heading => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
-                <Notifications notifications={this.props.notifications.existingKayttooikeus}
-                               L={this.L}
-                               closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)} />
                 <div className="header">
                     <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                 </div>
+                <Notifications notifications={this.props.notifications.existingKayttooikeus}
+                               L={this.L}
+                               closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)} />
+                {
+                    this.props.isOmattiedot && this.state.showMissingEmailNotification ? <WideBlueNotification message={this.L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_OLEMASSAOLEVA_KAYTTOOIKEUS']} closeAction={() => {this.setState({showMissingEmailNotification: false})}} /> : null
+                }
                 <div>
                     <Table headings={this.tableHeadings}
                            data={this._rows}
@@ -154,6 +180,21 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 </div>
             </div>
         );
+    };
+
+    _parseEmailOptions(henkilo) {
+        let emails = [];
+        if (henkilo.henkilo.yhteystiedotRyhma) {
+            henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
+                yhteystietoRyhma.yhteystieto.forEach(yhteys => {
+                    if (yhteys.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
+                        emails.push(yhteys.yhteystietoArvo);
+                    }
+                })
+            });
+        }
+
+        return emails.map(email => ({value: email, label: email}));
     };
 
     async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx) {

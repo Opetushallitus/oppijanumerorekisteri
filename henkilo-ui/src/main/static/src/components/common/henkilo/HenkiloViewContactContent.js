@@ -141,9 +141,7 @@ class HenkiloViewContactContent extends React.Component{
     };
 
     _updateModelField(event) {
-        const value = event.target.value;
-        const fieldpath = event.target.name;
-        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, fieldpath, value);
+        StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);
     };
 
     _createYhteystiedotRyhma(yhteystietoryhmaTyyppi) {
