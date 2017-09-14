@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -37,6 +38,8 @@ public class OppijaServiceImplTest {
     @Mock
     private HenkiloService henkiloServiceMock;
     @Mock
+    private OrganisaatioService organisaatioServiceMock;
+    @Mock
     private OrikaConfiguration mapperMock;
     @Mock
     private HenkiloRepository henkiloRepositoryMock;
@@ -54,9 +57,10 @@ public class OppijaServiceImplTest {
     @Before
     public void setup() {
         oppijaServiceImpl = new OppijaServiceImpl(henkiloServiceMock,
-                mapperMock, henkiloRepositoryMock, henkiloJpaRepositoryMock,
-                tuontiRepositoryMock, organisaatioRepositoryMock,
-                userDetailsHelperMock, kayttooikeusClientMock);
+                organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
+                henkiloJpaRepositoryMock, tuontiRepositoryMock,
+                organisaatioRepositoryMock, userDetailsHelperMock,
+                kayttooikeusClientMock);
     }
 
     @Test

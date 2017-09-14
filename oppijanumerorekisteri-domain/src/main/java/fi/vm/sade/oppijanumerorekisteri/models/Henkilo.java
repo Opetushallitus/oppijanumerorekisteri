@@ -214,6 +214,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         return organisaatiot.add(organisaatio);
     }
 
+    public boolean removeOrganisaatio(Organisaatio organisaatio) {
+        if (organisaatiot == null) {
+            return false;
+        }
+        return organisaatiot.remove(organisaatio);
+    }
+
     // Initialize default values for lombok builder
     public static class builder {
         private Boolean yksiloity = false;

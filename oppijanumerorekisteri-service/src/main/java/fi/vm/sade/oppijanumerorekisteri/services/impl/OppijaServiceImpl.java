@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
 import static java.util.Collections.emptyList;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -45,6 +47,7 @@ public class OppijaServiceImpl implements OppijaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OppijaServiceImpl.class);
 
     private final HenkiloService henkiloService;
+    private final OrganisaatioService organisaatioService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
     private final HenkiloJpaRepository henkiloJpaRepository;
@@ -172,6 +175,39 @@ public class OppijaServiceImpl implements OppijaService {
         criteria.setOrRetainOrganisaatioOids(organisaatioOids);
         LOGGER.info("Haetaan oppijat {}", criteria);
         return henkiloJpaRepository.findOidsBy(criteria);
+    }
+
+    @Override
+    public void addOrganisaatio(String henkiloOid, String organisaatioOid) {
+        Henkilo henkilo = getOppija(henkiloOid);
+        Organisaatio organisaatio = organisaatioRepository.findByOid(organisaatioOid)
+                .orElseGet(() -> organisaatioService.create(organisaatioOid));
+        if (henkilo.addOrganisaatio(organisaatio)) {
+            henkilo.setModified(new Date());
+            henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+            henkiloRepository.save(henkilo);
+        }
+    }
+
+    @Override
+    public void deleteOrganisaatio(String henkiloOid, String organisaatioOid) {
+        Henkilo henkilo = getOppija(henkiloOid);
+        organisaatioRepository.findByOid(organisaatioOid).ifPresent(organisaatio -> {
+            if (henkilo.removeOrganisaatio(organisaatio)) {
+                henkilo.setModified(new Date());
+                henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+                henkiloRepository.save(henkilo);
+            }
+        });
+    }
+
+    private Henkilo getOppija(String henkiloOid) {
+        Henkilo henkilo = henkiloRepository.findByOidHenkilo(henkiloOid)
+                .orElseThrow(() -> new NotFoundException(String.format("Henkilöä ei löytynyt OID:lla %s", henkiloOid)));
+        if (!HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi())) {
+            throw new ValidationException(String.format("Henkilö %s ei ole oppija", henkiloOid));
+        }
+        return henkilo;
     }
 
 }
