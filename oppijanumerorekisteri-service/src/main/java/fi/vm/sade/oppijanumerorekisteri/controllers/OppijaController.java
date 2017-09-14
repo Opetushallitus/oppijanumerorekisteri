@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +42,20 @@ public class OppijaController {
     @ApiOperation(value = "Muuttuneiden oppijoiden haku")
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
         return oppijaService.listOidsBy(criteria);
+    }
+
+    @PutMapping("/{henkiloOid}/organisaatio/{organisaatioOid}")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Lisää oppijan organisaatioon")
+    public void addOrganisaatio(@PathVariable String henkiloOid, @PathVariable String organisaatioOid) {
+        oppijaService.addOrganisaatio(henkiloOid, organisaatioOid);
+    }
+
+    @DeleteMapping("/{henkiloOid}/organisaatio/{organisaatioOid}")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Poistaa oppijan organisaatiosta")
+    public void deleteOrganisaatio(@PathVariable String henkiloOid, @PathVariable String organisaatioOid) {
+        oppijaService.deleteOrganisaatio(henkiloOid, organisaatioOid);
     }
 
 }

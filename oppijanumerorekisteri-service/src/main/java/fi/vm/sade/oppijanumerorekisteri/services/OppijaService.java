@@ -35,4 +35,22 @@ public interface OppijaService {
      */
     Iterable<String> listOidsBy(OppijaTuontiCriteria criteria);
 
+    /**
+     * Lisää oppijan organisaatioon. Jos oppija on jo organisaatio ei tehdä
+     * mitään.
+     *
+     * @param henkiloOid oppijan oid
+     * @param organisaatioOid organisaation oid
+     */
+    void addOrganisaatio(String henkiloOid, String organisaatioOid);
+
+    /**
+     * Poistaa oppijan organisaatiosta. Jos oppija ei ole organisaatiossa ei
+     * tehdä mitään.
+     *
+     * @param henkiloOid oppijan oid
+     * @param organisaatioOid organisaation oid
+     */
+    void deleteOrganisaatio(String henkiloOid, String organisaatioOid);
+
 }
