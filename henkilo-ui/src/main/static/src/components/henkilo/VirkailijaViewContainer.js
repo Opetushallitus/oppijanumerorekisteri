@@ -17,7 +17,7 @@ import {
     removePrivilege,
     updateHaettuKayttooikeusryhma
 } from "../../actions/kayttooikeusryhma.actions";
-import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
+import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import EditButton from "../common/henkilo/buttons/EditButton";
 import HakaButton from "../common/henkilo/buttons/HakaButton";
 import PasswordButton from "../common/henkilo/buttons/PasswordButton";
@@ -53,7 +53,7 @@ class VirkailijaViewContainer extends React.Component {
             this.props.fetchYhteystietotyypitKoodisto();
             this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
             this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
-            this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+            this.props.fetchOmattiedotOrganisaatios();
 
             this.props.getGrantablePrivileges(this.props.oidHenkilo);
         }
@@ -125,6 +125,6 @@ export default connect(mapStateToProps, {fetchHenkilo, fetchHenkiloOrgs, fetchKi
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto, updateHenkiloAndRefetch,
     fetchKayttajatieto, updatePassword, passivoiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation,
     passivoiHenkiloOrg, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchHenkiloOrganisaatiosForCurrentUser,
+    updateHaettuKayttooikeusryhma, fetchAllowedKayttooikeusryhmasForOrganisation, fetchOmattiedotOrganisaatios,
     addKayttooikeusToHenkilo, removeNotification, removePrivilege, getGrantablePrivileges, fetchHenkiloSlaves, unlinkHenkilo,
     clearHenkilo})(VirkailijaViewContainer);

@@ -1,5 +1,6 @@
 import {http} from '../http';
 import {urls} from 'oph-urls-js';
+import R from 'ramda';
 import {
     FETCH_OMATTIEDOT_REQUEST,
     FETCH_OMATTIEDOT_SUCCESS,
@@ -8,8 +9,6 @@ import {
     FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
     FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE
 } from './actiontypes';
-import {fetchHenkiloOrganisaatios} from './henkilo.actions';
-
 
 const requestOmattiedot = () => ({type: FETCH_OMATTIEDOT_REQUEST});
 const receiveOmattiedotSuccess = (json) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
@@ -32,10 +31,12 @@ const requestOmattiedotOrganisaatios = () => ({type: FETCH_OMATTIEDOT_ORGANISAAT
 const receiveOmattiedotOrganisaatiosSuccess = (json) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: json});
 const receiveOmattiedotOrganisaatiosFailure = (error) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, error});
 export const fetchOmattiedotOrganisaatios = () => async(dispatch, getState) => {
-    if(!getState().omattiedot.data.oid && !getState().omattiedot.omattiedotLoading) {
-        await fetchOmattiedot();
-    }
 
+    const oid = R.path(['omattiedot', 'data', 'oid'], getState());
+    const omattiedotLoading = getState().omattiedot.omattiedotLoaded;
+    if(!oid && !omattiedotLoading) {
+        await dispatch(fetchOmattiedot());
+    }
     const userOid = getState().omattiedot.data.oid;
     dispatch(requestOmattiedotOrganisaatios(userOid));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid);
@@ -46,8 +47,4 @@ export const fetchOmattiedotOrganisaatios = () => async(dispatch, getState) => {
         console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}` );
         dispatch(receiveOmattiedotOrganisaatiosFailure(error));
     }
-};
-
-export const fetchHenkiloOrganisaatiosForCurrentUser = () => async dispatch => {
-    await dispatch(fetchHenkiloOrganisaatios());
 };

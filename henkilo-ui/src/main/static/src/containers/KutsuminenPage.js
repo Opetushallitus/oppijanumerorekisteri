@@ -4,7 +4,7 @@ import React from 'react';
 import R from 'ramda';
 import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import Button from '../components/common/button/Button';
-import { fetchHenkiloOrganisaatiosForCurrentUser } from '../actions/omattiedot.actions';
+import { fetchOmattiedotOrganisaatios } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
 import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
 import Loader from '../components/common/icons/Loader';
@@ -25,7 +25,7 @@ class KutsuFormPage extends React.Component  {
     }
 
     componentDidMount() {
-        this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+        this.props.fetchOmattiedotOrganisaatios();
     }
 
     render() {
@@ -42,7 +42,7 @@ class KutsuFormPage extends React.Component  {
         const {l10n} = this.props;
         const {basicInfo} = this.state;
 
-            if(this.props.omattiedot.omattiedotLoading || this.props.henkilo.henkiloOrganisaatiosLoading) {
+            if(this.props.omattiedot.omattiedotLoading || this.props.omattiedot.omattiedotOrganisaatiosLoading) {
                 return (<div className="wrapper"><Loader /></div>);
             } else {
                 return (
@@ -57,7 +57,7 @@ class KutsuFormPage extends React.Component  {
                         </BasicInfo>
                         <KutsuOrganisaatios l10n={l10n}
                                             omattiedot={this.props.omattiedot.data}
-                                            orgs={this.props.henkilo.henkiloOrganisaatios}
+                                            orgs={this.props.omattiedot.organisaatios}
                                             addedOrgs={this.props.addedOrgs}
                                             henkilo={this.props.henkilo}
                                             locale={this.props.locale}
@@ -122,7 +122,7 @@ class KutsuFormPage extends React.Component  {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchHenkiloOrganisaatiosForCurrentUser: () => dispatch(fetchHenkiloOrganisaatiosForCurrentUser()),
+        fetchOmattiedotOrganisaatios: () => dispatch(fetchOmattiedotOrganisaatios()),
         kutsuAddOrganisaatio: (organisaatio) => dispatch(kutsuAddOrganisaatio(organisaatio))
     }
 };

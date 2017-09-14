@@ -169,7 +169,6 @@ const receiveHenkiloOrganisaatiosSuccess = (henkiloOrganisaatios) => ({
 const receiveHenkiloOrganisaatioFailure = (error) => ({type: FETCH_HENKILO_ORGANISAATIOS_FAILURE, error});
 
 export const fetchHenkiloOrganisaatios = (oidHenkilo) => (dispatch, getState) => {
-    oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
     dispatch(requestHenkiloOrganisaatios(oidHenkilo));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oidHenkilo);
     http.get(url)

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import HenkilohakuPage from "./HenkilohakuPage";
 import {connect} from 'react-redux';
-import {fetchHenkiloOrganisaatiosForCurrentUser} from "../../actions/omattiedot.actions";
+import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import {clearHenkilohaku, henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
@@ -33,12 +33,12 @@ class HenkilohakuContainer extends React.Component {
     };
 
     componentWillMount() {
-        this.props.fetchHenkiloOrganisaatiosForCurrentUser();
+        this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllKayttooikeusryhma();
     }
 
     render() {
-        return (!this.props.henkilo.henkiloOrganisaatiosLoading && !this.props.kayttooikeus.allKayttooikeusryhmasLoading)
+        return (!this.props.omattiedot.omattiedotOrganisaatiosLoading && !this.props.kayttooikeus.allKayttooikeusryhmasLoading)
             ? <HenkilohakuPage l10n={this.props.l10n}
                                locale={this.props.locale}
                                initialCriteria={this.initialCriteria}
@@ -71,5 +71,5 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 
-export default connect(mapStateToProps, {fetchHenkiloOrganisaatiosForCurrentUser, fetchAllKayttooikeusryhma,
+export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, fetchAllKayttooikeusryhma,
     henkilohaku, updateFilters, removeNotification, clearHenkilohaku})(HenkilohakuContainer);
