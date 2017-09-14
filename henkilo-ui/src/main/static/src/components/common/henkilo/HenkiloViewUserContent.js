@@ -104,9 +104,11 @@ class HenkiloViewUserContent extends React.Component {
     };
 
     _update() {
-        this.props.updateHenkiloAndRefetch(this.state.henkiloUpdate);
-        if(this.props.henkilo.kayttajatieto.username !== undefined && this.state.henkiloUpdate.kayttajanimi !== undefined) {
-            this.props.updateAndRefetchKayttajatieto(this.state.henkiloUpdate.oidHenkilo, this.state.henkiloUpdate.kayttajanimi);
+        const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
+        henkiloUpdate.syntymaaika = moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']);
+        this.props.updateHenkiloAndRefetch(henkiloUpdate);
+        if(this.props.henkilo.kayttajatieto.username !== undefined && henkiloUpdate.kayttajanimi !== undefined) {
+            this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});
     };
@@ -118,11 +120,8 @@ class HenkiloViewUserContent extends React.Component {
     };
 
     _updateDateField(event) {
-        const value = event.target.value;
-        const fieldpath = event.target.name;
         this.setState({
-            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, fieldpath,
-                moment(StaticUtils.ddmmyyyyToDate(value)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI'])),
+            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event)
         });
     };
 
