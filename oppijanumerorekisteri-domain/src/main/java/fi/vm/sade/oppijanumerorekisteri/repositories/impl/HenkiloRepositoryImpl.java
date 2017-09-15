@@ -432,4 +432,20 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .transform(groupBy(qPassinumero).as(qHenkilo));
     }
 
+    @Override
+    public Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QIdentification qIdentification = QIdentification.identification;
+
+        List<Predicate> predicates = identifiers.stream().map(identifier ->
+                qIdentification.idpEntityId.eq(idpEntityId)
+                .and(qIdentification.identifier.eq(identifier))).collect(toList());
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.identifications, qIdentification)
+                .where(anyOf(predicates))
+                .transform(groupBy(qIdentification.identifier).as(qHenkilo));
+    }
+
 }

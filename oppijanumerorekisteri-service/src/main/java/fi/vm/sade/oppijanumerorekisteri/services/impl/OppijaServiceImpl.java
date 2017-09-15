@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import static fi.vm.sade.oppijanumerorekisteri.models.Identification.SAHKOPOSTI_IDP_ENTITY_ID;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -70,6 +71,10 @@ public class OppijaServiceImpl implements OppijaService {
         Map<String, OppijaCreateDto> oppijatByPassinumero = mapByPassinumero(dto.getHenkilot(), (u, v) -> {
             throw new ValidationException(String.format("Duplikaatti passinumero %s", u.getHenkilo().getPassinumero()));
         });
+        // validoidaan että sähköpostit ovat uniikkeja
+        Map<String, OppijaCreateDto> oppijatBySahkoposti = mapBySahkoposti(dto.getHenkilot(), (u, v) -> {
+            throw new ValidationException(String.format("Duplikaatti sähköposti %s", u.getHenkilo().getSahkoposti()));
+        });
 
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
@@ -81,9 +86,10 @@ public class OppijaServiceImpl implements OppijaService {
         Map<String, Henkilo> henkilotByOid = getAndMapByOid(oppijatByOid.keySet());
         Map<String, Henkilo> henkilotByHetu = getAndMapByHetu(oppijatByHetu.keySet());
         Map<String, Henkilo> henkilotByPassinumero = getAndMapByPassinumero(oppijatByPassinumero.keySet());
+        Map<String, Henkilo> henkilotBySahkoposti = getAndMapBySahkoposti(oppijatBySahkoposti.keySet());
 
         Tuonti tuonti = mapper.map(dto, Tuonti.class);
-        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero);
+        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero, henkilotBySahkoposti);
         tuonti.setHenkilot(dto.getHenkilot().stream()
                 .map(tuontiRiviHelper::map)
                 .collect(toSet()));
@@ -107,6 +113,12 @@ public class OppijaServiceImpl implements OppijaService {
         return oppijat.stream()
                 .filter(t -> t.getHenkilo().getPassinumero() != null)
                 .collect(toMap(t -> t.getHenkilo().getPassinumero(), identity(), mergeFunction));
+    }
+
+    private Map<String, OppijaCreateDto> mapBySahkoposti(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
+        return oppijat.stream()
+                .filter(t -> t.getHenkilo().getSahkoposti() != null)
+                .collect(toMap(t -> t.getHenkilo().getSahkoposti(), identity(), mergeFunction));
     }
 
     private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid, boolean passivoitu) {
@@ -133,6 +145,10 @@ public class OppijaServiceImpl implements OppijaService {
         return henkiloJpaRepository.findAndMapByPassinumerot(passinumerot);
     }
 
+    private Map<String, Henkilo> getAndMapBySahkoposti(Set<String> sahkopostit) {
+        return henkiloJpaRepository.findAndMapByIdentifiers(SAHKOPOSTI_IDP_ENTITY_ID, sahkopostit);
+    }
+
     @RequiredArgsConstructor
     private class TuontiRiviHelper {
 
@@ -140,13 +156,15 @@ public class OppijaServiceImpl implements OppijaService {
         private final Map<String, Henkilo> henkilotByOid;
         private final Map<String, Henkilo> henkilotByHetu;
         private final Map<String, Henkilo> henkilotByPassinumero;
+        private final Map<String, Henkilo> henkilotBySahkoposti;
 
         public TuontiRivi map(OppijaCreateDto oppija) {
             Henkilo henkiloByOid = henkilotByOid.get(oppija.getHenkilo().getOid());
             Henkilo henkiloByHetu = henkilotByHetu.get(oppija.getHenkilo().getHetu());
             Henkilo henkiloByPassinumero = henkilotByPassinumero.get(oppija.getHenkilo().getPassinumero());
+            Henkilo henkiloBySahkoposti = henkilotBySahkoposti.get(oppija.getHenkilo().getSahkoposti());
 
-            Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu, henkiloByPassinumero)
+            Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu, henkiloByPassinumero, henkiloBySahkoposti)
                     .filter(Objects::nonNull)
                     .findFirst().orElse(null);
 
