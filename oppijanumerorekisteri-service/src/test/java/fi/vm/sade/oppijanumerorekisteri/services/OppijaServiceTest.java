@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import static java.util.Collections.singletonList;
@@ -154,6 +155,37 @@ public class OppijaServiceTest {
     }
 
     @Test
+    public void getOrCreateShouldValidateSahkopostiIsUnique() {
+        OppijatCreateDto createDto = OppijatCreateDto.builder()
+                .henkilot(Stream.of(
+                        OppijaCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
+                                        .sahkoposti("example@example.com")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build(),
+                        OppijaCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
+                                        .sahkoposti("example@example.com")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build())
+                        .collect(toSet()))
+                .build();
+
+        Throwable throwable = catchThrowable(() -> oppijaService.getOrCreate(createDto));
+
+        assertThat(throwable).isInstanceOf(ValidationException.class)
+                .hasMessage("Duplikaatti sähköposti example@example.com");
+    }
+
+    @Test
     public void getOrCreateShouldCreateNewHenkilo() {
         OppijatCreateDto createDto = OppijatCreateDto.builder()
                 .henkilot(Stream.of(
@@ -268,6 +300,46 @@ public class OppijaServiceTest {
                                 .tunniste("tunniste1")
                                 .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
                                         .passinumero("passi123")
+                                        .etunimet("etu")
+                                        .kutsumanimi("etu")
+                                        .sukunimi("suku")
+                                        .build())
+                                .build())
+                        .collect(toSet()))
+                .build();
+
+        OppijatReadDto readDto = oppijaService.getOrCreate(createDto);
+
+        assertThat(readDto.getId()).isNotNull();
+        assertThat(readDto.getHenkilot())
+                .extracting(t -> t.getTunniste(), t -> t.getHenkilo().getOid())
+                .containsExactly(tuple("tunniste1", "oid1"));
+        assertThat(henkiloRepository.findAll()).hasSize(1);
+    }
+
+    @Test
+    public void getOrCreateShouldFindBySahkoposti() {
+        Henkilo henkilo = Henkilo.builder()
+                .oidHenkilo("oid1")
+                .identifications(Stream.of(Identification.builder()
+                        .idpEntityId("email")
+                        .identifier("example@example.com")
+                        .build())
+                        .collect(toSet()))
+                .etunimet("etu")
+                .kutsumanimi("suku")
+                .sukunimi("suku")
+                .henkiloTyyppi(HenkiloTyyppi.OPPIJA)
+                .created(new Date())
+                .modified(new Date())
+                .build();
+        henkiloRepository.save(henkilo);
+        OppijatCreateDto createDto = OppijatCreateDto.builder()
+                .henkilot(Stream.of(
+                        OppijaCreateDto.builder()
+                                .tunniste("tunniste1")
+                                .henkilo(OppijaCreateDto.HenkiloCreateDto.builder()
+                                        .sahkoposti("example@example.com")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
                                         .sukunimi("suku")

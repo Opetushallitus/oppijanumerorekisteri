@@ -112,4 +112,6 @@ public interface HenkiloJpaRepository {
 
     Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot);
 
+    Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers);
+
 }

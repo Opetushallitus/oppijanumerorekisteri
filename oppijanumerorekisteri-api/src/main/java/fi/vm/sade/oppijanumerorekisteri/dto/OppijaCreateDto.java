@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Email;
 
 @Getter
 @Setter
@@ -37,6 +38,9 @@ public class OppijaCreateDto {
         private String hetu;
 
         private String passinumero;
+
+        @Email
+        private String sahkoposti;
 
         @NotNull
         private String etunimet;
