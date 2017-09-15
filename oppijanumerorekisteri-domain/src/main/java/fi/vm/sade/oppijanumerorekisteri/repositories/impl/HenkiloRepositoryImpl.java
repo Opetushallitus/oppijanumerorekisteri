@@ -6,6 +6,8 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -416,6 +418,18 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .join(qYhteystiedotRyhma.yhteystieto, qYhteystieto)
                 .where(qYhteystieto.yhteystietoArvo.eq(arvo))
                 .select(qHenkilo.oidHenkilo).distinct().fetch();
+    }
+
+    @Override
+    public Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qPassinumero = Expressions.stringPath("passinumero");
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.passinumerot, qPassinumero)
+                .where(qPassinumero.in(passinumerot))
+                .transform(groupBy(qPassinumero).as(qHenkilo));
     }
 
 }

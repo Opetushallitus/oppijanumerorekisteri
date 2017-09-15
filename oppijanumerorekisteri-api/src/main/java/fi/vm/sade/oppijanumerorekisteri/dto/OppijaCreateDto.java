@@ -36,6 +36,8 @@ public class OppijaCreateDto {
         @ValidateHetu
         private String hetu;
 
+        private String passinumero;
+
         @NotNull
         private String etunimet;
 

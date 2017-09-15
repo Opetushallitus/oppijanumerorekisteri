@@ -66,6 +66,10 @@ public class OppijaServiceImpl implements OppijaService {
         Map<String, OppijaCreateDto> oppijatByHetu = mapByHetu(dto.getHenkilot(), (u, v) -> {
             throw new ValidationException(String.format("Duplikaatti hetu %s", u.getHenkilo().getHetu()));
         });
+        // validoidaan että passinumerot ovat uniikkeja
+        Map<String, OppijaCreateDto> oppijatByPassinumero = mapByPassinumero(dto.getHenkilot(), (u, v) -> {
+            throw new ValidationException(String.format("Duplikaatti passinumero %s", u.getHenkilo().getPassinumero()));
+        });
 
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
@@ -76,9 +80,10 @@ public class OppijaServiceImpl implements OppijaService {
         // haetaan jo luodut henkilöt
         Map<String, Henkilo> henkilotByOid = getAndMapByOid(oppijatByOid.keySet());
         Map<String, Henkilo> henkilotByHetu = getAndMapByHetu(oppijatByHetu.keySet());
+        Map<String, Henkilo> henkilotByPassinumero = getAndMapByPassinumero(oppijatByPassinumero.keySet());
 
         Tuonti tuonti = mapper.map(dto, Tuonti.class);
-        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkilotByOid, henkilotByHetu);
+        TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero);
         tuonti.setHenkilot(dto.getHenkilot().stream()
                 .map(tuontiRiviHelper::map)
                 .collect(toSet()));
@@ -96,6 +101,12 @@ public class OppijaServiceImpl implements OppijaService {
         return oppijat.stream()
                 .filter(t -> t.getHenkilo().getHetu() != null)
                 .collect(toMap(t -> t.getHenkilo().getHetu(), identity(), mergeFunction));
+    }
+
+    private Map<String, OppijaCreateDto> mapByPassinumero(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
+        return oppijat.stream()
+                .filter(t -> t.getHenkilo().getPassinumero() != null)
+                .collect(toMap(t -> t.getHenkilo().getPassinumero(), identity(), mergeFunction));
     }
 
     private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid, boolean passivoitu) {
@@ -118,18 +129,24 @@ public class OppijaServiceImpl implements OppijaService {
                 .collect(toMap(henkilo -> henkilo.getHetu(), identity()));
     }
 
+    private Map<String, Henkilo> getAndMapByPassinumero(Set<String> passinumerot) {
+        return henkiloJpaRepository.findAndMapByPassinumerot(passinumerot);
+    }
+
     @RequiredArgsConstructor
     private class TuontiRiviHelper {
 
         private final Set<Organisaatio> organisaatiot;
         private final Map<String, Henkilo> henkilotByOid;
         private final Map<String, Henkilo> henkilotByHetu;
+        private final Map<String, Henkilo> henkilotByPassinumero;
 
         public TuontiRivi map(OppijaCreateDto oppija) {
             Henkilo henkiloByOid = henkilotByOid.get(oppija.getHenkilo().getOid());
             Henkilo henkiloByHetu = henkilotByHetu.get(oppija.getHenkilo().getHetu());
+            Henkilo henkiloByPassinumero = henkilotByPassinumero.get(oppija.getHenkilo().getPassinumero());
 
-            Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu)
+            Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu, henkiloByPassinumero)
                     .filter(Objects::nonNull)
                     .findFirst().orElse(null);
 
