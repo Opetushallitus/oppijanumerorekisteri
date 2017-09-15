@@ -115,6 +115,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private LocalDate syntymaaika;
 
+    /**
+     * @deprecated kts. passinumerot
+     */
+    @Deprecated
     private String passinnumero;
 
     private String oppijanumero;
@@ -151,6 +155,14 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             inverseJoinColumns = @JoinColumn(name = "organisaatio_id", referencedColumnName = "id"),
             inverseForeignKey = @ForeignKey(name = "fk_henkilo_organisaatio_organisaatio"))
     private Set<Organisaatio> organisaatiot;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "henkilo_passinumero",
+            joinColumns = @JoinColumn(name = "henkilo_id"),
+            foreignKey = @ForeignKey(name = "fk_henkilo_passinumero"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_passinumero_01", columnNames = "passinumero"))
+    @Column(name = "passinumero", nullable = false)
+    private Set<String> passinumerot;
 
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();

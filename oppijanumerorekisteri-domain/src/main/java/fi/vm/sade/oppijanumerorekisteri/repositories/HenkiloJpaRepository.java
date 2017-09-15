@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -108,5 +109,7 @@ public interface HenkiloJpaRepository {
     Collection<Henkilo> findUnidentified(long limit, long offset);
 
     Iterable<String> findOidByYhteystieto(String arvo);
+
+    Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot);
 
 }
