@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 
 @Getter
 @Setter
@@ -30,6 +31,7 @@ public class OppijaCreateDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ValidateAtLeastOneNotNull({"oid", "hetu", "passinumero", "sahkoposti"})
     public static class HenkiloCreateDto {
 
         private String oid;

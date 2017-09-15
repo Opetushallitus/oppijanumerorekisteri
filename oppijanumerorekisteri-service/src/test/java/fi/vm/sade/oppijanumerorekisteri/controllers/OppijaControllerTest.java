@@ -152,4 +152,24 @@ public class OppijaControllerTest {
         verifyZeroInteractions(oppijaServiceMock);
     }
 
+    @Test
+    @WithMockUser("user1")
+    public void putOppijaShouldValidateHenkilo() throws Exception {
+        OppijatCreateDto dto = getValidOppijatCreateDto();
+        OppijaCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        oppijaCreateDto.getHenkilo().setOid(null);
+        oppijaCreateDto.getHenkilo().setHetu(null);
+        oppijaCreateDto.getHenkilo().setPassinumero(null);
+        oppijaCreateDto.getHenkilo().setSahkoposti(null);
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toSet()));
+
+        mvc.perform(put("/oppija")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(oppijaServiceMock);
+    }
+
 }
