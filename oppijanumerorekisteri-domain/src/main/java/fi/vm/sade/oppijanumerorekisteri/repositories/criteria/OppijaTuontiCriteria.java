@@ -18,6 +18,8 @@ import org.joda.time.DateTime;
 @AllArgsConstructor
 public class OppijaTuontiCriteria {
 
+    private Long tuontiId;
+
     @ApiModelProperty("ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z")
     private DateTime muokattuJalkeen;
 

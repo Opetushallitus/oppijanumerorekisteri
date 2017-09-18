@@ -8,6 +8,8 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -29,10 +31,13 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
+import fi.vm.sade.oppijanumerorekisteri.models.QTuonti;
+import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import static java.util.stream.Collectors.joining;
 
@@ -76,6 +81,16 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .join(henkilo.organisaatiot, qOrganisaatio)
                 .select(henkilo.oidHenkilo).distinct();
 
+        if (criteria.getTuontiId() != null) {
+            QTuonti qTuonti = QTuonti.tuonti;
+            QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+
+            JPQLQuery<Tuonti> subQuery = JPAExpressions.selectFrom(qTuonti)
+                    .join(qTuonti.henkilot, qTuontiRivi)
+                    .where(qTuontiRivi.henkilo.eq(qHenkilo))
+                    .where(qTuonti.id.eq(criteria.getTuontiId()));
+            query.where(subQuery.exists());
+        }
         if (criteria.getMuokattuJalkeen() != null) {
             query.where(qHenkilo.modified.goe(criteria.getMuokattuJalkeen().toDate()));
         }
