@@ -127,7 +127,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "huoltaja_id")
     private Henkilo huoltaja;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "henkilo_id", nullable = false)
     private Set<Identification> identifications = new HashSet<>();
 

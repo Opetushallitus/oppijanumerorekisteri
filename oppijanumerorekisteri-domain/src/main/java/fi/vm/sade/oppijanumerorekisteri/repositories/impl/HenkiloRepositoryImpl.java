@@ -20,7 +20,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.Oppijanumerorekist
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -43,7 +42,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 
-@Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
 
     @Override
@@ -418,6 +416,19 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .join(qYhteystiedotRyhma.yhteystieto, qYhteystieto)
                 .where(qYhteystieto.yhteystietoArvo.eq(arvo))
                 .select(qHenkilo.oidHenkilo).distinct().fetch();
+    }
+
+    @Override
+    public Iterable<String> findPassinumerotByOid(String oid) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qPassinumero = Expressions.stringPath("passinumero");
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.passinumerot, qPassinumero)
+                .where(qHenkilo.oidHenkilo.eq(oid))
+                .select(qPassinumero)
+                .fetch();
     }
 
     @Override

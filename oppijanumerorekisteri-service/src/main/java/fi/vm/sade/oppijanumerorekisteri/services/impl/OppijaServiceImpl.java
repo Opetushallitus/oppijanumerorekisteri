@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import static fi.vm.sade.oppijanumerorekisteri.models.Identification.SAHKOPOSTI_IDP_ENTITY_ID;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
@@ -172,6 +173,16 @@ public class OppijaServiceImpl implements OppijaService {
             if (henkilo == null) {
                 henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
                 henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
+                if (oppija.getHenkilo().getPassinumero() != null) {
+                    henkilo.setPassinumerot(Stream.of(oppija.getHenkilo().getPassinumero()).collect(toSet()));
+                }
+                if (oppija.getHenkilo().getSahkoposti() != null) {
+                    henkilo.setIdentifications(Stream.of(Identification.builder()
+                            .idpEntityId(SAHKOPOSTI_IDP_ENTITY_ID)
+                            .identifier(oppija.getHenkilo().getSahkoposti())
+                            .build()).collect(toSet())
+                    );
+                }
                 henkilo = henkiloService.createHenkilo(henkilo);
             }
 

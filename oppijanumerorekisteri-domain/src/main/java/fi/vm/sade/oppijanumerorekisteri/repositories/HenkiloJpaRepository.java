@@ -110,6 +110,8 @@ public interface HenkiloJpaRepository {
 
     Iterable<String> findOidByYhteystieto(String arvo);
 
+    Iterable<String> findPassinumerotByOid(String oid);
+
     Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot);
 
     Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers);
