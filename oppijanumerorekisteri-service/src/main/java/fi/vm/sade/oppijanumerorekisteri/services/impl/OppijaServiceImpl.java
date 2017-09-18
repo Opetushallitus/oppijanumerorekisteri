@@ -36,7 +36,7 @@ import static java.util.Collections.emptyList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,22 +60,17 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     public OppijatReadDto getOrCreate(OppijatCreateDto dto) {
-        // validoidaan että oidit ovat uniikkeja
-        Map<String, OppijaCreateDto> oppijatByOid = mapByOid(dto.getHenkilot(), (u, v) -> {
-            throw new ValidationException(String.format("Duplikaatti OID %s", u.getHenkilo().getOid()));
-        });
-        // validoidaan että hetut ovat uniikkeja
-        Map<String, OppijaCreateDto> oppijatByHetu = mapByHetu(dto.getHenkilot(), (u, v) -> {
-            throw new ValidationException(String.format("Duplikaatti hetu %s", u.getHenkilo().getHetu()));
-        });
-        // validoidaan että passinumerot ovat uniikkeja
-        Map<String, OppijaCreateDto> oppijatByPassinumero = mapByPassinumero(dto.getHenkilot(), (u, v) -> {
-            throw new ValidationException(String.format("Duplikaatti passinumero %s", u.getHenkilo().getPassinumero()));
-        });
-        // validoidaan että sähköpostit ovat uniikkeja
-        Map<String, OppijaCreateDto> oppijatBySahkoposti = mapBySahkoposti(dto.getHenkilot(), (u, v) -> {
-            throw new ValidationException(String.format("Duplikaatti sähköposti %s", u.getHenkilo().getSahkoposti()));
-        });
+        Collection<OppijaCreateDto> henkilot = dto.getHenkilot();
+
+        // validoidaan että oidit, hetut, passinumerot ja sähköpostit ovat uniikkeja
+        Map<String, OppijaCreateDto> oppijatByOid = mapByOppijaProperty(henkilot,
+                OppijaCreateDto.HenkiloCreateDto::getOid, "OID");
+        Map<String, OppijaCreateDto> oppijatByHetu = mapByOppijaProperty(henkilot,
+                OppijaCreateDto.HenkiloCreateDto::getHetu, "hetu");
+        Map<String, OppijaCreateDto> oppijatByPassinumero = mapByOppijaProperty(henkilot,
+                OppijaCreateDto.HenkiloCreateDto::getPassinumero, "passinumero");
+        Map<String, OppijaCreateDto> oppijatBySahkoposti = mapByOppijaProperty(henkilot,
+                OppijaCreateDto.HenkiloCreateDto::getSahkoposti, "sähköposti");
 
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
@@ -91,35 +86,19 @@ public class OppijaServiceImpl implements OppijaService {
 
         Tuonti tuonti = mapper.map(dto, Tuonti.class);
         TuontiRiviHelper tuontiRiviHelper = new TuontiRiviHelper(organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero, henkilotBySahkoposti);
-        tuonti.setHenkilot(dto.getHenkilot().stream()
+        tuonti.setHenkilot(henkilot.stream()
                 .map(tuontiRiviHelper::map)
                 .collect(toSet()));
         tuonti = tuontiRepository.save(tuonti);
         return mapper.map(tuonti, OppijatReadDto.class);
     }
 
-    private Map<String, OppijaCreateDto> mapByOid(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
+    private <T> Map<T, OppijaCreateDto> mapByOppijaProperty(Collection<OppijaCreateDto> oppijat, Function<OppijaCreateDto.HenkiloCreateDto, T> mapper, String name) {
         return oppijat.stream()
-                .filter(t -> t.getHenkilo().getOid() != null)
-                .collect(toMap(t -> t.getHenkilo().getOid(), identity(), mergeFunction));
-    }
-
-    private Map<String, OppijaCreateDto> mapByHetu(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
-        return oppijat.stream()
-                .filter(t -> t.getHenkilo().getHetu() != null)
-                .collect(toMap(t -> t.getHenkilo().getHetu(), identity(), mergeFunction));
-    }
-
-    private Map<String, OppijaCreateDto> mapByPassinumero(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
-        return oppijat.stream()
-                .filter(t -> t.getHenkilo().getPassinumero() != null)
-                .collect(toMap(t -> t.getHenkilo().getPassinumero(), identity(), mergeFunction));
-    }
-
-    private Map<String, OppijaCreateDto> mapBySahkoposti(Collection<OppijaCreateDto> oppijat, BinaryOperator<OppijaCreateDto> mergeFunction) {
-        return oppijat.stream()
-                .filter(t -> t.getHenkilo().getSahkoposti() != null)
-                .collect(toMap(t -> t.getHenkilo().getSahkoposti(), identity(), mergeFunction));
+                .filter(t -> mapper.apply(t.getHenkilo()) != null)
+                .collect(toMap(t -> mapper.apply(t.getHenkilo()), identity(), (u, v) -> {
+                    throw new ValidationException(String.format("Duplikaatti %s %s", name, mapper.apply(u.getHenkilo())));
+                }));
     }
 
     private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid, boolean passivoitu) {
