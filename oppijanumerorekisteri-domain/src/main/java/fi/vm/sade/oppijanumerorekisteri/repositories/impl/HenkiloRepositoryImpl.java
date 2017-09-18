@@ -75,10 +75,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public Set<String> findOidsBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        QOrganisaatio qOrganisaatio = QOrganisaatio.organisaatio;
 
         JPAQuery<String> query = jpa().from(henkilo)
-                .join(henkilo.organisaatiot, qOrganisaatio)
                 .select(henkilo.oidHenkilo).distinct();
 
         if (criteria.getTuontiId() != null) {
@@ -95,6 +93,9 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
             query.where(qHenkilo.modified.goe(criteria.getMuokattuJalkeen().toDate()));
         }
         if (criteria.getOrganisaatioOids() != null) {
+            QOrganisaatio qOrganisaatio = QOrganisaatio.organisaatio;
+
+            query.join(henkilo.organisaatiot, qOrganisaatio);
             query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
         }
 
