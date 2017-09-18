@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -18,12 +19,12 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -68,7 +69,7 @@ public class OppijaServiceImplTest {
         List<OrganisaatioHenkiloDto> organisaatiot = Stream.of("oid1", "oid3")
                 .map(oid -> OrganisaatioHenkiloDto.builder().organisaatioOid(oid).build())
                 .collect(toList());
-        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(organisaatiot);
+        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder()
                 .organisaatioOids(Stream.of("oid1", "oid2").collect(toSet()))
                 .build();
@@ -86,7 +87,7 @@ public class OppijaServiceImplTest {
         List<OrganisaatioHenkiloDto> organisaatiot = Stream.of("oid1", "oid3")
                 .map(oid -> OrganisaatioHenkiloDto.builder().organisaatioOid(oid).build())
                 .collect(toList());
-        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(organisaatiot);
+        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
 
         Iterable<String> oids = oppijaServiceImpl.listOidsBy(input);
@@ -102,7 +103,7 @@ public class OppijaServiceImplTest {
         List<OrganisaatioHenkiloDto> organisaatiot = Stream.of("oid1", "oid3")
                 .map(oid -> OrganisaatioHenkiloDto.builder().organisaatioOid(oid).build())
                 .collect(toList());
-        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(organisaatiot);
+        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder().organisaatioOids(emptySet()).build();
 
         Iterable<String> oids = oppijaServiceImpl.listOidsBy(input);
@@ -116,11 +117,12 @@ public class OppijaServiceImplTest {
     @Test
     public void listOidsShouldSkipFindByWhenOrganisaatiotEmpty() {
         List<OrganisaatioHenkiloDto> organisaatiot = emptyList();
-        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(organisaatiot);
+        when(kayttooikeusClientMock.getOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
 
-        Iterable<String> oids = oppijaServiceImpl.listOidsBy(input);
+        Throwable throwable = catchThrowable(() -> oppijaServiceImpl.listOidsBy(input));
 
+        assertThat(throwable).isInstanceOf(ValidationException.class);
         verifyZeroInteractions(henkiloJpaRepositoryMock);
     }
 

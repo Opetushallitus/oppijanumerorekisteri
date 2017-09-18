@@ -22,7 +22,6 @@ import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import org.springframework.web.client.RestClientException;
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -95,6 +94,7 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         }
     }
 
+    @Override
     public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid) {
         try {
             String url = urlConfiguration.url("kayttooikeus-service.henkilo.organisaatiohenkilo", henkiloOid);
@@ -104,14 +104,6 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    @Override
-    public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid, boolean passivoitu) {
-        return getOrganisaatioHenkilot(henkiloOid)
-                .stream()
-                .filter(organisaatio -> !organisaatio.isPassivoitu())
-                .collect(toList());
     }
 
 }

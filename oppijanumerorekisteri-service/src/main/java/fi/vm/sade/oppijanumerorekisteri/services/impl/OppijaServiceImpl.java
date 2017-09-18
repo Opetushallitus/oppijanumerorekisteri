@@ -32,7 +32,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriter
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
-import static java.util.Collections.emptyList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -74,7 +73,7 @@ public class OppijaServiceImpl implements OppijaService {
 
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByHenkilo(kayttajaOid, false);
+        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByHenkilo(kayttajaOid);
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joihin oppijat liitetään", kayttajaOid));
         }
@@ -101,9 +100,10 @@ public class OppijaServiceImpl implements OppijaService {
                 }));
     }
 
-    private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid, boolean passivoitu) {
+    private Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid) {
         // haetaan henkilön organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
-        return kayttooikeusClient.getOrganisaatioHenkilot(henkiloOid, passivoitu).stream()
+        return kayttooikeusClient.getOrganisaatioHenkilot(henkiloOid).stream()
+                .filter(organisaatioHenkilo -> !organisaatioHenkilo.isPassivoitu())
                 .map(organisaatio -> organisaatioRepository.findByOid(organisaatio.getOrganisaatioOid())
                         .orElseGet(() -> organisaatioRepository.save(Organisaatio.builder().oid(organisaatio.getOrganisaatioOid()).build())))
                 .collect(toSet());
@@ -187,14 +187,13 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        boolean passivoitu = false;
-        Set<String> organisaatioOids = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid, passivoitu)
+        Set<String> organisaatioOids = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid)
                 .stream()
+                .filter(organisaatioHenkilo -> !organisaatioHenkilo.isPassivoitu())
                 .map(OrganisaatioHenkiloDto::getOrganisaatioOid)
                 .collect(toSet());
         if (organisaatioOids.isEmpty()) {
-            LOGGER.warn("Käyttäjällä ({}) ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid);
-            return emptyList();
+            throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid));
         }
 
         criteria.setOrRetainOrganisaatioOids(organisaatioOids);

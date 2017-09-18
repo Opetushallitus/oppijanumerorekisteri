@@ -13,5 +13,5 @@ public interface KayttooikeusClient {
                                       ExternalPermissionService externalPermissionService, Set<String> callingUserRoles);
     void passivoiHenkilo(String oidHenkilo, String kasittelijaOid);
     KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria);
-    List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String kayttajaOid, boolean passivoitu);
+    List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid);
 }

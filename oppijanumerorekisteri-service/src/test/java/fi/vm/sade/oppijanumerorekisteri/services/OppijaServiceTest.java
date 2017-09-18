@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -59,7 +58,7 @@ public class OppijaServiceTest {
     @Before
     public void setup() {
         when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("user1"));
-        when(kayttooikeusClient.getOrganisaatioHenkilot(any(), anyBoolean())).thenReturn(
+        when(kayttooikeusClient.getOrganisaatioHenkilot(any())).thenReturn(
                 singletonList(OrganisaatioHenkiloDto.builder().organisaatioOid("1.2.3.4").build())
         );
         tuontiRepository.deleteAll();
