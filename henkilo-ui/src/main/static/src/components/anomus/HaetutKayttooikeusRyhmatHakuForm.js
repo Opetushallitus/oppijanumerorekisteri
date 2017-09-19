@@ -46,12 +46,14 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                         <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
                                                organisaatiot={organisaatios} />
                     </div>
+                    { this.props.omattiedot.isAdmin &&
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <BooleanRadioButtonGroup value={this.state.naytaKaikki}
                                                  onChange={this.onNaytaKaikkiChange}
                                                  trueLabel={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']}
                                                  falseLabel={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']}/>
                     </div>
+                    }
                 </div>
             </form>
         );
