@@ -13,7 +13,6 @@ public class HenkiloReadDto {
     private Long id;
     private String etunimet;
     private LocalDate syntymaaika;
-    private String passinnumero;
     private String hetu;
     private String kutsumanimi;
     private String oidHenkilo;

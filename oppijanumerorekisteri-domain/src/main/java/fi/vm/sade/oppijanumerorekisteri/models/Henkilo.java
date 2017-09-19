@@ -115,12 +115,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private LocalDate syntymaaika;
 
-    /**
-     * @deprecated kts. passinumerot
-     */
-    @Deprecated
-    private String passinnumero;
-
     private String oppijanumero;
 
     @ManyToOne(fetch = FetchType.LAZY)
