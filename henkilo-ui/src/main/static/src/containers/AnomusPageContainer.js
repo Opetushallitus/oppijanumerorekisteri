@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import AnomusPage from '../components/anomus/AnomusPage'
 import {clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
 import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
-import {updateHaettuKayttooikeusryhmaInAnomukset} from '../actions/kayttooikeusryhma.actions'
+import {updateHaettuKayttooikeusryhmaInAnomukset, clearHaettuKayttooikeusryhma} from '../actions/kayttooikeusryhma.actions'
 import PropertySingleton from '../globals/PropertySingleton'
 import {fetchOmattiedotOrganisaatios} from '../actions/omattiedot.actions'
 
@@ -36,6 +36,7 @@ export default connect(mapStateToProps, {
     fetchHaetutKayttooikeusryhmat,
     fetchAllOrganisaatios,
     updateHaettuKayttooikeusryhmaInAnomukset,
+    clearHaettuKayttooikeusryhma,
     clearHaetutKayttooikeusryhmat,
     fetchOmattiedotOrganisaatios
 })(AnomusPageContainer);

@@ -31,7 +31,7 @@ class ConfirmButton extends React.Component {
     };
 
     render() {
-        const confirmProps = {...this.props, cancel: false};
+        const confirmProps = {...this.props, cancel: false, action: this.action};
         return (
             !this.state.confirmState
                 ?
@@ -50,6 +50,13 @@ class ConfirmButton extends React.Component {
                 </TopOverlayNotificationButton>
         );
     };
+
+    action = () => {
+        this.setState({
+            confirmState: false
+        });
+        this.props.action(arguments);
+    }
 }
 
 const mapStateToProps = (state, ownProps) => {

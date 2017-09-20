@@ -25,10 +25,10 @@ import {
     REMOVE_KAYTTOOIKEUS_FAILURE, FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS, FETCH_GRANTABLE_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST, FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
+    CLEAR_HAETTU_KAYTTOOIKEUSRYHMA,
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
-import {fetchHaetutKayttooikeusryhmat} from './anomus.actions';
 
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST, henkiloOid});
 const receiveAllKayttooikeusryhmasForHenkilo = (henkiloOid, kayttooikeus) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS,
@@ -91,11 +91,14 @@ export const updateHaettuKayttooikeusryhmaInAnomukset =  (id, kayttoOikeudenTila
     try {
         await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm});
         dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-        dispatch(fetchHaetutKayttooikeusryhmat(parameters));
     } catch (error) {
         dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
         throw(error); // throw error to set notification in kayttooikeusanomukset
     }
+};
+
+export const clearHaettuKayttooikeusryhma = (id) => dispatch => {
+    dispatch({type: CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, id});
 };
 
 //KAYTTOOIKEUSRYHMAT FOR ORGANISAATIO
