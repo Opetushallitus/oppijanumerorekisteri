@@ -107,8 +107,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public Henkilo hetuttomanYksilointi(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-        if(!StringUtils.isEmpty(henkilo.getHetu())) {
-            throw new IllegalArgumentException("Henkilöllä " + henkilo.getOidHenkilo() + " on hetu. Henkilöä ei voi yksilöidä hetuttomana.");
+        if (!StringUtils.isEmpty(henkilo.getHetu())) {
+            throw new ValidationException("Henkilöllä on hetu, yksilöintiä ei voida tehdä");
         }
 
         henkilo.setYksiloity(true);
@@ -116,7 +116,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setModified(new Date());
         henkilo.setKasittelijaOid(this.userDetailsHelper.getCurrentUserOid());
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
-        return henkilo;
+        return henkiloRepository.save(henkilo);
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
@@ -355,18 +355,18 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public Henkilo puraHeikkoYksilointi(final String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-        if(!henkilo.isYksiloity() || henkilo.isYksiloityVTJ()) {
-            throw new IllegalArgumentException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
+        if (!henkilo.isYksiloity()) {
+            throw new ValidationException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
         }
 
-        if(!StringUtils.isEmpty(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
-            throw new RuntimeException("Yksilöinnin purku epäonnistui");
-        } else {
-            henkilo.setYksiloity(false);
-            henkilo.setModified(new Date());
+        if (!StringUtils.isEmpty(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
+            throw new ValidationException("Henkilöllä on hetu tai se on VTJ yksilöity, yksilöintiä ei voida purkaa");
         }
 
-        return henkilo;
+        henkilo.setYksiloity(false);
+        henkilo.setModified(new Date());
+        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+        return henkiloRepository.save(henkilo);
     }
 
     @Override

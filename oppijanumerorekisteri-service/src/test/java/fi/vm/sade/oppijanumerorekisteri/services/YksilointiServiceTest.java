@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -24,6 +25,8 @@ public class YksilointiServiceTest {
     private MockVtjClient vtjClient;
 
     private YksilointiService yksilointiService;
+
+    private HenkiloRepository henkiloRepository;
 
     private final String henkiloOid = "1.2.246.562.24.27470134096";
     private Henkilo henkilo;
@@ -34,7 +37,7 @@ public class YksilointiServiceTest {
         MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
 
-        HenkiloRepository henkiloRepository = mock(HenkiloRepository.class);
+        henkiloRepository = mock(HenkiloRepository.class);
         YksilointitietoRepository yksilointitietoRepository = mock(YksilointitietoRepository.class);
         UserDetailsHelper userDetailsHelper = mock(UserDetailsHelper.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
@@ -187,6 +190,7 @@ public class YksilointiServiceTest {
 
     @Test
     public void hetuttomanYksilointiOnnistuu() {
+        when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         this.henkilo.setHetu(null);
 
         Date before = new Date();
@@ -200,6 +204,7 @@ public class YksilointiServiceTest {
 
     @Test
     public void hetuttomanYksiloinninPurkaminenOnnistuu() {
+        when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         this.henkilo.setHetu(null);
         yksilointiService.hetuttomanYksilointi(henkiloOid);
         Date before = new Date();
