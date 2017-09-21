@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
-
     private final UserDetailsHelper userDetailsHelper;
 
     private final VtjClient vtjClient;
@@ -87,6 +85,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Override
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
+
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
 
         if (!StringUtils.isEmpty(henkilo.getHetu())) {
@@ -101,6 +100,23 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         return henkilo;
+
+    }
+
+    @Override
+    @Transactional
+    public Henkilo hetuttomanYksilointi(String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if (!StringUtils.isEmpty(henkilo.getHetu())) {
+            throw new ValidationException("Henkilöllä on hetu, yksilöintiä ei voida tehdä");
+        }
+
+        henkilo.setYksiloity(true);
+        henkilo.setDuplicate(false);
+        henkilo.setModified(new Date());
+        henkilo.setKasittelijaOid(this.userDetailsHelper.getCurrentUserOid());
+        henkilo.setOppijanumero(henkilo.getOidHenkilo());
+        return henkiloRepository.save(henkilo);
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
@@ -333,6 +349,24 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .filter(stringNotEmpty)
                 .filter(hetu -> !hetu.equals(original))
                 .ifPresent(consumer);
+    }
+
+    @Override
+    @Transactional
+    public Henkilo puraHeikkoYksilointi(final String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if (!henkilo.isYksiloity()) {
+            throw new ValidationException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
+        }
+
+        if (!StringUtils.isEmpty(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
+            throw new ValidationException("Henkilöllä on hetu tai se on VTJ yksilöity, yksilöintiä ei voida purkaa");
+        }
+
+        henkilo.setYksiloity(false);
+        henkilo.setModified(new Date());
+        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+        return henkiloRepository.save(henkilo);
     }
 
     @Override

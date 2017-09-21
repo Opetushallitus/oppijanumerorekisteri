@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +11,10 @@ public interface YksilointiService {
     Optional<Henkilo> yksiloiAutomaattisesti(String henkiloOid);
 
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
+
+    Henkilo hetuttomanYksilointi(String henkiloOid);
+
+    Henkilo puraHeikkoYksilointi(final String henkiloOid);
 
     /**
      * Päivittään yksilöidyn henkilön tiedot VTJ:stä.
