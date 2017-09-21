@@ -3,14 +3,12 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
-import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -21,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +50,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
-    private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
 
     private final VtjClient vtjClient;
@@ -122,21 +118,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
         return henkilo;
     }
-
-    private Henkilo hetullisenYksilointi(Henkilo henkilo) {
-
-        henkilo = yksiloiHenkilo(henkilo);
-
-        // Remove yksilointitieto if henkilo was yksiloity succesfully.
-        if (henkilo != null && henkilo.isYksiloityVTJ() && henkilo.getYksilointitieto() != null) {
-            yksilointitietoRepository.delete(henkilo.getYksilointitieto());
-            henkilo.setYksilointitieto(null);
-            henkilo.setModified(new Date());
-        }
-
-        return henkilo;
-    }
-
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
         /* VTJ data for Henkilo contains a huge data set and parsing this data
