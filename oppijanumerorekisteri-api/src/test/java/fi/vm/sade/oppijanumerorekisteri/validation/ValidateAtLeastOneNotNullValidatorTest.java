@@ -55,7 +55,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
 
     @Test
     public void isValidShouldReturnTrueWhenNullValue() {
-        List<String> fields = emptyList();
+        List<String> fields = asList("stringValue");
         validator.initialize(createAnnotation(fields));
 
         boolean valid = validator.isValid(null, contextMock);
