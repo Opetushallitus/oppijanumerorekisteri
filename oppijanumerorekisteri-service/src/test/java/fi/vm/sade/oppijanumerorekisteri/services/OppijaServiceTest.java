@@ -14,7 +14,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import static java.util.Collections.singletonList;
 import java.util.Date;
 import java.util.List;
@@ -32,9 +31,11 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
+@Transactional
 public class OppijaServiceTest {
 
     @MockBean
@@ -51,8 +52,6 @@ public class OppijaServiceTest {
     @Autowired
     private HenkiloJpaRepository henkiloJpaRepository;
     @Autowired
-    private TuontiRepository tuontiRepository;
-    @Autowired
     private IdentificationRepository identificationRepository;
 
     @Before
@@ -61,8 +60,6 @@ public class OppijaServiceTest {
         when(kayttooikeusClient.getOrganisaatioHenkilot(any())).thenReturn(
                 singletonList(OrganisaatioHenkiloDto.builder().organisaatioOid("1.2.3.4").build())
         );
-        tuontiRepository.deleteAll();
-        henkiloRepository.deleteAll();
     }
 
     @Test
