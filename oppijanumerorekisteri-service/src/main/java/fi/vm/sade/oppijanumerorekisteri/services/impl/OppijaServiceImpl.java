@@ -94,9 +94,9 @@ public class OppijaServiceImpl implements OppijaService {
 
     private <T> Map<T, OppijaCreateDto> mapByOppijaProperty(Collection<OppijaCreateDto> oppijat, Function<OppijaCreateDto.HenkiloCreateDto, T> mapper, String name) {
         return oppijat.stream()
-                .filter(t -> mapper.apply(t.getHenkilo()) != null)
-                .collect(toMap(t -> mapper.apply(t.getHenkilo()), identity(), (u, v) -> {
-                    throw new ValidationException(String.format("Duplikaatti %s %s", name, mapper.apply(u.getHenkilo())));
+                .filter(oppija -> mapper.apply(oppija.getHenkilo()) != null)
+                .collect(toMap(oppija -> mapper.apply(oppija.getHenkilo()), identity(), (oppija1, oppija2) -> {
+                    throw new ValidationException(String.format("Duplikaatti %s %s", name, mapper.apply(oppija1.getHenkilo())));
                 }));
     }
 
