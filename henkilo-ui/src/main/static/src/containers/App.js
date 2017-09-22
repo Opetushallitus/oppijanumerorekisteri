@@ -7,7 +7,9 @@ import moment from 'moment'
 import 'moment/locale/fi'
 import 'moment/locale/sv'
 import PropTypes from 'prop-types'
+import {fetchPrequels} from "../actions/prequel.actions";
 
+const fetchPrequelsIntervalInMillis = 30 * 1000;
 
 class App extends React.Component {
     render() {
@@ -36,6 +38,7 @@ class App extends React.Component {
 
     componentDidMount() {
         this.props.fetchFrontProperties();
+        setInterval(this.props.fetchPrequels, fetchPrequelsIntervalInMillis);
     };
 
     static propTypes = {
@@ -70,4 +73,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchFrontProperties})(App)
+export default connect(mapStateToProps, {fetchFrontProperties, fetchPrequels})(App)
