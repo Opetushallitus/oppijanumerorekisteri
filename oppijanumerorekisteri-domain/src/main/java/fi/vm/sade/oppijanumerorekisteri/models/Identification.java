@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import lombok.Builder;
 
 /**
  * Hetuttoman henkilön tunnistamiseen käytettävä tieto (esimerkiksi
@@ -17,6 +18,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "identification")
@@ -24,6 +26,8 @@ import java.util.Date;
 public class Identification extends IdentifiableAndVersionedEntity {
 
     private static final long serialVersionUID = -2726844344901551508L;
+
+    public static final String SAHKOPOSTI_IDP_ENTITY_ID = "email";
 
     /**
      * Tunnisteen avain, esimerkiksi "email".

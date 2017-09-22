@@ -115,15 +115,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private LocalDate syntymaaika;
 
-    private String passinnumero;
-
     private String oppijanumero;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "huoltaja_id")
     private Henkilo huoltaja;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "henkilo_id", nullable = false)
     private Set<Identification> identifications = new HashSet<>();
 
@@ -139,6 +137,26 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_henkilo_yksilointi_synkronointi"))
     private Set<YksilointiSynkronointi> yksilointiSynkronoinnit;
+
+    /**
+     * Oppijan organisaatiot. Huom! virkailijan organisaatiot ovat
+     * käyttöoikeuspalvelussa.
+     */
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @JoinTable(name = "henkilo_organisaatio",
+            joinColumns = @JoinColumn(name = "henkilo_id", referencedColumnName = "id"),
+            foreignKey = @ForeignKey(name = "fk_henkilo_organisaatio_henkilo"),
+            inverseJoinColumns = @JoinColumn(name = "organisaatio_id", referencedColumnName = "id"),
+            inverseForeignKey = @ForeignKey(name = "fk_henkilo_organisaatio_organisaatio"))
+    private Set<Organisaatio> organisaatiot;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "henkilo_passinumero",
+            joinColumns = @JoinColumn(name = "henkilo_id"),
+            foreignKey = @ForeignKey(name = "fk_henkilo_passinumero"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_passinumero_01", columnNames = "passinumero"))
+    @Column(name = "passinumero", nullable = false)
+    private Set<String> passinumerot;
 
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
@@ -193,6 +211,20 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public Boolean isNotBlackListed() {
         return !isEiYksiloida();
+    }
+
+    public boolean addOrganisaatio(Organisaatio organisaatio) {
+        if (organisaatiot == null) {
+            organisaatiot = new HashSet<>();
+        }
+        return organisaatiot.add(organisaatio);
+    }
+
+    public boolean removeOrganisaatio(Organisaatio organisaatio) {
+        if (organisaatiot == null) {
+            return false;
+        }
+        return organisaatiot.remove(organisaatio);
     }
 
     // Initialize default values for lombok builder

@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.utils;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -62,7 +61,7 @@ public class DtoUtils {
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
-                syntymaAika, "1", "passinro", "1.2.3.4.5", null, false, false, false, false, false, createdModified,
+                syntymaAika, "1", "1.2.3.4.5", null, false, false, false, false, false, createdModified,
                 createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
     }
 
@@ -80,7 +79,7 @@ public class DtoUtils {
 
         return new HenkiloCreateDto(hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi, aidinkieli,
                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
-                "passinro", "1.2.3.4.5", null, false, false,
+                "1.2.3.4.5", null, false, false,
                 false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto));
     }
 

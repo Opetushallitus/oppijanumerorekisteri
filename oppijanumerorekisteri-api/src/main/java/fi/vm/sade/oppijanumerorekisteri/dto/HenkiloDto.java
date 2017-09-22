@@ -48,8 +48,6 @@ public class HenkiloDto implements Serializable {
 
     private String sukupuoli;
 
-    private String passinnumero;
-
     private String oppijanumero;
 
     private Boolean turvakielto;

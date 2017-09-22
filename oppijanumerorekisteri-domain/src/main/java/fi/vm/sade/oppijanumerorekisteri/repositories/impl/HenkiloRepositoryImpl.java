@@ -6,6 +6,10 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -18,7 +22,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.Oppijanumerorekist
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -27,18 +30,23 @@ import java.util.stream.Collectors;
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
+import fi.vm.sade.oppijanumerorekisteri.models.QTuonti;
+import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import static java.util.stream.Collectors.joining;
 
 import javax.persistence.Query;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 
-@Transactional(propagation = Propagation.MANDATORY)
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
 
     @Override
@@ -62,6 +70,36 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         this.createQuery(criteria, limit, offset, qHenkilo, query);
 
         return query.fetch();
+    }
+
+    @Override
+    public Set<String> findOidsBy(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<String> query = jpa().from(henkilo)
+                .select(henkilo.oidHenkilo).distinct();
+
+        if (criteria.getTuontiId() != null) {
+            QTuonti qTuonti = QTuonti.tuonti;
+            QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+
+            JPQLQuery<Tuonti> subQuery = JPAExpressions.selectFrom(qTuonti)
+                    .join(qTuonti.henkilot, qTuontiRivi)
+                    .where(qTuontiRivi.henkilo.eq(qHenkilo))
+                    .where(qTuonti.id.eq(criteria.getTuontiId()));
+            query.where(subQuery.exists());
+        }
+        if (criteria.getMuokattuJalkeen() != null) {
+            query.where(qHenkilo.modified.goe(criteria.getMuokattuJalkeen().toDate()));
+        }
+        if (criteria.getOrganisaatioOids() != null) {
+            QOrganisaatio qOrganisaatio = QOrganisaatio.organisaatio;
+
+            query.join(henkilo.organisaatiot, qOrganisaatio);
+            query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
+        }
+
+        return query.fetch().stream().collect(toSet());
     }
 
     @Override
@@ -394,6 +432,47 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .join(qYhteystiedotRyhma.yhteystieto, qYhteystieto)
                 .where(qYhteystieto.yhteystietoArvo.eq(arvo))
                 .select(qHenkilo.oidHenkilo).distinct().fetch();
+    }
+
+    @Override
+    public Iterable<String> findPassinumerotByOid(String oid) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qPassinumero = Expressions.stringPath("passinumero");
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.passinumerot, qPassinumero)
+                .where(qHenkilo.oidHenkilo.eq(oid))
+                .select(qPassinumero)
+                .fetch();
+    }
+
+    @Override
+    public Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qPassinumero = Expressions.stringPath("passinumero");
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.passinumerot, qPassinumero)
+                .where(qPassinumero.in(passinumerot))
+                .transform(groupBy(qPassinumero).as(qHenkilo));
+    }
+
+    @Override
+    public Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        QIdentification qIdentification = QIdentification.identification;
+
+        List<Predicate> predicates = identifiers.stream().map(identifier ->
+                qIdentification.idpEntityId.eq(idpEntityId)
+                .and(qIdentification.identifier.eq(identifier))).collect(toList());
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.identifications, qIdentification)
+                .where(anyOf(predicates))
+                .transform(groupBy(qIdentification.identifier).as(qHenkilo));
     }
 
 }

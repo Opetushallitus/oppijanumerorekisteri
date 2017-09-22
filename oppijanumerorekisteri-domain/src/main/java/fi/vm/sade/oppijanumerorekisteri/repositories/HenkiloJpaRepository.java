@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
@@ -11,7 +12,9 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 // High speed repository for jpa queries with querydsl.
 @Repository
@@ -34,6 +37,14 @@ public interface HenkiloJpaRepository {
      * @return henkilot
      */
     List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
+
+    /**
+     * Hakee annettujen hakukriteerien mukaiset henkilöiden OID:t.
+     *
+     * @param criteria hakukriteerit
+     * @return henkilö OID:t
+     */
+    Set<String> findOidsBy(OppijaTuontiCriteria criteria);
 
     /**
      * Yleiskäyttöinen henkilöhaku.
@@ -98,5 +109,11 @@ public interface HenkiloJpaRepository {
     Collection<Henkilo> findUnidentified(long limit, long offset);
 
     Iterable<String> findOidByYhteystieto(String arvo);
+
+    Iterable<String> findPassinumerotByOid(String oid);
+
+    Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot);
+
+    Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers);
 
 }
