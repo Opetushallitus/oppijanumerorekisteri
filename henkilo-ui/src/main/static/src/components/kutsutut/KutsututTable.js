@@ -78,7 +78,8 @@ export default class KutsututTable extends React.Component {
     }
 
     createKutsuLahetettyCell(kutsu) {
-        return moment(new Date(kutsu.aikaleima)).format();
+        const sent = moment(new Date(kutsu.aikaleima));
+        return (<span>{sent.format()} {sent.add(1, 'months').isBefore(moment()) ? <span className="oph-red">vanhentunut</span> : null}</span>);
     }
 
     createResendCell(kutsu) {
