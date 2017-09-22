@@ -113,6 +113,10 @@ class StaticUtils extends React.Component {
     static getLocalisedText(texts, locale) {
         return texts.filter(text => text.lang.toLowerCase() === locale)[0].text;
     };
+
+    static stringIsNotEmpty(entity) {
+        return entity && entity !== '';
+    }
 }
 
 export default StaticUtils;

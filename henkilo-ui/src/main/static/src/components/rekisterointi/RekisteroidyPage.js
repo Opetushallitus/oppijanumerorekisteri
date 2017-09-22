@@ -29,6 +29,15 @@ class RekisteroidyPage extends React.Component {
     constructor(props) {
         super(props);
 
+        this.errorChecks = [
+            (henkilo) => !this.etunimetContainsKutsumanimi(henkilo) ? props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'] : null,
+            (henkilo) => !this.kayttajanimiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KAYTTAJANIMI'] : null,
+            (henkilo) => !this.passwordsAreSame(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH'] : null,
+            (henkilo) => !this.passwordExceedsMinLength(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_LENGTH'].replace('%s', PropertySingleton.getState().minimunPasswordLength) : null,
+            (henkilo) => !this.passwordHasSpecialCharacter(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_SPECIALCHARACTER'] : null,
+            (henkilo) => !this.kielikoodiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KIELIKOODI'] : null,
+        ];
+
         this.state = {
             henkilo: {
                 etunimet: this.props.kutsu.etunimi,
@@ -42,7 +51,7 @@ class RekisteroidyPage extends React.Component {
                 passwordAgain: '',
             },
             isValid: false,
-        };
+        }
     }
 
     componentWillMount() {
@@ -69,6 +78,9 @@ class RekisteroidyPage extends React.Component {
                                               id="rekisteroidyPage" >
                         {this.props.L['REKISTEROIDY_TALLENNA_NAPPI']}
                     </BottomNotificationButton>
+                    <div>
+                        {this.printErrors()}
+                    </div>
                 </div>
                 <div className="borderless-colored-wrapper flex-horizontal flex-align-center">
                     <span className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_VALITSE']}</span>
@@ -100,20 +112,54 @@ class RekisteroidyPage extends React.Component {
     }
 
     isValid(henkilo) {
-        const regex = PropertySingleton.getState().specialCharacterRegex;
-        return henkilo.etunimet.split(' ').filter(nimi => nimi === henkilo.kutsumanimi)
-            && henkilo.kayttajanimi !== ''
-            && henkilo.password === henkilo.passwordAgain
-            && henkilo.password !== ''
-            && henkilo.password.length >= PropertySingleton.getState().minimunPasswordLength
-            && regex.exec(henkilo.password) !== null
-            && henkilo.asiointiKieli.kieliKoodi !== '';
+        return this.etunimetContainsKutsumanimi(henkilo)
+            && this.kayttajanimiIsNotEmpty(henkilo)
+            && this.passwordsAreSame(henkilo)
+            && this.passwordExceedsMinLength(henkilo)
+            && this.passwordHasSpecialCharacter(henkilo)
+            && this.kielikoodiIsNotEmpty(henkilo);
     }
 
     createHenkilo() {
         this.props.removeNotification('error', 'buttonNotifications', 'rekisteroidyPage');
         const payload = {...this.state.henkilo};
         this.props.createHenkiloByToken(this.props.kutsu.temporaryToken, payload);
+    }
+
+    etunimetContainsKutsumanimi(henkilo) {
+        return henkilo.etunimet.split(' ').filter(nimi => nimi === henkilo.kutsumanimi).length;
+    }
+
+    passwordIsNotEmpty(henkilo) {
+        return StaticUtils.stringIsNotEmpty(henkilo.password);
+    }
+
+    passwordExceedsMinLength(henkilo) {
+        return this.passwordIsNotEmpty(henkilo)
+            && henkilo.password.length >= PropertySingleton.getState().minimunPasswordLength;
+    }
+
+    passwordHasSpecialCharacter(henkilo) {
+        return (PropertySingleton.getState().specialCharacterRegex.exec(henkilo.password)) !== null;
+    }
+
+    passwordsAreSame(henkilo) {
+        return henkilo.password === henkilo.passwordAgain;
+    }
+
+    kielikoodiIsNotEmpty(henkilo) {
+        return StaticUtils.stringIsNotEmpty(henkilo.asiointiKieli.kieliKoodi);
+    }
+
+    kayttajanimiIsNotEmpty(henkilo) {
+        return StaticUtils.stringIsNotEmpty(henkilo.kayttajanimi);
+    }
+
+    printErrors() {
+        return this.errorChecks.map((errorCheck, idx) => {
+            const errorMessage = errorCheck(this.state.henkilo);
+            return errorMessage ? <ul key={idx} className="oph-h6">*{errorMessage}</ul> : null;
+        });
     }
 
 }
