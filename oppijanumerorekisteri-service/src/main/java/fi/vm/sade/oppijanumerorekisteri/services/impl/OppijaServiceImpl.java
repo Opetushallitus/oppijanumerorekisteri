@@ -146,24 +146,7 @@ public class OppijaServiceImpl implements OppijaService {
 
             Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu, henkiloByPassinumero, henkiloBySahkoposti)
                     .filter(Objects::nonNull)
-                    .findFirst().orElse(null);
-
-            // luodaan tarvittaessa uusi henkilö
-            if (henkilo == null) {
-                henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
-                henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
-                if (oppija.getHenkilo().getPassinumero() != null) {
-                    henkilo.setPassinumerot(Stream.of(oppija.getHenkilo().getPassinumero()).collect(toSet()));
-                }
-                if (oppija.getHenkilo().getSahkoposti() != null) {
-                    henkilo.setIdentifications(Stream.of(Identification.builder()
-                            .idpEntityId(SAHKOPOSTI_IDP_ENTITY_ID)
-                            .identifier(oppija.getHenkilo().getSahkoposti())
-                            .build()).collect(toSet())
-                    );
-                }
-                henkilo = henkiloService.createHenkilo(henkilo);
-            }
+                    .findFirst().orElseGet(() -> newHenkilo(oppija));
 
             // liitetään henkilö organisaatioihin
             organisaatiot.stream().forEach(henkilo::addOrganisaatio);
@@ -172,6 +155,22 @@ public class OppijaServiceImpl implements OppijaService {
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
             rivi.setHenkilo(henkilo);
             return rivi;
+        }
+
+        private Henkilo newHenkilo(OppijaCreateDto oppija) {
+            Henkilo henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
+            henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
+            if (oppija.getHenkilo().getPassinumero() != null) {
+                henkilo.setPassinumerot(Stream.of(oppija.getHenkilo().getPassinumero()).collect(toSet()));
+            }
+            if (oppija.getHenkilo().getSahkoposti() != null) {
+                henkilo.setIdentifications(Stream.of(Identification.builder()
+                        .idpEntityId(SAHKOPOSTI_IDP_ENTITY_ID)
+                        .identifier(oppija.getHenkilo().getSahkoposti())
+                        .build()).collect(toSet())
+                );
+            }
+            return henkiloService.createHenkilo(henkilo);
         }
 
     }
