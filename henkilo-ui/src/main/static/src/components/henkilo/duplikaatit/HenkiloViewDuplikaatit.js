@@ -103,6 +103,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
         await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates, notificationId);
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
+        this.props.router.push(`/virkailija/${this.props.oidHenkilo}`);
     }
 
     setSelection(oid) {
