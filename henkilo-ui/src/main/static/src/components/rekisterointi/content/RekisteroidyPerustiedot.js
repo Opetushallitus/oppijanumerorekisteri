@@ -28,6 +28,10 @@ class RekisteroidyPerustiedot extends React.Component {
             type: PropTypes.string,
             id: PropTypes.string,
         })),
+        isUsernameError: PropTypes.bool.isRequired,
+        isPasswordError: PropTypes.bool.isRequired,
+        isLanguageError: PropTypes.bool.isRequired,
+        isKutsumanimiError: PropTypes.bool.isRequired,
     };
 
     render() {
@@ -39,17 +43,19 @@ class RekisteroidyPerustiedot extends React.Component {
             <Kutsumanimi readOnly={false}
                          autoFocus
                          henkilo={henkilo}
-                         updateModelFieldAction={this.props.updatePayloadModel} />
+                         updateModelFieldAction={this.props.updatePayloadModel}
+                         isError={this.props.isKutsumanimiError} />
             <Kayttajanimi disabled={false}
                           henkilo={{kayttajatieto: {username: henkilo.henkilo.kayttajanimi}}}
                           updateModelFieldAction={this.props.updatePayloadModel}
-                          isError={this.isKayttajanimiError()} />
+                          isError={this.isKayttajanimiError() || this.props.isUsernameError} />
             <Salasana disabled={false}
                       updateModelFieldAction={this.props.updatePayloadModel}
-                      isError={this.isSalasanaError()} />
+                      isError={this.isSalasanaError() || this.props.isPasswordError} />
             <Asiointikieli koodisto={this.props.koodisto}
                            henkiloUpdate={this.props.henkilo.henkilo}
-                           updateModelFieldAction={this.props.updatePayloadModel} />
+                           updateModelFieldAction={this.props.updatePayloadModel}
+                           isError={this.props.isLanguageError} />
         </div>
     }
 

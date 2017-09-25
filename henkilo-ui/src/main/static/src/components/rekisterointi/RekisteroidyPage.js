@@ -72,7 +72,11 @@ class RekisteroidyPage extends React.Component {
                 <div className="wrapper flex-item-1">
                     <RekisteroidyPerustiedot henkilo={{henkilo: this.state.henkilo}}
                                              koodisto={this.props.koodisto}
-                                             updatePayloadModel={this.updatePayloadModelInput.bind(this)} />
+                                             updatePayloadModel={this.updatePayloadModelInput.bind(this)}
+                                             isLanguageError={!this.kielikoodiIsNotEmpty(this.state.henkilo)}
+                                             isPasswordError={this.isPasswordError()}
+                                             isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
+                                             isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)} />
                     <BottomNotificationButton action={this.createHenkilo.bind(this)}
                                               disabled={!this.state.isValid}
                                               id="rekisteroidyPage" >
@@ -104,7 +108,7 @@ class RekisteroidyPage extends React.Component {
     }
 
     updatePayloadModelInput(event) {
-        const henkilo = StaticUtils.updateFieldByDotAnnotation(this.state.henkilo, event);
+        const henkilo = StaticUtils.updateFieldByDotAnnotation({...this.state.henkilo}, event) || this.state.henkilo;
         this.setState({
             henkilo: henkilo,
             isValid: this.isValid(henkilo),
@@ -158,8 +162,15 @@ class RekisteroidyPage extends React.Component {
     printErrors() {
         return this.errorChecks.map((errorCheck, idx) => {
             const errorMessage = errorCheck(this.state.henkilo);
-            return errorMessage ? <ul key={idx} className="oph-h6">*{errorMessage}</ul> : null;
+            return errorMessage ? <ul key={idx} className="oph-h5 oph-red">! {errorMessage}</ul> : null;
         });
+    }
+
+    isPasswordError() {
+        return !this.passwordIsNotEmpty(this.state.henkilo)
+            || !this.passwordHasSpecialCharacter(this.state.henkilo)
+            || !this.passwordExceedsMinLength(this.state.henkilo)
+            || !this.passwordsAreSame(this.state.henkilo);
     }
 
 }

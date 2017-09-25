@@ -29,14 +29,15 @@ class Field extends React.Component {
             [`${this.props.className}`]: this.props.className,
             'readOnly': this.props.readOnly,
             'oph-input': !this.props.readOnly && !this.props.data,
-            'field-error': this.props.isError,
+            'oph-input-has-error': this.props.isError,
         });
         const type = {type: this.props.password ? 'password' : false};
         return (
             this.props.readOnly
                 ? <span className={className}>{this.props.children}</span>
                 : this.props.data
-                    ? <OphSelect options={this.props.data}
+                    ? <OphSelect className={className}
+                                 options={this.props.data}
                                  name={this.props.inputValue}
                                  onChange={this.props.changeAction}
                                  value={this.props.selectValue}

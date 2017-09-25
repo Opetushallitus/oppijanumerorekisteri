@@ -6,9 +6,13 @@ class StaticUtils extends React.Component {
         return new Date(from[2], from[1]-1, from[0]);
     };
 
+    // Example fieldpath: organisaatio.nimet.0.nimiValue
     static updateFieldByDotAnnotation(obj, event) {
         let value;
         let fieldpath;
+        if(event === null) {
+            return null;
+        }
         if(event.optionsName) {
             value = event.value;
             fieldpath = event.optionsName;

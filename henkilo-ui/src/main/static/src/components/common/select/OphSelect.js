@@ -4,7 +4,7 @@ import React from 'react'
 import Select from 'react-select'
 
 const OphSelect = (props) => {
-    return <Select clearable={false} {...props} />;
+    return <Select clearable={false} deleteRemoves={false} {...props} />;
 };
 
 export default OphSelect;
