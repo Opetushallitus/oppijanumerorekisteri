@@ -7,6 +7,7 @@ import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from "../../common/icons/Loader";
 import PropertySingleton from '../../../globals/PropertySingleton'
 import Notifications from "../../common/notifications/Notifications";
+import {FloatingBar} from "./FloatingBar";
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 
@@ -69,7 +70,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     classNames={{'person': true, master: true}}
                     isMaster={true}
                     setSelection={this.setSelection.bind(this)}/>
-                { duplicates.map((duplicate) =>
+                {duplicates.map((duplicate) =>
                     <DuplikaatitPerson
                         henkilo={duplicate}
                         koodisto={koodisto}
@@ -83,14 +84,16 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                         yksiloitySelected={this.state.yksiloitySelected}>
                     </DuplikaatitPerson>
                 )}
-                { this.props.henkilo.duplicatesLoading ? <Loader /> : null }
+                {this.props.henkilo.duplicatesLoading ? <Loader/> : null}
                 <Notifications L={L}
                                notifications={this.props.notifications}
-                               closeAction={(status, id) => this.props.removeNotification(status, 'duplicatesNotifications', id)} />
+                               closeAction={(status, id) => this.props.removeNotification(status, 'duplicatesNotifications', id)}/>
 
             </div>
-            <Button disabled={this.state.selectedDuplicates.length === 0}
-                    action={this._link.bind(this)}>{L['DUPLIKAATIT_YHDISTA']}</Button>
+            <FloatingBar>
+                <Button disabled={this.state.selectedDuplicates.length === 0}
+                        action={this._link.bind(this)}>{L['DUPLIKAATIT_YHDISTA']}</Button>
+            </FloatingBar>
         </div>
     }
 
