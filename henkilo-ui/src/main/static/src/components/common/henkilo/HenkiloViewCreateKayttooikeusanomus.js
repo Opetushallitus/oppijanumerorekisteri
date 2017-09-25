@@ -41,7 +41,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     componentWillReceiveProps(nextProps) {
         const emailOptions = this._parseEmailOptions(nextProps.henkilo);
-        this.setState({emailOptions});
         if (emailOptions.length === 1) {
             this.setState({
                 emailSelection: emailOptions[0].value,
@@ -53,6 +52,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         } else {
             this.setState({missingEmail: true, showMissingEmailNotification: true});
         }
+        this.setState({emailOptions});
     }
 
     render() {
@@ -66,7 +66,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                     this.setState({showMissingEmailNotification: false})
                 }}/> : null}
 
-            {!this.state.missingEmail ? <div>
+            <div>
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                         {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
@@ -78,7 +78,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                                    onBlurResetsInput={false}
                                    options={this.state.organisaatioOptions}
                                    onInputChange={this.inputChange.bind(this)}
-                                   value={this.state.organisaatioSelection}/>
+                                   value={this.state.organisaatioSelection}
+                                   disabled={this.state.showMissingEmailNotification} />
                     </div>
                 </div>
 
@@ -88,7 +89,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                         <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
                                    options={this.props.ryhmaOptions}
                                    value={this.state.ryhmaSelection}
-                                   placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}/>
+                                   placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
+                                   disabled={this.state.showMissingEmailNotification} />
                     </div>
                 </div>
 
@@ -117,7 +119,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                                 noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
                                 options={kayttooikeusRyhmaOptions}
                                 onChange={this._addKayttooikeusryhmaSelection.bind(this)}
-                        />
+                                disabled={this.state.showMissingEmailNotification} />
 
                         <ul className="selected-permissions">
                             {this.state.kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
@@ -148,7 +150,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                               name="perustelut"
                               id="perustelut"
                               cols="30"
-                              rows="10"/>
+                              rows="10"
+                              disabled={this.state.showMissingEmailNotification} />
                     </div>
                 </div>
 
@@ -171,8 +174,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
                 </div>
 
-            </div> : null
-            }
+            </div>
         </div>);
     }
 
