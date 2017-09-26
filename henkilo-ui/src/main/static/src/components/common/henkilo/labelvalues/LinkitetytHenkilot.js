@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {Link} from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
+import R from 'ramda';
 
 export default class LinkitetytHenkilot extends React.Component {
     static propTypes = {
@@ -29,13 +30,13 @@ export default class LinkitetytHenkilot extends React.Component {
     }
 
     valueGroup() {
-        return <div> {this.props.henkilo.slaves.map((slave, index) =>
+        return R.path(['henkilo', 'slaves'], this.props) ? <div> {this.props.henkilo.slaves.map((slave, index) =>
             <div key={index} className="nowrap">
                 <Link to={'/virkailija/' + slave.oidHenkilo}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
                 {this.props.L['HENKILO_POISTA_LINKITYS']}
             </TextButton>
             </div>)}
-        </div>;
+        </div> : null;
     }
 
     async removeLink(masterOid, slaveOid) {
