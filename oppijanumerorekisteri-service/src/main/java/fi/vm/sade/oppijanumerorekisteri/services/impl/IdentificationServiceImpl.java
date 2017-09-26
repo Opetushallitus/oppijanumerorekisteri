@@ -114,19 +114,15 @@ public class IdentificationServiceImpl implements IdentificationService {
         this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
     }
 
-
     private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
+        // Do not allow replacing differing not empty hetu
         Optional.ofNullable(henkilo.getHetu())
                 .filter(StringUtils::hasLength)
                 .filter((hetu) -> !hetu.equals(henkiloVahvaTunnistusDto.getHetu()))
                 .ifPresent((existingDifferentHetu) -> {
                     throw new DataInconsistencyException("Hetu does not match with the existing one");
                 });
-        Optional<String> validHetu = Optional.ofNullable(henkiloVahvaTunnistusDto.getHetu())
-                .filter((hetu) -> henkilo.getEtunimet().equals(henkiloVahvaTunnistusDto.getEtunimet()))
-                .filter((hetu) -> henkilo.getSukunimi().equals(henkiloVahvaTunnistusDto.getSukunimi()));
-        henkilo.setHetu(validHetu
-                .orElseThrow(() -> new DataInconsistencyException("Etunimet or sukunimi does not match with existing ones")));
+        henkilo.setHetu(henkiloVahvaTunnistusDto.getHetu());
     }
 
     private void logFaults(Henkilo henkilo) {
