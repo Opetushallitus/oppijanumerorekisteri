@@ -1,7 +1,8 @@
-import './VirkailijaViewPage.css'
-import React from 'react'
-import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
-import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
+import './VirkailijaViewPage.css';
+import React from 'react';
+import PropTypes from 'prop-types';
+import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent';
+import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent';
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
@@ -15,6 +16,13 @@ class VirkailijaViewPage extends React.Component {
 
         this.existingKayttooikeusRef = {};
     }
+
+    static propTypes = {
+        omattiedot: PropTypes.shape({
+            omattiedotOrganisaatiosLoading: PropTypes.bool.isRequired,
+        }).isRequired,
+    };
+
     render() {
         return (
             <div>
@@ -73,7 +81,7 @@ class VirkailijaViewPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        this.props.henkilo.henkiloOrganisaatiosLoading
+                        this.props.omattiedot.omattiedotOrganisaatiosLoading
                             ? <Loader />
                             : <HenkiloViewCreateKayttooikeus {...this.props}
                                                              existingKayttooikeusRef={this.existingKayttooikeusRef} />

@@ -12,9 +12,11 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
     static propTypes = {
         l10n: PropTypes.object.isRequired,
         locale: PropTypes.string.isRequired,
-        henkilo: PropTypes.shape({henkiloOrganisaatios: PropTypes.array.isRequired,}),
-        kayttooikeus: PropTypes.shape({allowedKayttooikeus: PropTypes.object}),
+        kayttooikeus: PropTypes.shape({allowedKayttooikeus: PropTypes.object,}),
         existingKayttooikeusRef: PropTypes.object.isRequired,
+        omattiedot: PropTypes.shape({
+            organisaatios: PropTypes.array,
+        }).isRequired,
     };
 
     constructor(props) {
@@ -126,7 +128,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
                                      locale={this.props.locale}
                                      organisationValue={this.state.kayttooikeusModel.kayttokohdeOrganisationOid}
                                      organisationAction={this.organisationAction}
-                                     organisationData={this.props.henkilo.henkiloOrganisaatios} />
+                                     organisationData={this.props.omattiedot.organisaatios} />
                             <CKKesto L={this.L}
                                      alkaaInitValue={this.state.kayttooikeusModel.alkupvm}
                                      paattyyInitValue={this.state.kayttooikeusModel.loppupvm}

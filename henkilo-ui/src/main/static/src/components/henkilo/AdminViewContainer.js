@@ -145,7 +145,8 @@ const mapStateToProps = (state, ownProps) => {
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
-        ownOid: state.omattiedot.data.oid
+        ownOid: state.omattiedot.data.oid,
+        omattiedot: state.omattiedot,
     };
 };
 

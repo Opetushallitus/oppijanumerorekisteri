@@ -134,6 +134,7 @@ const mapStateToProps = (state, ownProps) => {
         notifications: state.notifications,
         isAdmin: state.omattiedot.isAdmin,
         ownOid: state.omattiedot.data.oid,
+        omattiedot: state.omattiedot,
     };
 };
 
