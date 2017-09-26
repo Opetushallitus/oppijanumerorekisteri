@@ -5,7 +5,6 @@ import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
 import R from 'ramda';
 import {ShowText} from '../../common/ShowText';
-import Select from 'react-select';
 import IconButton from "../button/IconButton";
 import CrossCircleIcon from "../icons/CrossCircleIcon";
 import EmailSelect from "./select/EmailSelect";
@@ -114,7 +113,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
                     <div className="oph-input-container kayttooikeus-selection-wrapper">
 
-                        <Select placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
+                        <OphSelect placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
                                 noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
                                 options={kayttooikeusRyhmaOptions}
                                 onChange={this._addKayttooikeusryhmaSelection.bind(this)}
@@ -186,7 +185,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _changeOrganisaatioSelection(selection) {
-        this.setState({organisaatioSelection: selection.value, ryhmaSelection: '', kayttooikeusryhmaSelections: []});
+        this.setState({organisaatioSelection: selection.value, ryhmaSelection: '', kayttooikeusryhmaSelections: [], organisaatioOptions: [selection]});
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
     }
 

@@ -126,7 +126,9 @@ export default class OmattiedotPage extends React.Component {
                 .map(organisaatio => {
                     const organisaatioName = organisaatio.nimi[locale] ? organisaatio.nimi[locale] :
                         organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
-                    const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid ? `${organisaatioName} (${organisaatio.organisaatiotyypit.join(',')})` : `${organisaatioName}`;
+                    const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid
+                        ? `${organisaatioName} (${organisaatio.organisaatiotyypit.join(',')})`
+                        : `${organisaatioName}`;
                     return {
                         label,
                         value: organisaatio.oid
