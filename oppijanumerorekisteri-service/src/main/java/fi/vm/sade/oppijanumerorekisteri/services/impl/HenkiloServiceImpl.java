@@ -648,7 +648,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     private boolean isHenkiloIdentified(Henkilo henkilo) {
-        return henkilo.isYksiloity() || henkilo.isYksiloityVTJ();
+        return henkilo.isYksiloity() || henkilo.isYksiloityVTJ() || henkilo.getHetu() != null;
     }
 
     @Override
