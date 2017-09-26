@@ -20,8 +20,9 @@ class HenkilohakuPage extends React.Component {
             passivoitu: PropTypes.bool.isRequired,
             dublicates: PropTypes.bool.isRequired,
         }),
-        henkilo: PropTypes.shape({
-            henkiloOrganisaatios: PropTypes.array.isRequired,
+        omattiedot: PropTypes.shape({
+            organisaatios: PropTypes.array.isRequired,
+
         }),
         kayttooikeusryhmas: PropTypes.array.isRequired,
         henkilohakuAction: PropTypes.func.isRequired,
@@ -125,7 +126,7 @@ class HenkilohakuPage extends React.Component {
                                 initialValues={this.state.henkilohakuModel}
                                 l10n={this.props.l10n}
                                 locale={this.props.locale}
-                                organisaatioList={this.props.henkilo.henkiloOrganisaatios}
+                                organisaatioList={this.props.omattiedot.organisaatios}
                                 selectedOrganisation={this.state.henkilohakuModel.organisaatioOids}
                                 organisaatioSelectAction={this.updateToSearchModel('organisaatioOids').bind(this)}
                                 kayttooikeusryhmas={this.props.kayttooikeusryhmas}
