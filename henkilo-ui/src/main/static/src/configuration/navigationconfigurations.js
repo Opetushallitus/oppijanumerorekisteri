@@ -13,12 +13,12 @@ export const oppijaNavi = oid => [
 
 export const virkailijaNavi = oid => [
     {path: '/virkailija/' + oid, label: 'Henkilön tiedot'},
-    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit'}
+    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
 ];
 
 export const adminNavi = oid => [
     {path: '/admin/' + oid, label: 'Henkilön tiedot'},
-    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit'}
+    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
 ];
 
 export const emptyNavi = [];

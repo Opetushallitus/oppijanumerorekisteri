@@ -10,12 +10,14 @@ const TopNavigation = ({tabs, pathName, backButton, L}) => {
             { backButton ? <Link className="oph-link oph-link-big" to={backButton} >&#8701; {L['TAKAISIN_LINKKI']}</Link> : null }
             { tabs.length
                 ? <ul className="tabs">
-                    {tabs.map((data, index) => {
+                    {tabs
+                        .map((data, index) => {
                         const className = classNames({
-                            'active': data.path === pathName
+                            'active': data.path === pathName,
+                            'disabled-link': data.disabled
                         });
                         return <li key={index}>
-                            <Link className={className} to={data.path}>{data.label}</Link>
+                            <Link className={className} to={data.path} >{data.label}</Link>
                         </li>;
                     }
                     )}

@@ -28,3 +28,8 @@
     overflow: hidden;
     display: block;
 }
+
+.tabs .disabled-link {
+    pointer-events: none;
+    color: grey;
+}

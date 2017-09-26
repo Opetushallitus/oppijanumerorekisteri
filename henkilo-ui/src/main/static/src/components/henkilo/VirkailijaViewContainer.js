@@ -1,5 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
+import R from 'ramda';
 import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
@@ -32,6 +33,7 @@ import {removeNotification} from "../../actions/notifications.actions";
 import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
 
+
 class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
         this.props.clearHenkilo();
@@ -58,6 +60,20 @@ class VirkailijaViewContainer extends React.Component {
             this.props.getGrantablePrivileges(this.props.oidHenkilo);
         }
     };
+
+
+    componentWillReceiveProps(nextProps) {
+        // set duplicate page visible for henkilos who aren't slaves
+        let tabs = virkailijaNavi(nextProps.oidHenkilo);
+        const masterHenkiloOid = R.path(['henkilo', 'master', 'oidHenkilo'], nextProps);
+        if(!nextProps.henkilo.masterLoading && (masterHenkiloOid === undefined || nextProps.oidHenkilo === masterHenkiloOid)) {
+            tabs = tabs.map( tab => {
+                if(tab.label === 'Hae duplikaatit') { tab.disabled = false }
+                return tab;
+            });
+        }
+        this.props.updateHenkiloNavigation(tabs);
+    }
 
     render() {
         const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
