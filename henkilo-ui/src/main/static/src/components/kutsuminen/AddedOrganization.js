@@ -74,7 +74,7 @@ class AddedOrganisation extends React.Component {
                             noResultsText={L['EI_TULOKSIA']}>
                     </Select>
 
-                    <ul className="selected-permissions">
+                    <ul className="kutsuminen-selected-permissions">
                         {addedOrg.selectedPermissions.map(permission => {
                             return (
                                 <li key={permission.ryhmaId}>
