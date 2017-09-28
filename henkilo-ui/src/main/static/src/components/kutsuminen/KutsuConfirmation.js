@@ -34,7 +34,7 @@ export default class KutsuConfirmation extends React.Component {
                 <div className="confirmation-modal">
                     <i className="fa fa-times-circle fa-2 clickable right" onClick={this.props.modalCloseFn}
                        aria-hidden="true"/>
-                    <span className="oph-h1 oph-strong">>{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</span>
+                    <span className="oph-h1 oph-strong">{L['VIRKAILIJAN_LISAYS_ESIKATSELU_OTSIKKO']}</span>
                     <p>{ L['VIRKAILIJAN_LISAYS_ESIKATSELU_TEKSTI'] } {this.props.basicInfo.email}</p>
                     <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</span>
                     {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
