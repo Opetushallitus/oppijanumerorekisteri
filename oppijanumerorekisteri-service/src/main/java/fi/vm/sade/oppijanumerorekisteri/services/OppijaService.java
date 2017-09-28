@@ -1,7 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 
 /**
@@ -26,6 +29,24 @@ public interface OppijaService {
      * @return oppijat
      */
     OppijatReadDto getByTuontiId(Long id);
+
+    /**
+     * Palauttaa oppijoiden tuonnin yhteenvedon.
+     *
+     * @param criteria hakukriteerit
+     * @return yhteenveto
+     */
+    OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria);
+
+    /**
+     * Palauttaa annettujen hakukriteerien mukaiset henkilöt.
+     *
+     * @param criteria hakukriteerit
+     * @param page sivunumero
+     * @param count sivun koko
+     * @return henkilöt
+     */
+    Page<OppijaReadDto.HenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count);
 
     /**
      * Palauttaa annettujen hakukriteerien mukaiset henkilöiden OID:t.

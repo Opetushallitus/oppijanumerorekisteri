@@ -7,14 +7,14 @@ import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import static com.querydsl.core.types.dsl.Expressions.allOf;
 import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QExternalId;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
@@ -27,17 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
 import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
-import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
-import fi.vm.sade.oppijanumerorekisteri.models.QTuonti;
-import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import static java.util.stream.Collectors.joining;
 
@@ -73,33 +68,28 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
+    public List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return criteria.getQuery(em, qHenkilo)
+                .limit(limit)
+                .offset(offset)
+                .select(qHenkilo)
+                .fetch();
+    }
+
+    @Override
+    public long countBy(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return criteria.getQuery(em, qHenkilo).fetchCount();
+    }
+
+    @Override
     public Set<String> findOidsBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-
-        JPAQuery<String> query = jpa().from(henkilo)
-                .select(henkilo.oidHenkilo).distinct();
-
-        if (criteria.getTuontiId() != null) {
-            QTuonti qTuonti = QTuonti.tuonti;
-            QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
-
-            JPQLQuery<Tuonti> subQuery = JPAExpressions.selectFrom(qTuonti)
-                    .join(qTuonti.henkilot, qTuontiRivi)
-                    .where(qTuontiRivi.henkilo.eq(qHenkilo))
-                    .where(qTuonti.id.eq(criteria.getTuontiId()));
-            query.where(subQuery.exists());
-        }
-        if (criteria.getMuokattuJalkeen() != null) {
-            query.where(qHenkilo.modified.goe(criteria.getMuokattuJalkeen().toDate()));
-        }
-        if (criteria.getOrganisaatioOids() != null) {
-            QOrganisaatio qOrganisaatio = QOrganisaatio.organisaatio;
-
-            query.join(henkilo.organisaatiot, qOrganisaatio);
-            query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
-        }
-
-        return query.fetch().stream().collect(toSet());
+        return criteria.getQuery(em, qHenkilo)
+                .select(qHenkilo.oidHenkilo)
+                .fetch()
+                .stream().collect(toSet());
     }
 
     @Override
@@ -473,6 +463,47 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .join(qHenkilo.identifications, qIdentification)
                 .where(anyOf(predicates))
                 .transform(groupBy(qIdentification.identifier).as(qHenkilo));
+    }
+
+    @Override
+    public long countByYksilointiOnnistuneet(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return criteria.getQuery(em, qHenkilo)
+                .where(anyOf(
+                        qHenkilo.yksiloity.isTrue(),
+                        qHenkilo.yksiloityVTJ.isTrue())
+                ).fetchCount();
+    }
+
+    @Override
+    public long countByYksilointiVirheet(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return criteria.getQuery(em, qHenkilo)
+                .where(anyOf(
+                        allOf(
+                            qHenkilo.hetu.isNull(),
+                            qHenkilo.yksiloity.isFalse(),
+                            qHenkilo.yksiloityVTJ.isFalse()
+                    ),
+                    allOf(
+                            qHenkilo.hetu.isNotNull(),
+                            qHenkilo.yksiloity.isFalse(),
+                            qHenkilo.yksiloityVTJ.isFalse(),
+                            qHenkilo.yksilointiYritetty.isTrue()
+                    )
+                )).fetchCount();
+    }
+
+    @Override
+    public long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return criteria.getQuery(em, qHenkilo)
+                .where(allOf(
+                        qHenkilo.hetu.isNotNull(),
+                        qHenkilo.yksiloity.isFalse(),
+                        qHenkilo.yksiloityVTJ.isFalse(),
+                        qHenkilo.yksilointiYritetty.isFalse())
+                ).fetchCount();
     }
 
 }
