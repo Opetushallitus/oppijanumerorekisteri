@@ -41,13 +41,13 @@ class OppijaViewContainer extends React.Component {
             this.props.fetchKieliKoodisto();
             this.props.fetchKansalaisuusKoodisto();
         }
-    };
+    }
 
     render() {
         const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
             readOnlyButtons: this._readOnlyButtons, };
         return <OppijaViewPage {...props} />;
-    };
+    }
 
     constructor(props) {
         super(props);
@@ -85,7 +85,7 @@ class OppijaViewContainer extends React.Component {
             <YksiloiHetutonButton henkilo={this.props.henkilo} L={this.L} yksiloiAction={this.props.yksiloiHenkilo} />,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo} />,
         ];
-    };
+    }
 }
 
 const mapStateToProps = (state, ownProps) => {

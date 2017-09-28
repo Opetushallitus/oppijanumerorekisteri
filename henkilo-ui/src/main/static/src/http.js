@@ -21,36 +21,36 @@ const resolveResponse = (response, resolve, reject) => {
     return reject(response.data);
 };
 
-const commonOptions = {
+const getCommonOptions = () => ({
     mode: 'cors',
     headers: {
         "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
     },
     credentials: 'include',
-};
+});
 
 // externalPermissionService header is required only for users not having access through
 // normal privilege group but from SURE/HAKU
 export const http = {
     get: (url) => new Promise((resolve, reject) => fetch(url, {
-        ...commonOptions,
+        ...getCommonOptions(),
         }).then(parseResponseBody)
         .then((response) => resolveResponse(response, resolve, reject))
         .catch((error) => reject({networkError: error.message,}))
     ),
     delete: (url) => new Promise((resolve, reject) => fetch(url, {
-        ...commonOptions,
+        ...getCommonOptions(),
         method: 'DELETE',
         }).then(parseResponseBody)
         .then((response) => resolveResponse(response, resolve, reject))
         .catch((error) => reject({networkError: error.message,}))
     ),
     put: (url, payload) => new Promise((resolve, reject) => fetch(url, {
-        ...commonOptions,
+        ...getCommonOptions(),
         method: 'PUT',
         body: JSON.stringify(payload),
         headers: {
-            ...commonOptions.headers,
+            ...getCommonOptions().headers,
             'Content-Type': 'application/json',
         },
         }).then(parseResponseBody)
@@ -58,11 +58,11 @@ export const http = {
         .catch((error) => reject({networkError: error.message,}))
     ),
     post: (url, payload) => new Promise((resolve, reject) => fetch(url, {
-        ...commonOptions,
+        ...getCommonOptions(),
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
-            ...commonOptions.headers,
+            ...getCommonOptions().headers,
             'Content-Type': 'application/json',
         },
         }).then(parseResponseBody)
