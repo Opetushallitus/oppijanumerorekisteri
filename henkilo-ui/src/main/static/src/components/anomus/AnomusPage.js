@@ -23,6 +23,7 @@ class AnomusPage extends React.Component {
                 showOwnAnomus: false,
                 adminView: props.isAdmin,
                 anomuksenTilat: ['ANOTTU'],
+                kayttoOikeudenTilas: ['ANOTTU'],
             },
             sorted: [{id: 'ANOTTU_PVM', desc: true}],
             allFetched: false,

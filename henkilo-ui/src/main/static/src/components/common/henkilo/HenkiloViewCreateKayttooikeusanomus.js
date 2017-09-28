@@ -25,34 +25,37 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         fetchOrganisaatioKayttooikeusryhmat: PropTypes.func.isRequired
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             organisaatioSelection: '',
             ryhmaSelection: '',
-            emailSelection: '',
             kayttooikeusryhmaSelections: [],
             perustelut: '',
             kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
-        }
+            emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(props.henkilo),
+        };
     }
 
     componentWillReceiveProps(nextProps) {
-        const emailOptions = this._parseEmailOptions(nextProps.henkilo);
-        this.setState({emailOptions});
+        this.setState(HenkiloViewCreateKayttooikeusanomus.createEmailOptions(nextProps.henkilo));
+    }
+
+    static createEmailOptions(henkilo) {
+        const emailOptions = HenkiloViewCreateKayttooikeusanomus._parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
-            this.setState({
+            return {
                 emailSelection: emailOptions[0].value,
                 missingEmail: false,
                 showMissingEmailNotification: false
-            });
-        } else if (emailOptions.length > 1) {
-            this.setState({missingEmail: false, showMissingEmailNotification: false, emailSelection: ''});
-        } else {
-            this.setState({missingEmail: true, showMissingEmailNotification: true});
+            };
         }
+        else if (emailOptions.length > 1) {
+            return {missingEmail: false, showMissingEmailNotification: false, emailSelection: '', options: emailOptions};
+        }
+        return {missingEmail: true, showMissingEmailNotification: true};
     }
 
     render() {
@@ -61,12 +64,18 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
         return (<div className="kayttooikeus-anomus-wrapper">
             <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
-            {this.state.showMissingEmailNotification ?
+            {this.state.emailOptions.showMissingEmailNotification ?
                 <WideBlueNotification message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']} closeAction={() => {
-                    this.setState({showMissingEmailNotification: false})
+                    this.setState(
+                        {...this.state,
+                            emailOptions: {
+                                ...this.state.emailOptions,
+                                showMissingEmailNotification: false,
+                            }
+                        })
                 }}/> : null}
 
-            {!this.state.missingEmail ? <div>
+            <div>
                 <div className="oph-field oph-field-inline">
                     <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                         {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
@@ -78,7 +87,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                                    onBlurResetsInput={false}
                                    options={this.state.organisaatioOptions}
                                    onInputChange={this.inputChange.bind(this)}
-                                   value={this.state.organisaatioSelection}/>
+                                   value={this.state.organisaatioSelection}
+                                   disabled={this.state.emailOptions.missingEmail} />
                     </div>
                 </div>
 
@@ -88,11 +98,12 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                         <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
                                    options={this.props.ryhmaOptions}
                                    value={this.state.ryhmaSelection}
-                                   placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}/>
+                                   placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
+                                   disabled={this.state.emailOptions.missingEmail} />
                     </div>
                 </div>
 
-                {this.state.emailOptions && this.state.emailOptions.length > 1 ?
+                {this.state.emailOptions.options && this.state.emailOptions.options.length > 1 ?
                     <div className="oph-field oph-field-inline">
                         <label className="oph-label oph-bold oph-label-long" htmlFor="email"
                                aria-describedby="field-text">
@@ -100,8 +111,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                         </label>
 
                         <EmailSelect changeEmailAction={this._changeEmail.bind(this)}
-                                     emailSelection={this.state.emailSelection}
-                                    emailOptions={this.state.emailOptions}/>
+                                     emailSelection={this.state.emailOptions.emailSelection}
+                                    emailOptions={this.state.emailOptions.options}/>
                     </div> : null
                 }
 
@@ -117,7 +128,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                                 noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
                                 options={kayttooikeusRyhmaOptions}
                                 onChange={this._addKayttooikeusryhmaSelection.bind(this)}
-                        />
+                                disabled={this.state.emailOptions.missingEmail} />
 
                         <ul className="selected-permissions">
                             {this.state.kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
@@ -148,7 +159,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                               name="perustelut"
                               id="perustelut"
                               cols="30"
-                              rows="10"/>
+                              rows="10"
+                              disabled={this.state.emailOptions.missingEmail} />
                     </div>
                 </div>
 
@@ -171,13 +183,18 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
                 </div>
 
-            </div> : null
-            }
+            </div>
         </div>);
     }
 
     _changeEmail(value) {
-        this.setState({emailSelection: value});
+        this.setState({
+            ...this.state,
+            emailOptions: {
+                ...this.state.emailOptions,
+                emailSelection: value,
+            }
+        });
     }
 
     _changePerustelut(event) {
@@ -219,21 +236,21 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     _validEmailSelection() {
-        return this.state.emailSelection !== '' && !this.state.missingEmail;
+        return this.state.emailSelection !== '' && !this.state.emailOptions.missingEmail;
     }
 
     _resetAnomusFormFields() {
         this.setState({
             organisaatioSelection: '',
             ryhmaSelection: '',
-            emailSelection: '',
             kayttooikeusryhmaSelections: [],
             tehtavanimike: '',
-            perustelut: ''
+            perustelut: '',
+            emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(this.props.henkilo),
         });
     }
 
-    _parseEmailOptions(henkilo) {
+    static _parseEmailOptions(henkilo) {
         let emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
@@ -263,7 +280,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         const kayttooikeusRyhmaIds = R.map(selection => (R.view(R.lensProp('value'), selection)), this.state.kayttooikeusryhmaSelections);
         const anomusData = {
             organisaatioOrRyhmaOid: this.state.organisaatioSelection || this.state.ryhmaSelection,
-            email: this.state.emailSelection,
+            email: this.state.emailOptions.emailSelection,
             perustelut: this.state.perustelut,
             kayttooikeusRyhmaIds,
             anojaOid: this.props.omattiedot.data.oid

@@ -38,7 +38,8 @@ export default class OmattiedotPage extends React.Component {
             || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
             || this.props.koodisto.kansalaisuusKoodistoLoading;
         const isContactContentLoading = this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
-        const createKayttooikeusanomusLoading = this.props.organisaatios.organisaatioLoading || this.props.ryhmas.ryhmasLoading || this.props.henkilo.henkiloLoading;
+        const createKayttooikeusanomusLoading = this.props.organisaatios.organisaatioLoading || this.props.ryhmas.ryhmasLoading
+            || this.props.henkilo.henkiloLoading;
         return (
             <div>
                 <div className="wrapper">
@@ -89,7 +90,6 @@ export default class OmattiedotPage extends React.Component {
                                 kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}/>
                     }
                 </div>
-
             </div>
         )
     };
