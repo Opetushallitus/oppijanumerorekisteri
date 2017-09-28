@@ -10,7 +10,6 @@ import Notifications from "../notifications/Notifications";
 import SuljeButton from "./buttons/SuljeButton";
 import StaticUtils from '../StaticUtils'
 import HaeJatkoaikaaButton from "../../omattiedot/HaeJatkoaikaaButton";
-import EmailSelect from "./select/EmailSelect";
 import WideBlueNotification from "../../common/notifications/WideBlueNotification";
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
@@ -87,7 +86,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             emailOptions: this._parseEmailOptions(this.props.henkilo),
             missingEmail: false
         };
-    };
+    }
 
     loppupvmAction(value, idx) {
         const dates = [...this.state.dates];
@@ -95,7 +94,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         this.setState({
             dates: dates,
         });
-    };
+    }
 
     createRows(headingList) {
         this._rows = this.props.kayttooikeus.kayttooikeus
@@ -139,25 +138,32 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                             && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
                     }),
                     [headingList[8]]: <div>
-                        {
-                            this.state.emailOptions.length > 1 ?
-                                <EmailSelect changeEmailAction={(value) => {this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: value}}),});}}
-                                             emailSelection={this.state.emailSelection[idx]}
-                                             emailOptions={this.state.emailOptions}/> : null
-                        }
+                        {this.createEmailSelectionIfMoreThanOne(idx)}
                         <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx)}
                                              disabled={this.state.emailSelection[idx] === '' || this.state.emailOptions.length === 0} />
                     </div>,
                 }
             });
-    };
+    }
+
+    createEmailSelectionIfMoreThanOne(idx) {
+        return this.state.emailOptions.length > 1
+            ? this.state.emailOptions.map((email, idx2) => <div key={idx2}>
+                <input type="radio"
+                       checked={this.state.emailSelection[idx] === email.value}
+                       onChange={() => {this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: email.value}}),});}}
+                />
+                <span>{email.value}</span>
+            </div>)
+            : null;
+    }
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
     hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
         return !this.props.kayttooikeus.grantableKayttooikeusLoading
             && !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
             && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
-    };
+    }
 
     render() {
         this.createRows(this.headingList.map(heading => heading.key));
@@ -180,7 +186,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 </div>
             </div>
         );
-    };
+    }
 
     _parseEmailOptions(henkilo) {
         let emails = [];
@@ -195,7 +201,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         }
 
         return emails.map(email => ({value: email, label: email}));
-    };
+    }
+
+
 
     async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
@@ -210,7 +218,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         await this.props.createKayttooikeusanomus(anomusData);
         this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: ''}}),});
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
-    };
+    }
 
 }
 
