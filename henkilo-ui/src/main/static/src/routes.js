@@ -12,6 +12,7 @@ import AdminViewContainer from "./components/henkilo/AdminViewContainer";
 import HenkilohakuContainer from "./components/henkilohaku/HenkilohakuContainer";
 import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnistusInfoContainer";
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
+import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -26,4 +27,5 @@ export default <Route path="/" component={App}>
     <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
+    <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
 </Route>

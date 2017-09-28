@@ -1,0 +1,13 @@
+dl.side-by-side dt {
+    float: left;
+    clear: left;
+    width: 200px;
+    font-weight: bold;
+}
+
+dl.inverse dt {
+    font-weight: normal;
+}
+dl.inverse dd {
+    font-weight: bold;
+}
