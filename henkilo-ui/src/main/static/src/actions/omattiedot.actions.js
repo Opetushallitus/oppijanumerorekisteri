@@ -30,8 +30,7 @@ export const fetchOmattiedot = () => async dispatch => {
 const requestOmattiedotOrganisaatios = () => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST});
 const receiveOmattiedotOrganisaatiosSuccess = (json) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: json});
 const receiveOmattiedotOrganisaatiosFailure = (error) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, error});
-export const fetchOmattiedotOrganisaatios = () => async(dispatch, getState) => {
-
+export const fetchOmattiedotOrganisaatios = () => async (dispatch, getState) => {
     const oid = R.path(['omattiedot', 'data', 'oid'], getState());
     const omattiedotLoading = getState().omattiedot.omattiedotLoaded;
     if(!oid && !omattiedotLoading) {
@@ -40,11 +39,12 @@ export const fetchOmattiedotOrganisaatios = () => async(dispatch, getState) => {
     const userOid = getState().omattiedot.data.oid;
     dispatch(requestOmattiedotOrganisaatios(userOid));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid);
-    try {
-        const omattiedotOrganisaatios = await http.get(url);
-        dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios));
-    } catch (error) {
-        console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}` );
-        dispatch(receiveOmattiedotOrganisaatiosFailure(error));
-    }
+    const omattiedotOrganisaatios = http.get(url)
+        .then(() => {
+                dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios));
+            },
+            (error) => {
+                console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}` );
+                dispatch(receiveOmattiedotOrganisaatiosFailure(error));
+            });
 };

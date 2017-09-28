@@ -70,13 +70,12 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState(...this.createEmailOptions(nextProps.henkilo));
+        this.setState(this.createEmailOptions(nextProps.henkilo));
     }
 
 
     createEmailOptions(henkilo) {
         const emailOptions = this._parseEmailOptions(henkilo);
-        this.setState({ emailOptions });
         if(emailOptions.length === 1) {
             return {
                 emailSelection: this.props.kayttooikeus.kayttooikeus

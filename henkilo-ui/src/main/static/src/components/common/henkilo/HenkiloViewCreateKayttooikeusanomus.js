@@ -40,7 +40,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState(HenkiloViewCreateKayttooikeusanomus.createEmailOptions(nextProps.henkilo));
+        this.setState({emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(nextProps.henkilo)});
     }
 
     static createEmailOptions(henkilo) {
@@ -189,11 +189,10 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     _changeEmail(value) {
         this.setState({
-            ...this.state,
             emailOptions: {
                 ...this.state.emailOptions,
                 emailSelection: value,
-            }
+            },
         });
     }
 
