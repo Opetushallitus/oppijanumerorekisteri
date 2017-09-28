@@ -61,7 +61,7 @@ export default class OmattiedotPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        this.props.kayttooikeus.kayttooikeusLoading
+                        this.props.kayttooikeus.kayttooikeusLoading || this.props.henkilo.henkiloLoading
                             ? <Loader />
                             : <HenkiloViewExistingKayttooikeus {...this.props} isOmattiedot oidHenkilo={this.props.omattiedot.data.oid} />
                     }
