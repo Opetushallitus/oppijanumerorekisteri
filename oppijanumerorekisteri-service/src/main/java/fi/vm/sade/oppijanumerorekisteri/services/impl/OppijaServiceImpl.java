@@ -4,8 +4,11 @@ import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -33,6 +36,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -184,20 +188,56 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
+    public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
+        Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
+        if (kayttajaOrganisaatioOids.isEmpty()) {
+            throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista yhteenvetoa haetaan");
+        }
+        criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
+        LOGGER.info("Haetaan yhteenveto {}", criteria);
+
+        OppijaTuontiYhteenvetoDto dto = new OppijaTuontiYhteenvetoDto();
+        dto.setOnnistuneet(henkiloJpaRepository.countByYksilointiOnnistuneet(criteria));
+        dto.setVirheet(henkiloJpaRepository.countByYksilointiVirheet(criteria));
+        dto.setKeskeneraiset(henkiloJpaRepository.countByYksilointiKeskeneraiset(criteria));
+        return dto;
+    }
+
+    @Override
+    public Page<OppijaReadDto.HenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count) {
+        Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
+        if (kayttajaOrganisaatioOids.isEmpty()) {
+            throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista oppijoita haetaan");
+        }
+        criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
+        LOGGER.info("Haetaan oppijat {} (sivu: {}, määrä: {})", criteria, page, count);
+
+        int limit = count;
+        int offset = (page - 1) * count;
+        List<Henkilo> henkilot = henkiloJpaRepository.findBy(criteria, limit, offset);
+        long total = henkiloJpaRepository.countBy(criteria);
+        return Page.of(page, count, mapper.mapAsList(henkilot, OppijaReadDto.HenkiloReadDto.class), total);
+    }
+
+    @Override
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
+        Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
+        if (kayttajaOrganisaatioOids.isEmpty()) {
+            throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista oppijoita haetaan");
+        }
+        criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
+        LOGGER.info("Haetaan oppijat {}", criteria);
+
+        return henkiloJpaRepository.findOidsBy(criteria);
+    }
+
+    private Set<String> getKayttajaOrganisaatioOids() {
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        Set<String> organisaatioOids = kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid)
+        return kayttooikeusClient.getOrganisaatioHenkilot(kayttajaOid)
                 .stream()
                 .filter(organisaatioHenkilo -> !organisaatioHenkilo.isPassivoitu())
                 .map(OrganisaatioHenkiloDto::getOrganisaatioOid)
                 .collect(toSet());
-        if (organisaatioOids.isEmpty()) {
-            throw new ValidationException(String.format("Käyttäjällä (%s) ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid));
-        }
-
-        criteria.setOrRetainOrganisaatioOids(organisaatioOids);
-        LOGGER.info("Haetaan oppijat {}", criteria);
-        return henkiloJpaRepository.findOidsBy(criteria);
     }
 
     @Override

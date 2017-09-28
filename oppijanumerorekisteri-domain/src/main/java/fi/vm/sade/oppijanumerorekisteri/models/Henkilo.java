@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
 import java.time.LocalDate;
 
 import lombok.*;
@@ -72,12 +73,21 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean passivoitu;
 
+    /**
+     * true jos virkailija on manuaalisesti yksilöinyt hetuttoman henkilön.
+     */
     @Column(nullable = false)
     private boolean yksiloity;
 
+    /**
+     * true jos hetullinen henkilö on automaattisesti yksilöity VTJ:stä.
+     */
     @Column(nullable = false)
     private boolean yksiloityVTJ;
 
+    /**
+     * true jos hetulliselle henkilölle on yritetty automaattista yksilöintiä.
+     */
     @Column(nullable = false)
     private boolean yksilointiYritetty;
 
@@ -225,6 +235,25 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             return false;
         }
         return organisaatiot.remove(organisaatio);
+    }
+
+    /**
+     * Palauttaa henkilön yksilöinnin tilan.
+     *
+     * @return yksilöinnin tila
+     * @see YksilointiTila tilojen määritykset
+     */
+    public YksilointiTila getYksilointiTila() {
+        if (yksiloity || yksiloityVTJ) {
+            return YksilointiTila.OK;
+        }
+        if (hetu == null) {
+            return YksilointiTila.HETU_PUUTTUU;
+        }
+        if (yksilointiYritetty) {
+            return YksilointiTila.VIRHE;
+        }
+        return YksilointiTila.KESKEN;
     }
 
     // Initialize default values for lombok builder
