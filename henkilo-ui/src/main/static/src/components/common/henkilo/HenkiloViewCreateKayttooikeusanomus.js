@@ -53,7 +53,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             };
         }
         else if (emailOptions.length > 1) {
-            return {missingEmail: false, showMissingEmailNotification: false, emailSelection: ''};
+            return {missingEmail: false, showMissingEmailNotification: false, emailSelection: '', options: emailOptions};
         }
         return {missingEmail: true, showMissingEmailNotification: true};
     }
@@ -103,7 +103,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
                     </div>
                 </div>
 
-                {this.state.emailOptions && this.state.emailOptions.length > 1 ?
+                {this.state.emailOptions.options && this.state.emailOptions.options.length > 1 ?
                     <div className="oph-field oph-field-inline">
                         <label className="oph-label oph-bold oph-label-long" htmlFor="email"
                                aria-describedby="field-text">
@@ -112,7 +112,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
                         <EmailSelect changeEmailAction={this._changeEmail.bind(this)}
                                      emailSelection={this.state.emailOptions.emailSelection}
-                                    emailOptions={this.state.emailOptions}/>
+                                    emailOptions={this.state.emailOptions.options}/>
                     </div> : null
                 }
 

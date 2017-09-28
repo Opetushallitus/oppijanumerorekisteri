@@ -90,7 +90,6 @@ export default class OmattiedotPage extends React.Component {
                                 kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}/>
                     }
                 </div>
-
             </div>
         )
     };
