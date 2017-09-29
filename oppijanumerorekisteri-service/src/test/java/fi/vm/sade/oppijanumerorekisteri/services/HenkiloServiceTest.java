@@ -426,10 +426,11 @@ public class HenkiloServiceTest {
     @Test
     public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByOid() {
         LocalDate syntymaaika = LocalDate.now();
+        Date modified = new Date();
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, null, syntymaaika, new Date());
+                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, null, syntymaaika, modified);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
+                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", modified, modified, "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
 
         given(this.henkiloDataRepositoryMock.findByOidHenkilo(any()))
                 .willReturn(Optional.of(henkilo));
