@@ -7,7 +7,7 @@
 * React
 * Redux
 * ES6
-* NPM
+* NPM 5
 
 ## Ennakkovaatimukset
 * Asennettu Java 8
@@ -51,6 +51,26 @@ Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyt
 `npm install`
 
 `npm start`
+
+### Riippuvuudet
+
+Varmista että npm 5 (tai uudempi) on käytössä
+
+`npm --version`
+
+Uuden riippuvuuden lisääminen
+
+`npm install <riippuvuus> --save`
+
+Päivittäminen
+
+`npm install <riippuvuus>@<versio>`
+
+Poistaminen
+
+`npm uninstall <riippuvuus> --save`
+
+Commitoi sekä package.json että package-lock.json -tiedostot.
 
 ### CORS
 Integraatiopalvelinta vastaan kehitettäessä on käytettävästä 
