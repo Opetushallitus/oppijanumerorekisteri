@@ -2,9 +2,9 @@ import './HenkiloViewUserContent.css'
 import React from 'react'
 import PropTypes from 'prop-types'
 import Columns from 'react-columns'
-import moment from 'moment'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
+import moment from 'moment';
 
 class HenkiloViewUserContent extends React.Component {
     static propTypes = {
@@ -105,7 +105,10 @@ class HenkiloViewUserContent extends React.Component {
 
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
-        henkiloUpdate.syntymaaika = moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']);
+
+        console.log(henkiloUpdate.syntymaaika);
+        henkiloUpdate.syntymaaika = henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']) : henkiloUpdate.syntymaaika;
+        console.log(henkiloUpdate.syntymaaika);
         this.props.updateHenkiloAndRefetch(henkiloUpdate);
         if(this.props.henkilo.kayttajatieto.username !== undefined && henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
