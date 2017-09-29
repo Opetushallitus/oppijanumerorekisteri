@@ -1,2 +1,3 @@
 server:
   context-path: /henkilo-ui
+management.security.roles: APP_HENKILONHALLINTA_OPHREKISTERI
