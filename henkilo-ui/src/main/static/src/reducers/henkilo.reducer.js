@@ -7,7 +7,7 @@ import {
     UPDATE_HENKILO_UNLINK_REQUEST, UPDATE_HENKILO_UNLINK_SUCCESS, UPDATE_HENKILO_UNLINK_FAILURE,
     FETCH_HENKILO_DUPLICATES_REQUEST, FETCH_HENKILO_DUPLICATES_SUCCESS, FETCH_HENKILO_DUPLICATES_FAILURE,
     LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_REQUEST,
-    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO
+    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO, UPDATE_HENKILO_FAILURE
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
@@ -30,6 +30,8 @@ export const henkilo = (state = {...initialState}, action) => {
             return Object.assign({}, state, {henkiloLoading: true});
         case FETCH_HENKILO_SUCCESS:
             return Object.assign({}, state, {henkiloLoading: false, henkilo: action.henkilo});
+        case UPDATE_HENKILO_FAILURE:
+            return Object.assign({}, state, {henkiloLoading: false});
         case FETCH_KAYTTAJATIETO_REQUEST:
             return Object.assign({}, state, {kayttajatietoLoading: true});
         case FETCH_KAYTTAJATIETO_SUCCESS:
