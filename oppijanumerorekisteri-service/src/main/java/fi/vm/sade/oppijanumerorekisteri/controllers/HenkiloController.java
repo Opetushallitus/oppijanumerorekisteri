@@ -321,7 +321,7 @@ public class HenkiloController {
     @GetMapping("/{oid}/yksilointitiedot")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiOperation("Hakee henkilön yksilöintitiedot oidin perusteella")
-    public YksilointitietoDto getYksilointitiedot(@PathVariable String oid) {
+    public YksilointitietoDto getYksilointitiedot(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return yksilointiService.getYksilointiTiedot(oid);
     }
 
