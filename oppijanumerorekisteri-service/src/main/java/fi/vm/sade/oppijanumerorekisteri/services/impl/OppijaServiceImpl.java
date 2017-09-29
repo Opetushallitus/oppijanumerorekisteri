@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.util.Collection;
 import java.util.Date;
@@ -59,6 +60,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
     private final UserDetailsHelper userDetailsHelper;
+    private final PermissionChecker permissionChecker;
     private final KayttooikeusClient kayttooikeusClient;
 
     @Override
@@ -190,11 +192,13 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     @Transactional(readOnly = true)
     public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
-        Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
-        if (kayttajaOrganisaatioOids.isEmpty()) {
-            throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista yhteenvetoa haetaan");
+        if (!permissionChecker.isSuperUser()) {
+            Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
+            if (kayttajaOrganisaatioOids.isEmpty()) {
+                throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista yhteenvetoa haetaan");
+            }
+            criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
         }
-        criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
         LOGGER.info("Haetaan yhteenveto {}", criteria);
 
         OppijaTuontiYhteenvetoDto dto = new OppijaTuontiYhteenvetoDto();
@@ -207,11 +211,13 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     @Transactional(readOnly = true)
     public Page<OppijaReadDto.HenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count) {
-        Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
-        if (kayttajaOrganisaatioOids.isEmpty()) {
-            throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista oppijoita haetaan");
+        if (!permissionChecker.isSuperUser()) {
+            Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
+            if (kayttajaOrganisaatioOids.isEmpty()) {
+                throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista oppijoita haetaan");
+            }
+            criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
         }
-        criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
         LOGGER.info("Haetaan oppijat {} (sivu: {}, määrä: {})", criteria, page, count);
 
         int limit = count;
@@ -224,11 +230,13 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     @Transactional(readOnly = true)
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
-        Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
-        if (kayttajaOrganisaatioOids.isEmpty()) {
-            throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista oppijoita haetaan");
+        if (!permissionChecker.isSuperUser()) {
+            Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
+            if (kayttajaOrganisaatioOids.isEmpty()) {
+                throw new ValidationException("Käyttäjällä ei ole yhtään organisaatiota joista oppijoita haetaan");
+            }
+            criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
         }
-        criteria.setOrRetainOrganisaatioOids(kayttajaOrganisaatioOids);
         LOGGER.info("Haetaan oppijat {}", criteria);
 
         return henkiloJpaRepository.findOidsBy(criteria);

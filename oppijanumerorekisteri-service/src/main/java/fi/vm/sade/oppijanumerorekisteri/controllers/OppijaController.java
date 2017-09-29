@@ -31,28 +31,32 @@ public class OppijaController {
     private final OppijaService oppijaService;
 
     @PutMapping
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonti eräajona")
     public OppijatReadDto getOrCreate(@Valid @RequestBody OppijatCreateDto dto) {
         return oppijaService.getOrCreate(dto);
     }
 
     @GetMapping("/tuonti={id}")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku eräajon ID:llä")
     public OppijatReadDto getByTuontiId(@PathVariable Long id) {
         return oppijaService.getByTuontiId(id);
     }
 
     @GetMapping("/yhteenveto")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin yhteenveto")
     public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
         return oppijaService.getYhteenveto(criteria);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
     public Page<OppijaReadDto.HenkiloReadDto> list(
             OppijaTuontiCriteria criteria,
@@ -62,7 +66,8 @@ public class OppijaController {
     }
 
     @GetMapping("/oid")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Muuttuneiden oppijoiden haku")
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
         return oppijaService.listOidsBy(criteria);

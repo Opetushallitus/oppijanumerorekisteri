@@ -74,13 +74,17 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .limit(limit)
                 .offset(offset)
                 .select(qHenkilo)
+                .distinct()
                 .fetch();
     }
 
     @Override
     public long countBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo).fetchCount();
+        return criteria.getQuery(em, qHenkilo)
+                .select(qHenkilo.oidHenkilo)
+                .distinct()
+                .fetchCount();
     }
 
     @Override
@@ -88,6 +92,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return criteria.getQuery(em, qHenkilo)
                 .select(qHenkilo.oidHenkilo)
+                .distinct()
                 .fetch()
                 .stream().collect(toSet());
     }
@@ -471,8 +476,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         return criteria.getQuery(em, qHenkilo)
                 .where(anyOf(
                         qHenkilo.yksiloity.isTrue(),
-                        qHenkilo.yksiloityVTJ.isTrue())
-                ).fetchCount();
+                        qHenkilo.yksiloityVTJ.isTrue()
+                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
     }
 
     @Override
@@ -481,17 +486,17 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
         return criteria.getQuery(em, qHenkilo)
                 .where(anyOf(
                         allOf(
-                            qHenkilo.hetu.isNull(),
-                            qHenkilo.yksiloity.isFalse(),
-                            qHenkilo.yksiloityVTJ.isFalse()
-                    ),
-                    allOf(
-                            qHenkilo.hetu.isNotNull(),
-                            qHenkilo.yksiloity.isFalse(),
-                            qHenkilo.yksiloityVTJ.isFalse(),
-                            qHenkilo.yksilointiYritetty.isTrue()
-                    )
-                )).fetchCount();
+                                qHenkilo.hetu.isNull(),
+                                qHenkilo.yksiloity.isFalse(),
+                                qHenkilo.yksiloityVTJ.isFalse()
+                        ),
+                        allOf(
+                                qHenkilo.hetu.isNotNull(),
+                                qHenkilo.yksiloity.isFalse(),
+                                qHenkilo.yksiloityVTJ.isFalse(),
+                                qHenkilo.yksilointiYritetty.isTrue()
+                        )
+                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
     }
 
     @Override
@@ -502,8 +507,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.hetu.isNotNull(),
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),
-                        qHenkilo.yksilointiYritetty.isFalse())
-                ).fetchCount();
+                        qHenkilo.yksilointiYritetty.isFalse()
+                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
     }
 
 }
