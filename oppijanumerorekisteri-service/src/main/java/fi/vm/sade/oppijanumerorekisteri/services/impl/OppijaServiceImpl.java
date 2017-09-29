@@ -188,6 +188,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
         Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
         if (kayttajaOrganisaatioOids.isEmpty()) {
@@ -204,6 +205,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<OppijaReadDto.HenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count) {
         Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
         if (kayttajaOrganisaatioOids.isEmpty()) {
@@ -220,6 +222,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
         Set<String> kayttajaOrganisaatioOids = getKayttajaOrganisaatioOids();
         if (kayttajaOrganisaatioOids.isEmpty()) {
