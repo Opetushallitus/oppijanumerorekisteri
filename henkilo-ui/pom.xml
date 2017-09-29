@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <springfox.version>2.6.1</springfox.version>
+        <springfox.version>2.7.0</springfox.version>
         <frontend-plugin.version>1.5</frontend-plugin.version>
         <nodejs.version>v8.5.0</nodejs.version>
 
