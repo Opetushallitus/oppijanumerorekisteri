@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -42,6 +43,7 @@ public class YksilointiServiceTest {
         UserDetailsHelper userDetailsHelper = mock(UserDetailsHelper.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
+        OrikaConfiguration orikaConfiguration = mock(OrikaConfiguration.class);
         YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
         YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
         this.yksilointiService = new YksilointiServiceImpl(henkiloRepository,
@@ -51,6 +53,7 @@ public class YksilointiServiceTest {
                 yhteystietoRepository,
                 yksilointitietoRepository,
                 userDetailsHelper,
+                orikaConfiguration,
                 this.vtjClient,
                 mockKoodistoClient,
                 oppijanumerorekisteriProperties);

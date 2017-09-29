@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,14 @@ public interface YksilointiService {
      * @param henkiloOid henkilö oid
      */
     void paivitaYksilointitiedot(String henkiloOid);
+
+    /**
+     * Hakee henkilon yksilointitiedot oidin perusteella
+     *
+     * @param henkiloOid
+     * @return YksilointitietoDto
+     */
+    YksilointitietoDto getYksilointiTiedot(String henkiloOid);
 
     /**
      * Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle.

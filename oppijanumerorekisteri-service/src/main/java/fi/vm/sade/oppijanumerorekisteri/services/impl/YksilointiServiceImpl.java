@@ -5,10 +5,12 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -51,6 +53,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
     private final UserDetailsHelper userDetailsHelper;
+    private final OrikaConfiguration mapper;
 
     private final VtjClient vtjClient;
     private final KoodistoClient koodistoClient;
@@ -387,6 +390,14 @@ public class YksilointiServiceImpl implements YksilointiService {
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
         henkilo.setVtjsynced(new Date());
+    }
+
+    @Override
+    @Transactional
+    public YksilointitietoDto getYksilointiTiedot(String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        Yksilointitieto yksilointitieto = henkilo.getYksilointitieto();
+        return Optional.ofNullable(yksilointitieto).map(y -> this.mapper.map(y, YksilointitietoDto.class)).orElseGet(YksilointitietoDto::new);
     }
 
     @Override
