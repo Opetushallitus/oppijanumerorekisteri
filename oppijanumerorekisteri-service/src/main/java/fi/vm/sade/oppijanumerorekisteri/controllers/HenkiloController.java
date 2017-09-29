@@ -318,6 +318,13 @@ public class HenkiloController {
         yksilointiService.paivitaYksilointitiedot(oid);
     }
 
+    @GetMapping("/{oid}/yksilointitiedot")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiOperation("Hakee henkilön yksilöintitiedot oidin perusteella")
+    public YksilointitietoDto getYksilointitiedot(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        return yksilointiService.getYksilointiTiedot(oid);
+    }
+
     @GetMapping("/{oid}/yksilointi")
     @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
