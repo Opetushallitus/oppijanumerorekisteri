@@ -6,7 +6,7 @@ import {fetchHenkilo, fetchHenkiloDuplicates, linkHenkilos} from '../../../actio
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import { fetchMaatJaValtiotKoodisto, fetchKieliKoodisto } from '../../../actions/koodisto.actions';
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
-import {virkailijaNavi} from "../../../configuration/navigationconfigurations";
+import {duplikaatitNavi} from "../../../configuration/navigationconfigurations";
 import {removeNotification} from "../../../actions/notifications.actions";
 
 class VirkailijaDuplikaatitContainer extends React.Component {
@@ -14,7 +14,7 @@ class VirkailijaDuplikaatitContainer extends React.Component {
     static propTypes = {  };
 
     async componentDidMount() {
-        this.props.updateHenkiloNavigation(virkailijaNavi(this.props.oidHenkilo));
+        this.props.updateHenkiloNavigation(duplikaatitNavi(this.props.oidHenkilo, this.props.henkiloType));
 
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
@@ -31,6 +31,7 @@ class VirkailijaDuplikaatitContainer extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     oidHenkilo: ownProps.params['oid'],
+    henkiloType: ownProps.params['henkiloType'],
     l10n: state.l10n.localisations,
     locale: state.locale,
     omattiedot: state.omattiedot,

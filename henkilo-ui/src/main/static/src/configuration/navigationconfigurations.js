@@ -9,6 +9,7 @@ export const mainNavigation = [
 
 export const oppijaNavi = oid => [
     {path: '/oppija/' + oid, label: 'Henkilön tiedot'},
+    {path: `/oppija/${oid}/duplikaatit`, label: 'Hae duplikaatit', },
 ];
 
 export const virkailijaNavi = oid => [
@@ -18,7 +19,12 @@ export const virkailijaNavi = oid => [
 
 export const adminNavi = oid => [
     {path: '/admin/' + oid, label: 'Henkilön tiedot'},
-    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
+    {path: `/admin/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
+];
+
+export const duplikaatitNavi = (oid, henkiloType) => [
+    {path: `/${henkiloType}/${oid}`, label: 'Henkilön tiedot'},
+    {path: `/${henkiloType}/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
 ];
 
 export const emptyNavi = [];

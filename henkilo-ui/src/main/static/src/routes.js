@@ -20,7 +20,7 @@ export default <Route path="/" component={App}>
     <Route path="/henkilohaku" component={HenkilohakuContainer} />
     <Route path="/oppija/:oid" component={OppijaViewContainer} />
     <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
-    <Route path="/virkailija/:oid/duplikaatit" component={DuplikaatitContainer} />
+    <Route path="/:henkiloType/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
     <Route path="/admin/:oid" component={AdminViewContainer} />
     <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
