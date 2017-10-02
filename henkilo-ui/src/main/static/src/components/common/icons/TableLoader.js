@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Loader from './Loader';
 
 /**
  * Loading-komponentti react-table -komponentille.
@@ -19,11 +20,7 @@ class TableLoader extends React.Component {
         return (
             <div>
                 {this.props.loading &&
-                <div className="oph-spinner">
-                    <div className="oph-bounce oph-bounce1" />
-                    <div className="oph-bounce oph-bounce2" />
-                    <div className="oph-bounce oph-bounce3" />
-                </div>
+                <Loader />
                 }
             </div>
         );
