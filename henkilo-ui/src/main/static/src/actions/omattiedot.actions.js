@@ -23,7 +23,7 @@ export const fetchOmattiedot = () => async dispatch => {
         return omattiedotResponse;
     } catch (error) {
         dispatch(receiveOmattiedotFailure(error));
-        console.error('Failed fetching omat tiedot', error);
+        throw error;
     }
 };
 
@@ -34,7 +34,11 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch, getState) => 
     const oid = R.path(['omattiedot', 'data', 'oid'], getState());
     const omattiedotLoading = getState().omattiedot.omattiedotLoaded;
     if(!oid && !omattiedotLoading) {
-        await dispatch(fetchOmattiedot());
+        try {
+            await dispatch(fetchOmattiedot());
+        } catch (error) {
+            throw error;
+        }
     }
     const userOid = getState().omattiedot.data.oid;
     dispatch(requestOmattiedotOrganisaatios(userOid));

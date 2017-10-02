@@ -25,7 +25,6 @@ export const fetchAllOrganisaatios = () => async dispatch => {
         dispatch({type: FETCH_ORGANISATIONS_SUCCESS, organisations: organisaatiot.organisaatiot});
     } catch (error) {
         dispatch(requestAllOrganisaatiosFailure(error));
-        console.error('Fetching organisaatios failed', error);
         throw error;
     }
 };
@@ -42,7 +41,6 @@ export const fetchAllRyhmas = () => async dispatch => {
         dispatch(requestRyhmasSuccess(ryhmas));
     } catch (error) {
         dispatch(requestRyhmasFailure(error));
-        console.error('Fetching ryhmas failed', error);
         throw error;
     }
 

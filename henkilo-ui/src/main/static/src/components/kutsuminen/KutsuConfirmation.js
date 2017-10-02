@@ -93,7 +93,6 @@ export default class KutsuConfirmation extends React.Component {
             await http.post(url, payload);
             this.setState({sent: true});
         } catch (error) {
-            console.error(`Creating new virkailija kutsu failed`, error);
             throw error;
         }
     }

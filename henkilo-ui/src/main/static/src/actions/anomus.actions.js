@@ -19,6 +19,7 @@ export const fetchHaetutKayttooikeusryhmat = (parameters) => async dispatch => {
             dispatch(receiveHaetutKayttooikeusryhmatSuccess(haetutKayttooikeusryhmat))
         } catch (error) {
             dispatch(receiveHaetutKayttooikeusryhmatFailure());
+            throw error;
         }
     };
 

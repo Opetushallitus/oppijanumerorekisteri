@@ -56,11 +56,10 @@ export default class HakatunnistePopupContent extends React.Component {
         this.setState({newTunnisteValue: event.target.value});
     }
 
-    async addHakatunniste() {
+    addHakatunniste() {
         if (this.state.newTunnisteValue.length > 0) {
             const tunnisteet = this.state.hakatunnisteet.slice(0);
             tunnisteet.push(this.state.newTunnisteValue);
-            console.log(tunnisteet);
             this.saveHakatunnisteet(tunnisteet);
             this.setState({newTunnisteValue: ''});
         }
@@ -78,7 +77,6 @@ export default class HakatunnistePopupContent extends React.Component {
             const hakatunnisteet = await http.get(url);
             return hakatunnisteet;
         } catch (error) {
-            console.error('Fetching hakatunnisteet failed', error);
             throw error;
         }
     }
@@ -89,7 +87,6 @@ export default class HakatunnistePopupContent extends React.Component {
             const hakatunnisteet = await http.put(url, newHakatunnisteet);
             this.setState({hakatunnisteet});
         } catch (error) {
-            console.error('Saving hakatunnisteet list failed', error);
             throw error;
         }
     }

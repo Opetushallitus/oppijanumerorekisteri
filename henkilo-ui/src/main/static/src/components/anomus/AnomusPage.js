@@ -161,6 +161,7 @@ class AnomusPage extends React.Component {
             this.props.clearHaettuKayttooikeusryhma(id);
         } catch (error) {
             kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysFailure: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenFailure: true, anomusModifiedHenkilo: henkilo});
+            throw error;
         }
     };
 

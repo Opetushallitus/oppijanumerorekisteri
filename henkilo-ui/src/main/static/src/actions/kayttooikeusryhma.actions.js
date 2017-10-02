@@ -82,6 +82,7 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
         dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
     } catch (error) {
         dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
+        throw error;
     }
 };
 
@@ -112,7 +113,6 @@ export const fetchOrganisaatioKayttooikeusryhmat = organisaatioOid => async disp
         const kayttooikeusryhmat = await http.get(url, organisaatioOid);
         dispatch(requestOrganisaatioKayttooikeusryhmatSuccess(kayttooikeusryhmat));
     } catch (error) {
-        console.error(error);
         dispatch(requestOrganisaatioKayttooikeusryhmatFailure(error));
         throw error;
     }
@@ -163,7 +163,6 @@ export const createKayttooikeusanomus = (anomusData) => async dispatch => {
         dispatch(createKayttooikeusanomusSuccess(anomusId));
     } catch (error) {
         dispatch(createKayttooikeusanomusFailure(error));
-        console.error(`Failed creating new kayttooikeusanomus for henkilo: ${anomusData.anojaOid}`, error);
         throw error;
     }
 };
