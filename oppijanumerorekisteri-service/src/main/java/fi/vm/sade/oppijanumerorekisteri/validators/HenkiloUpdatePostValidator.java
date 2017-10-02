@@ -9,13 +9,13 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
@@ -49,22 +49,8 @@ public class HenkiloUpdatePostValidator implements Validator {
     public void validate(Object o, Errors errors) {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
 
-        if(henkiloUpdateDto.getHetu() != null) {
-            Optional<Henkilo> henkiloByOid = this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo());
-            if (henkiloByOid.isPresent()
-                    && !StringUtils.isEmpty(henkiloByOid.get().getHetu())
-                    && !henkiloByOid.get().getHetu().equals(henkiloUpdateDto.getHetu())
-                    // sallitaan hetun muuttaminen vain jos yksiloityvtj = false
-                    && henkiloByOid.get().isYksiloityVTJ()) {
-                errors.rejectValue("hetu", "socialsecuritynr.already.set");
-            } else {
-                henkiloRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkilo -> {
-                    if (!henkilo.getOidHenkilo().equals(henkiloUpdateDto.getOidHenkilo())) {
-                        errors.rejectValue("hetu", "socialsecuritynr.already.exists");
-                    }
-                });
-            }
-        }
+        this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
+                .ifPresent(henkilo -> validateHetu(henkilo, henkiloUpdateDto, errors));
 
         if(henkiloUpdateDto.getKutsumanimi() != null && henkiloUpdateDto.getEtunimet() != null) {
             KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
@@ -99,6 +85,22 @@ public class HenkiloUpdatePostValidator implements Validator {
                     .map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto).collect(toSet());
             koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
                     "yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
+        }
+    }
+
+    private void validateHetu(Henkilo henkiloByOid, HenkiloUpdateDto dto, Errors errors) {
+        if (!Objects.equals(henkiloByOid.getHetu(), dto.getHetu())) {
+            if (henkiloByOid.isYksiloityVTJ()) {
+                // estetään hetun muuttaminen jos yksilöinti on jo tehty
+                errors.rejectValue("hetu", "socialsecuritynr.already.set");
+            } else if (!StringUtils.isEmpty(dto.getHetu())) {
+                // tarkistetaan että hetu on uniikki
+                henkiloRepository.findByHetu(dto.getHetu()).ifPresent(henkiloByHetu -> {
+                    if (!henkiloByHetu.getOidHenkilo().equals(dto.getOidHenkilo())) {
+                        errors.rejectValue("hetu", "socialsecuritynr.already.exists");
+                    }
+                });
+            }
         }
     }
 
