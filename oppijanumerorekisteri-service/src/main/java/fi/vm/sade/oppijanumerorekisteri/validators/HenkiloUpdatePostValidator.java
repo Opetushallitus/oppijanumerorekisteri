@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
@@ -49,8 +50,12 @@ public class HenkiloUpdatePostValidator implements Validator {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
 
         if(henkiloUpdateDto.getHetu() != null) {
-            Optional<String> hetu = this.henkiloJpaRepository.findHetuByOid(henkiloUpdateDto.getOidHenkilo());
-            if (hetu.isPresent() && !StringUtils.isEmpty(hetu.get()) && !hetu.get().equals(henkiloUpdateDto.getHetu())) {
+            Optional<Henkilo> henkiloByOid = this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo());
+            if (henkiloByOid.isPresent()
+                    && !StringUtils.isEmpty(henkiloByOid.get().getHetu())
+                    && !henkiloByOid.get().getHetu().equals(henkiloUpdateDto.getHetu())
+                    // sallitaan hetun muuttaminen vain jos yksiloityvtj = false
+                    && henkiloByOid.get().isYksiloityVTJ()) {
                 errors.rejectValue("hetu", "socialsecuritynr.already.set");
             } else {
                 henkiloRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkilo -> {
