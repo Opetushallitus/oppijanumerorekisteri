@@ -38,6 +38,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <assertj.version>3.5.2</assertj.version> <!-- java8 assertions -->
+        <mockito.version>2.10.0</mockito.version>
 
         <!-- library versions -->
         <springfox.version>2.7.0</springfox.version>

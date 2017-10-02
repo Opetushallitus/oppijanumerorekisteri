@@ -144,7 +144,6 @@ public class HenkiloServiceImplTest {
     public void getMasterByOidShouldReturnBySlaveOidWhenSlaveAvailable() {
         String oid = "oid1";
         Henkilo entity = new Henkilo();
-        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(new Henkilo()));
         when(henkiloJpaRepository.findMasterBySlaveOid(any())).thenReturn(Optional.of(entity));
 
         HenkiloReadDto dto = impl.getMasterByOid(oid);
@@ -218,7 +217,6 @@ public class HenkiloServiceImplTest {
         HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().oidHenkilo("oid1").build();
         Henkilo henkilo = new Henkilo();
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.empty());
-        when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
         Throwable throwable = catchThrowable(() -> impl.findOrCreateHenkiloFromPerustietoDto(input));
 
