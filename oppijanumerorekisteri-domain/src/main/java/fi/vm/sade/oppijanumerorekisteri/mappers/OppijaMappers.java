@@ -15,6 +15,8 @@ public class OppijaMappers {
         return mapperFactory.classMap(Henkilo.class, OppijaReadDto.HenkiloReadDto.class)
                 .byDefault()
                 .field("oidHenkilo", "oid")
+                .field("created", "luotu")
+                .field("modified", "muokattu")
                 .toClassMap();
     }
 

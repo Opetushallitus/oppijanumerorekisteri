@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDate;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,13 +32,21 @@ public class OppijaReadDto {
 
         private String oppijanumero;
 
+        private Date luotu;
+
+        private Date muokattu;
+
         private String hetu;
+
+        private LocalDate syntymaaika;
 
         private String etunimet;
 
         private String kutsumanimi;
 
         private String sukunimi;
+
+        private YksilointiTila yksilointiTila;
 
     }
 

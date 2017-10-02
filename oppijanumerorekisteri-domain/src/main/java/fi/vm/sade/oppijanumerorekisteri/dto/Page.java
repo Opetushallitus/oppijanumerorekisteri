@@ -10,22 +10,20 @@ import lombok.Setter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Kevyempi malli sivutukselle. Sisältää varsinaisen {@link #results datan}
- * lisäksi vain onko sivu {@link #last viimeinen}, jonka avulla pystyy
- * läpikäymään tiedot läpi.
+ * Malli sivutukselle.
  *
  * @param <T> listan alkioiden tyyppi
- * @see Page malli sivutukselle jossa on mukana sivumäärä
+ * @see Slice kevyempi malli sivutukselle
  */
 @Getter
 @Setter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class Slice<T> implements Iterable<T> {
+public class Page<T> implements Iterable<T> {
 
     private final int number;
     private final int size;
     private final List<T> results;
-    private final boolean last;
+    private final long totalElements;
 
     /**
      * Luo uuden sivun.
@@ -34,16 +32,11 @@ public class Slice<T> implements Iterable<T> {
      * @param page sivunumero (alkaa 1:stä)
      * @param count sivun koko
      * @param results sivun rivit
-     * @return viipale
+     * @param total rivien kokonaismäärä
+     * @return sivu
      */
-    public static <T> Slice<T> of(int page, int count, List<T> results) {
-        requireNonNull(results);
-        if (results.size() > count) {
-            List<T> slice = results.subList(0, count);
-            return new Slice<>(page, count, slice, false);
-        } else {
-            return new Slice<>(page, count, results, true);
-        }
+    public static <T> Page<T> of(int page, int count, List<T> results, long total) {
+        return new Page<>(page, count, requireNonNull(results), total);
     }
 
     /**
@@ -52,10 +45,10 @@ public class Slice<T> implements Iterable<T> {
      * @param <T> listan alkioiden tyyppi
      * @param page sivunumero (alkaa 1:stä)
      * @param count sivun koko
-     * @return
+     * @return sivu
      */
-    public static <T> Slice<T> empty(int page, int count) {
-        return of(page, count, emptyList());
+    public static <T> Page<T> empty(int page, int count) {
+        return of(page, count, emptyList(), 0);
     }
 
     /**
@@ -74,6 +67,24 @@ public class Slice<T> implements Iterable<T> {
      */
     public boolean isFirst() {
         return number == 1;
+    }
+
+    /**
+     * Palauttaa onko tämä viimeinen sivu.
+     *
+     * @return onko viimeinen sivu
+     */
+    public boolean isLast() {
+        return getTotalPages() == number;
+    }
+
+    /**
+     * Palauttaa sivujen määrän.
+     *
+     * @return sivumäärä
+     */
+    public int getTotalPages() {
+        return (int) Math.ceil((double) totalElements / (double) size);
     }
 
     @Override

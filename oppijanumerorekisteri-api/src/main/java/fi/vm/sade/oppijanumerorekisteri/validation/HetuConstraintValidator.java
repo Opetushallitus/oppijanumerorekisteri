@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-class HetuConstraintValidator implements ConstraintValidator<ValidateHetu, String> {
+public class HetuConstraintValidator implements ConstraintValidator<ValidateHetu, String> {
     @Override
     public void initialize(ValidateHetu validateHetu) { }
 

@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -53,6 +54,8 @@ public class OppijaServiceImplTest {
     @Mock
     private UserDetailsHelper userDetailsHelperMock;
     @Mock
+    private PermissionChecker permissionChecker;
+    @Mock
     private KayttooikeusClient kayttooikeusClientMock;
 
     @Before
@@ -61,7 +64,7 @@ public class OppijaServiceImplTest {
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 henkiloJpaRepositoryMock, tuontiRepositoryMock,
                 organisaatioRepositoryMock, userDetailsHelperMock,
-                kayttooikeusClientMock);
+                permissionChecker, kayttooikeusClientMock);
     }
 
     @Test

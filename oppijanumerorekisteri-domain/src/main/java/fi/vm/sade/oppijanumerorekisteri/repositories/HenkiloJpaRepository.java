@@ -39,6 +39,24 @@ public interface HenkiloJpaRepository {
     List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
 
     /**
+     * Hakee annettujen hakukriteerien mukaiset henkilöt.
+     *
+     * @param criteria hakukriteerit
+     * @param limit alkioiden maksimimäärä
+     * @param offset sivutuksen offset
+     * @return henkilöt
+     */
+    List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset);
+
+    /**
+     * Laskee annettujen hakukriteerien mukaiset henkilöt.
+     *
+     * @param criteria hakukriteerit
+     * @return henkilöiden lukumäärä
+     */
+    long countBy(OppijaTuontiCriteria criteria);
+
+    /**
      * Hakee annettujen hakukriteerien mukaiset henkilöiden OID:t.
      *
      * @param criteria hakukriteerit
@@ -55,7 +73,6 @@ public interface HenkiloJpaRepository {
      * @return henkilot
      */
 //    List<HenkiloHakuDto> findBy(OppijaCriteria criteria, long limit, long offset);
-
     List<HenkiloHakuPerustietoDto> findPerustietoBy(OppijanumerorekisteriCriteria criteria, Long limit, Long offset);
 
     /**
@@ -115,5 +132,36 @@ public interface HenkiloJpaRepository {
     Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot);
 
     Map<String, Henkilo> findAndMapByIdentifiers(String idpEntityId, Set<String> identifiers);
+
+    /**
+     * Palauttaa yksilöityjen henkilöiden lukumäärän. Yksilöidyksi lasketaan
+     * sekä manuaalisesti yksilöidyt hetuttomat että automaattisesti yksilöidyt
+     * hetulliset henkilöt.
+     *
+     * @param criteria hakukriteerit
+     * @return onnistuneiden lukumäärä
+     */
+    long countByYksilointiOnnistuneet(OppijaTuontiCriteria criteria);
+
+    /**
+     * Palauttaa yksilöinnin virheellisten henkilöiden lukumäärän. Virheellisiä
+     * ovat yksilöimättömät hetuttomat henkilöt sekä ne yksilöimättömät
+     * hetulliset henkilöt joille {@link Henkilo#yksilointiYritetty} on
+     * <code>true</code>.
+     *
+     * @param criteria hakukriteerit
+     * @return virheellisten lukumäärä
+     */
+    long countByYksilointiVirheet(OppijaTuontiCriteria criteria);
+
+    /**
+     * Palauttaa yksilöinnin keskeneräisten henkilöiden lukumäärän.
+     * Keskeneräisiä ovat hetulliset henkilöt joita ei ole vielä yksilöity ja
+     * {@link Henkilo#yksilointiYritetty} on <code>false</code>.
+     *
+     * @param criteria hakukriteerit
+     * @return keskeneräisten lukumäärä
+     */
+    long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria);
 
 }
