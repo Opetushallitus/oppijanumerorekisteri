@@ -4,6 +4,7 @@ import {Link} from 'react-router';
 import ReactTable from 'react-table'
 import moment from 'moment'
 import TableLoader from '../common/icons/TableLoader'
+import YksilointiTilaIkoni from './YksilointiTilaIkoni'
 import './OppijoidenTuontiListaus.css';
 
 /**
@@ -62,11 +63,7 @@ class OppijoidenTuontiListaus extends React.Component {
     }
 
     renderYksilointiTilaIcon(arvo) {
-        return YKSILOINTI_TILAT[arvo] ? YKSILOINTI_TILAT[arvo].ikoni : this.renderOletusYksilointiTilaIcon();
-    }
-
-    renderOletusYksilointiTilaIcon() {
-        return <i className="fa" aria-hidden="true" />;
+        return <YksilointiTilaIkoni value={arvo}></YksilointiTilaIkoni>;
     }
 
     renderAikaleima(arvo) {
@@ -78,7 +75,7 @@ class OppijoidenTuontiListaus extends React.Component {
     }
 
     renderYksilointiTilaText(arvo) {
-        return YKSILOINTI_TILAT[arvo] ? YKSILOINTI_TILAT[arvo].kuvaus(this.props.L) : '';
+        return YKSILOINTI_TILAT[arvo] ? YKSILOINTI_TILAT[arvo](this.props.L) : '';
     }
 
     renderOppijaLinkki(henkilo) {
@@ -96,22 +93,10 @@ OppijoidenTuontiListaus.propTypes = {
 };
 
 const YKSILOINTI_TILAT = {
-    OK: {
-        ikoni: <i className="fa fa-check oph-green" aria-hidden="true" />,
-        kuvaus: L => '',
-    },
-    VIRHE: {
-        ikoni: <i className="fa fa-exclamation-circle oph-red" aria-hidden="true" />,
-        kuvaus: L => L['YKSILOINTI_TILA_VIRHE'],
-    },
-    KESKEN: {
-        ikoni: <i className="fa fa-check oph-yellow" aria-hidden="true" />,
-        kuvaus: L => L['YKSILOINTI_TILA_KESKEN'],
-    },
-    HETU_PUUTTUU: {
-        ikoni: <i className="fa fa-exclamation-circle oph-red" aria-hidden="true" />,
-        kuvaus: L => L['YKSILOINTI_TILA_HETU_PUUTTUU'],
-    },
+    OK: L => '',
+    VIRHE: L => L['YKSILOINTI_TILA_VIRHE'],
+    KESKEN: L => L['YKSILOINTI_TILA_KESKEN'],
+    HETU_PUUTTUU: L => L['YKSILOINTI_TILA_HETU_PUUTTUU'],
 };
 
 export default OppijoidenTuontiListaus;
