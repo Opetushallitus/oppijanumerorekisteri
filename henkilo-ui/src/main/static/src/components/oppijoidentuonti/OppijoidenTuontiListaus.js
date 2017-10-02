@@ -17,7 +17,7 @@ class OppijoidenTuontiListaus extends React.Component {
                 Header: this.props.L['OPPIJOIDEN_TUONTI_YKSILOINTI_TILA'],
                 accessor: henkilo => this.renderYksilointiTilaIcon(henkilo.yksilointiTila),
                 id: 'tila',
-                className: 'align-center'
+                className: 'yksilointi-tila-sarake'
             },
             {
                 Header: this.props.L['OPPIJOIDEN_TUONTI_AIKA'],
@@ -52,6 +52,7 @@ class OppijoidenTuontiListaus extends React.Component {
                         rowsText={this.props.L['TAULUKKO_RIVIA']}
                         loading={this.props.state.loading}
                         LoadingComponent={TableLoader}
+                        className="OppijoidenTuontiListaus"
                         manual
                         onFetchData={(state) => {
                             this.props.onFetchData(state.page + 1, state.pageSize);
