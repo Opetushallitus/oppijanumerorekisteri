@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -84,6 +85,20 @@ public class HenkiloUpdatePostValidatorTest {
     }
 
     @Test
+    public void validateShouldIgnoreEmptyHetuWhenNullSaved() {
+        HenkiloUpdateDto dto = new HenkiloUpdateDto();
+        dto.setHetu("");
+        Henkilo entity = new Henkilo();
+        entity.setHetu(null);
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(entity));
+
+        validator.validate(dto, errors);
+
+        verifyZeroInteractions(errors);
+        verify(henkiloRepository, never()).findByHetu(any());
+    }
+
+    @Test
     public void validateShouldRejectModifiedHetuWhenYksiloituVtjIsTrue() {
         HenkiloUpdateDto dto = new HenkiloUpdateDto();
         dto.setHetu("021017A9114");
@@ -98,26 +113,49 @@ public class HenkiloUpdatePostValidatorTest {
     }
 
     @Test
+    public void validateShouldRejectNullHetuWhenYksiloituVtjIsTrue() {
+        HenkiloUpdateDto dto = new HenkiloUpdateDto();
+        dto.setHetu(null);
+        Henkilo entity = new Henkilo();
+        entity.setYksiloityVTJ(true);
+        entity.setHetu("021017A953F");
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(entity));
+
+        validator.validate(dto, errors);
+
+        verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.set"));
+    }
+
+    @Test
+    public void validateShouldRejectEmptyHetuWhenYksiloituVtjIsTrue() {
+        HenkiloUpdateDto dto = new HenkiloUpdateDto();
+        dto.setHetu("");
+        Henkilo entity = new Henkilo();
+        entity.setYksiloityVTJ(true);
+        entity.setHetu("021017A953F");
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(entity));
+
+        validator.validate(dto, errors);
+
+        verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.set"));
+    }
+
+    @Test
     public void validateShouldCheckHetuIsUnique() {
+        Henkilo entityByOid = new Henkilo();
+        entityByOid.setOidHenkilo("oid1");
+        entityByOid.setHetu("021017A953F");
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(entityByOid));
+        Henkilo entityByHetu = new Henkilo();
+        entityByHetu.setOidHenkilo("oid2");
+        entityByHetu.setHetu("021017A9114");
+        when(henkiloRepository.findByHetu(any())).thenReturn(Optional.of(entityByHetu));
         HenkiloUpdateDto dto = new HenkiloUpdateDto();
         dto.setOidHenkilo("oid1");
         dto.setHetu("021017A9114");
-        when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
 
         validator.validate(dto, errors);
-        verifyZeroInteractions(errors);
 
-        Henkilo entity = new Henkilo();
-        entity.setOidHenkilo("oid1");
-        entity.setHetu("021017A9114");
-        when(henkiloRepository.findByHetu(any())).thenReturn(Optional.of(entity));
-
-        validator.validate(dto, errors);
-        verifyZeroInteractions(errors);
-
-        entity.setOidHenkilo("oid2");
-
-        validator.validate(dto, errors);
         verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.exists"));
     }
 
