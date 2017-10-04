@@ -25,6 +25,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import lombok.RequiredArgsConstructor;
@@ -330,6 +331,11 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setSyntymaaika(null);
         }
 
+        if (!StringUtils.isEmpty(henkiloUpdateDto.getHetu()) && HetuUtils.hetuIsValid(henkiloUpdateDto.getHetu())) {
+            henkiloUpdateDto.setSyntymaaika(HetuUtils.dateFromHetu(henkiloUpdateDto.getHetu()));
+            henkiloUpdateDto.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloUpdateDto.getHetu()));
+        }
+
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
@@ -470,6 +476,10 @@ public class HenkiloServiceImpl implements HenkiloService {
         // varmistetaan että tyhjä hetu tallentuu nullina
         if (StringUtils.isEmpty(henkiloCreate.getHetu())) {
             henkiloCreate.setHetu(null);
+        }
+        if (!StringUtils.isEmpty(henkiloCreate.getHetu()) && HetuUtils.hetuIsValid(henkiloCreate.getHetu())) {
+            henkiloCreate.setSyntymaaika(HetuUtils.dateFromHetu(henkiloCreate.getHetu()));
+            henkiloCreate.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloCreate.getHetu()));
         }
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
