@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 import Notifications from "../notifications/Notifications"
 import './PasswordPopupContent.css';
+import PropertySingleton from "../../../globals/PropertySingleton";
 
 export default class PasswordPopupContent extends React.Component {
 
@@ -95,8 +96,8 @@ export default class PasswordPopupContent extends React.Component {
      * Includes special characters
      */
     _checkPasswordRules(password) {
-        let format = new RegExp(/^(?=.*[\d])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/);
-        return (password.length >= 8 && format.test(password));
+        return (password.length >= PropertySingleton.getState().minimunPasswordLength
+            && PropertySingleton.getState().specialCharacterRegex.exec(password) !== null);
     }
 
 }
