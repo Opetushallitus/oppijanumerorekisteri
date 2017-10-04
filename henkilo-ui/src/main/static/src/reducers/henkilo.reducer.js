@@ -7,7 +7,8 @@ import {
     UPDATE_HENKILO_UNLINK_REQUEST, UPDATE_HENKILO_UNLINK_SUCCESS, UPDATE_HENKILO_UNLINK_FAILURE,
     FETCH_HENKILO_DUPLICATES_REQUEST, FETCH_HENKILO_DUPLICATES_SUCCESS, FETCH_HENKILO_DUPLICATES_FAILURE,
     LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_REQUEST,
-    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO, UPDATE_HENKILO_FAILURE
+    FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO, UPDATE_HENKILO_FAILURE,
+    FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
@@ -20,7 +21,7 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
 const initialState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
     henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
     henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
-    linkingLoading: false, masterLoading: true, master: {}, };
+    linkingLoading: false, masterLoading: true, master: {}, yksilointitiedotLoading: false, yksilointitiedot: []};
 
 export const henkilo = (state = {...initialState}, action) => {
 
@@ -88,6 +89,12 @@ export const henkilo = (state = {...initialState}, action) => {
             return Object.assign({}, state, {linkingLoading: false});
         case LINK_HENKILOS_FAILURE:
             return Object.assign({}, state, {linkingLoading: false});
+        case FETCH_HENKILO_YKSILOINTITIETO_REQUEST:
+            return {...state,  yksilointitiedotLoading: true};
+        case FETCH_HENKILO_YKSILOINTITIETO_SUCCESS:
+            return {...state, yksilointitiedot: action.payload, yksilointitiedotLoading: false};
+        case FETCH_HENKILO_YKSILOINTITIETO_FAILURE:
+            return {...state, yksilointitiedotLoading: false};
         case CLEAR_HENKILO:
             return Object.assign({}, state, {...initialState});
         default:

@@ -12,19 +12,16 @@ export const oppijaNavi = oid => [
     {path: `/oppija/${oid}/duplikaatit`, label: 'Hae duplikaatit', },
 ];
 
-export const virkailijaNavi = oid => [
-    {path: '/virkailija/' + oid, label: 'Henkilön tiedot'},
-    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
+export const virkailijaNavi = (oid) => [
+    {path: `/virkailija/${oid}`, label: 'Henkilön tiedot'},
+    {path: `/virkailija/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true},
+    {path: `/virkailija/${oid}/vtjvertailu`, label: 'VTJ vertailu', disabled: true}
 ];
 
-export const adminNavi = oid => [
-    {path: '/admin/' + oid, label: 'Henkilön tiedot'},
-    {path: `/admin/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
-];
-
-export const duplikaatitNavi = (oid, henkiloType) => [
-    {path: `/${henkiloType}/${oid}`, label: 'Henkilön tiedot'},
-    {path: `/${henkiloType}/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true}
+export const adminNavi = (oid) => [
+    {path: `/admin/${oid}`, label: 'Henkilön tiedot'},
+    {path: `/admin/${oid}/duplikaatit`, label: 'Hae duplikaatit', disabled: true},
+    {path: `/admin/${oid}/vtjvertailu`, label: 'VTJ vertailu', disabled: true}
 ];
 
 export const emptyNavi = [];

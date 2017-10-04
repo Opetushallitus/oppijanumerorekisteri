@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import R from 'ramda';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, puraYksilointi, overrideHenkiloVtjData, fetchHenkiloSlaves,
@@ -10,7 +9,7 @@ import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
 import {updateHenkiloNavigation} from "../../actions/navigation.actions";
-import {adminNavi} from "../../configuration/navigationconfigurations";
+import {henkiloViewTabs} from "../NavigationTabs";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
@@ -63,16 +62,7 @@ class AdminViewContainer extends React.Component {
 
 
     componentWillReceiveProps(nextProps) {
-        // set duplicate page visible for henkilos who aren't slaves
-        let tabs = adminNavi(nextProps.oidHenkilo);
-
-        const masterHenkiloOid = R.path(['henkilo', 'master', 'oidHenkilo'], nextProps);
-        if(!nextProps.henkilo.masterLoading && (masterHenkiloOid === undefined || nextProps.oidHenkilo === masterHenkiloOid)) {
-            tabs = tabs.map( tab => {
-                if(tab.label === 'Hae duplikaatit') { tab.disabled = false }
-                return tab;
-            });
-        }
+        const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'admin');
         this.props.updateHenkiloNavigation(tabs);
     }
 
@@ -138,6 +128,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
         oidHenkilo: ownProps.params['oid'],
+        henkiloType: ownProps.params['henkiloType'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,

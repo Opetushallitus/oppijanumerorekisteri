@@ -6,21 +6,20 @@ import {fetchHenkilo, fetchHenkiloDuplicates, linkHenkilos} from '../../../actio
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import { fetchMaatJaValtiotKoodisto, fetchKieliKoodisto } from '../../../actions/koodisto.actions';
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
-import {duplikaatitNavi} from "../../../configuration/navigationconfigurations";
 import {removeNotification} from "../../../actions/notifications.actions";
+import {henkiloViewTabs} from "../../NavigationTabs";
 
 class VirkailijaDuplikaatitContainer extends React.Component {
 
     static propTypes = {  };
 
     async componentDidMount() {
-        this.props.updateHenkiloNavigation(duplikaatitNavi(this.props.oidHenkilo, this.props.henkiloType));
-
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
         this.props.fetchMaatJaValtiotKoodisto();
         this.props.fetchKieliKoodisto();
+        this.props.updateHenkiloNavigation(henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, this.props.henkiloType));
     }
 
     render() {

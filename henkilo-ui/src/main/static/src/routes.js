@@ -13,6 +13,7 @@ import HenkilohakuContainer from "./components/henkilohaku/HenkilohakuContainer"
 import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnistusInfoContainer";
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
+import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -21,6 +22,7 @@ export default <Route path="/" component={App}>
     <Route path="/henkilohaku" component={HenkilohakuContainer} />
     <Route path="/oppija/:oid" component={OppijaViewContainer} />
     <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
+    <Route path="/:henkiloType/:oid/vtjvertailu" component={VtjVertailuPage}/>
     <Route path="/:henkiloType/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
     <Route path="/admin/:oid" component={AdminViewContainer} />

@@ -17,7 +17,7 @@ class AdminViewPage extends React.Component {
         this.existingKayttooikeusRef = {};
     }
 
-    propTypes = {
+    static propTypes = {
         omattiedot: PropTypes.shape({
             omattiedotOrganisaatiosLoading: PropTypes.bool.isRequired,
         }).isRequired,

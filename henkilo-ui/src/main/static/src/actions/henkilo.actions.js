@@ -135,11 +135,16 @@ const receiveOverrideHenkiloVtjData = (oid) => ({type: VTJ_OVERRIDE_HENKILO_SUCC
 const errorOverrideHenkiloVtjData = (error) => ({type: VTJ_OVERRIDE_HENKILO_FAILURE,
     receivedAt: Date.now(),
     buttonNotification: {position: 'vtjOverride', notL10nMessage: 'VTJ_OVERRIDE_ERROR_TOPIC', notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT'},});
-export const overrideHenkiloVtjData = (oid,) => (dispatch => {
+export const overrideHenkiloVtjData = (oid,) => (async dispatch => {
     dispatch(requestOverrideHenkiloVtjData(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
-    http.put(url).then(() => {dispatch(receiveOverrideHenkiloVtjData(oid))})
-        .catch(e => dispatch(errorOverrideHenkiloVtjData(e)));
+    try {
+        await http.put(url);
+        dispatch(receiveOverrideHenkiloVtjData(oid));
+    } catch(error) {
+        dispatch(errorOverrideHenkiloVtjData(error));
+        throw error;
+    }
 });
 
 const requestHenkiloOrgs = (oid) => ({type: FETCH_HENKILOORGS_REQUEST, oid});
