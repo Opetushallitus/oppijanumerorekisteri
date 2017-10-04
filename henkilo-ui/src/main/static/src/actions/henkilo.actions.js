@@ -107,7 +107,7 @@ export const passivoiHenkilo = (oid) => (dispatch => {
 
 
 const requestHenkiloYksilointitieto = (oid) => ({type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST, oid});
-const receiveHenkiloYksilointitieto = (data) => ({type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, data});
+const receiveHenkiloYksilointitieto = (payload) => ({type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, payload});
 const failureHenkiloYksilointitieto = (error) => ({type: FETCH_HENKILO_YKSILOINTITIETO_FAILURE, error});
 
 export const fetchHenkiloYksilointitieto = (oid) => (async dispatch => {

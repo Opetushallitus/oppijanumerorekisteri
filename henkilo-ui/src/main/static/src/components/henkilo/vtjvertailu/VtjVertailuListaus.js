@@ -14,14 +14,14 @@ export default class VtjVertailuListaus extends React.Component {
 
     render() {
         const henkilo = R.path(['henkilo'], this.props.henkilo);
-        console.log(henkilo);
-        // const henkiloData = R.pick(['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'], henkilo);
-        // henkiloData.palvelu = 'HENKILO_VTJ_HENKILOPALVELU';
-        //
-        // const yksilointiTiedot = R.path(['yksilointitiedot'], this.props.henkilo);
-        // yksilointiTiedot.palvelu = 'HENKILO_VTJ_VRKPALVELU';
 
-        const data = [henkiloData, yksilointiTiedot];
+        const henkiloData = R.pick(['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'], henkilo);
+        henkiloData.palvelu = 'HENKILO_VTJ_HENKILOPALVELU';
+
+        const yksilointitiedot = R.path(['yksilointitiedot'], this.props.henkilo);
+        yksilointitiedot.palvelu = 'HENKILO_VTJ_VRKPALVELU';
+
+        const data = [henkiloData, yksilointitiedot];
 
         const columns = [
             {
@@ -57,7 +57,7 @@ export default class VtjVertailuListaus extends React.Component {
                 id: 'yhteystiedot'
             },
         ];
-        
+
         return <ReactTable className={['table', 'VtjVertailuListaus']}
                            columns={columns}
                            data={data}
