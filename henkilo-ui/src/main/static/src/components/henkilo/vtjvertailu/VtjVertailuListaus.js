@@ -14,14 +14,15 @@ export default class VtjVertailuListaus extends React.Component {
 
     render() {
         const henkilo = R.path(['henkilo'], this.props.henkilo);
-        const henkiloData = R.pick(['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'], henkilo);
-        henkiloData.palvelu = 'HENKILO_VTJ_HENKILOPALVELU';
-
-        const yksilointiTiedot = R.path(['yksilointitiedot'], this.props.henkilo);
-        yksilointiTiedot.palvelu = 'HENKILO_VTJ_VRKPALVELU';
+        console.log(henkilo);
+        // const henkiloData = R.pick(['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'], henkilo);
+        // henkiloData.palvelu = 'HENKILO_VTJ_HENKILOPALVELU';
+        //
+        // const yksilointiTiedot = R.path(['yksilointitiedot'], this.props.henkilo);
+        // yksilointiTiedot.palvelu = 'HENKILO_VTJ_VRKPALVELU';
 
         const data = [henkiloData, yksilointiTiedot];
-        
+
         const columns = [
             {
                 Header: this.props.L['HENKILO_VTJ_TIETOLAHDE'],

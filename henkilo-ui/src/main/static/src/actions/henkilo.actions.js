@@ -28,17 +28,22 @@ import {
     LINK_HENKILOS_REQUEST,
     LINK_HENKILOS_SUCCESS,
     LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST,
-    CLEAR_HENKILO
+    CLEAR_HENKILO, FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, FETCH_HENKILO_YKSILOINTITIETO_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
 
 const requestHenkilo = (oid) => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
-export const fetchHenkilo = (oid) => (dispatch => {
+export const fetchHenkilo = (oid) => (async dispatch => {
     dispatch(requestHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.oid', oid);
-    http.get(url).then(json => {dispatch(receiveHenkilo(json))});
+    try {
+        const henkilo = await http.get(url);
+        dispatch(receiveHenkilo(henkilo));
+    } catch(error) {
+        throw error;
+    }
 });
 
 const requestHenkiloUpdate = (oid) => ({type: UPDATE_HENKILO_REQUEST, oid});
@@ -98,6 +103,22 @@ export const passivoiHenkilo = (oid) => (dispatch => {
         dispatch(receivePassivoiHenkilo());
         dispatch(fetchHenkilo(oid));
     }).catch(e => dispatch(errorPassivoiHenkilo(e)));
+});
+
+
+const requestHenkiloYksilointitieto = (oid) => ({type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST, oid});
+const receiveHenkiloYksilointitieto = (data) => ({type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, data});
+const failureHenkiloYksilointitieto = (error) => ({type: FETCH_HENKILO_YKSILOINTITIETO_FAILURE, error});
+
+export const fetchHenkiloYksilointitieto = (oid) => (async dispatch => {
+    dispatch(requestHenkiloYksilointitieto);
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
+    try {
+        const data = await http.get(url);
+        dispatch(receiveHenkiloYksilointitieto(data));
+    } catch(error) {
+        dispatch(failureHenkiloYksilointitieto(error));
+    }
 });
 
 const requestYksiloiHenkilo = (oid) => ({type: YKSILOI_HENKILO_REQUEST, oid});
