@@ -325,6 +325,13 @@ public class HenkiloController {
         return yksilointiService.getYksilointiTiedot(oid);
     }
 
+    @PutMapping("/{oid}/yksilointitiedot/yliajayksiloimaton")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiOperation("Yliajaa henkilön tiedot yksilöintitiedoilla. Tarkoitettu henkilöille, joiden VTJ-yksilöinti on epäonnistunut")
+    public void yliajaHenkilonTiedot(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        yksilointiService.yliajaHenkilonTiedot(oid);
+    }
+
     @GetMapping("/{oid}/yksilointi")
     @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")

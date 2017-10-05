@@ -32,6 +32,13 @@ public interface YksilointiService {
      */
     YksilointitietoDto getYksilointiTiedot(String henkiloOid);
 
+    /*
+     * Yliajaa henkilön tiedot VTJ:n tiedoilla.
+     *
+     * @param henkiloOid
+     */
+    void yliajaHenkilonTiedot(String henkiloOid);
+
     /**
      * Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle.
      *
