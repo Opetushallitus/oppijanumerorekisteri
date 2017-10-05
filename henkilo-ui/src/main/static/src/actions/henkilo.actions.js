@@ -28,7 +28,9 @@ import {
     LINK_HENKILOS_REQUEST,
     LINK_HENKILOS_SUCCESS,
     LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST,
-    CLEAR_HENKILO, FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, FETCH_HENKILO_YKSILOINTITIETO_FAILURE
+    CLEAR_HENKILO, FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS,
+    FETCH_HENKILO_YKSILOINTITIETO_FAILURE, VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
+    VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS, VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -151,6 +153,7 @@ export const puraYksilointi = (oid) => async (dispatch) => {
     }
 };
 
+// Henkikön tietojen yliajo yksilöintitiedoille niille, jotka henkilöille jotka on yksilöity
 const requestOverrideHenkiloVtjData = (oid) => ({type: VTJ_OVERRIDE_HENKILO_REQUEST, oid});
 const receiveOverrideHenkiloVtjData = (oid) => ({type: VTJ_OVERRIDE_HENKILO_SUCCESS, oid, receivedAt: Date.now()});
 const errorOverrideHenkiloVtjData = (error) => ({type: VTJ_OVERRIDE_HENKILO_FAILURE,
@@ -167,6 +170,24 @@ export const overrideHenkiloVtjData = (oid,) => (async dispatch => {
         throw error;
     }
 });
+
+
+// Henkilön tietojen yliajo yksilöintitiedoilla niille henkilöille, joiden VTJ-yksilöinti on epäonnistunut
+const requestOverrideYksiloimatonHenkilo = (oid) => ({type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST, oid});
+const successOverrideYksiloimatonHenkilo = (oid) => ({type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS, oid});
+const errorOverrideYksiloimatonHenkilo = (error) => ({type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE});
+export const overrideYksiloimatonHenkiloVtjData = (oid) => (async dispatch => {
+    dispatch(requestOverrideYksiloimatonHenkilo(oid));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton', oid);
+    try {
+        await http.put(url);
+        dispatch(successOverrideYksiloimatonHenkilo(oid));
+    } catch(error) {
+        dispatch(errorOverrideYksiloimatonHenkilo(error));
+        throw error;
+    }
+});
+
 
 const requestHenkiloOrgs = (oid) => ({type: FETCH_HENKILOORGS_REQUEST, oid});
 const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({

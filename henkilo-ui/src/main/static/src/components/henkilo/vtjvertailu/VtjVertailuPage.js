@@ -4,7 +4,7 @@ import {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
     fetchHenkiloSlaves,
-    overrideHenkiloVtjData
+    overrideYksiloimatonHenkiloVtjData
 } from "../../../actions/henkilo.actions";
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from "../../common/icons/Loader";
@@ -49,7 +49,7 @@ class VtjVertailuPage extends React.Component {
 
     async overrideHenkiloInformation() {
         try {
-            await this.props.overrideHenkiloVtjData(this.props.oidHenkilo);
+            await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
             this.showSuccess();
         } catch (error) {
             this.showError();
@@ -73,7 +73,6 @@ class VtjVertailuPage extends React.Component {
         this.setState({showSuccess: false});
     }
 
-
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -89,6 +88,6 @@ export default connect(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
     updateHenkiloNavigation,
-    overrideHenkiloVtjData,
+    overrideYksiloimatonHenkiloVtjData,
     fetchHenkiloSlaves
 })(VtjVertailuPage);

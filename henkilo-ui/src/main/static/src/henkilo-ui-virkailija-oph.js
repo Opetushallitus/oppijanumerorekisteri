@@ -52,6 +52,7 @@ export default {
     "oppijanumerorekisteri-service.henkilo.yksiloihetuton": "oppijanumerorekisteri-service/henkilo/$1/yksiloihetuton",
     "oppijanumerorekisteri-service.henkilo.yksiloi.pura": "oppijanumerorekisteri-service/henkilo/$1/purayksilointi",
     "oppijanumerorekisteri-service.henkilo.yksilointitiedot": "oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot",
+    "oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton": "oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot/yliajayksiloimaton",
     "oppijanumerorekisteri-service.oppija.yhteenveto": "oppijanumerorekisteri-service/oppija/yhteenveto",
     "oppijanumerorekisteri-service.oppija": "oppijanumerorekisteri-service/oppija",
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
