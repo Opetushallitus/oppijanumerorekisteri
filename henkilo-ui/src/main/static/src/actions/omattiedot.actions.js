@@ -49,5 +49,6 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch, getState) => 
     } catch (error) {
         console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}`);
         dispatch(receiveOmattiedotOrganisaatiosFailure(error));
+        throw error;
     }
 };
