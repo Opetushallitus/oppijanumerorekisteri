@@ -43,12 +43,12 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch, getState) => 
     const userOid = getState().omattiedot.data.oid;
     dispatch(requestOmattiedotOrganisaatios(userOid));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid);
-    const omattiedotOrganisaatios = http.get(url)
-        .then(() => {
-                dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios));
-            },
-            (error) => {
-                console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}` );
-                dispatch(receiveOmattiedotOrganisaatiosFailure(error));
-            });
+    try {
+        const omattiedotOrganisaatios = await http.get(url);
+        dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios));
+    } catch (error) {
+        console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}`);
+        dispatch(receiveOmattiedotOrganisaatiosFailure(error));
+        throw error;
+    }
 };

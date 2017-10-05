@@ -75,7 +75,7 @@ export default class OmattiedotPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        this.props.kayttooikeus.kayttooikeusLoading
+                        this.props.kayttooikeus.kayttooikeusLoading || this.props.kayttooikeus.kayttooikeusAnomusLoading
                             ? <Loader />
                             : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }

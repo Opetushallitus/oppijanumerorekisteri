@@ -36,20 +36,31 @@ class OrganisaatioOphSelect extends React.Component {
                        onChange={this.onOrganisaatioChange.bind(this)}
                        onBlurResetsInput={false}
                        options={this.state.selectableOrganisaatiot}
-                       onInputChange={this.onOrganisaatioInputChange}
+                       onInputChange={this.onOrganisaatioInputChange.bind(this)}
                        value={this.state.selectedOrganisaatio}/>
         </div>;
     }
 
     onOrganisaatioChange(organisaatio) {
-        this.setState({selectedOrganisaatio: organisaatio.value});
+        this.setState({
+            selectedOrganisaatio: organisaatio.value,
+            selectableOrganisaatiot: [organisaatio],
+        });
         this.props.onOrganisaatioChange(organisaatio);
     }
 
     onOrganisaatioInputChange = (value) => {
         if (value.length >= 3) {
             this.setState({selectableOrganisaatiot: this.getSelectableOrganisaatiot(value.toLowerCase())});
-        } else {
+        }
+        else if(this.state.selectedOrganisaatio !== '') {
+            this.setState({
+                selectableOrganisaatiot: this.props.organisaatiot
+                    .filter(organisaatio => organisaatio.oid === this.state.selectedOrganisaatio)
+                    .map(this.getOrganisaatioAsSelectable),
+            });
+        }
+        else {
             this.setState({selectableOrganisaatiot: []});
         }
     };

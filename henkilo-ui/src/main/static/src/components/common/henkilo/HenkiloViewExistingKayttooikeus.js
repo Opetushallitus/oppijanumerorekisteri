@@ -19,6 +19,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         locale: PropTypes.string.isRequired,
         oidHenkilo: PropTypes.string.isRequired,
         kayttooikeus: PropTypes.shape({
+            kayttooikeusAnomus: PropTypes.array,
             kayttooikeus: PropTypes.array.isRequired,
             grantableKayttooikeus: PropTypes.object.isRequired,
         }).isRequired,
@@ -156,10 +157,17 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                     [headingList[8]]: <div>
                         {this.createEmailSelectionIfMoreThanOne(idx)}
                         <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx)}
-                                             disabled={this.state.emailSelection[idx] === '' || this.state.emailOptions.length === 0} />
+                                             disabled={this.isHaeJatkoaikaaButtonDisabled(idx, uusittavaKayttooikeusRyhma)} />
                     </div>,
                 }
             });
+    }
+
+    isHaeJatkoaikaaButtonDisabled(idx, uusittavaKayttooikeusRyhma) {
+        const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus
+            .filter(haettuKayttooikeusRyhma => haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId
+                && uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid)[0];
+        return this.state.emailSelection[idx] === '' || this.state.emailOptions.length === 0 || anomusAlreadyExists;
     }
 
     createEmailSelectionIfMoreThanOne(idx) {
@@ -192,7 +200,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                                L={this.L}
                                closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)} />
                 {
-                    this.props.isOmattiedot && this.state.showMissingEmailNotification ? <WideBlueNotification message={this.L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_OLEMASSAOLEVA_KAYTTOOIKEUS']} closeAction={() => {this.setState({showMissingEmailNotification: false})}} /> : null
+                    this.props.isOmattiedot && this.state.showMissingEmailNotification
+                        ? <WideBlueNotification message={this.L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_OLEMASSAOLEVA_KAYTTOOIKEUS']}
+                                                closeAction={() => {this.setState({showMissingEmailNotification: false})}} />
+                        : null
                 }
                 <div>
                     <Table headings={this.tableHeadings}
