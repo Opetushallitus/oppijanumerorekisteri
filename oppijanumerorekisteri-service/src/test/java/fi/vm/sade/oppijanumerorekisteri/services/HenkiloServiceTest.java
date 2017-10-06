@@ -491,6 +491,8 @@ public class HenkiloServiceTest {
                 .thenAnswer(returnsFirstArg());
         HenkiloCreateDto input = new HenkiloCreateDto();
         input.setHetu("310817A983J");
+        input.setSyntymaaika(LocalDate.of(2017, Month.OCTOBER, 6));
+        input.setSukunimi("2");
 
         HenkiloDto output = service.createHenkilo(input);
 
@@ -561,6 +563,8 @@ public class HenkiloServiceTest {
                 .thenAnswer(returnsFirstArg());
         HenkiloUpdateDto input = new HenkiloUpdateDto();
         input.setHetu("310817A983J");
+        input.setSyntymaaika(LocalDate.of(2017, Month.OCTOBER, 6));
+        input.setSukunimi("2");
 
         HenkiloUpdateDto output = service.updateHenkilo(input);
 
