@@ -6,6 +6,8 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.Yksilointitieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import org.junit.Before;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
@@ -215,5 +218,49 @@ public class YksilointiServiceTest {
         assertThat(purettu.isYksiloity()).isFalse();
         assertThat(purettu.getModified()).isAfterOrEqualsTo(before);
     }
+
+    @Test
+    public void yliajaHenkiloTiedotOnnistuuPerustietojenOsalta() {
+        Yksilointitieto yksilointitieto = new Yksilointitieto();
+        yksilointitieto.setEtunimet("testi");
+        yksilointitieto.setSukunimi("sukunimi");
+        yksilointitieto.setKutsumanimi("kutsumanimi");
+
+        Henkilo henkilo = new Henkilo();
+        henkilo.setYksilointitieto(yksilointitieto);
+
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
+        yksilointiService.yliajaHenkilonTiedot("");
+
+        assertThat(henkilo.getEtunimet()).isEqualTo("testi");
+        assertThat(henkilo.getSukunimi()).isEqualTo("sukunimi");
+        assertThat(henkilo.getKutsumanimi()).isEqualTo("kutsumanimi");
+        assertThat(henkilo.isYksiloityVTJ()).isTrue();
+        assertThat(henkilo.isYksiloity()).isFalse();
+        assertThat(henkilo.getYksilointitieto()).isNull();
+    }
+
+    @Test
+    public void yliajaHenkiloTiedotOnnistuuYhteystietoRyhmienOsalta() {
+        Yksilointitieto yksilointitieto = new Yksilointitieto();
+        Henkilo henkilo = new Henkilo();
+        henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
+        henkilo.setYksilointitieto(yksilointitieto);
+
+        YhteystiedotRyhma yhteystiedotRyhma1 = new YhteystiedotRyhma();
+        henkilo.getYhteystiedotRyhma().add(yhteystiedotRyhma1);
+
+        YhteystiedotRyhma yhteystiedotRyhma2 = new YhteystiedotRyhma();
+        YhteystiedotRyhma yhteystiedotRyhma3 = new YhteystiedotRyhma();
+        yksilointitieto.getYhteystiedotRyhma().add(yhteystiedotRyhma2);
+        yksilointitieto.getYhteystiedotRyhma().add(yhteystiedotRyhma3);
+
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
+        yksilointiService.yliajaHenkilonTiedot("");
+
+        assertThat(henkilo.getYhteystiedotRyhma().size()).isEqualTo(3);
+
+    }
+
 
 }
