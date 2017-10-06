@@ -216,7 +216,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
         if(oids.size() > 1000) {
-            throw new ForbiddenException("Maximum amount of henkilös to be fetched is 1000");
+            throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is 1000");
         }
 
         return this.henkiloJpaRepository.findByOidIn(oids);
