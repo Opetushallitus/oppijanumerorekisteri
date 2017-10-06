@@ -401,6 +401,49 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     @Override
+    @Transactional
+    public void yliajaHenkilonTiedot(String henkiloOid) {
+        Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if (henkilo.getYksilointitieto() == null) {
+            throw new ValidationException("No VTJ-data found for henkilo");
+        }
+        Yksilointitieto yksilointitieto = henkilo.getYksilointitieto();
+
+        henkilo.setOppijanumero(henkilo.getOidHenkilo());
+        henkilo.setEtunimet(yksilointitieto.getEtunimet());
+        henkilo.setSukunimi(yksilointitieto.getSukunimi());
+        henkilo.setSukupuoli(yksilointitieto.getSukupuoli());
+        henkilo.setYksiloityVTJ(true);
+        henkilo.setModified(new Date());
+        henkilo.setYksiloity(false);
+        henkilo.setTurvakielto(yksilointitieto.isTurvakielto());
+
+        if(!StringUtils.isEmpty(yksilointitieto.getKutsumanimi())) {
+            henkilo.setKutsumanimi(yksilointitieto.getKutsumanimi());
+        }
+
+        if (yksilointitieto.getAidinkieli() != null) {
+            henkilo.setAidinkieli(yksilointitieto.getAidinkieli());
+            yksilointitieto.setAidinkieli(null);
+        }
+
+        if (yksilointitieto.getKansalaisuus() != null && !yksilointitieto.getKansalaisuus().isEmpty()) {
+            henkilo.setKansalaisuus(new HashSet<>(yksilointitieto.getKansalaisuus()));
+            yksilointitieto.setKansalaisuus(new HashSet<>());
+        }
+
+        if(HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi()) &&
+                (yksilointitieto.getYhteystiedotRyhma() != null && !yksilointitieto.getYhteystiedotRyhma().isEmpty())) {
+            henkilo.getYhteystiedotRyhma().addAll(yksilointitieto.getYhteystiedotRyhma());
+            yksilointitieto.setYhteystiedotRyhma(new HashSet<>());
+        }
+
+        yksilointitietoRepository.delete(yksilointitieto);
+        henkilo.setYksilointitieto(null);
+
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Iterable<String> listPalvelutunnisteet(String oid) {
         Henkilo henkilo = getHenkiloByOid(oid);
