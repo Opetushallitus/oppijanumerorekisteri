@@ -8,6 +8,7 @@ import Loader from "../../common/icons/Loader";
 import PropertySingleton from '../../../globals/PropertySingleton'
 import Notifications from "../../common/notifications/Notifications";
 import {FloatingBar} from "./FloatingBar";
+import {enabledDuplikaattiView} from "../../NavigationTabs";
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 
@@ -91,7 +92,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
 
             </div>
             <FloatingBar>
-                <Button disabled={this.state.selectedDuplicates.length === 0}
+                <Button disabled={this.state.selectedDuplicates.length === 0 || !enabledDuplikaattiView(this.props.oidHenkilo, this.props.henkilo.masterLoading, this.props.henkilo.master.oidHenkilo) || (this.props.oidHenkilo === this.props.omattiedot.data.oid)}
                         action={this._link.bind(this)}>{L['DUPLIKAATIT_YHDISTA']}</Button>
             </FloatingBar>
         </div>

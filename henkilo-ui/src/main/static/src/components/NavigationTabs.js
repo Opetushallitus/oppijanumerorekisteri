@@ -1,6 +1,10 @@
 import R from 'ramda';
 import {adminNavi, virkailijaNavi} from "../configuration/navigationconfigurations";
 
+
+export const enabledDuplikaattiView = (oidHenkilo, masterLoading, masterHenkiloOid) => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
+export const enabledVtjVertailuView = (henkilo) => henkilo.yksilointiYritetty && !henkilo.yksiloityVTJ && !henkilo.duplicate;
+
 /*
  * Get tabs for a view in henkilo-component
  *
@@ -18,13 +22,12 @@ export const henkiloViewTabs = (oidHenkilo, henkilo, henkiloType) => {
     }
 
     return tabs.map( tab => {
-        if(tab.label === 'Hae duplikaatit' && (!henkilo.masterLoading && (masterHenkiloOid === undefined || oidHenkilo === masterHenkiloOid))) {
+        if(tab.label === 'Hae duplikaatit' && enabledDuplikaattiView(oidHenkilo, henkilo.masterLoading, masterHenkiloOid)) {
             tab.disabled = false;
         }
-        if(tab.label === 'VTJ vertailu' && (currentHenkilo.yksilointiYritetty && !currentHenkilo.yksiloityVTJ && !currentHenkilo.duplicate)) {
+        if(tab.label === 'VTJ vertailu' && enabledVtjVertailuView(currentHenkilo)) {
             tab.disabled = false;
         }
         return tab;
     });
-
 };

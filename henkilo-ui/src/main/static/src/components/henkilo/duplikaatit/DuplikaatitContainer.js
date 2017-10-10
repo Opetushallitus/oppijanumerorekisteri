@@ -2,7 +2,7 @@
 import VirkailijaDuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
-import {fetchHenkilo, fetchHenkiloDuplicates, linkHenkilos} from '../../../actions/henkilo.actions';
+import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster, linkHenkilos} from '../../../actions/henkilo.actions';
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import { fetchMaatJaValtiotKoodisto, fetchKieliKoodisto } from '../../../actions/koodisto.actions';
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
@@ -16,6 +16,7 @@ class VirkailijaDuplikaatitContainer extends React.Component {
     async componentDidMount() {
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
+        this.props.fetchHenkiloMaster(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
         this.props.fetchMaatJaValtiotKoodisto();
         this.props.fetchKieliKoodisto();
@@ -39,5 +40,5 @@ const mapStateToProps = (state, ownProps) => ({
     notifications: state.notifications.duplicatesNotifications,
 });
 
-export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot, fetchHenkiloDuplicates,
+export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot, fetchHenkiloDuplicates, fetchHenkiloMaster,
     fetchMaatJaValtiotKoodisto, fetchKieliKoodisto, linkHenkilos, updateHenkiloNavigation, removeNotification})(VirkailijaDuplikaatitContainer);

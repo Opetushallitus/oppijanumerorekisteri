@@ -3,7 +3,7 @@ import {urls} from 'oph-urls-js';
 import {
     DELETE_HENKILOORGS_FAILURE,
     DELETE_HENKILOORGS_REQUEST, DELETE_HENKILOORGS_SUCCESS,
-    FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
+    FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILO_FAILURE, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE, UPDATE_HENKILO_REQUEST,
@@ -37,6 +37,7 @@ import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions"
 
 const requestHenkilo = (oid) => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
+const receiveHenkiloFailure = () => ({type: FETCH_HENKILO_FAILURE});
 export const fetchHenkilo = (oid) => (async dispatch => {
     dispatch(requestHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.oid', oid);
@@ -44,6 +45,7 @@ export const fetchHenkilo = (oid) => (async dispatch => {
         const henkilo = await http.get(url);
         dispatch(receiveHenkilo(henkilo));
     } catch(error) {
+        dispatch(receiveHenkiloFailure());
         throw error;
     }
 });

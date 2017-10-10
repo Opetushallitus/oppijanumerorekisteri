@@ -4,13 +4,15 @@ import {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
     fetchHenkiloSlaves,
+    fetchHenkiloMaster,
     overrideYksiloimatonHenkiloVtjData
 } from "../../../actions/henkilo.actions";
+import {fetchOmattiedot} from "../../../actions/omattiedot.actions";
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from "../../common/icons/Loader";
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import Button from "../../common/button/Button";
-import {henkiloViewTabs} from "../../NavigationTabs";
+import {enabledVtjVertailuView, henkiloViewTabs} from "../../NavigationTabs";
 import WideGreenNotification from "../../common/notifications/WideGreenNotification";
 import WideRedNotification from "../../common/notifications/WideRedNotification";
 
@@ -25,8 +27,10 @@ class VtjVertailuPage extends React.Component {
     }
 
     async componentDidMount() {
+        this.props.fetchOmattiedot();
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloYksilointitieto(this.props.oidHenkilo);
+        this.props.fetchHenkiloMaster(this.props.oidHenkilo);
         this.props.fetchHenkiloSlaves(this.props.oidHenkilo); // tabs need data about master to switch duplicates tab enabled
     }
 
@@ -36,14 +40,14 @@ class VtjVertailuPage extends React.Component {
     }
 
     render() {
-        return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading ? <Loader/> :
+        return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading || this.props.omattiedotLoading ? <Loader/> :
             <div className="wrapper">
                 <h1>{this.props.L['HENKILO_VTJ_VERTAILU']}</h1>
                 {this.state.showSuccess ? <WideGreenNotification message={this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS']} closeAction={this.hideSuccess.bind(this)}></WideGreenNotification> : null }
                 {this.state.showError ? <WideRedNotification message={this.props.L['HENKILO_VTJ_YLIAJA_FAILURE']} closeAction={this.hideError.bind(this)}></WideRedNotification> : null}
                 <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L}></VtjVertailuListaus>
                 <Button
-                    action={this.overrideHenkiloInformation.bind(this)}>{this.props.L['HENKILO_VTJ_YLIAJA']}</Button>
+                    action={this.overrideHenkiloInformation.bind(this)} disabled={!enabledVtjVertailuView(this.props.henkilo.henkilo) || this.props.oidHenkilo === this.props.omattiedot.data.oid}>{this.props.L['HENKILO_VTJ_YLIAJA']}</Button>
             </div>;
     }
 
@@ -80,6 +84,7 @@ const mapStateToProps = (state, ownProps) => {
         oidHenkilo: ownProps.params['oid'],
         henkiloType: ownProps.params['henkiloType'],
         henkilo: state.henkilo,
+        omattiedot: state.omattiedot,
         L: state.l10n.localisations[state.locale]
     }
 };
@@ -87,6 +92,8 @@ const mapStateToProps = (state, ownProps) => {
 export default connect(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
+    fetchHenkiloMaster,
+    fetchOmattiedot,
     updateHenkiloNavigation,
     overrideYksiloimatonHenkiloVtjData,
     fetchHenkiloSlaves

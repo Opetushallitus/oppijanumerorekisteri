@@ -1,5 +1,5 @@
 import {
-    FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILOORGS_REQUEST,
+    FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILO_FAILURE, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE, UPDATE_HENKILO_REQUEST,
@@ -31,6 +31,8 @@ export const henkilo = (state = {...initialState}, action) => {
             return Object.assign({}, state, {henkiloLoading: true});
         case FETCH_HENKILO_SUCCESS:
             return Object.assign({}, state, {henkiloLoading: false, henkilo: action.henkilo});
+        case FETCH_HENKILO_FAILURE:
+            return {...state, henkiloLoading: false};
         case UPDATE_HENKILO_FAILURE:
             return Object.assign({}, state, {henkiloLoading: false});
         case FETCH_KAYTTAJATIETO_REQUEST:
