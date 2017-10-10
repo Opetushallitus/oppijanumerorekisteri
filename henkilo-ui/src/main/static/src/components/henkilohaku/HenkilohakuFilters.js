@@ -11,6 +11,7 @@ import OphSelect from "../common/select/OphSelect";
 import OrganisaatioSelection from "../kutsuminen/OrganisaatioSelection";
 import StaticUtils from "../common/StaticUtils";
 import CloseButton from "../common/button/CloseButton";
+import R from 'ramda';
 
 class HenkilohakuFilters extends React.Component {
     static propTypes = {
@@ -73,6 +74,7 @@ class HenkilohakuFilters extends React.Component {
                     </OphInline>
                      : null }
                 </OphCheckboxInline>
+
                 <OphInline>
                     <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">
                         {this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIOLLA']}
@@ -100,8 +102,34 @@ class HenkilohakuFilters extends React.Component {
                     </div>
                     <CloseButton closeAction={() => this.props.kayttooikeusSelectionAction({value: undefined})} />
                 </OphInline>
+
+                {
+                    this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija ?
+                <OphInline>
+                    <label className="oph-label demo-label-inline oph-bold" htmlFor="ryhmaFilter">
+                        {this.L['HENKILOHAKU_FILTERS_SUODATARYHMALLA']}
+                    </label>
+                    <div className="henkilohaku-select">
+                        <OphSelect id="ryhmaFilter"
+                                   options={this._parseRyhmaOptions(this.props.ryhmas)}
+                                   value={this.props.selectedRyhma}
+                                   placeholder={this.L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
+                                   onChange={this.props.ryhmaSelectionAction} />
+                    </div>
+                    <CloseButton closeAction={() => this.props.ryhmaSelectionAction({value: undefined})} />
+                </OphInline>
+                : null }
+
             </div>
         </div>;
+    };
+
+    _parseRyhmaOptions(ryhmatState) {
+        const ryhmat = R.path(['ryhmas'], ryhmatState);
+        return ryhmat ? ryhmat.map(ryhma => ({
+            label: ryhma.nimi[this.props.locale],
+            value: ryhma.oid
+        })) : [];
     };
 }
 

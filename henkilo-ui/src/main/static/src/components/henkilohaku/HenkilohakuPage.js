@@ -38,6 +38,7 @@ class HenkilohakuPage extends React.Component {
         }).isRequired).isRequired,
         removeNotification: PropTypes.func.isRequired,
         clearHenkilohaku: PropTypes.func.isRequired,
+        ryhmas: PropTypes.object.isRequired
     };
 
     constructor(props) {
@@ -70,12 +71,14 @@ class HenkilohakuPage extends React.Component {
                 ...props.initialCriteria,
                 organisaatioOids: undefined,
                 kayttooikeusryhmaId: undefined,
+                ryhmaOids: undefined,
                 nameQuery: undefined,
             },
             showNoDataMessage: false,
             allFetched: true,
             page: 0,
             sorted: [],
+            ryhmaOid: undefined
         };
 
     };
@@ -128,8 +131,11 @@ class HenkilohakuPage extends React.Component {
                                 locale={this.props.locale}
                                 organisaatioList={this.props.omattiedot.organisaatios}
                                 selectedOrganisation={this.state.henkilohakuModel.organisaatioOids}
-                                organisaatioSelectAction={this.updateToSearchModel('organisaatioOids').bind(this)}
+                                organisaatioSelectAction={this.selectOrganisaaOid.bind(this)}
                                 kayttooikeusryhmas={this.props.kayttooikeusryhmas}
+                                ryhmas={this.props.ryhmas}
+                                selectedRyhma={this.state.ryhmaOid}
+                                ryhmaSelectionAction={this.selectRyhmaOid.bind(this)}
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)}
                                 omattiedot={this.props.omattiedot} />
@@ -195,6 +201,18 @@ class HenkilohakuPage extends React.Component {
         }));
     };
 
+    selectOrganisaaOid(organisaatioOption) {
+        const henkilohakuModel = this.state.henkilohakuModel;
+        henkilohakuModel.organisaatioOids = organisaatioOption.value;
+        this.setState({ ryhmaOid: undefined, henkilohakuModel }, this.searchQuery);
+    }
+
+    selectRyhmaOid(ryhmaOption) {
+        const henkilohakuModel = this.state.henkilohakuModel;
+        henkilohakuModel.organisaatioOids = ryhmaOption.value;
+        this.setState({ ryhmaOid: ryhmaOption.value, henkilohakuModel }, this.searchQuery);
+    }
+
     updateToSearchModel(key, isEvent) {
         return (entity) => {
             this.setState({
@@ -231,6 +249,8 @@ class HenkilohakuPage extends React.Component {
         });
         }
     };
+
+
 
 }
 
