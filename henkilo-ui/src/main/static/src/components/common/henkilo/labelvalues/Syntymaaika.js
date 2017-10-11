@@ -7,7 +7,7 @@ const Syntymaaika = (props) => <LabelValue {...props} values={{
     label: 'HENKILO_SYNTYMAAIKA',
     inputValue: 'syntymaaika',
     date: true,
-    value: props.henkilo.henkilo.syntymaaika ? moment(new Date(props.henkilo.henkilo.syntymaaika)).format() : '',
+    value: props.henkiloUpdate.syntymaaika ? moment(new Date(props.henkiloUpdate.syntymaaika)).format() : '',
     disabled: !!props.henkilo.henkilo.hetu,
 }} />;
 

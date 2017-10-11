@@ -88,7 +88,7 @@ class AdminViewContainer extends React.Component {
                 [
                     <Sukunimi {...props} autofocus={true} />,
                     <Etunimet {...props} />,
-                    <Syntymaaika {...props} />,
+                    <Syntymaaika {...props} henkiloUpdate={henkiloUpdate} />,
                     <Hetu {...props} />,
                     <Kutsumanimi {...props} />,
                 ],

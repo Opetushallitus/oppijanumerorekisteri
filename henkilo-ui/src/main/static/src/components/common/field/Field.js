@@ -1,8 +1,12 @@
 import './Field.css';
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import OphSelect from '../select/OphSelect'
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import StaticUtils from "../StaticUtils";
 
 class Field extends React.Component {
     static propTypes = {
@@ -31,29 +35,50 @@ class Field extends React.Component {
             'oph-input': !this.props.readOnly && !this.props.data,
             'oph-input-has-error': this.props.isError,
         });
+        return (this.createField(className))
+    }
+
+    createField(className) {
         const type = {type: this.props.password ? 'password' : false};
-        return (
-            this.props.readOnly
-                ? <span className={className}>{this.props.children}</span>
-                : this.props.data
-                    ? <OphSelect className={className}
-                                 options={this.props.data}
-                                 name={this.props.inputValue}
-                                 onChange={this.props.changeAction}
-                                 value={this.props.selectValue}
-                                 placeholder=""
-                                 disabled={this.props.disabled} />
-                    : <input className={className}
-                             name={this.props.inputValue}
-                             key={this.props.inputValue}
-                             onChange={this.props.changeAction}
-                             defaultValue={this.props.children}
-                             {...type}
-                             autoFocus={this.props.autofocus}
-                             placeholder={this.props.placeholder}
-                             disabled={this.props.disabled} />
-        )
+        if(this.props.readOnly) {
+            return <span className={className}>{this.props.children}</span>;
+        }
+        if (this.props.data) {
+            return <OphSelect className={className}
+                                    options={this.props.data}
+                                    name={this.props.inputValue}
+                                    onChange={this.props.changeAction}
+                                    value={this.props.selectValue}
+                                    placeholder=""
+                                    disabled={this.props.disabled}
+            />;
+        }
+        if(this.props.date) {
+            return <DatePicker className="oph-input"
+                               onChange={(value) => this.props.changeAction({target: {
+                                   value: value.format(this.props.L['PVM_DBFORMAATTI']),
+                                   name: this.props.inputValue,
+                               }})}
+                               selected={moment(StaticUtils.ddmmyyyyToDate(this.props.children))}
+                               showYearDropdown
+                               showWeekNumbers
+            />;
+        }
+        return <input className={className}
+                      name={this.props.inputValue}
+                      key={this.props.inputValue}
+                      onChange={this.props.changeAction}
+                      defaultValue={this.props.children}
+                      {...type}
+                      autoFocus={this.props.autofocus}
+                      placeholder={this.props.placeholder}
+                      disabled={this.props.disabled}
+        />;
     }
 }
 
-export default Field;
+const mapStateToProps = (state, ownProps) => ({
+    L: state.l10n.localisations[state.locale],
+});
+
+export default connect(mapStateToProps)(Field);

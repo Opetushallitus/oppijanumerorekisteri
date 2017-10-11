@@ -10,10 +10,10 @@ class StaticUtils extends React.Component {
     static updateFieldByDotAnnotation(obj, event) {
         let value;
         let fieldpath;
-        if(event === null) {
+        if (event === null) {
             return null;
         }
-        if(event.optionsName) {
+        if (event.optionsName) {
             value = event.value;
             fieldpath = event.optionsName;
         }
@@ -27,7 +27,7 @@ class StaticUtils extends React.Component {
         const len = pList.length;
         for(let i = 0; i < len-1; i++) {
             let elem = pList[i];
-            if( !schema[elem] ) {
+            if ( !schema[elem] ) {
                 schema[elem] = {};
             }
             schema = schema[elem];
@@ -50,7 +50,7 @@ class StaticUtils extends React.Component {
             .filter((yhteystiedotRyhma, idx) => {
                 const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto
                     .filter(yhteystieto => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi)[0];
-                if(yhteystiedotRyhmaIndex === null && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus
+                if (yhteystiedotRyhmaIndex === null && yhteystiedotRyhma.ryhmaKuvaus === ryhmakuvaus
                     && yhteystietoByTyyppi && yhteystietoByTyyppi.yhteystietoArvo && yhteystietoByTyyppi.yhteystietoArvo !== '') {
                     yhteystiedotRyhmaIndex = idx;
                     return true;
@@ -59,14 +59,14 @@ class StaticUtils extends React.Component {
             })[0];
         let yhteystieto = yhteystietoRyhma
             ? yhteystietoRyhma.yhteystieto.filter((yhteystieto, idx) => {
-                if(yhteystietoIndex === null && yhteystieto.yhteystietoTyyppi === yhteystietotyyppi) {
+                if (yhteystietoIndex === null && yhteystieto.yhteystietoTyyppi === yhteystietotyyppi) {
                     yhteystietoIndex = idx;
                     return true;
                 }
                 return false;
             })[0]
             : null;
-        if(yhteystiedotRyhmaIndex === null) {
+        if (yhteystiedotRyhmaIndex === null) {
             yhteystiedotRyhmaIndex = henkiloUpdate.yhteystiedotRyhma.length;
             yhteystietoRyhma = {
                 readOnly: false,
@@ -77,7 +77,7 @@ class StaticUtils extends React.Component {
             henkiloUpdate.yhteystiedotRyhma.push(yhteystietoRyhma);
         }
 
-        if(yhteystietoIndex === null) {
+        if (yhteystietoIndex === null) {
             yhteystietoIndex = henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.length;
             yhteystieto = {yhteystietoTyyppi: yhteystietotyyppi, yhteystietoArvo: ''};
             henkiloUpdate.yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto.push(yhteystieto);
