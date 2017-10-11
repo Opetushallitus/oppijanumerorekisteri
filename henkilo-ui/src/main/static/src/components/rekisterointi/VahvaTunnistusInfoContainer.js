@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import VahvaTunnistusInfoPage from "./VahvaTunnistusInfoPage";
 import {updateNavigation} from "../../actions/navigation.actions";
-import {emptyNavi} from "../../configuration/navigationconfigurations";
+import {emptyNavi} from "../navigation/navigationconfigurations";
 import VirhePage from "../common/error/VirhePage";
 
 class VahvaTunnistusInfoContainer extends React.Component {

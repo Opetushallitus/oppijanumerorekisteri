@@ -12,7 +12,7 @@ import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from "../../common/icons/Loader";
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import Button from "../../common/button/Button";
-import {enabledVtjVertailuView, henkiloViewTabs} from "../../NavigationTabs";
+import {enabledVtjVertailuView, henkiloViewTabs} from "../../navigation/NavigationTabs";
 import WideGreenNotification from "../../common/notifications/WideGreenNotification";
 import WideRedNotification from "../../common/notifications/WideRedNotification";
 

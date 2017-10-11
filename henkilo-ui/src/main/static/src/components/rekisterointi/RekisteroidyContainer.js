@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import RekisteroidyPage from "./RekisteroidyPage";
 import {updateNavigation} from "../../actions/navigation.actions";
-import {emptyNavi} from "../../configuration/navigationconfigurations";
+import {emptyNavi} from "../navigation/navigationconfigurations";
 import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
 import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";

@@ -10,7 +10,7 @@ import {
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
 import {updateHenkiloNavigation} from "../../actions/navigation.actions";
-import {oppijaNavi} from "../../configuration/navigationconfigurations";
+import {oppijaNavi} from "../navigation/navigationconfigurations";
 import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
 import EditButton from "../common/henkilo/buttons/EditButton";
 import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";

@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
-import TopNavigation from '../components/TopNavigation'
+import TopNavigation from '../components/navigation/TopNavigation'
 import Loader from "../components/common/icons/Loader";
 import moment from 'moment'
 import 'moment/locale/fi'

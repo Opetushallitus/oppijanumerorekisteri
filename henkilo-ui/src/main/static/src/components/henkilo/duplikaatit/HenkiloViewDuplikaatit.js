@@ -8,7 +8,7 @@ import Loader from "../../common/icons/Loader";
 import PropertySingleton from '../../../globals/PropertySingleton'
 import Notifications from "../../common/notifications/Notifications";
 import {FloatingBar} from "./FloatingBar";
-import {enabledDuplikaattiView} from "../../NavigationTabs";
+import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 
 export default class HenkiloViewDuplikaatit extends React.Component {
 

@@ -9,7 +9,7 @@ import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
 import {updateHenkiloNavigation} from "../../actions/navigation.actions";
-import {henkiloViewTabs} from "../NavigationTabs";
+import {henkiloViewTabs} from "../navigation/NavigationTabs";
 import {
     addKayttooikeusToHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,

@@ -1,5 +1,5 @@
 import R from 'ramda';
-import {adminNavi, virkailijaNavi} from "../configuration/navigationconfigurations";
+import {adminNavi, virkailijaNavi} from "./navigationconfigurations";
 
 
 export const enabledDuplikaattiView = (oidHenkilo, masterLoading, masterHenkiloOid) => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);

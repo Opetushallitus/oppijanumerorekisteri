@@ -7,7 +7,7 @@ import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import { fetchMaatJaValtiotKoodisto, fetchKieliKoodisto } from '../../../actions/koodisto.actions';
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import {removeNotification} from "../../../actions/notifications.actions";
-import {henkiloViewTabs} from "../../NavigationTabs";
+import {henkiloViewTabs} from "../../navigation/NavigationTabs";
 
 class VirkailijaDuplikaatitContainer extends React.Component {
 
