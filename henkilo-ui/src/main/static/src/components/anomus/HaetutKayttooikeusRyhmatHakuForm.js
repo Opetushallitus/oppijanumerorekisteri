@@ -7,6 +7,8 @@ import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButt
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
+import CloseButton from "../common/button/CloseButton";
+import OphInline from "../henkilohaku/criterias/OphInline";
 
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     constructor(props) {
@@ -42,9 +44,16 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                                             placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
                                             loading={this.props.haetutKayttooikeusryhmatLoading} />
                     </div>
-                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
-                        <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
-                                               organisaatiot={organisaatios} />
+                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline">
+                        <OphInline>
+                            <span className="flex-item-1">
+                                <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
+                                                       organisaatiot={organisaatios} />
+                            </span>
+                            <span>
+                                <CloseButton closeAction={() => this.onOrganisaatioChange('')} />
+                            </span>
+                        </OphInline>
                     </div>
                     { this.props.omattiedot.isAdmin &&
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">

@@ -1,7 +1,8 @@
 import React from 'react'
+import '../../../flex.css';
 
 const OphInline = ({children}) =>
-    <div className="oph-field oph-field-inline">
+    <div className="flex-inline">
         {children}
     </div>;
 

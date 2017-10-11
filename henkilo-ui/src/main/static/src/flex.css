@@ -11,6 +11,12 @@
     text-align: right;
 }
 
+.flex-inline {
+    display: inline-flex;
+    display: -webkit-flex;
+    width: 100%;
+}
+
 .flex-item-1 {
     flex: 1;
 }

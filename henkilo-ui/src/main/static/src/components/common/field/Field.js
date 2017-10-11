@@ -40,7 +40,7 @@ class Field extends React.Component {
 
     createField(className) {
         const type = {type: this.props.password ? 'password' : false};
-        if(this.props.readOnly) {
+        if (this.props.readOnly) {
             return <span className={className}>{this.props.children}</span>;
         }
         if (this.props.data) {
@@ -53,7 +53,7 @@ class Field extends React.Component {
                                     disabled={this.props.disabled}
             />;
         }
-        if(this.props.date) {
+        if (this.props.date) {
             return <DatePicker className="oph-input"
                                onChange={(value) => this.props.changeAction({target: {
                                    value: value.format(this.props.L['PVM_DBFORMAATTI']),
