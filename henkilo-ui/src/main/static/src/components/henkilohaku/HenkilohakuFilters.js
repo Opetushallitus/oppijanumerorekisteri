@@ -119,7 +119,7 @@ class HenkilohakuFilters extends React.Component {
                         </div>
                     </div>
                     {
-                        this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija && false ?
+                        this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija ?
                             <div className="flex-item-1">
                                 <label className="oph-label filter-label" htmlFor="ryhmaFilter">
                                     {this.L['HENKILOHAKU_FILTERS_SUODATARYHMALLA']}
