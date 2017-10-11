@@ -55,71 +55,90 @@ class HenkilohakuFilters extends React.Component {
     render() {
         return <div>
             <div className="henkilohakufilters-wrapper">
-                <OphCheckboxInline text={this.L['HENKILOHAKU_FILTERS_HAEMYOS']} >
+                <OphCheckboxInline text={this.L['HENKILOHAKU_FILTERS_HAEMYOS']}>
                     <SubOrganisationCheckbox L={this.L}
                                              subOrganisationValue={this.props.initialValues.subOrganisation}
                                              subOrganisationAction={this.props.suborganisationAction}/>
                     {
                         this.props.omattiedot.isAdmin ?
-                    <OphInline>
-                        <NoOrganisationCheckbox L={this.L}
-                            noOrganisationValue={this.props.initialValues.noOrganisation}
-                            noOrganisationAction={this.props.noOrganisationAction} />
-                        <PassiivisetOrganisationCheckbox L={this.L}
-                             passiivisetValue={this.props.initialValues.passivoitu}
-                             passiivisetAction={this.props.passiivisetAction} />
-                        <DuplikaatitOrganisationCheckbox L={this.L}
-                             duplikaatitValue={this.props.initialValues.dublicates}
-                             duplikaatitAction={this.props.duplikaatitAction} />
-                    </OphInline>
-                     : null }
+                            <OphInline>
+                                <NoOrganisationCheckbox L={this.L}
+                                                        noOrganisationValue={this.props.initialValues.noOrganisation}
+                                                        noOrganisationAction={this.props.noOrganisationAction}/>
+                                <PassiivisetOrganisationCheckbox L={this.L}
+                                                                 passiivisetValue={this.props.initialValues.passivoitu}
+                                                                 passiivisetAction={this.props.passiivisetAction}/>
+                                <DuplikaatitOrganisationCheckbox L={this.L}
+                                                                 duplikaatitValue={this.props.initialValues.dublicates}
+                                                                 duplikaatitAction={this.props.duplikaatitAction}/>
+                            </OphInline>
+                            : null}
                 </OphCheckboxInline>
 
                 <OphInline>
-                    <label className="oph-label demo-label-inline oph-bold" htmlFor="organisationFilter">
-                        {this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIOLLA']}
+                    <label className="oph-label oph-bold" htmlFor="organisationFilter">
+                        {this.L['HENKILOHAKU_FILTERS_SUODATA']}:
                     </label>
-                    <div className="henkilohaku-select">
-                        <OrganisaatioSelection id="organisationFilter"
-                                               L={this.L}
-                                               locale={this.props.locale}
-                                               organisaatios={this.props.organisaatioList}
-                                               selectOrganisaatio={this.props.organisaatioSelectAction}
-                                               selectedOrganisaatioOid={this.props.selectedOrganisation} />
-                    </div>
-                    <CloseButton closeAction={() => this.props.organisaatioSelectAction({value: undefined})} />
-
-                    <label className="oph-label demo-label-inline oph-bold" htmlFor="kayttooikeusryhmaFilter">
-                        {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
-                    </label>
-                    <div className="henkilohaku-select">
-                        <OphSelect id="kayttooikeusryhmaFilter"
-                                   options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({value: kayttooikeusryhma.id,
-                                       label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)}))}
-                                   value={this.props.selectedKayttooikeus}
-                                   placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                                   onChange={this.props.kayttooikeusSelectionAction} />
-                    </div>
-                    <CloseButton closeAction={() => this.props.kayttooikeusSelectionAction({value: undefined})} />
                 </OphInline>
+                <div className="flex-horizontal flex-align-center">
+                    <div className="flex-item-1">
+                        <label className="oph-label filter-label" htmlFor="organisationFilter">
+                            {this.L['HENKILOHAKU_FILTERS_ORGANISAATIOLLA']}
+                        </label>
+                        <div className="henkilohaku-select">
+                            <span className="flex-item-1">
+                                <OrganisaatioSelection id="organisationFilter"
+                                                       L={this.L}
+                                                       locale={this.props.locale}
+                                                       organisaatios={this.props.organisaatioList}
+                                                       selectOrganisaatio={this.props.organisaatioSelectAction}
+                                                       selectedOrganisaatioOid={this.props.selectedOrganisation}/>
+                            </span>
+                            <span className="henkilohaku-clear-select"><CloseButton closeAction={() => this.props.organisaatioSelectAction({value: undefined})}/></span>
+                        </div>
 
-                {
-                    this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija ?
-                <OphInline>
-                    <label className="oph-label demo-label-inline oph-bold" htmlFor="ryhmaFilter">
-                        {this.L['HENKILOHAKU_FILTERS_SUODATARYHMALLA']}
-                    </label>
-                    <div className="henkilohaku-select">
-                        <OphSelect id="ryhmaFilter"
-                                   options={this._parseRyhmaOptions(this.props.ryhmas)}
-                                   value={this.props.selectedRyhma}
-                                   placeholder={this.L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
-                                   onChange={this.props.ryhmaSelectionAction} />
                     </div>
-                    <CloseButton closeAction={() => this.props.ryhmaSelectionAction({value: undefined})} />
-                </OphInline>
-                : null }
-
+                    <div className="flex-item-1">
+                        <label className="oph-label filter-label" htmlFor="kayttooikeusryhmaFilter">
+                            {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
+                        </label>
+                        <div className="henkilohaku-select">
+                            <span className="flex-item-1">
+                                <OphSelect id="kayttooikeusryhmaFilter"
+                                       options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({
+                                           value: kayttooikeusryhma.id,
+                                           label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
+                                       }))}
+                                       value={this.props.selectedKayttooikeus}
+                                       placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                                       onChange={this.props.kayttooikeusSelectionAction}/>
+                            </span>
+                            <span className="henkilohaku-clear-select">
+                                <CloseButton closeAction={() => this.props.kayttooikeusSelectionAction({value: undefined})}/>
+                            </span>
+                        </div>
+                    </div>
+                    {
+                        this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija && false ?
+                            <div className="flex-item-1">
+                                <label className="oph-label filter-label" htmlFor="ryhmaFilter">
+                                    {this.L['HENKILOHAKU_FILTERS_SUODATARYHMALLA']}
+                                </label>
+                                <div className="henkilohaku-select">
+                                    <span className="flex-item-1">
+                                        <OphSelect id="ryhmaFilter"
+                                                   options={this._parseRyhmaOptions(this.props.ryhmas)}
+                                                   value={this.props.selectedRyhma}
+                                                   placeholder={this.L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
+                                                   onChange={this.props.ryhmaSelectionAction}/>
+                                    </span>
+                                    <span className="henkilohaku-clear-select"><CloseButton
+                                        closeAction={() => this.props.ryhmaSelectionAction({value: undefined})}/>
+                                    </span>
+                                </div>
+                            </div>
+                            : null}
+                </div>
             </div>
         </div>;
     };

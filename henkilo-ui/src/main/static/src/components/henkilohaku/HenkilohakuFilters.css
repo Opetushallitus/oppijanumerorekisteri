@@ -13,6 +13,13 @@
 }
 
 .henkilohakufilters-wrapper .henkilohaku-select {
-    min-width: 30%;
-    margin-right: 10px;
+    display: inline-flex;
+    width: 100%;
+}
+.henkilohakufilters-wrapper .filter-label {
+    display: block;
+}
+
+.henkilohaku-clear-select {
+    margin-left: 10px;
 }
