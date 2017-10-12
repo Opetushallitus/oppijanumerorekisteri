@@ -14,6 +14,7 @@ import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnist
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
 import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
+import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/KayttooikeusryhmatHallintaContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -30,4 +31,5 @@ export default <Route path="/" component={App}>
     <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
     <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
+    <Route path="/kayttooikeusryhmat/hallinta" component={KayttooikeusryhmatHallintaContainer} />
 </Route>
