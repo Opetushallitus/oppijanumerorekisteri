@@ -51,10 +51,8 @@ class AnomusPage extends React.Component {
     componentDidMount() {
         this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
         // For organisation filtering. Should fetch only user's organisations for normal users.
-        if(!this.props.isAdmin) {
-            this.props.fetchOmattiedotOrganisaatios();
-        }
-        this.props.fetchAllOrganisaatios();
+        this.props.fetchOmattiedotOrganisaatios();
+        this.props.fetchAllRyhmas();
     };
 
     componentWillReceiveProps(nextProps) {

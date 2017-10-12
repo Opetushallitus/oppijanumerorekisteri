@@ -3,7 +3,7 @@ import { Route } from 'react-router'
 import App from './containers/App'
 import KutsututPageContainer from './containers/KutsututPageContainer';
 import KutsuminenPage from './containers/KutsuminenPage';
-import AnomustListPageContainer from './containers/AnomusPageContainer';
+import AnomustListPageContainer from './components/anomus/AnomusPageContainer';
 import OppijaViewContainer from './components/henkilo/OppijaViewContainer';
 import VirkailijaViewContainer from "./components/henkilo/VirkailijaViewContainer";
 import OmattiedotContainer from "./components/omattiedot/OmattiedotPageContainer";

@@ -1,11 +1,11 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import AnomusPage from '../components/anomus/AnomusPage'
-import {clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat} from '../actions/anomus.actions'
-import {fetchAllOrganisaatios} from '../actions/organisaatio.actions'
-import {updateHaettuKayttooikeusryhmaInAnomukset, clearHaettuKayttooikeusryhma} from '../actions/kayttooikeusryhma.actions'
-import PropertySingleton from '../globals/PropertySingleton'
-import {fetchOmattiedotOrganisaatios} from '../actions/omattiedot.actions'
+import AnomusPage from './AnomusPage'
+import {clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat} from '../../actions/anomus.actions'
+import {fetchAllOrganisaatios, fetchAllRyhmas} from '../../actions/organisaatio.actions'
+import {updateHaettuKayttooikeusryhmaInAnomukset, clearHaettuKayttooikeusryhma} from '../../actions/kayttooikeusryhma.actions'
+import PropertySingleton from '../../globals/PropertySingleton'
+import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions'
 
 class AnomusPageContainer extends React.Component {
     render() {
@@ -28,13 +28,15 @@ const mapStateToProps = (state) => {
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
         isAdmin: state.omattiedot.isAdmin,
-        omattiedot: state.omattiedot
+        omattiedot: state.omattiedot,
+        ryhmat: state.ryhmatState
     };
 };
 
 export default connect(mapStateToProps, {
     fetchHaetutKayttooikeusryhmat,
     fetchAllOrganisaatios,
+    fetchAllRyhmas,
     updateHaettuKayttooikeusryhmaInAnomukset,
     clearHaettuKayttooikeusryhma,
     clearHaetutKayttooikeusryhmat,
