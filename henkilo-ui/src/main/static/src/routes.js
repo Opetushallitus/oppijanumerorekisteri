@@ -14,7 +14,8 @@ import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnist
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
 import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
-import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/KayttooikeusryhmatHallintaContainer";
+import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/hallinta/KayttooikeusryhmatHallintaContainer";
+import KayttooikeusryhmatLisaaContainer from "./components/kayttooikeusryhmat/lisaa/KayttooikeusryhmatLisaaContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -32,4 +33,5 @@ export default <Route path="/" component={App}>
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
     <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
     <Route path="/kayttooikeusryhmat/hallinta" component={KayttooikeusryhmatHallintaContainer} />
+    <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmatLisaaContainer} />
 </Route>

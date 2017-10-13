@@ -45,19 +45,13 @@ export const fetchAllKayttooikeusryhmasForHenkilo = henkiloOid => dispatch => {
         .catch(() => dispatch(errorAllKayttooikeusryhmasForHenkilo(henkiloOid)));
 };
 
-const requestAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST,
-    henkiloOid
-});
-const receiveAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid, kayttooikeusAnomus) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS,
-    henkiloOid,
-    kayttooikeusAnomus
-});
-const errorAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) => ({
-    type: FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE,
-    henkiloOid
-});
+const requestAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) =>
+    ({ type: FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST, henkiloOid });
+const receiveAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid, kayttooikeusAnomus) =>
+    ({ type: FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS, henkiloOid, kayttooikeusAnomus });
+const errorAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) =>
+    ({ type: FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE, henkiloOid });
+
 export const fetchAllKayttooikeusAnomusForHenkilo = henkiloOid => dispatch => {
     dispatch(requestAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid));
     const url = urls.url('kayttooikeus-service.henkilo.anomus-list', henkiloOid, {activeOnly: true});
@@ -85,6 +79,9 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
         throw error;
     }
 };
+
+
+
 
 export const updateHaettuKayttooikeusryhmaInAnomukset =  (id, kayttoOikeudenTila, alkupvm, loppupvm, parameters) => async dispatch => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
