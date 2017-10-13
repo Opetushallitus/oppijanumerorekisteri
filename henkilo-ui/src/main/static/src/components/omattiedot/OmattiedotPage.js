@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
@@ -22,7 +23,26 @@ import PasswordButton from "../common/henkilo/buttons/PasswordButton";
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import PropertySingleton from "../../globals/PropertySingleton";
 
-export default class OmattiedotPage extends React.Component {
+type Props = {
+    henkilo: any,
+    locale: string,
+    kayttooikeus: any,
+    organisaatios: any,
+    koodisto: any,
+    ryhmas: any,
+    l10n: any,
+    omattiedot: any,
+    updatePassword: () => any,
+    organisaatioKayttooikeusryhmat: any
+}
+
+type State = {
+    confirmPassivointi: boolean,
+    confirmYksilointi: boolean
+}
+
+
+export default class OmattiedotPage extends React.Component<Props, State> {
 
     constructor() {
         super();
@@ -94,7 +114,7 @@ export default class OmattiedotPage extends React.Component {
         )
     };
 
-    _createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
+    _createBasicInfo = (readOnly: boolean, updateModelAction: () => any, updateDateAction: () => any, henkiloUpdate: () => any) => {
         const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
             updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
             L: this.props.l10n[this.props.locale], locale: this.props.locale,};
@@ -119,7 +139,7 @@ export default class OmattiedotPage extends React.Component {
         ];
     };
 
-    _parseOrganisaatioOptions() {
+    _parseOrganisaatioOptions(): Array<string> {
         const locale = this.props.locale;
         if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
@@ -141,7 +161,7 @@ export default class OmattiedotPage extends React.Component {
     _parseKayttooikeusryhmaOptions() {
         return this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat.map( kayttooikeusryhma => {
 
-            const label = R.find(R.propEq('lang', this.props.locale.toUpperCase()))(kayttooikeusryhma.description.texts);
+            const label : any = R.find(R.propEq('lang', this.props.locale.toUpperCase()))(kayttooikeusryhma.description.texts);
             return {
                 value: kayttooikeusryhma.id,
                 label: label.text
@@ -157,7 +177,7 @@ export default class OmattiedotPage extends React.Component {
             })) : [];
     };
 
-    _readOnlyButtons(edit) {
+    _readOnlyButtons(edit: () => mixed) {
         const L = this.props.l10n[this.props.locale];
         return [
             <EditButton editAction={edit} L={L} />,

@@ -50,7 +50,15 @@ Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyt
 
 `npm install`
 
+`npm run flow-install`
+
 `npm start`
+
+
+### Flowjs
+Voit ajaa tyyppitarkistukset lokaalisti komennolla `npm run flow`. Tämä ei kuitenkaa seuraa muutoksia, vaan prosessi päättyy heti ajon jälkeen. Kannattanee asentaa omaan IDEn plugin, joka hoitaa jatkuvan tyyppitarkistuksen. 
+
+Ulkoiset kirjastot vaativat erilliset tyyppitiedostot. Kun olet päivittänyt package.json:iin uuden paketin flow-typed asentaa siihen liittyvät mahdolliset flow-tyypitykset komennolla `npm run flow-install` 
 
 ### Riippuvuudet
 

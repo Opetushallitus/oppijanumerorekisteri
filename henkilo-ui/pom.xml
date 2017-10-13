@@ -179,6 +179,16 @@
                     </execution>
 
                     <execution>
+                        <id>flow-typed install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run flow-install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
                         <id>npm run test</id>
                         <goals>
                             <goal>npm</goal>
