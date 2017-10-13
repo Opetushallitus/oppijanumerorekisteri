@@ -17,7 +17,7 @@ class KayttooikeusryhmatContainer extends React.Component {
         return <div className="wrapper">
             <ul>
                 {this.props.kayttooikeusryhmat.map( (kayttooikeusryhma, index) =>
-                    <li key={kayttooikeusryhma.id}>{index}. {kayttooikeusryhma§.name}</li>
+                    <li key={kayttooikeusryhma.id}>{index}. {kayttooikeusryhma.name}</li>
                 )}
             </ul>
         </div>
