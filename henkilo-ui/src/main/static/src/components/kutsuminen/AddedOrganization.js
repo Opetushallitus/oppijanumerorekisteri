@@ -14,7 +14,7 @@ import {
     removeOrganisaatioPermission
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
-import OrganisaatioSelection from './OrganisaatioSelection';
+import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
 import {getOrganisaatios} from "./OrganisaatioUtilities";
 
 class AddedOrganisation extends React.Component {

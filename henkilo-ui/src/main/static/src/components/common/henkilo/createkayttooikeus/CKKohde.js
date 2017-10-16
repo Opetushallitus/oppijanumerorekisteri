@@ -1,7 +1,7 @@
 import './CKKohde.css'
 import React from 'react'
 import PropTypes from 'prop-types'
-import OrganisaatioSelection from "../../../kutsuminen/OrganisaatioSelection";
+import OrganisaatioSelection from "../../select/OrganisaatioSelection";
 
 const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale}) =>
     <tr key="kayttokohdeField">

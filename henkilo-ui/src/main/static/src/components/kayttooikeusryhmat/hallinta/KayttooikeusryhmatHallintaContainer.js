@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {updateNavigation} from '../../../actions/navigation.actions';
 import {kayttooikeusryhmatNavigation} from '../../navigation/navigationconfigurations';
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
-import {linkHenkilos} from "../../../actions/henkilo.actions";
+import Loader from "../../common/icons/Loader";
 
 class KayttooikeusryhmatContainer extends React.Component {
 
@@ -15,19 +15,20 @@ class KayttooikeusryhmatContainer extends React.Component {
     render() {
 
         return <div className="wrapper">
-            <ul>
-                {this.props.kayttooikeusryhmat.map( (kayttooikeusryhma, index) =>
-                    <li key={kayttooikeusryhma.id}>{index}. {kayttooikeusryhma.name}</li>
-                )}
-            </ul>
+            {this.props.kayttooikeusryhmat.kayttooikeusryhmatLoading ? <Loader/> :
+                <ul>
+                    {this.props.kayttooikeusryhmat.allKayttooikeusryhmas.map((kayttooikeusryhma, index) =>
+                        <li key={kayttooikeusryhma.id}>{index}. {kayttooikeusryhma.name}</li>
+                    )}
+                </ul>
+            }
         </div>
     }
 
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    updateNavigation,
-    kayttooikeusryhmat: state.kayttooikeus.allKayttooikeusryhmas
+    kayttooikeusryhmat: state.kayttooikeus
 });
 
 

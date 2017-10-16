@@ -1,14 +1,14 @@
 import './HenkilohakuFilters.css'
 import React from 'react'
 import PropTypes from 'prop-types'
-import OphCheckboxInline from "./criterias/OphCheckboxInline";
+import OphCheckboxInline from "../common/forms/OphCheckboxInline";
 import SubOrganisationCheckbox from "./criterias/SubOrganisationCheckbox";
 import NoOrganisationCheckbox from "./criterias/NoOrganisationCheckbox";
 import PassiivisetOrganisationCheckbox from "./criterias/PassiivisetOrganisationCheckbox";
 import DuplikaatitOrganisationCheckbox from "./criterias/DuplikaatitOrganisationCheckbox";
-import OphInline from "./criterias/OphInline";
+import OphInline from "../common/forms/OphInline";
 import OphSelect from "../common/select/OphSelect";
-import OrganisaatioSelection from "../kutsuminen/OrganisaatioSelection";
+import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import StaticUtils from "../common/StaticUtils";
 import CloseButton from "../common/button/CloseButton";
 import R from 'ramda';

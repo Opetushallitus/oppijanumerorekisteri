@@ -7,7 +7,7 @@ import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButt
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import CloseButton from "../common/button/CloseButton";
-import OrganisaatioSelection from "../kutsuminen/OrganisaatioSelection";
+import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import OphSelect from "../common/select/OphSelect";
 import R from 'ramda';
 

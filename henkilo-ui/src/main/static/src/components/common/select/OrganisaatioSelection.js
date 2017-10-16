@@ -1,38 +1,30 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types'
-import {toLocalizedText} from '../../localizabletext';
-import OphSelect from '../common/select/OphSelect';
+import {toLocalizedText} from '../../../localizabletext';
+import OphSelect from './OphSelect';
 import './OrganisaatioSelection.css';
-import {getOrganisaatios} from "./OrganisaatioUtilities";
+import {getOrganisaatios} from "../../kutsuminen/OrganisaatioUtilities";
+import {connect} from 'react-redux';
 
+type Props = {
+    L: any,
+    organisaatios: Array<any>,
+    selectOrganisaatio: () => any,
+    locale: string,
+    selectedOrganisaatioOid: string,
+    isRyhma: boolean
+}
 
-export default class OrganisaatioSelection extends React.Component {
+type State = {
+    options: Array<any>
+}
 
-    static propTypes = {
-        L: PropTypes.object.isRequired,
-        organisaatios: PropTypes.arrayOf(PropTypes.shape({
-            organisaatio: PropTypes.shape({
-                nimi: PropTypes.object.isRequired,
-                oid: PropTypes.string.isRequired,
-                parentOidPath: PropTypes.string, // Null for root organisation
-                tyypit: PropTypes.arrayOf(PropTypes.string).isRequired,
-            }).isRequired,
-        })).isRequired,
-        selectOrganisaatio: PropTypes.func,
-        locale: PropTypes.string.isRequired,
-        selectedOrganisaatioOid: PropTypes.string,
-        isRyhma: PropTypes.bool,
-    };
+class OrganisaatioSelection extends React.Component<Props, State> {
 
-    constructor(props) {
+    constructor(props: any) {
         super(props);
 
-        // Filter off organisations or ryhmas depending on isRyhma value.
-        this.getOrganisationsOrRyhmas = (organisaatios) => {
-            return this.props.isRyhma
-                ? organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') !== -1)
-                : organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') === -1);
-        };
+
 
         this.state = {
             options: []
@@ -82,4 +74,18 @@ export default class OrganisaatioSelection extends React.Component {
 
     }
 
+    // Filter off organisations or ryhmas depending on isRyhma value.
+    getOrganisationsOrRyhmas = (organisaatios) => {
+        return this.props.isRyhma
+            ? organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') !== -1)
+            : organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') === -1);
+    };
+
 }
+
+const mapStateToProps = (state) => ({
+    locale: state.locale,
+    L: state.l10n.localisations[state.locale]
+});
+
+export default connect(mapStateToProps, {})(OrganisaatioSelection);
