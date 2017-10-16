@@ -45,11 +45,19 @@ export default class OrganisaatioSelection extends React.Component {
             : this.getOrganisationsOrRyhmas(getOrganisaatios(this.props.organisaatios, this.props.locale))
                 .filter(organisaatio => organisaatio.oid === this.props.selectedOrganisaatioOid)
                 .map(this.mapOrganisaatio.bind(this));
+
+        let placeholder;
+        if(this.props.placeholder) {
+            placeholder = this.props.placeholder;
+        } else if (this.props.isRyhma) {
+            placeholder = this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA'];
+        } else {
+            placeholder = this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO'];
+        }
+
         return <OphSelect className={'organisaatioSelection'}
                           options={options}
-                          placeholder={this.props.isRyhma
-                              ? this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA']
-                              : this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO']}
+                          placeholder={placeholder}
                           onInputChange={this.inputChange.bind(this)}
                           onChange={this.props.selectOrganisaatio}
                           optionRenderer={this.renderOption.bind(this)}
