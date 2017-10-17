@@ -1,10 +1,9 @@
 // @flow
 import React from 'react';
 import KayttooikeusryhmanMyontoKohde from './KayttooikeusryhmanMyontoKohde';
-
-type NewKayttooikeusryhma = {
-    organisaatioSelections: Array<any>
-}
+import type {NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
+import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
+import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
 
 type Props = {
     L: any,
@@ -19,42 +18,17 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
 
     state = {
         newKayttooikeusryhma: {
-            organisaatioSelections: []
+            organisaatioSelections: [],
+            name: {fi: '', sv: '', en: ''},
+            description: {fi: '', sv: '', en: ''}
         }
     };
 
     render() {
         return <div className="wrapper">
 
-            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_NIMI']}</h4>
-            <div className="oph-field oph-field-inline oph-field-is-required">
-                <label className="oph-label" htmlFor="kayttooikeusryhma-nimi-fi">FI</label>
-                <input id="kayttooikeusryhma-nimi-fi" className="oph-input" type="text"/>
-            </div>
-
-            <div className="oph-field oph-field-inline oph-field-is-required">
-                <label className="oph-label" htmlFor="kayttooikeusryhma-nimi-sv">SV</label>
-                <input id="kayttooikeusryhma-nimi-sv" className="oph-input" type="text"/>
-            </div>
-
-            <div className="oph-field oph-field-inline oph-field-is-required">
-                <label className="oph-label" htmlFor="kayttooikeusryhma-nimi-en">EN</label>
-                <input id="kayttooikeusryhma-nimi-en" className="oph-input" type="text"/>
-            </div>
-
-            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS']}</h4>
-            <div className="oph-field oph-field-inline oph-field-is-required">
-                <label className="oph-label" htmlFor="kayttooikeusryhma-kuvaus-fi">FI</label>
-                <textarea id="kayttooikeusryhma-kuvaus-fi" className="oph-input" type="text" />
-            </div>
-            <div className="oph-field oph-field-inline oph-field-is-required">
-                <label className="oph-label" htmlFor="kayttooikeusryhma-kuvaus-sv">SV</label>
-                <textarea id="kayttooikeusryhma-kuvaus-sv" className="oph-input" type="text" />
-            </div>
-            <div className="oph-field oph-field-inline oph-field-is-required">
-                <label className="oph-label" htmlFor="kayttooikeusryhma-kuvaus-en">EN</label>
-                <textarea id="kayttooikeusryhma-kuvaus-en" className="oph-input" type="text" />
-            </div>
+            <KayttooikeusryhmatNimi L={this.props.L} name={this.state.newKayttooikeusryhma.name}></KayttooikeusryhmatNimi>
+            <KayttooikeusryhmatKuvaus L={this.props.L} description={this.state.newKayttooikeusryhma.description}></KayttooikeusryhmatKuvaus>
 
             <KayttooikeusryhmanMyontoKohde L={this.props.L}
                                            omattiedot={this.props.omattiedot}
