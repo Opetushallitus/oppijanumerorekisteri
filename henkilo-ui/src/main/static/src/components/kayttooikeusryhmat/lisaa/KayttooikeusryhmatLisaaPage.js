@@ -1,25 +1,27 @@
 // @flow
 import React from 'react';
-
 import KayttooikeusryhmanMyontoKohde from './KayttooikeusryhmanMyontoKohde';
+
+type NewKayttooikeusryhma = {
+    organisaatioSelections: Array<any>
+}
 
 type Props = {
     L: any,
-    organisaatio: any
+    omattiedot: any
 }
 
 type State = {
-    selectedOrganisaatioOid: string | void,
-
+    newKayttooikeusryhma: NewKayttooikeusryhma
 };
 
 export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, State> {
 
     state = {
-        selectedOrganisaatioOid: undefined
+        newKayttooikeusryhma: {
+            organisaatioSelections: []
+        }
     };
-
-
 
     render() {
         return <div className="wrapper">
@@ -55,15 +57,21 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             </div>
 
             <KayttooikeusryhmanMyontoKohde L={this.props.L}
-                                           organisaatioState={this.props.organisaatio}
-                                            selectedOrganisaatioOid={this.state.selectedOrganisaatioOid}></KayttooikeusryhmanMyontoKohde>
-
+                                           omattiedot={this.props.omattiedot}
+                                           organisaatioSelectAction={this._onOrganisaatioSelection}
+                                           organisaatioSelections={this.state.newKayttooikeusryhma.organisaatioSelections}></KayttooikeusryhmanMyontoKohde>
 
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_MITA_MONNETAAN']}</h4>
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_MITA_SISALTAA']}</h4>
 
         </div>
     }
+
+    _onOrganisaatioSelection = (selection: any) => {
+        const organisaatios = this.state.newKayttooikeusryhma.organisaatioSelections;
+        this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
+            organisaatioSelections: [...organisaatios, selection]}});
+    };
 
     async createNewKayttooikeusryhma() {
         console.log(this.state);

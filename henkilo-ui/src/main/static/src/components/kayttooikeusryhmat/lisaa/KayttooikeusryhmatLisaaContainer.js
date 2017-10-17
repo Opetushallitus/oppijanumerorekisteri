@@ -12,7 +12,7 @@ type Props = {
     L: any,
     updateNavigation: (Array<any>, string) => void,
     fetchOmattiedotOrganisaatios: () => void,
-    organisaatio: any
+    omattiedot: any
 }
 
 class KayttooikeusryhmatLisaaContainer extends React.Component<Props> {
@@ -23,14 +23,14 @@ class KayttooikeusryhmatLisaaContainer extends React.Component<Props> {
     }
 
     render() {
-        return this.props.organisaatio.organisaatioLoading ? <Loader /> : <KayttooikeusryhmatLisaaPage {...this.props} />;
+        return this.props.omattiedot.omattiedotOrganisaatiosLoading ? <Loader /> : <KayttooikeusryhmatLisaaPage {...this.props} />;
     }
 
 }
 
 const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale],
-    organisaatio: state.organisaatio
+    omattiedot: state.omattiedot
 });
 
 export default connect(mapStateToProps, {updateNavigation, fetchOmattiedotOrganisaatios})(KayttooikeusryhmatLisaaContainer)
