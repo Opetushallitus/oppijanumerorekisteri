@@ -75,55 +75,48 @@ class HenkilohakuFilters extends React.Component {
                             : null}
                 </OphCheckboxInline>
 
-                <OphInline>
-                    <label className="oph-label oph-bold" htmlFor="organisationFilter">
-                        {this.L['HENKILOHAKU_FILTERS_SUODATA']}:
-                    </label>
-                </OphInline>
-                <div className="flex-horizontal flex-align-center">
+                <div className="flex-horizontal flex-align-center henkilohaku-suodata">
                     <div className="flex-item-1">
-                        <label className="oph-label filter-label" htmlFor="organisationFilter">
-                            {this.L['HENKILOHAKU_FILTERS_ORGANISAATIOLLA']}
-                        </label>
+
                         <div className="henkilohaku-select">
                             <span className="flex-item-1">
                                 <OrganisaatioSelection id="organisationFilter"
+                                                       placeholder={this.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIO']}
                                                        L={this.L}
                                                        locale={this.props.locale}
                                                        organisaatios={this.props.organisaatioList}
                                                        selectOrganisaatio={this.props.organisaatioSelectAction}
                                                        selectedOrganisaatioOid={this.props.selectedOrganisation}/>
                             </span>
-                            <span className="henkilohaku-clear-select"><CloseButton closeAction={() => this.props.organisaatioSelectAction({value: undefined})}/></span>
+                            <span className="henkilohaku-clear-select"><CloseButton
+                                closeAction={() => this.props.organisaatioSelectAction({value: undefined})}/></span>
                         </div>
 
                     </div>
                     <div className="flex-item-1">
-                        <label className="oph-label filter-label" htmlFor="kayttooikeusryhmaFilter">
-                            {this.L['HENKILOHAKU_FILTERS_SUODATAKORYHMALLA']}
-                        </label>
                         <div className="henkilohaku-select">
                             <span className="flex-item-1">
                                 <OphSelect id="kayttooikeusryhmaFilter"
-                                       options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({
-                                           value: kayttooikeusryhma.id,
-                                           label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
-                                       }))}
-                                       value={this.props.selectedKayttooikeus}
-                                       placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                                       onChange={this.props.kayttooikeusSelectionAction}/>
+                                           options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({
+                                               value: kayttooikeusryhma.id,
+                                               label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
+                                           }))}
+                                           value={this.props.selectedKayttooikeus}
+                                           placeholder={this.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                                           onChange={this.props.kayttooikeusSelectionAction}/>
                             </span>
                             <span className="henkilohaku-clear-select">
-                                <CloseButton closeAction={() => this.props.kayttooikeusSelectionAction({value: undefined})}/>
+                                <CloseButton
+                                    closeAction={() => this.props.kayttooikeusSelectionAction({value: undefined})}/>
                             </span>
                         </div>
                     </div>
-                    {
-                        this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija ?
+
+                </div>
+                {
+                    this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija ?
+                        <div className="flex-horizontal flex-align-center henkilohaku-suodata">
                             <div className="flex-item-1">
-                                <label className="oph-label filter-label" htmlFor="ryhmaFilter">
-                                    {this.L['HENKILOHAKU_FILTERS_SUODATARYHMALLA']}
-                                </label>
                                 <div className="henkilohaku-select">
                                     <span className="flex-item-1">
                                         <OphSelect id="ryhmaFilter"
@@ -137,8 +130,9 @@ class HenkilohakuFilters extends React.Component {
                                     </span>
                                 </div>
                             </div>
-                            : null}
-                </div>
+                            <div className="flex-item-1"></div>
+                        </div>
+                : null}
             </div>
         </div>;
     };
