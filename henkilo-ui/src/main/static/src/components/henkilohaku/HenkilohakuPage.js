@@ -115,7 +115,9 @@ class HenkilohakuPage extends React.Component {
 
     render() {
         return <div className="borderless-wrapper">
-            <Link to="palvelu/luonti">{this.L['PALVELUKAYTTAJAN_LUONTI_LINKKI']}</Link>
+            {this.props.omattiedot.isAdmin &&
+                <Link to="palvelu/luonti">{this.L['PALVELUKAYTTAJAN_LUONTI_LINKKI']}</Link>
+            }
             {this.props.notifications.filter(notification => notification.type === 'error').map( (notification, index) =>
                 <WideRedNotification key={index} closeAction={() => this.props.removeNotification('error', 'henkilohakuNotifications', 'HENKILOHAKU_ERROR')}
                                      message={this.L[notification.notL10nMessage]} />)
