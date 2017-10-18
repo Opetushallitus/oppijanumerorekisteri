@@ -3,6 +3,7 @@ import {
     FETCH_KIELIKOODISTO_SUCCESS,
     FETCH_SUKUPUOLIKOODISTO_REQUEST, FETCH_SUKUPUOLIKOODISTO_SUCCESS, FETCH_YHTEYSTIETOTYYPITKOODISTO_REQUEST,
     FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS, FETCH_MAATJAVALTIOTKOODISTO_REQUEST, FETCH_MAATJAVALTIOTKOODISTO_SUCCESS,
+    FETCH_OPPILAITOSTYYPIT_REQUEST, FETCH_OPPILAITOSTYYPIT_SUCCESS, FETCH_OPPILAITOSTYYPIT_FAILURE
 } from "../actions/actiontypes";
 import StaticUtils from "../components/common/StaticUtils";
 
@@ -15,7 +16,8 @@ const mapKoodistoValuesByLocale = (koodisto) => koodisto.map(koodi =>
 
 export const koodisto = (state = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,
                              yhteystietotyypitKoodistoLoading: true, kieli: [], kansalaisuus: [], sukupuoli: [],
-                             yhteystietotyypit: [], maatjavaltiot1KoodistoLoading: true, maatjavaltiot1: []}, action) => {
+                             yhteystietotyypit: [], maatjavaltiot1KoodistoLoading: true, maatjavaltiot1: [],
+                            oppilaitostyypitLoading: false, oppilaitostyypit: []}, action) => {
     switch (action.type) {
         case FETCH_KANSALAISUUSKOODISTO_REQUEST:
             return Object.assign({}, state, {kansalaisuusKoodistoLoading: true});
@@ -37,6 +39,12 @@ export const koodisto = (state = {kieliKoodistoLoading: true, kansalaisuusKoodis
             return Object.assign({}, state, {maatjavaltiot1KoodistoLoading: true});
         case FETCH_MAATJAVALTIOTKOODISTO_SUCCESS:
             return Object.assign({}, state, {maatjavaltiot1KoodistoLoading: false, maatjavaltiot1: mapKoodistoValuesByLocale(action.maatjavaltiot1)});
+        case FETCH_OPPILAITOSTYYPIT_REQUEST:
+            return {...state, oppilaitostyypitLoading: true};
+        case FETCH_OPPILAITOSTYYPIT_SUCCESS:
+            return {...state, oppilaitostyypitLoading: false, oppilaitostyypit: mapKoodistoValuesByLocale(action.oppilaitostyypit)};
+        case FETCH_OPPILAITOSTYYPIT_FAILURE:
+            return {...state, oppilaitostyypitLoading: false};
         default:
             return state;
     }

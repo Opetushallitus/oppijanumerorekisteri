@@ -24,8 +24,6 @@ class OrganisaatioSelection extends React.Component<Props, State> {
     constructor(props: any) {
         super(props);
 
-
-
         this.state = {
             options: []
         }
@@ -79,7 +77,6 @@ class OrganisaatioSelection extends React.Component<Props, State> {
         } else {
             this.setState({ options: [] });
         }
-
     }
 
     // Filter off organisations or ryhmas depending on isRyhma value.

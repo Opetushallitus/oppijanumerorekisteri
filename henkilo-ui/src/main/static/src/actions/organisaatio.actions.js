@@ -67,3 +67,5 @@ export const fetchOrganisations = (oidOrganisations) => ((dispatch, getState) =>
         .then(json => dispatch(receiveOrganisations(json)))
         .catch(e => console.error(e));
 });
+
+

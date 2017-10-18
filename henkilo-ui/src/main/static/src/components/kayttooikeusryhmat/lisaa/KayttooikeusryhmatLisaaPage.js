@@ -4,23 +4,27 @@ import KayttooikeusryhmanMyontoKohde from './KayttooikeusryhmanMyontoKohde';
 import type {NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
+import type {Locale} from "../../../types/locale.type";
 
 type Props = {
     L: any,
-    omattiedot: any
+    omattiedot: any,
+    koodisto: any,
+    locale: Locale
 }
 
 type State = {
-    newKayttooikeusryhma: NewKayttooikeusryhma
+    newKayttooikeusryhma: NewKayttooikeusryhma,
 };
 
 export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, State> {
 
     state = {
         newKayttooikeusryhma: {
-            organisaatioSelections: [],
             name: {fi: '', sv: '', en: ''},
-            description: {fi: '', sv: '', en: ''}
+            description: {fi: '', sv: '', en: ''},
+            organisaatioSelections: [],
+            oppilaitostyypitSelections: []
         }
     };
 
@@ -30,10 +34,15 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             <KayttooikeusryhmatNimi L={this.props.L} name={this.state.newKayttooikeusryhma.name}></KayttooikeusryhmatNimi>
             <KayttooikeusryhmatKuvaus L={this.props.L} description={this.state.newKayttooikeusryhma.description}></KayttooikeusryhmatKuvaus>
 
-            <KayttooikeusryhmanMyontoKohde L={this.props.L}
-                                           omattiedot={this.props.omattiedot}
+            <KayttooikeusryhmanMyontoKohde {...this.props}
                                            organisaatioSelectAction={this._onOrganisaatioSelection}
-                                           organisaatioSelections={this.state.newKayttooikeusryhma.organisaatioSelections}></KayttooikeusryhmanMyontoKohde>
+                                           organisaatioSelections={this.state.newKayttooikeusryhma.organisaatioSelections}
+
+                                           removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect.bind(this)}
+
+                                           oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
+                                           oppilaitostyypitSelections={this.state.newKayttooikeusryhma.oppilaitostyypitSelections}
+                                           removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}></KayttooikeusryhmanMyontoKohde>
 
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_MITA_MONNETAAN']}</h4>
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_MITA_SISALTAA']}</h4>
@@ -41,10 +50,34 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
         </div>
     }
 
-    _onOrganisaatioSelection = (selection: any) => {
-        const organisaatios = this.state.newKayttooikeusryhma.organisaatioSelections;
+    _onOrganisaatioSelection = (selection: any): void => {
+        const currentOrganisaatioSelections  = this.state.newKayttooikeusryhma.organisaatioSelections;
+        if(!currentOrganisaatioSelections.some( organisaatio => organisaatio.value === selection.value)) {
+            this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
+            organisaatioSelections: [...currentOrganisaatioSelections, selection]}});
+        }
+    };
+
+    _onRemoveOrganisaatioSelect(selection: any): void {
+        const newOrganisaatioSelections = this.state.newKayttooikeusryhma.organisaatioSelections
+            .filter( organisaatio => selection.value !== organisaatio.value );
         this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
-            organisaatioSelections: [...organisaatios, selection]}});
+            organisaatioSelections: newOrganisaatioSelections}});
+    };
+
+    _onOppilaitostyypitSelection = (selection: any): void => {
+        const currentOppilaitostyypitSelections = this.state.newKayttooikeusryhma.oppilaitostyypitSelections;
+        if(!currentOppilaitostyypitSelections.some( oppilaitostyyppi => oppilaitostyyppi.value === selection.value)) {
+            this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
+                oppilaitostyypitSelections: [...currentOppilaitostyypitSelections, selection]}});
+        }
+    };
+
+    _onRemoveOppilaitostyypitSelect = (selection: any): void => {
+        const newOppilaitostyypitSelections = this.state.newKayttooikeusryhma.oppilaitostyypitSelections
+            .filter( oppilaitostyyppi => selection.value !== oppilaitostyyppi.value );
+        this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
+            oppilaitostyypitSelections: newOppilaitostyypitSelections}});
     };
 
     async createNewKayttooikeusryhma() {

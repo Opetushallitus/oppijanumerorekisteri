@@ -23,7 +23,7 @@ const ItemList = (props: Props) =>
             {props.items.map( (item, index) =>
                 <li className="simple-selection-list-element flex-horizontal" key={index}>
                     <span className="flex-item-1">{R.path(props.labelPath, item)}</span>
-                    <button className="oph-button oph-button-cancel" onClick={props.removeAction(item)}>Poista</button>
+                    <button className="oph-button oph-button-cancel" onClick={() => props.removeAction(item)}>Poista</button>
                 </li>
             )}
         </ul>

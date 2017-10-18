@@ -250,3 +250,6 @@ select option {
     margin-bottom: 15px;
 }
 
+.oph-label-short {
+    width: 50px;
+}

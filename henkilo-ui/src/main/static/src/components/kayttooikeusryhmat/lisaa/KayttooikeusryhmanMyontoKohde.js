@@ -4,19 +4,35 @@ import OrganisaatioSelection from '../../common/select/OrganisaatioSelection';
 import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
 import './KayttooikeusryhmanMyontoKohde.css';
+import type {Locale} from "../../../types/locale.type";
 
 type Props = {
     L: any,
+    omattiedot: any,
+    koodisto: any,
+    locale: Locale,
     organisaatioSelections: Array<any>,
     organisaatioSelectAction: (selection: any) => void,
-    omattiedot: any,
+    removeOrganisaatioSelectAction: (selection: any) => void,
+    oppilaitostyypitSelections: Array<any>,
+    oppilaitostyypitSelectAction: (selection: any) => void,
+    removeOppilaitostyypitSelectionAction: (selection: any) => void,
 }
 
-type State ={
-    selectedOrganisaatios: Array<any>
+type State = {
+    oppilaitostyypitOptions: Array<any>,
 }
 
 export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props, State> {
+
+    state = {
+        oppilaitostyypitOptions: []
+    };
+
+    componentWillMount() {
+        const oppilaitostyypitOptions = this.props.koodisto.oppilaitostyypit.map(oppilaitostyyppi => ({label: oppilaitostyyppi[this.props.locale], value: oppilaitostyyppi.value}));
+        this.setState({oppilaitostyypitOptions})
+    }
 
     render() {
         return <div className="kayttooikeusryhman-myonto-kohde">
@@ -31,16 +47,20 @@ export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props
                     </OrganisaatioSelection>
                     <ItemList items={this.props.organisaatioSelections}
                               labelPath={['label']}
-                              removeAction={() => {}}></ItemList>
+                              removeAction={this.props.removeOrganisaatioSelectAction}></ItemList>
 
                 </div>
                 <div className="flex-item-1">
-                    <OphSelect></OphSelect>
-                </div>
-                <div className="flex-item-1">
-                    <OphSelect></OphSelect>
-                </div>
+                    <OphSelect id="oppilaitostyyppi"
+                               options={this.state.oppilaitostyypitOptions}
+                               placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}
+                               onChange={this.props.oppilaitostyypitSelectAction}>
+                    </OphSelect>
+                    <ItemList items={this.props.oppilaitostyypitSelections}
+                                labelPath={['label']}
+                                removeAction={this.props.removeOppilaitostyypitSelectionAction}></ItemList>
 
+                </div>
             </div>
         </div>
 
