@@ -5,18 +5,19 @@ import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
 import './KayttooikeusryhmanMyontoKohde.css';
 import type {Locale} from "../../../types/locale.type";
+import type {ReactSelectOption} from "../../../types/react-select.types";
 
 type Props = {
     L: any,
     omattiedot: any,
     koodisto: any,
     locale: Locale,
-    organisaatioSelections: Array<any>,
-    organisaatioSelectAction: (selection: any) => void,
-    removeOrganisaatioSelectAction: (selection: any) => void,
-    oppilaitostyypitSelections: Array<any>,
-    oppilaitostyypitSelectAction: (selection: any) => void,
-    removeOppilaitostyypitSelectionAction: (selection: any) => void,
+    organisaatioSelections: Array<ReactSelectOption>,
+    organisaatioSelectAction: (selection: ReactSelectOption) => void,
+    removeOrganisaatioSelectAction: (selection: ReactSelectOption) => void,
+    oppilaitostyypitSelections: Array<ReactSelectOption>,
+    oppilaitostyypitSelectAction: (selection: ReactSelectOption) => void,
+    removeOppilaitostyypitSelectionAction: (selection: ReactSelectOption) => void,
 }
 
 type State = {
@@ -30,7 +31,7 @@ export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props
     };
 
     componentWillMount() {
-        const oppilaitostyypitOptions = this.props.koodisto.oppilaitostyypit.map(oppilaitostyyppi => ({label: oppilaitostyyppi[this.props.locale], value: oppilaitostyyppi.value}));
+        const oppilaitostyypitOptions: Array<ReactSelectOption> = this.props.koodisto.oppilaitostyypit.map(oppilaitostyyppi => ({label: oppilaitostyyppi[this.props.locale], value: oppilaitostyyppi.value}));
         this.setState({oppilaitostyypitOptions})
     }
 

@@ -15,6 +15,7 @@ export type NewKayttoikeusryhmaKuvaus = {
 export type NewKayttooikeusryhma = {
     organisaatioSelections: Array<any>,
     oppilaitostyypitSelections: Array<any>,
+    kayttooikeusryhmaSelections: Array<any>,
     name: NewKayttooikeusryhmaNimi,
     description: NewKayttoikeusryhmaKuvaus
 }

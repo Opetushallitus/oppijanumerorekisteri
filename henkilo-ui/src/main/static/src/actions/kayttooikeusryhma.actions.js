@@ -186,12 +186,16 @@ const getGrantablePrivilegesRequest = () => ({type: FETCH_GRANTABLE_REQUEST});
 const getGrantablePrivilegesSuccess = data => ({type: FETCH_GRANTABLE_SUCCESS, data});
 const getGrantablePrivilegesFailure = (error) => ({type: FETCH_GRANTABLE_FAILURE, error});
 
-export const getGrantablePrivileges = (henkiloOid) => dispatch => {
+export const getGrantablePrivileges = (henkiloOid) => async dispatch => {
     const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-list-grantable', henkiloOid);
     dispatch(getGrantablePrivilegesRequest());
-    http.get(url)
-        .then((data) => dispatch(getGrantablePrivilegesSuccess(data)))
-        .catch(error => dispatch(getGrantablePrivilegesFailure(error)));
+    try {
+        const data = await http.get(url);
+        dispatch(getGrantablePrivilegesSuccess(data));
+    } catch (error) {
+        dispatch(getGrantablePrivilegesFailure(error));
+        throw error;
+    }
 };
 
 // All kayttooikeusryhmas
@@ -199,13 +203,17 @@ const fetchAllKayttooikeusryhmaRequest = () => ({type: FETCH_ALL_KAYTTOOIKEUSRYH
 const fetchAllKayttooikeusryhmaSuccess = data => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS, data});
 const fetchAllKayttooikeusryhmaFailure = error => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE, error});
 
-export const fetchAllKayttooikeusryhma = () => (dispatch, getState) => {
+export const fetchAllKayttooikeusryhma = () => async (dispatch, getState) => {
     // Fetch data only once
-    if(!getState().kayttooikeus.allKayttooikeusryhmas.length) {
+    if(!getState().kayttooikeus.allKayttooikeusryhmas.length && !getState().kayttooikeus.allKayttooikeusryhmasLoading) {
         dispatch(fetchAllKayttooikeusryhmaRequest());
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all');
-        http.get(url)
-            .then(data => dispatch(fetchAllKayttooikeusryhmaSuccess(data)))
-            .catch(error => dispatch(fetchAllKayttooikeusryhmaFailure(error)));
+        try {
+            const data = await http.get(url);
+            dispatch(fetchAllKayttooikeusryhmaSuccess(data))
+        } catch (error) {
+            dispatch(fetchAllKayttooikeusryhmaFailure(error));
+            throw error;
+        }
     }
 };
