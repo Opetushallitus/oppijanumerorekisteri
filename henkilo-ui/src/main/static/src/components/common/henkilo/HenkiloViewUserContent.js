@@ -105,9 +105,9 @@ class HenkiloViewUserContent extends React.Component {
 
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
-        henkiloUpdate.syntymaaika = henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']) : henkiloUpdate.syntymaaika;
+        henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']) : henkiloUpdate.syntymaaika;
         this.props.updateHenkiloAndRefetch(henkiloUpdate);
-        if(this.props.henkilo.kayttajatieto.username !== undefined && henkiloUpdate.kayttajanimi !== undefined) {
+        if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
         }
         this.setState({readOnly: true});

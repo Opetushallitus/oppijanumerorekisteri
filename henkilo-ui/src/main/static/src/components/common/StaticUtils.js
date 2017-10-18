@@ -121,6 +121,10 @@ class StaticUtils extends React.Component {
     static stringIsNotEmpty(entity) {
         return entity && entity !== '';
     }
+
+    static getKayttooikeusKestoVuosissa(henkilo) {
+        return henkilo.henkiloTyyppi === 'PALVELU' ? 10 : 1;
+    }
 }
 
 export default StaticUtils;

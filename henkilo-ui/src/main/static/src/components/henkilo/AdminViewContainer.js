@@ -1,5 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
+import R from 'ramda';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, puraYksilointi, overrideHenkiloVtjData, fetchHenkiloSlaves,
@@ -99,7 +100,7 @@ class AdminViewContainer extends React.Component {
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Kayttajanimi {...props} disabled={true} />,
+                    <Kayttajanimi {...props} disabled={!!R.path(['henkilo', 'kayttajatieto', 'username'], props)} />,
                     <LinkitetytHenkilot {...linkitetytProps} />,
                     <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
