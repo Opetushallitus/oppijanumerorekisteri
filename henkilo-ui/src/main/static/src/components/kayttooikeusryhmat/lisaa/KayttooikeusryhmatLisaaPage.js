@@ -31,14 +31,13 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     render() {
         return <div className="wrapper">
 
-            <KayttooikeusryhmatNimi L={this.props.L} name={this.state.newKayttooikeusryhma.name}></KayttooikeusryhmatNimi>
-            <KayttooikeusryhmatKuvaus L={this.props.L} description={this.state.newKayttooikeusryhma.description}></KayttooikeusryhmatKuvaus>
+            <KayttooikeusryhmatNimi L={this.props.L} name={this.state.newKayttooikeusryhma.name} setName={this._setName}></KayttooikeusryhmatNimi>
+            <KayttooikeusryhmatKuvaus L={this.props.L} description={this.state.newKayttooikeusryhma.description} setDescription={this._setDescription}></KayttooikeusryhmatKuvaus>
 
             <KayttooikeusryhmanMyontoKohde {...this.props}
                                            organisaatioSelectAction={this._onOrganisaatioSelection}
                                            organisaatioSelections={this.state.newKayttooikeusryhma.organisaatioSelections}
-
-                                           removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect.bind(this)}
+                                           removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
 
                                            oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                            oppilaitostyypitSelections={this.state.newKayttooikeusryhma.oppilaitostyypitSelections}
@@ -58,7 +57,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
         }
     };
 
-    _onRemoveOrganisaatioSelect(selection: any): void {
+    _onRemoveOrganisaatioSelect = (selection: any): void => {
         const newOrganisaatioSelections = this.state.newKayttooikeusryhma.organisaatioSelections
             .filter( organisaatio => selection.value !== organisaatio.value );
         this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
@@ -78,6 +77,18 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             .filter( oppilaitostyyppi => selection.value !== oppilaitostyyppi.value );
         this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
             oppilaitostyypitSelections: newOppilaitostyypitSelections}});
+    };
+
+    _setName = (languageCode: string, value: string): void => {
+        this.setState({newKayttooikeusryhma: 
+                            {...this.state.newKayttooikeusryhma,
+                                name: {...this.state.newKayttooikeusryhma.name, [languageCode]: value}}})
+    };
+
+    _setDescription = (languageCode: string, value:string): void => {
+        this.setState({newKayttooikeusryhma:
+            {...this.state.newKayttooikeusryhma,
+                description: {...this.state.newKayttooikeusryhma.description, [languageCode]: value}}})
     };
 
     async createNewKayttooikeusryhma() {
