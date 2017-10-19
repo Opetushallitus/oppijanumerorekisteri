@@ -60,6 +60,7 @@ class PalveluCreateForm extends React.Component<Props, State> {
     }
 
     onSubmit = async (event : SyntheticEvent<HTMLButtonElement>) => {
+        event.preventDefault();
         this.props.onSubmit(this.state.henkilo);
     }
 
