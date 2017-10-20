@@ -5,19 +5,27 @@ import type {NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
 import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
+import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
 import type {Locale} from '../../../types/locale.type';
 import type {ReactSelectOption} from '../../../types/react-select.types';
+import type {PalvelutState} from "../../../reducers/palvelut.reducer";
+import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 
 type Props = {
     L: any,
     omattiedot: any,
     koodisto: any,
     kayttooikeus: any,
-    locale: Locale
+    kayttooikeusState: KayttooikeusState,
+    palvelutState: PalvelutState,
+    locale: Locale,
+    fetchPalveluKayttooikeus: (palveluName: string) => void
 }
 
 type State = {
     newKayttooikeusryhma: NewKayttooikeusryhma,
+    palvelutSelection: ReactSelectOption | void,
+    palveluKayttooikeusSelection: ReactSelectOption | void
 };
 
 export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, State> {
@@ -28,23 +36,28 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             description: {fi: '', sv: '', en: ''},
             organisaatioSelections: [],
             oppilaitostyypitSelections: [],
-            kayttooikeusryhmaSelections: []
-        }
+            kayttooikeusryhmaSelections: [],
+            kayttooikeudetSelections: []
+        },
+        palvelutSelection: undefined,
+        palveluKayttooikeusSelection: undefined
     };
 
     render() {
         return <div className="wrapper">
 
-            <KayttooikeusryhmatNimi {...this.props} name={this.state.newKayttooikeusryhma.name}
+            <KayttooikeusryhmatNimi {...this.props}
+                                    name={this.state.newKayttooikeusryhma.name}
                                     setName={this._setName}></KayttooikeusryhmatNimi>
-            <KayttooikeusryhmatKuvaus {...this.props} description={this.state.newKayttooikeusryhma.description}
+
+            <KayttooikeusryhmatKuvaus {...this.props}
+                                      description={this.state.newKayttooikeusryhma.description}
                                       setDescription={this._setDescription}></KayttooikeusryhmatKuvaus>
 
             <KayttooikeusryhmanMyontoKohde {...this.props}
                                            organisaatioSelectAction={this._onOrganisaatioSelection}
                                            organisaatioSelections={this.state.newKayttooikeusryhma.organisaatioSelections}
                                            removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
-
                                            oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                            oppilaitostyypitSelections={this.state.newKayttooikeusryhma.oppilaitostyypitSelections}
                                            removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}></KayttooikeusryhmanMyontoKohde>
@@ -54,13 +67,20 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                                             kayttooikeusryhmaSelections={this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections}
                                             removeKayttooikeusryhmaSelectAction={this._onRemoveKayttooikeusryhmaSelect}
             ></MyonnettavatKayttooikeusryhmat>
-            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_MITA_SISALTAA']}</h4>
+
+            <KayttooikeusryhmatPalvelutJaKayttooikeudet {...this.props}
+                                                        palvelutSelection={this.state.palvelutSelection}
+                                                        palvelutSelectAction={this._onPalvelutSelection}
+
+                                                        palveluKayttooikeusSelectAction={this._onPalveluKayttooikeusSelection}
+                                                        palveluKayttooikeusSelection={this.state.palveluKayttooikeusSelection}
+                                                        ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
 
         </div>
     }
 
     _onOrganisaatioSelection = (selection: ReactSelectOption): void => {
-        const currentOrganisaatioSelections = this.state.newKayttooikeusryhma.organisaatioSelections;
+        const currentOrganisaatioSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.organisaatioSelections;
         if (!currentOrganisaatioSelections.some(organisaatio => organisaatio.value === selection.value)) {
             this.setState({
                 newKayttooikeusryhma: {
@@ -72,7 +92,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     _onRemoveOrganisaatioSelect = (selection: ReactSelectOption): void => {
-        const newOrganisaatioSelections = this.state.newKayttooikeusryhma.organisaatioSelections
+        const newOrganisaatioSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.organisaatioSelections
             .filter(organisaatio => selection.value !== organisaatio.value);
         this.setState({
             newKayttooikeusryhma: {
@@ -83,7 +103,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     _onOppilaitostyypitSelection = (selection: ReactSelectOption): void => {
-        const currentOppilaitostyypitSelections = this.state.newKayttooikeusryhma.oppilaitostyypitSelections;
+        const currentOppilaitostyypitSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.oppilaitostyypitSelections;
         if (!currentOppilaitostyypitSelections.some((oppilaitostyyppi: ReactSelectOption) => oppilaitostyyppi.value === selection.value)) {
             this.setState({
                 newKayttooikeusryhma: {
@@ -95,7 +115,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     _onRemoveOppilaitostyypitSelect = (selection: ReactSelectOption): void => {
-        const newOppilaitostyypitSelections = this.state.newKayttooikeusryhma.oppilaitostyypitSelections
+        const newOppilaitostyypitSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.oppilaitostyypitSelections
             .filter((oppilaitostyyppi: ReactSelectOption) => selection.value !== oppilaitostyyppi.value);
         this.setState({
             newKayttooikeusryhma: {
@@ -126,8 +146,8 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     _onKayttooikeusryhmaSelection = (selection: ReactSelectOption): void => {
-        const currentKayttooikeusryhmaSelections = this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections;
-        if (!currentKayttooikeusryhmaSelections.some(kayttooikeusryhma => kayttooikeusryhma.value === selection.value)) {
+        const currentKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections;
+        if (!currentKayttooikeusryhmaSelections.some( (kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value === selection.value)) {
             this.setState({
                 newKayttooikeusryhma: {
                     ...this.state.newKayttooikeusryhma,
@@ -138,7 +158,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     _onRemoveKayttooikeusryhmaSelect = (selection: ReactSelectOption): void => {
-        const newKayttooikeusryhmaSelections = this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections
+        const newKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections
             .filter((kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value !== selection.value);
         this.setState({
             newKayttooikeusryhma: {
@@ -146,6 +166,19 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                 kayttooikeusryhmaSelections: newKayttooikeusryhmaSelections
             }
         });
+    };
+
+    _onPalvelutSelection = (selection: ReactSelectOption): void => {
+        this.setState({palvelutSelection: selection, palveluKayttooikeusSelection: undefined});
+        this.props.fetchPalveluKayttooikeus(selection.value);
+    };
+
+    _onPalveluKayttooikeusSelection = (selection: ReactSelectOption): void => {
+        this.setState({palveluKayttooikeusSelection: selection});
+    };
+
+    _onLisaaPalveluJaKayttooikeus = (): void => {
+
     };
 
     async createNewKayttooikeusryhma() {

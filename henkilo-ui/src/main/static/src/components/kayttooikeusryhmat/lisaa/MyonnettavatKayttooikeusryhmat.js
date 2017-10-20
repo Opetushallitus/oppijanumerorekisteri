@@ -43,11 +43,11 @@ export default class MyonnettavatKayttooikeusryhmat extends React.Component<Prop
                 <div className="flex-item-1">
                     <OphSelect id="kayttooikeusryhma-myontooikeudet"
                                options={this.state.kayttooikeusryhmaOptions}
-                                placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUSRYHMA']}
-                                onChange={this.props.kayttooikeusryhmaSelectAction}></OphSelect>
+                               placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUSRYHMA']}
+                               onChange={this.props.kayttooikeusryhmaSelectAction}></OphSelect>
                     <ItemList items={this.props.kayttooikeusryhmaSelections}
-                                labelPath={['label']}
-                                removeAction={this.props.removeKayttooikeusryhmaSelectAction}></ItemList>
+                              labelPath={['label']}
+                              removeAction={this.props.removeKayttooikeusryhmaSelectAction}></ItemList>
                 </div>
                 <div className="flex-item-1">
 

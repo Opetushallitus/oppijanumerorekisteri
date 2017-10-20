@@ -19,6 +19,8 @@ import {haetutKayttooikeusryhmat} from "./anomus.reducer";
 import {henkilohakuState} from "./henkilohaku.reducer";
 import {cas} from "./cas.reducer";
 import {oppijoidenTuontiYhteenveto, oppijoidenTuontiListaus} from "./oppijoidentuonti.reducer";
+import {palvelutState} from "./palvelut.reducer";
+import {kayttooikeusState} from "./kayttooikeus.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -42,6 +44,8 @@ const rootReducer = combineReducers({
     cas,
     oppijoidenTuontiYhteenveto,
     oppijoidenTuontiListaus,
+    palvelutState,
+    kayttooikeusState
 });
 
 export default rootReducer;

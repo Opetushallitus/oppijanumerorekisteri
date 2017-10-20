@@ -9,6 +9,10 @@ import {fetchOppilaitostyypit} from '../../../actions/koodisto.actions';
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
 import Loader from "../../common/icons/Loader";
 import type {Locale} from "../../../types/locale.type";
+import {fetchAllPalvelut} from "../../../actions/palvelut.actions";
+import type {PalvelutState} from "../../../reducers/palvelut.reducer";
+import {fetchPalveluKayttooikeus} from "../../../actions/kayttooikeus.actions";
+import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 
 
 type Props = {
@@ -17,10 +21,14 @@ type Props = {
     fetchOmattiedotOrganisaatios: () => void,
     fetchOppilaitostyypit: () => void,
     fetchAllKayttooikeusryhma: () => void,
+    fetchAllPalvelut: () => void,
+    fetchPalveluKayttooikeus: (palveluName: string) => void,
     omattiedot: any,
     koodisto: any,
     locale: Locale,
-    kayttooikeus: any
+    kayttooikeus: any,
+    palvelutState: PalvelutState,
+    kayttooikeusState: KayttooikeusState
 }
 
 class KayttooikeusryhmatLisaaContainer extends React.Component<Props> {
@@ -30,10 +38,12 @@ class KayttooikeusryhmatLisaaContainer extends React.Component<Props> {
         this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
+        this.props.fetchAllPalvelut();
     }
 
     render() {
-        return this.props.omattiedot.omattiedotOrganisaatiosLoading || this.props.koodisto.oppilaitostyypitLoading || this.props.kayttooikeus.allKayttooikeusryhmasLoading ?
+        return this.props.omattiedot.omattiedotOrganisaatiosLoading || this.props.koodisto.oppilaitostyypitLoading ||
+        this.props.kayttooikeus.allKayttooikeusryhmasLoading || this.props.palvelutState.palvelutLoading ?
             <Loader /> : <KayttooikeusryhmatLisaaPage {...this.props} />;
     }
 
@@ -44,7 +54,10 @@ const mapStateToProps = (state, ownProps) => ({
     omattiedot: state.omattiedot,
     koodisto: state.koodisto,
     locale: state.locale,
-    kayttooikeus: state.kayttooikeus
+    kayttooikeus: state.kayttooikeus,
+    palvelutState: state.palvelutState,
+    kayttooikeusState: state.kayttooikeusState
 });
 
-export default connect(mapStateToProps, {updateNavigation, fetchOmattiedotOrganisaatios, fetchOppilaitostyypit, fetchAllKayttooikeusryhma})(KayttooikeusryhmatLisaaContainer)
+export default connect(mapStateToProps, {updateNavigation, fetchOmattiedotOrganisaatios,
+    fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus})(KayttooikeusryhmatLisaaContainer)

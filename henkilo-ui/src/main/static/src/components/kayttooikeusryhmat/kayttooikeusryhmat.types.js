@@ -1,5 +1,7 @@
 // @flow
 
+import type {ReactSelectOption} from "../../types/react-select.types";
+
 export type NewKayttooikeusryhmaNimi = {
     fi: string,
     sv: string,
@@ -13,9 +15,10 @@ export type NewKayttoikeusryhmaKuvaus = {
 }
 
 export type NewKayttooikeusryhma = {
-    organisaatioSelections: Array<any>,
-    oppilaitostyypitSelections: Array<any>,
-    kayttooikeusryhmaSelections: Array<any>,
+    organisaatioSelections: Array<ReactSelectOption>,
+    oppilaitostyypitSelections: Array<ReactSelectOption>,
+    kayttooikeusryhmaSelections: Array<ReactSelectOption>,
+    kayttooikeudetSelections: Array<ReactSelectOption>,
     name: NewKayttooikeusryhmaNimi,
     description: NewKayttoikeusryhmaKuvaus
 }
