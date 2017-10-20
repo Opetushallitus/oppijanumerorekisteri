@@ -38,7 +38,7 @@ const getValue = (format, localizableText, uiLang, fallbackValue) => {
 };
 
 export function toLocalizedText(uiLang, localizableText, fallbackValue) {
-    if (typeof localizableText === 'undefined') {
+    if (typeof localizableText === 'undefined' || localizableText === null) {
         return fallbackValue
     }
     return R.pipe(
