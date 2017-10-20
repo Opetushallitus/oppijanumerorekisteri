@@ -40,7 +40,7 @@ export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_KENELLE_MYONNETAAN']}</h4>
             <div className="flex-horizontal">
 
-                <div className="flex-item-1">
+                <div className="flex-item-1 ">
 
                     <OrganisaatioSelection id="organisaatiofilter"
                                            organisaatios={this.props.omattiedot.organisaatios}
@@ -51,7 +51,7 @@ export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props
                               removeAction={this.props.removeOrganisaatioSelectAction}></ItemList>
 
                 </div>
-                <div className="flex-item-1">
+                <div className="flex-item-1 oppilaitostyyppi-wrapper">
                     <OphSelect id="oppilaitostyyppi"
                                options={this.state.oppilaitostyypitOptions}
                                placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}

@@ -8,16 +8,21 @@ import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import R from 'ramda';
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {PalveluKayttooikeus} from "../../../types/domain/palvelukayttooikeus.types";
+import ItemList from "./ItemList";
+import type {KayttooikeusSelection} from "../kayttooikeusryhmat.types";
 
 type Props = {
     L: any,
     locale: Locale,
     palvelutState: PalvelutState,
-    kayttooikeusState:  KayttooikeusState,
+    kayttooikeusState: KayttooikeusState,
     palvelutSelectAction: (selection: ReactSelectOption) => void,
     palvelutSelection: ReactSelectOption,
     palveluKayttooikeusSelectAction: (selection: ReactSelectOption) => void,
-    palveluKayttooikeusSelection: ReactSelectOption
+    palveluKayttooikeusSelection: ReactSelectOption,
+    lisaaPalveluJaKayttooikeusAction: () => void,
+    palveluJaKayttooikeusSelections: Array<KayttooikeusSelection>,
+    removePalveluJaKayttooikeus: () => void
 }
 
 type State = {
@@ -65,16 +70,32 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                                onChange={this.props.palvelutSelectAction}></OphSelect>
                 </div>
 
+                <div className="flex-item-1 kayttooikeudet-wrapper">
+                    <div className="flex-inline">
+                        <div className="flex-item-1">
+                            <OphSelect id="kayttooikeusryhmat-palvelu-kayttooikeudet"
+                                       options={this.state.palveluKayttooikeusOptions}
+                                       value={this.props.palveluKayttooikeusSelection}
+                                       placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
+                                       onChange={this.props.palveluKayttooikeusSelectAction}></OphSelect>
+                        </div>
+                        <button className="oph-button oph-button-cancel test"
+                                onClick={() => this.props.lisaaPalveluJaKayttooikeusAction()}>{this.props.L['LISAA']}</button>
+                    </div>
+                </div>
+            </div>
+            <div className="flex-horizontal">
                 <div className="flex-item-1">
-                    <OphSelect id="kayttooikeusryhmat-palvelu-kayttooikeudet"
-                                options={this.state.palveluKayttooikeusOptions}
-                                value={this.props.palveluKayttooikeusSelection}
-                                placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
-                                onChange={this.props.palveluKayttooikeusSelectAction}></OphSelect>
+                    <ItemList items={this.props.palveluJaKayttooikeusSelections}
+                                labelPath={['palvelu', 'label']}
+                                ></ItemList>
                 </div>
                 <div className="flex-item-1">
-                    <button className="oph-button" onClick={() => {}}>Lisää</button>
+                    <ItemList items={this.props.palveluJaKayttooikeusSelections}
+                                labelPath={['kayttooikeus', 'label']}
+                                removeAction={this.props.removePalveluJaKayttooikeus}></ItemList>
                 </div>
+
 
             </div>
 

@@ -25,3 +25,4 @@ export const fetchPalveluKayttooikeus = (palveluName: string) => async (dispatch
         throw error;
     }
 };
+                            

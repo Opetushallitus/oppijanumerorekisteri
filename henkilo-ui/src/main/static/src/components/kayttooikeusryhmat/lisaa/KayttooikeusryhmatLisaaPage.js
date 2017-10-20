@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import KayttooikeusryhmanMyontoKohde from './KayttooikeusryhmanMyontoKohde';
-import type {NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
+import type {KayttooikeusSelection, NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
 import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
@@ -37,7 +37,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             organisaatioSelections: [],
             oppilaitostyypitSelections: [],
             kayttooikeusryhmaSelections: [],
-            kayttooikeudetSelections: []
+            palveluJaKayttooikeusSelections: []
         },
         palvelutSelection: undefined,
         palveluKayttooikeusSelection: undefined
@@ -71,10 +71,12 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             <KayttooikeusryhmatPalvelutJaKayttooikeudet {...this.props}
                                                         palvelutSelection={this.state.palvelutSelection}
                                                         palvelutSelectAction={this._onPalvelutSelection}
-
+                                                        palveluJaKayttooikeusSelections={this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections}
                                                         palveluKayttooikeusSelectAction={this._onPalveluKayttooikeusSelection}
                                                         palveluKayttooikeusSelection={this.state.palveluKayttooikeusSelection}
-                                                        ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
+                                                        lisaaPalveluJaKayttooikeusAction={this._onLisaaPalveluJaKayttooikeus}
+                                                        removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
+            ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
 
         </div>
     }
@@ -147,7 +149,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
 
     _onKayttooikeusryhmaSelection = (selection: ReactSelectOption): void => {
         const currentKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections;
-        if (!currentKayttooikeusryhmaSelections.some( (kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value === selection.value)) {
+        if (!currentKayttooikeusryhmaSelections.some((kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value === selection.value)) {
             this.setState({
                 newKayttooikeusryhma: {
                     ...this.state.newKayttooikeusryhma,
@@ -178,7 +180,24 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     _onLisaaPalveluJaKayttooikeus = (): void => {
+        const {palvelutSelection, palveluKayttooikeusSelection}: any = this.state;
 
+        const newKayttoikeusSelection: KayttooikeusSelection = { palvelu: palvelutSelection, kayttooikeus: palveluKayttooikeusSelection };
+        const currentKayttooikeusSelections = this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections;
+        if (!currentKayttooikeusSelections.some((kayttooikeusSelection: KayttooikeusSelection) =>
+                (kayttooikeusSelection.palvelu.value === newKayttoikeusSelection.palvelu.value &&
+                    kayttooikeusSelection.kayttooikeus.value === newKayttoikeusSelection.kayttooikeus.value))) {
+            console.log('adding', newKayttoikeusSelection);
+            this.setState({
+                newKayttooikeusryhma: {
+                    ...this.state.newKayttooikeusryhma, palveluJaKayttooikeusSelections: [...currentKayttooikeusSelections, newKayttoikeusSelection]
+                }
+            })
+        }
+    };
+
+    _onRemovePalveluJaKayttooikeus = (selection: ReactSelectOption): void => {
+        console.log('remove');
     };
 
     async createNewKayttooikeusryhma() {

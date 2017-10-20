@@ -6,8 +6,9 @@ import R from 'ramda';
 
 type Props = {
     items: Array<any>,
-    removeAction: (string) => void,
-    labelPath: Array<string>
+    removeAction?: (string) => void,
+    labelPath: Array<string>,
+    L: any
 }
 
 /*
@@ -18,12 +19,15 @@ type Props = {
  * @param labelPath - object traversal path to label to be shown in list as an array of strings. For example ['path', 'to', 'label']
  */
 const ItemList = (props: Props) =>
-    <div className="simple-selection-list">
+    <div className="item-list">
         <ul>
             {props.items.map( (item, index) =>
-                <li className="simple-selection-list-element flex-horizontal" key={index}>
+                <li className="item-list-element flex-horizontal" key={index}>
                     <span className="flex-item-1">{R.path(props.labelPath, item)}</span>
-                    <button className="oph-button oph-button-cancel" onClick={() => props.removeAction(item)}>Poista</button>
+                    { props.removeAction ?
+                        <button className="oph-button oph-button-cancel" onClick={() => props.removeAction ? props.removeAction(item) : null }>{props.L['POISTA']}</button>
+                        : null}
+
                 </li>
             )}
         </ul>

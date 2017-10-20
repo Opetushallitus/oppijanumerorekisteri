@@ -14,11 +14,16 @@ export type NewKayttoikeusryhmaKuvaus = {
     en: string
 }
 
+export type KayttooikeusSelection = {
+    palvelu: ReactSelectOption,
+    kayttooikeus: ReactSelectOption
+}
+
 export type NewKayttooikeusryhma = {
     organisaatioSelections: Array<ReactSelectOption>,
     oppilaitostyypitSelections: Array<ReactSelectOption>,
     kayttooikeusryhmaSelections: Array<ReactSelectOption>,
-    kayttooikeudetSelections: Array<ReactSelectOption>,
+    palveluJaKayttooikeusSelections: Array<KayttooikeusSelection>,
     name: NewKayttooikeusryhmaNimi,
     description: NewKayttoikeusryhmaKuvaus
 }
