@@ -74,6 +74,8 @@ public interface HenkiloService {
 
     List<HenkiloDuplicateDto> findDuplicates(String oid);
 
+    List<HenkiloReadDto> getDuplikaatit(HenkiloDuplikaattiCriteria criteria);
+
     List<String> linkHenkilos(String masterOid, List<String> slaveOids);
 
     void unlinkHenkilo(String oid, String slaveOid);
