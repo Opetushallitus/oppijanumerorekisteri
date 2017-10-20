@@ -80,6 +80,8 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                                                         removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
             ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
 
+            <button className="oph-button" onClick={() => {} }>{this.props.L['TALLENNA']}</button>
+            <button className="oph-button oph-button-cancel" onClick={() => {} }>{this.props.L['PERUUTA']}</button>
         </div>
     }
 
@@ -183,7 +185,6 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
 
     _onLisaaPalveluJaKayttooikeus = (): void => {
         const {palvelutSelection, palveluKayttooikeusSelection}: any = this.state;
-
         const newKayttoikeusSelection: PalveluJaKayttooikeusSelection = {
             palvelu: palvelutSelection,
             kayttooikeus: palveluKayttooikeusSelection
@@ -196,7 +197,8 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                 newKayttooikeusryhma: {
                     ...this.state.newKayttooikeusryhma,
                     palveluJaKayttooikeusSelections: [...currentKayttooikeusSelections, newKayttoikeusSelection]
-                }
+                },
+                palveluKayttooikeusSelection: undefined
             })
         }
     };

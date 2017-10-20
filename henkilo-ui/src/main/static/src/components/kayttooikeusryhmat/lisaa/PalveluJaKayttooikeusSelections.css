@@ -1,7 +1,11 @@
-.palvelu-ja-kayttooikeus-list .palvelu-ja-kayttooikeus-element {
+.palvelu-ja-kayttooikeus-list .palvelu-ja-kayttooikeus {
     margin-top: 10px;
 }
 
-.palvelu-ja-kayttooikeus-list .palvelu-ja-kayttooikeus-element button {
+.palvelu-ja-kayttooikeus-list .palvelu-ja-kayttooikeus button {
     float: right;
+}
+
+.palvelu-ja-kayttooikeus-list .palvelu-ja-kayttooikeus .kayttooikeus-element {
+     margin-left: 10px;
 }

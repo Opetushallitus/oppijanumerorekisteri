@@ -12,6 +12,7 @@
     margin-left: 10px;
 }
 
-.kayttooikeusryhmat-palvelu-ja-kayttooikeudet .test {
+.kayttooikeusryhmat-palvelu-ja-kayttooikeudet .add-button {
     float: right;
+    margin-left: 10px;
 }
