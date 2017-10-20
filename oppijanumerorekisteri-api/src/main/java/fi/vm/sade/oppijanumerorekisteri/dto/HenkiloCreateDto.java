@@ -72,4 +72,6 @@ public class HenkiloCreateDto implements Serializable {
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 
+    private Set<String> passinumerot = new HashSet<>();
+
 }

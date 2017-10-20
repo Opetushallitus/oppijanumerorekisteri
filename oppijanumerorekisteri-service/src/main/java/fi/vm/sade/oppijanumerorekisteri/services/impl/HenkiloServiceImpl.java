@@ -486,6 +486,14 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
 
+        // hylätään tyhjät passinumerot
+        if (henkiloCreate.getPassinumerot() != null) {
+            Set<String> passinumerot = henkiloCreate.getPassinumerot().stream()
+                    .filter(passinumero -> passinumero != null && !passinumero.trim().isEmpty())
+                    .collect(toSet());
+            henkiloCreate.setPassinumerot(passinumerot);
+        }
+
         if (henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKieliKoodi() != null) {
             henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAidinkieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));

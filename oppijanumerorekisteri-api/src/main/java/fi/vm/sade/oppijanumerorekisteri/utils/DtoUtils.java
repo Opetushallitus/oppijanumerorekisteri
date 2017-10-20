@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import static java.util.Arrays.asList;
 import java.util.Collections;
+import static java.util.Collections.emptySet;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -80,7 +81,7 @@ public class DtoUtils {
         return new HenkiloCreateDto(hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi, aidinkieli,
                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
                 "1.2.3.4.5", null, false, false,
-                false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto));
+                false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
     }
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {
