@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import KayttooikeusryhmanMyontoKohde from './KayttooikeusryhmanMyontoKohde';
-import type {KayttooikeusSelection, NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
+import type {PalveluJaKayttooikeusSelection, NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
 import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
@@ -71,10 +71,12 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             <KayttooikeusryhmatPalvelutJaKayttooikeudet {...this.props}
                                                         palvelutSelection={this.state.palvelutSelection}
                                                         palvelutSelectAction={this._onPalvelutSelection}
-                                                        palveluJaKayttooikeusSelections={this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections}
+
                                                         palveluKayttooikeusSelectAction={this._onPalveluKayttooikeusSelection}
                                                         palveluKayttooikeusSelection={this.state.palveluKayttooikeusSelection}
                                                         lisaaPalveluJaKayttooikeusAction={this._onLisaaPalveluJaKayttooikeus}
+
+                                                        palveluJaKayttooikeusSelections={this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections}
                                                         removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
             ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
 
@@ -182,22 +184,32 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     _onLisaaPalveluJaKayttooikeus = (): void => {
         const {palvelutSelection, palveluKayttooikeusSelection}: any = this.state;
 
-        const newKayttoikeusSelection: KayttooikeusSelection = { palvelu: palvelutSelection, kayttooikeus: palveluKayttooikeusSelection };
+        const newKayttoikeusSelection: PalveluJaKayttooikeusSelection = {
+            palvelu: palvelutSelection,
+            kayttooikeus: palveluKayttooikeusSelection
+        };
         const currentKayttooikeusSelections = this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections;
-        if (!currentKayttooikeusSelections.some((kayttooikeusSelection: KayttooikeusSelection) =>
+        if (!currentKayttooikeusSelections.some((kayttooikeusSelection: PalveluJaKayttooikeusSelection) =>
                 (kayttooikeusSelection.palvelu.value === newKayttoikeusSelection.palvelu.value &&
                     kayttooikeusSelection.kayttooikeus.value === newKayttoikeusSelection.kayttooikeus.value))) {
-            console.log('adding', newKayttoikeusSelection);
             this.setState({
                 newKayttooikeusryhma: {
-                    ...this.state.newKayttooikeusryhma, palveluJaKayttooikeusSelections: [...currentKayttooikeusSelections, newKayttoikeusSelection]
+                    ...this.state.newKayttooikeusryhma,
+                    palveluJaKayttooikeusSelections: [...currentKayttooikeusSelections, newKayttoikeusSelection]
                 }
             })
         }
     };
 
-    _onRemovePalveluJaKayttooikeus = (selection: ReactSelectOption): void => {
-        console.log('remove');
+    _onRemovePalveluJaKayttooikeus = (removeItem: PalveluJaKayttooikeusSelection): void => {
+        const newPalveluJaKayttooikeusSelections = this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections.filter(
+            (currentItem: PalveluJaKayttooikeusSelection) => !(removeItem.kayttooikeus.value === currentItem.kayttooikeus.value) && (removeItem.palvelu.value === currentItem.palvelu.value));
+        this.setState({
+            newKayttooikeusryhma:{
+                    ...this.state.newKayttooikeusryhma,
+                    palveluJaKayttooikeusSelections: newPalveluJaKayttooikeusSelections
+                }
+        });
     };
 
     async createNewKayttooikeusryhma() {

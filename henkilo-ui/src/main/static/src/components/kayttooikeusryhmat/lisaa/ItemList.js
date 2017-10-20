@@ -6,7 +6,7 @@ import R from 'ramda';
 
 type Props = {
     items: Array<any>,
-    removeAction?: (string) => void,
+    removeAction: (string) => void,
     labelPath: Array<string>,
     L: any
 }
@@ -24,10 +24,7 @@ const ItemList = (props: Props) =>
             {props.items.map( (item, index) =>
                 <li className="item-list-element flex-horizontal" key={index}>
                     <span className="flex-item-1">{R.path(props.labelPath, item)}</span>
-                    { props.removeAction ?
-                        <button className="oph-button oph-button-cancel" onClick={() => props.removeAction ? props.removeAction(item) : null }>{props.L['POISTA']}</button>
-                        : null}
-
+                    <button className="oph-button oph-button-cancel" onClick={() => props.removeAction(item) }>{props.L['POISTA']}</button>
                 </li>
             )}
         </ul>

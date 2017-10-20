@@ -8,8 +8,8 @@ import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import R from 'ramda';
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {PalveluKayttooikeus} from "../../../types/domain/palvelukayttooikeus.types";
-import ItemList from "./ItemList";
-import type {KayttooikeusSelection} from "../kayttooikeusryhmat.types";
+import type {PalveluJaKayttooikeusSelection} from "../kayttooikeusryhmat.types";
+import PalveluJaKayttooikeusSelections from "./PalveluJaKayttooikeusSelections";
 
 type Props = {
     L: any,
@@ -21,8 +21,8 @@ type Props = {
     palveluKayttooikeusSelectAction: (selection: ReactSelectOption) => void,
     palveluKayttooikeusSelection: ReactSelectOption,
     lisaaPalveluJaKayttooikeusAction: () => void,
-    palveluJaKayttooikeusSelections: Array<KayttooikeusSelection>,
-    removePalveluJaKayttooikeus: () => void
+    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>,
+    removePalveluJaKayttooikeus: (PalveluJaKayttooikeusSelection) => void
 }
 
 type State = {
@@ -84,20 +84,11 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                     </div>
                 </div>
             </div>
-            <div className="flex-horizontal">
-                <div className="flex-item-1">
-                    <ItemList items={this.props.palveluJaKayttooikeusSelections}
-                                labelPath={['palvelu', 'label']}
-                                ></ItemList>
-                </div>
-                <div className="flex-item-1">
-                    <ItemList items={this.props.palveluJaKayttooikeusSelections}
-                                labelPath={['kayttooikeus', 'label']}
-                                removeAction={this.props.removePalveluJaKayttooikeus}></ItemList>
-                </div>
+            <PalveluJaKayttooikeusSelections items={this.props.palveluJaKayttooikeusSelections}
+                                             removeAction={this.props.removePalveluJaKayttooikeus}
+                                             L={this.props.L}>
+            </PalveluJaKayttooikeusSelections>
 
-
-            </div>
 
         </div>
     }
