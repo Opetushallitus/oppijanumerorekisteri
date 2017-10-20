@@ -121,7 +121,7 @@ public interface HenkiloJpaRepository {
 
     List<Henkilo> findSlavesByMasterOid(String henkiloOid);
 
-    List<Henkilo> findDuplicates(Henkilo henkilo);
+    List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria);
 
     Collection<Henkilo> findUnidentified(long limit, long offset);
 

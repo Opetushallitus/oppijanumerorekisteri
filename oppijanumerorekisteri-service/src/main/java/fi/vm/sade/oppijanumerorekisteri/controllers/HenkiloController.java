@@ -372,6 +372,17 @@ public class HenkiloController {
         return this.henkiloService.findDuplicates(oid);
     }
 
+    @GetMapping("/duplikaatit")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Hakee duplikaatit nimeä vertailemalla")
+    public List<HenkiloReadDto> getDuplikaatit(
+            @RequestParam String etunimet,
+            @RequestParam String kutsumanimi,
+            @RequestParam String sukunimi) {
+        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi);
+        return henkiloService.getDuplikaatit(criteria);
+    }
+
     @PostMapping("/{oid}/link")
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
