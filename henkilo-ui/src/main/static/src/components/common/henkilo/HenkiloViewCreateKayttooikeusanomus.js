@@ -9,6 +9,7 @@ import IconButton from "../button/IconButton";
 import CrossCircleIcon from "../icons/CrossCircleIcon";
 import EmailSelect from "./select/EmailSelect";
 import WideBlueNotification from "../../common/notifications/WideBlueNotification";
+import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal'
 
 export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -21,7 +22,7 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         henkilo: PropTypes.object.isRequired,
         organisaatioOptions: PropTypes.array.isRequired,
         ryhmaOptions: PropTypes.array.isRequired,
-        kayttooikeusryhmaOptions: PropTypes.array.isRequired,
+        kayttooikeusryhmat: PropTypes.array.isRequired,
         fetchOrganisaatioKayttooikeusryhmat: PropTypes.func.isRequired
     };
 
@@ -33,7 +34,6 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
             ryhmaSelection: '',
             kayttooikeusryhmaSelections: [],
             perustelut: '',
-            kayttooikeusryhmaOptions: [],
             organisaatioOptions: [],
             emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(props.henkilo),
         };
@@ -60,7 +60,8 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
     render() {
         const L = this.props.l10n[this.props.locale];
-        const kayttooikeusRyhmaOptions = this.props.kayttooikeusryhmaOptions.filter(option => R.findIndex(R.propEq('value', option.value), this.state.kayttooikeusryhmaSelections) < 0);
+        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.map(selection => {return {id: selection.value}})
+        const kayttooikeusryhmat = this.props.kayttooikeusryhmat.filter(kayttooikeusryhma => R.findIndex(R.propEq('id', kayttooikeusryhma.id), kayttooikeusryhmaSelections) < 0);
 
         return (<div className="kayttooikeus-anomus-wrapper">
             <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
@@ -124,21 +125,36 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
 
                     <div className="oph-input-container kayttooikeus-selection-wrapper">
 
-                        <OphSelect placeholder={L['OMATTIEDOT_ANOMINEN_KAYTTOOIKEUS']}
-                                noResultsText={L['OMATTIEDOT_ANOMINEN_OHJE']}
-                                options={kayttooikeusRyhmaOptions}
-                                onChange={this._addKayttooikeusryhmaSelection.bind(this)}
-                                disabled={this.state.emailOptions.missingEmail} />
+                        <KayttooikeusryhmaSelectModal
+                            locale={this.props.locale}
+                            L={L}
+                            kayttooikeusryhmat={kayttooikeusryhmat}
+                            onSelect={this._addKayttooikeusryhmaSelection.bind(this)}
+                            disabled={kayttooikeusryhmat.length === 0 || this.state.emailOptions.missingEmail}
+                            />
+                    </div>
+                </div>
 
+                <div className="oph-field oph-field-inline">
+                    <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                    </label>
+                    <div className="oph-input-container">
                         <ul className="selected-permissions">
                             {this.state.kayttooikeusryhmaSelections.map((kayttooikeusRyhmaSelection, index) => {
                                 return (
                                     <li key={index}>
-                                        {kayttooikeusRyhmaSelection.label}
-                                        <IconButton
-                                            onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
-                                            <CrossCircleIcon/>
-                                        </IconButton>
+                                        <div className="selected-permissions-name">
+                                            {kayttooikeusRyhmaSelection.label}
+                                            <IconButton
+                                                onClick={this._removeKayttooikeusryhmaSelection.bind(this, kayttooikeusRyhmaSelection)}>
+                                                <CrossCircleIcon/>
+                                            </IconButton>
+                                        </div>
+                                        {kayttooikeusRyhmaSelection.description &&
+                                            <div className="selected-permissions-description">
+                                                {kayttooikeusRyhmaSelection.description}
+                                            </div>
+                                        }
                                     </li>
                                 )
                             })}
@@ -264,7 +280,14 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
         return emails.map(email => ({value: email, label: email}));
     };
 
-    _addKayttooikeusryhmaSelection(kayttooikeusryhmaSelection) {
+    _addKayttooikeusryhmaSelection(kayttooikeusryhma) {
+        const locale = this.props.locale.toUpperCase()
+        const kayttooikeusryhmaSelection = {
+            value: kayttooikeusryhma.id,
+            label: R.path(['text'], R.find(R.propEq('lang', locale))(kayttooikeusryhma.nimi.texts)),
+            description: R.path(['text'], R.find(R.propEq('lang', locale))(kayttooikeusryhma.kuvaus ? kayttooikeusryhma.kuvaus.texts : [])),
+        }
+
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;
         kayttooikeusryhmaSelections.push(kayttooikeusryhmaSelection);
         this.setState({kayttooikeusryhmaSelections: kayttooikeusryhmaSelections});

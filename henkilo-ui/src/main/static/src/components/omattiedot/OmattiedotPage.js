@@ -2,7 +2,6 @@
 import React from 'react'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
 import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
-import R from 'ramda';
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
@@ -107,7 +106,8 @@ export default class OmattiedotPage extends React.Component<Props, State> {
                             <HenkiloViewCreateKayttooikeusanomus {...this.props}
                                 organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
                                 ryhmaOptions={this._parseRyhmaOptions.call(this)}
-                                kayttooikeusryhmaOptions={this._parseKayttooikeusryhmaOptions.call(this)}/>
+                                kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
+                                />
                     }
                 </div>
             </div>
@@ -156,17 +156,6 @@ export default class OmattiedotPage extends React.Component<Props, State> {
                 });
         }
         return [];
-    };
-
-    _parseKayttooikeusryhmaOptions() {
-        return this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat.map( kayttooikeusryhma => {
-
-            const label : any = R.find(R.propEq('lang', this.props.locale.toUpperCase()))(kayttooikeusryhma.description.texts);
-            return {
-                value: kayttooikeusryhma.id,
-                label: label.text
-            };
-        });
     };
 
     _parseRyhmaOptions() {

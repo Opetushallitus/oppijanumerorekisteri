@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
 
-const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L}) =>
+const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L, vuosia}) =>
     <tr key="kayttooikeusKestoField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
@@ -16,7 +16,7 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             selected={alkaaInitValue}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
+                            filterDate={(date) => date.isBefore(moment().add(vuosia, 'years'))} />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
@@ -25,7 +25,7 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             selected={paattyyInitValue}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
+                            filterDate={(date) => date.isBefore(moment().add(vuosia, 'years'))} />
             </div>
         </td>
         <td/>
@@ -37,6 +37,7 @@ CKKesto.propTypes = {
     alkaaInitValue: PropTypes.object,
     paattyyInitValue: PropTypes.object,
     L: PropTypes.object,
+    vuosia: PropTypes.number.isRequired,
 };
 
 export default CKKesto;

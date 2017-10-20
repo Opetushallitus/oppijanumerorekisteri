@@ -9,6 +9,7 @@ import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpen
 import HenkiloViewCreateKayttooikeus from "../common/henkilo/HenkiloViewCreateKayttooikeus";
 import Loader from "../common/icons/Loader";
 import HenkiloViewContactContent from "../common/henkilo/HenkiloViewContactContent";
+import StaticUtils from '../common/StaticUtils'
 
 class AdminViewPage extends React.Component {
     constructor(props) {
@@ -84,6 +85,7 @@ class AdminViewPage extends React.Component {
                         this.props.omattiedot.omattiedotOrganisaatiosLoading
                             ? <Loader />
                             : <HenkiloViewCreateKayttooikeus {...this.props}
+                                                             vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
                                                              existingKayttooikeusRef={this.existingKayttooikeusRef} />
                     }
                 </div>

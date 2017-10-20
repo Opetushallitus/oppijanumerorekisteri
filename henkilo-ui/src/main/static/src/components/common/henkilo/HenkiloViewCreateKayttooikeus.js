@@ -17,6 +17,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
         omattiedot: PropTypes.shape({
             organisaatios: PropTypes.array,
         }).isRequired,
+        vuosia: PropTypes.number.isRequired,
     };
 
     constructor(props) {
@@ -27,7 +28,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
             kayttokohdeOrganisationOid: '',
             myonnettavatOikeudet: [],
             alkupvm: moment(),
-            loppupvm: moment().add(1, 'years'),
+            loppupvm: moment().add(this.props.vuosia, 'years'),
         });
         this.initialState = {
             selectedList: [],
@@ -130,6 +131,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
                                      organisationAction={this.organisationAction}
                                      organisationData={this.props.omattiedot.organisaatios} />
                             <CKKesto L={this.L}
+                                     vuosia={this.props.vuosia}
                                      alkaaInitValue={this.state.kayttooikeusModel.alkupvm}
                                      paattyyInitValue={this.state.kayttooikeusModel.loppupvm}
                                      alkaaPvmAction={this.kestoAlkaaAction}

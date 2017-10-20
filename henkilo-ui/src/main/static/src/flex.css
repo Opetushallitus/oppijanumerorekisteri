@@ -28,3 +28,8 @@
 .flex-item-3 {
     flex: 3;
 }
+
+.flex-same-size {
+    flex-grow: 1;
+    flex-basis: 0;
+}
