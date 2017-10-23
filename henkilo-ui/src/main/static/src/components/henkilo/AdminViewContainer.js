@@ -40,7 +40,6 @@ import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
 import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 import PuraHetuttomanYksilointiButton from "../common/henkilo/buttons/PuraHetuttomanYksilointi";
 
-
 class AdminViewContainer extends React.Component {
     componentDidMount() {
         this.props.clearHenkilo();

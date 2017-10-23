@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
-import KayttooikeusryhmanMyontoKohde from './KayttooikeusryhmanMyontoKohde';
+import './KayttooikeusryhmatLisaaPage.css';
+import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
 import type {PalveluJaKayttooikeusSelection, NewKayttooikeusryhma} from '../kayttooikeusryhmat.types';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
@@ -36,15 +37,16 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             description: {fi: '', sv: '', en: ''},
             organisaatioSelections: [],
             oppilaitostyypitSelections: [],
+            ryhmaRajoite: false,
             kayttooikeusryhmaSelections: [],
-            palveluJaKayttooikeusSelections: []
+            palveluJaKayttooikeusSelections: [],
         },
         palvelutSelection: undefined,
         palveluKayttooikeusSelection: undefined
     };
 
     render() {
-        return <div className="wrapper">
+        return <form className="wrapper">
 
             <KayttooikeusryhmatNimi {...this.props}
                                     name={this.state.newKayttooikeusryhma.name}
@@ -54,13 +56,15 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                                       description={this.state.newKayttooikeusryhma.description}
                                       setDescription={this._setDescription}></KayttooikeusryhmatKuvaus>
 
-            <KayttooikeusryhmanMyontoKohde {...this.props}
+            <KayttooikeusryhmanOrganisaatiorajoite {...this.props}
+                                            ryhmaRajoite={this.state.newKayttooikeusryhma.ryhmaRajoite}
+                                               toggleRyhmaRajoite={this._toggleRyhmaRajoite}
                                            organisaatioSelectAction={this._onOrganisaatioSelection}
                                            organisaatioSelections={this.state.newKayttooikeusryhma.organisaatioSelections}
                                            removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
                                            oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                            oppilaitostyypitSelections={this.state.newKayttooikeusryhma.oppilaitostyypitSelections}
-                                           removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}></KayttooikeusryhmanMyontoKohde>
+                                           removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}></KayttooikeusryhmanOrganisaatiorajoite>
 
             <MyonnettavatKayttooikeusryhmat {...this.props}
                                             kayttooikeusryhmaSelectAction={this._onKayttooikeusryhmaSelection}
@@ -80,10 +84,19 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                                                         removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
             ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
 
-            <button className="oph-button" onClick={() => {} }>{this.props.L['TALLENNA']}</button>
-            <button className="oph-button oph-button-cancel" onClick={() => {} }>{this.props.L['PERUUTA']}</button>
-        </div>
+            <div className="kayttooikeusryhmat-lisaa-page-buttons">
+                <button disabled={!this._validateKayttooikeusryhmaInputs()} className="oph-button oph-button-primary" onClick={() => {} }>{this.props.L['TALLENNA']}</button>
+                <button className="oph-button oph-button-cancel" onClick={() => {} }>{this.props.L['PERUUTA']}</button>
+            </div>
+
+        </form>
     }
+
+    _toggleRyhmaRajoite = () => {
+        this.setState({newKayttooikeusryhma: {...this.state.newKayttooikeusryhma,
+            ryhmaRajoite: !this.state.newKayttooikeusryhma.ryhmaRajoite}});
+
+    };
 
     _onOrganisaatioSelection = (selection: ReactSelectOption): void => {
         const currentOrganisaatioSelections: Array<ReactSelectOption> = this.state.newKayttooikeusryhma.organisaatioSelections;
@@ -212,6 +225,16 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
                     palveluJaKayttooikeusSelections: newPalveluJaKayttooikeusSelections
                 }
         });
+    };
+
+    _validateKayttooikeusryhmaInputs = (): boolean => {
+        const newKayttooikeusryhma = this.state.newKayttooikeusryhma;
+        const name = newKayttooikeusryhma.name;
+        const description = newKayttooikeusryhma.description;
+        const palveluJaKayttooikeusSelections = newKayttooikeusryhma.palveluJaKayttooikeusSelections;
+        return palveluJaKayttooikeusSelections.length > 0
+            && description.fi.length > 0 && description.sv.length > 0 && description.en.length > 0
+            && name.fi.length > 0 && name.sv.length > 0 && name.en.length > 0;
     };
 
     async createNewKayttooikeusryhma() {

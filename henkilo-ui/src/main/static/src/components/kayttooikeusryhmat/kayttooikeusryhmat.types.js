@@ -20,11 +20,12 @@ export type PalveluJaKayttooikeusSelection = {
 }
 
 export type NewKayttooikeusryhma = {
+    name: NewKayttooikeusryhmaNimi,
+    description: NewKayttoikeusryhmaKuvaus,
+    ryhmaRajoite: boolean,
     organisaatioSelections: Array<ReactSelectOption>,
     oppilaitostyypitSelections: Array<ReactSelectOption>,
     kayttooikeusryhmaSelections: Array<ReactSelectOption>,
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>,
-    name: NewKayttooikeusryhmaNimi,
-    description: NewKayttoikeusryhmaKuvaus
 }
 

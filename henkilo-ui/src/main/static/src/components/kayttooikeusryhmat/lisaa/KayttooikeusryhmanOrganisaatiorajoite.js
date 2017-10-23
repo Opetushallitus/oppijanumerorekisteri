@@ -3,7 +3,7 @@ import React from 'react';
 import OrganisaatioSelection from '../../common/select/OrganisaatioSelection';
 import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
-import './KayttooikeusryhmanMyontoKohde.css';
+import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import type {Locale} from "../../../types/locale.type";
 import type {ReactSelectOption} from "../../../types/react-select.types";
 
@@ -12,6 +12,8 @@ type Props = {
     omattiedot: any,
     koodisto: any,
     locale: Locale,
+    ryhmaRajoite: boolean,
+    toggleRyhmaRajoite: () => void,
     organisaatioSelections: Array<ReactSelectOption>,
     organisaatioSelectAction: (selection: ReactSelectOption) => void,
     removeOrganisaatioSelectAction: (selection: ReactSelectOption) => void,
@@ -24,7 +26,7 @@ type State = {
     oppilaitostyypitOptions: Array<any>,
 }
 
-export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props, State> {
+export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Component<Props, State> {
 
     state = {
         oppilaitostyypitOptions: []
@@ -37,7 +39,13 @@ export default class KayttooikeusryhmanMyontoKohde extends React.Component<Props
 
     render() {
         return <div className="kayttooikeusryhman-myonto-kohde">
-            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_KUVAUS_KENELLE_MYONNETAAN']}</h4>
+            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_ORGANISAATIORAJOITE_OTSIKKO']}</h4>
+
+            <label class="oph-checkable" for="ryhmarajoite">
+                <input id="ryhmarajoite" class="oph-checkable-input" type="checkbox" onChange={this.props.toggleRyhmaRajoite} checked={this.props.ryhmaRajoite} />
+                <span class="oph-checkable-text">Käyttöoikeusryhmän saa myöntää ryhmälle</span>
+            </label>
+
             <div className="flex-horizontal">
 
                 <div className="flex-item-1 ">

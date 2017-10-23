@@ -79,7 +79,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                                        placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
                                        onChange={this.props.palveluKayttooikeusSelectAction}></OphSelect>
                         </div>
-                        <button className="oph-button add-button" disabled={this.props.palvelutSelection === undefined || this.props.palveluKayttooikeusSelection === undefined}
+                        <button className="oph-button add-button oph-button-primary" disabled={this.props.palvelutSelection === undefined || this.props.palveluKayttooikeusSelection === undefined}
                                 onClick={() => this.props.lisaaPalveluJaKayttooikeusAction()}>{this.props.L['LISAA']}</button>
                     </div>
                 </div>
