@@ -11,9 +11,14 @@ import type {Locale} from '../../../types/locale.type';
 import type {ReactSelectOption} from '../../../types/react-select.types';
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
+import type {TextGroup} from "../../../types/domain/textgroup.types";
+import type {PalveluRooliModify} from "../../../types/domain/PalveluRooliModify";
+import {http} from '../../../http';
+import {urls} from 'oph-urls-js';
 
 type Props = {
     L: any,
+    router: any,
     omattiedot: any,
     koodisto: any,
     kayttooikeus: any,
@@ -46,7 +51,7 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
     };
 
     render() {
-        return <form className="wrapper">
+        return <div className="wrapper">
 
             <KayttooikeusryhmatNimi {...this.props}
                                     name={this.state.newKayttooikeusryhma.name}
@@ -85,11 +90,11 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
 
             <div className="kayttooikeusryhmat-lisaa-page-buttons">
-                <button disabled={!this._validateKayttooikeusryhmaInputs()} className="oph-button oph-button-primary" onClick={() => {} }>{this.props.L['TALLENNA']}</button>
-                <button className="oph-button oph-button-cancel" onClick={() => {} }>{this.props.L['PERUUTA']}</button>
+                <button disabled={!this._validateKayttooikeusryhmaInputs()} className="oph-button oph-button-primary" onClick={() => {this.createNewKayttooikeusryhma()} }>{this.props.L['TALLENNA']}</button>
+                <button className="oph-button oph-button-cancel" onClick={() => {this.cancel()} }>{this.props.L['PERUUTA']}</button>
             </div>
 
-        </form>
+        </div>
     }
 
     _toggleRyhmaRajoite = () => {
@@ -237,8 +242,61 @@ export default class KayttooikeusryhmatLisaaPage extends React.Component<Props, 
             && name.fi.length > 0 && name.sv.length > 0 && name.en.length > 0;
     };
 
+    _parseNameData = (): TextGroup => {
+        const name = this.state.newKayttooikeusryhma.name;
+        const texts: any = Object.keys(name).map(
+            (key: string) => ({lang: key.toUpperCase(), text: name[key]})
+        );
+        return {texts};
+    };
+
+    _parseDescriptionData = (): TextGroup => {
+        const description = this.state.newKayttooikeusryhma.description;
+        const texts: any = Object.keys(description).map(
+            (key: string) => ({lang: key.toUpperCase(), text: description[key]})
+        );
+        return {texts};
+    };
+
+    _parsePalvelutRoolit = (): Array<PalveluRooliModify> => {
+        return this.state.newKayttooikeusryhma.palveluJaKayttooikeusSelections
+            .map( (item: PalveluJaKayttooikeusSelection) => ({palveluName: item.palvelu.value, rooli: item.kayttooikeus.value}));
+    };
+
+    _parseSlaveIds = (): Array<number> => {
+        return this.state.newKayttooikeusryhma.kayttooikeusryhmaSelections.map( (selection: ReactSelectOption) => parseInt(selection.value, 10) );
+    };
+
+    _parseOrganisaatioTyypit = (): Array<string> => {
+        const organisaatioTyypit = this.state.newKayttooikeusryhma.oppilaitostyypitSelections
+            .map( (item: ReactSelectOption) => item.value);
+        const organisaatiot = this.state.newKayttooikeusryhma.organisaatioSelections
+            .map( (item: ReactSelectOption) => item.value);
+        return organisaatioTyypit.concat(organisaatiot);
+    };
+
+    cancel = (): void => {
+        this.props.router.push('/kayttooikeusryhmat');
+    };
+
     async createNewKayttooikeusryhma() {
-        console.log(this.state);
+        const payload: any = {
+            nimi: this._parseNameData(),
+            kuvaus: this._parseDescriptionData(),
+            palvelutRoolit: this._parsePalvelutRoolit(),
+            rooliRajoite: null,
+            slaveIds: this._parseSlaveIds(),
+            organisaatioTyypit: this._parseOrganisaatioTyypit(),
+        };
+
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma');
+
+        try {
+            await http.post(url, payload);
+            this.props.router.push('/kayttooikeusryhmat');
+        } catch(error) {
+            throw error;
+        }
     }
 
 }

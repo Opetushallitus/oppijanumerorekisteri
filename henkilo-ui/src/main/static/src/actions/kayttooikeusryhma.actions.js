@@ -25,7 +25,7 @@ import {
     REMOVE_KAYTTOOIKEUS_FAILURE, FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS, FETCH_GRANTABLE_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST, FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
-    CLEAR_HAETTU_KAYTTOOIKEUSRYHMA,
+    CLEAR_HAETTU_KAYTTOOIKEUSRYHMA
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
@@ -203,9 +203,10 @@ const fetchAllKayttooikeusryhmaRequest = () => ({type: FETCH_ALL_KAYTTOOIKEUSRYH
 const fetchAllKayttooikeusryhmaSuccess = data => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS, data});
 const fetchAllKayttooikeusryhmaFailure = error => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE, error});
 
-export const fetchAllKayttooikeusryhma = () => async (dispatch, getState) => {
+export const fetchAllKayttooikeusryhma = (forceFetch = false) => async (dispatch, getState) => {
     // Fetch data only once
-    if(!getState().kayttooikeus.allKayttooikeusryhmas.length && !getState().kayttooikeus.allKayttooikeusryhmasLoading) {
+
+    if(forceFetch || (!getState().kayttooikeus.allKayttooikeusryhmas.length && !getState().kayttooikeus.allKayttooikeusryhmasLoading)) {
         dispatch(fetchAllKayttooikeusryhmaRequest());
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all');
         try {
@@ -217,3 +218,5 @@ export const fetchAllKayttooikeusryhma = () => async (dispatch, getState) => {
         }
     }
 };
+
+

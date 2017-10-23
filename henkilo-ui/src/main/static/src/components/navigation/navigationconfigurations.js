@@ -5,7 +5,7 @@ export const mainNavigation = [
     {path: '/kutsulomake', label: 'Virkailijan kutsuminen Opintopolkuun'},
     {path: '/henkilohaku', label: 'Henkilöhaku'},
     {path: '/omattiedot', label: 'Omat tiedot'},
-    {path: '/kayttooikeusryhmat/hallinta', label: 'Käyttöoikeusryhmät'}
+    {path: '/kayttooikeusryhmat', label: 'Käyttöoikeusryhmät'}
 ];
 
 export const oppijaNavi = oid => [
@@ -26,7 +26,7 @@ export const adminNavi = (oid) => [
 ];
 
 export const kayttooikeusryhmatNavigation = [
-    {path: '/kayttooikeusryhmat/hallinta', label: 'Käyttöoikeusryhmien hallinta'},
+    {path: '/kayttooikeusryhmat', label: 'Käyttöoikeusryhmien hallinta'},
     {path: '/kayttooikeusryhmat/lisaa', label: 'Lisää käyttöoikeusryhmä'}
 ];
 

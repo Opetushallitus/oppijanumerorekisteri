@@ -59,7 +59,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
 
     render() {
         return <div className="kayttooikeusryhmat-palvelu-ja-kayttooikeudet">
-            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET']}</h4>
+            <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET']} *</h4>
             <div className="flex-horizontal">
 
                 <div className="flex-item-1">
@@ -75,6 +75,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                         <div className="flex-item-1">
                             <OphSelect id="kayttooikeusryhmat-palvelu-kayttooikeudet"
                                        options={this.state.palveluKayttooikeusOptions}
+                                       disabled={!this.props.palvelutSelection}
                                        value={this.props.palveluKayttooikeusSelection}
                                        placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
                                        onChange={this.props.palveluKayttooikeusSelectAction}></OphSelect>

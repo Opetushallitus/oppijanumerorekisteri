@@ -8,14 +8,13 @@ import Loader from "../../common/icons/Loader";
 class KayttooikeusryhmatContainer extends React.Component {
 
     componentDidMount() {
-        this.props.updateNavigation(kayttooikeusryhmatNavigation, '/');
-        this.props.fetchAllKayttooikeusryhma();
+        this.props.updateNavigation(kayttooikeusryhmatNavigation, '/hallinta');
+        this.props.fetchAllKayttooikeusryhma(true);
     }
 
     render() {
-
         return <div className="wrapper">
-            {this.props.kayttooikeusryhmat.kayttooikeusryhmatLoading ? <Loader/> :
+            {this.props.kayttooikeusryhmat.allKayttooikeusryhmasLoading ? <Loader/> :
                 <ul>
                     {this.props.kayttooikeusryhmat.allKayttooikeusryhmas.map((kayttooikeusryhma, index) =>
                         <li key={kayttooikeusryhma.id}>{index}. {kayttooikeusryhma.name}</li>
@@ -30,6 +29,5 @@ class KayttooikeusryhmatContainer extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
     kayttooikeusryhmat: state.kayttooikeus
 });
-
 
 export default connect(mapStateToProps, {updateNavigation, fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)

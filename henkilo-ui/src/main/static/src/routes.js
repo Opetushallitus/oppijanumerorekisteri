@@ -33,7 +33,7 @@ export default <Route path="/" component={App}>
     <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
     <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
-    <Route path="/kayttooikeusryhmat/hallinta" component={KayttooikeusryhmatHallintaContainer} />
+    <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatHallintaContainer} />
     <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmatLisaaContainer} />
     <Route path="/palvelu/luonti" component={PalveluCreateContainer} />
 </Route>
