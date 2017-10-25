@@ -28,7 +28,8 @@ type Props = {
     locale: Locale,
     kayttooikeus: any,
     palvelutState: PalvelutState,
-    kayttooikeusState: KayttooikeusState
+    kayttooikeusState: KayttooikeusState,
+    router: any
 }
 
 class KayttooikeusryhmatLisaaContainer extends React.Component<Props> {
@@ -44,7 +45,7 @@ class KayttooikeusryhmatLisaaContainer extends React.Component<Props> {
     render() {
         return this.props.omattiedot.omattiedotOrganisaatiosLoading || this.props.koodisto.oppilaitostyypitLoading ||
         this.props.kayttooikeus.allKayttooikeusryhmasLoading || this.props.palvelutState.palvelutLoading ?
-            <Loader /> : <KayttooikeusryhmatLisaaPage {...this.props} />;
+            <Loader /> : <KayttooikeusryhmatLisaaPage {...this.props} router={this.props.router}/>;
     }
 
 }

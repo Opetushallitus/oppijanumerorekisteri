@@ -13,7 +13,8 @@ type Props = {
     updateNavigation: (Array<any>, string, ?string) => any,
     kayttooikeusryhmat: any,
     fetchAllKayttooikeusryhma: (boolean) => void,
-    locale: Locale
+    locale: Locale,
+    L: any
 }
 
 class KayttooikeusryhmatContainer extends React.Component<Props> {
@@ -27,7 +28,8 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
         const kayttooikeusryhmat: any = this.props.kayttooikeusryhmat.allKayttooikeusryhmas;
         return <div className="wrapper">
             {this.props.kayttooikeusryhmat.allKayttooikeusryhmasLoading ? <Loader/> :
-                <KayttooikeusryhmatHallintaPage {...this.props}
+                <KayttooikeusryhmatHallintaPage L={this.props.L}
+                                                locale={this.props.locale}
                                                 kayttooikeusryhmat={kayttooikeusryhmat}></KayttooikeusryhmatHallintaPage>
             }
         </div>
