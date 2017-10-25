@@ -1,11 +1,22 @@
+// @flow
 import React from 'react';
 import {connect} from 'react-redux';
 import {updateNavigation} from '../../../actions/navigation.actions';
 import {kayttooikeusryhmatNavigation} from '../../navigation/navigationconfigurations';
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
 import Loader from "../../common/icons/Loader";
+import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
+import type {Locale} from "../../../types/locale.type";
 
-class KayttooikeusryhmatContainer extends React.Component {
+
+type Props = {
+    updateNavigation: (Array<any>, string, ?string) => any,
+    kayttooikeusryhmat: any,
+    fetchAllKayttooikeusryhma: (boolean) => void,
+    locale: Locale
+}
+
+class KayttooikeusryhmatContainer extends React.Component<Props> {
 
     componentDidMount() {
         this.props.updateNavigation(kayttooikeusryhmatNavigation, '/hallinta');
@@ -13,13 +24,11 @@ class KayttooikeusryhmatContainer extends React.Component {
     }
 
     render() {
+        const kayttooikeusryhmat: any = this.props.kayttooikeusryhmat.allKayttooikeusryhmas;
         return <div className="wrapper">
             {this.props.kayttooikeusryhmat.allKayttooikeusryhmasLoading ? <Loader/> :
-                <ul>
-                    {this.props.kayttooikeusryhmat.allKayttooikeusryhmas.map((kayttooikeusryhma, index) =>
-                        <li key={kayttooikeusryhma.id}>{index}. {kayttooikeusryhma.name}</li>
-                    )}
-                </ul>
+                <KayttooikeusryhmatHallintaPage {...this.props}
+                                                kayttooikeusryhmat={kayttooikeusryhmat}></KayttooikeusryhmatHallintaPage>
             }
         </div>
     }
@@ -27,7 +36,9 @@ class KayttooikeusryhmatContainer extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    kayttooikeusryhmat: state.kayttooikeus
+    kayttooikeusryhmat: state.kayttooikeus,
+    locale: state.locale,
+    L: state.l10n.localisations[state.locale]
 });
 
 export default connect(mapStateToProps, {updateNavigation, fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)

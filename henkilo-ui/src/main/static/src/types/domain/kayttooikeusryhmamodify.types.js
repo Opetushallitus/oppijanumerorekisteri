@@ -1,7 +1,7 @@
 // @flow
 
 import type {TextGroup} from "./textgroup.types";
-import type {PalveluRooliModify} from "./PalveluRooliModify";
+import type {PalveluRooliModify} from "./PalveluRooliModify.types";
 
 export type KayttooikeusRyhmaModify = {
     nimi: TextGroup,

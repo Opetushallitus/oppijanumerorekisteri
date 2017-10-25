@@ -12,7 +12,7 @@ import type {ReactSelectOption} from '../../../types/react-select.types';
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {TextGroup} from "../../../types/domain/textgroup.types";
-import type {PalveluRooliModify} from "../../../types/domain/PalveluRooliModify";
+import type {PalveluRooliModify} from "../../../types/domain/PalveluRooliModify.types";
 import {http} from '../../../http';
 import {urls} from 'oph-urls-js';
 
