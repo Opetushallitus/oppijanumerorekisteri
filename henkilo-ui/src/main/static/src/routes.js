@@ -14,6 +14,7 @@ import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnist
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
 import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
+import OppijaCreateContainer from "./components/henkilo/OppijaCreateContainer";
 import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/hallinta/KayttooikeusryhmatHallintaContainer";
 import KayttooikeusryhmatLisaaContainer from "./components/kayttooikeusryhmat/lisaa/KayttooikeusryhmatLisaaContainer";
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
@@ -24,6 +25,7 @@ export default <Route path="/" component={App}>
     <Route path="/kutsutut" component={KutsututPageContainer} />
     <Route path="/kutsulomake" component={KutsuminenPage} />
     <Route path="/henkilohaku" component={HenkilohakuContainer} />
+    <Route path="/oppija/luonti" component={OppijaCreateContainer} />
     <Route path="/oppija/:oid" component={OppijaViewContainer} />
     <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
     <Route path="/:henkiloType/:oid/vtjvertailu" component={VtjVertailuPage}/>
