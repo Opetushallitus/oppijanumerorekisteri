@@ -11,7 +11,8 @@ type Props = {
     items: Array<Kayttooikeusryhma>,
     labelPath: Array<string>,
     locale: Locale,
-    L: any
+    L: any,
+    router: any
 }
 
 type State = {

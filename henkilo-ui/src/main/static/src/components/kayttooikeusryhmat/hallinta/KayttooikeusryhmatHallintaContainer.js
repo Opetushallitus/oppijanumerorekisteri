@@ -14,7 +14,8 @@ type Props = {
     kayttooikeusryhmat: any,
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
-    L: any
+    L: any,
+    router: any
 }
 
 class KayttooikeusryhmatContainer extends React.Component<Props> {
@@ -28,8 +29,7 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
         const kayttooikeusryhmat: any = this.props.kayttooikeusryhmat.allKayttooikeusryhmas;
         return <div className="wrapper">
             {this.props.kayttooikeusryhmat.allKayttooikeusryhmasLoading ? <Loader/> :
-                <KayttooikeusryhmatHallintaPage L={this.props.L}
-                                                locale={this.props.locale}
+                <KayttooikeusryhmatHallintaPage {...this.props}
                                                 kayttooikeusryhmat={kayttooikeusryhmat}></KayttooikeusryhmatHallintaPage>
             }
         </div>

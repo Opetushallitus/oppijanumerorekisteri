@@ -13,7 +13,8 @@ type Props = {
     item: Kayttooikeusryhma,
     locale: Locale,
     L: any,
-    show: boolean
+    show: boolean,
+    router: any
 }
 
 type State = {
@@ -64,7 +65,7 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
                     <div className="flex-item-2"></div>
                 </div>)}
             </div>
-            <button className="oph-button oph-button-primary">{this.props.L['MUOKKAA']}</button>
+            <button onClick={() => {this.props.router.push(`/kayttooikeusryhmat/${this.props.item.id}`)}} className="oph-button oph-button-primary">{this.props.L['MUOKKAA']}</button>
         </div> : null
     }
 

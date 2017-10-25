@@ -8,7 +8,8 @@ import type {Kayttooikeusryhma} from "../../../types/kayttooikeusryhma.type";
 type Props = {
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     locale: Locale,
-    L: any
+    L: any,
+    router: any
 }
 
 export default class KayttooikeusryhmatHallintaPage extends React.Component<Props> {

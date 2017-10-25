@@ -17,6 +17,7 @@ import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
 import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/hallinta/KayttooikeusryhmatHallintaContainer";
 import KayttooikeusryhmatLisaaContainer from "./components/kayttooikeusryhmat/lisaa/KayttooikeusryhmatLisaaContainer";
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
+import KayttooikeusryhmatMuokkaaContainer from "./components/kayttooikeusryhmat/muokkaa/KayttooikeusryhmatMuokkaaContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -35,5 +36,6 @@ export default <Route path="/" component={App}>
     <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
     <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatHallintaContainer} />
     <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmatLisaaContainer} />
+    <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmatMuokkaaContainer} />
     <Route path="/palvelu/luonti" component={PalveluCreateContainer} />
 </Route>
