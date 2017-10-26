@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
+import java.util.Date;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ public class SwaggerConfiguration {
     public Docket henkiloApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
+                .directModelSubstitute(Date.class, Integer.class) // unix time
                 .useDefaultResponseMessages(false);
     }
 
