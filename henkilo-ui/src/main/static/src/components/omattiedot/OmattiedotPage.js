@@ -32,6 +32,8 @@ type Props = {
     l10n: any,
     omattiedot: any,
     updatePassword: () => any,
+    updateHenkiloAndRefetch: (any) => void,
+    updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
     organisaatioKayttooikeusryhmat: any
 }
 

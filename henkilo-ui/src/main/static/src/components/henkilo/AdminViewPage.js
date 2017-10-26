@@ -1,6 +1,7 @@
+// @flow
 import './AdminViewPage.css';
 import React from 'react';
-import PropTypes from 'prop-types';
+import type {Locale} from '../../types/locale.type'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent';
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
@@ -11,18 +12,31 @@ import Loader from "../common/icons/Loader";
 import HenkiloViewContactContent from "../common/henkilo/HenkiloViewContactContent";
 import StaticUtils from '../common/StaticUtils'
 
-class AdminViewPage extends React.Component {
-    constructor(props) {
+type Props = {
+    l10n: any,
+    locale: Locale,
+    updateHenkiloAndRefetch: (any) => void,
+    updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
+    omattiedot: {
+        omattiedotOrganisaatiosLoading: boolean,
+    },
+    henkilo: any,
+    kayttooikeus: any,
+    koodisto: any,
+    createBasicInfo: (boolean, (any) => void, (any) => void, any) => any,
+    readOnlyButtons: ((any) => void) => any,
+    passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
+}
+
+class AdminViewPage extends React.Component<Props> {
+
+    existingKayttooikeusRef: any;
+
+    constructor(props: Props) {
         super(props);
 
         this.existingKayttooikeusRef = {};
     }
-
-    static propTypes = {
-        omattiedot: PropTypes.shape({
-            omattiedotOrganisaatiosLoading: PropTypes.bool.isRequired,
-        }).isRequired,
-    };
 
     render() {
         return (
@@ -44,6 +58,7 @@ class AdminViewPage extends React.Component {
                                                       readOnlyButtons={this.props.readOnlyButtons} />
                     }
                 </div>
+                {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloLoading
@@ -52,6 +67,7 @@ class AdminViewPage extends React.Component {
                             : <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
                 </div>
+                }
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloOrgsLoading
@@ -66,6 +82,7 @@ class AdminViewPage extends React.Component {
                             : <HenkiloViewExistingKayttooikeus {...this.props} />
                     }
                 </div>
+                {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
@@ -73,6 +90,7 @@ class AdminViewPage extends React.Component {
                             : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
                     }
                 </div>
+                }
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusLoading

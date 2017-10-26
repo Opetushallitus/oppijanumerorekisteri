@@ -67,8 +67,9 @@ class AdminViewContainer extends React.Component {
     }
 
     render() {
+        const readOnlyButtons = this.isPalvelukayttaja() ? this._readOnlyButtonsPalvelu : this._readOnlyButtons
         const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
-            readOnlyButtons: this._readOnlyButtons, updatePassword: updatePassword,
+            readOnlyButtons: readOnlyButtons, updatePassword: updatePassword,
         };
         return <AdminViewPage {...props} />;
     };
@@ -84,6 +85,16 @@ class AdminViewContainer extends React.Component {
                 L: this.L, locale: this.props.locale,};
             const linkitetytProps = {henkilo: this.props.henkilo, L: this.L, unlinkHenkilo: this.props.unlinkHenkilo,
                 fetchHenkiloSlaves: this.props.fetchHenkiloSlaves};
+            if (this.isPalvelukayttaja()) {
+                return [
+                    [
+                        <Sukunimi {...props} autofocus={true} label="HENKILO_PALVELUN_NIMI" />,
+                    ],
+                    [
+                        <Kayttajanimi {...props} disabled={!!R.path(['henkilo', 'kayttajatieto', 'username'], props)} />,
+                    ]
+                ]
+            }
             return [
                 [
                     <Sukunimi {...props} autofocus={true} />,
@@ -121,7 +132,17 @@ class AdminViewContainer extends React.Component {
             <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
                             styles={{top: '3rem', left: '0', width: '18rem'}}/>,
         ]);
+
+        this._readOnlyButtonsPalvelu = (edit) => ([
+            <EditButton editAction={edit} L={this.L}/>,
+            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
+            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
+                            styles={{top: '3rem', left: '0', width: '18rem'}}/>,
+        ]);
     };
+
+    isPalvelukayttaja = (): boolean => this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU'
+
 }
 
 const mapStateToProps = (state, ownProps) => {

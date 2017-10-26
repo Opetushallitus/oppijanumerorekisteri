@@ -1,35 +1,34 @@
+// @flow
 import './HenkiloViewUserContent.css'
 import React from 'react'
-import PropTypes from 'prop-types'
 import Columns from 'react-columns'
+import type {Locale} from '../../../types/locale.type'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 import moment from 'moment';
 
-class HenkiloViewUserContent extends React.Component {
-    static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        henkilo: PropTypes.shape({
-            kayttajatieto: PropTypes.object.isRequired,
-            henkilo: PropTypes.object.isRequired
-        }).isRequired,
-        readOnly: PropTypes.bool.isRequired,
-        showPassive: PropTypes.bool,
-        locale: PropTypes.string.isRequired,
-        koodisto: PropTypes.shape({
-            sukupuoli: PropTypes.array,
-            kieli: PropTypes.array,
-            kansalaisuus: PropTypes.kansalaisuus
-        }).isRequired,
-        passivoiHenkilo: PropTypes.func.isRequired,
-        yksiloiHenkilo: PropTypes.func.isRequired,
-        updateHenkiloAndRefetch: PropTypes.func.isRequired,
+type Props = {
+    l10n: any,
+    locale: string,
+    henkilo: any,
+    readOnly: boolean,
+    basicInfo: (boolean, (any) => void, (any) => void, any) => any,
+    readOnlyButtons: ((any) => void) => any,
+    updateHenkiloAndRefetch: (any) => void,
+    updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
+}
 
-        basicInfo: PropTypes.func.isRequired,
-        readOnlyButtons: PropTypes.func.isRequired,
-    };
+type State = {
+    henkiloUpdate: any,
+    readOnly: boolean,
+    showPassive: boolean,
+}
 
-    constructor(props) {
+class HenkiloViewUserContent extends React.Component<Props, State> {
+
+    L: any;
+
+    constructor(props: Props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
@@ -113,13 +112,13 @@ class HenkiloViewUserContent extends React.Component {
         this.setState({readOnly: true});
     };
 
-    _updateModelField(event) {
+    _updateModelField(event: any) {
         this.setState({
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event),
         });
     };
 
-    _updateDateField(event) {
+    _updateDateField(event: any) {
         this.setState({
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event)
         });
