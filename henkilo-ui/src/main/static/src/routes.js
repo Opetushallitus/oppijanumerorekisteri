@@ -14,10 +14,9 @@ import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnist
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
 import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
-import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/hallinta/KayttooikeusryhmatHallintaContainer";
-import KayttooikeusryhmatLisaaContainer from "./components/kayttooikeusryhmat/lisaa/KayttooikeusryhmatLisaaContainer";
+import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer";
+import KayttooikeusryhmaContainer from "./components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer";
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
-import KayttooikeusryhmatMuokkaaContainer from "./components/kayttooikeusryhmat/muokkaa/KayttooikeusryhmatMuokkaaContainer";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -35,7 +34,7 @@ export default <Route path="/" component={App}>
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
     <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
     <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatHallintaContainer} />
-    <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmatLisaaContainer} />
-    <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmatMuokkaaContainer} />
+    <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaContainer} />
+    <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaContainer} />
     <Route path="/palvelu/luonti" component={PalveluCreateContainer} />
 </Route>

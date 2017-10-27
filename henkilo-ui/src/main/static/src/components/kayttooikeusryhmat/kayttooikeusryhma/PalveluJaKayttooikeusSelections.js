@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import './PalveluJaKayttooikeusSelections.css';
-import type {PalveluJaKayttooikeusSelection} from "../kayttooikeusryhmat.types";
+import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
 
 type Props = {
     items: Array<PalveluJaKayttooikeusSelection>,

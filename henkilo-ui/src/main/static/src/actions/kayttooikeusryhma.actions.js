@@ -25,7 +25,11 @@ import {
     REMOVE_KAYTTOOIKEUS_FAILURE, FETCH_GRANTABLE_REQUEST, FETCH_GRANTABLE_SUCCESS, FETCH_GRANTABLE_FAILURE,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST, FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS,
     FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE,
-    CLEAR_HAETTU_KAYTTOOIKEUSRYHMA
+    CLEAR_HAETTU_KAYTTOOIKEUSRYHMA, FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST, FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS,
+    FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE,
+    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST, FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS,
+    FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE, FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
+    FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS, FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE
 } from './actiontypes';
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchHenkiloOrgs} from "./henkilo.actions";
@@ -219,4 +223,54 @@ export const fetchAllKayttooikeusryhma = (forceFetch = false) => async (dispatch
     }
 };
 
+// Fetch kayttooikeusryhma by id
+const fetchKayttooikeusryhmaByIdrequest = () => ({type: FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST});
+const fetchKayttooikeusryhmaByIdSuccess = payload => ({type: FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS, payload});
+const fetchKayttooikeusryhmaByIdFailure = error => ({type: FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE, error});
 
+export const fetchKayttooikeusryhmaById = id => async (dispatch) => {
+    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id', id);
+    dispatch(fetchKayttooikeusryhmaByIdrequest());
+    try {
+        const data = await http.get(url);
+        dispatch(fetchKayttooikeusryhmaByIdSuccess(data));
+    } catch (error) {
+        dispatch(fetchKayttooikeusryhmaByIdFailure(error));
+        throw error;
+    }
+};
+
+// Fetch palvelurooli by kayttooikeusryhmaId
+const fetchPalveluRooliByKayttooikeusryhmaIdRequest = () => ({type: FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST});
+const fetchPalveluRooliByKayttooikeusryhmaIdSuccess = payload => ({type: FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS, payload});
+const fetchPalveluRooliByKayttooikeusryhmaIdFailure = error => ({type: FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE, error});
+
+export const fetchPalveluRooliByKayttooikeusryhmaId = id => async (dispatch) => {
+    dispatch(fetchPalveluRooliByKayttooikeusryhmaIdRequest());
+    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', id);
+    try {
+        const data = await http.get(url);
+        dispatch(fetchPalveluRooliByKayttooikeusryhmaIdSuccess(data));
+    } catch (error) {
+        dispatch(fetchPalveluRooliByKayttooikeusryhmaIdFailure(error));
+        throw error;
+    }
+};
+
+
+// Fetch kayttooikeusryhmaslaves for kayttooikeusryhma
+const fetchKayttooikeusryhmaSlavesRequest = () => ({ type: FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST });
+const fetchKayttooikeusryhmaSlavesSuccess = payload => ({ type: FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS, payload });
+const fetchKayttooikeusryhmaSlavesFailure = error => ({ type: FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE, error});
+
+export const fetchKayttooikeusryhmaSlaves = id => async (dispatch) => {
+    dispatch(fetchKayttooikeusryhmaSlavesRequest());
+    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.slaves', id);
+    try {
+        const payload = await http.get(url);
+        dispatch(fetchKayttooikeusryhmaSlavesSuccess(payload));
+    } catch (error) {
+        dispatch(fetchKayttooikeusryhmaSlavesFailure(error));
+        throw error;
+    }
+};
