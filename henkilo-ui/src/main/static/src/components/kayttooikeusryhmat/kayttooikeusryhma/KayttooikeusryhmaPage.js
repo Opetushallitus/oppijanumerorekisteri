@@ -14,12 +14,11 @@ import type {TextGroup} from "../../../types/domain/textgroup.types";
 import type {PalveluRooliModify} from "../../../types/domain/PalveluRooliModify.types";
 import {http} from '../../../http';
 import {urls} from 'oph-urls-js';
-import type {Kayttooikeusryhma, OrganisaatioViite} from "../../../types/kayttooikeusryhma.type";
+import type {Kayttooikeusryhma} from "../../../types/kayttooikeusryhma.type";
 import R from 'ramda';
 import type {Text} from "../../../types/domain/text.types";
 import type {PalveluRooli} from "../../../types/domain/PalveluRooli.types";
 import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
-import {fetchOppijoidenTuontiYhteenveto} from "../../../actions/oppijoidentuonti.actions";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,

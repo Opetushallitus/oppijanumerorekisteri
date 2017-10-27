@@ -14,8 +14,9 @@ import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnist
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
 import OppijoidenTuontiContainer from "./components/oppijoidentuonti/OppijoidenTuontiContainer";
 import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
+import KayttooikeusryhmaPageContainer from "./components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer";
 import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer";
-import KayttooikeusryhmaContainer from "./components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer";
+import OppijaCreateContainer from "./components/henkilo/OppijaCreateContainer";
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
 
 export default <Route path="/" component={App}>
@@ -23,6 +24,7 @@ export default <Route path="/" component={App}>
     <Route path="/kutsutut" component={KutsututPageContainer} />
     <Route path="/kutsulomake" component={KutsuminenPage} />
     <Route path="/henkilohaku" component={HenkilohakuContainer} />
+    <Route path="/oppija/luonti" component={OppijaCreateContainer} />
     <Route path="/oppija/:oid" component={OppijaViewContainer} />
     <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
     <Route path="/:henkiloType/:oid/vtjvertailu" component={VtjVertailuPage}/>
@@ -34,7 +36,7 @@ export default <Route path="/" component={App}>
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
     <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
     <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatHallintaContainer} />
-    <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaContainer} />
-    <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaContainer} />
+    <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaPageContainer} />
+    <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaPageContainer} />
     <Route path="/palvelu/luonti" component={PalveluCreateContainer} />
 </Route>

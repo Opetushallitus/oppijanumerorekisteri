@@ -1,25 +1,41 @@
+// @flow
 import './HenkiloViewOrganisationContent.css'
 import React from 'react'
-import PropTypes from 'prop-types'
 import Columns from 'react-columns'
+import type {Locale} from '../../../types/locale.type'
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 import StaticUtils from "../StaticUtils";
 
-class HenkiloViewOrganisationContent extends React.Component{
-    static propTypes = {
-        henkilo: PropTypes.shape({henkiloOrgs: PropTypes.Array}.isRequired),
-        l10n: PropTypes.object.isRequired,
-        readOnly: PropTypes.bool.isRequired,
-        showPassive: PropTypes.bool,
-        locale: PropTypes.string.isRequired,
-        kayttooikeus: PropTypes.shape({
-            grantableKayttooikeus: PropTypes.object.isRequired,
-        }).isRequired,
+type Props = {
+    l10n: any,
+    locale: Locale,
+    readOnly: boolean,
+    henkilo: {
+        henkilo: any,
+        henkiloOrgs: Array<any>,
+    },
+    kayttooikeus: any,
+    passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
+}
 
-        passivoiHenkiloOrg: PropTypes.func.isRequired,
-    };
+type State = {
+    readOnly: boolean,
+    showPassive: boolean,
+}
 
-    constructor(props) {
+type OrganisaatioFlat = {|
+    name: string,
+    typesFlat: string,
+    role: string,
+    passive: boolean,
+    id: string,
+|}
+
+class HenkiloViewOrganisationContent extends React.Component<Props, State> {
+
+    L: any;
+
+    constructor(props: Props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
@@ -75,17 +91,17 @@ class HenkiloViewOrganisationContent extends React.Component{
     };
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
-    hasNoPermission(organisaatioOid) {
+    hasNoPermission(organisaatioOid: string) {
         return !this.props.kayttooikeus.grantableKayttooikeusLoading
             && !this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid];
     };
 
 
-    passivoiHenkiloOrganisation(organisationOid) {
+    passivoiHenkiloOrganisation(organisationOid: string) {
         this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);
     };
 
-    flatOrganisations(organisations) {
+    flatOrganisations(organisations: Array<any>): Array<OrganisaatioFlat> {
         return organisations.map(organisation =>
             ({
                 name: organisation.nimi[this.props.locale],

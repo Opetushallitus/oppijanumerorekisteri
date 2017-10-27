@@ -52,6 +52,7 @@ export default {
     "oppijanumerorekisteri-service.henkilo.link": "oppijanumerorekisteri-service/henkilo/$1/link",
     "oppijanumerorekisteri-service.henkilo.unlink": "oppijanumerorekisteri-service/henkilo/$1/unlink/$2",
     "oppijanumerorekisteri-service.henkilo.duplicates": "oppijanumerorekisteri-service/henkilo/$1/duplicates",
+    "oppijanumerorekisteri-service.henkilo.duplikaatit": "oppijanumerorekisteri-service/henkilo/duplikaatit?etunimet=$1&kutsumanimi=$2&sukunimi=$3",
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
     "oppijanumerorekisteri-service.henkilo.delete": "oppijanumerorekisteri-service/henkilo/$1",
     "oppijanumerorekisteri-service.henkilo.yksiloi": "oppijanumerorekisteri-service/henkilo/$1/yksiloi",

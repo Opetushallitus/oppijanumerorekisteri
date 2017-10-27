@@ -1,11 +1,11 @@
 // @flow
 import React from 'react';
-import type {NewKayttoikeusryhmaKuvaus} from "../kayttooikeusryhmat.types";
+import type {KayttooikeusryhmaKuvaus} from "./KayttooikeusryhmaPage";
 import './KayttooikeusryhmatKuvaus.css';
 
 type Props = {
     L: any,
-    description: NewKayttoikeusryhmaKuvaus,
+    description: KayttooikeusryhmaKuvaus,
     setDescription: (string, string) => void
 }
 

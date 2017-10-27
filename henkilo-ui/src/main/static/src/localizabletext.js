@@ -2,6 +2,15 @@ import R from 'ramda'
 
 const FORMATS = [
     {
+        // used (at least) in koodistopalvelu
+        isValid: (localizableText) => Array.isArray(localizableText) && localizableText.length > 0,
+        getValue: (localizableText, uiLang) => {
+            const value = R.find(R.propEq('kieli', uiLang.toUpperCase()))(localizableText)
+            return value ? value.nimi : value
+        },
+        getFallbackValue: (localizableText) => localizableText[0]
+    },
+    {
         // used (at least) in henkilöpalvelu
         isValid: (localizableText) => Array.isArray(localizableText.texts) && localizableText.texts.length > 0,
         getValue: (localizableText, uiLang) => {

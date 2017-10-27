@@ -4,7 +4,7 @@ import LabelValue from "./LabelValue";
 import StaticUtils from "../../StaticUtils";
 
 const Sukunimi = (props) => <LabelValue {...props} values={{
-    label: 'HENKILO_SUKUNIMI',
+    label: props.label || 'HENKILO_SUKUNIMI',
     value: props.henkilo.henkilo.sukunimi,
     inputValue: 'sukunimi',
     disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
