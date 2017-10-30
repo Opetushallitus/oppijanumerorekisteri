@@ -14,6 +14,7 @@ export default {
     "kayttooikeus-service.l10n.languages": "kayttooikeus-service/l10n/languages",
     "kayttooikeus-service.kutsu": "kayttooikeus-service/kutsu",
     "kayttooikeus-service.peruutaKutsu": "kayttooikeus-service/kutsu/$1",
+    "kayttooikeus-service.renewKutsu": "kayttooikeus-service/kutsu/$1/renew",
     "kayttooikeus-service.kutsu.by-token": "kayttooikeus-service/kutsu/token/$1",
     "kayttooikeus-service.buildversion": "kayttooikeus-service/buildversion.txt",
     "kayttooikeus-service.henkilo.organisaatios": "kayttooikeus-service/henkilo/$1/organisaatio",

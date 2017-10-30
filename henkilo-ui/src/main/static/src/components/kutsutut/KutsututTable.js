@@ -1,20 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
-import {http} from "../../http";
 import {urls} from 'oph-urls-js';
+import {fetchKutsus, renewKutsu} from "../../actions/kutsu.actions";
 
-export default class KutsututTable extends React.Component {
+class KutsututTable extends React.Component {
 
     static propTypes = {
-        fetchKutsus: PropTypes.func,
-        L: PropTypes.object.isRequired,
         kutsus: PropTypes.array,
-        cancelInvitation: PropTypes.func,
-        locale: PropTypes.string.isRequired,
+        cancelInvitation: PropTypes.func.isRequired,
         isLoading: PropTypes.bool.isRequired,
         allFetched: PropTypes.bool.isRequired,
     };
@@ -83,11 +81,10 @@ export default class KutsututTable extends React.Component {
     }
 
     createResendCell(kutsu) {
-        const deleteUrl = urls.url('kayttooikeus-service.peruutaKutsu', kutsu.id);
-        const createUrl = urls.url('kayttooikeus-service.kutsu');
-        const resendAction = () => http.delete(deleteUrl)
-            .then(() => http.post(createUrl, kutsu))
-            .then(() => this.props.fetchKutsus(this.state.sorted[0]));
+        const resendAction = () => {
+            this.props.renewKutsu(kutsu.id);
+            this.props.fetchKutsus(this.state.sorted[0]);
+        };
         return kutsu.tila === 'AVOIN' &&
             <Button
                     action={resendAction}>
@@ -125,3 +122,9 @@ export default class KutsututTable extends React.Component {
 
 }
 
+const mapStateToProps = (state, ownProps) => ({
+    L: state.l10n.localisations[state.locale],
+    locale: state.locale,
+});
+
+export default connect(mapStateToProps, {renewKutsu, fetchKutsus})(KutsututTable);

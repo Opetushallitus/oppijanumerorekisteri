@@ -1,7 +1,8 @@
 import {
     DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_KUTSU_SUCCESS,
     FETCH_KUTSUBYTOKEN_REQUEST, FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE,
-    CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST, LOGIN_FAILED, CLEAR_KUTSU_LIST
+    CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST, LOGIN_FAILED, CLEAR_KUTSU_LIST, RENEW_KUTSU_REQUEST,
+    RENEW_KUTSU_SUCCESS, RENEW_KUTSU_FAILURE
 } from './actiontypes';
 
 import {http} from "../http";
@@ -15,6 +16,19 @@ export const deleteKutsu = (id) => (dispatch => {
     const url = urls.url('kayttooikeus-service.peruutaKutsu', id);
     http.delete(url).then(json => dispatch(receiveDeleteKutsu(id, json)));
 });
+
+export const renewKutsu = (id) => async dispatch => {
+    dispatch(id => ({type: RENEW_KUTSU_REQUEST, id,}));
+    const url = urls.url('kayttooikeus-service.renewKutsu', id);
+    try {
+        await http.put(url);
+        dispatch(id => ({type: RENEW_KUTSU_SUCCESS, id,}));
+    } catch (error) {
+        console.error('Could not renew kutsu with id ' + id);
+        dispatch(id => ({type: RENEW_KUTSU_FAILURE, id,}));
+        throw error;
+    }
+};
 
 const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
 const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});

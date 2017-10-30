@@ -15,6 +15,12 @@ export default class KutsututPage extends React.Component {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
+        this.kutsuViews = {
+            ONLY_OWN_KUTSUS: 'ONLY_OWN_KUTSUS',
+            ADMIN: 'ADMIN',
+            OPH: 'OPH',
+            KAYTTOOIKEUSRYHMA: 'KAYTTOOIKEUSRYHMA',
+        };
 
         this.defaultLimit = 20;
         this.defaultOffset = 0;
@@ -25,19 +31,28 @@ export default class KutsututPage extends React.Component {
             KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: 'AIKALEIMA',
             KUTSUT_NIMI_OTSIKKO: 'NIMI',
             KUTSUT_SAHKOPOSTI_OTSIKKO: 'SAHKOPOSTI',
+            DEFAULT: '',
         };
+        let view;
+        if (this.props.isAdmin) {
+            view = this.kutsuViews.OPH;
+        }
+        // OPH-virkailija (miniadmin) or normal virkailija do not have real default view
+        else {
+            view = this.kutsuViews.DEFAULT;
+        }
 
         this.state = {
             confirmDeleteFor: null,
+            allFetched: false,
             payload: {
-                onlyOwnKutsus: true,
                 searchTerm: '',
                 organisaatioOid: null,
                 tilas: ['AVOIN'],
                 sortBy: 'AIKALEIMA',
                 direction: 'DESC',
+                view,
             },
-            allFetched: false,
         };
     }
 
@@ -54,7 +69,7 @@ export default class KutsututPage extends React.Component {
 
     componentWillMount() {
         this.fetchKutsus();
-        if(this.props.isAdmin) {
+        if (this.props.isAdmin) {
             this.props.fetchAllOrganisaatios();
         }
     }
@@ -86,8 +101,8 @@ export default class KutsututPage extends React.Component {
                                                organisaatiot={this.props.organisaatiot} />
                     </div>
                     <div className="flex-item-1" id="radiator">
-                        <BooleanRadioButtonGroup value={!this.state.payload.onlyOwnKutsus}
-                                                 onChange={() => this.toggleFetchAll(this.state.payload.onlyOwnKutsus)}
+                        <BooleanRadioButtonGroup value={!this.state.payload.view}
+                                                 onChange={this.toggleView.bind(this)}
                                                  trueLabel={this.L['KUTSUTUT_KAIKKI_BUTTON']}
                                                  falseLabel={this.L['KUTSUTUT_OMAT_BUTTON']} />
                     </div>
@@ -159,8 +174,28 @@ export default class KutsututPage extends React.Component {
         this.fetchKutsus();
     }
 
-    toggleFetchAll(getOwnKutsus) {
-        this.setState({payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}},
+    toggleView() {
+        let newView = this.state.payload.view;
+        if (this.props.isAdmin) {
+            newView = newView === this.kutsuViews.OPH
+                ? this.kutsuViews.DEFAULT
+                : this.kutsuViews.OPH;
+        }
+        else if (this.props.isOphVirkailija) {
+            newView = newView === this.kutsuViews.KAYTTOOIKEUSRYHMA
+                ? this.kutsuViews.DEFAULT
+                : this.kutsuViews.KAYTTOOIKEUSRYHMA;
+        }
+        else {
+            newView = this.kutsuViews.DEFAULT;
+        }
+
+        this.setState({
+                payload: {
+                    ...this.state.payload,
+                    view: newView,
+                }
+            },
             () => this.fetchKutsus());
     }
 
