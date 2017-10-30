@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
@@ -13,6 +15,14 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriter
  * @see HenkiloService yleiskäyttöisempi palvelu henkilöiden käsittelyyn
  */
 public interface OppijaService {
+
+    /**
+     * Oppijan luonti.
+     *
+     * @param dto oppijan tiedot
+     * @return oppijan tiedot
+     */
+    HenkiloReadDto create(HenkiloCreateDto dto);
 
     /**
      * Oppijoiden luonti eräajona.
@@ -55,6 +65,14 @@ public interface OppijaService {
      * @return henkilö OID:t
      */
     Iterable<String> listOidsBy(OppijaTuontiCriteria criteria);
+
+    /**
+     * Lisää nykyisen käyttäjän organisaatiot oppijalle. Jos oppija on jo
+     * organisaatio ei tehdä mitään.
+     *
+     * @param henkiloOid oppijan oid
+     */
+    void addKayttajanOrganisaatiot(String henkiloOid);
 
     /**
      * Lisää oppijan organisaatioon. Jos oppija on jo organisaatio ei tehdä
