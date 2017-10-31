@@ -5,7 +5,6 @@ import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
-import {urls} from 'oph-urls-js';
 import {fetchKutsus, renewKutsu} from "../../actions/kutsu.actions";
 
 class KutsututTable extends React.Component {

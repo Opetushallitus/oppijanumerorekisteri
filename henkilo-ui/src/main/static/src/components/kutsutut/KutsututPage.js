@@ -5,9 +5,10 @@ import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
-import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
+import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
+import KutsuViews from "./KutsuViews";
 
 export default class KutsututPage extends React.Component {
 
@@ -15,12 +16,6 @@ export default class KutsututPage extends React.Component {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
-        this.kutsuViews = {
-            ONLY_OWN_KUTSUS: 'ONLY_OWN_KUTSUS',
-            ADMIN: 'ADMIN',
-            OPH: 'OPH',
-            KAYTTOOIKEUSRYHMA: 'KAYTTOOIKEUSRYHMA',
-        };
 
         this.defaultLimit = 20;
         this.defaultOffset = 0;
@@ -35,11 +30,11 @@ export default class KutsututPage extends React.Component {
         };
         let view;
         if (this.props.isAdmin) {
-            view = this.kutsuViews.OPH;
+            view = KutsuViews.OPH;
         }
         // OPH-virkailija (miniadmin) or normal virkailija do not have real default view
         else {
-            view = this.kutsuViews.DEFAULT;
+            view = KutsuViews.DEFAULT;
         }
 
         this.state = {
@@ -101,10 +96,8 @@ export default class KutsututPage extends React.Component {
                                                organisaatiot={this.props.organisaatiot} />
                     </div>
                     <div className="flex-item-1" id="radiator">
-                        <BooleanRadioButtonGroup value={!this.state.payload.view}
-                                                 onChange={this.toggleView.bind(this)}
-                                                 trueLabel={this.L['KUTSUTUT_KAIKKI_BUTTON']}
-                                                 falseLabel={this.L['KUTSUTUT_OMAT_BUTTON']} />
+                        <KutsututBooleanRadioButton view={this.state.payload.view}
+                                                    toggleView={this.toggleView.bind(this)} />
                     </div>
                 </div>
                 <KutsututTable
@@ -174,22 +167,7 @@ export default class KutsututPage extends React.Component {
         this.fetchKutsus();
     }
 
-    toggleView() {
-        let newView = this.state.payload.view;
-        if (this.props.isAdmin) {
-            newView = newView === this.kutsuViews.OPH
-                ? this.kutsuViews.DEFAULT
-                : this.kutsuViews.OPH;
-        }
-        else if (this.props.isOphVirkailija) {
-            newView = newView === this.kutsuViews.KAYTTOOIKEUSRYHMA
-                ? this.kutsuViews.DEFAULT
-                : this.kutsuViews.KAYTTOOIKEUSRYHMA;
-        }
-        else {
-            newView = this.kutsuViews.DEFAULT;
-        }
-
+    toggleView(newView) {
         this.setState({
                 payload: {
                     ...this.state.payload,
