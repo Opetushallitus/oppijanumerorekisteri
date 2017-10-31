@@ -46,7 +46,6 @@ export type KayttooikeusryhmaForm = {
     oppilaitostyypitSelections: Array<ReactSelectOption>,
     kayttooikeusryhmaSelections: Array<ReactSelectOption>,
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>,
-    passivoitu: boolean
 }
 
 type Props = {
@@ -81,7 +80,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             ryhmaRestriction: false,
             kayttooikeusryhmaSelections: [],
             palveluJaKayttooikeusSelections: [],
-            passivoitu: false
         },
         palvelutSelection: undefined,
         palveluKayttooikeusSelection: undefined,
@@ -172,10 +170,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     }
 
     _passivoiKayttooikeusryhma = (): void => {
-        this.setState({ kayttooikeusryhmaForm: {...this.state.kayttooikeusryhmaForm, passivoitu: true },
-            showPassivoiModal: false
-        }, () => {
-            this.updateKayttooikeusryhma();
+        this.setState( { showPassivoiModal: false}, () => {
+            this.passivoiKayttooikeusryhma();
         });
     };
 
@@ -188,7 +184,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             ryhmaRestriction: this._parseExistingRyhmaRestriction(kayttooikeusryhmaState),
             kayttooikeusryhmaSelections: this._parseExistingKayttooikeusryhmaSelections(kayttooikeusryhmaState.kayttooikeusryhmaSlaves),
             palveluJaKayttooikeusSelections: this._parseExistingPalvelutRoolitData(kayttooikeusryhmaState.palvelutRoolit),
-            passivoitu: false
         };
     };
 
@@ -474,9 +469,18 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         rooliRajoite: null,
         ryhmaRestriction: this.state.kayttooikeusryhmaForm.ryhmaRestriction,
         organisaatioTyypit: this._parseOrganisaatioTyypit(),
-        slaveIds: this._parseSlaveIds(),
-        passivoitu: this.state.kayttooikeusryhmaForm.passivoitu
+        slaveIds: this._parseSlaveIds()
     });
+
+    async passivoiKayttooikeusryhma() {
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id.passivoi', this.props.kayttooikeusryhmaId);
+        try {
+            await http.put(url);
+            this.props.router.push('/kayttooikeusryhmat');
+        } catch (error) {
+            throw error;
+        }
+    }
 
     async createNewKayttooikeusryhma() {
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma');
