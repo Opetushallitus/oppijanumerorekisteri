@@ -12,8 +12,8 @@ type Props = {
     omattiedot: any,
     koodisto: any,
     locale: Locale,
-    ryhmaRajoite: boolean,
-    toggleRyhmaRajoite: () => void,
+    ryhmaRestriction: boolean,
+    toggleRyhmaRestriction: () => void,
     organisaatioSelections: Array<ReactSelectOption>,
     organisaatioSelectAction: (selection: ReactSelectOption) => void,
     removeOrganisaatioSelectAction: (selection: ReactSelectOption) => void,
@@ -40,12 +40,11 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
     render() {
         return <div className="kayttooikeusryhman-myonto-kohde">
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_ORGANISAATIORAJOITE_OTSIKKO']}</h4>
-            {/*
-            <label className="oph-checkable" htmlFor="ryhmarajoite">
-                <input id="ryhmarajoite" className="oph-checkable-input" type="checkbox" onChange={this.props.toggleRyhmaRajoite} checked={this.props.ryhmaRajoite} />
+            <label className="oph-checkable" htmlFor="ryhmarestriction">
+                <input id="ryhmarestriction" className="oph-checkable-input" type="checkbox" onChange={this.props.toggleRyhmaRestriction} checked={this.props.ryhmaRestriction} />
                 <span className="oph-checkable-text">Käyttöoikeusryhmän saa myöntää ryhmälle</span>
             </label>
-*/}
+
             <div className="flex-horizontal">
 
                 <div className="flex-item-1 ">

@@ -9,5 +9,7 @@ export type KayttooikeusRyhmaModify = {
     palvelutRoolit: Array<PalveluRooliModify>,
     organisaatioTyypit: Array<string>,
     rooliRajoite: string,
-    slaveIds: Array<number>
+    slaveIds: Array<number>,
+    passivoitu: boolean,
+    ryhmaRestriction: boolean
 }

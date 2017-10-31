@@ -40,7 +40,7 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
     }
 
     render() {
-        const kuvaus: any =   R.path(['kuvaus'], this.props.item);
+        const kuvaus: any = R.path(['kuvaus', 'texts'], this.props.item);
 
         return this.props.show ? <div className="kayttooikeusryhma-tiedot">
             <LocalizedTextGroup texts={kuvaus} locale={this.props.locale}></LocalizedTextGroup>
