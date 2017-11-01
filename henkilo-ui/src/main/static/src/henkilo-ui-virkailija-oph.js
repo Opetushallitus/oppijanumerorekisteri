@@ -63,6 +63,7 @@ export default {
     "oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton": "oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot/yliajayksiloimaton",
     "oppijanumerorekisteri-service.oppija.yhteenveto": "oppijanumerorekisteri-service/oppija/yhteenveto",
     "oppijanumerorekisteri-service.oppija": "oppijanumerorekisteri-service/oppija",
+    "oppijanumerorekisteri-service.oppija.byOid.organisaatio": "oppijanumerorekisteri-service/oppija/$1/organisaatio",
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
 
     "organisaatio-service.baseUrl": "/",

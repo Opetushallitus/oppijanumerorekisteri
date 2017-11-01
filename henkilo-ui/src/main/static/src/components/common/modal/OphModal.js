@@ -1,10 +1,12 @@
 // @flow
 import * as React from 'react'
+import classNames from 'classnames'
 
 type Props = {
     children: React.Node,
     title?: string,
     onClose: (SyntheticEvent<HTMLButtonElement>) => void,
+    big?: boolean,
 }
 
 /**
@@ -15,7 +17,7 @@ class OphModal extends React.Component<Props> {
     render() {
         return (
             <div className="oph-overlay oph-overlay-bg oph-overlay-is-visible" role="dialog" tabIndex="-1">
-                <div className="oph-modal" role="document">
+                <div className={classNames({'oph-modal': true}, {'oph-modal-big': this.props.big})} role="document">
                     <button className="oph-button oph-button-close" type="button" title="Close" aria-label="Close" onClick={this.props.onClose}>
                         <span aria-hidden="true">×</span>
                     </button>

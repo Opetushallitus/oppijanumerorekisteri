@@ -1,9 +1,26 @@
+// @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import WideGreenNotification from "./WideGreenNotification";
 import WideRedNotification from "./WideRedNotification";
 
-const Notifications = ({notifications, L, closeAction, styles}) => <div style={styles}>
+export type NotificationType = 'ok' | 'error'
+
+export type Notification = {|
+    id?: string,
+    type: NotificationType,
+    notL10nMessage: string,
+    organisaatioOid?: string,
+    ryhmaIdList?: Array<string>,
+|}
+
+type Props = {|
+    notifications: Array<Notification>,
+    L: any,
+    closeAction: (type: NotificationType, id: ?string) => void,
+    styles?: any,
+|}
+
+const Notifications = ({notifications, L, closeAction, styles}: Props) => <div style={styles}>
     {notifications.filter(notification => notification.type === 'ok').map((notification, idx) =>
         <WideGreenNotification key={idx}
                                message={L[notification.notL10nMessage]}
@@ -17,14 +34,5 @@ const Notifications = ({notifications, L, closeAction, styles}) => <div style={s
                                  ? notification.organisaatioOid + notification.ryhmaIdList.join('')
                                  : notification.id)} /> )}
 </div>;
-
-Notifications.propTypes = {
-    notifications: PropTypes.arrayOf(PropTypes.shape({
-        type: PropTypes.string.isRequired,
-        notL10nMessage: PropTypes.string,
-    })),
-    L: PropTypes.object.isRequired,
-    closeAction: PropTypes.func.isRequired,
-};
 
 export default Notifications;

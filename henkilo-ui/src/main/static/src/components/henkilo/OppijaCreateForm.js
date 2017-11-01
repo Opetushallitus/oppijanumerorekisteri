@@ -23,7 +23,8 @@ type Form = {
 }
 
 type Props = {
-    onSubmit: (HenkiloCreate) => Promise<void>,
+    tallenna: (HenkiloCreate) => Promise<void>,
+    lisaaOppijaKayttajanOrganisaatioihin: (henkiloOid: string) => Promise<*>,
     locale: Locale,
     L: any,
     sukupuoliKoodisto: Koodisto,
@@ -39,6 +40,14 @@ type State = {
     form: Form,
 }
 
+const initialState = {
+    disabled: false,
+    submitted: false,
+    errors: [],
+    henkilo: {etunimet: '', kutsumanimi: '', sukunimi: ''},
+    form: {passinumero: '', sahkoposti: ''},
+}
+
 /**
  * Oppijan luonti -lomake.
  */
@@ -47,13 +56,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
 
-        this.state = {
-            disabled: false,
-            submitted: false,
-            errors: [],
-            henkilo: {etunimet: '', kutsumanimi: '', sukunimi: ''},
-            form: {passinumero: '', sahkoposti: ''},
-        }
+        this.state = initialState
     }
 
     render() {
@@ -62,7 +65,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
             return {...koodi, koodiArvo: koodi.koodiArvo.toLowerCase()}
         })
         return (
-            <form onSubmit={this.onSubmit}>
+            <form onSubmit={this.tallenna}>
                 <div className="oph-field oph-field-is-required">
                     <label className="oph-label">
                         {this.props.L['HENKILO_ETUNIMET']}
@@ -111,6 +114,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         etunimet={this.state.henkilo.etunimet}
                         kutsumanimi={this.state.henkilo.kutsumanimi}
                         sukunimi={this.state.henkilo.sukunimi}
+                        lisaaOppijaKayttajanOrganisaatioihin={this.lisaaOppijaKayttajanOrganisaatioihin}
                         />
                 </div>
                 <div className="oph-field oph-field-is-required">
@@ -269,7 +273,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
         return <div key={index} className="oph-field-text oph-error">{error.value}</div>
     }
 
-    onSubmit = async (event: SyntheticEvent<HTMLButtonElement>) => {
+    tallenna = async (event: SyntheticEvent<HTMLButtonElement>) => {
         event.preventDefault()
 
         const errors = this.validate(this.state.henkilo)
@@ -277,7 +281,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
             this.setState({submitted: true, errors: errors})
         } else {
             await this.setState({disabled: true})
-            await this.props.onSubmit(this.getHenkilo())
+            await this.props.tallenna(this.getHenkilo())
             await this.setState({disabled: false})
         }
     }
@@ -286,7 +290,6 @@ class OppijaCreateForm extends React.Component<Props, State> {
     getHenkilo = (): HenkiloCreate => {
         const properties = PropertySingleton.getState()
         return {...this.state.henkilo,
-            henkiloTyyppi: 'OPPIJA',
             passinumerot: this.state.form.passinumero ? [this.state.form.passinumero] : null,
             yhteystiedotRyhma: this.state.form.sahkoposti ? [{
                 ryhmaKuvaus: properties.KOTIOSOITE,
@@ -297,6 +300,11 @@ class OppijaCreateForm extends React.Component<Props, State> {
                 }],
             }] : null,
         }
+    }
+
+    lisaaOppijaKayttajanOrganisaatioihin = async (henkiloOid: string) => {
+        await this.props.lisaaOppijaKayttajanOrganisaatioihin(henkiloOid)
+        this.setState(initialState)
     }
 
 }

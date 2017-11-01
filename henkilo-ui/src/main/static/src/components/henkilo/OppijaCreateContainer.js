@@ -7,12 +7,14 @@ import {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
-} from '../../actions/koodisto.actions';
+} from '../../actions/koodisto.actions'
 import type {Locale} from '../../types/locale.type'
 import type {Koodisto} from '../../types/koodisto.type'
 import OppijaCreateForm from './OppijaCreateForm'
 import type {HenkiloCreate} from '../../types/henkilo.type'
-import WideRedNotification from '../../components/common/notifications/WideRedNotification'
+import Notifications from '../../components/common/notifications/Notifications'
+import type {Notification, NotificationType} from '../../components/common/notifications/Notifications'
+import PropertySingleton from '../../globals/PropertySingleton'
 
 type Props = {
     router: any,
@@ -27,13 +29,19 @@ type Props = {
 }
 
 type State = {
-    error?: string,
+    ilmoitukset: Array<Notification>,
 }
 
 /**
  * Oppijan luonti -näkymä.
  */
 class OppijaCreateContainer extends React.Component<Props, State> {
+
+    constructor(props: Props) {
+        super(props)
+
+        this.state = {ilmoitukset: []}
+    }
 
     componentDidMount() {
         this.props.fetchSukupuoliKoodisto()
@@ -44,13 +52,15 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     render() {
         return (
             <div className="wrapper">
-                {this.state && this.state.error
-                    ? <WideRedNotification message={this.state.error} closeAction={() => this.setError()} />
-                    : null
-                }
+                <Notifications
+                    notifications={this.state.ilmoitukset}
+                    L={this.props.L}
+                    closeAction={this.poistaIlmoitus}
+                    />
                 <h1>{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</h1>
                 <OppijaCreateForm
-                    onSubmit={this.onSubmit}
+                    tallenna={this.tallenna}
+                    lisaaOppijaKayttajanOrganisaatioihin={this.lisaaOppijaKayttajanOrganisaatioihin}
                     locale={this.props.locale}
                     L={this.props.L}
                     sukupuoliKoodisto={this.props.sukupuoliKoodisto}
@@ -61,26 +71,35 @@ class OppijaCreateContainer extends React.Component<Props, State> {
         )
     }
 
-    setError = (error) => {
-        this.setState({error: error});
+    lisaaIlmoitus = (type: NotificationType, messageKey: string) => {
+        const ilmoitus = {id: '' + PropertySingleton.getNewId(), type: type, notL10nMessage: messageKey}
+        this.setState({ilmoitukset: [...this.state.ilmoitukset, ilmoitus]})
     }
 
-    onSubmit = async (henkilo: HenkiloCreate) => {
+    poistaIlmoitus = (type: NotificationType, id: ?string) => {
+        const ilmoitukset = this.state.ilmoitukset.filter(ilmoitus => ilmoitus.id !== id)
+        this.setState({ilmoitukset: ilmoitukset})
+    }
+
+    tallenna = async (oppija: HenkiloCreate) => {
         try {
-            const henkiloOid = await this.createHenkilo(henkilo);
-            this.navigateToHenkilo(henkiloOid);
+            const url = urls.url('oppijanumerorekisteri-service.oppija')
+            const oid = await http.post(url, oppija)
+            this.props.router.push(`/oppija/${oid}`)
         } catch (error) {
-            this.setError(this.props.L['HENKILON_LUONTI_EPAONNISTUI']);
+            this.lisaaIlmoitus('error', this.props.L['HENKILON_LUONTI_EPAONNISTUI'])
         }
     }
 
-    createHenkilo = async (henkilo: HenkiloCreate) => {
-        const henkiloUrl = urls.url('oppijanumerorekisteri-service.henkilo');
-        return await http.post(henkiloUrl, henkilo);
-    }
-
-    navigateToHenkilo = (oid) => {
-        this.props.router.push(`/oppija/${oid}`);
+    lisaaOppijaKayttajanOrganisaatioihin = async (henkiloOid: string) => {
+        try {
+            const url = urls.url('oppijanumerorekisteri-service.oppija.byOid.organisaatio', henkiloOid)
+            await http.post(url)
+            this.lisaaIlmoitus('ok', 'OPPIJAN_LIITTAMINEN_ORGANISAATIOON_ONNISTUI')
+        } catch (e) {
+            this.lisaaIlmoitus('error', 'OPPIJAN_LIITTAMINEN_ORGANISAATIOON_EPAONNISTUI')
+            throw e
+        }
     }
 
 }
@@ -92,11 +111,11 @@ const mapStateToProps = (state) => {
         sukupuoliKoodisto: state.koodisto.sukupuoliKoodisto,
         kieliKoodisto: state.koodisto.kieliKoodisto,
         kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
-    };
-};
+    }
+}
 
 export default connect(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
-})(OppijaCreateContainer);
+})(OppijaCreateContainer)

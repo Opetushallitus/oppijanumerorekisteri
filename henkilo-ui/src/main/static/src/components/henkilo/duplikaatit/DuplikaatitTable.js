@@ -1,11 +1,13 @@
 // @flow
 import React from 'react'
+import {Link} from 'react-router'
 import ReactTable from 'react-table'
 import moment from 'moment'
 
 type Props = {
     L: any,
     data: Array<any>,
+    lisaaOppijaKayttajanOrganisaatioihin: (henkiloOid: string) => Promise<*>,
 }
 
 /**
@@ -18,6 +20,9 @@ class DuplikaatitTable extends React.Component<Props> {
             {
                 Header: 'Oppijanumero',
                 accessor: 'oidHenkilo',
+                Cell: row => (
+                    <Link to={'oppija/' + row.value} target="_blank">{row.value}</Link>
+                ),
             },
             {
                 Header: 'Etunimet',
@@ -39,6 +44,15 @@ class DuplikaatitTable extends React.Component<Props> {
                 Header: 'Syntymäaika',
                 accessor: henkilo => henkilo.syntymaaika ? moment(henkilo.syntymaaika).format() : null,
                 id: 'syntymaaika',
+            },
+            {
+                Header: '',
+                accessor: 'oidHenkilo',
+                Cell: row => (
+                    <button type="button" className="oph-button oph-button-primary" onClick={(e) => {e.preventDefault(); this.props.lisaaOppijaKayttajanOrganisaatioihin(row.value)}}>
+                        {this.props.L['OPPIJA_LISAA_KAYTTAJAN_ORGANISAATIOIHIN']}
+                    </button>
+                ),
             },
         ]
         return (

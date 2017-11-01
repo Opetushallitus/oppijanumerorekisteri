@@ -10,6 +10,7 @@ type Props = {
     etunimet: ?string,
     kutsumanimi: ?string,
     sukunimi: ?string,
+    lisaaOppijaKayttajanOrganisaatioihin: (henkiloOid: string) => Promise<*>,
 }
 
 type State = {
@@ -47,8 +48,12 @@ class DuplikaatitButton extends React.Component<Props, State> {
                     <span>{this.props.L['NIMELLA_EI_LOYTYNYT']}</span>
                 }
                 {this.state.visible &&
-                    <OphModal onClose={this.onClose}>
-                        <DuplikaatitTable L={this.props.L} data={this.state.data} />
+                    <OphModal onClose={this.onClose} big={true}>
+                        <DuplikaatitTable
+                            L={this.props.L}
+                            data={this.state.data}
+                            lisaaOppijaKayttajanOrganisaatioihin={this.lisaaOppijaKayttajanOrganisaatioihin}
+                            />
                     </OphModal>
                 }
             </div>
@@ -59,14 +64,23 @@ class DuplikaatitButton extends React.Component<Props, State> {
         event.preventDefault()
         this.setState({loading: true, loaded: false})
         const url = urls.url('oppijanumerorekisteri-service.henkilo.duplikaatit', this.props.etunimet, this.props.kutsumanimi, this.props.sukunimi)
-        const henkilot = await http.get(url)
-        const visible = henkilot.length > 0
-        this.setState({loading: false, loaded: true, data: henkilot, visible: visible})
+        try {
+            const henkilot = await http.get(url)
+            const visible = henkilot.length > 0
+            this.setState({loading: false, loaded: true, data: henkilot, visible: visible})
+        } catch (e) {
+            this.setState({loading: false})
+        }
     }
 
     onClose = (event: SyntheticEvent<HTMLButtonElement>) => {
         event.preventDefault()
         this.setState({visible: false})
+    }
+
+    lisaaOppijaKayttajanOrganisaatioihin = async (henkiloOid: string) => {
+        this.setState({visible: false})
+        await this.props.lisaaOppijaKayttajanOrganisaatioihin(henkiloOid)
     }
 
 }
