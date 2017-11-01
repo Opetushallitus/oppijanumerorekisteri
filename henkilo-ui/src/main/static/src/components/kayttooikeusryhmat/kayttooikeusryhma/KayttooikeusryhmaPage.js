@@ -91,7 +91,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         if (this.props.kayttooikeusryhmaId) {
             const kayttooikeusryhmaForm: KayttooikeusryhmaForm = this._parseExistingKayttooikeusryhmaData(this.props.kayttooikeus);
             const ryhmaRestrictionViite = this._parseExistingRyhmaRestrictionViite(R.path(['kayttooikeusryhma', 'organisaatioViite'], this.props.kayttooikeus));
-            console.log('existingviite', ryhmaRestrictionViite);
             this.setState({kayttooikeusryhmaForm, ryhmaRestrictionViite});
         }
     }
@@ -470,7 +469,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         ryhmaRestriction: this.state.kayttooikeusryhmaForm.ryhmaRestriction,
         organisaatioTyypit: this._parseOrganisaatioTyypit(),
         slaveIds: this._parseSlaveIds(),
-        passivoitu: false 
+        passivoitu: false
     });
 
     async passivoiKayttooikeusryhma() {

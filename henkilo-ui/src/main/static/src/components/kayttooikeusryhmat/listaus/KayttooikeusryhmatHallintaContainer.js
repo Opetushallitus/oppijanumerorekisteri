@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import {updateNavigation} from '../../../actions/navigation.actions';
-import {kayttooikeusryhmatNavigation} from '../../navigation/navigationconfigurations';
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
 import Loader from "../../common/icons/Loader";
 import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
@@ -21,7 +19,6 @@ type Props = {
 class KayttooikeusryhmatContainer extends React.Component<Props> {
 
     componentDidMount() {
-        this.props.updateNavigation(kayttooikeusryhmatNavigation, '/hallinta');
         this.props.fetchAllKayttooikeusryhma(true);
     }
 
@@ -43,4 +40,4 @@ const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale]
 });
 
-export default connect(mapStateToProps, {updateNavigation, fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)
+export default connect(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)

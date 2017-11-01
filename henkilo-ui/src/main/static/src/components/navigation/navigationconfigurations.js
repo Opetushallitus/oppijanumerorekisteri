@@ -25,9 +25,6 @@ export const adminNavi = (oid) => [
     {path: `/admin/${oid}/vtjvertailu`, label: 'VTJ vertailu', disabled: true}
 ];
 
-export const kayttooikeusryhmatNavigation = [
-    {path: '/kayttooikeusryhmat', label: 'Käyttöoikeusryhmien hallinta'},
-    {path: '/kayttooikeusryhmat/lisaa', label: 'Lisää käyttöoikeusryhmä'}
-];
+export const kayttooikeusryhmatNavigation = [];
 
 export const emptyNavi = [];

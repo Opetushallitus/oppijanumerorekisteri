@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import {kayttooikeusryhmatNavigation} from '../../navigation/navigationconfigurations';
+import {emptyNavi} from '../../navigation/navigationconfigurations';
 import {updateNavigation} from '../../../actions/navigation.actions';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import {fetchOmattiedotOrganisaatios} from '../../../actions/omattiedot.actions';
@@ -43,7 +43,7 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
 
     componentDidMount() {
         const kayttooikeusryhmaId: ?string  = this.props.kayttooikeusryhmaId;
-        this.props.updateNavigation(kayttooikeusryhmatNavigation, '/');
+        this.props.updateNavigation(emptyNavi, '/kayttooikeusryhmat');
         this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
