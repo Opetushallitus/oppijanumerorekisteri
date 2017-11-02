@@ -468,8 +468,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         rooliRajoite: null,
         ryhmaRestriction: this.state.kayttooikeusryhmaForm.ryhmaRestriction,
         organisaatioTyypit: this._parseOrganisaatioTyypit(),
-        slaveIds: this._parseSlaveIds(),
-        passivoitu: false
+        slaveIds: this._parseSlaveIds()
     });
 
     async passivoiKayttooikeusryhma() {
