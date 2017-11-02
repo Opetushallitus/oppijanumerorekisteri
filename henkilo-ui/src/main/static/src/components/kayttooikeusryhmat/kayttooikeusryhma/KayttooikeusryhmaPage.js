@@ -20,6 +20,7 @@ import type {Text} from "../../../types/domain/text.types";
 import type {PalveluRooli} from "../../../types/domain/PalveluRooli.types";
 import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
 import OphModal from "../../common/modal/OphModal";
+import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -66,7 +67,9 @@ type State = {
     palvelutSelection: ReactSelectOption | void,
     palveluKayttooikeusSelection: ReactSelectOption | void,
     showPassivoiModal: boolean,
-    ryhmaRestrictionViite: any
+    ryhmaRestrictionViite: any,
+    toggleTallenna: boolean,
+    togglePassivoi: boolean
 };
 
 export default class KayttooikeusryhmaPage extends React.Component<Props, State> {
@@ -84,7 +87,9 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         palvelutSelection: undefined,
         palveluKayttooikeusSelection: undefined,
         showPassivoiModal: false,
-        ryhmaRestrictionViite: undefined
+        ryhmaRestrictionViite: undefined,
+        toggleTallenna: false,
+        togglePassivoi: false
     };
 
     componentDidMount() {
@@ -144,7 +149,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                             this.props.kayttooikeusryhmaId ?
                                 this.updateKayttooikeusryhma() :
                                 this.createNewKayttooikeusryhma()
-                        }}>{this.props.L['TALLENNA']}</button>
+                        }}><SpinnerInButton show={this.state.toggleTallenna}></SpinnerInButton> {this.props.L['TALLENNA']}</button>
                 <button className="oph-button oph-button-cancel" onClick={() => {this.cancel()}}>
                     {this.props.L['PERUUTA']}
                 </button>
@@ -160,7 +165,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 <OphModal title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']} onClose={() => {this.setState({showPassivoiModal: false})}}>
                     <div className="passivoi-modal">
                         <button className="oph-button oph-button-primary"
-                            onClick={() => {this._passivoiKayttooikeusryhma()}}>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}</button>
+                            onClick={() => {this._passivoiKayttooikeusryhma()}}><SpinnerInButton show={this.state.togglePassivoi}></SpinnerInButton>  {this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}</button>
                         <button className="oph-button oph-button-cancel" onClick={() => { this.setState({ showPassivoiModal: false }) }}>{this.props.L['PERUUTA']}</button>
                     </div>
                 </OphModal> :
@@ -474,8 +479,11 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     async passivoiKayttooikeusryhma() {
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id.passivoi', this.props.kayttooikeusryhmaId);
         try {
+            this.setState({togglePassivoi: true});
             await http.put(url);
-            this.props.router.push('/kayttooikeusryhmat');
+            this.setState({togglePassivoi: false}, () => {
+                this.props.router.push('/kayttooikeusryhmat');
+            });
         } catch (error) {
             throw error;
         }
@@ -484,8 +492,11 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     async createNewKayttooikeusryhma() {
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma');
         try {
+            this.setState({toggleTallenna: true});
             await http.post(url, this.parsePayload());
-            this.props.router.push('/kayttooikeusryhmat');
+            this.setState({toggleTallenna: false}, () => {
+              this.props.router.push('/kayttooikeusryhmat');
+            });
         } catch (error) {
             throw error;
         }
@@ -494,8 +505,11 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     async updateKayttooikeusryhma() {
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id', this.props.kayttooikeusryhmaId);
         try {
+            this.setState({toggleTallenna: true});
             await http.put(url, this.parsePayload());
-            this.props.router.push('/kayttooikeusryhmat')
+            this.setState({toggleTallenna: false}, () => {
+                this.props.router.push('/kayttooikeusryhmat');
+            });
         } catch (error) {
             throw error;
         }
