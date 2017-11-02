@@ -41,7 +41,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
         return <div className="kayttooikeusryhman-myonto-kohde">
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_ORGANISAATIORAJOITE_OTSIKKO']}</h4>
             <label className="oph-checkable" htmlFor="ryhmarestriction">
-                <input id="ryhmarestriction" className="oph-checkable-input" type="checkbox" onChange={this.props.toggleRyhmaRestriction} value={this.props.ryhmaRestriction} />
+                <input id="ryhmarestriction" className="oph-checkable-input" type="checkbox" onChange={this.props.toggleRyhmaRestriction} checked={this.props.ryhmaRestriction} />
                 <span className="oph-checkable-text">Käyttöoikeusryhmän saa myöntää ryhmälle</span>
             </label>
 
