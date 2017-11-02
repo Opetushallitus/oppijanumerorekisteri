@@ -39,7 +39,7 @@ class Field extends React.Component {
     }
 
     createField(className) {
-        const type = {type: this.props.password ? 'password' : false};
+        const type = {type: this.props.password ? 'password' : 'text'};
         if (this.props.readOnly) {
             return <span className={className}>{this.props.children}</span>;
         }
