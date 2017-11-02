@@ -9,6 +9,7 @@ import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
 import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
 import KutsuViews from "./KutsuViews";
+import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
 
 export default class KutsututPage extends React.Component {
 
@@ -47,6 +48,7 @@ export default class KutsututPage extends React.Component {
                 sortBy: 'AIKALEIMA',
                 direction: 'DESC',
                 view,
+                kayttooikeusryhmaIds: null,
             },
         };
     }
@@ -83,6 +85,10 @@ export default class KutsututPage extends React.Component {
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
                     <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
+                    <span className="right">
+                        <KutsututBooleanRadioButton view={this.state.payload.view}
+                                                    toggleView={this.toggleView.bind(this)} />
+                    </span>
                 </div>
                 <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1">
@@ -96,8 +102,8 @@ export default class KutsututPage extends React.Component {
                                                organisaatiot={this.props.organisaatiot} />
                     </div>
                     <div className="flex-item-1" id="radiator">
-                        <KutsututBooleanRadioButton view={this.state.payload.view}
-                                                    toggleView={this.toggleView.bind(this)} />
+                        <KayttooikeusryhmaSingleSelect kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)} />
+
                     </div>
                 </div>
                 <KutsututTable
@@ -190,6 +196,11 @@ export default class KutsututPage extends React.Component {
     onOrganisaatioChange(organisaatio) {
         const organisaatioOid = organisaatio.value;
         this.setState({payload: {...this.state.payload, organisaatioOid},},
+            () => this.fetchKutsus());
+    }
+
+    onKayttooikeusryhmaChange(newKayttooikeusId) {
+        this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: newKayttooikeusId,}},
             () => this.fetchKutsus());
     }
 

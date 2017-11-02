@@ -84,9 +84,6 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
     }
 };
 
-
-
-
 export const updateHaettuKayttooikeusryhmaInAnomukset =  (id, kayttoOikeudenTila, alkupvm, loppupvm, parameters) => async dispatch => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
