@@ -110,7 +110,7 @@ class AdminViewContainer extends React.Component {
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Kayttajanimi {...props} disabled={!!R.path(['henkilo', 'kayttajatieto', 'username'], props)} />,
+                    <Kayttajanimi {...props} disabled={!!R.path(['henkilo', 'kayttajatieto', 'username'], props) || !this.props.omattiedot.isAdmin} />,
                     <LinkitetytHenkilot {...linkitetytProps} />,
                     <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
