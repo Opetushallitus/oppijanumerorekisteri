@@ -45,8 +45,8 @@ type State = {
 
 export default class OmattiedotPage extends React.Component<Props, State> {
 
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
 
         this.state = {
             confirmPassivointi: false,

@@ -19,6 +19,7 @@ const mapStateToProps = (state, ownProps) => {
         kutsuListLoading: !state.kutsuList.loaded,
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         isAdmin: state.omattiedot.isAdmin,
+        isOphVirkailija: state.omattiedot.isOphVirkailija,
     };
 };
 

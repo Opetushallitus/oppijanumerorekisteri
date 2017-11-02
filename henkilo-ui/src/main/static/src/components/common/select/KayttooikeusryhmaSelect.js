@@ -14,7 +14,7 @@ type KielistettyKayttooikeusryhma = {
 
 type Props = {
     locale: Locale,
-    L: any,
+    L: {[key: string]: string},
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void,
 }
@@ -34,41 +34,41 @@ type State = {
 class KayttooikeusryhmaSelect extends React.Component<Props, State> {
 
     constructor(props: Props) {
-        super(props)
+        super(props);
 
-        const kaikki = this.getKielistetyt(props.kayttooikeusryhmat)
-        this.state = {kaikki: kaikki, naytettavat: kaikki, valittu: null, hakutermi: ''}
+        const kaikki = this.getKielistetyt(props.kayttooikeusryhmat);
+        this.state = {kaikki: kaikki, naytettavat: kaikki, valittu: null, hakutermi: ''};
     }
 
     componentWillReceiveProps(props: Props) {
-        const kaikki = this.getKielistetyt(props.kayttooikeusryhmat)
-        const naytettavat = this.getNaytettavat(kaikki, this.state.hakutermi)
-        this.setState({kaikki: kaikki, naytettavat: naytettavat})
+        const kaikki = this.getKielistetyt(props.kayttooikeusryhmat);
+        const naytettavat = this.getNaytettavat(kaikki, this.state.hakutermi);
+        this.setState({kaikki: kaikki, naytettavat: naytettavat});
     }
 
     getKielistetyt = (kayttooikeusryhmat: Array<Kayttooikeusryhma>): Array<KielistettyKayttooikeusryhma> => {
         return kayttooikeusryhmat
             .map(this.getKielistetty)
             .sort((a, b) => a.nimi.localeCompare(b.nimi))
-    }
+    };
 
     getKielistetty = (kayttooikeusryhma: Kayttooikeusryhma): KielistettyKayttooikeusryhma => {
-        const locale = this.props.locale.toUpperCase()
+        const locale = this.props.locale.toUpperCase();
         return {
             id: kayttooikeusryhma.id,
             nimi: toLocalizedText(locale, kayttooikeusryhma.nimi, ''),
             kuvaus: toLocalizedText(locale, kayttooikeusryhma.kuvaus, ''),
         }
-    }
+    };
 
     getNaytettavat = (kayttooikeusryhmat: Array<KielistettyKayttooikeusryhma>, hakutermi: string): Array<KielistettyKayttooikeusryhma> => {
         return kayttooikeusryhmat.filter(kayttooikeusryhma => {
             return kayttooikeusryhma.nimi.toLowerCase().indexOf(hakutermi.toLowerCase()) !== -1
         })
-    }
+    };
 
     render() {
-        const invalid = !this.state.valittu
+        const invalid = !this.state.valittu;
         return (
             <form onSubmit={this.onSubmit} className="flex-horizontal KayttooikeusryhmaSelect">
                 <div className="flex-1 flex-same-size">
@@ -98,7 +98,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
             return <div className="valittavat-tyhja"></div>
         }
         return <div className="valittavat">{kayttooikeusryhmat.map(this.renderKayttooikeusryhma)}</div>
-    }
+    };
 
     renderKayttooikeusryhma = (kayttooikeusryhma: KielistettyKayttooikeusryhma) => {
         return (
@@ -108,7 +108,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
                  {kayttooikeusryhma.nimi}
             </div>
         )
-    }
+    };
 
     renderValittuKayttooikeusryhma = (kayttooikeusryhma: ?KielistettyKayttooikeusryhma) => {
         if (kayttooikeusryhma) {
@@ -119,27 +119,27 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
                 </div>
             )
         }
-    }
+    };
 
     onFilter = (event: SyntheticEvent<HTMLInputElement>) => {
-        const hakutermi = event.currentTarget.value
-        const naytettavat = this.getNaytettavat(this.state.kaikki, hakutermi)
-        const valittuId = this.state.valittu ? this.state.valittu.id : null
-        const valittu = valittuId ? naytettavat.find(naytettava => naytettava.id === valittuId) : null
+        const hakutermi = event.currentTarget.value;
+        const naytettavat = this.getNaytettavat(this.state.kaikki, hakutermi);
+        const valittuId = this.state.valittu ? this.state.valittu.id : null;
+        const valittu = valittuId ? naytettavat.find(naytettava => naytettava.id === valittuId) : null;
         this.setState({naytettavat: naytettavat, hakutermi: hakutermi, valittu: valittu})
-    }
+    };
 
     onSelect = (event: SyntheticEvent<>, valittu: KielistettyKayttooikeusryhma) => {
-        event.preventDefault()
+        event.preventDefault();
         this.setState({valittu: valittu})
-    }
+    };
 
     onSubmit = (event: SyntheticEvent<HTMLButtonElement>) => {
-        event.preventDefault()
-        const valittuId = this.state.valittu ? this.state.valittu.id : null
-        const valittu = this.props.kayttooikeusryhmat.find(kayttooikeusryhma => kayttooikeusryhma.id === valittuId)
+        event.preventDefault();
+        const valittuId = this.state.valittu ? this.state.valittu.id : null;
+        const valittu = this.props.kayttooikeusryhmat.find(kayttooikeusryhma => kayttooikeusryhma.id === valittuId);
         if (valittu) {
-            this.props.onSelect(valittu)
+            this.props.onSelect(valittu);
             this.setState({valittu: null})
         }
     }

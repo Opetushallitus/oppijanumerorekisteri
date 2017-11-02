@@ -5,9 +5,11 @@ import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
-import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
+import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
+import KutsuViews from "./KutsuViews";
+import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
 
 export default class KutsututPage extends React.Component {
 
@@ -25,19 +27,29 @@ export default class KutsututPage extends React.Component {
             KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: 'AIKALEIMA',
             KUTSUT_NIMI_OTSIKKO: 'NIMI',
             KUTSUT_SAHKOPOSTI_OTSIKKO: 'SAHKOPOSTI',
+            DEFAULT: '',
         };
+        let view;
+        if (this.props.isAdmin) {
+            view = KutsuViews.OPH;
+        }
+        // OPH-virkailija (miniadmin) or normal virkailija do not have real default view
+        else {
+            view = KutsuViews.DEFAULT;
+        }
 
         this.state = {
             confirmDeleteFor: null,
+            allFetched: false,
             payload: {
-                onlyOwnKutsus: true,
                 searchTerm: '',
                 organisaatioOid: null,
                 tilas: ['AVOIN'],
                 sortBy: 'AIKALEIMA',
                 direction: 'DESC',
+                view,
+                kayttooikeusryhmaIds: null,
             },
-            allFetched: false,
         };
     }
 
@@ -54,7 +66,7 @@ export default class KutsututPage extends React.Component {
 
     componentWillMount() {
         this.fetchKutsus();
-        if(this.props.isAdmin) {
+        if (this.props.isAdmin) {
             this.props.fetchAllOrganisaatios();
         }
     }
@@ -73,6 +85,10 @@ export default class KutsututPage extends React.Component {
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
                     <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
+                    <span className="right">
+                        <KutsututBooleanRadioButton view={this.state.payload.view}
+                                                    toggleView={this.toggleView.bind(this)} />
+                    </span>
                 </div>
                 <div className="flex-horizontal flex-align-center">
                     <div className="flex-item-1">
@@ -86,10 +102,8 @@ export default class KutsututPage extends React.Component {
                                                organisaatiot={this.props.organisaatiot} />
                     </div>
                     <div className="flex-item-1" id="radiator">
-                        <BooleanRadioButtonGroup value={!this.state.payload.onlyOwnKutsus}
-                                                 onChange={() => this.toggleFetchAll(this.state.payload.onlyOwnKutsus)}
-                                                 trueLabel={this.L['KUTSUTUT_KAIKKI_BUTTON']}
-                                                 falseLabel={this.L['KUTSUTUT_OMAT_BUTTON']} />
+                        <KayttooikeusryhmaSingleSelect kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)} />
+
                     </div>
                 </div>
                 <KutsututTable
@@ -159,8 +173,13 @@ export default class KutsututPage extends React.Component {
         this.fetchKutsus();
     }
 
-    toggleFetchAll(getOwnKutsus) {
-        this.setState({payload: {...this.state.payload, onlyOwnKutsus: !getOwnKutsus}},
+    toggleView(newView) {
+        this.setState({
+                payload: {
+                    ...this.state.payload,
+                    view: newView,
+                }
+            },
             () => this.fetchKutsus());
     }
 
@@ -177,6 +196,11 @@ export default class KutsututPage extends React.Component {
     onOrganisaatioChange(organisaatio) {
         const organisaatioOid = organisaatio.value;
         this.setState({payload: {...this.state.payload, organisaatioOid},},
+            () => this.fetchKutsus());
+    }
+
+    onKayttooikeusryhmaChange(newKayttooikeusId) {
+        this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: newKayttooikeusId,}},
             () => this.fetchKutsus());
     }
 
