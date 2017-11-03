@@ -545,10 +545,13 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
-        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid)
+                .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
         List<Henkilo> candidates = this.henkiloJpaRepository.findDuplicates(henkilo);
-        List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
-                .stream().filter(henkiloDuplicate -> henkiloDuplicate.getOidHenkilo() !=  this.userDetailsHelper.getCurrentUserOid()).collect(toList()); // remove current user from duplicate search results
+        List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class).stream()
+                // remove current user from duplicate search results
+                .filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(this.userDetailsHelper.getCurrentUserOid()))
+                .collect(toList());
         Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
         Map<String, List<Map<String, Object>>> hakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
         henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakemukset.get(h.getOidHenkilo())));
@@ -679,6 +682,14 @@ public class HenkiloServiceImpl implements HenkiloService {
     public String getAsiointikieli(String oidHenkilo) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oidHenkilo)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
+        return UserDetailsHelperImpl.getAsiointikieliOrDefault(henkilo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getCurrentUserAsiointikieli() {
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(this.userDetailsHelper.getCurrentUserOid())
+                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + this.userDetailsHelper.getCurrentUserOid()));
         return UserDetailsHelperImpl.getAsiointikieliOrDefault(henkilo);
     }
 
