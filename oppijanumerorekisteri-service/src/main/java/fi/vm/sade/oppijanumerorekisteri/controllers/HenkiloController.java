@@ -306,7 +306,8 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilön yksilöinnin purku.",
             notes = "Purkaa hetuttoman henkilön yksilöinnin",
             authorizations = {@Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI")})
-    public void puraYksilointi(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid) {
+    public void puraYksilointi(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
+                               @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         this.yksilointiService.puraHeikkoYksilointi(henkiloOid);
     }
 
@@ -321,14 +322,16 @@ public class HenkiloController {
     @GetMapping("/{oid}/yksilointitiedot")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiOperation("Hakee henkilön yksilöintitiedot oidin perusteella")
-    public YksilointitietoDto getYksilointitiedot(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+    public YksilointitietoDto getYksilointitiedot(@PathVariable String oid,
+                                                  @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return yksilointiService.getYksilointiTiedot(oid);
     }
 
     @PutMapping("/{oid}/yksilointitiedot/yliajayksiloimaton")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiOperation("Yliajaa henkilön tiedot yksilöintitiedoilla. Tarkoitettu henkilöille, joiden VTJ-yksilöinti on epäonnistunut")
-    public void yliajaHenkilonTiedot(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+    public void yliajaHenkilonTiedot(@PathVariable String oid,
+                                     @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         yksilointiService.yliajaHenkilonTiedot(oid);
     }
 
@@ -404,5 +407,12 @@ public class HenkiloController {
                                    @RequestHeader(value = "External-Permission-Service", required = false)
                                            ExternalPermissionService permissionService) {
         return this.henkiloService.getAsiointikieli(oidHenkilo);
+    }
+
+    @ApiOperation("Hae kirjautuneen käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/current/asiointiKieli", method = RequestMethod.GET)
+    public String getCurrentUserAsiointikieli() {
+        return this.henkiloService.getCurrentUserAsiointikieli();
     }
 }
