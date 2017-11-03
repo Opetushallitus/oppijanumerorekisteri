@@ -1,26 +1,25 @@
+// @flow
+
 import React from 'react'
-import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
+import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-const VtjOverrideButton = ({henkilo, L, overrideAction}) =>{
-    console.log();
-    return henkilo.henkilo.yksiloityVTJ && henkilo.henkilo.hetu
+type Props = {
+    henkilo: HenkiloState,
+    L: any,
+    overrideAction: (string) => any,
+    disabled?: boolean
+}
+
+const VtjOverrideButton = (props: Props) =>{
+    return props.henkilo.henkilo.yksiloityVTJ && props.henkilo.henkilo.hetu
         ? <ConfirmButton key="vtjOverride"
-                         action={() => overrideAction(henkilo.henkilo.oidHenkilo)}
-                         normalLabel={L['VTJ_OVERRIDE_LINKKI']}
-                         confirmLabel={L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
-                         id="vtjOverride" />
+                         action={() => props.overrideAction(props.henkilo.henkilo.oidHenkilo)}
+                         normalLabel={props.L['VTJ_OVERRIDE_LINKKI']}
+                         confirmLabel={props.L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
+                         id="vtjOverride"
+                        disabled={props.disabled}/>
         : null;
-};
-
-VtjOverrideButton.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        yksiloityVTJ: PropTypes.bool,
-        hetu: PropTypes.string,
-        oidHenkilo: PropTypes.string,
-    })}),
-    L: PropTypes.object,
-    overrideAction: PropTypes.func.isRequired,
 };
 
 export default VtjOverrideButton;

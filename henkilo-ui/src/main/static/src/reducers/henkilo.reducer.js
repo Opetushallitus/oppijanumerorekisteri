@@ -1,3 +1,5 @@
+// @flow
+
 import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILO_FAILURE, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
@@ -9,21 +11,46 @@ import {
     LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_REQUEST,
     FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO, UPDATE_HENKILO_FAILURE,
     FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
+
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
+import type {Henkilo} from "../types/domain/henkilo.types";
+
+export type HenkiloState = {
+    +henkiloLoading: boolean,
+    +henkiloOrgsLoading: boolean,
+    +kayttajatietoLoading: boolean,
+    +henkilo: Henkilo | any,
+    +henkiloOrgs: Array<any>,
+    +kayttajatieto: any,
+    +buttonNotifications: any,
+    +notifications: Array<any>,
+    +henkiloOrganisaatiosLoading: boolean,
+    +henkiloOrganisaatios: Array<any>,
+    +slaves: Array<any>,
+    +slavesLoading: boolean,
+    +unlinkingLoading: boolean,
+    +duplicates: Array<any>,
+    +duplicatesLoading: boolean,
+    +linkingLoading: boolean,
+    +masterLoading: boolean,
+    +master: any,
+    +yksilointitiedotLoading: boolean,
+    +yksilointitiedot: Array<any>
+}
+
+const initialState: HenkiloState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
+    henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
+    henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
+    linkingLoading: false, masterLoading: true, master: {}, yksilointitiedotLoading: false, yksilointitiedot: []};
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
     return henkiloOrgs.map(henkiloOrg =>
         Object.assign({}, henkiloOrg, organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid)));
 };
 
-const initialState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
-    henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
-    henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
-    linkingLoading: false, masterLoading: true, master: {}, yksilointitiedotLoading: false, yksilointitiedot: []};
-
-export const henkilo = (state = {...initialState}, action) => {
+export const henkilo = (state: HenkiloState = initialState, action: any): HenkiloState => {
 
     switch (action.type) {
         case UPDATE_HENKILO_REQUEST:

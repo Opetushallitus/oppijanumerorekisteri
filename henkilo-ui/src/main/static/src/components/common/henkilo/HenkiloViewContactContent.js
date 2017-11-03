@@ -87,6 +87,10 @@ class HenkiloViewContactContent extends React.Component{
     };
 
     render() {
+
+        const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        const duplicate = this.props.henkilo.henkilo.duplicate;
+
         return (
             <div className="henkiloViewUserContentWrapper contact-content">
                 <div>
@@ -101,7 +105,7 @@ class HenkiloViewContactContent extends React.Component{
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button key="contactEdit" action={this._edit.bind(this)}>{this.L['MUOKKAA_LINKKI']}</Button>
+                        <Button disabled={passivoitu | duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
                         <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={this.L} />

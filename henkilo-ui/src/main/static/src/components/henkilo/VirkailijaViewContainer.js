@@ -83,6 +83,7 @@ class VirkailijaViewContainer extends React.Component {
             const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
                 updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
                 L: this.L, locale: this.props.locale,};
+
             const linkitetytHenkilotProps = {henkilo: this.props.henkilo, L: this.L, unlinkHenkilo: this.props.unlinkHenkilo,
                 fetchHenkiloSlaves: this.props.fetchHenkiloSlaves };
             return [
@@ -104,11 +105,15 @@ class VirkailijaViewContainer extends React.Component {
         };
 
         // Basic info default buttons
-        this._readOnlyButtons = (edit) => [
-            <EditButton editAction={edit} L={this.L} />,
-            <HakaButton oidHenkilo={this.props.oidHenkilo} L={this.L} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}/>,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
-        ];
+        this._readOnlyButtons = (edit) => {
+            const duplicate = this.props.henkilo.henkilo.duplicate;
+            const passivoitu = this.props.henkilo.henkilo.passivoitu;
+            return [
+                <EditButton editAction={edit} L={this.L} disabled={duplicate | passivoitu}/>,
+                <HakaButton oidHenkilo={this.props.oidHenkilo} disabled={duplicate | passivoitu} L={this.L} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}/>,
+                <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L} disabled={duplicate | passivoitu} styles={{ top: '3rem', left: '0', width: '18rem' }} />,
+            ];
+        }
 
     };
 }

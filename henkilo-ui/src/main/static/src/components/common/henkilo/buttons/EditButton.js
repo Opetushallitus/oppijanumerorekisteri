@@ -1,12 +1,15 @@
+// @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import Button from "../../button/Button";
 
-const EditButton = ({editAction, L}) => <Button key="edit" action={editAction}>{L['MUOKKAA_LINKKI']}</Button>;
+type Props = {
+    editAction: () => any,
+    L: any,
+    disabled?: boolean
+}
 
-EditButton.propTypes = {
-    editAction: PropTypes.func,
-    L: PropTypes.object,
-};
+const EditButton = (props: Props) => <Button key="edit"
+                                             disabled={props.disabled}
+                                             action={props.editAction}>{props.L['MUOKKAA_LINKKI']}</Button>;
 
 export default EditButton;

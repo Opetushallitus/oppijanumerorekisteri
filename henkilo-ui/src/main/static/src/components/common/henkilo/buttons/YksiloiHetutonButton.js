@@ -1,24 +1,23 @@
+// @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import ConfirmButton from "../../button/ConfirmButton";
+import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-const YksiloiHetutonButton = ({henkilo, L, yksiloiAction}) =>
-    !henkilo.henkilo.yksiloityVTJ && !henkilo.henkilo.hetu && !henkilo.henkilo.yksiloity
+type Props = {
+    henkilo: HenkiloState,
+    L: any,
+    yksiloiAction: (string) => any,
+    disabled?: boolean
+}
+
+const YksiloiHetutonButton = (props: Props) =>
+    !props.henkilo.henkilo.yksiloityVTJ && !props.henkilo.henkilo.hetu && !props.henkilo.henkilo.yksiloity
         ? <ConfirmButton key="yksilointi"
-                         action={() => yksiloiAction(henkilo.henkilo.oidHenkilo)}
-                         normalLabel={L['YKSILOI_LINKKI']}
-                         confirmLabel={L['YKSILOI_LINKKI_CONFIRM']}
+                         action={() => props.yksiloiAction(props.henkilo.henkilo.oidHenkilo)}
+                         normalLabel={props.L['YKSILOI_LINKKI']}
+                         confirmLabel={props.L['YKSILOI_LINKKI_CONFIRM']}
+                         disabled={props.disabled}
                          id="yksilointi" />
         : null;
-
-YksiloiHetutonButton.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        yksiloityVTJ: PropTypes.bool,
-        hetu: PropTypes.string,
-        oidHenkilo: PropTypes.string,
-    })}),
-    L: PropTypes.object,
-    yksiloiAction: PropTypes.func.isRequired,
-};
 
 export default YksiloiHetutonButton;

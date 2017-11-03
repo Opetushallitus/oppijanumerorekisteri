@@ -27,7 +27,7 @@ class Button extends React.Component {
         });
         return (
             this.props.href
-                ? <a href={this.props.href} className="a" onClick={this.props.action}>{this.props.children}</a>
+                ? <a href={this.props.href} onClick={this.props.action}>{this.props.children}</a>
                 :
                 <button className={className}
                         disabled={this.props.disabled}

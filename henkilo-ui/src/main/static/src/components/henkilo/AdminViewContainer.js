@@ -77,7 +77,6 @@ class AdminViewContainer extends React.Component {
     constructor(props) {
         super(props);
         this.L = this.props.l10n[this.props.locale];
-
         // Basic info box content
         this._createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate) => {
             const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
@@ -118,20 +117,32 @@ class AdminViewContainer extends React.Component {
         };
 
         // Basic info default buttons
-        this._readOnlyButtons = (edit) => ([
-            <EditButton editAction={edit} L={this.L}/>,
-            <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo}
-                                  L={this.L}/>,
-            <PuraHetuttomanYksilointiButton puraYksilointiAction={this.props.puraYksilointi} henkilo={this.props.henkilo} L={this.L}>
-            </PuraHetuttomanYksilointiButton>,
-            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
-            <HakaButton oidHenkilo={this.props.oidHenkilo}
-                        styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} L={this.L}/>,
-            <VtjOverrideButton henkilo={this.props.henkilo} L={this.L}
-                               overrideAction={this.props.overrideHenkiloVtjData}/>,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
-                            styles={{top: '3rem', left: '0', width: '18rem'}}/>,
-        ]);
+        this._readOnlyButtons = (edit) => {
+            const duplicate = R.path(['henkilo', 'duplicate'], this.props.henkilo);
+            const passivoitu = R.path(['henkilo', 'passivoitu'], this.props.henkilo);
+
+            return [
+                <EditButton editAction={edit} L={this.L}
+                            disabled={duplicate || passivoitu} />,
+                <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo}
+                                      L={this.L} disabled={duplicate || passivoitu}/>,
+                <PuraHetuttomanYksilointiButton puraYksilointiAction={this.props.puraYksilointi}
+                                                henkilo={this.props.henkilo} L={this.L} disabled={duplicate || passivoitu}>
+                </PuraHetuttomanYksilointiButton>,
+                <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}
+                    disabled={duplicate || passivoitu}/>,
+                <HakaButton oidHenkilo={this.props.oidHenkilo}
+                            styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
+                            L={this.L}
+                            disabled={duplicate || passivoitu}/>,
+                <VtjOverrideButton henkilo={this.props.henkilo} L={this.L}
+                                   overrideAction={this.props.overrideHenkiloVtjData}
+                                disabled={duplicate || passivoitu}/>,
+                <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
+                                styles={{top: '3rem', left: '0', width: '18rem'}}
+                                disabled={duplicate || passivoitu}/>,
+            ];
+        };
 
         this._readOnlyButtonsPalvelu = (edit) => ([
             <EditButton editAction={edit} L={this.L}/>,

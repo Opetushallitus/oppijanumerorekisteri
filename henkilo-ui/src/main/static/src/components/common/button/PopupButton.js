@@ -1,24 +1,29 @@
+// @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import './PopupButton.css';
 
-export default class PopupButton extends React.Component {
+type Props = {
+    popupStyle: any,
+    closeButtonStyles?: any,
+    popupTitle: any,
+    popupContent: any,
+    popupClass?: string,
+    disabled?: boolean,
+    children: any
+}
 
-    static propTypes = {
-        popupStyle: PropTypes.object,
-        closeButtonStyles: PropTypes.object,
-        popupTitle: PropTypes.element,
-        popupContent: PropTypes.element,
-        popupClass: PropTypes.string
+type State = {
+    show: boolean,
+    defaultPopupClass: string
+}
+
+
+export default class PopupButton extends React.Component<Props, State> {
+
+    state = {
+        show: false,
+        defaultPopupClass: 'oph-popup-default oph-popup-top'
     };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            show: false,
-        };
-
-    }
 
     render() {
         const wrapperStyle = { position: 'relative' };
@@ -26,7 +31,8 @@ export default class PopupButton extends React.Component {
             <div style={wrapperStyle}>
                 <button onClick={this.show.bind(this)}
                         className="oph-button oph-button-primary"
-                        type="button">{this.props.children}</button>
+                        type="button"
+                        disabled={this.props.disabled}>{this.props.children}</button>
                 { this.state.show ? this.createPopup() : null }
             </div>
         );
@@ -41,8 +47,10 @@ export default class PopupButton extends React.Component {
             marginRight: '-20px'
         };
 
+        const popupClass = this.props.popupClass ? this.props.popupClass : this.state.defaultPopupClass;
+
         return (
-            <div className={`oph-popup ${this.props.popupClass} popup-paddings`} style={this.props.popupStyle}>
+            <div className={`oph-popup ${popupClass} popup-paddings`} style={this.props.popupStyle}>
                 <div className="oph-popup-arrow"></div>
                 <div style={closeButtonStyles}><i className="fa fa-times" onClick={() => this.closePopup()}></i></div>
                 <div className="oph-popup-title">{this.props.popupTitle} </div>
@@ -59,8 +67,4 @@ export default class PopupButton extends React.Component {
         this.setState({show: true});
     }
 }
-
-PopupButton.defaultProps = {
-    popupClass: 'oph-popup-default oph-popup-top'
-};
 
