@@ -56,13 +56,13 @@ class AnomusPage extends React.Component {
     };
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            allFetched: !nextProps.haetutKayttooikeusryhmatLoading
-            && (nextProps.kayttooikeusAnomus.length < this.defaultLimit
-            || nextProps.kayttooikeusAnomus.length === this.props.kayttooikeusAnomus.length),
-        });
-
-        if(!this.props.haetutKayttooikeusryhmatLoading) {
+        if (!nextProps.haetutKayttooikeusryhmatLoading
+            && nextProps.kayttooikeusAnomus.length !== this.props.kayttooikeusAnomus.length) {
+            this.setState({
+                allFetched: nextProps.kayttooikeusAnomus.length < this.defaultLimit * (this.state.page + 1),
+            });
+        }
+        if (!this.props.haetutKayttooikeusryhmatLoading) {
             this.initialised = true;
         }
     };
@@ -89,29 +89,29 @@ class AnomusPage extends React.Component {
                   this.props.haetutKayttooikeusryhmatLoading && !this.initialised
                       ? <Loader />
                       : <div>
-                      <HenkiloViewOpenKayttooikeusanomus
-                          kayttooikeus={{
-                              kayttooikeusAnomus: this.props.kayttooikeusAnomus,
-                              grantableKayttooikeus: {},
-                              grantableKayttooikeusLoading: true,
-                          }}
-                          l10n={this.props.l10n}
-                          locale={this.props.locale}
-                          organisaatioCache={this.props.organisaatioCache}
-                          updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
-                          isAnomusView={true}
-                          manualSortSettings={{
-                              manual: true,
-                              defaultSorted: this.state.sorted,
-                              onFetchData: this.onTableFetch.bind(this)
-                          }}
-                          fetchMoreSettings={{
-                              isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
-                              fetchMoreAction: this.onSubmitWithoutClear.bind(this),
-                          }}
-                          tableLoading={this.props.haetutKayttooikeusryhmatLoading}
-                          striped />
-                  </div>
+                          <HenkiloViewOpenKayttooikeusanomus
+                              kayttooikeus={{
+                                  kayttooikeusAnomus: this.props.kayttooikeusAnomus,
+                                  grantableKayttooikeus: {},
+                                  grantableKayttooikeusLoading: true,
+                              }}
+                              l10n={this.props.l10n}
+                              locale={this.props.locale}
+                              organisaatioCache={this.props.organisaatioCache}
+                              updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
+                              isAnomusView={true}
+                              manualSortSettings={{
+                                  manual: true,
+                                  defaultSorted: this.state.sorted,
+                                  onFetchData: this.onTableFetch.bind(this)
+                              }}
+                              fetchMoreSettings={{
+                                  isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
+                                  fetchMoreAction: this.onSubmitWithoutClear.bind(this),
+                              }}
+                              tableLoading={this.props.haetutKayttooikeusryhmatLoading}
+                              striped />
+                      </div>
               }
           </div>
         );
@@ -149,6 +149,7 @@ class AnomusPage extends React.Component {
         this.setState({
             parameters: parameters,
             page: shouldNotClear ? this.state.page+1 : 0,
+            allFetched: shouldNotClear ? this.state.allFetched : false,
         }, () => this.props.fetchHaetutKayttooikeusryhmat(parameters));
     };
 
