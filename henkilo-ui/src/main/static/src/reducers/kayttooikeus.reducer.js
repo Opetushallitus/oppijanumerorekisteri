@@ -1,6 +1,6 @@
 // @flow
 
-import type {PalveluKayttooikeus} from "../types/domain/palvelukayttooikeus.types";
+import type {PalveluKayttooikeus} from "../types/domain/kayttooikeus/palvelukayttooikeus.types";
 import {FETCH_PALVELUKAYTTOOIKEUS_REQUEST, FETCH_PALVELUKAYTTOOIKEUS_SUCCESS, FETCH_PALVELUKAYTTOOIKEUS_FAILURE} from "../actions/actiontypes";
 import type {PalveluKayttooikeusAction} from "../actions/kayttooikeus.actions";
 

@@ -7,7 +7,7 @@ import {
     FETCH_OPPILAITOSTYYPIT_REQUEST, FETCH_OPPILAITOSTYYPIT_SUCCESS, FETCH_OPPILAITOSTYYPIT_FAILURE
 } from "../actions/actiontypes";
 import StaticUtils from "../components/common/StaticUtils";
-import type {Koodisto} from '../types/koodisto.type'
+import type {Koodisto} from '../types/domain/koodisto/koodisto.types'
 
 const mapKoodistoValuesByLocale = (koodisto: Koodisto): any => koodisto.map(koodi =>
     ({value: koodi.koodiArvo.toLowerCase(),

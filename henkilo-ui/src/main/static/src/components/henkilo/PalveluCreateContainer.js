@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import {http} from '../../http'
 import {urls} from 'oph-urls-js'
 import PalveluCreateForm from './PalveluCreateForm'
-import type {HenkiloCreate} from '../../types/henkilo.type'
+import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 
 type Props = {

@@ -1,6 +1,8 @@
 // @flow
 
-import type {Kielisyys, YhteystietoRyhma} from "../henkilo.type";
+import type {YhteystietoRyhma} from "./yhteystietoryhma.types";
+import type {Kansalaisuus} from "./kansalaisuus.types";
+import type {Kielisyys} from "./kielisyys.types";
 
 export type Henkilo = {
     oidHenkilo: string,
@@ -30,3 +32,16 @@ export type Henkilo = {
     huoltaja: Henkilo,
     yhteystiedotRyhma: Array<YhteystietoRyhma>
 }
+
+export type HenkiloCreate = {
+    henkiloTyyppi?: string,
+    etunimet?: string,
+    kutsumanimi?: string,
+    sukunimi?: string,
+    aidinkieli?: ?Kielisyys,
+    kansalaisuus?: ?Array<Kansalaisuus>,
+    syntymaaika?: ?string,
+    sukupuoli?: ?string,
+    passinumerot?: ?Array<string>,
+    yhteystiedotRyhma?: ?Array<YhteystietoRyhma>,
+};

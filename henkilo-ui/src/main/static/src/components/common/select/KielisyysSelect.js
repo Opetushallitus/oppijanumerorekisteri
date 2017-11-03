@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
-import type {Koodisto} from '../../../types/koodisto.type'
-import type {Kielisyys} from '../../../types/henkilo.type'
+import type {Koodisto} from '../../../types/domain/koodisto/koodisto.types'
+import type {Kielisyys} from '../../../types/domain/oppijanumerorekisteri/kielisyys.types'
 import KoodistoSelect from './KoodistoSelect'
 
 type Props = {

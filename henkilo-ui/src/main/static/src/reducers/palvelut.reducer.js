@@ -1,7 +1,7 @@
 // @flow
 import type {PalvelutAction} from "../actions/palvelut.actions";
 import {FETCH_PALVELUT_FAILURE, FETCH_PALVELUT_REQUEST, FETCH_PALVELUT_SUCCESS} from "../actions/actiontypes";
-import type {Palvelu} from '../types/domain/palvelu.types';
+import type {Palvelu} from '../types/domain/kayttooikeus/palvelu.types';
 
 export type PalvelutState = {
     +palvelutLoading: boolean;

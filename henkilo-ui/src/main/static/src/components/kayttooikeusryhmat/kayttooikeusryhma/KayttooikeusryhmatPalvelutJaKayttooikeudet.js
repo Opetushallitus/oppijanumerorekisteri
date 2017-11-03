@@ -7,7 +7,7 @@ import type {Locale} from "../../../types/locale.type";
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import R from 'ramda';
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
-import type {PalveluKayttooikeus} from "../../../types/domain/palvelukayttooikeus.types";
+import type {PalveluKayttooikeus} from "../../../types/domain/kayttooikeus/palvelukayttooikeus.types";
 import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
 import PalveluJaKayttooikeusSelections from "./PalveluJaKayttooikeusSelections";
 

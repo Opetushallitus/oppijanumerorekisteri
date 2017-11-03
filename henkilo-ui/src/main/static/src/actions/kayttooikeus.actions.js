@@ -2,7 +2,7 @@
 import {FETCH_PALVELUKAYTTOOIKEUS_REQUEST, FETCH_PALVELUKAYTTOOIKEUS_SUCCESS, FETCH_PALVELUKAYTTOOIKEUS_FAILURE} from "./actiontypes";
 import { http } from '../http';
 import {urls} from 'oph-urls-js';
-import type {PalveluKayttooikeus} from "../types/domain/palvelukayttooikeus.types";
+import type {PalveluKayttooikeus} from "../types/domain/kayttooikeus/palvelukayttooikeus.types";
 
 export type PalveluKayttooikeusAction = {
     type: FETCH_PALVELUKAYTTOOIKEUS_REQUEST | FETCH_PALVELUKAYTTOOIKEUS_SUCCESS | FETCH_PALVELUKAYTTOOIKEUS_FAILURE;

@@ -2,7 +2,7 @@
 import React from 'react';
 import KayttooikeusryhmaLista from "./KayttooikeusryhmaLista";
 import type {Locale} from "../../../types/locale.type";
-import type {Kayttooikeusryhma} from "../../../types/kayttooikeusryhma.type";
+import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import KayttooikeusryhmaListaSuodatin from "./KayttooikeusryhmaListaSuodatin";
 
 

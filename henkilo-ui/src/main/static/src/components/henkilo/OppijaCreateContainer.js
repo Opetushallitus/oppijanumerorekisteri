@@ -9,9 +9,9 @@ import {
     fetchKansalaisuusKoodisto,
 } from '../../actions/koodisto.actions'
 import type {Locale} from '../../types/locale.type'
-import type {Koodisto} from '../../types/koodisto.type'
+import type {Koodisto} from '../../types/domain/koodisto/koodisto.types'
 import OppijaCreateForm from './OppijaCreateForm'
-import type {HenkiloCreate} from '../../types/henkilo.type'
+import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import Notifications from '../../components/common/notifications/Notifications'
 import type {Notification, NotificationType} from '../../components/common/notifications/Notifications'
 import PropertySingleton from '../../globals/PropertySingleton'

@@ -4,9 +4,9 @@ import './KayttooikeusryhmaLista.css';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
 import R from 'ramda';
 import type {Locale} from "../../../types/locale.type";
-import type {Kayttooikeusryhma} from "../../../types/kayttooikeusryhma.type";
+import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import LocalizedTextGroup from "./LocalizedTextGroup";
-import type {Text} from "../../../types/domain/text.types";
+import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 
 type Props = {
     items: Array<Kayttooikeusryhma>,

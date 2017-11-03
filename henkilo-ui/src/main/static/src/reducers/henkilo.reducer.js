@@ -15,7 +15,7 @@ import {
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
-import type {Henkilo} from "../types/domain/henkilo.types";
+import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
 
 export type HenkiloState = {
     +henkiloLoading: boolean,

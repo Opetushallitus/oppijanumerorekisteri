@@ -4,7 +4,7 @@ import Select from 'react-select'
 import {connect} from 'react-redux'
 import type {ReactSelectOption} from '../../../types/react-select.types'
 import type {Locale} from '../../../types/locale.type'
-import type {Koodisto, Koodi} from '../../../types/koodisto.type'
+import type {Koodisto, Koodi} from '../../../types/domain/koodisto/koodisto.types'
 import {toLocalizedText} from '../../../localizabletext'
 import './KoodistoSelect.css'
 

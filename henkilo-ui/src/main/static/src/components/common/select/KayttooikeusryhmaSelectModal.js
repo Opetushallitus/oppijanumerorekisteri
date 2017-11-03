@@ -3,7 +3,7 @@ import React from 'react'
 import type {Locale} from '../../../types/locale.type'
 import OphModal from '../modal/OphModal'
 import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect'
-import type {Kayttooikeusryhma} from '../../../types/kayttooikeusryhma.type'
+import type {Kayttooikeusryhma} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 
 type Props = {
     locale: Locale,
