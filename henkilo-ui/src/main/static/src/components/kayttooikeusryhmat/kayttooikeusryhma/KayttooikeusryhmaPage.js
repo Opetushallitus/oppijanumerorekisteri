@@ -52,7 +52,7 @@ export type KayttooikeusryhmaForm = {
 type Props = {
     L: any,
     router: any,
-    omattiedot: any,
+    omattiedot: {organisaatios: any},
     koodisto: any,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
@@ -109,11 +109,13 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
             <KayttooikeusryhmatNimi {...this.props}
                                     name={this.state.kayttooikeusryhmaForm.name}
-                                    setName={this._setName}></KayttooikeusryhmatNimi>
+                                    setName={this._setName}
+            />
 
             <KayttooikeusryhmatKuvaus {...this.props}
                                       description={this.state.kayttooikeusryhmaForm.description}
-                                      setDescription={this._setDescription}></KayttooikeusryhmatKuvaus>
+                                      setDescription={this._setDescription}
+            />
 
             <KayttooikeusryhmanOrganisaatiorajoite {...this.props}
                                                    ryhmaRestriction={this.state.kayttooikeusryhmaForm.ryhmaRestriction}
@@ -123,13 +125,14 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                                                    removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
                                                    oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                                    oppilaitostyypitSelections={this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections}
-                                                   removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}></KayttooikeusryhmanOrganisaatiorajoite>
+                                                   removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}
+            />
 
             <MyonnettavatKayttooikeusryhmat {...this.props}
                                             kayttooikeusryhmaSelectAction={this._onKayttooikeusryhmaSelection}
                                             kayttooikeusryhmaSelections={this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections}
                                             removeKayttooikeusryhmaSelectAction={this._onRemoveKayttooikeusryhmaSelect}
-            ></MyonnettavatKayttooikeusryhmat>
+            />
 
             <KayttooikeusryhmatPalvelutJaKayttooikeudet {...this.props}
                                                         palvelutSelection={this.state.palvelutSelection}
@@ -141,7 +144,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
                                                         palveluJaKayttooikeusSelections={this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections}
                                                         removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
-            ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
+            />
 
             <div className="kayttooikeusryhmat-lisaa-page-buttons">
                 <button disabled={!this._validateKayttooikeusryhmaInputs()} className="oph-button oph-button-primary"

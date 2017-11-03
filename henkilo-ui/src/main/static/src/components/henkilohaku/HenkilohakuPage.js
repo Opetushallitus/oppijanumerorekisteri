@@ -23,6 +23,7 @@ class HenkilohakuPage extends React.Component {
         }),
         omattiedot: PropTypes.shape({
             organisaatios: PropTypes.array.isRequired,
+            isAdmin: PropTypes.bool.isRequired,
 
         }),
         kayttooikeusryhmas: PropTypes.array.isRequired,

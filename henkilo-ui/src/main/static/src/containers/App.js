@@ -39,7 +39,7 @@ class App extends React.Component {
     componentDidMount() {
         this.props.fetchFrontProperties();
         setInterval(this.props.fetchPrequels, fetchPrequelsIntervalInMillis);
-    };
+    }
 
     static propTypes = {
         // Injected by React Redux
@@ -68,7 +68,6 @@ const mapStateToProps = (state, ownProps) => {
         backButton: state.naviState.backButton,
         prequelsNotLoadedCount: state.prequels.notLoadedCount,
         locale: state.locale,
-        omattiedot: state.omattiedot.data,
         omattiedotLoaded: state.omattiedot.initialized,
     };
 };

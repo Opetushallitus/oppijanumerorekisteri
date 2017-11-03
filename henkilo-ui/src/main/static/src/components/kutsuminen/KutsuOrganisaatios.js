@@ -8,7 +8,6 @@ export default class KutsuOrganisaatios extends React.Component {
     static propTypes = {
         addedOrgs: PropTypes.array,
         l10n: PropTypes.object,
-        omattiedot: PropTypes.object,
         orgs: PropTypes.array,
         henkilo: PropTypes.object,
         addOrganisaatio: PropTypes.func,

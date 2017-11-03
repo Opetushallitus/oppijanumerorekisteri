@@ -9,7 +9,7 @@ import type {ReactSelectOption} from "../../../types/react-select.types";
 
 type Props = {
     L: any,
-    omattiedot: any,
+    omattiedot: {organisaatios: any},
     koodisto: any,
     locale: Locale,
     ryhmaRestriction: boolean,

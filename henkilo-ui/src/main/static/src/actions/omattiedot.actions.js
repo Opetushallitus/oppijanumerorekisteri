@@ -13,17 +13,19 @@ import {
 const requestOmattiedot = () => ({type: FETCH_OMATTIEDOT_REQUEST});
 const receiveOmattiedotSuccess = (json) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
 const receiveOmattiedotFailure = (error) => ({type: FETCH_OMATTIEDOT_FAILURE, error});
-export const fetchOmattiedot = () => async dispatch => {
-    dispatch(requestOmattiedot());
-    const url = urls.url('cas.me');
-    try {
-        const omattiedotResponse = await http.get(url);
-        const omattiedot = JSON.parse(omattiedotResponse);
-        dispatch(receiveOmattiedotSuccess(omattiedot));
-        return omattiedotResponse;
-    } catch (error) {
-        dispatch(receiveOmattiedotFailure(error));
-        throw error;
+export const fetchOmattiedot = () => async (dispatch, getState) => {
+    if (!getState().omattiedot.data) {
+        dispatch(requestOmattiedot());
+        const url = urls.url('cas.me');
+        try {
+            const omattiedotResponse = await http.get(url);
+            const omattiedot = JSON.parse(omattiedotResponse);
+            dispatch(receiveOmattiedotSuccess(omattiedot));
+            return omattiedotResponse;
+        } catch (error) {
+            dispatch(receiveOmattiedotFailure(error));
+            throw error;
+        }
     }
 };
 

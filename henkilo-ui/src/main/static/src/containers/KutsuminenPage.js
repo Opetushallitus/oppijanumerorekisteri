@@ -56,7 +56,6 @@ class KutsuFormPage extends React.Component  {
                                     locale={this.props.locale}>
                         </BasicInfo>
                         <KutsuOrganisaatios l10n={l10n}
-                                            omattiedot={this.props.omattiedot.data}
                                             orgs={this.props.omattiedot.organisaatios}
                                             addedOrgs={this.props.addedOrgs}
                                             henkilo={this.props.henkilo}
