@@ -109,7 +109,7 @@ class AdminViewContainer extends React.Component {
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Kayttajanimi {...props} disabled={!this.props.omattiedot.isAdmin} />,
+                    <Kayttajanimi {...props} disabled={!this.props.isAdmin} />,
                     <LinkitetytHenkilot {...linkitetytProps} />,
                     <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
@@ -180,6 +180,7 @@ const mapStateToProps = (state, ownProps) => {
         notifications: state.notifications,
         ownOid: state.omattiedot.data.oid,
         omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
+        isAdmin: state.omattiedot.isAdmin,
     };
 };
 
