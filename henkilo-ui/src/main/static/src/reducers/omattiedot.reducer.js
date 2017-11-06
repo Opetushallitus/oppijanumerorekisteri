@@ -8,9 +8,9 @@ export const omattiedot = (state = { omattiedotLoading: false, data: undefined, 
         case FETCH_OMATTIEDOT_SUCCESS:
             return Object.assign({}, state, {
                 omattiedotLoading: false,
-                data: action.omattiedot,
-                isAdmin: action.isAdmin,
-                isOphVirkailija: action.isMiniAdmin,
+                data: {oid: action.omattiedot.oidHenkilo},
+                isAdmin: action.omattiedot.isAdmin,
+                isOphVirkailija: action.omattiedot.isMiniAdmin,
                 initialized: true,
             });
         case FETCH_OMATTIEDOT_FAILURE:

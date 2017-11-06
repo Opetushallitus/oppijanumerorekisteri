@@ -82,7 +82,7 @@ class VirkailijaViewPage extends React.Component {
                 </div>
                 <div className="wrapper">
                     {
-                        this.props.omattiedot.omattiedotOrganisaatiosLoading
+                        this.props.omattiedotOrganisaatiosLoading
                             ? <Loader />
                             : <HenkiloViewCreateKayttooikeus {...this.props}
                                                              vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}

@@ -5,6 +5,7 @@ import Columns from 'react-columns'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 import moment from 'moment';
+import type {L} from "../../../types/l.type";
 
 type Props = {
     l10n: any,
@@ -25,7 +26,7 @@ type State = {
 
 class HenkiloViewUserContent extends React.Component<Props, State> {
 
-    L: any;
+    L: L;
 
     constructor(props: Props) {
         super(props);

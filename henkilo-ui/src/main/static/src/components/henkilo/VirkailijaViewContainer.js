@@ -31,8 +31,6 @@ import LinkitetytHenkilot from "../common/henkilo/labelvalues/LinkitetytHenkilot
 import {removeNotification} from "../../actions/notifications.actions";
 import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 
-
-
 class VirkailijaViewContainer extends React.Component {
     componentDidMount() {
         this.props.clearHenkilo();
@@ -132,6 +130,7 @@ const mapStateToProps = (state, ownProps) => {
         notifications: state.notifications,
         isAdmin: state.omattiedot.isAdmin,
         ownOid: state.omattiedot.data.oid,
+        omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
     };
 };
 

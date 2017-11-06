@@ -16,10 +16,11 @@ import {fetchAllPalvelut} from "../../../actions/palvelut.actions";
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import {fetchPalveluKayttooikeus} from "../../../actions/kayttooikeus.actions";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
+import type {L} from "../../../types/l.type";
 
 
 type Props = {
-    L: any,
+    L: L,
     updateNavigation: (Array<any>, string) => void,
     fetchKayttooikeusryhmaById: (id: string) => Promise<any>,
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => Promise<any>,

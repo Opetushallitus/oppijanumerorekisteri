@@ -4,9 +4,10 @@ import {urls} from 'oph-urls-js'
 import {http} from '../../../http'
 import OphModal from '../../common/modal/OphModal'
 import DuplikaatitTable from './DuplikaatitTable'
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
+    L: L,
     etunimet: ?string,
     kutsumanimi: ?string,
     sukunimi: ?string,

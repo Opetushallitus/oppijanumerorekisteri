@@ -5,9 +5,10 @@ import OphSelect from './OphSelect';
 import './OrganisaatioSelection.css';
 import {getOrganisaatios} from "../../kutsuminen/OrganisaatioUtilities";
 import {connect} from 'react-redux';
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
+    L: L,
     organisaatios: Array<any>,
     selectOrganisaatio: () => any,
     locale: string,

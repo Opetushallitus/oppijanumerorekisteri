@@ -2,9 +2,10 @@
 import React from 'react';
 import type {KayttooikeusryhmaNimi} from "./KayttooikeusryhmaPage";
 import './KayttooikeusryhmatNimi.css';
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
+    L: L,
     name: KayttooikeusryhmaNimi,
     setName: (string, string) => void
 }

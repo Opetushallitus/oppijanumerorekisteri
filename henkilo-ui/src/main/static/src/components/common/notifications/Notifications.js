@@ -2,6 +2,7 @@
 import React from 'react'
 import WideGreenNotification from "./WideGreenNotification";
 import WideRedNotification from "./WideRedNotification";
+import type {L} from "../../../types/l.type";
 
 export type NotificationType = 'ok' | 'error'
 
@@ -15,7 +16,7 @@ export type Notification = {|
 
 type Props = {|
     notifications: Array<Notification>,
-    L: any,
+    L: L,
     closeAction: (type: NotificationType, id: ?string) => void,
     styles?: any,
 |}

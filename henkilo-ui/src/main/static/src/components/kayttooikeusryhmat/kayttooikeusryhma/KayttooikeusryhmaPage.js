@@ -21,6 +21,7 @@ import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli
 import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
 import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
+import type {L} from "../../../types/l.type";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -50,7 +51,7 @@ export type KayttooikeusryhmaForm = {
 }
 
 type Props = {
-    L: any,
+    L: L,
     router: any,
     omattiedot: {organisaatios: any},
     koodisto: any,

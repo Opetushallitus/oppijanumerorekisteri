@@ -1,29 +1,68 @@
-import './HenkiloViewCreateKayttooikeus.css'
-import React from 'react'
-import PropTypes from 'prop-types'
+// @flow
+import './HenkiloViewCreateKayttooikeus.css';
+import React from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import moment from 'moment';
-import scrollToComponent from 'react-scroll-to-component'
+import scrollToComponent from 'react-scroll-to-component';
 import CKKohde from "./createkayttooikeus/CKKohde";
 import CKKesto from "./createkayttooikeus/CKKesto";
 import CKKayttooikeudet from "./createkayttooikeus/CKKayttooikeudet";
 import CKHaeButton from "./createkayttooikeus/CKHaeButton";
+import {
+    addKayttooikeusToHenkilo,
+    fetchAllowedKayttooikeusryhmasForOrganisation
+} from "../../../actions/kayttooikeusryhma.actions";
+import type {L} from "../../../types/l.type";
+import type {Locale} from "../../../types/locale.type";
 
-class HenkiloViewCreateKayttooikeus extends React.Component {
+type Props = {
+    organisaatios: Array<{}>,
+    vuosia: number,
+    kayttooikeus: {allowedKayttooikeus: {}},
+    existingKayttooikeusRef: {},
+    oidHenkilo: string,
+    fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
+    L: L,
+    locale: Locale,
+    oidHenkilo: string,
+    addKayttooikeusToHenkilo: (string, string, Array<{id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string}>) => void;
+};
+
+type KayttooikeusModel = {
+    kayttokohdeOrganisationOid: string,
+    myonnettavatOikeudet: Array<{}>,
+    alkupvm: moment,
+    loppupvm: moment,
+};
+
+type State  = {
+    selectedList: Array<{value: number}>,
+    validationMessages: Array<{id: string, label: string}>,
+    kayttooikeusData: Array<{}>,
+    kayttooikeusModel: KayttooikeusModel,
+};
+
+class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
+    initialKayttooikeusModel: () => KayttooikeusModel;
+    initialState: State;
+    organisationAction: ({value: string}) => void;
+    close: (number) => void;
+    kayttooikeudetAction: ({value: number}) => void;
+    createKayttooikeusAction: () => void;
+    kestoAlkaaAction: (moment) => void;
+    kestoPaattyyAction: (moment) => void;
+
     static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
         kayttooikeus: PropTypes.shape({allowedKayttooikeus: PropTypes.object,}),
         existingKayttooikeusRef: PropTypes.object.isRequired,
-        omattiedot: PropTypes.shape({
-            organisaatios: PropTypes.array,
-        }).isRequired,
+        organisaatios: PropTypes.array,
         vuosia: PropTypes.number.isRequired,
     };
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
-        this.L = this.props.l10n[this.props.locale];
         this.initialKayttooikeusModel = () => ({
             kayttokohdeOrganisationOid: '',
             myonnettavatOikeudet: [],
@@ -52,7 +91,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
         };
 
         this.kayttooikeudetAction = (value) => {
-            if(value.value !== '') {
+            if (value.value) {
                 this.setState({
                     selectedList: [...this.state.selectedList, value],
                 });
@@ -63,19 +102,19 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
             });
         };
 
-        this.close = (kayttooikeusId) => {
+        this.close = (kayttooikeusId: number) => {
             const selectedList = this.state.selectedList.filter(selected => selected.value !== kayttooikeusId);
             const id = 'kayttooikeus';
             const label = 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID';
-            let newState = { selectedList, };
-            if(this.state.validationMessages.filter(validationMessage => validationMessage.id === id)[0] === undefined
+            let newState: State = Object.assign({}, this.state, { selectedList: selectedList, });
+            if (this.state.validationMessages.filter(validationMessage => validationMessage.id === id)[0] === undefined
                 && !selectedList.length) {
                 newState = Object.assign(newState, { validationMessages: [...this.state.validationMessages, {id, label}],});
             }
             this.setState(newState);
         };
 
-        this.kestoAlkaaAction = (value) => {
+        this.kestoAlkaaAction = (value: moment) => {
             this.setState({
                 kayttooikeusModel: {
                     ...this.state.kayttooikeusModel,
@@ -84,7 +123,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
             });
         };
 
-        this.kestoPaattyyAction = (value) => {
+        this.kestoPaattyyAction = (value: moment) => {
             this.setState({
                 kayttooikeusModel: {
                     ...this.state.kayttooikeusModel,
@@ -98,8 +137,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
                 this.state.selectedList.map(selected => ({
                     id: selected.value,
                     kayttoOikeudenTila: 'MYONNA',
-                    alkupvm: moment(this.state.kayttooikeusModel.alkupvm).format(this.L['PVM_DBFORMAATTI']),
-                    loppupvm: moment(this.state.kayttooikeusModel.loppupvm).format(this.L['PVM_DBFORMAATTI']),
+                    alkupvm: moment(this.state.kayttooikeusModel.alkupvm).format(this.props.L['PVM_DBFORMAATTI']),
+                    loppupvm: moment(this.state.kayttooikeusModel.loppupvm).format(this.props.L['PVM_DBFORMAATTI']),
                 })));
             // clear
             this.setState(this.initialState);
@@ -115,7 +154,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
             <div className="henkiloViewUserContentWrapper">
                 <div className="add-kayttooikeus-container">
                     <div className="header">
-                        <p className="oph-h2 oph-bold">{this.L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</p>
+                        <p className="oph-h2 oph-bold">{this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_OTSIKKO']}</p>
                     </div>
                     <div>
                         <table>
@@ -125,24 +164,24 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
                                 <col span={1} style={{width: "10%"}} />
                             </colgroup>
                             <tbody>
-                            <CKKohde L={this.L}
+                            <CKKohde L={this.props.L}
                                      locale={this.props.locale}
                                      organisationValue={this.state.kayttooikeusModel.kayttokohdeOrganisationOid}
                                      organisationAction={this.organisationAction}
-                                     organisationData={this.props.omattiedot.organisaatios} />
-                            <CKKesto L={this.L}
+                                     organisationData={this.props.organisaatios} />
+                            <CKKesto L={this.props.L}
                                      vuosia={this.props.vuosia}
                                      alkaaInitValue={this.state.kayttooikeusModel.alkupvm}
                                      paattyyInitValue={this.state.kayttooikeusModel.loppupvm}
                                      alkaaPvmAction={this.kestoAlkaaAction}
                                      paattyyPvmAction={this.kestoPaattyyAction} />
-                            <CKKayttooikeudet L={this.L}
+                            <CKKayttooikeudet L={this.props.L}
                                               locale={this.props.locale}
                                               kayttooikeusData={this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo]}
                                               selectedList={this.state.selectedList}
                                               close={this.close}
                                               kayttooikeusAction={this.kayttooikeudetAction} />
-                            <CKHaeButton L={this.L}
+                            <CKHaeButton L={this.props.L}
                                          validationMessages={this.state.validationMessages}
                                          haeButtonAction={this.createKayttooikeusAction} />
                             </tbody>
@@ -154,4 +193,13 @@ class HenkiloViewCreateKayttooikeus extends React.Component {
     };
 }
 
-export default HenkiloViewCreateKayttooikeus;
+const mapStateToProps = (state, ownProps) => ({
+    L: state.l10n.localisations[state.locale],
+    locale: state.locale,
+    organisaatios: state.omattiedot.organisaatios,
+});
+
+export default connect(mapStateToProps, {
+    fetchAllowedKayttooikeusryhmasForOrganisation,
+    addKayttooikeusToHenkilo,
+})(HenkiloViewCreateKayttooikeus);

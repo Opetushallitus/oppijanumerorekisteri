@@ -4,12 +4,13 @@ import KayttooikeusryhmaLista from "./KayttooikeusryhmaLista";
 import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import KayttooikeusryhmaListaSuodatin from "./KayttooikeusryhmaListaSuodatin";
+import type {L} from "../../../types/l.type";
 
 
 type Props = {
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     locale: Locale,
-    L: any,
+    L: L,
     router: any
 }
 
@@ -25,11 +26,11 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
 
     render() {
         return <div className="kayttooikeusryhmat-hallinta">
-            <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}></KayttooikeusryhmaListaSuodatin>
+            <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}/>
             <KayttooikeusryhmaLista {...this.props}
-                            items={this.props.kayttooikeusryhmat}
-                            filter={this.state.filter}
-                            labelPath={['name']}></KayttooikeusryhmaLista>
+                                    items={this.props.kayttooikeusryhmat}
+                                    filter={this.state.filter}
+                                    labelPath={['name']}/>
         </div>
     }
 

@@ -1,6 +1,7 @@
 [ignore]
 <PROJECT_Root>/build/.*
 <PROJECT_ROOT>/node_modules/.*
+.*/node_modules/config-chain/test/broken.json
 
 [include]
 
