@@ -16,6 +16,8 @@ import {
 import StaticUtils from '../components/common/StaticUtils'
 import R from 'ramda';
 import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {KayttajatiedotRead} from "../types/domain/kayttooikeus/KayttajatiedotRead";
+import type {HenkiloDuplicate} from "../types/domain/oppijanumerorekisteri/HenkiloDuplicate";
 
 export type HenkiloState = {
     +henkiloLoading: boolean,
@@ -23,7 +25,7 @@ export type HenkiloState = {
     +kayttajatietoLoading: boolean,
     +henkilo: Henkilo | any,
     +henkiloOrgs: Array<any>,
-    +kayttajatieto: any,
+    +kayttajatieto: KayttajatiedotRead | any,
     +buttonNotifications: any,
     +notifications: Array<any>,
     +henkiloOrganisaatiosLoading: boolean,
@@ -31,7 +33,7 @@ export type HenkiloState = {
     +slaves: Array<any>,
     +slavesLoading: boolean,
     +unlinkingLoading: boolean,
-    +duplicates: Array<any>,
+    +duplicates: Array<HenkiloDuplicate>,
     +duplicatesLoading: boolean,
     +linkingLoading: boolean,
     +masterLoading: boolean,
