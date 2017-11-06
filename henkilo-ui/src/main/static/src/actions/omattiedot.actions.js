@@ -11,8 +11,7 @@ import {
     FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_HENKILO_ASIOINTIKIELLI_REQUEST, FETCH_HENKILO_ASIOINTIKIELLI_SUCCESS,
     FETCH_HENKILO_ASIOINTIKIELLI_FAILURE
 } from './actiontypes';
-
-type Dispatch = (any) => void;
+import {Dispatch} from "../types/dispatch.type";
 
 type GetState = () => {
     omattiedot: {
