@@ -3,7 +3,6 @@ import {FETCH_PALVELUT_REQUEST, FETCH_PALVELUT_SUCCESS, FETCH_PALVELUT_FAILURE} 
 import { http } from '../http';
 import {urls} from 'oph-urls-js';
 import type {Palvelu} from "../types/domain/kayttooikeus/palvelu.types";
-import type {Palvelu} from "../types/domain/palvelu.types";
 import type {Dispatch} from "../types/dispatch.type";
 
 type PalvelutRequestAction = { type: FETCH_PALVELUT_REQUEST };

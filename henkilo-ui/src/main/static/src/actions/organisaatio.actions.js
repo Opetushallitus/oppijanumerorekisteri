@@ -15,6 +15,9 @@ type GetState = () => {
     },
     organisaatio: {
         cached: {},
+        organisaatiot: {
+            numHits: number,
+        },
     },
 };
 
@@ -22,20 +25,22 @@ const requestAllOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_REQUEST});
 const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGANISAATIOS_SUCCESS, organisaatios});
 const requestAllOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_FAILURE, error});
 
-export const fetchAllOrganisaatios = () => async (dispatch: Dispatch) => {
-    const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
-    const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid)
-    dispatch(requestAllOrganisaatios());
-    try {
-        const organisaatiot = await http.get(url);
-        const rootOrganisation = await http.get(rootUrl);
-        organisaatiot.numHits += 1;
-        organisaatiot.organisaatiot.push(rootOrganisation);
-        dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
-        dispatch({type: FETCH_ORGANISATIONS_SUCCESS, organisations: organisaatiot.organisaatiot});
-    } catch (error) {
-        dispatch(requestAllOrganisaatiosFailure(error));
-        throw error;
+export const fetchAllOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+    if (!getState().organisaatio.organisaatiot.numHits === 0) {
+        const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
+        const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid);
+        dispatch(requestAllOrganisaatios());
+        try {
+            const organisaatiot = await http.get(url);
+            const rootOrganisation = await http.get(rootUrl);
+            organisaatiot.numHits += 1;
+            organisaatiot.organisaatiot.push(rootOrganisation);
+            dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
+            dispatch({type: FETCH_ORGANISATIONS_SUCCESS, organisations: organisaatiot.organisaatiot});
+        } catch (error) {
+            dispatch(requestAllOrganisaatiosFailure(error));
+            throw error;
+        }
     }
 };
 

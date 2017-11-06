@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
-import type {HenkiloCreate} from '../../types/henkilo.type'
 import type {L} from "../../types/l.type";
 
 type Props = {
