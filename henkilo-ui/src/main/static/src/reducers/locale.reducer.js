@@ -1,14 +1,17 @@
-import {FETCH_OMATTIEDOT_SUCCESS} from "../actions/actiontypes";
+// @flow
+import {FETCH_HENKILO_ASIOINTIKIELLI_SUCCESS} from "../actions/actiontypes";
 import type {Locale} from "../types/locale.type";
 
-type Action = { lang: string };
+type Action = {
+    lang: string,
+    type: string,
+};
 
-export const locale = (state : Locale = 'fi', action: Action): Locale => {
+export const locale = (state: Locale = 'fi', action: Action): Locale => {
     switch (action.type) {
-        case FETCH_OMATTIEDOT_SUCCESS:
+        case FETCH_HENKILO_ASIOINTIKIELLI_SUCCESS:
             return action.lang || 'fi';
         default:
             return 'fi';
     }
-
 };
