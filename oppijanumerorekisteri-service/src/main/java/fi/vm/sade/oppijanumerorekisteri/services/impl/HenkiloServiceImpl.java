@@ -697,4 +697,12 @@ public class HenkiloServiceImpl implements HenkiloService {
         return UserDetailsHelperImpl.getAsiointikieliOrDefault(henkilo);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public String getCurrentUserAsiointikieli() {
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(this.userDetailsHelper.getCurrentUserOid())
+                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + this.userDetailsHelper.getCurrentUserOid()));
+        return UserDetailsHelperImpl.getAsiointikieliOrDefault(henkilo);
+    }
+
 }
