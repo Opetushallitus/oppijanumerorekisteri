@@ -613,4 +613,19 @@ public class HenkiloServiceTest {
         assertThat(saved.getSukupuoli()).isEqualTo("1");
     }
 
+    @Test
+    public void createShouldSkipEmptyPassinumerot() {
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloCreateDto input = new HenkiloCreateDto();
+        input.setPassinumerot(Stream.of("passi123", null, " ").collect(toSet()));
+
+        HenkiloDto output = service.createHenkilo(input);
+
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getPassinumerot()).containsExactly("passi123");
+    }
+
 }

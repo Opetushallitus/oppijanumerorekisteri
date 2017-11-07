@@ -486,6 +486,14 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
 
+        // hylätään tyhjät passinumerot
+        if (henkiloCreate.getPassinumerot() != null) {
+            Set<String> passinumerot = henkiloCreate.getPassinumerot().stream()
+                    .filter(passinumero -> passinumero != null && !passinumero.trim().isEmpty())
+                    .collect(toSet());
+            henkiloCreate.setPassinumerot(passinumerot);
+        }
+
         if (henkiloCreate.getAidinkieli() != null && henkiloCreate.getAidinkieli().getKieliKoodi() != null) {
             henkiloCreate.setAidinkieli(this.kielisyysRepository.findByKieliKoodi(henkiloCreate.getAidinkieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.aidinkieli")));
@@ -546,13 +554,20 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
-        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplicates(henkilo);
+        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
+        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplikaatit(criteria);
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
                 .stream().filter(henkiloDuplicate -> henkiloDuplicate.getOidHenkilo() !=  this.userDetailsHelper.getCurrentUserOid()).collect(toList()); // remove current user from duplicate search results
         Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
         Map<String, List<Map<String, Object>>> hakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
         henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakemukset.get(h.getOidHenkilo())));
         return henkiloDuplicateDtos;
+    }
+
+    @Override
+    public List<HenkiloReadDto> getDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
+        List<Henkilo> henkilot = henkiloJpaRepository.findDuplikaatit(criteria);
+        return mapper.mapAsList(henkilot, HenkiloReadDto.class);
     }
 
     @Override

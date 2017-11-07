@@ -379,22 +379,21 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
 
     // NOTE: native postgres query
     @Override
-    public List<Henkilo> findDuplicates(Henkilo henkilo) {
+    public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
         em.createNativeQuery("SELECT set_limit(0.6)").getSingleResult();
         Query henkiloTypedQuery = this.em.createNativeQuery("" +
                 "SELECT h1.* \n" +
                 "FROM henkilo h1 \n" +
                 "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
-//                "  AND h1.oidhenkilo != h2.oidhenkilo \n" +
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
                 "ORDER BY similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) DESC \n", Henkilo.class)
-                .setParameter("nimet", getAllNames(henkilo));
+                .setParameter("nimet", getAllNames(criteria));
         return (List<Henkilo>)henkiloTypedQuery.getResultList();
     }
 
-    private String getAllNames(Henkilo henkilo) {
-        return Stream.of(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi())
+    private String getAllNames(HenkiloDuplikaattiCriteria criteria) {
+        return Stream.of(criteria.getEtunimet(), criteria.getKutsumanimi(), criteria.getSukunimi())
                 .filter(Objects::nonNull)
                 .collect(joining(" "));
     }

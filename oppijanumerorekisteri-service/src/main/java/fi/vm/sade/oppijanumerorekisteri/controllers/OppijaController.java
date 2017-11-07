@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
@@ -16,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OppijaController {
 
     private final OppijaService oppijaService;
+
+    @PostMapping
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @ApiOperation("Yksittäisen oppijan luonti")
+    public HenkiloReadDto create(@Valid @RequestBody HenkiloCreateDto dto) {
+        return oppijaService.create(dto);
+    }
 
     @PutMapping
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
@@ -71,6 +82,13 @@ public class OppijaController {
     @ApiOperation(value = "Muuttuneiden oppijoiden haku")
     public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
         return oppijaService.listOidsBy(criteria);
+    }
+
+    @PostMapping("/{henkiloOid}/organisaatio")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Lisää nykyisen käyttäjän organisaatiot oppijalle")
+    public void addKayttajanOrganisaatiot(@PathVariable String henkiloOid) {
+        oppijaService.addKayttajanOrganisaatiot(henkiloOid);
     }
 
     @PutMapping("/{henkiloOid}/organisaatio/{organisaatioOid}")
