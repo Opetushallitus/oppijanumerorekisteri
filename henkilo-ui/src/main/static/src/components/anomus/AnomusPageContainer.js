@@ -28,8 +28,6 @@ const mapStateToProps = (state) => {
         organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
         isAdmin: state.omattiedot.isAdmin,
-        omattiedot: state.omattiedot,
-        ryhmat: state.ryhmatState
     };
 };
 

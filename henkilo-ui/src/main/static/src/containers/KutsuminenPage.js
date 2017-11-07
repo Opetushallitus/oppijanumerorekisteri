@@ -42,9 +42,10 @@ class KutsuFormPage extends React.Component  {
         const {l10n} = this.props;
         const {basicInfo} = this.state;
 
-            if(this.props.omattiedot.omattiedotLoading || this.props.omattiedot.omattiedotOrganisaatiosLoading) {
+            if (this.props.omattiedotLoading) {
                 return (<div className="wrapper"><Loader /></div>);
-            } else {
+            }
+            else {
                 return (
                     <div>
                     <form className="wrapper kutsuFormWrapper">
@@ -56,7 +57,7 @@ class KutsuFormPage extends React.Component  {
                                     locale={this.props.locale}>
                         </BasicInfo>
                         <KutsuOrganisaatios l10n={l10n}
-                                            orgs={this.props.omattiedot.organisaatios}
+                                            orgs={this.props.omatOrganisaatios}
                                             addedOrgs={this.props.addedOrgs}
                                             henkilo={this.props.henkilo}
                                             locale={this.props.locale}
@@ -130,7 +131,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
         l10n: state.l10n.localisations,
-        omattiedot: state.omattiedot,
+        omattiedotLoading: state.omattiedot.omattiedotLoading,
+        omatOrganisaatios: state.omattiedot.organisaatios,
         henkilo: state.henkilo,
         addedOrgs: state.kutsuminenOrganisaatios,
         locale: state.locale

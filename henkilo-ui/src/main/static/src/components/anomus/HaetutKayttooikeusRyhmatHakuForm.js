@@ -1,37 +1,66 @@
+// @flow
 /**
  * Haettujen käyttöoikeusryhmien hakulomake.
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import CloseButton from "../common/button/CloseButton";
 import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import OphSelect from "../common/select/OphSelect";
+import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions';
 import R from 'ramda';
+import type {L} from "../../types/l.type";
+import type {Locale} from "../../types/locale.type";
 
-class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
+type Props = {
+    L: L,
+    locale: Locale,
+    onSubmit: ({}) => void,
+    organisaatios: Array<{}>,
+    isAdmin: boolean,
+    isOphVirkailija: boolean,
+    haetutKayttooikeusryhmatLoading: boolean,
+    ryhmat: {ryhmas: Array<{}>},
+    fetchOmattiedotOrganisaatios: () => void,
+}
+
+type State = {
+    searchTerm: string,
+    naytaKaikki: boolean,
+    selectedOrganisaatio: ?string,
+    selectedRyhma: ?number,
+}
+
+class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     constructor(props) {
         super(props);
 
-        this.L = this.props.l10n[this.props.locale];
-
         this.state = {
-            hakutermi: '',
+            searchTerm: '',
             naytaKaikki: false,
             selectedOrganisaatio: undefined,
             selectedRyhma: undefined
         };
     };
 
+    componentDidMount() {
+        this.props.fetchOmattiedotOrganisaatios();
+    }
+
     static propTypes = {
         onSubmit: PropTypes.func.isRequired,
         locale: PropTypes.string.isRequired,
-        l10n: PropTypes.array.isRequired,
-        organisaatiot: PropTypes.array.isRequired,
         haetutKayttooikeusryhmatLoading: PropTypes.bool.isRequired,
-        omattiedot: PropTypes.object.isRequired
+        isAdmin: PropTypes.bool,
+        isOphVirkailija: PropTypes.bool,
+        organisaatios: PropTypes.array,
+        ryhmat: PropTypes.shape({
+            ryhmas: PropTypes.array,
+        })
     };
 
     render() {
@@ -41,60 +70,50 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                             defaultNameQuery={this.state.searchTerm}
-                                            placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
+                                            placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
                                             loading={this.props.haetutKayttooikeusryhmatLoading}/>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline">
                         <span className="flex-item-1">
                             <OrganisaatioSelection id="organisaatiofilter"
-                                                   L={this.L}
+                                                   L={this.props.L}
                                                    locale={this.props.locale}
-                                                   organisaatios={this.props.omattiedot.organisaatios}
+                                                   organisaatios={this.props.organisaatios}
                                                    selectOrganisaatio={this.onOrganisaatioChange.bind(this)}
                                                    selectedOrganisaatioOid={this.state.selectedOrganisaatio}>
                             </OrganisaatioSelection>
                         </span>
                         <span className="haetut-kayttooikeusryhmat-close-button">
-                            <CloseButton closeAction={() => this.onOrganisaatioChange(undefined)}></CloseButton>
+                            <CloseButton closeAction={() => this.onOrganisaatioChange(undefined)}/>
                         </span>
                     </div>
-                    {this.props.omattiedot.isAdmin || this.props.omattiedot.isOphVirkailija ?
+                    {this.props.isAdmin || this.props.isOphVirkailija ?
                         <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline">
                             <span className="flex-item-1">
                                 <OphSelect id="ryhmafilter"
                                            options={this._parseRyhmas(this.props.ryhmat)}
                                            value={this.state.selectedRyhma}
-                                           placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
+                                           placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
                                            onChange={this.onRyhmaChange.bind(this)}>
                                 </OphSelect>
                             </span>
                             <span className="haetut-kayttooikeusryhmat-close-button">
-                                <CloseButton closeAction={() => this.onRyhmaChange(undefined)}></CloseButton>
+                                <CloseButton closeAction={() => this.onRyhmaChange(undefined)}/>
                             </span>
                         </div>
                         : null}
 
-                    {this.props.omattiedot.isAdmin &&
+                    {this.props.isAdmin &&
                     <div className="haetut-kayttooikeusryhmat-form-item">
                         <BooleanRadioButtonGroup value={this.state.naytaKaikki}
                                                  onChange={this.onNaytaKaikkiChange}
-                                                 trueLabel={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']}
-                                                 falseLabel={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']}/>
+                                                 trueLabel={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']}
+                                                 falseLabel={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_OPH']}/>
                     </div>
                     }
                 </div>
             </form>
         );
-    }
-
-    // Find users organisaatios from all organisaatios
-    parseUserOrganisaatios(allOrganisaatios) {
-        const omatOrganisaatiot = this.props.omattiedot.organisaatios;
-        const organisaatioOids = [];
-        omatOrganisaatiot.forEach(organisaatio => {
-            this.parseChild(organisaatio.organisaatio, organisaatioOids)
-        });
-        return allOrganisaatios.filter(organisaatio => organisaatioOids.includes(organisaatio.oid));
     }
 
     parseChild(organisaatio, organisaatioOids) {
@@ -138,12 +157,14 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component {
     };
 }
 
-HaetutKayttooikeusRyhmatHakuForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-    organisaatiot: PropTypes.array.isRequired,
-    rootOrganisaatioOid: PropTypes.string.isRequired,
-    locale: PropTypes.string.isRequired,
-    l10n: PropTypes.object.isRequired,
-};
+const mapStateToProps = (state, ownProps) => ({
+    L: state.l10n.localisations[state.locale],
+    locale: state.locale,
+    organisaatios: state.omattiedot.organisaatios,
+    isAdmin: state.omattiedot.isAdmin,
+    isOphVirkailija: state.omattiedot.isOphVirkailija,
+    haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.isLoading,
+    ryhmat: state.ryhmatState,
+});
 
-export default HaetutKayttooikeusRyhmatHakuForm;
+export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios})(HaetutKayttooikeusRyhmatHakuForm);

@@ -18,7 +18,7 @@ class HenkilohakuContainer extends React.Component {
     constructor(props) {
         super(props);
 
-        this.initialCriteria = this.props.omattiedot.isAdmin
+        this.initialCriteria = this.props.isAdmin
             ? {
                 noOrganisation: true,
                 subOrganisation: true,
@@ -40,13 +40,11 @@ class HenkilohakuContainer extends React.Component {
     }
 
     render() {
-        return (!this.props.omattiedot.omattiedotOrganisaatiosLoading && !this.props.kayttooikeus.allKayttooikeusryhmasLoading && !this.props.ryhmas.ryhmasLoading)
+        return !this.props.allKayttooikeusryhmasLoading
             ? <HenkilohakuPage l10n={this.props.l10n}
                                locale={this.props.locale}
                                initialCriteria={this.initialCriteria}
                                henkilo={this.props.henkilo}
-                               kayttooikeusryhmas={this.props.kayttooikeus.allKayttooikeusryhmas}
-                               ryhmas={this.props.ryhmas}
                                henkilohakuAction={this.props.henkilohaku}
                                henkilohakuResult={this.props.henkilohakuState.result}
                                henkiloHakuFilters={this.props.henkilohakuState.filters}
@@ -56,7 +54,7 @@ class HenkilohakuContainer extends React.Component {
                                notifications={this.props.notifications}
                                removeNotification={this.props.removeNotification}
                                clearHenkilohaku={this.props.clearHenkilohaku}
-                               omattiedot={this.props.omattiedot}/>
+                               isAdmin={this.props.isAdmin}/>
             : <Loader />
     };
 }
@@ -66,10 +64,10 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         locale: state.locale,
         henkilo: state.henkilo,
-        kayttooikeus: state.kayttooikeus,
+        allKayttooikeusryhmasLoading: state.kayttooikeus.allKayttooikeusryhmasLoading,
         henkilohakuState: state.henkilohakuState,
         notifications: state.notifications.henkilohakuNotifications,
-        omattiedot: state.omattiedot,
+        isAdmin: state.omattiedot.isAdmin,
         ryhmas: state.ryhmatState
     };
 };

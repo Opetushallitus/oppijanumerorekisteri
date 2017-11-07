@@ -12,6 +12,7 @@ import type {Dispatch} from "../types/dispatch.type";
 type GetState = () => {
     ryhmatState: {
         ryhmas: Array<{}>,
+        ryhmasLoading: boolean,
     },
     organisaatio: {
         cached: {},
@@ -26,6 +27,7 @@ const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGA
 const requestAllOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_FAILURE, error});
 
 export const fetchAllOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+    // Fetch only with the first call
     if (!getState().organisaatio.organisaatiot.numHits === 0) {
         const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
         const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid);
@@ -49,7 +51,8 @@ const requestRyhmas = () => ({type: FETCH_ALL_RYHMAT_REQUEST});
 const requestRyhmasSuccess = (ryhmas) => ({type: FETCH_ALL_RYHMAT_SUCCESS, ryhmas});
 const requestRyhmasFailure = (error) => ({type: FETCH_ALL_RYHMAT_FAILURE, error});
 export const fetchAllRyhmas = () => async (dispatch: Dispatch, getState: GetState) => {
-    if (getState().ryhmatState.ryhmas && !getState().ryhmatState.ryhmas.length) {
+    // Fetch only with first call
+    if (getState().ryhmatState.ryhmas && !getState().ryhmatState.ryhmas.length && !getState().ryhmatState.ryhmasLoading) {
         const url = urls.url('organisaatio-service.ryhmat');
         dispatch(requestRyhmas());
         try {

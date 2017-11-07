@@ -1,7 +1,8 @@
 import { FETCH_OMATTIEDOT_REQUEST, FETCH_OMATTIEDOT_SUCCESS, FETCH_OMATTIEDOT_FAILURE,
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST, FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE} from '../actions/actiontypes';
 
-export const omattiedot = (state = { omattiedotLoading: false, data: undefined, initialized: false, omattiedotOrganisaatiosLoading: true, organisaatios: [] }, action) => {
+export const omattiedot = (state = { omattiedotLoading: false, data: undefined, initialized: false,
+    omattiedotOrganisaatiosLoading: false, organisaatios: [] }, action) => {
     switch(action.type) {
         case FETCH_OMATTIEDOT_REQUEST:
             return Object.assign({}, state, { omattiedotLoading: true });

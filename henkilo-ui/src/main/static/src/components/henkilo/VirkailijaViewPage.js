@@ -19,9 +19,21 @@ class VirkailijaViewPage extends React.Component {
     }
 
     static propTypes = {
-        omattiedot: PropTypes.shape({
-            omattiedotOrganisaatiosLoading: PropTypes.bool.isRequired,
-        }).isRequired,
+        henkilo: PropTypes.shape({
+            henkiloLoading: PropTypes.bool,
+            kayttajatietoLoading: PropTypes.bool,
+        }),
+        koodisto: PropTypes.shape({
+            kieliKoodistoLoading: PropTypes.bool,
+            kansalaisuusKoodistoLoading: PropTypes.bool,
+            sukupuoliKoodistoLoading: PropTypes.bool,
+            yhteystietotyypitKoodistoLoading: PropTypes.bool,
+        }),
+        kayttooikeus: PropTypes.shape({
+            grantableKayttooikeusLoading: PropTypes.bool,
+            kayttooikeusLoading: PropTypes.bool,
+            kayttooikeusAnomusLoading: PropTypes.bool,
+        }),
     };
 
     render() {
@@ -36,7 +48,10 @@ class VirkailijaViewPage extends React.Component {
                         || this.props.henkilo.kayttajatietoLoading
                         || this.props.koodisto.yhteystietotyypitKoodistoLoading
                             ? <Loader />
-                            : <HenkiloViewUserContent {...this.props} readOnly={true} locale={this.props.locale} showPassive={false}
+                            : <HenkiloViewUserContent {...this.props}
+                                                      readOnly={true}
+                                                      locale={this.props.locale}
+                                                      showPassive={false}
                                                       basicInfo={this.props.createBasicInfo}
                                                       readOnlyButtons={this.props.readOnlyButtons} />
                     }
@@ -81,13 +96,9 @@ class VirkailijaViewPage extends React.Component {
                     }
                 </div>
                 <div className="wrapper">
-                    {
-                        this.props.omattiedotOrganisaatiosLoading
-                            ? <Loader />
-                            : <HenkiloViewCreateKayttooikeus {...this.props}
-                                                             vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
-                                                             existingKayttooikeusRef={this.existingKayttooikeusRef} />
-                    }
+                    <HenkiloViewCreateKayttooikeus {...this.props}
+                                                   vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                                                   existingKayttooikeusRef={this.existingKayttooikeusRef} />
                 </div>
             </div>
         )

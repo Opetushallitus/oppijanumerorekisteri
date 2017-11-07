@@ -53,7 +53,7 @@ export type KayttooikeusryhmaForm = {
 type Props = {
     L: L,
     router: any,
-    omattiedot: {organisaatios: any},
+    organisaatios: ?Array<{}>,
     koodisto: any,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
@@ -262,7 +262,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _findOrganisaatiosByOids = (oids: Array<string>): Array<any> => {
-        return getOrganisaatios(this.props.omattiedot.organisaatios, this.props.locale)
+        return getOrganisaatios(this.props.organisaatios, this.props.locale)
             .filter((organisaatio: any) => R.contains(organisaatio.oid, oids));
     };
 

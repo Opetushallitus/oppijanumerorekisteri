@@ -17,9 +17,6 @@ type Props = {
     locale: Locale,
     updateHenkiloAndRefetch: (any) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
-    omattiedot: {
-        omattiedotOrganisaatiosLoading: boolean,
-    },
     henkilo: any,
     kayttooikeus: any,
     koodisto: any,
@@ -99,13 +96,9 @@ class AdminViewPage extends React.Component<Props> {
                     }
                 </div>
                 <div className="wrapper">
-                    {
-                        this.props.omattiedotOrganisaatiosLoading
-                            ? <Loader />
-                            : <HenkiloViewCreateKayttooikeus {...this.props}
-                                                             vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
-                                                             existingKayttooikeusRef={this.existingKayttooikeusRef} />
-                    }
+                    <HenkiloViewCreateKayttooikeus {...this.props}
+                                                   vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                                                   existingKayttooikeusRef={this.existingKayttooikeusRef} />
                 </div>
             </div>
         )

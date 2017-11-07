@@ -69,7 +69,10 @@ const requestOmattiedotOrganisaatios = () => ({type: FETCH_OMATTIEDOT_ORGANISAAT
 const receiveOmattiedotOrganisaatiosSuccess = (json) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: json});
 const receiveOmattiedotOrganisaatiosFailure = (error) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, error});
 export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
-    if (getState().omattiedot.organisaatios && !getState().omattiedot.organisaatios.length) {
+    // Fetch only with the first call
+    if (getState().omattiedot.organisaatios
+        && !getState().omattiedot.organisaatios.length
+        && !getState().omattiedot.omattiedotOrganisaatiosLoading) {
         const oid = R.path(['omattiedot', 'data', 'oid'], getState());
         const omattiedotLoading = getState().omattiedot.omattiedotLoaded;
         if (!oid && !omattiedotLoading) {

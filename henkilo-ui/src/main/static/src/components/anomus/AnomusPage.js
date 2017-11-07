@@ -50,8 +50,6 @@ class AnomusPage extends React.Component {
 
     componentDidMount() {
         this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
-        // For organisation filtering. Should fetch only user's organisations for normal users.
-        this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllRyhmas();
     };
 
@@ -71,7 +69,7 @@ class AnomusPage extends React.Component {
         const L = this.props.l10n[this.props.locale];
         return (
           <div className="anomus-table">
-            <HaetutKayttooikeusRyhmatHakuForm {...this.props} onSubmit={this.onSubmit.bind(this)}/>
+              <HaetutKayttooikeusRyhmatHakuForm onSubmit={this.onSubmit.bind(this)}/>
               { this.state.showHylkaysSuccess
               && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
                                         closeAction={() => this.setState({showHylkaysSuccess: false})}/> }
@@ -163,10 +161,6 @@ class AnomusPage extends React.Component {
             throw error;
         }
     };
-
-    showNotification(key) {
-        this.setState({[key]: true});
-    }
 
     createNotificationMessage(notificationResult) {
         return `Henkilön ${this.state.anomusModifiedHenkilo.etunimet} ${this.state.anomusModifiedHenkilo.sukunimi} (${this.state.anomusModifiedHenkilo.oid}) ${notificationResult}`;

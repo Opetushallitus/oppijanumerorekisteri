@@ -179,7 +179,6 @@ const mapStateToProps = (state, ownProps) => {
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
         ownOid: state.omattiedot.data.oid,
-        omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
         isAdmin: state.omattiedot.isAdmin,
     };
 };

@@ -21,12 +21,7 @@ class HenkilohakuPage extends React.Component {
             passivoitu: PropTypes.bool.isRequired,
             dublicates: PropTypes.bool.isRequired,
         }),
-        omattiedot: PropTypes.shape({
-            organisaatios: PropTypes.array.isRequired,
-            isAdmin: PropTypes.bool.isRequired,
-
-        }),
-        kayttooikeusryhmas: PropTypes.array.isRequired,
+        isAdmin: PropTypes.bool.isRequired,
         henkilohakuAction: PropTypes.func.isRequired,
         updateFilters: PropTypes.func.isRequired,
         henkilohakuResult: PropTypes.array.isRequired,
@@ -40,7 +35,6 @@ class HenkilohakuPage extends React.Component {
         }).isRequired).isRequired,
         removeNotification: PropTypes.func.isRequired,
         clearHenkilohaku: PropTypes.func.isRequired,
-        ryhmas: PropTypes.object.isRequired
     };
 
     constructor(props) {
@@ -116,10 +110,10 @@ class HenkilohakuPage extends React.Component {
 
     render() {
         return <div className="borderless-wrapper">
-            {this.props.omattiedot.isAdmin &&
+            {this.props.isAdmin &&
                 <Link to="palvelu/luonti">{this.L['PALVELUKAYTTAJAN_LUONTI_LINKKI']}</Link>
             }
-            {this.props.omattiedot.isAdmin &&
+            {this.props.isAdmin &&
                 <Link to="oppija/luonti">{this.L['OPPIJAN_LUONTI_LINKKI']}</Link>
             }
             {this.props.notifications.filter(notification => notification.type === 'error').map( (notification, index) =>
@@ -135,18 +129,13 @@ class HenkilohakuPage extends React.Component {
                                 duplikaatitAction={this.updateToSearchModel('dublicates', true).bind(this)}
                                 passiivisetAction={this.updateToSearchModel('passivoitu', true).bind(this)}
                                 initialValues={this.state.henkilohakuModel}
-                                l10n={this.props.l10n}
-                                locale={this.props.locale}
-                                organisaatioList={this.props.omattiedot.organisaatios}
                                 selectedOrganisation={this.state.henkilohakuModel.organisaatioOids}
                                 organisaatioSelectAction={this.selectOrganisaaOid.bind(this)}
-                                kayttooikeusryhmas={this.props.kayttooikeusryhmas}
-                                ryhmas={this.props.ryhmas}
                                 selectedRyhma={this.state.ryhmaOid}
                                 ryhmaSelectionAction={this.selectRyhmaOid.bind(this)}
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
                                 kayttooikeusSelectionAction={this.updateToSearchModel('kayttooikeusryhmaId').bind(this)}
-                                omattiedot={this.props.omattiedot} />
+            />
             {
                 (this.initialised && !this.state.showNoDataMessage) || this.props.henkilohakuResult.length
                     ? <div className="henkilohakuTableWrapper">

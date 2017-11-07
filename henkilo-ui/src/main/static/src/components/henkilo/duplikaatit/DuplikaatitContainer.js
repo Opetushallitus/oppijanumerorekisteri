@@ -34,7 +34,6 @@ const mapStateToProps = (state, ownProps) => ({
     henkiloType: ownProps.params['henkiloType'],
     l10n: state.l10n.localisations,
     locale: state.locale,
-    omattiedot: state.omattiedot,
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     notifications: state.notifications.duplicatesNotifications,

@@ -7,7 +7,7 @@ export const ryhmatState = (state = {ryhmasLoading: false, ryhmas: []}, action) 
         case FETCH_ALL_RYHMAT_SUCCESS:
             return Object.assign({}, state, { ryhmasLoading: false, ryhmas: action.ryhmas });
         case FETCH_ALL_RYHMAT_FAILURE:
-            return Object.assign({}, state, { ryhmasLoading: false, ryhmas: [] });
+            return Object.assign({}, state, { ryhmasLoading: false, });
         default:
             return state;
     }
