@@ -24,7 +24,7 @@ public class OppijaCreateDto {
 
     @NotNull
     @Valid
-    private HenkiloCreateDto henkilo;
+    private OppijaCreateHenkiloDto henkilo;
 
     @Getter
     @Setter
@@ -32,7 +32,7 @@ public class OppijaCreateDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @ValidateAtLeastOneNotNull({"oid", "hetu", "passinumero", "sahkoposti"})
-    public static class HenkiloCreateDto {
+    public static class OppijaCreateHenkiloDto {
 
         private String oid;
 

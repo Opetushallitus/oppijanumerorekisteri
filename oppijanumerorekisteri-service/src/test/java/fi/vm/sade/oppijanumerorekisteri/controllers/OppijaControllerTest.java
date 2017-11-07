@@ -6,11 +6,11 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class OppijaControllerTest {
     private OppijatCreateDto getValidOppijatCreateDto() {
         return OppijatCreateDto.builder()
                 .sahkoposti("example@example.com")
-                .henkilot(Stream.of(getValidOppijaCreateDto()).collect(toSet()))
+                .henkilot(Stream.of(getValidOppijaCreateDto()).collect(toList()))
                 .build();
     }
 
@@ -53,8 +53,8 @@ public class OppijaControllerTest {
                 .build();
     }
 
-    private OppijaCreateDto.HenkiloCreateDto getValidHenkiloCreateDto() {
-        return OppijaCreateDto.HenkiloCreateDto.builder()
+    private OppijaCreateDto.OppijaCreateHenkiloDto getValidHenkiloCreateDto() {
+        return OppijaCreateDto.OppijaCreateHenkiloDto.builder()
                 .hetu("170897-935L")
                 .etunimet("etu")
                 .kutsumanimi("etu")
@@ -73,7 +73,7 @@ public class OppijaControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(oppijaServiceMock).getOrCreate(any());
+        verify(oppijaServiceMock).create(any(OppijatCreateDto.class));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class OppijaControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(oppijaServiceMock).getOrCreate(any());
+        verify(oppijaServiceMock).create(any(OppijatCreateDto.class));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class OppijaControllerTest {
         OppijatCreateDto dto = getValidOppijatCreateDto();
         OppijaCreateDto oppijaCreateDto = getValidOppijaCreateDto();
         oppijaCreateDto.getHenkilo().setHetu("hetu1");
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toSet()));
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
                 .accept(MediaType.APPLICATION_JSON)
@@ -162,7 +162,7 @@ public class OppijaControllerTest {
         oppijaCreateDto.getHenkilo().setHetu(null);
         oppijaCreateDto.getHenkilo().setPassinumero(null);
         oppijaCreateDto.getHenkilo().setSahkoposti(null);
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toSet()));
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
                 .accept(MediaType.APPLICATION_JSON)

@@ -14,4 +14,5 @@ public interface KayttooikeusClient {
     void passivoiHenkilo(String oidHenkilo, String kasittelijaOid);
     KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria);
     List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid);
+    Set<String> getAktiivisetOrganisaatioHenkilot(String henkiloOid);
 }
