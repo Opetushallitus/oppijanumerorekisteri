@@ -467,10 +467,18 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional
     public Henkilo createHenkilo(Henkilo henkiloCreate) {
-        BindException errors = new BindException(henkiloCreate, "henkiloCreate");
-        this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
-        if (errors.hasErrors()) {
-            throw new UnprocessableEntityException(errors);
+        return createHenkilo(henkiloCreate, userDetailsHelper.getCurrentUserOid(), true);
+    }
+
+    @Override
+    @Transactional
+    public Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate) {
+        if (validate) {
+            BindException errors = new BindException(henkiloCreate, "henkiloCreate");
+            this.henkiloCreatePostValidator.validate(henkiloCreate, errors);
+            if (errors.hasErrors()) {
+                throw new UnprocessableEntityException(errors);
+            }
         }
 
         // varmistetaan että tyhjä hetu tallentuu nullina
@@ -484,7 +492,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
-        henkiloCreate.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+        henkiloCreate.setKasittelijaOid(kasittelijaOid);
 
         // hylätään tyhjät passinumerot
         if (henkiloCreate.getPassinumerot() != null) {

@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class OppijaMappers {
 
     @Bean
-    public ClassMap<Henkilo, OppijaReadDto.HenkiloReadDto> oppijaReadDtoClassMap(MapperFactory mapperFactory) {
-        return mapperFactory.classMap(Henkilo.class, OppijaReadDto.HenkiloReadDto.class)
+    public ClassMap<Henkilo, OppijaReadDto.OppijaReadHenkiloDto> oppijaReadDtoClassMap(MapperFactory mapperFactory) {
+        return mapperFactory.classMap(Henkilo.class, OppijaReadDto.OppijaReadHenkiloDto.class)
                 .byDefault()
                 .field("oidHenkilo", "oid")
                 .field("created", "luotu")

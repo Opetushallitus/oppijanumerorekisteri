@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Collection;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,6 +26,6 @@ public class OppijatCreateDto {
     @NotNull
     @Size(min = 1)
     @Valid
-    private Collection<OppijaCreateDto> henkilot;
+    private List<OppijaCreateDto> henkilot;
 
 }
