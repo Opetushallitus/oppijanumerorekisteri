@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
+import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
@@ -25,6 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Oppijoiden tuontiin liittyvät toiminnot. Oppijoita tuodaan
+ * oppijanumerorekisteriin eri oppilashallintojärjestelmistä ja nämä rajapinnat
+ * ovat ensisijaisesti heitä varten.
+ */
 @RestController
 @RequestMapping("/oppija")
 @RequiredArgsConstructor
@@ -36,7 +42,8 @@ public class OppijaController {
     @PostMapping
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation("Yksittäisen oppijan luonti")
+    @ApiOperation(value = "Yksittäisen oppijan luonti",
+            notes = "Lisää automaattisesti oppijan käyttäjän organisaatioihin.")
     public HenkiloReadDto create(@Valid @RequestBody HenkiloCreateDto dto) {
         return oppijaService.create(dto);
     }
@@ -44,17 +51,37 @@ public class OppijaController {
     @PutMapping
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation(value = "Oppijoiden tuonti eräajona")
-    public OppijatReadDto getOrCreate(@Valid @RequestBody OppijatCreateDto dto) {
-        return oppijaService.getOrCreate(dto);
+    @ApiOperation(value = "Useamman oppijan luonti",
+            notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
+    public TuontiReadDto create(@Valid @RequestBody OppijatCreateDto dto) {
+        return oppijaService.create(dto);
     }
 
     @GetMapping("/tuonti={id}")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation(value = "Oppijoiden haku eräajon ID:llä")
-    public OppijatReadDto getByTuontiId(@PathVariable Long id) {
-        return oppijaService.getByTuontiId(id);
+    @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
+            notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
+    public OppijatReadDto getOppijatByTuontiId(@PathVariable Long id) {
+        return oppijaService.getOppijatByTuontiId(id);
+    }
+
+    @PostMapping("/tuonti={id}")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @ApiOperation(value = "Käynnistää oppijoiden tuonnin käsittelyn",
+            notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
+    public TuontiReadDto create(@PathVariable Long id) {
+        return oppijaService.create(id);
+    }
+
+    @GetMapping("/tuonti={id}/perustiedot")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
+            notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
+    public TuontiReadDto getTuontiById(@PathVariable Long id) {
+        return oppijaService.getTuontiById(id);
     }
 
     @GetMapping("/yhteenveto")
@@ -69,7 +96,7 @@ public class OppijaController {
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
-    public Page<OppijaReadDto.HenkiloReadDto> list(
+    public Page<OppijaReadDto.OppijaReadHenkiloDto> list(
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
