@@ -11,13 +11,13 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
@@ -34,6 +34,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
     private final HenkiloJpaRepository henkiloJpaRepository;
+    private final YksilointitietoRepository yksilointitietoRepository;
 
     private final UserDetailsHelper userDetailsHelper;
 
@@ -78,13 +79,21 @@ public class IdentificationServiceImpl implements IdentificationService {
         unidentified.stream()
                 .peek(this::logFaults)
                 .filter(Henkilo::isNotBlackListed)
-                .filter(Henkilo::hasNoDataInconsistency)
+                .filter(this::hasNoDataInconsistency)
                 .filter(Henkilo::hasNoFakeHetu)
                 .forEach(henkilo -> {
                     this.waitBetweenRequests(vtjRequestDelayInMillis);
                     log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
                     this.identifyHenkilo(henkilo);
                 });
+    }
+
+    /**
+     * If an unidentified person already has reference data there must be an inconsistency in the data.
+     * Those cases must be solved by officials.
+     */
+    private boolean hasNoDataInconsistency(Henkilo henkilo) {
+        return !(!henkilo.isYksiloityVTJ() && !henkilo.getHetu().isEmpty() && yksilointitietoRepository.findByHenkilo(henkilo).isPresent());
     }
 
     @Override
@@ -129,7 +138,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         if (!henkilo.isNotBlackListed()) {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
         }
-        if (!henkilo.hasNoDataInconsistency()) {
+        if (!hasNoDataInconsistency(henkilo)) {
             log.warn("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
         }
         /*
