@@ -1,6 +1,8 @@
 // @flow
-export type Organisaatio =  {
-    nimi: {en: string, fi: string, sv: string,},
+import type {TextGroup} from "./textgroup.types";
+
+export type Organisaatio = {
+    nimi: TextGroup,
     tyypit: Array<string>,
     oid: string,
     parentOid: ?string,

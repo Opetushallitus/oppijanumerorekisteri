@@ -22,6 +22,7 @@ import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
 import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
 import type {L} from "../../../types/l.type";
+import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -53,14 +54,14 @@ export type KayttooikeusryhmaForm = {
 type Props = {
     L: L,
     router: any,
-    organisaatios: ?Array<{}>,
+    organisaatios: Array<OrganisaatioHenkilo>,
     koodisto: any,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
     palvelutState: PalvelutState,
     locale: Locale,
     fetchPalveluKayttooikeus: (palveluName: string) => void,
-    kayttooikeusryhmaId?: string
+    kayttooikeusryhmaId?: string,
 }
 
 type State = {
