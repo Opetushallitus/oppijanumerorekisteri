@@ -141,9 +141,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private Boolean turvakielto = false;
 
-    @OneToOne(mappedBy = "henkilo", cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-    private Yksilointitieto yksilointitieto;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_henkilo_yksilointi_synkronointi"))
     private Set<YksilointiSynkronointi> yksilointiSynkronoinnit;
@@ -205,14 +202,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public void setTurvakielto(Boolean turvakielto) {
         this.turvakielto = turvakielto;
-    }
-
-    /**
-     * If an unidentified person already has reference data there must be an inconsistency in the data.
-     * Those cases must be solved by officials.
-     */
-    public Boolean hasNoDataInconsistency() {
-        return !(!yksiloityVTJ && !hetu.isEmpty() && yksilointitieto != null);
     }
 
     public Boolean hasNoFakeHetu() {

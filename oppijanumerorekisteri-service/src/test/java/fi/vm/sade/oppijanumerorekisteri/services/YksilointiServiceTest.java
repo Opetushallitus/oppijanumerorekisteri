@@ -18,12 +18,16 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
-import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class YksilointiServiceTest {
     private MockVtjClient vtjClient;
@@ -31,6 +35,8 @@ public class YksilointiServiceTest {
     private YksilointiService yksilointiService;
 
     private HenkiloRepository henkiloRepository;
+
+    private YksilointitietoRepository yksilointitietoRepository;
 
     private final String henkiloOid = "1.2.246.562.24.27470134096";
     private Henkilo henkilo;
@@ -42,7 +48,7 @@ public class YksilointiServiceTest {
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
 
         henkiloRepository = mock(HenkiloRepository.class);
-        YksilointitietoRepository yksilointitietoRepository = mock(YksilointitietoRepository.class);
+        yksilointitietoRepository = mock(YksilointitietoRepository.class);
         UserDetailsHelper userDetailsHelper = mock(UserDetailsHelper.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
@@ -190,7 +196,10 @@ public class YksilointiServiceTest {
         Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
-        assertThat(yksiloity.getYksilointitieto()).isNotNull().extracting("etunimet").contains("Teijo Tahvelo");
+        ArgumentCaptor<Yksilointitieto> argumentCaptor = ArgumentCaptor.forClass(Yksilointitieto.class);
+        verify(yksilointitietoRepository).save(argumentCaptor.capture());
+        Yksilointitieto yksilointitieto = argumentCaptor.getValue();
+        assertThat(yksilointitieto).isNotNull().extracting("etunimet").contains("Teijo Tahvelo");
         assertThat(yksiloity.getEtunimet()).isEqualTo("Teppo Taneli");
     }
 
@@ -227,9 +236,9 @@ public class YksilointiServiceTest {
         yksilointitieto.setKutsumanimi("kutsumanimi");
 
         Henkilo henkilo = new Henkilo();
-        henkilo.setYksilointitieto(yksilointitieto);
 
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(yksilointitietoRepository.findByHenkilo(any())).thenReturn(Optional.of(yksilointitieto));
         yksilointiService.yliajaHenkilonTiedot("");
 
         assertThat(henkilo.getEtunimet()).isEqualTo("testi");
@@ -237,7 +246,7 @@ public class YksilointiServiceTest {
         assertThat(henkilo.getKutsumanimi()).isEqualTo("kutsumanimi");
         assertThat(henkilo.isYksiloityVTJ()).isTrue();
         assertThat(henkilo.isYksiloity()).isFalse();
-        assertThat(henkilo.getYksilointitieto()).isNull();
+        verify(yksilointitietoRepository).delete(eq(yksilointitieto));
     }
 
     @Test
@@ -245,7 +254,6 @@ public class YksilointiServiceTest {
         Yksilointitieto yksilointitieto = new Yksilointitieto();
         Henkilo henkilo = new Henkilo();
         henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
-        henkilo.setYksilointitieto(yksilointitieto);
 
         YhteystiedotRyhma yhteystiedotRyhma1 = new YhteystiedotRyhma();
         henkilo.getYhteystiedotRyhma().add(yhteystiedotRyhma1);
@@ -256,6 +264,7 @@ public class YksilointiServiceTest {
         yksilointitieto.getYhteystiedotRyhma().add(yhteystiedotRyhma3);
 
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(henkilo));
+        when(yksilointitietoRepository.findByHenkilo(any())).thenReturn(Optional.of(yksilointitieto));
         yksilointiService.yliajaHenkilonTiedot("");
 
         assertThat(henkilo.getYhteystiedotRyhma().size()).isEqualTo(3);
