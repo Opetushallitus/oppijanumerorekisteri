@@ -10,12 +10,14 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
@@ -102,6 +104,20 @@ public class OppijaServiceImpl implements OppijaService {
     @Transactional(readOnly = true)
     public OppijatReadDto getOppijatByTuontiId(Long id) {
         Tuonti entity = getTuontiEntity(id);
+
+        // ladataan rivit yhdellä haulla
+        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
+        Set<String> organisaatioOids = kayttooikeusClient
+                .getAktiivisetOrganisaatioHenkilot(kayttajaOid);
+        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
+        criteria.setTuontiId(id);
+        criteria.setOrganisaatioOids(organisaatioOids);
+        List<TuontiRivi> rivit = tuontiRepository.findRiviBy(criteria);
+        if (rivit.isEmpty()) {
+            throw new ForbiddenException("Oppijoiden tuonnin tietoihin ei oikeuksia");
+        }
+
+        // rivit on jo ladattu valmiiksi joten tämä ei aiheuta kyselyä/rivi
         return mapper.map(entity, OppijatReadDto.class);
     }
 
