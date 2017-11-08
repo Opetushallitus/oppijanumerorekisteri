@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import java.util.List;
 import java.util.Optional;
 
 public interface TuontiRepositoryCustom {
@@ -12,5 +15,14 @@ public interface TuontiRepositoryCustom {
      * @return oppijoiden tuonti
      */
     Optional<Tuonti> findForUpdateById(Long id);
+
+    /**
+     * Palauttaa oppijoiden tuonnin rivit ja niihin liittyvät henkilöt
+     * hakukriteerien perusteella.
+     *
+     * @param criteria hakukriteerit
+     * @return tuonnin rivit
+     */
+    List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria);
 
 }
