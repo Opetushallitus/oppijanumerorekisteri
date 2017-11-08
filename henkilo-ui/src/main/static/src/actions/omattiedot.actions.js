@@ -9,7 +9,7 @@ import {
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST,
     FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
     FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_HENKILO_ASIOINTIKIELLI_REQUEST, FETCH_HENKILO_ASIOINTIKIELLI_SUCCESS,
-    FETCH_HENKILO_ASIOINTIKIELLI_FAILURE
+    FETCH_HENKILO_ASIOINTIKIELLI_FAILURE, FETCH_CASME_REQUEST, FETCH_CASME_FAILURE, FETCH_CASME_SUCCESS
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
 
@@ -62,6 +62,20 @@ export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetSta
             dispatch(receiveOmattiedotFailure(error));
             throw error;
         }
+    }
+};
+
+// Used only to determine if user has been synced to dlap
+export const fetchCasMe = () => async (dispatch: Dispatch) => {
+    dispatch({type: FETCH_CASME_REQUEST});
+    try {
+        const url = urls.url('cas.me');
+        await http.get(url);
+        dispatch({type: FETCH_CASME_SUCCESS});
+    } catch (error) {
+        dispatch({type: FETCH_CASME_FAILURE});
+        console.error('Fetching cas me failed');
+        throw error;
     }
 };
 

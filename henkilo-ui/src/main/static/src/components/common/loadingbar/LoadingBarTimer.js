@@ -47,7 +47,7 @@ class LoadingBarTimer extends React.Component {
                     progress: calculateProgress(this.startTime)
                 },
                 () => {
-                    if(this.props.stopAfterFinished && this.stopTime.isSameOrAfter(moment()))
+                    if (this.props.stopAfterFinished && this.stopTime.isSameOrAfter(moment()))
                         this.props.clearInterval(this.intervalId)
                 })};
         this.intervalId = this.props.setInterval(updateProgress, 200);
