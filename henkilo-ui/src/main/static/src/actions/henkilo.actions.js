@@ -12,9 +12,7 @@ import {
     YKSILOI_HENKILO_REQUEST,
     YKSILOI_HENKILO_SUCCESS,
     PURA_YKSILOINTI_REQUEST, PURA_YKSILOINTI_SUCCESS, PURA_YKSILOINTI_FAILURE,
-    FETCH_HENKILO_ORGANISAATIOS_REQUEST,
-    FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
-    FETCH_HENKILO_ORGANISAATIOS_FAILURE, VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
+    VTJ_OVERRIDE_HENKILO_REQUEST, VTJ_OVERRIDE_HENKILO_SUCCESS,
     VTJ_OVERRIDE_HENKILO_FAILURE,
     FETCH_HENKILO_DUPLICATES_REQUEST,
     FETCH_HENKILO_DUPLICATES_SUCCESS,
@@ -208,24 +206,6 @@ export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch, getState) => {
         dispatch(fetchOrganisations(json.map(orgHenkilo => orgHenkilo.organisaatioOid)))
             .then(organisationsAction => dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached)));
     });
-};
-
-const requestHenkiloOrganisaatios = (oid) => ({type: FETCH_HENKILO_ORGANISAATIOS_REQUEST, oid});
-const receiveHenkiloOrganisaatiosSuccess = (henkiloOrganisaatios) => ({
-    type: FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
-    henkiloOrganisaatios
-});
-const receiveHenkiloOrganisaatioFailure = (error) => ({type: FETCH_HENKILO_ORGANISAATIOS_FAILURE, error});
-
-export const fetchHenkiloOrganisaatios = (oidHenkilo) => (dispatch, getState) => {
-    dispatch(requestHenkiloOrganisaatios(oidHenkilo));
-    const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oidHenkilo);
-    http.get(url)
-        .then(henkiloOrganisaatios => dispatch(receiveHenkiloOrganisaatiosSuccess( henkiloOrganisaatios )))
-        .catch(error => {
-            console.error(`Failed fetching organisaatios for henkilo: ${oidHenkilo}: ${error}`);
-            dispatch(receiveHenkiloOrganisaatioFailure(error));
-        });
 };
 
 const requestPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({type: DELETE_HENKILOORGS_REQUEST, oidHenkilo, oidHenkiloOrg});

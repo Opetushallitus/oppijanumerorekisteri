@@ -55,7 +55,7 @@ class RekisteroidyPage extends React.Component {
     }
 
     componentWillMount() {
-        if(this.props.kutsu.hakaIdentifier) {
+        if (this.props.kutsu.hakaIdentifier) {
             this.createHenkilo();
         }
     }

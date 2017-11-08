@@ -6,10 +6,10 @@ import Button from '../common/button/Button';
 import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
-import OrganisaatioOphSelect from "../common/select/OrganisaatioOphSelect";
 import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
 import KutsuViews from "./KutsuViews";
 import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
+import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 
 export default class KutsututPage extends React.Component {
 
@@ -66,9 +66,7 @@ export default class KutsututPage extends React.Component {
 
     componentWillMount() {
         this.fetchKutsus();
-        if (this.props.isAdmin) {
-            this.props.fetchAllOrganisaatios();
-        }
+        this.props.fetchOmattiedotOrganisaatios();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -98,8 +96,8 @@ export default class KutsututPage extends React.Component {
                                             loading={this.props.kutsuListLoading} />
                     </div>
                     <div className="flex-item-1">
-                        <OrganisaatioOphSelect onOrganisaatioChange={this.onOrganisaatioChange.bind(this)}
-                                               organisaatiot={this.props.organisaatiot} />
+                        <OrganisaatioSelection organisaatios={this.props.organisaatiot}
+                                               selectOrganisaatio={this.onOrganisaatioChange.bind(this)} />
                     </div>
                     <div className="flex-item-1" id="radiator">
                         <KayttooikeusryhmaSingleSelect kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)} />

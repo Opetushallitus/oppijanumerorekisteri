@@ -8,11 +8,12 @@ import R from 'ramda';
 import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli.types";
 import LocalizedTextGroup from "./LocalizedTextGroup";
 import './KayttooikeusryhmaTiedot.css';
+import type {L} from "../../../types/l.type";
 
 type Props = {
     item: Kayttooikeusryhma,
     locale: Locale,
-    L: any,
+    L: L,
     show: boolean,
     router: any
 }

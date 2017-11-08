@@ -1,18 +1,22 @@
+// @flow
 import R from 'ramda';
 import {toLocalizedText} from '../../localizabletext';
+import type {Organisaatio, OrganisaatioHenkilo} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Locale} from "../../types/locale.type";
 
-export const organisaatioHierarchyRoots = (orgs, locale) => {
+export const organisaatioHierarchyRoots = (orgs: Array<OrganisaatioHenkilo>, locale: Locale): Array<Organisaatio> => {
     // First sort by name:
-    orgs = R.sortBy(org => toLocalizedText(locale, org.organisaatio.nimi), orgs);
+    orgs = R.sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio.nimi), orgs);
     const byOid = {};
     let lowestLevel = null;
     // Determine organization levels, lowest level, direct parent oid and map by oid:
-    const mapOrg = org => {
+    const mapOrg = (org) => {
         byOid[org.oid] = org;
         if (!org.parentOidPath) {
             org.level = 1; // root
             org.parentOid = null;
-        } else {
+        }
+        else {
             const parents = org.parentOidPath.split('/');
             org.level = parents.length;
             org.parentOid = parents[1];
@@ -31,18 +35,20 @@ export const organisaatioHierarchyRoots = (orgs, locale) => {
     const roots = [];
     R.forEach(org => {
         if (org.parentOid) {
-            const parent = byOid[org.parentOid];
+            const parent: Organisaatio = byOid[org.parentOid];
             if (parent) {
                 // do not add duplicates:
-                if (R.findIndex(R.pathEq(['oid'], org.oid), parent.children) < 0) {
+                if (R.findIndex(R.pathEq(['oid'], org.oid))(parent.children) < 0) {
                     parent.children.push(org);
-                    orgs = R.sortBy(org => toLocalizedText(locale, org.nimi), parent.children);
+                    parent.children = R.sortBy((org: Organisaatio) => toLocalizedText(locale, org.nimi))(parent.children);
                 }
-            } else {
+            }
+            else {
                 // not the root org but root can not be found (=> makes this lowest accessable)
                 roots.push(org);
             }
-        } else {
+        }
+        else {
             // root org:
             roots.push(org);
         }
@@ -50,13 +56,16 @@ export const organisaatioHierarchyRoots = (orgs, locale) => {
     return roots;
 };
 
-export const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots, locale) => {
+export const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: Array<Organisaatio>, locale: Locale) => {
     const result = [];
     const map = org => {
-        org.fullLocalizedName = (org.parent && org.parent.parentOid ? org.parent.fullLocalizedName + " " : "") + toLocalizedText(locale, org.nimi, '').toLowerCase();
+        const localisedText = toLocalizedText(locale, org.nimi, '');
+        org.fullLocalizedName = (org.parent && org.parent.parentOid
+            ? org.parent.fullLocalizedName + " "
+            : "") + (localisedText ? localisedText.toLowerCase() : '');
         result.push(org);
         if (org.children) {
-            org.children.map(child => child.parent =org);
+            org.children.map(child => child.parent = org);
             org.children.map(map);
         }
     };
@@ -64,7 +73,7 @@ export const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots, lo
     return result;
 };
 
-export const getOrganisaatios = (organisaatios, locale) => {
+export const getOrganisaatios = (organisaatios: Array<OrganisaatioHenkilo>, locale: Locale) => {
     const hierarchyRoots = organisaatioHierarchyRoots(organisaatios, locale);
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };

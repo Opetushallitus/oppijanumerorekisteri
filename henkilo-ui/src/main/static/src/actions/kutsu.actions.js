@@ -7,7 +7,7 @@ import {
 
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
-import {fetchOmattiedot} from "./omattiedot.actions";
+import {fetchCasMe} from "./omattiedot.actions";
 
 const requestDeleteKutsu = (id) => ({type: DELETE_KUTSU_REQUEST, id});
 const receiveDeleteKutsu = (id, json) => ({type: DELETE_KUTSU_SUCCESS, id, receivedAt: Date.now()});
@@ -70,10 +70,10 @@ export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getS
                             // Wait until user data has been synced to ldap
                             do {
                                 if(!getState().omattiedot.omattiedotLoading) {
-                                    dispatch(fetchOmattiedot());
+                                    dispatch(fetchCasMe());
                                 }
                                 await new Promise(resolve => setTimeout(resolve, 4000));
-                            } while (getState().omattiedot.data === undefined);
+                            } while (!getState().omattiedot.casMeSuccess);
                             // Redirect to opintopolku root page
                             window.location = window.location.origin;
                         }

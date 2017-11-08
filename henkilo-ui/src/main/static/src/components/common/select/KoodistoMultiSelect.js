@@ -40,18 +40,18 @@ class KoodistoMultiSelect extends React.Component<Props> {
         return koodisto
             .map(this.getOption)
             .sort((a, b) => a.label.localeCompare(b.label))
-    }
+    };
 
     getOption = (koodi: Koodi) => {
-        const locale = this.props.locale.toUpperCase()
+        const locale = this.props.locale.toUpperCase();
         return {
             value: koodi.koodiArvo,
             label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo),
         }
-    }
+    };
 
     onChange = (selected: Array<ReactSelectOption>) => {
-        const value = selected ? selected.map(a => a.value) : null
+        const value = selected ? selected.map(a => a.value) : null;
         this.props.onChange(value)
     }
 
@@ -61,6 +61,6 @@ const mapStateToProps = (state) => {
     return {
         locale: state.locale,
     }
-}
+};
 
 export default connect(mapStateToProps, {})(KoodistoMultiSelect)

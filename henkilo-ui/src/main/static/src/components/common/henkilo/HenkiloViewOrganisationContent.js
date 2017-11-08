@@ -5,6 +5,7 @@ import Columns from 'react-columns'
 import type {Locale} from '../../../types/locale.type'
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 import StaticUtils from "../StaticUtils";
+import type {L} from "../../../types/l.type";
 
 type Props = {
     l10n: any,
@@ -33,7 +34,7 @@ type OrganisaatioFlat = {|
 
 class HenkiloViewOrganisationContent extends React.Component<Props, State> {
 
-    L: any;
+    L: L;
 
     constructor(props: Props) {
         super(props);

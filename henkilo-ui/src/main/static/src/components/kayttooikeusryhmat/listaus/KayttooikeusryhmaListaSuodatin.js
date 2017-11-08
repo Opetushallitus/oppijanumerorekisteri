@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
 import './KayttooikeusryhmaListaSuodatin.css';
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
+    L: L,
     onFilterEvent: (event: SyntheticInputEvent<HTMLInputElement>) => void,
     router: any
 }

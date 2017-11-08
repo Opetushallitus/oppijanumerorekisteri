@@ -3,12 +3,13 @@ import React from 'react';
 import {connect} from 'react-redux';
 import './ItemList.css';
 import R from 'ramda';
+import type {L} from "../../../types/l.type";
 
 type Props = {
     items: Array<any>,
     removeAction: (string) => void,
     labelPath: Array<string>,
-    L: any
+    L: L
 }
 
 /*

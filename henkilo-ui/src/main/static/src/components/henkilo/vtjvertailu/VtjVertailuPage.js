@@ -43,11 +43,13 @@ class VtjVertailuPage extends React.Component {
         return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading || this.props.omattiedotLoading ? <Loader/> :
             <div className="wrapper">
                 <h1>{this.props.L['HENKILO_VTJ_VERTAILU']}</h1>
-                {this.state.showSuccess ? <WideGreenNotification message={this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS']} closeAction={this.hideSuccess.bind(this)}></WideGreenNotification> : null }
-                {this.state.showError ? <WideRedNotification message={this.props.L['HENKILO_VTJ_YLIAJA_FAILURE']} closeAction={this.hideError.bind(this)}></WideRedNotification> : null}
-                <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L}></VtjVertailuListaus>
-                <Button
-                    action={this.overrideHenkiloInformation.bind(this)} disabled={!enabledVtjVertailuView(this.props.henkilo.henkilo) || this.props.oidHenkilo === this.props.omattiedot.data.oid}>{this.props.L['HENKILO_VTJ_YLIAJA']}</Button>
+                {this.state.showSuccess ? <WideGreenNotification message={this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS']} closeAction={this.hideSuccess.bind(this)}/> : null }
+                {this.state.showError ? <WideRedNotification message={this.props.L['HENKILO_VTJ_YLIAJA_FAILURE']} closeAction={this.hideError.bind(this)}/> : null}
+                <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L}/>
+                <Button action={this.overrideHenkiloInformation.bind(this)}
+                        disabled={!enabledVtjVertailuView(this.props.henkilo.henkilo) || this.props.oidHenkilo === this.props.ownOid}>
+                    {this.props.L['HENKILO_VTJ_YLIAJA']}
+                </Button>
             </div>;
     }
 
@@ -84,7 +86,8 @@ const mapStateToProps = (state, ownProps) => {
         oidHenkilo: ownProps.params['oid'],
         henkiloType: ownProps.params['henkiloType'],
         henkilo: state.henkilo,
-        omattiedot: state.omattiedot,
+        ownOid: state.omattiedot.data.oid,
+        omattiedotLoading: state.omattiedot.omattiedotLoading,
         L: state.l10n.localisations[state.locale]
     }
 };

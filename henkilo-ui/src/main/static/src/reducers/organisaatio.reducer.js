@@ -16,8 +16,8 @@ export const organisaatio = (state = {organisaatioLoading: false, organisaatiot:
         case FETCH_ALL_ORGANISAATIOS_FAILURE:
             return Object.assign({}, state, { organisaatioLoading: false, organisaatiot: initialState });
         case FETCH_ORGANISATIONS_SUCCESS:
-            const uncachedOrganisaatios = action.organisations.filter(organisaatio =>
-                Object.keys(state.cached).indexOf(organisaatio.oid) === -1)
+            const uncachedOrganisaatios = action.organisations
+                .filter(organisaatio => Object.keys(state.cached).indexOf(organisaatio.oid) === -1)
                 .map(organisaatio => ({[organisaatio.oid]: organisaatio}))
                 .reduce(StaticUtils.reduceListToObject, {});
             return Object.assign({}, state, {cached: {...state.cached, ...uncachedOrganisaatios}});

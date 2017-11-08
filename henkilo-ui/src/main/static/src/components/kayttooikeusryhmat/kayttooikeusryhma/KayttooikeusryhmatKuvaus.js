@@ -2,9 +2,10 @@
 import React from 'react';
 import type {KayttooikeusryhmaKuvaus} from "./KayttooikeusryhmaPage";
 import './KayttooikeusryhmatKuvaus.css';
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
+    L: L,
     description: KayttooikeusryhmaKuvaus,
     setDescription: (string, string) => void
 }

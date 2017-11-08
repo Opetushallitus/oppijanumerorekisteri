@@ -21,6 +21,8 @@ import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli
 import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
 import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
+import type {L} from "../../../types/l.type";
+import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -50,16 +52,16 @@ export type KayttooikeusryhmaForm = {
 }
 
 type Props = {
-    L: any,
+    L: L,
     router: any,
-    omattiedot: any,
+    organisaatios: Array<OrganisaatioHenkilo>,
     koodisto: any,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
     palvelutState: PalvelutState,
     locale: Locale,
     fetchPalveluKayttooikeus: (palveluName: string) => void,
-    kayttooikeusryhmaId?: string
+    kayttooikeusryhmaId?: string,
 }
 
 type State = {
@@ -109,11 +111,13 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
             <KayttooikeusryhmatNimi {...this.props}
                                     name={this.state.kayttooikeusryhmaForm.name}
-                                    setName={this._setName}></KayttooikeusryhmatNimi>
+                                    setName={this._setName}
+            />
 
             <KayttooikeusryhmatKuvaus {...this.props}
                                       description={this.state.kayttooikeusryhmaForm.description}
-                                      setDescription={this._setDescription}></KayttooikeusryhmatKuvaus>
+                                      setDescription={this._setDescription}
+            />
 
             <KayttooikeusryhmanOrganisaatiorajoite {...this.props}
                                                    ryhmaRestriction={this.state.kayttooikeusryhmaForm.ryhmaRestriction}
@@ -123,13 +127,14 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                                                    removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
                                                    oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                                    oppilaitostyypitSelections={this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections}
-                                                   removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}></KayttooikeusryhmanOrganisaatiorajoite>
+                                                   removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}
+            />
 
             <MyonnettavatKayttooikeusryhmat {...this.props}
                                             kayttooikeusryhmaSelectAction={this._onKayttooikeusryhmaSelection}
                                             kayttooikeusryhmaSelections={this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections}
                                             removeKayttooikeusryhmaSelectAction={this._onRemoveKayttooikeusryhmaSelect}
-            ></MyonnettavatKayttooikeusryhmat>
+            />
 
             <KayttooikeusryhmatPalvelutJaKayttooikeudet {...this.props}
                                                         palvelutSelection={this.state.palvelutSelection}
@@ -141,7 +146,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
                                                         palveluJaKayttooikeusSelections={this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections}
                                                         removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
-            ></KayttooikeusryhmatPalvelutJaKayttooikeudet>
+            />
 
             <div className="kayttooikeusryhmat-lisaa-page-buttons">
                 <button disabled={!this._validateKayttooikeusryhmaInputs()} className="oph-button oph-button-primary"
@@ -258,7 +263,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _findOrganisaatiosByOids = (oids: Array<string>): Array<any> => {
-        return getOrganisaatios(this.props.omattiedot.organisaatios, this.props.locale)
+        return getOrganisaatios(this.props.organisaatios, this.props.locale)
             .filter((organisaatio: any) => R.contains(organisaatio.oid, oids));
     };
 

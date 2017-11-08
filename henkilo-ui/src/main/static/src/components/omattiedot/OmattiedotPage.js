@@ -59,8 +59,7 @@ export default class OmattiedotPage extends React.Component<Props, State> {
             || this.props.koodisto.sukupuoliKoodistoLoading || this.props.koodisto.kieliKoodistoLoading
             || this.props.koodisto.kansalaisuusKoodistoLoading;
         const isContactContentLoading = this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading;
-        const createKayttooikeusanomusLoading = this.props.organisaatios.organisaatioLoading || this.props.ryhmas.ryhmasLoading
-            || this.props.henkilo.henkiloLoading;
+        const createKayttooikeusanomusLoading = this.props.henkilo.henkiloLoading;
         return (
             <div>
                 <div className="wrapper">
@@ -84,7 +83,9 @@ export default class OmattiedotPage extends React.Component<Props, State> {
                     {
                         this.props.kayttooikeus.kayttooikeusLoading || this.props.henkilo.henkiloLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props} isOmattiedot oidHenkilo={this.props.omattiedot.data.oid} />
+                            : <HenkiloViewExistingKayttooikeus {...this.props}
+                                                               isOmattiedot
+                                                               oidHenkilo={this.props.omattiedot.data.oid} />
                     }
                 </div>
                 <div className="wrapper">
@@ -143,7 +144,7 @@ export default class OmattiedotPage extends React.Component<Props, State> {
 
     _parseOrganisaatioOptions(): Array<string> {
         const locale = this.props.locale;
-        if(this.props.organisaatios && this.props.organisaatios.organisaatiot) {
+        if (this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
                 .map(organisaatio => {
                     const organisaatioName = organisaatio.nimi[locale] ? organisaatio.nimi[locale] :
@@ -158,7 +159,7 @@ export default class OmattiedotPage extends React.Component<Props, State> {
                 });
         }
         return [];
-    };
+    }
 
     _parseRyhmaOptions() {
         return this.props.ryhmas ?
@@ -166,7 +167,7 @@ export default class OmattiedotPage extends React.Component<Props, State> {
                 label: ryhma.nimi[this.props.locale],
                 value: ryhma.oid
             })) : [];
-    };
+    }
 
     _readOnlyButtons(edit: () => mixed) {
         const L = this.props.l10n[this.props.locale];
@@ -174,6 +175,6 @@ export default class OmattiedotPage extends React.Component<Props, State> {
             <EditButton editAction={edit} L={L} />,
             <PasswordButton oidHenkilo={this.props.omattiedot.data.oid} L={L} updatePassword={this.props.updatePassword} styles={{ top: '3rem', left: '0', width: '18rem' }}/>
         ];
-    };
+    }
 }
 

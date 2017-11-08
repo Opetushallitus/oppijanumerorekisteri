@@ -3,6 +3,7 @@ import {FETCH_PALVELUT_REQUEST, FETCH_PALVELUT_SUCCESS, FETCH_PALVELUT_FAILURE} 
 import { http } from '../http';
 import {urls} from 'oph-urls-js';
 import type {Palvelu} from "../types/domain/kayttooikeus/palvelu.types";
+import type {Dispatch} from "../types/dispatch.type";
 
 type PalvelutRequestAction = { type: FETCH_PALVELUT_REQUEST };
 type PalvelutSuccessAction = { type: FETCH_PALVELUT_SUCCESS, payload: Array<Palvelu> };
@@ -17,7 +18,7 @@ export type PalvelutAction = {
 const requestPalvelut = (): PalvelutRequestAction => ({ type: FETCH_PALVELUT_REQUEST });
 const requestPalvelutSuccess = ( payload: Array<Palvelu> ): PalvelutSuccessAction => ({ type: FETCH_PALVELUT_SUCCESS, payload });
 const requestPalvelutFailure = ( error ): PalvelutFailureAction => ({ type: FETCH_PALVELUT_FAILURE, error });
-export const fetchAllPalvelut = () => async (dispatch: any) => {
+export const fetchAllPalvelut = () => async (dispatch: Dispatch) => {
     dispatch(requestPalvelut());
     const url = urls.url('kayttooikeus-service.palvelu.listaus');
     try {

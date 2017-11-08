@@ -1,10 +1,11 @@
 // @flow
 import React from 'react'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
+import type {L} from "../../types/l.type";
 
 type Props = {
     onSubmit: (HenkiloCreate) => Promise<void>,
-    L: any,
+    L: L,
 }
 
 type State = {
@@ -20,7 +21,7 @@ class PalveluCreateForm extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            henkilo: {
+            henkilo: {
                 etunimet: '_',
                 kutsumanimi: '_',
                 sukunimi: '',

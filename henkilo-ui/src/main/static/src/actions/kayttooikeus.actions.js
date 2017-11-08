@@ -3,6 +3,7 @@ import {FETCH_PALVELUKAYTTOOIKEUS_REQUEST, FETCH_PALVELUKAYTTOOIKEUS_SUCCESS, FE
 import { http } from '../http';
 import {urls} from 'oph-urls-js';
 import type {PalveluKayttooikeus} from "../types/domain/kayttooikeus/palvelukayttooikeus.types";
+import {Dispatch} from "../types/dispatch.type";
 
 export type PalveluKayttooikeusAction = {
     type: FETCH_PALVELUKAYTTOOIKEUS_REQUEST | FETCH_PALVELUKAYTTOOIKEUS_SUCCESS | FETCH_PALVELUKAYTTOOIKEUS_FAILURE;
@@ -14,7 +15,7 @@ const requestPalveluKayttooikeus = (): PalveluKayttooikeusAction => ({ type: FET
 const requestPalveluKayttooikeusSuccess = (payload: Array<PalveluKayttooikeus>): PalveluKayttooikeusAction => ({type: FETCH_PALVELUKAYTTOOIKEUS_SUCCESS, payload});
 const requestPalveluKayttooikeusFailure = ( error ): PalveluKayttooikeusAction => ({type: FETCH_PALVELUKAYTTOOIKEUS_FAILURE, error});
 
-export const fetchPalveluKayttooikeus = (palveluName: string) => async (dispatch: any) => {
+export const fetchPalveluKayttooikeus = (palveluName: string) => async (dispatch: Dispatch) => {
     dispatch(requestPalveluKayttooikeus());
     const url = urls.url('kayttooikeus-service.kayttooikeus.listaus', palveluName);
     try {

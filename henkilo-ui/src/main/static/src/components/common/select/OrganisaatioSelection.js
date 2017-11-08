@@ -1,27 +1,37 @@
 // @flow
 import React from 'react';
+import PropTypes from 'prop-types';
 import {toLocalizedText} from '../../../localizabletext';
 import OphSelect from './OphSelect';
 import './OrganisaatioSelection.css';
 import {getOrganisaatios} from "../../kutsuminen/OrganisaatioUtilities";
 import {connect} from 'react-redux';
+import type {L} from "../../../types/l.type";
+import type {Locale} from "../../../types/locale.type";
+import type {Organisaatio, OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
 type Props = {
-    L: any,
-    organisaatios: Array<any>,
+    L: L,
+    organisaatios: Array<OrganisaatioHenkilo>,
     selectOrganisaatio: () => any,
-    locale: string,
+    locale: Locale,
     selectedOrganisaatioOid: string,
     isRyhma: boolean
 }
 
 type State = {
-    options: Array<any>
+    options: Array<{value: string, label: string,}>
 }
 
 class OrganisaatioSelection extends React.Component<Props, State> {
 
-    constructor(props: any) {
+    static propTypes = {
+        organisaatios: PropTypes.array.isRequired,
+        selectOrganisaatio: PropTypes.func.isRequired,
+        isRyhma: PropTypes.bool,
+    };
+
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -80,7 +90,7 @@ class OrganisaatioSelection extends React.Component<Props, State> {
     }
 
     // Filter off organisations or ryhmas depending on isRyhma value.
-    getOrganisationsOrRyhmas = (organisaatios) => {
+    getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>): Array<Organisaatio> => {
         return this.props.isRyhma
             ? organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') !== -1)
             : organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') === -1);

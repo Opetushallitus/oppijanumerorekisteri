@@ -1,5 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
 import R from 'ramda';
@@ -10,14 +11,11 @@ import Notifications from "../../common/notifications/Notifications";
 import {FloatingBar} from "./FloatingBar";
 import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 
-export default class HenkiloViewDuplikaatit extends React.Component {
+class HenkiloViewDuplikaatit extends React.Component {
 
     static propTypes = {
         oidHenkilo: PropTypes.string,
         henkilo: PropTypes.object,
-        omattiedot: PropTypes.object,
-        l10n: PropTypes.object,
-        locale: PropTypes.string,
         koodisto: PropTypes.object,
         notifications: PropTypes.array.isRequired,
     };
@@ -33,7 +31,6 @@ export default class HenkiloViewDuplikaatit extends React.Component {
     }
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         const master = this.props.henkilo.henkilo;
         const duplicates = this.props.henkilo.duplicates;
         const koodisto = this.props.koodisto;
@@ -42,30 +39,30 @@ export default class HenkiloViewDuplikaatit extends React.Component {
             <div id="duplicates">
                 <div className="person header">
                     <span/>
-                    <span>{L['DUPLIKAATIT_HENKILOTUNNUS']}</span>
-                    <span>{L['DUPLIKAATIT_YKSILOITY']}</span>
-                    <span>{L['DUPLIKAATIT_KUTSUMANIMI']}</span>
-                    <span>{L['DUPLIKAATIT_ETUNIMET']}</span>
-                    <span>{L['DUPLIKAATIT_SUKUNIMI']}</span>
-                    <span>{L['DUPLIKAATIT_SUKUPUOLI']}</span>
-                    <span>{L['DUPLIKAATIT_SYNTYMAAIKA']}</span>
-                    <span>{L['DUPLIKAATIT_OIDHENKILO']}</span>
-                    <span>{L['DUPLIKAATIT_KANSALAISUUS']}</span>
-                    <span>{L['DUPLIKAATIT_AIDINKIELI']}</span>
-                    <span>{L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>
-                    <span>{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
-                    <span>{L['DUPLIKAATIT_OSOITE']}</span>
-                    <span>{L['DUPLIKAATIT_POSTINUMERO']}</span>
-                    <span>{L['DUPLIKAATIT_PASSINUMERO']}</span>
-                    <span>{L['DUPLIKAATIT_KANSALLINENID']}</span>
-                    <span>{L['DUPLIKAATIT_HAKEMUKSENTILA']}</span>
-                    <span>{L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
-                    <span>{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_HENKILOTUNNUS']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_YKSILOITY']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_KUTSUMANIMI']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_ETUNIMET']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_SUKUNIMI']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_SUKUPUOLI']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_SYNTYMAAIKA']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_OIDHENKILO']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_OSOITE']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_POSTINUMERO']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_KANSALLINENID']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_HAKEMUKSENTILA']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
+                    <span>{this.props.L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
                 </div>
                 <DuplikaatitPerson
                     henkilo={master}
                     koodisto={koodisto}
-                    L={L}
+                    L={this.props.L}
                     header={'DUPLIKAATIT_HENKILON_TIEDOT'}
                     locale={locale}
                     classNames={{'person': true, master: true}}
@@ -75,7 +72,7 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     <DuplikaatitPerson
                         henkilo={duplicate}
                         koodisto={koodisto}
-                        L={L}
+                        L={this.props.L}
                         header={'DUPLIKAATIT_DUPLIKAATTI'}
                         locale={locale}
                         key={duplicate.oidHenkilo}
@@ -86,14 +83,14 @@ export default class HenkiloViewDuplikaatit extends React.Component {
                     </DuplikaatitPerson>
                 )}
                 {this.props.henkilo.duplicatesLoading ? <Loader/> : null}
-                <Notifications L={L}
+                <Notifications L={this.props.L}
                                notifications={this.props.notifications}
                                closeAction={(status, id) => this.props.removeNotification(status, 'duplicatesNotifications', id)}/>
 
             </div>
             <FloatingBar>
-                <Button disabled={this.state.selectedDuplicates.length === 0 || !enabledDuplikaattiView(this.props.oidHenkilo, this.props.henkilo.masterLoading, this.props.henkilo.master.oidHenkilo) || (this.props.oidHenkilo === this.props.omattiedot.data.oid)}
-                        action={this._link.bind(this)}>{L['DUPLIKAATIT_YHDISTA']}</Button>
+                <Button disabled={this.state.selectedDuplicates.length === 0 || !enabledDuplikaattiView(this.props.oidHenkilo, this.props.henkilo.masterLoading, this.props.henkilo.master.oidHenkilo) || (this.props.oidHenkilo === this.props.ownOid)}
+                        action={this._link.bind(this)}>{this.props.L['DUPLIKAATIT_YHDISTA']}</Button>
             </FloatingBar>
         </div>
     }
@@ -114,6 +111,12 @@ export default class HenkiloViewDuplikaatit extends React.Component {
         this.setState({selectedDuplicates});
     }
 
-
 }
 
+const mapStateToProps = (state, ownProps) => ({
+    ownOid: state.omattiedot.data.oid,
+    L: state.l10n.localisations[state.locale],
+    locale: state.locale,
+});
+
+export default connect(mapStateToProps, {})(HenkiloViewDuplikaatit);

@@ -6,10 +6,11 @@ import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import type {Locale} from "../../../types/locale.type";
 import type {ReactSelectOption} from "../../../types/react-select.types";
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
-    omattiedot: any,
+    L: L,
+    organisaatios: any,
     koodisto: any,
     locale: Locale,
     ryhmaRestriction: boolean,
@@ -50,12 +51,12 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                 <div className="flex-item-1 ">
 
                     <OrganisaatioSelection id="organisaatiofilter"
-                                           organisaatios={this.props.omattiedot.organisaatios}
+                                           organisaatios={this.props.organisaatios}
                                            selectOrganisaatio={this.props.organisaatioSelectAction}>
                     </OrganisaatioSelection>
                     <ItemList items={this.props.organisaatioSelections}
                               labelPath={['label']}
-                              removeAction={this.props.removeOrganisaatioSelectAction}></ItemList>
+                              removeAction={this.props.removeOrganisaatioSelectAction}/>
 
                 </div>
                 <div className="flex-item-1 oppilaitostyyppi-wrapper">
@@ -65,8 +66,8 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                                onChange={this.props.oppilaitostyypitSelectAction}>
                     </OphSelect>
                     <ItemList items={this.props.oppilaitostyypitSelections}
-                                labelPath={['label']}
-                                removeAction={this.props.removeOppilaitostyypitSelectionAction}></ItemList>
+                              labelPath={['label']}
+                              removeAction={this.props.removeOppilaitostyypitSelectionAction}/>
 
                 </div>
             </div>

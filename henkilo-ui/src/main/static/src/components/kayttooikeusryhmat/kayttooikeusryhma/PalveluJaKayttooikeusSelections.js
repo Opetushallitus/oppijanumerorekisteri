@@ -2,11 +2,12 @@
 import React from 'react';
 import './PalveluJaKayttooikeusSelections.css';
 import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
+import type {L} from "../../../types/l.type";
 
 type Props = {
     items: Array<PalveluJaKayttooikeusSelection>,
     removeAction: (PalveluJaKayttooikeusSelection) => void,
-    L: any
+    L: L
 }
 
 const PalveluJaKayttooikeusSelections = (props: Props) =>

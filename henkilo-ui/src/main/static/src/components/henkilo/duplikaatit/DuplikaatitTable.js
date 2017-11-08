@@ -3,9 +3,10 @@ import React from 'react'
 import {Link} from 'react-router'
 import ReactTable from 'react-table'
 import moment from 'moment'
+import type {L} from "../../../types/l.type";
 
 type Props = {
-    L: any,
+    L: L,
     data: Array<any>,
     lisaaOppijaKayttajanOrganisaatioihin: (henkiloOid: string) => Promise<*>,
 }

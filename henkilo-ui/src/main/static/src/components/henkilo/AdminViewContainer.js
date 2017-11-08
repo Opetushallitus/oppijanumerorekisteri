@@ -67,7 +67,7 @@ class AdminViewContainer extends React.Component {
     }
 
     render() {
-        const readOnlyButtons = this.isPalvelukayttaja() ? this._readOnlyButtonsPalvelu : this._readOnlyButtons
+        const readOnlyButtons = this.isPalvelukayttaja() ? this._readOnlyButtonsPalvelu : this._readOnlyButtons;
         const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
             readOnlyButtons: readOnlyButtons, updatePassword: updatePassword,
         };
@@ -109,7 +109,7 @@ class AdminViewContainer extends React.Component {
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-                    <Kayttajanimi {...props} disabled={!this.props.omattiedot.isAdmin} />,
+                    <Kayttajanimi {...props} disabled={!this.props.isAdmin} />,
                     <LinkitetytHenkilot {...linkitetytProps} />,
                     <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
@@ -122,23 +122,32 @@ class AdminViewContainer extends React.Component {
             const passivoitu = R.path(['henkilo', 'passivoitu'], this.props.henkilo);
 
             return [
-                <EditButton editAction={edit} L={this.L}
+                <EditButton editAction={edit}
+                            L={this.L}
                             disabled={duplicate || passivoitu} />,
-                <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo} henkilo={this.props.henkilo}
-                                      L={this.L} disabled={duplicate || passivoitu}/>,
+                <YksiloiHetutonButton yksiloiAction={this.props.yksiloiHenkilo}
+                                      henkilo={this.props.henkilo}
+                                      L={this.L}
+                                      disabled={duplicate || passivoitu}/>,
                 <PuraHetuttomanYksilointiButton puraYksilointiAction={this.props.puraYksilointi}
-                                                henkilo={this.props.henkilo} L={this.L} disabled={duplicate || passivoitu}>
+                                                henkilo={this.props.henkilo}
+                                                L={this.L}
+                                                disabled={duplicate || passivoitu}>
                 </PuraHetuttomanYksilointiButton>,
-                <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}
-                    disabled={duplicate || passivoitu}/>,
+                <PassivoiButton henkilo={this.props.henkilo}
+                                L={this.L}
+                                passivoiAction={this.props.passivoiHenkilo}
+                                disabled={duplicate || passivoitu}/>,
                 <HakaButton oidHenkilo={this.props.oidHenkilo}
                             styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
                             L={this.L}
                             disabled={duplicate || passivoitu}/>,
-                <VtjOverrideButton henkilo={this.props.henkilo} L={this.L}
+                <VtjOverrideButton henkilo={this.props.henkilo}
+                                   L={this.L}
                                    overrideAction={this.props.overrideHenkiloVtjData}
-                                disabled={duplicate || passivoitu}/>,
-                <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
+                                   disabled={duplicate || passivoitu}/>,
+                <PasswordButton oidHenkilo={this.props.oidHenkilo}
+                                L={this.L}
                                 styles={{top: '3rem', left: '0', width: '18rem'}}
                                 disabled={duplicate || passivoitu}/>,
             ];
@@ -147,7 +156,8 @@ class AdminViewContainer extends React.Component {
         this._readOnlyButtonsPalvelu = (edit) => ([
             <EditButton editAction={edit} L={this.L}/>,
             <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo} L={this.L}
+            <PasswordButton oidHenkilo={this.props.oidHenkilo}
+                            L={this.L}
                             styles={{top: '3rem', left: '0', width: '18rem'}}/>,
         ]);
     };
@@ -169,7 +179,7 @@ const mapStateToProps = (state, ownProps) => {
         organisaatioCache: state.organisaatio.cached,
         notifications: state.notifications,
         ownOid: state.omattiedot.data.oid,
-        omattiedot: state.omattiedot,
+        isAdmin: state.omattiedot.isAdmin,
     };
 };
 

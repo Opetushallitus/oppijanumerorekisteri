@@ -115,7 +115,7 @@ class AddedOrganisation extends React.Component {
             const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
             const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
-            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.omattiedot.data.oid, organisaatio.oid);
+            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.oid, organisaatio.oid);
         }
 
     }
@@ -123,7 +123,7 @@ class AddedOrganisation extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        omattiedot: state.omattiedot,
+        oid: state.omattiedot.data.oid,
         locale: state.locale
     }
 };
