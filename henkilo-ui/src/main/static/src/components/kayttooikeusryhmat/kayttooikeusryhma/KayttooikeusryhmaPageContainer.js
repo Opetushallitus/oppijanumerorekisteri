@@ -48,7 +48,7 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
         this.props.fetchAllPalvelut();
-        if(kayttooikeusryhmaId) {
+        if (kayttooikeusryhmaId) {
             this.props.fetchKayttooikeusryhmaById(kayttooikeusryhmaId);
             this.props.fetchPalveluRooliByKayttooikeusryhmaId(kayttooikeusryhmaId);
             this.props.fetchKayttooikeusryhmaSlaves(kayttooikeusryhmaId);
@@ -57,8 +57,10 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
 
     render() {
         return this.props.koodisto.oppilaitostyypitLoading ||
-        this.props.kayttooikeus.allKayttooikeusryhmasLoading || this.props.palvelutState.palvelutLoading ||
-        this.props.kayttooikeus.kayttooikeusryhmaLoading || this.props.kayttooikeus.palvelutRoolitLoading ||
+        this.props.kayttooikeus.allKayttooikeusryhmasLoading ||
+        this.props.palvelutState.palvelutLoading ||
+        this.props.kayttooikeus.kayttooikeusryhmaLoading ||
+        (this.props.kayttooikeus.palvelutRoolitLoading && this.props.kayttooikeusryhmaId) ||
         this.props.kayttooikeus.kayttooikeusryhmaSlavesLoading ?
             <Loader/> : <KayttooikeusryhmaPage {...this.props} />;
     }
