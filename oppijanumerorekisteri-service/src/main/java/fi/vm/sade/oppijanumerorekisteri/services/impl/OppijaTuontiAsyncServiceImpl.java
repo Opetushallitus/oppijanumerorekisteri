@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Propagation;
 @RequiredArgsConstructor
 public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
 
-    private static final int ERÄKOKO = 1000;
+    // määrittää kuinka monta riviä käsitellään yhdessä transaktiossa
+    private static final int ERAKOKO = 1000;
 
     private final OppijaTuontiService oppijaTuontiService;
 
@@ -23,7 +24,7 @@ public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
     @Async(AsyncConfiguration.OPPIJOIDEN_TUONTI_EXECUTOR_QUALIFIER)
     public void create(long id) {
         // luodaan henkilöt kantaan pienemmissä transaktioissa
-        while (!oppijaTuontiService.create(id, ERÄKOKO)) {
+        while (!oppijaTuontiService.create(id, ERAKOKO)) {
             // nop
         }
     }
