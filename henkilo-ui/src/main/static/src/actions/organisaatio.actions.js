@@ -20,10 +20,11 @@ type GetState = () => {
             numHits: number,
         },
     },
+    locale: string,
 };
 
 const requestAllOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_REQUEST});
-const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGANISAATIOS_SUCCESS, organisaatios});
+const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGANISAATIOS_SUCCESS, organisaatios,});
 const requestAllOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_FAILURE, error});
 
 export const fetchAllOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {

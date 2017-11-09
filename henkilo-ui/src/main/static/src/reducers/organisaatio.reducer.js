@@ -7,12 +7,15 @@ const initialState = {
     organisaatiot: []
 };
 
-export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: initialState, cached: {}}, action) => {
+export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: initialState, cached: {},}, action) => {
     switch(action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
             return Object.assign({}, state, { organisaatioLoading: true, organisaatiot: initialState });
         case FETCH_ALL_ORGANISAATIOS_SUCCESS:
-            return Object.assign({}, state, { organisaatioLoading: false, organisaatiot: action.organisaatios });
+            return Object.assign({}, state, {
+                organisaatioLoading: false,
+                organisaatiot: action.organisaatios,
+            });
         case FETCH_ALL_ORGANISAATIOS_FAILURE:
             return Object.assign({}, state, { organisaatioLoading: false, organisaatiot: initialState });
         case FETCH_ORGANISATIONS_SUCCESS:
@@ -25,3 +28,4 @@ export const organisaatio = (state = {organisaatioLoading: false, organisaatiot:
             return state;
     }
 };
+
