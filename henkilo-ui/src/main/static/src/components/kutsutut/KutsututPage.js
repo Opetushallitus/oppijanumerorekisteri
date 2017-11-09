@@ -97,11 +97,11 @@ export default class KutsututPage extends React.Component {
                     </div>
                     <div className="flex-item-1">
                         <OrganisaatioSelection organisaatios={this.props.organisaatiot}
-                                               selectOrganisaatio={this.onOrganisaatioChange.bind(this)} />
+                                               selectOrganisaatio={this.onOrganisaatioChange.bind(this)}
+                                               selectedOrganisaatioOid={this.state.payload.organisaatioOid} />
                     </div>
                     <div className="flex-item-1" id="radiator">
                         <KayttooikeusryhmaSingleSelect kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)} />
-
                     </div>
                 </div>
                 <KutsututTable

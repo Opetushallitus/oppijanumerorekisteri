@@ -34,6 +34,7 @@ class OrganisaatioSelection extends React.Component<Props, State> {
     static propTypes = {
         organisaatios: PropTypes.array.isRequired,
         selectOrganisaatio: PropTypes.func.isRequired,
+        selectedOrganisaatioOid: PropTypes.string.isRequired,
         isRyhma: PropTypes.bool,
         placeholder: PropTypes.string,
     };
@@ -58,18 +59,11 @@ class OrganisaatioSelection extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.organisaatios.length && this.props.organisaatios.length !== nextProps.organisaatios.length) {
-                const newOptions = this.getOrganisationsOrRyhmas(getOrganisaatios(nextProps.organisaatios, this.props.locale))
-                    .map(this.mapOrganisaatio.bind(this));
-            // update index
-            const index = createFilterOptions({options: newOptions});
-            this.setState({
-                options: newOptions.map((option: {value: string, level: number, label: string}): any => ({
-                    ...option,
-                    label: <span className={`organisaatio-level-${option.level}`}>{option.label}</span>
-                })),
-                filterOptions: index,
-            });
+        // Update fetched organisaatios only once.
+        if (nextProps.organisaatios.length > 0 && (this.props.organisaatios.length === 0
+                //     // In case organisaatios have already been fetched
+            || this.state.filterOptions.length === 0)) {
+            this.updateOptionsToState(nextProps.organisaatios);
         }
     }
 
@@ -79,9 +73,23 @@ class OrganisaatioSelection extends React.Component<Props, State> {
                           filterOptions={this.state.filterOptions}
                           placeholder={this.placeholder}
                           onChange={this.props.selectOrganisaatio}
-                          // optionRenderer={this.renderOption.bind(this)}
                           value={this.props.selectedOrganisaatioOid}
-                          noResultsText={ `${this.props.L['SYOTA_VAHINTAAN']} 3 ${this.props.L['MERKKIA']}` } />;
+                          noResultsText={ this.props.L['EI_TULOKSIA']}
+                          optionHeight={45} />;
+    }
+
+    updateOptionsToState(newOrganisaatios) {
+        const newOptions = this.getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, this.props.locale))
+            .map(this.mapOrganisaatio.bind(this));
+        // update index
+        const index = createFilterOptions({options: newOptions});
+        this.setState({
+            options: newOptions.map((option: {value: string, level: number, label: string}): any => ({
+                value: option.value,
+                label: <span className={`organisaatio-level-${option.level}`}>{option.label}</span>
+            })),
+            filterOptions: index,
+        });
     }
 
     mapOrganisaatio(organisaatio) {
@@ -93,15 +101,6 @@ class OrganisaatioSelection extends React.Component<Props, State> {
         };
     }
 
-    // renderOption(option) {
-    //     // return '\xa0\xa0'.repeat(option.level) + option.label;
-    //     return <span className={`organisaatio-level-${option.level}`}
-    //                  key={option.key}
-    //                  onClick={() => option.selectValue(option.option)}
-    //                  onMouseEnter={() => option.focusOption(option.option)}
-    //                  style={option.style}>{option.label}</span>;
-    // }
-
     // Filter off organisations or ryhmas depending on isRyhma value.
     getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>): Array<Organisaatio> => {
         return this.props.isRyhma
@@ -112,7 +111,7 @@ class OrganisaatioSelection extends React.Component<Props, State> {
 
 const mapStateToProps = (state) => ({
     locale: state.locale,
-    L: state.l10n.localisations[state.locale]
+    L: state.l10n.localisations[state.locale],
 });
 
 export default connect(mapStateToProps, {})(OrganisaatioSelection);
