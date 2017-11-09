@@ -22,10 +22,10 @@ export const kayttooikeus = (state = {
                                  allKayttooikeusryhmasLoading: false,
                                  kayttooikeusryhma: {},
                                  kayttooikeusryhmaLoading: false,
-                                palvelutRoolit: [],
-                                palvelutRoolitLoading: false,
-                                kayttooikeusryhmaSlaves: [],
-                                kayttooikeusryhmaSlavesLoading: false
+                                 palvelutRoolit: [],
+                                 palvelutRoolitLoading: true,
+                                 kayttooikeusryhmaSlaves: [],
+                                 kayttooikeusryhmaSlavesLoading: false,
                              },
                              action) => {
     switch (action.type) {

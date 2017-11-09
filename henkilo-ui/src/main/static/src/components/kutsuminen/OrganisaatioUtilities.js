@@ -1,8 +1,10 @@
 // @flow
+import React from 'react';
 import R from 'ramda';
 import {toLocalizedText} from '../../localizabletext';
 import type {Organisaatio, OrganisaatioHenkilo} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Locale} from "../../types/locale.type";
+import createFilterOptions from 'react-select-fast-filter-options';
 
 export const organisaatioHierarchyRoots = (orgs: Array<OrganisaatioHenkilo>, locale: Locale): Array<Organisaatio> => {
     // First sort by name:
@@ -78,3 +80,32 @@ export const getOrganisaatios = (organisaatios: Array<OrganisaatioHenkilo>, loca
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };
 
+export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale): {value: string, label: string, level: number} => {
+    const organisaatioNimi = org => toLocalizedText(locale, organisaatio.nimi);
+    return {
+        value: organisaatio.oid,
+        label: `${organisaatioNimi(organisaatio)} (${organisaatio.tyypit.join(',')})`,
+        level: organisaatio.level
+    };
+};
+
+// Filter off organisations or ryhmas depending on isRyhma value.
+export const getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>, isRyhma: boolean): Array<Organisaatio> => {
+    return isRyhma
+        ? organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') !== -1)
+        : organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') === -1);
+};
+
+export const getOrganisaatioOptionsAndFilter = (newOrganisaatios: Array<OrganisaatioHenkilo>, locale: Locale, isRyhma: boolean) => {
+    const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma)
+        .map((organisaatio) => mapOrganisaatio(organisaatio, locale));
+    // update index
+    const index = createFilterOptions({options: newOptions});
+    return {
+        options: newOptions.map((option: {value: string, level: number, label: string}): any => ({
+            value: option.value,
+            label: <span className={`organisaatio-level-${option.level}`}>{option.label}</span>
+        })),
+        filterOptions: index,
+    };
+};

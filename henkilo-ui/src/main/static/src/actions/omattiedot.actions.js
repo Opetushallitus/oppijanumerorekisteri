@@ -19,7 +19,8 @@ type GetState = () => {
         omattiedotLoaded: boolean,
         locale: string,
         organisaatios: Array<{}>,
-    };
+    },
+    locale: string,
 }
 
 type OmattiedotResponse = {
@@ -80,7 +81,7 @@ export const fetchCasMe = () => async (dispatch: Dispatch) => {
 };
 
 const requestOmattiedotOrganisaatios = () => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST});
-const receiveOmattiedotOrganisaatiosSuccess = (json) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: json});
+const receiveOmattiedotOrganisaatiosSuccess = (json, locale) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS, organisaatios: json, locale});
 const receiveOmattiedotOrganisaatiosFailure = (error) => ({type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, error});
 export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only with the first call
@@ -101,7 +102,7 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, get
         const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid);
         try {
             const omattiedotOrganisaatios = await http.get(url);
-            dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios));
+            dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios, getState().locale));
         } catch (error) {
             console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}`);
             dispatch(receiveOmattiedotOrganisaatiosFailure(error));
