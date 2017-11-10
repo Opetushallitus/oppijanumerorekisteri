@@ -26,7 +26,7 @@ const FORMATS = [
         // used (at least) in organisaatiopalvelu
         isValid: (localizableText) => typeof localizableText === "object" && localizableText !== null,
         getValue: (localizableText, uiLang: Locale) => localizableText[uiLang.toLowerCase()],
-        getFallbackValue: (localizableText) => Object.keys(localizableText)[0]
+        getFallbackValue: (localizableText) => localizableText[Object.keys(localizableText)[0]]
     }
 ];
 

@@ -43,7 +43,7 @@ export default class KutsututPage extends React.Component {
             allFetched: false,
             payload: {
                 searchTerm: '',
-                organisaatioOid: null,
+                organisaatioOids: '',
                 tilas: ['AVOIN'],
                 sortBy: 'AIKALEIMA',
                 direction: 'DESC',
@@ -98,7 +98,7 @@ export default class KutsututPage extends React.Component {
                     <div className="flex-item-1">
                         <OrganisaatioSelection organisaatios={this.props.organisaatiot}
                                                selectOrganisaatio={this.onOrganisaatioChange.bind(this)}
-                                               selectedOrganisaatioOid={this.state.payload.organisaatioOid} />
+                                               selectedOrganisaatioOid={this.state.payload.organisaatioOids} />
                     </div>
                     <div className="flex-item-1" id="radiator">
                         <KayttooikeusryhmaSingleSelect kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)} />
@@ -192,8 +192,8 @@ export default class KutsututPage extends React.Component {
     }
 
     onOrganisaatioChange(organisaatio) {
-        const organisaatioOid = organisaatio.value;
-        this.setState({payload: {...this.state.payload, organisaatioOid},},
+        const organisaatioOids = organisaatio.value;
+        this.setState({payload: {...this.state.payload, organisaatioOids},},
             () => this.fetchKutsus());
     }
 
