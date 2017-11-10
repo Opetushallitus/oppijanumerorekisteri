@@ -6,11 +6,12 @@ import moment from 'moment'
 import DatePicker from 'react-datepicker'
 import StaticUtils from "../StaticUtils"
 import MyonnaButton from "./buttons/MyonnaButton"
-import HylkaaButton from "./buttons/HylkaaButton"
 import Button from "../button/Button"
 import { urls } from "oph-urls-js"
 import { http } from "../../../http"
 import {toLocalizedText} from '../../../localizabletext'
+import PopupButton from "../button/PopupButton";
+import AnomusHylkaysPopup from "../../anomus/AnomusHylkaysPopup";
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -51,11 +52,11 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
         
-        this.updateHaettuKayttooikeusryhma = (id, tila, idx, henkilo) => {
+        this.updateHaettuKayttooikeusryhma = (id, tila, idx, henkilo, hylkaysperuste) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
                 this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
                 this.state.dates[idx].loppupvm.format(this.L['PVM_DBFORMAATTI']),
-                this.props.oidHenkilo, henkilo);
+                henkilo, hylkaysperuste);
         };
 
         this.state = {
@@ -128,11 +129,21 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                               disabled={noPermission} />
             </div>
             <div style={{display: 'table-cell'}}>
-                <HylkaaButton hylkaaAction={() => this.updateHaettuKayttooikeusryhma(
-                    haettuKayttooikeusRyhma.id, 'HYLATTY', idx, henkilo)}
-                              L={this.L}
-                              henkilo={this.props.henkilo}
-                              disabled={noPermission} />
+                <PopupButton popupClass={'oph-popup-default oph-popup-bottom'}
+                             popupButtonWrapperPositioning={'absolute'}
+                             popupTitle={<span className="oph-h3 oph-strong">{this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}</span>}
+                             popupArrowStyles={{marginLeft: '230px'}}
+                             popupButtonClasses={'oph-button oph-button-cancel'}
+                             popupStyle={{left: '-233px', width: '20rem', padding: '30px', position: 'absolute'}}
+                             popupContent={<AnomusHylkaysPopup L={this.L}
+                                                               kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
+                                                               index={idx}
+                                                               henkilo={henkilo}
+                                                               action={this.updateHaettuKayttooikeusryhma}>
+                             </AnomusHylkaysPopup>}
+                            >
+                    {this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
+                </PopupButton>
             </div>
 
         </div>

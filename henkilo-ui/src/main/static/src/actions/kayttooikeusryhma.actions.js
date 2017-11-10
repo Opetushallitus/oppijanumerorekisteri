@@ -84,11 +84,11 @@ export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, l
     }
 };
 
-export const updateHaettuKayttooikeusryhmaInAnomukset =  (id, kayttoOikeudenTila, alkupvm, loppupvm, parameters) => async dispatch => {
+export const updateHaettuKayttooikeusryhmaInAnomukset =  (id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste) => async dispatch => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
     try {
-        await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm});
+        await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste});
         dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
     } catch (error) {
         dispatch(errorHaettuKayttooikeusryhmaUpdate(id));

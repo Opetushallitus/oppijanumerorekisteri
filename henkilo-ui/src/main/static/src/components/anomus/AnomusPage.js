@@ -151,9 +151,9 @@ class AnomusPage extends React.Component {
         }, () => this.props.fetchHaetutKayttooikeusryhmat(parameters));
     };
 
-    async updateHaettuKayttooikeusryhma(id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo, henkilo) {
+    async updateHaettuKayttooikeusryhma(id, kayttoOikeudenTila, alkupvm, loppupvm, henkilo, hylkaysperuste) {
         try {
-            await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, this.state.parameters);
+            await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste);
             kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysSuccess: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenSuccess: true, anomusModifiedHenkilo: henkilo});
             this.props.clearHaettuKayttooikeusryhma(id);
         } catch (error) {

@@ -1,15 +1,19 @@
 // @flow
-import React from 'react'
+import React from 'react';
+import type {Node} from 'react';
 import './PopupButton.css';
 
 type Props = {
-    popupStyle: any,
-    closeButtonStyles?: any,
-    popupTitle: any,
-    popupContent: any,
-    popupClass?: string,
+    popupTitle: any, // Title/header for the popup
+    popupContent: Node, // React element as popup content
+    children: any, // Button text
+
+    popupClass?: string, // css-classes for popup (see oph style guide)
+    popupStyle?: any, // css-styles for positioning popup
     disabled?: boolean,
-    children: any
+    popupButtonWrapperPositioning?: string, // value for css-position attribute (defaults to relative)
+    popupArrowStyles?: any, // css-styles to position arrow
+    popupButtonClasses?: string // css-classes for button (see oph style guide)
 }
 
 type State = {
@@ -17,20 +21,23 @@ type State = {
     defaultPopupClass: string
 }
 
-
+/*
+ * Component button with custom popup attached to it
+ */
 export default class PopupButton extends React.Component<Props, State> {
 
     state = {
         show: false,
-        defaultPopupClass: 'oph-popup-default oph-popup-top'
+        defaultPopupClass: 'oph-popup-default oph-popup-bottom'
     };
 
-    render() {
-        const wrapperStyle = { position: 'relative' };
+    render(): Node {
+        const wrapperStyle = { position: this.props.popupButtonWrapperPositioning ? this.props.popupButtonWrapperPositioning : 'relative' };
+        const popupButtonClasses = this.props.popupButtonClasses ? this.props.popupButtonClasses : 'oph-button oph-button-primary';
         return (
-            <div style={wrapperStyle}>
+            <div style={wrapperStyle} className="popup-button">
                 <button onClick={this.show.bind(this)}
-                        className="oph-button oph-button-primary"
+                        className={popupButtonClasses}
                         type="button"
                         disabled={this.props.disabled}>{this.props.children}</button>
                 { this.state.show ? this.createPopup() : null }
@@ -47,23 +54,23 @@ export default class PopupButton extends React.Component<Props, State> {
             marginRight: '-20px'
         };
 
-        const popupClass = this.props.popupClass ? this.props.popupClass : this.state.defaultPopupClass;
+        const popupClass: string = this.props.popupClass ? this.props.popupClass : this.state.defaultPopupClass;
 
         return (
             <div className={`oph-popup ${popupClass} popup-paddings`} style={this.props.popupStyle}>
-                <div className="oph-popup-arrow"></div>
+                <div className="oph-popup-arrow" style={this.props.popupArrowStyles}></div>
                 <div style={closeButtonStyles}><i className="fa fa-times" onClick={() => this.closePopup()}></i></div>
-                <div className="oph-popup-title">{this.props.popupTitle} </div>
+                <div className="oph-popup-title">{this.props.popupTitle}</div>
                 <div className="oph-popup-content">{this.props.popupContent}</div>
             </div>
         )
     }
 
-    closePopup() {
+    closePopup(): void {
         this.setState({show: false});
     }
 
-    show() {
+    show(): void {
         this.setState({show: true});
     }
 }

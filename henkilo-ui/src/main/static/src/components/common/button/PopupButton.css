@@ -1,3 +1,8 @@
 .popup-paddings {
     padding: 30px !important;
 }
+
+.popup-button .oph-popup-title,
+.popup-button .oph-popup-content {
+    text-align: left;
+}
