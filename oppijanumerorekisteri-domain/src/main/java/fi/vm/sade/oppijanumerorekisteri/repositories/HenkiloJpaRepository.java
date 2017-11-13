@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriter
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import java.util.Collection;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
@@ -44,9 +45,10 @@ public interface HenkiloJpaRepository {
      * @param criteria hakukriteerit
      * @param limit alkioiden maksimimäärä
      * @param offset sivutuksen offset
+     * @param sort järjestys
      * @return henkilöt
      */
-    List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset);
+    List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort);
 
     /**
      * Laskee annettujen hakukriteerien mukaiset henkilöt.
@@ -106,6 +108,14 @@ public interface HenkiloJpaRepository {
      * @return henkilo optional
      */
     Optional<Henkilo> findMasterBySlaveOid(String henkiloOid);
+
+    /**
+     * Palauttaa henkilöiden master-tiedot. Paluuarvon avain on slaveOid.
+     *
+     * @param henkiloOids henkilö oidit
+     * @return henkilöt
+     */
+    Map<String, Henkilo> findMastersBySlaveOids(Set<String> henkiloOids);
 
     List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 

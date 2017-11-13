@@ -2,6 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
@@ -21,6 +23,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -39,6 +43,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiAsyncService;
+import java.util.Map;
+import java.util.function.Function;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @Transactional
@@ -137,10 +145,12 @@ public class OppijaServiceImpl implements OppijaService {
     @Transactional(readOnly = true)
     public Page<OppijaReadDto.OppijaReadHenkiloDto> list(OppijaTuontiCriteria criteria, int page, int count) {
         prepare(criteria);
-        LOGGER.info("Haetaan oppijat {} (sivu: {}, määrä: {})", criteria, page, count);
+        OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
+                OppijaTuontiSort.Column.MODIFIED, OppijaTuontiSort.Column.ID);
+        LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
-        List<Henkilo> henkilot = henkiloJpaRepository.findBy(criteria, limit, offset);
+        List<Henkilo> henkilot = henkiloJpaRepository.findBy(criteria, limit, offset, sort);
         long total = henkiloJpaRepository.countBy(criteria);
         return Page.of(page, count, mapper.mapAsList(henkilot, OppijaReadDto.OppijaReadHenkiloDto.class), total);
     }
@@ -151,6 +161,46 @@ public class OppijaServiceImpl implements OppijaService {
         prepare(criteria);
         LOGGER.info("Haetaan oppijoiden OID:t {}", criteria);
         return henkiloJpaRepository.findOidsBy(criteria);
+    }
+
+    @Override
+    public Page<MasterHenkiloDto<OppijaMuutosDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count) {
+        // haetaan henkilöt
+        prepare(criteria);
+        OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
+                OppijaTuontiSort.Column.MODIFIED, OppijaTuontiSort.Column.ID);
+        LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
+        int limit = count;
+        int offset = (page - 1) * count;
+        List<Henkilo> slaves = henkiloJpaRepository.findBy(criteria, limit, offset, sort);
+        long total = henkiloJpaRepository.countBy(criteria);
+
+        // haetaan henkilöille masterit
+        Set<String> slaveOids = slaves.stream().map(Henkilo::getOidHenkilo).collect(toSet());
+        Map<String, Henkilo> mastersBySlaveOid = henkiloJpaRepository.findMastersBySlaveOids(slaveOids);
+
+        // palautetaan henkilöiden tiedot mastereista
+        HenkiloToMasterDto toMasterDto = new HenkiloToMasterDto(mastersBySlaveOid, mapper);
+        List<MasterHenkiloDto<OppijaMuutosDto>> masters = slaves.stream().map(toMasterDto).collect(toList());
+        return Page.of(page, count, masters, total);
+    }
+
+    @RequiredArgsConstructor
+    private static class HenkiloToMasterDto implements Function<Henkilo, MasterHenkiloDto<OppijaMuutosDto>> {
+
+        private final Map<String, Henkilo> mastersBySlaveOid;
+        private final OrikaConfiguration mapper;
+
+        @Override
+        public MasterHenkiloDto<OppijaMuutosDto> apply(Henkilo slave) {
+            MasterHenkiloDto<OppijaMuutosDto> dto = new MasterHenkiloDto<>();
+            String slaveOid = slave.getOidHenkilo();
+            dto.setOid(slaveOid);
+            Henkilo master = mastersBySlaveOid.getOrDefault(slaveOid, slave);
+            dto.setMaster(mapper.map(master, OppijaMuutosDto.class));
+            return dto;
+        }
+
     }
 
     @Override

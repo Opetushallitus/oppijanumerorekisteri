@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
@@ -85,6 +87,16 @@ public interface OppijaService {
      * @return henkilö OID:t
      */
     Iterable<String> listOidsBy(OppijaTuontiCriteria criteria);
+
+    /**
+     * Palauttaa annettujen hakukriteerien mukaisen henkilöiden master-tiedot.
+     *
+     * @param criteria hakukriteerit
+     * @param page sivunumero
+     * @param count sivun koko
+     * @return masterit
+     */
+    Page<MasterHenkiloDto<OppijaMuutosDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count);
 
     /**
      * Lisää nykyisen käyttäjän organisaatiot oppijalle. Jos oppija on jo

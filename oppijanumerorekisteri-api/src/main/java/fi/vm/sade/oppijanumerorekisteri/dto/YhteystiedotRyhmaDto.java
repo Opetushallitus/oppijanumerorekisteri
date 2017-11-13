@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,11 +25,13 @@ public class YhteystiedotRyhmaDto implements Serializable {
     /**
      * Koodisto "yhteystietotyypit".
      */
+    @ApiModelProperty("Koodisto 'yhteystietotyypit'")
     private String ryhmaKuvaus;
 
     /**
      * Koodisto "yhteystietojenalkupera".
      */
+    @ApiModelProperty("Koodisto 'yhteystietojenalkupera'")
     private String ryhmaAlkuperaTieto;
 
     private boolean readOnly;
