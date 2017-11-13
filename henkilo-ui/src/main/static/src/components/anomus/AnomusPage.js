@@ -1,51 +1,78 @@
+// @flow
+
 import React from 'react'
-import PropTypes from 'prop-types'
 import './AnomusPage.css'
 import Loader from '../common/icons/Loader'
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm'
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus"
 import WideGreenNotification from "../common/notifications/WideGreenNotification";
+import type {Locale} from "../../types/locale.type";
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
  */
-class AnomusPage extends React.Component {
-    constructor(props) {
-        super(props);
 
-        this.defaultLimit = 20;
-        this.defaultOffset = 0;
+type Parameters = {
+    orderBy: string,
+    limit: number,
+    showOwnAnomus: boolean,
+    adminView: boolean,
+    anomuksenTilat: Array<string>,
+    kayttoOikeudenTilas: Array<string>
+}
 
-        this.state = {
-            parameters: {
-                orderBy: 'ANOTTU_PVM_DESC',
-                limit: this.defaultLimit,
-                showOwnAnomus: false,
-                adminView: props.isAdmin,
-                anomuksenTilat: ['ANOTTU'],
-                kayttoOikeudenTilas: ['ANOTTU'],
-            },
-            sorted: [{id: 'ANOTTU_PVM', desc: true}],
-            allFetched: false,
-            page: 0,
-            kayttooikeus: {},
-            showHylkaysSuccess: false,
-            showHylkaysFailure: false,
-            showHyvaksyminenSuccess: false,
-            showHyvaksyminenFailure: false,
-            anomusModifiedHenkilo: undefined
-        };
-    };
+type Props = {
+    l10n: any,
+    locale: Locale,
+    kayttooikeusAnomus: any,
+    organisaatioCache: any,
+    clearHaetutKayttooikeusryhmat: () => void,
+    fetchAllOrganisaatios: () => void,
+    fetchHaetutKayttooikeusryhmat: (Parameters) => void,
+    haetutKayttooikeusryhmatLoading: boolean,
+    fetchAllRyhmas: () => void,
+    isAdmin: boolean,
+    updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, string) => Promise<any>,
+    clearHaettuKayttooikeusryhma: (number) => void
+};
 
-    static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
-        kayttooikeusAnomus: PropTypes.array.isRequired,
-        organisaatioCache: PropTypes.object.isRequired,
-        clearHaetutKayttooikeusryhmat: PropTypes.func.isRequired,
-        fetchAllOrganisaatios: PropTypes.func.isRequired,
-        fetchHaetutKayttooikeusryhmat: PropTypes.func.isRequired,
-        isAdmin: PropTypes.bool.isRequired,
+type State = {
+    parameters: Parameters,
+    sorted: Array<any>,
+    allFetched: boolean,
+    page: number,
+    kayttooikeus: any,
+    showHylkaysSuccess: boolean,
+    showHylkaysFailure: boolean,
+    showHyvaksyminenSuccess: boolean,
+    showHyvaksyminenFailure: boolean,
+    anomusModifiedHenkilo: any
+}
+
+class AnomusPage extends React.Component<Props, State> {
+
+    defaultLimit = 20;
+    defaultOffset = 0;
+    initialised = false;
+
+    state: State = {
+        parameters: {
+            orderBy: 'ANOTTU_PVM_DESC',
+            limit: this.defaultLimit,
+            showOwnAnomus: false,
+            adminView: this.props.isAdmin,
+            anomuksenTilat: ['ANOTTU'],
+            kayttoOikeudenTilas: ['ANOTTU'],
+        },
+        sorted: [{id: 'ANOTTU_PVM', desc: true}],
+        allFetched: false,
+        page: 0,
+        kayttooikeus: {},
+        showHylkaysSuccess: false,
+        showHylkaysFailure: false,
+        showHyvaksyminenSuccess: false,
+        showHyvaksyminenFailure: false,
+        anomusModifiedHenkilo: undefined
     };
 
     componentDidMount() {
@@ -53,7 +80,7 @@ class AnomusPage extends React.Component {
         this.props.fetchAllRyhmas();
     };
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         if (!nextProps.haetutKayttooikeusryhmatLoading
             && nextProps.kayttooikeusAnomus.length !== this.props.kayttooikeusAnomus.length) {
             this.setState({
@@ -62,6 +89,9 @@ class AnomusPage extends React.Component {
         }
         if (!this.props.haetutKayttooikeusryhmatLoading) {
             this.initialised = true;
+        }
+        if(nextProps.kayttooikeusAnomus.length === 0) {
+            this.setState({allFetched: true});
         }
     };
 
@@ -115,7 +145,7 @@ class AnomusPage extends React.Component {
         );
     };
 
-    onTableFetch(tableState, instance) {
+    onTableFetch(tableState: any) {
         const sort = tableState.sorted[0];
         const stateSort = this.state.sorted[0];
         // Update sort state
@@ -131,11 +161,11 @@ class AnomusPage extends React.Component {
         }
     };
 
-    onSubmitWithoutClear(criteria) {
+    onSubmitWithoutClear(criteria: any) {
         this.onSubmit(criteria, true);
     };
 
-    onSubmit(criteria, shouldNotClear) {
+    onSubmit(criteria?: any, shouldNotClear?: boolean) {
         if(!shouldNotClear) {
             this.props.clearHaetutKayttooikeusryhmat();
         }
@@ -151,7 +181,7 @@ class AnomusPage extends React.Component {
         }, () => this.props.fetchHaetutKayttooikeusryhmat(parameters));
     };
 
-    async updateHaettuKayttooikeusryhma(id, kayttoOikeudenTila, alkupvm, loppupvm, henkilo, hylkaysperuste) {
+    async updateHaettuKayttooikeusryhma(id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, henkilo: any, hylkaysperuste: string) {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste);
             kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysSuccess: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenSuccess: true, anomusModifiedHenkilo: henkilo});
@@ -162,8 +192,11 @@ class AnomusPage extends React.Component {
         }
     };
 
-    createNotificationMessage(notificationResult) {
-        return `Henkilön ${this.state.anomusModifiedHenkilo.etunimet} ${this.state.anomusModifiedHenkilo.sukunimi} (${this.state.anomusModifiedHenkilo.oid}) ${notificationResult}`;
+    createNotificationMessage(notificationResult: string): string {
+        const etunimet: string = this.state.anomusModifiedHenkilo.etunimet;
+        const sukunimi = this.state.anomusModifiedHenkilo.sukunimi;
+        const oid = this.state.anomusModifiedHenkilo.oid;
+        return `Henkilön ${etunimet} ${sukunimi} (${oid}) ${notificationResult}`;
     }
 }
 
