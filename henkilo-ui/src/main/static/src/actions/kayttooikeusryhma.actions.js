@@ -70,14 +70,14 @@ export const fetchAllKayttooikeusAnomusForHenkilo = henkiloOid => dispatch => {
 const requestHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_REQUEST, id, });
 const receiveHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_SUCCESS, id, });
 const errorHaettuKayttooikeusryhmaUpdate = (id) => ({ type: UPDATE_HAETTU_KAYTTOOIKEUSRYHMA_FAILURE, id });
-export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo) => async dispatch => {
+export const updateHaettuKayttooikeusryhma = (id, kayttoOikeudenTila, alkupvm, loppupvm, oidHenkilo, hylkaysperuste) => async dispatch => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
     try {
-        await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm,});
+        await http.put(url, {id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste});
         dispatch(receiveHaettuKayttooikeusryhmaUpdate(id));
-        dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo));
-        dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
+        dispatch(fetchAllKayttooikeusAnomusForHenkilo(oidHenkilo.oid));
+        dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo.oid));
     } catch (error) {
         dispatch(errorHaettuKayttooikeusryhmaUpdate(id));
         throw error;
