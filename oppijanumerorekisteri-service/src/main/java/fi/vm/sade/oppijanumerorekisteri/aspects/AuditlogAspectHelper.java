@@ -2,128 +2,148 @@ package fi.vm.sade.oppijanumerorekisteri.aspects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.auditlog.Audit;
-import fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage;
-import fi.vm.sade.auditlog.oppijanumerorekisteri.OppijanumerorekisteriOperation;
-import fi.vm.sade.oppijanumerorekisteri.configurations.AuditlogConfiguration;
+import fi.vm.sade.auditlog.Changes;
+import fi.vm.sade.auditlog.Target;
+import fi.vm.sade.oppijanumerorekisteri.audit.*;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
-
-import static fi.vm.sade.auditlog.oppijanumerorekisteri.LogMessage.builder;
 
 @Component
 public class AuditlogAspectHelper {
-    private final Audit audit;
-    private UserDetailsHelper userDetailsHelper;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    public AuditlogAspectHelper(AuditlogConfiguration auditlogConfiguration, UserDetailsHelper userDetailsHelper) {
-        this.audit = auditlogConfiguration.audit();
-        this.userDetailsHelper = userDetailsHelper;
-    }
+    private VirkailijaAuditLogger virkailijaLogger = new VirkailijaAuditLogger();
+    private ApiAuditLogger apiLogger = new ApiAuditLogger();
 
     void logCreateHenkilo(Henkilo henkilo, Object returnHenkilo) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkilo.getOidHenkilo())
-                .lisatieto("Luotu uusi henkilö.")
-                .setOperaatio(OppijanumerorekisteriOperation.CREATE_HENKILO);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkilo.getOidHenkilo())
+                .setField(AuditMessageFields.LISATIETO, "Luotu uusi henkilö.")
+                .build();
+        Changes changes = new Changes.Builder()
+                .added(AuditMessageFields.HENKILO, getJson(henkilo))
+                .build();
+
+        virkailijaLogger.log(OnrOperation.CREATE_HENKILO, target, changes);
     }
 
     void logUpdateHenkilo(HenkiloUpdateDto henkilo, Object returnHenkilo) {
-        String changedHenkilo;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            changedHenkilo = mapper.writeValueAsString(henkilo);
-        } catch (JsonProcessingException e) {
-            changedHenkilo = "Failed to serialize HenkiloUpdateDto!";
-        }
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkilo.getOidHenkilo())
+                .setField(AuditMessageFields.LISATIETO, "Muokattu olemassa olevaa henkilöä.")
+                .build();
+        Changes changes = new Changes.Builder()
+                .updated(AuditMessageFields.HENKILO, "", getJson(henkilo))
+                .build();
+        virkailijaLogger.log(OnrOperation.UPDATE_HENKILO, target, changes);
+    }
 
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkilo.getOidHenkilo())
-                .lisatieto("Muokattu olemassa olevaa henkilöä.")
-                .muutettuUusi("HenkiloUpdateDto: " + changedHenkilo)
-                .setOperaatio(OppijanumerorekisteriOperation.UPDATE_HENKILO);
-        finishLogging(logMessage);
+    void logForceUpdateHenkilo(HenkiloUpdateDto henkilo, Object returnHenkilo) {
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkilo.getOidHenkilo())
+                .setField(AuditMessageFields.LISATIETO, "Muokattu väkisin olemassa olevaa henkilöä.")
+                .build();
+        Changes changes = new Changes.Builder()
+                .updated(AuditMessageFields.HENKILO, "", getJson(henkilo))
+                .build();
+        apiLogger.log(OnrOperation.FORCE_UPDATE_HENKILO, target, changes);
     }
 
     void logDisableHenkilo(String henkiloOid, Object returnHenkilo) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Passivoidaan henkilö.")
-                .setOperaatio(OppijanumerorekisteriOperation.PASSIVOI_HENKILO);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Passivoidaan henkilö.")
+                .build();
+        Changes changes = new Changes.Builder()
+                .updated(AuditMessageFields.PASSIVOITU, "false", "true")
+                .build();
+        virkailijaLogger.log(OnrOperation.PASSIVOI_HENKILO, target, changes);
     }
 
     void logCreateIdentification(String henkiloOid, IdentificationDto identification, Object returnIdentifications) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Luotu henkilölle uusi tunnistetieto.")
-                .setOperaatio(OppijanumerorekisteriOperation.TUNNISTUSTIETOJEN_PAIVITYS);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Luotu henkilölle uusi tunnistetieto.")
+                .build();
+        Changes changes = new Changes.Builder()
+                .updated(AuditMessageFields.TUNNISTETIETO, "", getJson(identification))
+                .build();
+        virkailijaLogger.log(OnrOperation.TUNNISTUSTIETOJEN_PAIVITYS, target, changes);
     }
 
     void logInitiateYksilointi(String henkiloOid, Object returnHenkilo) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Aloitettu henkilon yksilointi.")
-                .setOperaatio(OppijanumerorekisteriOperation.MANUAALINEN_YKSILOINTI);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Aloitettu henkilon yksilointi.")
+                .build();
+        virkailijaLogger.log(OnrOperation.MANUAALINEN_YKSILOINTI, target, new Changes.Builder().build());
     }
 
     void logHetuttomanYksilointi(String henkiloOid, Object result) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Yksilöidään hetuton henkilo.")
-                .setOperaatio(OppijanumerorekisteriOperation.HETUTTOMAN_YKSILOINTI);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Yksilöidään hetuton henkilo.")
+                .build();
+        virkailijaLogger.log(OnrOperation.HETUTTOMAN_YKSILOINTI, target, new Changes.Builder().build());
     }
 
     void logPuraYksilointi(String henkiloOid, Object result) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Puretaan hetuttoman henkilon yksilointi.")
-                .setOperaatio(OppijanumerorekisteriOperation.PURA_HETUTTOMAN_YKSILOINTI);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Puretaan hetuttoman henkilon yksilointi.")
+                .build();
+        virkailijaLogger.log(OnrOperation.PURA_HETUTTOMAN_YKSILOINTI, target, new Changes.Builder().build());
     }
 
     void logEnableYksilointi(String henkiloOid, String palvelutunniste, Object result) {
-        LogMessage.LogMessageBuilder logMessage = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Yksilointi asetettu päälle.")
-                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTI_PAALLE);
-        finishLogging(logMessage);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Yksilointi asetettu päälle.")
+                .build();
+        virkailijaLogger.log(OnrOperation.YKSILOINTI_PAALLE, target, new Changes.Builder().build());
     }
 
     void logDisableYksilointi(String henkiloOid, String palvelutunniste, Object result) {
-        LogMessage.LogMessageBuilder logMessageBuilder = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("Yksilointi asetettu pois päältä.")
-                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTI_POIS_PAALTA);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "Yksilointi asetettu pois päältä.")
+                .build();
+        virkailijaLogger.log(OnrOperation.YKSILOINTI_POIS_PAALTA, target, new Changes.Builder().build());
     }
 
     void logPaivitaYksilointitiedot(String henkiloOid) {
-        LogMessage.LogMessageBuilder logMessageBuilder1 = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .lisatieto("VTJ-tiedot päivitetty")
-                .setOperaatio(OppijanumerorekisteriOperation.TUNNISTUSTIETOJEN_PAIVITYS);
-        finishLogging(logMessageBuilder1);
-        LogMessage.LogMessageBuilder logMessageBuilder2 = builder()
-                .kohdehenkiloOid(henkiloOid)
-                .setOperaatio(OppijanumerorekisteriOperation.YKSILOINTITIETOJEN_PAIVITYS);
-        finishLogging(logMessageBuilder2);
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.HENKILO_OID, henkiloOid)
+                .setField(AuditMessageFields.LISATIETO, "VTJ-tiedot päivitetty.")
+                .build();
+        virkailijaLogger.log(OnrOperation.TUNNISTUSTIETOJEN_PAIVITYS, target, new Changes.Builder().build());
+        virkailijaLogger.log(OnrOperation.YKSILOINTITIETOJEN_PAIVITYS, target, new Changes.Builder().build());
     }
 
-    // Set the method calling user id and log.
-    private void finishLogging(LogMessage.LogMessageBuilder builder) {
-        Optional<String> oid = this.userDetailsHelper.findCurrentUserOid();
-        LogMessage logMessage = builder.id(oid.orElse("No oid")).build();
-        audit.log(logMessage);
+    private String getJson(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return String.format("Failed to parse json value: %s", extrapolateStackTrace(e));
+        }
+    }
+
+    private String extrapolateStackTrace(Exception ex) {
+        Throwable e = ex;
+        StringBuilder trace = new StringBuilder();
+        trace.append(e.toString()).append("\n");
+        for (StackTraceElement e1 : e.getStackTrace()) {
+            trace.append("\t at ").append(e1.toString()).append("\n");
+        }
+        while (e.getCause() != null) {
+            e = e.getCause();
+            trace.append("Cause by: ").append(e.toString()).append("\n");
+            for (StackTraceElement e1 : e.getStackTrace()) {
+                trace.append("\t at ").append(e1.toString()).append("\n");
+            }
+        }
+        return trace.toString();
     }
 }
