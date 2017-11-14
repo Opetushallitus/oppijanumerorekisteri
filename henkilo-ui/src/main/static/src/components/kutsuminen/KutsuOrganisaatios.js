@@ -1,9 +1,21 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types'
 import { AddedOrganizations } from './AddedOrganizations';
 import Button from "../common/button/Button";
+import type {KutsuOrganisaatio, OrganisaatioHenkilo} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 
-export default class KutsuOrganisaatios extends React.Component {
+type Props = {
+    addedOrgs: Array<KutsuOrganisaatio>,
+    l10n: {},
+    orgs: Array<OrganisaatioHenkilo>,
+    henkilo: Henkilo,
+    addOrganisaatio: (KutsuOrganisaatio) => void,
+    locale: string,
+}
+
+export default class KutsuOrganisaatios extends React.Component<Props> {
 
     static propTypes = {
         addedOrgs: PropTypes.array,
@@ -31,9 +43,10 @@ export default class KutsuOrganisaatios extends React.Component {
         )
     }
 
-    addEmptyOrganization(e) {
+    addEmptyOrganization(e: Event) {
         e.preventDefault();
-        this.props.addOrganisaatio({oid: '',
+        this.props.addOrganisaatio({
+            oid: '',
             organisation: {oid: ''},
             selectablePermissions: [],
             selectedPermissions: []

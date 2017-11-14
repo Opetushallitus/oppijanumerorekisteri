@@ -1,9 +1,17 @@
+// @flow
 import React from 'react'
 import PropTypes from 'prop-types'
 
 import AddedOrganization from './AddedOrganization';
+import type {KutsuOrganisaatio, OrganisaatioHenkilo} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
-export const AddedOrganizations = (props) =>
+type Props = {
+    addedOrgs: Array<KutsuOrganisaatio>,
+    l10n: {},
+    orgs: Array<OrganisaatioHenkilo>,
+}
+
+export const AddedOrganizations = (props: Props) =>
     <div>{props.addedOrgs.map((organization, index) =>
         <AddedOrganization
             key={index}

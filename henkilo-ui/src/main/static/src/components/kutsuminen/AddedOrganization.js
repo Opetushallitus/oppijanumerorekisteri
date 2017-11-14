@@ -1,8 +1,8 @@
+// @flow
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import * as R from 'ramda';
-import Select from 'react-select';
 import './AddedOrganization.css';
 import {
     kutsuAddOrganisaatio,
@@ -16,8 +16,30 @@ import {
 import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
 import {getOrganisaatios} from "./OrganisaatioUtilities";
+import type {
+    KutsuKayttooikeusryhma,
+    KutsuOrganisaatio, Organisaatio,
+    OrganisaatioHenkilo
+} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import OphSelect from "../common/select/OphSelect";
 
-class AddedOrganisation extends React.Component {
+type Props = {
+    changeOrganization: () => void,
+    addedOrgs: Array<KutsuOrganisaatio>,
+    addedOrg: KutsuOrganisaatio,
+    l10n: {},
+    locale: string,
+    orgs: Array<OrganisaatioHenkilo>,
+    index: number,
+    kutsuRemoveOrganisaatio: (string) => void,
+    kutsuSetOrganisaatio: (number, Organisaatio) => void,
+    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio: (string, string) => void,
+    currentHenkiloOid: string,
+    addOrganisaatioPermission: (string, ?KutsuKayttooikeusryhma) => void,
+    removeOrganisaatioPermission: (string, KutsuKayttooikeusryhma) => void,
+}
+
+class AddedOrganisation extends React.Component<Props> {
 
     static propTypes = {
         changeOrganization: PropTypes.func,
@@ -25,17 +47,14 @@ class AddedOrganisation extends React.Component {
         addedOrgs: PropTypes.array,
         addedOrg: PropTypes.object,
         orgs: PropTypes.array,
-        uiLang: PropTypes.object,
         index: PropTypes.number,
         locale: PropTypes.string
     };
 
     render() {
         const addedOrg = this.props.addedOrg;
-        const excludedOrgOids = R.map(R.prop('oid'), this.props.addedOrgs);
         const L = this.props.l10n[this.props.locale];
         const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
-        const orgs = R.filter(org => excludedOrgOids.indexOf(org.oid) < 0, this.props.orgs);
         const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
         const permissionsSelect = {
             options: selectablePermissions.map(permission => ({
@@ -52,12 +71,13 @@ class AddedOrganisation extends React.Component {
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
                     <div className="organisaatioSelection-container">
-                        <OrganisaatioSelection organisaatios={orgs}
-                                               selectedOrganisaatioOid={selectedOrganisaatioOid}
-                                               locale={this.props.locale}
-                                               index={this.props.index}
+                        <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
                                                selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                               L={L} />
+                        />
+                        <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
+                                               selectOrganisaatio={this.selectOrganisaatio.bind(this)}
+                                               isRyhma={true}
+                        />
                     </div>
                 </div>
 
@@ -66,13 +86,13 @@ class AddedOrganisation extends React.Component {
                         {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']} *
                     </label>
 
-                    <Select name="permission-select"
+                    <OphSelect name="permission-select"
                             className={'permissionSelect'}
                             onChange={this.addPermission.bind(this, selectablePermissions)}
                             options={permissionsSelect.options}
                             placeholder={L['VIRKAILIJAN_LISAYS_SUODATA_KAYTTOOIKEUKSIA']}
                             noResultsText={L['EI_TULOKSIA']}>
-                    </Select>
+                    </OphSelect>
 
                     <ul className="kutsuminen-selected-permissions">
                         {addedOrg.selectedPermissions.map(permission => {
@@ -110,23 +130,22 @@ class AddedOrganisation extends React.Component {
     selectOrganisaatio(selection) {
         if (!selection) {
             this.removeOrganisaatio(this.props.addedOrg.oid);
-        } else {
+        }
+        else {
             const selectedOrganisaatioOid = selection.value;
             const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
             const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
-            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.oid, organisaatio.oid);
+            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, organisaatio.oid);
         }
 
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        oid: state.omattiedot.data.oid,
-        locale: state.locale
-    }
-};
+const mapStateToProps = (state) => ({
+    currentHenkiloOid: state.omattiedot.data.oid,
+    locale: state.locale
+});
 
 export default connect(mapStateToProps, {
     kutsuAddOrganisaatio,
@@ -135,5 +154,5 @@ export default connect(mapStateToProps, {
     kutsuClearOrganisaatios,
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
     addOrganisaatioPermission,
-    removeOrganisaatioPermission
+    removeOrganisaatioPermission,
 })(AddedOrganisation);

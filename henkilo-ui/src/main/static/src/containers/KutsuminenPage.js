@@ -1,26 +1,56 @@
+// @flow
 import { connect } from 'react-redux';
 import { BasicInfo } from '../components/kutsuminen/BasicinfoForm';
 import React from 'react';
-import * as R from 'ramda';
 import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import Button from '../components/common/button/Button';
 import { fetchOmattiedotOrganisaatios } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
 import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
 import Loader from '../components/common/icons/Loader';
+import type {KutsuOrganisaatio, OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
 
-class KutsuFormPage extends React.Component  {
+type Props = {
+    fetchOmattiedotOrganisaatios: () => void,
+    l10n: {},
+    locale: string,
+    addedOrgs: Array<KutsuOrganisaatio>,
+    omatOrganisaatios: Array<OrganisaatioHenkilo>,
+    kutsuAddOrganisaatio: (KutsuOrganisaatio) => void,
+    henkilo: Henkilo,
+}
 
-    constructor () {
-        super();
+type State = {
+    confirmationModalOpen: boolean,
+    basicInfo: {
+        etunimi: string,
+        sukunimi: string,
+        email: string,
+        languageCode: string,
+    }
+}
+
+class KutsuFormPage extends React.Component<Props, State>  {
+    initialBasicInfo: {
+        etunimi: string,
+        sukunimi: string,
+        email: string,
+        languageCode: string,
+    };
+
+    constructor (props: Props) {
+        super(props);
+        this.initialBasicInfo = {
+            etunimi: '',
+            sukunimi: '',
+            email: '',
+            languageCode: '',
+        };
+
         this.state = {
             confirmationModalOpen: false,
-            basicInfo: {
-                etunimi: '',
-                sukunimi: '',
-                email: '',
-                languageCode: ''
-            }
+            basicInfo: this.initialBasicInfo,
         };
     }
 
@@ -81,12 +111,12 @@ class KutsuFormPage extends React.Component  {
 
     isValid() {
         const { email, etunimi, sukunimi } = this.state.basicInfo;
-        return this.isValidEmail(email) && etunimi && sukunimi && this.isOrganizationsValid();
+        return KutsuFormPage.isValidEmail(email) && etunimi && sukunimi && this.isOrganizationsValid();
     }
 
     isOrganizationsValid() {
         return this.props.addedOrgs.length > 0
-            && R.all(org => org.oid && org.selectedPermissions.length > 0)(this.props.addedOrgs)
+            && this.props.addedOrgs.every(org => org.oid && org.selectedPermissions.length > 0);
     }
 
     setBasicInfo(basicInfo) {
@@ -94,10 +124,10 @@ class KutsuFormPage extends React.Component  {
     }
 
     clearBasicInfo() {
-        this.setState({ basicInfo: {}});
+        this.setState({ basicInfo: this.initialBasicInfo});
     }
 
-    isValidEmail(email) {
+    static isValidEmail(email: string) {
         return email !== null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
     }
 
@@ -120,13 +150,6 @@ class KutsuFormPage extends React.Component  {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchOmattiedotOrganisaatios: () => dispatch(fetchOmattiedotOrganisaatios()),
-        kutsuAddOrganisaatio: (organisaatio) => dispatch(kutsuAddOrganisaatio(organisaatio))
-    }
-};
-
 const mapStateToProps = (state, ownProps) => {
     return {
         path: ownProps.location.pathname,
@@ -139,4 +162,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(KutsuFormPage);
+export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio})(KutsuFormPage);

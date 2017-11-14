@@ -36,7 +36,6 @@ class OrganisaatioSelection extends React.Component<Props, State> {
     placeholder: string;
 
     static propTypes = {
-        organisaatios: PropTypes.array.isRequired,
         selectOrganisaatio: PropTypes.func.isRequired,
         selectedOrganisaatioOid: PropTypes.string.isRequired,
         isRyhma: PropTypes.bool,
