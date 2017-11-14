@@ -51,6 +51,8 @@ public interface HenkiloService {
 
     HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
 
+    HenkiloReadDto forceUpdateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
+
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
     Optional<YhteystiedotDto> getHenkiloYhteystiedot(String henkiloOid, String ryhma);

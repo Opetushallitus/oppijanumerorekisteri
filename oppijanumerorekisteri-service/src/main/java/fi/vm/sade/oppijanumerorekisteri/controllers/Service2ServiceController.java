@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -137,5 +138,13 @@ public class Service2ServiceController {
                                                 @RequestParam(required = false) Long limit,
                                                 @Validated @RequestBody HenkiloHakuCriteriaDto criteria) {
         return this.henkiloService.list(criteria, offset, limit);
+    }
+
+    @ApiOperation(value = "Päivittää henkilön tietoja muutostietopalvelun antamilla muutoksilla.",
+            notes = "Päivittää kutsussa annettuun OID:n täsmäävän henkilön tiedot")
+    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_MUUTOSTIETOPALVELU')")
+    @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT)
+    public HenkiloReadDto forceUpdateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto) throws BindException {
+        return this.henkiloService.forceUpdateHenkilo(henkiloUpdateDto);
     }
 }

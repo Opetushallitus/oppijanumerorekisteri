@@ -125,6 +125,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private LocalDate syntymaaika;
 
+    private LocalDate kuolinpaiva;
+
     private String oppijanumero;
 
     @ManyToOne(fetch = FetchType.LAZY)

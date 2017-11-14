@@ -29,6 +29,8 @@ public class HenkiloUpdateDto {
 
     private LocalDate syntymaaika;
 
+    private LocalDate kuolinpaiva;
+
     private String sukupuoli;
 
     @ValidateAsiointikieli

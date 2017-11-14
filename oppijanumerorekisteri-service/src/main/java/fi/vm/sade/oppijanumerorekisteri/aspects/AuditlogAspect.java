@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -34,6 +33,14 @@ public class AuditlogAspect {
     private Object logUpdateHenkilo(ProceedingJoinPoint proceedingJoinPoint, HenkiloUpdateDto henkilo) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
         auditlogAspectHelper.logUpdateHenkilo(henkilo, result);
+        return result;
+    }
+
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.forceUpdateHenkilo(*))" +
+            "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
+    private Object logForceUpdateHenkilo(ProceedingJoinPoint proceedingJoinPoint, HenkiloUpdateDto henkilo) throws Throwable {
+        Object result = proceedingJoinPoint.proceed();
+        auditlogAspectHelper.logForceUpdateHenkilo(henkilo, result);
         return result;
     }
 
