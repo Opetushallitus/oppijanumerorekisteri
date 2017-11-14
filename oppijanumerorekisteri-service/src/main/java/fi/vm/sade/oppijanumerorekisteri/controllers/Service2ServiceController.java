@@ -146,4 +146,5 @@ public class Service2ServiceController {
     @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT)
     public HenkiloReadDto forceUpdateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto) throws BindException {
         return this.henkiloService.forceUpdateHenkilo(henkiloUpdateDto);
+    }
 }
