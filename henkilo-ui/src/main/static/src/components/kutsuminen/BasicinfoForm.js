@@ -33,38 +33,51 @@ export default class BasicInfo extends React.Component<Props> {
 
     render() {
         const {basicInfo} = this.props;
-
         const languageOptions = languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
         return (
             <fieldset id="basicinfo">
                 <span className="oph-h2 oph-strong">{this.props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
-                <div className="oph-field oph-field-inline">
-                    <label htmlFor="etunimi" className="required oph-label">{this.props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
-                    <input type="text" id="etunimi" className="oph-input" aria-required="true" value={basicInfo.etunimi || ''}
-                           onChange={this.updateEtunimi.bind(this)}/>
-                </div>
-                <div className="oph-field oph-field-inline">
-                    <label htmlFor="sukunimi" className="required oph-label">{this.props.L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
-                    <input type="text" id="sukunimi" className="oph-input" aria-required="true" value={basicInfo.sukunimi || ''}
-                           onChange={this.updateSukunimi.bind(this)}/>
-                </div>
-                <div className="oph-field oph-field-inline">
-                    <label htmlFor="email" className="required oph-label">{this.props.L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
-                    <input type="text" id="email" className="oph-input" aria-required="true" value={basicInfo.email} onChange={this.updateEmail.bind(this)}/>
-                </div>
-                <div className="oph-field oph-field-inline">
-                    <label className="oph-label" htmlFor="lang">{this.props.L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
-                    <div className="fieldContainer">
+                <ul className="flex-outer">
+                    <li>
+                        <label>{this.props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
+                        <input autoFocus
+                               type="text"
+                               className="oph-input"
+                               value={basicInfo.etunimi || ''}
+                               onChange={this.updateEtunimi.bind(this)}
+                        />
+                    </li>
+                    <li>
+                        <label>{this.props.L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
+                        <input type="text"
+                               className="oph-input"
+                               value={basicInfo.sukunimi || ''}
+                               onChange={this.updateSukunimi.bind(this)}/>
+                    </li>
+                    <li>
+                        <label>{this.props.L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
+                        <input type="text"
+                               className="oph-input"
+                               value={basicInfo.email}
+                               onChange={this.updateEmail.bind(this)}/>
+                    </li>
+                    <li>
+                        <label>{this.props.L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                         <OphSelect name="languageSelection"
                                    value={basicInfo.languageCode}
                                    options={languageOptions}
-                                   onChange={this.selectLanguage.bind(this)}/>
-
+                                   onChange={this.selectLanguage.bind(this)}
+                        />
+                    </li>
+                    <li>
+                        <label>
+                            &nbsp;
+                        </label>
                         <div className="oph-field-text">
                             {this.props.L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
                         </div>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </fieldset>
         )
     }

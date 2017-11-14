@@ -10,7 +10,8 @@ fieldset {
     margin-bottom: 16px;
 }
 
-fieldset input {
+fieldset input,
+fieldset .Select {
     margin: 10px 0 0;
 }
 
