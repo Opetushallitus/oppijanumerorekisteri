@@ -349,6 +349,36 @@ public class HenkiloServiceImpl implements HenkiloService {
         return henkiloUpdateDto;
     }
 
+    // Mapper is configured to ignore null values so setting henkiloUpdateDto field to null is same as skipping the field.
+    // If one wishes to enable validation groups with hibernate one needs to disable automatic validation and manually
+    // call the validator.
+    //
+    // Same as updateHenkilo, only with fewer validations. Values can be overwritten even if isYksiloityVTJ() is true.
+    @Override
+    @Transactional
+    public HenkiloReadDto forceUpdateHenkilo(HenkiloUpdateDto henkiloUpdateDto) {
+        BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
+        this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
+        if (errors.hasErrors()) {
+            throw new UnprocessableEntityException(errors);
+        }
+
+        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
+                Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
+                .stream().findFirst().orElseThrow(NotFoundException::new);
+
+        henkiloSaved.setModified(new Date());
+        henkiloSaved.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
+
+        henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
+
+        this.mapper.map(henkiloUpdateDto, henkiloSaved);
+        // This needs to be called in order to persist new yhteystiedotryhmas.
+        // this.henkiloDataRepository.save(henkiloSaved); // TODO: Disabled
+
+        return mapper.map(henkiloSaved, HenkiloReadDto.class);
+    }
+
     private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         if (henkiloUpdateDto.getYhteystiedotRyhma() != null) {
             // poistetaan käyttäjän antamista ryhmistä read-only merkityt
