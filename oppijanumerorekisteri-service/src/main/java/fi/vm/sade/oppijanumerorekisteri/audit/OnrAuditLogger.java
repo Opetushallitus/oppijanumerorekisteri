@@ -27,26 +27,49 @@ public class OnrAuditLogger extends Audit {
 
     private User getUser() {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if(sra != null) {
-            HttpServletRequest req = sra.getRequest();
-            String sessionId = req.getSession().getId();
-            String useragent = req.getHeader("User-Agent");
-            String remoteAddr = req.getRemoteAddr();
 
-            try {
-                InetAddress address = InetAddress.getByName(remoteAddr);
-                return new User(getCurrentPersonOid(), address, sessionId, useragent);
-            } catch (UnknownHostException e) {
-                log.error("Error creating inetadress for user out of {}, returning null user", remoteAddr, e);
-                return null;
+        InetAddress address = getInetAddress(sra);
+        if (address == null) {
+            return null;
+        }
+
+        String session = "";
+        String userAgent = "";
+        if (sra != null) {
+            HttpServletRequest req = sra.getRequest();
+            session = req.getSession().getId();
+            userAgent = req.getHeader("User-Agent");
+        }
+
+        return new User(getCurrentPersonOid(), address, session, userAgent);
+    }
+
+    private InetAddress getInetAddress(ServletRequestAttributes sra) {
+        try {
+            if (sra != null) {
+                HttpServletRequest request = sra.getRequest();
+
+                String realIp = request.getHeader("X-Real-IP");
+                if (realIp != null) {
+                    return InetAddress.getByName(realIp);
+                }
+
+                String forwardedFor = request.getHeader("X-Forwarded-For");
+                if (forwardedFor != null) {
+                    return InetAddress.getByName(forwardedFor);
+                }
+                log.warn("X-Real-IP or X-Forwarded-For was not set. Defaulting to Request.getRemoteAddr().");
+
+                String remoteAddr = request.getRemoteAddr();
+                if (remoteAddr != null) {
+                    return InetAddress.getByName(remoteAddr);
+                }
+                log.warn("RemoteAddr was null. Defaulting to localhost/127.0.0.1.");
             }
-        } else {
-            try {
-                return new User(getCurrentPersonOid(), InetAddress.getLocalHost(), "", "");
-            } catch (UnknownHostException e) {
-                log.error("Error creating localhost inetaddress",e);
-                return null;
-            }
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            log.error("Error creating InetAddress: ", e);
+            return null;
         }
     }
 
