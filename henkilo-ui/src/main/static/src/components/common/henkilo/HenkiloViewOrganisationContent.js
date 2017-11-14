@@ -5,7 +5,7 @@ import Columns from 'react-columns'
 import type {Locale} from '../../../types/locale.type'
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 import StaticUtils from "../StaticUtils";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     l10n: any,

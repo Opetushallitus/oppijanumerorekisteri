@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import './KayttooikeusryhmaListaSuodatin.css';
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,

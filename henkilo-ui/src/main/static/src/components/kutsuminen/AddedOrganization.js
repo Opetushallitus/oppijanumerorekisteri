@@ -22,14 +22,15 @@ import type {
     OrganisaatioHenkilo
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import OphSelect from "../common/select/OphSelect";
+import type {L} from "../../types/localisation.type";
 
 type Props = {
     changeOrganization: () => void,
     addedOrgs: Array<KutsuOrganisaatio>,
     addedOrg: KutsuOrganisaatio,
-    l10n: {},
     locale: string,
-    orgs: Array<OrganisaatioHenkilo>,
+    L: L,
+    omatOrganisaatios: Array<OrganisaatioHenkilo>,
     index: number,
     kutsuRemoveOrganisaatio: (string) => void,
     kutsuSetOrganisaatio: (number, Organisaatio) => void,
@@ -43,17 +44,15 @@ class AddedOrganisation extends React.Component<Props> {
 
     static propTypes = {
         changeOrganization: PropTypes.func,
-        l10n: PropTypes.object,
         addedOrgs: PropTypes.array,
         addedOrg: PropTypes.object,
-        orgs: PropTypes.array,
-        index: PropTypes.number,
+        omatOrganisaatios: PropTypes.array,
+        index: PropTypes.number.isRequired,
         locale: PropTypes.string
     };
 
     render() {
         const addedOrg = this.props.addedOrg;
-        const L = this.props.l10n[this.props.locale];
         const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
         const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
         const permissionsSelect = {
@@ -68,7 +67,7 @@ class AddedOrganisation extends React.Component<Props> {
             <div className="added-org" key={addedOrg.oid}>
                 <div className="row">
                     <label htmlFor="org">
-                        {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
+                        {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
                     <div className="organisaatioSelection-container">
                         <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
@@ -83,15 +82,15 @@ class AddedOrganisation extends React.Component<Props> {
 
                 <div className="row permissions-row">
                     <label htmlFor="permissions">
-                        {L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']} *
+                        {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']} *
                     </label>
 
                     <OphSelect name="permission-select"
                             className={'permissionSelect'}
                             onChange={this.addPermission.bind(this, selectablePermissions)}
                             options={permissionsSelect.options}
-                            placeholder={L['VIRKAILIJAN_LISAYS_SUODATA_KAYTTOOIKEUKSIA']}
-                            noResultsText={L['EI_TULOKSIA']}>
+                            placeholder={this.props.L['VIRKAILIJAN_LISAYS_SUODATA_KAYTTOOIKEUKSIA']}
+                            noResultsText={this.props.L['EI_TULOKSIA']}>
                     </OphSelect>
 
                     <ul className="kutsuminen-selected-permissions">
@@ -133,7 +132,7 @@ class AddedOrganisation extends React.Component<Props> {
         }
         else {
             const selectedOrganisaatioOid = selection.value;
-            const availableOrganisaatios = getOrganisaatios(this.props.orgs, this.props.locale);
+            const availableOrganisaatios = getOrganisaatios(this.props.omatOrganisaatios, this.props.locale);
             const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
             this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, organisaatio.oid);
@@ -144,7 +143,9 @@ class AddedOrganisation extends React.Component<Props> {
 
 const mapStateToProps = (state) => ({
     currentHenkiloOid: state.omattiedot.data.oid,
-    locale: state.locale
+    locale: state.locale,
+    L: state.l10n.localisations[state.locale],
+    omatOrganisaatios: state.omattiedot.organisaatios,
 });
 
 export default connect(mapStateToProps, {

@@ -13,7 +13,7 @@ import {
     addKayttooikeusToHenkilo,
     fetchAllowedKayttooikeusryhmasForOrganisation
 } from "../../../actions/kayttooikeusryhma.actions";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 
 type Props = {

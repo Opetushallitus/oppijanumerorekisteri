@@ -4,7 +4,7 @@ import {urls} from 'oph-urls-js'
 import {http} from '../../../http'
 import OphModal from '../../common/modal/OphModal'
 import DuplikaatitTable from './DuplikaatitTable'
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,

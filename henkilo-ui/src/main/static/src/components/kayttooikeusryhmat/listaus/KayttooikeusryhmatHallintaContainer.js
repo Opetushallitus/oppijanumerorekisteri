@@ -5,7 +5,7 @@ import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.acti
 import Loader from "../../common/icons/Loader";
 import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 
 type Props = {

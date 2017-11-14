@@ -16,7 +16,7 @@ import {fetchAllPalvelut} from "../../../actions/palvelut.actions";
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import {fetchPalveluKayttooikeus} from "../../../actions/kayttooikeus.actions";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,

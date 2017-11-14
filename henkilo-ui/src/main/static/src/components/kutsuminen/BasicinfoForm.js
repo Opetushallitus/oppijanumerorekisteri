@@ -1,42 +1,59 @@
+// @flow
 import React from 'react'
 import PropTypes from 'prop-types'
 import languages from '../../configuration/languages';
 import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
+import type {L} from "../../types/localisation.type";
+import type {ReactSelectOption} from "../../types/react-select.types";
 
-export class BasicInfo extends React.Component {
+type BasicinfoType = {
+    etunimi: string,
+    sukunimi: string,
+    email: string,
+    languageCode: string,
+}
+
+type Props = {
+    basicInfo: BasicinfoType,
+    L: L,
+    setBasicInfo: () => void,
+    locale: string,
+    setBasicInfo: (BasicinfoType) => void,
+}
+
+export default class BasicInfo extends React.Component<Props> {
 
     static propTypes = {
         basicInfo: PropTypes.object,
-        l10n: PropTypes.object,
+        L: PropTypes.object,
         setBasicInfo: PropTypes.func,
         locale: PropTypes.string
     };
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         const {basicInfo} = this.props;
 
         const languageOptions = languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
         return (
             <fieldset id="basicinfo">
-                <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
+                <span className="oph-h2 oph-strong">{this.props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
                 <div className="oph-field oph-field-inline">
-                    <label htmlFor="etunimi" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
+                    <label htmlFor="etunimi" className="required oph-label">{this.props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>
                     <input type="text" id="etunimi" className="oph-input" aria-required="true" value={basicInfo.etunimi || ''}
                            onChange={this.updateEtunimi.bind(this)}/>
                 </div>
                 <div className="oph-field oph-field-inline">
-                    <label htmlFor="sukunimi" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
+                    <label htmlFor="sukunimi" className="required oph-label">{this.props.L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
                     <input type="text" id="sukunimi" className="oph-input" aria-required="true" value={basicInfo.sukunimi || ''}
                            onChange={this.updateSukunimi.bind(this)}/>
                 </div>
                 <div className="oph-field oph-field-inline">
-                    <label htmlFor="email" className="required oph-label">{L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
+                    <label htmlFor="email" className="required oph-label">{this.props.L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
                     <input type="text" id="email" className="oph-input" aria-required="true" value={basicInfo.email} onChange={this.updateEmail.bind(this)}/>
                 </div>
                 <div className="oph-field oph-field-inline">
-                    <label className="oph-label" htmlFor="lang">{L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
+                    <label className="oph-label" htmlFor="lang">{this.props.L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                     <div className="fieldContainer">
                         <OphSelect name="languageSelection"
                                    value={basicInfo.languageCode}
@@ -44,7 +61,7 @@ export class BasicInfo extends React.Component {
                                    onChange={this.selectLanguage.bind(this)}/>
 
                         <div className="oph-field-text">
-                            {L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
+                            {this.props.L['VIRKAILIJAN_LISAYS_ASIOINTIKIELI_TARKENNE']}
                         </div>
                     </div>
                 </div>
@@ -52,25 +69,25 @@ export class BasicInfo extends React.Component {
         )
     }
 
-    updateEmail(event) {
+    updateEmail(event: SyntheticInputEvent<HTMLInputElement>) {
         const { basicInfo } = this.props;
         basicInfo.email = event.target.value;
         this.props.setBasicInfo(basicInfo);
     }
 
-    updateEtunimi(event) {
+    updateEtunimi(event: SyntheticInputEvent<HTMLInputElement>) {
         const { basicInfo } = this.props;
         basicInfo.etunimi = event.target.value;
         this.props.setBasicInfo(basicInfo);
     }
 
-    updateSukunimi(event) {
+    updateSukunimi(event: SyntheticInputEvent<HTMLInputElement>) {
         const { basicInfo } = this.props;
         basicInfo.sukunimi = event.target.value;
         this.props.setBasicInfo(basicInfo);
     }
 
-    selectLanguage(selection) {
+    selectLanguage(selection: ReactSelectOption) {
         const { basicInfo } = this.props;
         basicInfo.languageCode = selection.value;
         this.props.setBasicInfo(basicInfo);

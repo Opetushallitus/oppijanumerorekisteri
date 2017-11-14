@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import OphSelect from './OphSelect';
 import {connect} from 'react-redux';
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 

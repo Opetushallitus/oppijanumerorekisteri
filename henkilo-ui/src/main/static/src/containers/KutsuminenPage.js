@@ -1,6 +1,6 @@
 // @flow
 import { connect } from 'react-redux';
-import { BasicInfo } from '../components/kutsuminen/BasicinfoForm';
+import BasicInfoForm from '../components/kutsuminen/BasicinfoForm';
 import React from 'react';
 import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import Button from '../components/common/button/Button';
@@ -8,15 +8,15 @@ import { fetchOmattiedotOrganisaatios } from '../actions/omattiedot.actions';
 import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
 import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
 import Loader from '../components/common/icons/Loader';
-import type {KutsuOrganisaatio, OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {KutsuOrganisaatio} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {L10n} from "../types/localisation.type";
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
-    l10n: {},
+    l10n: L10n,
     locale: string,
     addedOrgs: Array<KutsuOrganisaatio>,
-    omatOrganisaatios: Array<OrganisaatioHenkilo>,
     kutsuAddOrganisaatio: (KutsuOrganisaatio) => void,
     henkilo: Henkilo,
 }
@@ -69,7 +69,6 @@ class KutsuFormPage extends React.Component<Props, State>  {
             basicInfo: this.state.basicInfo,
             clearBasicInfo: this.clearBasicInfo.bind(this),
         };
-        const {l10n} = this.props;
         const {basicInfo} = this.state;
 
             if (this.props.omattiedotLoading) {
@@ -80,18 +79,18 @@ class KutsuFormPage extends React.Component<Props, State>  {
                     <div>
                     <form className="wrapper kutsuFormWrapper">
 
-                        <span>{this.props.l10n[this.props.locale]['POISTA_MERKKIA']}</span>
-                        <BasicInfo l10n={l10n}
+                        <span>{L['POISTA_MERKKIA']}</span>
+                        <BasicInfoForm L={L}
                                     basicInfo={basicInfo}
                                     setBasicInfo={this.setBasicInfo.bind(this)}
                                     locale={this.props.locale}>
-                        </BasicInfo>
-                        <KutsuOrganisaatios l10n={l10n}
-                                            orgs={this.props.omatOrganisaatios}
+                        </BasicInfoForm>
+                        <KutsuOrganisaatios L={L}
                                             addedOrgs={this.props.addedOrgs}
                                             henkilo={this.props.henkilo}
                                             locale={this.props.locale}
-                                            addOrganisaatio={this.props.kutsuAddOrganisaatio}/>
+                                            addOrganisaatio={this.props.kutsuAddOrganisaatio}
+                        />
 
                         <div className="kutsuFormFooter row">
                             <Button action={this.openConfirmationModal.bind(this)} disabled={!this.isValid()}>
@@ -155,7 +154,6 @@ const mapStateToProps = (state, ownProps) => {
         path: ownProps.location.pathname,
         l10n: state.l10n.localisations,
         omattiedotLoading: state.omattiedot.omattiedotLoading,
-        omatOrganisaatios: state.omattiedot.organisaatios,
         henkilo: state.henkilo,
         addedOrgs: state.kutsuminenOrganisaatios,
         locale: state.locale

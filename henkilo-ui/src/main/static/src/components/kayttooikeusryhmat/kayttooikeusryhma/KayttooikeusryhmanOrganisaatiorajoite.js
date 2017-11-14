@@ -6,7 +6,7 @@ import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import type {Locale} from "../../../types/locale.type";
 import type {ReactSelectOption} from "../../../types/react-select.types";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,

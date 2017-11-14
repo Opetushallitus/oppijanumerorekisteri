@@ -12,13 +12,14 @@ import {
     FETCH_HENKILO_ASIOINTIKIELLI_FAILURE, FETCH_CASME_REQUEST, FETCH_CASME_FAILURE, FETCH_CASME_SUCCESS
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
+import type {OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
 type GetState = () => {
     omattiedot: {
         data: any,
         omattiedotLoaded: boolean,
         locale: string,
-        organisaatios: Array<{}>,
+        organisaatios: Array<OrganisaatioHenkilo>,
     },
     locale: string,
 }

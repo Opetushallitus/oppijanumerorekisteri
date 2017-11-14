@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
-import type {L} from "../../types/l.type";
+import type {L} from "../../types/localisation.type";
 
 type Props = {
     onSubmit: (HenkiloCreate) => Promise<void>,

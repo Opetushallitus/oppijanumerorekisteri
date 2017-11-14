@@ -2,7 +2,7 @@
 import React from 'react';
 import type {KayttooikeusryhmaNimi} from "./KayttooikeusryhmaPage";
 import './KayttooikeusryhmatNimi.css';
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,

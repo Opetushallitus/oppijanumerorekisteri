@@ -7,7 +7,7 @@ import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import LocalizedTextGroup from "./LocalizedTextGroup";
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     items: Array<Kayttooikeusryhma>,

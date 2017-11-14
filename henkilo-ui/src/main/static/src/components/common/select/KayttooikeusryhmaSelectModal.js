@@ -4,7 +4,7 @@ import type {Locale} from '../../../types/locale.type'
 import OphModal from '../modal/OphModal'
 import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect'
 import type {Kayttooikeusryhma} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types'
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     locale: Locale,

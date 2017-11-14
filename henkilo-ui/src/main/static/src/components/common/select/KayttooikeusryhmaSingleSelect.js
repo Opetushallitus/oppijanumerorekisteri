@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import OphSelect from "./OphSelect";
 import StaticUtils from "../StaticUtils";
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,

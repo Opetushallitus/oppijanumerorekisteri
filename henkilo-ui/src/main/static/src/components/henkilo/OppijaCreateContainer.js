@@ -15,7 +15,7 @@ import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henki
 import Notifications from '../../components/common/notifications/Notifications'
 import type {Notification, NotificationType} from '../../components/common/notifications/Notifications'
 import PropertySingleton from '../../globals/PropertySingleton'
-import type {L} from "../../types/l.type";
+import type {L} from "../../types/localisation.type";
 
 type Props = {
     router: any,

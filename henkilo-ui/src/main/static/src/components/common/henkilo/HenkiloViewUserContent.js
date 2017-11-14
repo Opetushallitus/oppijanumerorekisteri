@@ -5,7 +5,7 @@ import Columns from 'react-columns'
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 import moment from 'moment';
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     l10n: any,
