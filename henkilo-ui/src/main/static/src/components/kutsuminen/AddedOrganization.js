@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
-import R from 'ramda';
+import * as R from 'ramda';
 import Select from 'react-select';
 import './AddedOrganization.css';
 import {

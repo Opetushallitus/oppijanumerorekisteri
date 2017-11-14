@@ -1,5 +1,5 @@
 // @flow
-import R from 'ramda';
+import * as R from 'ramda';
 import { http } from '../http';
 import {urls} from 'oph-urls-js';
 import { FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS, FETCH_ALL_ORGANISAATIOS_FAILURE,

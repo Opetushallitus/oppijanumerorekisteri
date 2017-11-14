@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import PropTypes from 'prop-types';
-import R from 'ramda';
+import * as R from 'ramda';
 import 'react-table/react-table.css'
 import './VtjVertailuListaus.css';
 

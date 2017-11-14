@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
-import R from 'ramda';
+import * as R from 'ramda';
 import './HakaPopupContent.css';
 
 export default class HakatunnistePopupContent extends React.Component {

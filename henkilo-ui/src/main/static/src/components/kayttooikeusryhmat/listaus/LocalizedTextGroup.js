@@ -1,6 +1,6 @@
 // @flow
 import type {Locale} from "../../../types/locale.type";
-import R from 'ramda';
+import * as R from 'ramda';
 import React from 'react';
 import type {TextGroup} from "../../../types/domain/kayttooikeus/textgroup.types";
 

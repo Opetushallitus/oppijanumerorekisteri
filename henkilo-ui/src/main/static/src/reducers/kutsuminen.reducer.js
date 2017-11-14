@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 
 import {KUTSU_ADD_ORGANISAATIO,
     KUTSU_CLEAR_ORGANISAATIOS,

@@ -1,5 +1,5 @@
 // @flow
-import R from 'ramda'
+import * as R from 'ramda'
 import type {Locale} from "./types/locale.type";
 import type {TextGroup} from "./types/domain/kayttooikeus/textgroup.types";
 

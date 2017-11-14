@@ -9,7 +9,7 @@ import DelayedSearchInput from "./DelayedSearchInput";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
 import Loader from "../common/icons/Loader";
-import R from 'ramda';
+import * as R from 'ramda';
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {

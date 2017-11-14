@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import R from 'ramda';
+import * as R from 'ramda';
 import {toLocalizedText} from '../../localizabletext';
 import type {Organisaatio, OrganisaatioHenkilo} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Locale} from "../../types/locale.type";

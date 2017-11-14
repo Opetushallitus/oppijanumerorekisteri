@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import R from 'ramda';
+import * as R from 'ramda';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto, updatePassword, yksiloiHenkilo, puraYksilointi, overrideHenkiloVtjData, fetchHenkiloSlaves,

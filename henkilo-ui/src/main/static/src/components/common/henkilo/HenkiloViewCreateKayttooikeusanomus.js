@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
-import R from 'ramda';
+import * as R from 'ramda';
 import {ShowText} from '../../common/ShowText';
 import IconButton from "../button/IconButton";
 import CrossCircleIcon from "../icons/CrossCircleIcon";

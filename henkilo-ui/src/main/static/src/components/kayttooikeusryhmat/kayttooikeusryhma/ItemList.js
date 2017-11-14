@@ -2,7 +2,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import './ItemList.css';
-import R from 'ramda';
+import * as R from 'ramda';
 import type {L} from "../../../types/l.type";
 
 type Props = {

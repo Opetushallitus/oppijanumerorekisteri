@@ -15,7 +15,7 @@ import type {PalveluRooliModify} from "../../../types/domain/kayttooikeus/Palvel
 import {http} from '../../../http';
 import {urls} from 'oph-urls-js';
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
-import R from 'ramda';
+import * as R from 'ramda';
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli.types";
 import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';

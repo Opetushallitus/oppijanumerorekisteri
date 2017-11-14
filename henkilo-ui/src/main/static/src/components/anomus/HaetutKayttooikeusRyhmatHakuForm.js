@@ -12,7 +12,7 @@ import CloseButton from "../common/button/CloseButton";
 import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import OphSelect from "../common/select/OphSelect";
 import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions';
-import R from 'ramda';
+import * as R from 'ramda';
 import type {L} from "../../types/l.type";
 import type {Locale} from "../../types/locale.type";
 

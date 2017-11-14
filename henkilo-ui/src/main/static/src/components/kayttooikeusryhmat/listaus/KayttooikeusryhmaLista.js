@@ -2,7 +2,7 @@
 import * as React from 'react';
 import './KayttooikeusryhmaLista.css';
 import KayttooikeusryhmaTiedot from './KayttooikeusryhmaTiedot';
-import R from 'ramda';
+import * as R from 'ramda';
 import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import LocalizedTextGroup from "./LocalizedTextGroup";

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {Link} from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
-import R from 'ramda';
+import * as R from 'ramda';
 
 export default class LinkitetytHenkilot extends React.Component {
     static propTypes = {

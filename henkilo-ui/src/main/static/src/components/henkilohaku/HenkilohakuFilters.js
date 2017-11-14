@@ -16,7 +16,7 @@ import {fetchAllRyhmas} from "../../actions/organisaatio.actions";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import StaticUtils from "../common/StaticUtils";
 import CloseButton from "../common/button/CloseButton";
-import R from 'ramda';
+import * as R from 'ramda';
 import type {L} from "../../types/l.type";
 import type {Locale} from "../../types/locale.type";
 

@@ -14,7 +14,7 @@ import {
 
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
-import R from 'ramda';
+import * as R from 'ramda';
 import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {KayttajatiedotRead} from "../types/domain/kayttooikeus/KayttajatiedotRead";
 import type {HenkiloDuplicate} from "../types/domain/oppijanumerorekisteri/HenkiloDuplicate";

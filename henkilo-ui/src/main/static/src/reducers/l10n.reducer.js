@@ -1,4 +1,4 @@
-import R from 'ramda'
+import * as R from 'ramda'
 import {FETCH_L10N_SUCCESS, FETCH_L10N_REQUEST, FETCH_LOCALISATION_REQUEST,
     FETCH_LOCALISATION_SUCCESS} from '../actions/actiontypes';
 

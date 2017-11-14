@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
-import R from 'ramda';
+import * as R from 'ramda';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from "../../common/icons/Loader";
 import PropertySingleton from '../../../globals/PropertySingleton'

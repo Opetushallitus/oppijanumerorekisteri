@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { BasicInfo } from '../components/kutsuminen/BasicinfoForm';
 import React from 'react';
-import R from 'ramda';
+import * as R from 'ramda';
 import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
 import Button from '../components/common/button/Button';
 import { fetchOmattiedotOrganisaatios } from '../actions/omattiedot.actions';

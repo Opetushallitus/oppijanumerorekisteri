@@ -2,7 +2,7 @@
 import React from 'react';
 import './MyonnettavatKayttooikeusryhmat.css';
 import type {Locale} from "../../../types/locale.type";
-import R from 'ramda';
+import * as R from 'ramda';
 import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
 import type {ReactSelectOption} from "../../../types/react-select.types";

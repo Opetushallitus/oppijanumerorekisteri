@@ -4,7 +4,7 @@ import type {Locale} from "../../../types/locale.type";
 import { http } from '../../../http';
 import {urls} from 'oph-urls-js';
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
-import R from 'ramda';
+import * as R from 'ramda';
 import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli.types";
 import LocalizedTextGroup from "./LocalizedTextGroup";
 import './KayttooikeusryhmaTiedot.css';

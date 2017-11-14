@@ -1,7 +1,7 @@
 // @flow
 import {http} from '../http';
 import {urls} from 'oph-urls-js';
-import R from 'ramda';
+import * as R from 'ramda';
 import {
     FETCH_OMATTIEDOT_REQUEST,
     FETCH_OMATTIEDOT_SUCCESS,
