@@ -33,7 +33,7 @@ type State = {
         email: string,
         languageCode: string,
     },
-    validationMessages: Array<ValidationMessage>,
+    validationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage},
 }
 
 class KutsuFormPage extends React.Component<Props, State>  {
@@ -44,9 +44,7 @@ class KutsuFormPage extends React.Component<Props, State>  {
         languageCode: string,
     };
 
-    initialValidationMessages: Array<ValidationMessage>;
-    organisaatioKayttooikeusValidation: ValidationMessage;
-    allFilledValidation: ValidationMessage;
+    initialValidationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage};
 
     constructor (props: Props) {
         super(props);
@@ -57,18 +55,23 @@ class KutsuFormPage extends React.Component<Props, State>  {
             languageCode: '',
         };
 
-        this.organisaatioKayttooikeusValidation = {id: 'organisaatioKayttooikeus', labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS']};
-        this.allFilledValidation = {id: 'allFilled', labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_TAYTA_KAIKKI_KENTAT']};
-
-        this.initialValidationMessages = [
-            this.organisaatioKayttooikeusValidation,
-            this.allFilledValidation,
-        ];
+        this.initialValidationMessages = {
+            organisaatioKayttooikeus: {
+                id: 'organisaatioKayttooikeus',
+                labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_VALITSE_VAH_ORGANISAATIO_JA_YKSI_OIKEUS'],
+                isValid: false,
+            },
+            allFilled: {
+                id: 'allFilled',
+                labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_TAYTA_KAIKKI_KENTAT'],
+                isValid: false,
+            },
+        };
 
         this.state = {
             confirmationModalOpen: false,
-            basicInfo: this.initialBasicInfo,
-            validationMessages: this.initialValidationMessages,
+            basicInfo: {...this.initialBasicInfo},
+            validationMessages: {...this.initialValidationMessages},
         };
     }
 
@@ -131,34 +134,39 @@ class KutsuFormPage extends React.Component<Props, State>  {
         return KutsuFormPage.isValidEmail(email) && !!etunimi && !!sukunimi && !!languageCode;
     }
 
-    isOrganizationsValid(newAddedOrgs) {
+    isOrganizationsValid(newAddedOrgs): boolean {
         return newAddedOrgs.length > 0
             && newAddedOrgs
                 .every(org => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0);
     }
 
     setBasicInfo(basicInfo) {
-        const filteredValidationMessages = this.state.validationMessages.filter((message) => message.id !== 'allFilled');
-        const validationMessages = KutsuFormPage.isValid(basicInfo)
-            ? filteredValidationMessages
-            : [...filteredValidationMessages, this.allFilledValidation];
         this.setState({
             basicInfo,
-            validationMessages,
+            validationMessages: {
+                ...this.state.validationMessages,
+                allFilled: {
+                    ...this.state.validationMessages.allFilled,
+                    isValid: KutsuFormPage.isValid(basicInfo),
+                },
+            },
         });
     }
 
     updateOrganisaatioValidation(newAddedOrgs) {
-        const filteredValidationMessages = this.state.validationMessages
-            .filter((message) => message.id !== 'organisaatioKayttooikeus');
-        const validationMessages = this.isOrganizationsValid(newAddedOrgs)
-            ? filteredValidationMessages
-            : [...filteredValidationMessages, this.organisaatioKayttooikeusValidation];
-        this.setState({validationMessages});
+        this.setState({
+            validationMessages: {
+                ...this.state.validationMessages,
+                organisaatioKayttooikeus: {
+                    ...this.state.validationMessages.organisaatioKayttooikeus,
+                    isValid: this.isOrganizationsValid(newAddedOrgs),
+                },
+            },
+        });
     }
 
     clearBasicInfo() {
-        this.setBasicInfo(this.initialBasicInfo);
+        this.setBasicInfo({...this.initialBasicInfo});
     }
 
     static isValidEmail(email: string): boolean {
@@ -168,14 +176,14 @@ class KutsuFormPage extends React.Component<Props, State>  {
     openConfirmationModal(e: Event) {
         e.preventDefault();
         this.setState({
-            confirmationModalOpen: true
+            confirmationModalOpen: true,
         })
     }
 
     closeConfirmationModal(e: Event) {
         e.preventDefault();
         this.setState({
-            confirmationModalOpen: false
+            confirmationModalOpen: false,
         })
     }
 }

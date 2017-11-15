@@ -15,6 +15,7 @@ import {
 } from "../../../actions/kayttooikeusryhma.actions";
 import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
+import type {ValidationMessage} from "../../../types/validation.type";
 
 type Props = {
     organisaatios: Array<{}>,
@@ -38,7 +39,7 @@ type KayttooikeusModel = {
 
 type State  = {
     selectedList: Array<{value: number}>,
-    validationMessages: Array<{id: string, label: string}>,
+    validationMessages: {[key: string]: ValidationMessage},
     kayttooikeusData: Array<{}>,
     kayttooikeusModel: KayttooikeusModel,
 };
@@ -71,16 +72,31 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
         });
         this.initialState = {
             selectedList: [],
-            validationMessages: [{id: 'organisation', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'},
-                {id: 'kayttooikeus', label: 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'}],
+            validationMessages: {
+                organisation: {
+                    id: 'organisation',
+                    labelLocalised: this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_ORGANISAATIO_VALID'],
+                    isValid: false
+                },
+                kayttooikeus: {
+                    id: 'kayttooikeus',
+                    labelLocalised: this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'],
+                    isValid: false
+                },
+            },
             kayttooikeusData: [],
             kayttooikeusModel: this.initialKayttooikeusModel(),
         };
 
         this.organisationAction = (value) => {
             this.setState({
-                validationMessages: this.state.validationMessages.filter(
-                    validationMessage => validationMessage.id !== 'organisation'),
+                validationMessages: {
+                    ...this.state.validationMessages,
+                    organisation: {
+                        ...this.state.validationMessages.organisation,
+                        isValid: true,
+                    }
+                },
                 kayttooikeusModel: {
                     ...this.state.kayttooikeusModel,
                     kayttokohdeOrganisationOid: value.value,
@@ -97,19 +113,28 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                 });
             }
             this.setState({
-                validationMessages: this.state.validationMessages.filter(
-                    validationMessage => validationMessage.id !== 'kayttooikeus'),
+                validationMessages: {
+                    ...this.state.validationMessages,
+                    kayttooikeus: {
+                        ...this.state.validationMessages.kayttooikeus,
+                        isValid: true,
+                    }
+                },
             });
         };
 
         this.close = (kayttooikeusId: number) => {
             const selectedList = this.state.selectedList.filter(selected => selected.value !== kayttooikeusId);
             const id = 'kayttooikeus';
-            const label = 'HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID';
+            const labelLocalised = this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'];
             let newState: State = Object.assign({}, this.state, { selectedList: selectedList, });
-            if (this.state.validationMessages.filter(validationMessage => validationMessage.id === id)[0] === undefined
+            if (this.state.validationMessages[id] === undefined
                 && !selectedList.length) {
-                newState = Object.assign(newState, { validationMessages: [...this.state.validationMessages, {id, label}],});
+                newState = Object.assign(newState, {
+                    validationMessages: {
+                        ...this.state.validationMessages,
+                        kayttooikeus: {id, labelLocalised, isValid: false,}},
+                });
             }
             this.setState(newState);
         };

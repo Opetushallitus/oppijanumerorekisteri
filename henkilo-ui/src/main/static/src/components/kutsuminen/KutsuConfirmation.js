@@ -17,7 +17,7 @@ import type {L10n} from "../../types/localisation.type";
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
-    modalCloseFn: () => void,
+    modalCloseFn: (any) => void,
     modalOpen: boolean,
     basicInfo: BasicinfoType,
     clearBasicInfo: () => void,
@@ -41,8 +41,8 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         l10n: PropTypes.object,
     };
 
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
         this.state = {
             sent: false
         }
@@ -61,9 +61,9 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                     <span className="oph-h2 oph-strong">{L['VIRKAILIJAN_LISAYS_ESIKATSELU_ALAOTSIKKO']}</span>
                     {this.props.addedOrgs.map(this.renderAddedOrg.bind(this))}
                     <div className="row">
-                        {this.state.sent ?
-                            <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button> :
-                            <Button action={this.sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
+                        {this.state.sent
+                            ? <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
+                            : <Button action={this.sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
                 </div>
