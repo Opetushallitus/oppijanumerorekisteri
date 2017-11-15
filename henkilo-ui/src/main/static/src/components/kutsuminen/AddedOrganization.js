@@ -82,7 +82,7 @@ class AddedOrganisation extends React.Component<Props> {
 
                 <div className="row permissions-row">
                     <label htmlFor="permissions">
-                        {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']} *
+                        {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']}
                     </label>
 
                     <OphSelect name="permission-select"
