@@ -124,7 +124,7 @@ public class OppijaController {
     public Page<MasterHenkiloDto<OppijaMuutosDto>> getMuuttuneet(
             @RequestParam @ApiParam(value = "ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z", required = true) DateTime muokattuJalkeen,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
-            @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(1000) int count) {
+            @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(10000) int count) {
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setMuokattuJalkeen(muokattuJalkeen);
         return oppijaService.listMastersBy(criteria, page, count);
