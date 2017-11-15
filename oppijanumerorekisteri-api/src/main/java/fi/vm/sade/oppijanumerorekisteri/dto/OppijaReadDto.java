@@ -19,14 +19,14 @@ public class OppijaReadDto {
     @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
     private String tunniste;
 
-    private HenkiloReadDto henkilo;
+    private OppijaReadHenkiloDto henkilo;
 
     @Getter
     @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class HenkiloReadDto {
+    public static class OppijaReadHenkiloDto {
 
         private String oid;
 

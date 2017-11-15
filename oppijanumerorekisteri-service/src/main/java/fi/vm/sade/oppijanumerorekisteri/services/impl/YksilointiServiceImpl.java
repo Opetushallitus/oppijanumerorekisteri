@@ -96,10 +96,12 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         // Remove yksilointitieto if henkilo was yksiloity succesfully.
-        if (henkilo != null && henkilo.isYksiloityVTJ() && henkilo.getYksilointitieto() != null) {
-            yksilointitietoRepository.delete(henkilo.getYksilointitieto());
-            henkilo.setYksilointitieto(null);
-            henkilo.setModified(new Date());
+        if (henkilo != null && henkilo.isYksiloityVTJ()) {
+            Optional<Yksilointitieto> yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo);
+            if (yksilointitieto.isPresent()) {
+                yksilointitietoRepository.delete(yksilointitieto.get());
+                henkilo.setModified(new Date());
+            }
         }
 
         return henkilo;
@@ -195,7 +197,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
-        Yksilointitieto yksilointitieto = Optional.ofNullable(henkilo.getYksilointitieto())
+        Yksilointitieto yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo)
                 .orElseGet(Yksilointitieto::new);
 
         yksilointitieto.setEtunimet(yksiloityHenkilo.getEtunimi());
@@ -221,7 +223,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .ifPresent(yhteystiedotRyhmas -> yhteystiedotRyhmas.forEach(yksilointitieto::addYhteystiedotRyhma));
 
         yksilointitieto.setHenkilo(henkilo);
-        henkilo.setYksilointitieto(yksilointitieto);
+        yksilointitietoRepository.save(yksilointitieto);
         henkilo.setModified(new Date());
     }
 
@@ -396,18 +398,16 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public YksilointitietoDto getYksilointiTiedot(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-        Yksilointitieto yksilointitieto = henkilo.getYksilointitieto();
-        return Optional.ofNullable(yksilointitieto).map(y -> this.mapper.map(y, YksilointitietoDto.class)).orElseGet(YksilointitietoDto::new);
+        Optional<Yksilointitieto> yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo);
+        return yksilointitieto.map(y -> this.mapper.map(y, YksilointitietoDto.class)).orElseGet(YksilointitietoDto::new);
     }
 
     @Override
     @Transactional
     public void yliajaHenkilonTiedot(String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-        if (henkilo.getYksilointitieto() == null) {
-            throw new ValidationException("No VTJ-data found for henkilo");
-        }
-        Yksilointitieto yksilointitieto = henkilo.getYksilointitieto();
+        Yksilointitieto yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo)
+                .orElseThrow(() -> new ValidationException("No VTJ-data found for henkilo"));
 
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
         henkilo.setEtunimet(yksilointitieto.getEtunimet());
@@ -439,8 +439,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         yksilointitietoRepository.delete(yksilointitieto);
-        henkilo.setYksilointitieto(null);
-
     }
 
     @Override
