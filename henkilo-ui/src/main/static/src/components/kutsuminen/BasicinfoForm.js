@@ -7,7 +7,7 @@ import OphSelect from '../common/select/OphSelect';
 import type {L} from "../../types/localisation.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
 
-type BasicinfoType = {
+export type BasicinfoType = {
     etunimi: string,
     sukunimi: string,
     email: string,

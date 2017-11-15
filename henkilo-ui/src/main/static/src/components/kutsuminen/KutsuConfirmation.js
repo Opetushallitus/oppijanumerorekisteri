@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import PropTypes from 'prop-types'
 import * as R from "ramda";
@@ -7,8 +8,28 @@ import {toLocalizedText} from '../../localizabletext';
 import './KutsuConfirmation.css';
 import {http} from '../../http';
 import {urls} from 'oph-urls-js';
+import type {
+    KutsuKayttooikeusryhma,
+    KutsuOrganisaatio
+} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {BasicinfoType} from "./BasicinfoForm";
+import type {L10n} from "../../types/localisation.type";
 
-export default class KutsuConfirmation extends React.Component {
+type Props = {
+    addedOrgs: Array<KutsuOrganisaatio>,
+    modalCloseFn: () => void,
+    modalOpen: boolean,
+    basicInfo: BasicinfoType,
+    clearBasicInfo: () => void,
+    locale: string,
+    l10n: L10n,
+}
+
+type State = {
+    sent: boolean,
+}
+
+export default class KutsuConfirmation extends React.Component<Props, State> {
 
     static propTypes = {
         addedOrgs: PropTypes.array,
@@ -16,7 +37,8 @@ export default class KutsuConfirmation extends React.Component {
         modalOpen: PropTypes.bool,
         basicInfo: PropTypes.object,
         clearBasicInfo: PropTypes.func,
-        locale: PropTypes.string
+        locale: PropTypes.string,
+        l10n: PropTypes.object,
     };
 
     constructor() {
@@ -54,7 +76,7 @@ export default class KutsuConfirmation extends React.Component {
         this.setState({sent: false});
     }
 
-    renderAddedOrg(org) {
+    renderAddedOrg(org: any) {
         const orgName = toLocalizedText(this.props.locale, org.organisation.nimi);
         return (
             <div key={org.organisation.oid}>
@@ -64,7 +86,7 @@ export default class KutsuConfirmation extends React.Component {
         )
     }
 
-    renderAddedOrgPermission(permission) {
+    renderAddedOrgPermission(permission: KutsuKayttooikeusryhma) {
         return (
             <div key={permission.ryhmaId}>
                 <span className="oph-h4 oph-strong">{toLocalizedText(this.props.locale, permission.ryhmaNames)}</span>
@@ -72,7 +94,7 @@ export default class KutsuConfirmation extends React.Component {
         )
     }
 
-    async sendInvitation(e) {
+    async sendInvitation(e: Event) {
         e.preventDefault();
 
         const payload = {
@@ -96,6 +118,4 @@ export default class KutsuConfirmation extends React.Component {
             throw error;
         }
     }
-
-
 }

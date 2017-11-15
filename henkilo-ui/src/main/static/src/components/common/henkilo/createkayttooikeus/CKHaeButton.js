@@ -1,26 +1,24 @@
+// @flow
 import './CKHaeButton.css'
 import React from 'react'
 import PropTypes from 'prop-types'
-import Button from "../../button/Button";
+import type {L} from "../../../../types/localisation.type";
+import ValidationMessageButton from "../../button/ValidationMessageButton";
 
-const CKHaeButton = ({haeButtonAction, validationMessages, L}) =>
+type Props = {
+    L: L,
+    validationMessages: Array<{id: string, label: string}>,
+    haeButtonAction: () => void,
+}
+
+const CKHaeButton = ({haeButtonAction, validationMessages, L}: Props ) =>
     <tr key="kayttooikeusHaeButton">
         <td />
         <td>
-            <div className="haeButtonWrapper">
-                <Button id="hae_ko_button" disabled={validationMessages.length > 0} action={haeButtonAction}>
-                    {L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
-                </Button>
-            </div>
-            <div className="haeButtonWrapper">
-            <ul>
-                {
-                    validationMessages.map((validationMessage, idx) =>
-                        <li key={idx} className="oph-h5">{L[validationMessage.label]}</li>
-                    )
-                }
-            </ul>
-            </div>
+            <ValidationMessageButton validationMessages={validationMessages.map(message => ({...message, labelLocalised: L[message.label]}))}
+                                     buttonAction={haeButtonAction}>
+                {L['HENKILO_LISAA_KAYTTOOIKEUDET_HAE_BUTTON']}
+            </ValidationMessageButton>
         </td>
         <td/>
     </tr>;
