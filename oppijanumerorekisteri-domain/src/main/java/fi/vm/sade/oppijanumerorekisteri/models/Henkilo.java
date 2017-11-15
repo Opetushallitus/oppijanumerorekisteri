@@ -115,6 +115,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id")
+    @BatchSize(size = 1000)
     private Set<YhteystiedotRyhma> yhteystiedotRyhma = new HashSet<>();
 
     @Column(name = "kasittelija")

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import static java.util.Objects.requireNonNull;
 import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 
 /**
  * Yhteystietojen ryhmä (esimerkiksi kotiosoite tai työosoite).
@@ -40,6 +41,7 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "yhteystiedotryhma_id", nullable = false)
+    @BatchSize(size = 1000)
     private Set<Yhteystieto> yhteystieto = new HashSet<>();
 
     public boolean isEquivalentTo(YhteystiedotRyhmaDto dto) {
