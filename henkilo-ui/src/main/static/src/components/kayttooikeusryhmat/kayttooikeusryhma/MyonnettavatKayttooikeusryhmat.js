@@ -6,7 +6,7 @@ import * as R from 'ramda';
 import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
 import type {ReactSelectOption} from "../../../types/react-select.types";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     kayttooikeus: any,

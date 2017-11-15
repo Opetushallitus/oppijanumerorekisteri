@@ -4,7 +4,7 @@ import KayttooikeusryhmaLista from "./KayttooikeusryhmaLista";
 import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import KayttooikeusryhmaListaSuodatin from "./KayttooikeusryhmaListaSuodatin";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 
 type Props = {

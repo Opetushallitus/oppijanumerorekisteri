@@ -11,7 +11,7 @@ import KielisyysSelect from '../common/select/KielisyysSelect'
 import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect'
 import {isValidKutsumanimi} from '../../validation/KutsumanimiValidator'
 import DuplikaatitButton from './duplikaatit/DuplikaatitButton'
-import type {L} from "../../types/l.type";
+import type {L} from "../../types/localisation.type";
 
 type Error = {
     name: string,

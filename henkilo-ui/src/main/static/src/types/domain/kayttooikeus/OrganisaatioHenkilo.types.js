@@ -16,3 +16,15 @@ export type Organisaatio = {
 export type OrganisaatioHenkilo = {
     organisaatio: Organisaatio,
 };
+
+export type KutsuKayttooikeusryhma = {
+    ryhmaId: number,
+    ryhmaNames: any,
+}
+
+export type KutsuOrganisaatio = {
+    oid: string,
+    organisation: {oid: string},
+    selectablePermissions: Array<KutsuKayttooikeusryhma>,
+    selectedPermissions: Array<KutsuKayttooikeusryhma>,
+};

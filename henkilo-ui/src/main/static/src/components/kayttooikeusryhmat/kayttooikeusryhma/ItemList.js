@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import './ItemList.css';
 import * as R from 'ramda';
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     items: Array<any>,

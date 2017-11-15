@@ -17,7 +17,7 @@ import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions
 import StaticUtils from "../common/StaticUtils";
 import CloseButton from "../common/button/CloseButton";
 import * as R from 'ramda';
-import type {L} from "../../types/l.type";
+import type {L} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 
 type Props = {

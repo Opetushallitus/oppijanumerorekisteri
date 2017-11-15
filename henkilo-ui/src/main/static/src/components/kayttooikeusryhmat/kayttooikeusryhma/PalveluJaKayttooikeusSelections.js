@@ -2,7 +2,7 @@
 import React from 'react';
 import './PalveluJaKayttooikeusSelections.css';
 import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 
 type Props = {
     items: Array<PalveluJaKayttooikeusSelection>,

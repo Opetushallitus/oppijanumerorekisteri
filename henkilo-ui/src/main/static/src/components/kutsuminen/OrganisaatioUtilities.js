@@ -75,7 +75,7 @@ export const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: Ar
     return result;
 };
 
-export const getOrganisaatios = (organisaatios: Array<OrganisaatioHenkilo>, locale: Locale) => {
+export const getOrganisaatios = (organisaatios: Array<OrganisaatioHenkilo>, locale: Locale): Array<Organisaatio> => {
     const hierarchyRoots = organisaatioHierarchyRoots(organisaatios, locale);
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };

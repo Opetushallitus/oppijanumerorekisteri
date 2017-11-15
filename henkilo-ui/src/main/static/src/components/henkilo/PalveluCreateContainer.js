@@ -6,7 +6,7 @@ import {urls} from 'oph-urls-js'
 import PalveluCreateForm from './PalveluCreateForm'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
-import type {L} from "../../types/l.type";
+import type {L} from "../../types/localisation.type";
 
 type Props = {
     router: any,

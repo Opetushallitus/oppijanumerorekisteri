@@ -21,7 +21,7 @@ import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli
 import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
 import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
-import type {L} from "../../../types/l.type";
+import type {L} from "../../../types/localisation.type";
 import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
 export type KayttooikeusryhmaNimi = {
