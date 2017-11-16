@@ -1,18 +1,48 @@
+// @flow
 import {LOCATION_CHANGE, UPDATE_NAVIGATION} from "../actions/actiontypes";
 import {mainNavigation} from "../components/navigation/navigationconfigurations";
 
+type NaviTab = {
+    path: string,
+    label: string,
+}
+
+type State = {
+    naviTabs: Array<NaviTab>,
+    backButton: ?string,
+}
+
+type Action = {
+    type: string,
+    bgColor: string,
+    naviTabs: Array<NaviTab>,
+    backLocation: ?string,
+    payload: any, // redux native
+}
+
 const locationChanges = (state, action) => state.naviTabs.map(naviTab => naviTab.path).indexOf(action.payload.pathname) === -1;
 
-export const naviState = (state = {naviTabs: [], backButton: null,}, action) => {
+export const naviState = (state: State = {naviTabs: [], backButton: null,}, action: Action) => {
     switch (action.type) {
         case UPDATE_NAVIGATION:
-            // If bgColor is not provided guess by if component has updated navibar on mount
-            document.body.bgColor = action.bgColor ? action.bgColor : action.naviTabs.length ? "#f6f4f0" : "white";
+            if (action.bgColor.endsWith('.jpg')) {
+                window.document.body.background = action.bgColor;
+                window.document.body.style.backgroundPosition= 'top';
+                window.document.body.style.backgroundRepeat= 'no-repeat';
+            }
+            else {
+                // If bgColor is not provided guess by if component has updated navibar on mount
+                window.document.body.bgColor = action.bgColor
+                    ? action.bgColor
+                    : action.naviTabs.length
+                        ? "#f6f4f0"
+                        : "white";
+            }
             return Object.assign({}, state, {naviTabs: action.naviTabs, backButton: action.backLocation});
         case LOCATION_CHANGE:
             // Default navigation always before component mounts (only if location changes)
-            if(locationChanges(state, action)) {
-                document.body.bgColor = "white";
+            if (locationChanges(state, action)) {
+                window.document.body.bgColor = "white";
                 return Object.assign({}, state, {naviTabs: mainNavigation, backButton: null});
             }
             return state;

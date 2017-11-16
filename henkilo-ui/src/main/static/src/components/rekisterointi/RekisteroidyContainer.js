@@ -7,7 +7,7 @@ import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
 import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";
 import {removeNotification} from "../../actions/notifications.actions";
-import VirhePage from "../common/error/VirhePage";
+import VirhePage from "../common/page/VirhePage";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
