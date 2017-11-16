@@ -46,10 +46,32 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
     }
 
     @Override
+    @Deprecated
     public boolean checkUserPermissionToUser(String callingUserOid, String userOid, List<String> allowedRoles,
                                              ExternalPermissionService externalPermissionService, Set<String> callingUserRoles) {
         PermissionCheckDto permissionCheckDto = new PermissionCheckDto();
         permissionCheckDto.setAllowedRoles(allowedRoles);
+        permissionCheckDto.setCallingUserOid(callingUserOid);
+        permissionCheckDto.setCallingUserRoles(callingUserRoles);
+        permissionCheckDto.setExternalPermissionService(externalPermissionService);
+        permissionCheckDto.setUserOid(userOid);
+        String url = this.urlConfiguration.url("kayttooikeus-service.s2s-checkUserPermissionToUser");
+        Boolean content;
+        try {
+            content = this.objectMapper.readerFor(Boolean.class)
+                    .readValue(cachingRestClient.post(url, JSON, this.objectMapper.writeValueAsString(permissionCheckDto))
+                            .getEntity().getContent());
+        } catch (IOException e) {
+            throw new RestClientException(e.getMessage(), e);
+        }
+        return content;
+    }
+
+    @Override
+    public boolean checkUserPermissionToUserByPalveluRooli(String callingUserOid, String userOid, Map<String, List<String>> allowedPalveluRooli,
+                                             ExternalPermissionService externalPermissionService, Set<String> callingUserRoles) {
+        PermissionCheckDto permissionCheckDto = new PermissionCheckDto();
+        permissionCheckDto.setAllowedPalveluRooli(allowedPalveluRooli);
         permissionCheckDto.setCallingUserOid(callingUserOid);
         permissionCheckDto.setCallingUserRoles(callingUserRoles);
         permissionCheckDto.setExternalPermissionService(externalPermissionService);

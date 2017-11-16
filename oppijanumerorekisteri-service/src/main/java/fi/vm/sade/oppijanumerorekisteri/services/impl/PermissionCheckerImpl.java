@@ -13,10 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
@@ -52,8 +49,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
         return permissionCheckedPersons;
     }
 
-
     @Override
+    @Deprecated
     public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
                                            ExternalPermissionService externalPermissionService) throws IOException {
         Set<String> callingUserRoles = this.getCasRoles();
@@ -75,6 +72,21 @@ public class PermissionCheckerImpl implements PermissionChecker {
         return kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles,
                 externalPermissionService, callingUserRoles);
     }
+
+    @Override
+    public boolean isAllowedToAccessPersonByPalveluRooli(String userOid, Map<String, List<String>> allowedPalveluRooli,
+                                           ExternalPermissionService externalPermissionService) throws IOException {
+        Set<String> callingUserRoles = this.getCasRoles();
+        if (this.isSuperUser(callingUserRoles) || this.isOwnData(userOid)) {
+            return true;
+        }
+        else {
+            String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
+            return kayttooikeusClient.checkUserPermissionToUserByPalveluRooli(callingUserOid, userOid, allowedPalveluRooli,
+                    externalPermissionService, callingUserRoles);
+        }
+    }
+
 
     @Override
     public boolean isSuperUser() {
