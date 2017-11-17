@@ -18,19 +18,12 @@ class HenkilohakuContainer extends React.Component {
     constructor(props) {
         super(props);
 
-        this.initialCriteria = this.props.isAdmin
-            ? {
-                noOrganisation: true,
-                subOrganisation: true,
-                passivoitu: true,
-                dublicates: true,
-            }
-            : {
-                noOrganisation: false,
-                subOrganisation: true,
-                passivoitu: false,
-                dublicates: false,
-            };
+        this.initialCriteria = {
+            noOrganisation: false,
+            subOrganisation: true,
+            passivoitu: false,
+            dublicates: false,
+        };
     };
 
     componentWillMount() {
