@@ -4,7 +4,7 @@
     border: #d5d5d5 solid 1px;
     border-radius: 2px;
     width: 300px;
-    margin: 40px auto;
+    margin: 120px auto 0;
 }
 
 .virhePageVirheWrapperGray {
@@ -13,7 +13,7 @@
     border: #d5d5d5 solid 1px;
     border-radius: 2px;
     width: 300px;
-    margin: 40px auto;
+    margin: 120px auto 0;
 }
 #virhePageVirhe > p {
     margin-bottom: 10px;

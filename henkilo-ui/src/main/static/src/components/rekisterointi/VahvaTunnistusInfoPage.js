@@ -19,10 +19,11 @@ class VahvaTunnistusInfoPage extends React.Component<Props> {
         });
         const identificationUrl: string = urls.url('shibboleth.identification', this.props.locale.toUpperCase(), {target: targetUrl});
         return <InfoPage topicLocalised={this.props.L['VAHVATUNNISTUSINFO_OTSIKKO']}>
-            {this.props.L['VAHVATUNNISTUSINFO_TEKSTI']}
-            <div style={{textAlign: 'center'}}>
+            <span className="oph-bold">{this.props.L['VAHVATUNNISTUSINFO_TEKSTI']}</span>
+            <div style={{textAlign: 'center', paddingTop: '25px'}}>
                 <Button href={identificationUrl}
-                        isButton={true}>
+                        isButton
+                        big>
                     {this.props.L['VAHVATUNNISTUSINFO_LINKKI']}
                 </Button>
             </div>

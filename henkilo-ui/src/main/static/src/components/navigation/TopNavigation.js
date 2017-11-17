@@ -1,6 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router';
 import classNames from 'classnames/bind';
+import ophLogo from '../../img/logo_oph.svg';
+import okmLogo from '../../img/logo_okm.png';
 
 import './TopNavigation.css';
 
@@ -22,7 +24,7 @@ const TopNavigation = ({tabs, pathName, backButton, L}) => {
                     }
                     )}
                 </ul>
-                : null}
+                : !backButton && <div><img src={ophLogo} alt="oph logo" id="ophlogo"/> <img src={okmLogo} alt="okm logo" id="okmlogo"/></div>}
         </div>
     )
 };

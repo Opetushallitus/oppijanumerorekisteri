@@ -1,16 +1,9 @@
-import React from 'react'
-import {connect} from 'react-redux'
+import React from 'react';
+import {connect} from 'react-redux';
 import VahvaTunnistusInfoPage from "./VahvaTunnistusInfoPage";
-import {updateNavigation} from "../../actions/navigation.actions";
-import {emptyNavi} from "../navigation/navigationconfigurations";
 import VirhePage from "../common/page/VirhePage";
-import background from "../../img/unauthenticated_background.jpg";
 
 class VahvaTunnistusInfoContainer extends React.Component {
-    componentWillMount() {
-        this.props.updateNavigation(emptyNavi, null, background);
-    }
-
     render() {
         if (this.props.loginToken === 'vanha') {
             return <VirhePage theme="gray"
@@ -35,4 +28,4 @@ const mapStateToProps = (state, ownProps) => ({
     virhe: ownProps.route.path.indexOf('/vahvatunnistusinfo/virhe/') !== -1,
 });
 
-export default connect(mapStateToProps, {updateNavigation})(VahvaTunnistusInfoContainer);
+export default connect(mapStateToProps, {})(VahvaTunnistusInfoContainer);

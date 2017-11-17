@@ -30,6 +30,7 @@ export const naviState = (state: State = {naviTabs: [], backButton: null,}, acti
                 window.document.body.style.backgroundRepeat = 'no-repeat';
                 window.document.body.style.backgroundSize = 'cover';
                 window.document.body.style.backgroundAttachment = 'fixed';
+                window.document.body.style.backgroundPosition = '0px 100px';
             }
             else {
                 // If bgColor is not provided guess by if component has updated navibar on mount

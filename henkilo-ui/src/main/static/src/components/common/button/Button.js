@@ -47,7 +47,7 @@ class Button extends React.Component<Props> {
                 ?
                 <a href={this.props.href}
                    onClick={this.props.action}
-                   className={this.props.isButton ? 'oph-button oph-button-primary' : ''}>
+                   className={this.props.isButton ? className : ''}>
                     {this.props.children}
                 </a>
                 :
