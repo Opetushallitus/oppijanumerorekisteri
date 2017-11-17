@@ -12,7 +12,9 @@ type Props = {
 }
 
 const PassivoiButton = (props: Props) => props.henkilo.henkilo.passivoitu
-    ? <Button key="passivoi" disabled={props.disabled} action={() => {}}>{props.L['PASSIVOI_PASSIVOITU']}</Button>
+    ? <Button key="passivoi"
+              disabled={!!props.disabled}
+              action={(e: Event) => {}}>{props.L['PASSIVOI_PASSIVOITU']}</Button>
     : <ConfirmButton key="passivoi"
                      action={() => props.passivoiAction(props.henkilo.henkilo.oidHenkilo)}
                      normalLabel={props.L['PASSIVOI_LINKKI']}

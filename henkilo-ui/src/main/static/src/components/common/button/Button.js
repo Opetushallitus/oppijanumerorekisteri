@@ -5,16 +5,17 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 
 type Props = {
-    action: () => void,
-    disabled: boolean,
-    href: string,
-    confirm: boolean,
-    big: boolean,
-    cancel: boolean,
-    inputRef: () => void,
-    isButton: boolean,
+    action?: (Event) => void,
+    disabled?: boolean,
+    href?: string,
+    confirm?: boolean,
+    big?: boolean,
+    cancel?: boolean,
+    inputRef?: () => void,
+    isButton?: boolean,
     children: any,
-    className: string,
+    className?: string,
+    key?: string,
 }
 
 class Button extends React.Component<Props> {
@@ -32,13 +33,14 @@ class Button extends React.Component<Props> {
 
 
     render() {
+        const classNameProp = this.props.className ? this.props.className : '';
         const className = classNames({
             'oph-button': true,
             'oph-button-primary': !this.props.confirm && !this.props.cancel,
             'oph-button-confirm': this.props.confirm,
             'oph-button-big': this.props.big,
             'oph-button-cancel': this.props.cancel,
-            [`${this.props.className}`]: this.props.className,
+            [`${classNameProp}`]: classNameProp,
         });
         return (
             this.props.href

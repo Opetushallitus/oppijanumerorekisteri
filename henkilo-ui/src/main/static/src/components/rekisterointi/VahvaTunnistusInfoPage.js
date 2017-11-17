@@ -15,13 +15,16 @@ class VahvaTunnistusInfoPage extends React.Component<Props> {
     render() {
         const targetUrl = urls.url('shibboleth.kayttooikeus-service.cas.tunnistus', {
             loginToken: this.props.loginToken,
-            kielisyys: this.props.locale
+            kielisyys: this.props.locale,
         });
-        const identificationUrl = urls.url('shibboleth.identification', this.props.locale.toUpperCase(), {target: targetUrl});
+        const identificationUrl: string = urls.url('shibboleth.identification', this.props.locale.toUpperCase(), {target: targetUrl});
         return <InfoPage topicLocalised={this.props.L['VAHVATUNNISTUSINFO_OTSIKKO']}>
             {this.props.L['VAHVATUNNISTUSINFO_TEKSTI']}
             <div style={{textAlign: 'center'}}>
-                <Button href={identificationUrl} isButton>{this.props.L['VAHVATUNNISTUSINFO_LINKKI']}</Button>
+                <Button href={identificationUrl}
+                        isButton={true}>
+                    {this.props.L['VAHVATUNNISTUSINFO_LINKKI']}
+                </Button>
             </div>
         </InfoPage>;
     }

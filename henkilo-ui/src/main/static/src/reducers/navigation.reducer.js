@@ -26,9 +26,10 @@ export const naviState = (state: State = {naviTabs: [], backButton: null,}, acti
     switch (action.type) {
         case UPDATE_NAVIGATION:
             if (action.bgColor.endsWith('.jpg')) {
-                window.document.body.background = action.bgColor;
-                window.document.body.style.backgroundPosition= 'top';
-                window.document.body.style.backgroundRepeat= 'no-repeat';
+                window.document.body.style.backgroundImage = `url('${action.bgColor}')`;
+                window.document.body.style.backgroundRepeat = 'no-repeat';
+                window.document.body.style.backgroundSize = 'cover';
+                window.document.body.style.backgroundAttachment = 'fixed';
             }
             else {
                 // If bgColor is not provided guess by if component has updated navibar on mount
