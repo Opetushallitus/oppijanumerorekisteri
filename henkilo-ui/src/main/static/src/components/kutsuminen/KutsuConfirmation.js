@@ -63,7 +63,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                     <div className="row">
                         {this.state.sent
                             ? <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
-                            : <Button action={this.sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
+                            : <Button action={this._sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
                 </div>
@@ -92,6 +92,10 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                 <span className="oph-h4 oph-strong">{toLocalizedText(this.props.locale, permission.ryhmaNames)}</span>
             </div>
         )
+    }
+
+    _sendInvitation(e: Event) {
+        this.sendInvitation(e);
     }
 
     async sendInvitation(e: Event) {

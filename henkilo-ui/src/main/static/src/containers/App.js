@@ -13,7 +13,7 @@ const fetchPrequelsIntervalInMillis = 30 * 1000;
 
 class App extends React.Component {
     render() {
-        if(this.isInitialized()) {
+        if (this.isInitialized()) {
             moment.locale(this.props.locale);
             moment.defaultFormat = this.props.l10n.localisations[this.props.locale]['PVM_FORMAATTI'];
         }
@@ -21,7 +21,9 @@ class App extends React.Component {
             this.isInitialized()
                 ?
                 <div className="oph-typography mainContainer">
-                    <TopNavigation tabs={this.props.naviTabs} pathName={this.props.pathname} backButton={this.props.backButton}
+                    <TopNavigation tabs={this.props.naviTabs}
+                                   pathName={this.props.pathname}
+                                   backButton={this.props.backButton}
                                    L={this.props.l10n.localisations[this.props.locale]} />
                     <div>
                         {this.props.children}
