@@ -14,7 +14,7 @@ type State = {
 
 type Action = {
     type: string,
-    bgColor: string,
+    bgColor: ?string,
     naviTabs: Array<NaviTab>,
     backLocation: ?string,
     payload: any, // redux native
@@ -25,7 +25,7 @@ const locationChanges = (state, action) => state.naviTabs.map(naviTab => naviTab
 export const naviState = (state: State = {naviTabs: [], backButton: null,}, action: Action) => {
     switch (action.type) {
         case UPDATE_NAVIGATION:
-            if (action.bgColor.endsWith('.jpg')) {
+            if (action.bgColor && action.bgColor.endsWith('.jpg')) {
                 window.document.body.style.backgroundImage = `url('${action.bgColor}')`;
                 window.document.body.style.backgroundRepeat = 'no-repeat';
                 window.document.body.style.backgroundSize = 'cover';
