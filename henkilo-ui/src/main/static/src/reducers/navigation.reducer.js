@@ -1,11 +1,7 @@
 // @flow
 import {LOCATION_CHANGE, UPDATE_NAVIGATION} from "../actions/actiontypes";
 import {mainNavigation} from "../components/navigation/navigationconfigurations";
-
-type NaviTab = {
-    path: string,
-    label: string,
-}
+import type {NaviTab} from "../types/navigation.type";
 
 type State = {
     naviTabs: Array<NaviTab>,

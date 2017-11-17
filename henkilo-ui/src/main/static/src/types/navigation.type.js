@@ -4,4 +4,10 @@ export type NaviType = {
     label: string,
 }
 
+export type NaviTab = {
+    path: string,
+    label: string,
+}
+
 export type UpdateNaviType = (Array<NaviType>, ?string, ?string) => void;
+
