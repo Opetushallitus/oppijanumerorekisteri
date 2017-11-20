@@ -46,8 +46,13 @@
     <logger name="fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter" level="error" />
     <logger name="org.hibernate.SQL" level="error" />
 
-    <!-- Auditlog -->
-    <logger name="fi.vm.sade.auditlog.Audit" level="INFO" additivity="false">
+    <!-- Auditlog Virkailija & API -->
+    <logger name="fi.vm.sade.oppijanumerorekisteri.audit.AuditHelper" level="INFO" additivity="false">
+        <appender-ref ref="ROLLING" />
+    </logger>
+
+    <!-- Auditlog Oppija -->
+    <logger name="fi.vm.sade.oppijanumerorekisteri.audit.OppijaAuditHelper" level="INFO" additivity="false">
         <appender-ref ref="ROLLING" />
     </logger>
 
