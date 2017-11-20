@@ -61,7 +61,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 <h1>{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</h1>
                 <OppijaCreateForm
                     tallenna={this.tallenna}
-                    lisaaOppijaKayttajanOrganisaatioihin={this.lisaaOppijaKayttajanOrganisaatioihin}
                     locale={this.props.locale}
                     L={this.props.L}
                     sukupuoliKoodisto={this.props.sukupuoliKoodisto}
@@ -89,17 +88,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
             this.props.router.push(`/oppija/${oid}`)
         } catch (error) {
             this.lisaaIlmoitus('error', this.props.L['HENKILON_LUONTI_EPAONNISTUI'])
-        }
-    }
-
-    lisaaOppijaKayttajanOrganisaatioihin = async (henkiloOid: string) => {
-        try {
-            const url = urls.url('oppijanumerorekisteri-service.oppija.byOid.organisaatio', henkiloOid)
-            await http.post(url)
-            this.lisaaIlmoitus('ok', 'OPPIJAN_LIITTAMINEN_ORGANISAATIOON_ONNISTUI')
-        } catch (e) {
-            this.lisaaIlmoitus('error', 'OPPIJAN_LIITTAMINEN_ORGANISAATIOON_EPAONNISTUI')
-            throw e
         }
     }
 
