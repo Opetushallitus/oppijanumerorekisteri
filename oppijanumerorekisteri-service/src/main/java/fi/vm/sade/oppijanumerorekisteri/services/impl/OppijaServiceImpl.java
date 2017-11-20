@@ -35,7 +35,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -213,7 +212,7 @@ public class OppijaServiceImpl implements OppijaService {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
         organisaatiot.stream().forEach(henkilo::addOrganisaatio);
-        henkiloRepository.save(henkilo);
+        henkiloService.update(henkilo);
     }
 
     @Override
@@ -222,9 +221,7 @@ public class OppijaServiceImpl implements OppijaService {
         Organisaatio organisaatio = organisaatioRepository.findByOid(organisaatioOid)
                 .orElseGet(() -> organisaatioService.create(organisaatioOid));
         if (henkilo.addOrganisaatio(organisaatio)) {
-            henkilo.setModified(new Date());
-            henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-            henkiloRepository.save(henkilo);
+            henkiloService.update(henkilo);
         }
     }
 
@@ -233,9 +230,7 @@ public class OppijaServiceImpl implements OppijaService {
         Henkilo henkilo = getHenkiloEntity(henkiloOid);
         organisaatioRepository.findByOid(organisaatioOid).ifPresent(organisaatio -> {
             if (henkilo.removeOrganisaatio(organisaatio)) {
-                henkilo.setModified(new Date());
-                henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-                henkiloRepository.save(henkilo);
+                henkiloService.update(henkilo);
             }
         });
     }

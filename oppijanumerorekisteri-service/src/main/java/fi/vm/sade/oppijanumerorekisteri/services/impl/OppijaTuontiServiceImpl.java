@@ -174,7 +174,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
             // liitetään henkilö organisaatioihin
             organisaatiot.stream().forEach(henkilo::addOrganisaatio);
-            henkilo = henkiloRepository.save(henkilo);
+            henkilo = henkiloService.update(henkilo);
 
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
             rivi.setHenkilo(henkilo);

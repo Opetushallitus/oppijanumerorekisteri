@@ -13,7 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
@@ -47,12 +47,12 @@ public class YksilointiServiceImpl implements YksilointiService {
     private static final Predicate<Collection> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
 
     private final HenkiloRepository henkiloRepository;
+    private final HenkiloService henkiloService;
     private final KansalaisuusRepository kansalaisuusRepository;
     private final KielisyysRepository kielisyysRepository;
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
-    private final UserDetailsHelper userDetailsHelper;
     private final OrikaConfiguration mapper;
 
     private final VtjClient vtjClient;
@@ -63,12 +63,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found by oid " + oid));
-    }
-
-    private Henkilo saveHenkilo(Henkilo henkilo) {
-        henkilo.setModified(new Date());
-        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-        return henkiloRepository.save(henkilo);
     }
 
     @Override
@@ -100,7 +94,6 @@ public class YksilointiServiceImpl implements YksilointiService {
             Optional<Yksilointitieto> yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo);
             if (yksilointitieto.isPresent()) {
                 yksilointitietoRepository.delete(yksilointitieto.get());
-                henkilo.setModified(new Date());
             }
         }
 
@@ -118,10 +111,8 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         henkilo.setYksiloity(true);
         henkilo.setDuplicate(false);
-        henkilo.setModified(new Date());
-        henkilo.setKasittelijaOid(this.userDetailsHelper.getCurrentUserOid());
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
-        return henkiloRepository.save(henkilo);
+        return henkiloService.update(henkilo);
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
@@ -158,7 +149,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setYksiloity(false);
         }
 
-        return henkilo;
+        return henkiloService.update(henkilo);
     }
 
     private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
@@ -224,7 +215,6 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         yksilointitieto.setHenkilo(henkilo);
         yksilointitietoRepository.save(yksilointitieto);
-        henkilo.setModified(new Date());
     }
 
     private String maaritaSukupuoli(YksiloityHenkilo yksiloityHenkilo) {
@@ -321,7 +311,6 @@ public class YksilointiServiceImpl implements YksilointiService {
                 });
 
         henkilo.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
-        henkilo.setModified(new Date());
     }
 
     private void removeVtjYhteystiedotAndUpdateForOppija(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
@@ -369,9 +358,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         henkilo.setYksiloity(false);
-        henkilo.setModified(new Date());
-        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-        return henkiloRepository.save(henkilo);
+        return henkiloService.update(henkilo);
     }
 
     @Override
@@ -414,7 +401,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setSukunimi(yksilointitieto.getSukunimi());
         henkilo.setSukupuoli(yksilointitieto.getSukupuoli());
         henkilo.setYksiloityVTJ(true);
-        henkilo.setModified(new Date());
         henkilo.setYksiloity(false);
         henkilo.setTurvakielto(yksilointitieto.isTurvakielto());
 
@@ -456,7 +442,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         Henkilo henkilo = getHenkiloByOid(oid);
         if (henkilo.getYksilointiSynkronoinnit().stream().noneMatch(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
             henkilo.getYksilointiSynkronoinnit().add(new YksilointiSynkronointi(palvelutunniste, new Date()));
-            saveHenkilo(henkilo);
+            henkiloService.update(henkilo);
         }
     }
 
@@ -465,7 +451,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     public void disableYksilointi(String oid, String palvelutunniste) {
         Henkilo henkilo = getHenkiloByOid(oid);
         if (henkilo.getYksilointiSynkronoinnit().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
-            saveHenkilo(henkilo);
+            henkiloService.update(henkilo);
         }
     }
 

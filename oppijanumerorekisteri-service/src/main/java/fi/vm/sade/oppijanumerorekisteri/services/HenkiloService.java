@@ -7,7 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -74,6 +73,8 @@ public interface HenkiloService {
     Henkilo createHenkilo(Henkilo henkiloCreate);
 
     Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate);
+
+    Henkilo update(Henkilo henkilo);
 
     List<HenkiloReadDto> findSlavesByMasterOid(String oid);
 

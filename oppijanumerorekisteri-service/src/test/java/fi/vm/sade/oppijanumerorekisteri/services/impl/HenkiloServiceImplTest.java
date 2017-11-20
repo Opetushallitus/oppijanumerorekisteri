@@ -29,7 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.HashSet;
 import java.util.List;
@@ -41,9 +40,17 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HenkiloServiceImplTest {
@@ -254,6 +261,26 @@ public class HenkiloServiceImplTest {
         verify(henkiloJpaRepository).findByIdentifications(eq(singletonList(identification)));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
         verify(henkiloRepository, never()).save(any(Henkilo.class));
+    }
+
+    @Test
+    public void updateHenkiloShouldUpdateSlaves() {
+        when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("käsittelijä"));
+        Henkilo input = new Henkilo();
+        input.setOidHenkilo("oid1");
+        when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        Henkilo slave1 = new Henkilo();
+        Henkilo slave2 = new Henkilo();
+        when(henkiloJpaRepository.findSlavesByMasterOid(any())).thenReturn(asList(slave1, slave2));
+
+        Henkilo output = impl.update(input);
+
+        ArgumentCaptor<Henkilo> henkiloCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloJpaRepository).findSlavesByMasterOid(eq("oid1"));
+        verify(henkiloRepository, times(3)).save(henkiloCaptor.capture());
+        List<Henkilo> tallennetut = henkiloCaptor.getAllValues();
+        assertThat(tallennetut).extracting(Henkilo::getModified).isNotNull();
+        assertThat(tallennetut).extracting(Henkilo::getKasittelijaOid).containsOnly("käsittelijä");
     }
 
 }

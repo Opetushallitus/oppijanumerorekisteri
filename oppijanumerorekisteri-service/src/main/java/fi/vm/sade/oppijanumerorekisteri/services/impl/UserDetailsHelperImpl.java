@@ -15,18 +15,21 @@ import org.springframework.util.StringUtils;
 public class UserDetailsHelperImpl implements UserDetailsHelper {
     public final static String DEFAULT_KIELIKOODI = "fi";
 
+    private static Optional<Authentication> getAuthentication() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+    }
+
     @Override
     public Optional<String> findCurrentUserOid() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new UnauthorizedException("Käyttäjä ei ole kirjautunut");
-        }
-        return Optional.ofNullable(authentication.getName());
+        return getAuthentication().flatMap(authentication -> Optional.ofNullable(authentication.getName()));
     }
 
     @Override
     public String getCurrentUserOid() {
-        return findCurrentUserOid().orElseThrow(UserHasNoOidException::new);
+        return getAuthentication()
+                .map(authentication -> Optional.ofNullable(authentication.getName())
+                        .orElseThrow(UserHasNoOidException::new))
+                .orElseThrow(() -> new UnauthorizedException("Käyttäjä ei ole kirjautunut"));
     }
 
     static public String getAsiointikieliOrDefault(Henkilo henkilo) {
