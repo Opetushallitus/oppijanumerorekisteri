@@ -1,15 +1,15 @@
 // @flow
 import React from 'react'
-import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
+import type {PalvelukayttajaCreate} from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import type {L} from "../../types/localisation.type";
 
 type Props = {
-    onSubmit: (HenkiloCreate) => Promise<void>,
+    onSubmit: (PalvelukayttajaCreate) => Promise<void>,
     L: L,
 }
 
 type State = {
-    henkilo: HenkiloCreate,
+    kayttaja: PalvelukayttajaCreate,
 }
 
 /**
@@ -20,29 +20,22 @@ class PalveluCreateForm extends React.Component<Props, State> {
     constructor(props : Props) {
         super(props);
 
-        this.state = {
-            henkilo: {
-                etunimet: '_',
-                kutsumanimi: '_',
-                sukunimi: '',
-                henkiloTyyppi: 'PALVELU',
-            },
-        };
+        this.state = {kayttaja: {nimi: ''}};
     }
 
     render() {
-        const invalid = !this.state.henkilo.sukunimi;
+        const invalid = !this.state.kayttaja.nimi;
         return (
             <form onSubmit={this.onSubmit}>
                 <div className="oph-field oph-field-is-required">
-                    <label htmlFor="sukunimi"
+                    <label htmlFor="nimi"
                            className="oph-label">{this.props.L['HENKILO_PALVELUN_NIMI']}</label>
-                    <input id="sukunimi"
+                    <input id="nimi"
                            className="oph-input"
                            placeholder={this.props.L['HENKILO_PALVELUN_NIMI']}
                            type="text"
-                           name="sukunimi"
-                           value={this.state.henkilo.sukunimi}
+                           name="nimi"
+                           value={this.state.kayttaja.nimi}
                            onChange={this.onHenkiloInputChange} />
                 </div>
                 <div className="oph-field">
@@ -57,12 +50,12 @@ class PalveluCreateForm extends React.Component<Props, State> {
     }
 
     onHenkiloInputChange = (event : SyntheticEvent<HTMLInputElement>) => {
-        this.setState({henkilo: {...this.state.henkilo, [event.currentTarget.name]: event.currentTarget.value}});
+        this.setState({kayttaja: {...this.state.kayttaja, [event.currentTarget.name]: event.currentTarget.value}});
     }
 
     onSubmit = async (event : SyntheticEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        this.props.onSubmit(this.state.henkilo);
+        this.props.onSubmit(this.state.kayttaja);
     }
 
 };
