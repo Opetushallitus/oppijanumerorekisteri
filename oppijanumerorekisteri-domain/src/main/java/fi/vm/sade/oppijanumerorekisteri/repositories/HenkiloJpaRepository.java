@@ -59,14 +59,6 @@ public interface HenkiloJpaRepository {
     long countBy(OppijaTuontiCriteria criteria);
 
     /**
-     * Hakee annettujen hakukriteerien mukaiset henkilöiden OID:t.
-     *
-     * @param criteria hakukriteerit
-     * @return henkilö OID:t
-     */
-    Set<String> findOidsBy(OppijaTuontiCriteria criteria);
-
-    /**
      * Yleiskäyttöinen henkilöhaku.
      *
      * @param criteria hakukriteerit

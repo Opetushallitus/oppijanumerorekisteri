@@ -40,7 +40,6 @@ import static java.util.stream.Collectors.joining;
 import javax.persistence.Query;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
@@ -89,16 +88,6 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .select(qHenkilo.oidHenkilo)
                 .distinct()
                 .fetchCount();
-    }
-
-    @Override
-    public Set<String> findOidsBy(OppijaTuontiCriteria criteria) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
-                .select(qHenkilo.oidHenkilo)
-                .distinct()
-                .fetch()
-                .stream().collect(toSet());
     }
 
     @Override

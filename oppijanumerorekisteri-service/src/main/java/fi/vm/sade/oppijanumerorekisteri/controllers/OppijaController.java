@@ -108,14 +108,6 @@ public class OppijaController {
         return oppijaService.list(criteria, page, count);
     }
 
-    @GetMapping("/oid")
-    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation(value = "Muuttuneiden oppijoiden haku")
-    public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
-        return oppijaService.listOidsBy(criteria);
-    }
-
     @GetMapping("/muuttuneet")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
