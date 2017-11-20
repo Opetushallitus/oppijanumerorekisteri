@@ -155,14 +155,6 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Iterable<String> listOidsBy(OppijaTuontiCriteria criteria) {
-        prepare(criteria);
-        LOGGER.info("Haetaan oppijoiden OID:t {}", criteria);
-        return henkiloJpaRepository.findOidsBy(criteria);
-    }
-
-    @Override
     public Page<MasterHenkiloDto<OppijaMuutosDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count) {
         // haetaan henkilöt
         prepare(criteria);

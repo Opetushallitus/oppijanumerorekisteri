@@ -86,56 +86,64 @@ public class OppijaServiceImplTest {
     }
 
     @Test
-    public void listOidsShouldFilterOrganisaatioOids() {
+    public void listMastersShouldFilterOrganisaatioOids() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
         when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder()
                 .organisaatioOids(Stream.of("oid1", "oid2").collect(toSet()))
                 .build();
+        int page = 1;
+        int count = 20;
 
-        Iterable<String> oids = oppijaServiceImpl.listOidsBy(input);
+        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
-        verify(henkiloJpaRepositoryMock).findOidsBy(argumentCaptor.capture());
+        verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
         assertThat(output.getOrganisaatioOids()).containsExactly("oid1");
     }
 
     @Test
-    public void listOidsShouldSetOrganisaatioOidsWhenCriteriaNull() {
+    public void listMastersShouldSetOrganisaatioOidsWhenCriteriaNull() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
         when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
+        int page = 1;
+        int count = 20;
 
-        Iterable<String> oids = oppijaServiceImpl.listOidsBy(input);
+        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
-        verify(henkiloJpaRepositoryMock).findOidsBy(argumentCaptor.capture());
+        verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
         assertThat(output.getOrganisaatioOids()).containsExactly("oid1", "oid3");
     }
 
     @Test
-    public void listOidsShouldSetOrganisaatioOidsWhenCriteriaEmpty() {
+    public void listMastersShouldSetOrganisaatioOidsWhenCriteriaEmpty() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
         when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder().organisaatioOids(emptySet()).build();
+        int page = 1;
+        int count = 20;
 
-        Iterable<String> oids = oppijaServiceImpl.listOidsBy(input);
+        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
-        verify(henkiloJpaRepositoryMock).findOidsBy(argumentCaptor.capture());
+        verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
         assertThat(output.getOrganisaatioOids()).containsExactly("oid1", "oid3");
     }
 
     @Test
-    public void listOidsShouldSkipFindByWhenOrganisaatiotEmpty() {
+    public void listMastersShouldSkipFindByWhenOrganisaatiotEmpty() {
         Set<String> organisaatiot = emptySet();
         when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
+        int page = 1;
+        int count = 20;
 
-        Throwable throwable = catchThrowable(() -> oppijaServiceImpl.listOidsBy(input));
+        Throwable throwable = catchThrowable(() -> oppijaServiceImpl.listMastersBy(input, page, count));
 
         assertThat(throwable).isInstanceOf(ValidationException.class);
         verifyZeroInteractions(henkiloJpaRepositoryMock);

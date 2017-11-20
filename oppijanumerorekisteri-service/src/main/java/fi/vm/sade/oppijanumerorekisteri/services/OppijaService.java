@@ -81,14 +81,6 @@ public interface OppijaService {
     Page<OppijaReadDto.OppijaReadHenkiloDto> list(OppijaTuontiCriteria criteria, int page, int count);
 
     /**
-     * Palauttaa annettujen hakukriteerien mukaiset henkilöiden OID:t.
-     *
-     * @param criteria hakukriteerit
-     * @return henkilö OID:t
-     */
-    Iterable<String> listOidsBy(OppijaTuontiCriteria criteria);
-
-    /**
      * Palauttaa annettujen hakukriteerien mukaisen henkilöiden master-tiedot.
      *
      * @param criteria hakukriteerit
