@@ -14,10 +14,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
@@ -35,8 +33,6 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final HenkiloRepository henkiloRepository;
     private final HenkiloJpaRepository henkiloJpaRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
-
-    private final UserDetailsHelper userDetailsHelper;
 
     private final OrikaConfiguration mapper;
 
@@ -68,9 +64,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         Henkilo henkilo = getHenkiloByOid(oid);
         Identification identification = mapper.map(dto, Identification.class);
         henkilo.getIdentifications().add(identification);
-        henkilo.setModified(new Date());
-        henkilo.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-        return henkiloRepository.save(henkilo);
+        return henkiloService.update(henkilo);
     }
 
     @Override

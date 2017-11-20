@@ -317,9 +317,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                     Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
-        henkiloSaved.setModified(new Date());
-        henkiloSaved.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-
         // Do not update all values if henkilo is already vtj yksiloity
         if (henkiloSaved.isYksiloityVTJ()) {
             henkiloUpdateDto.setEtunimet(null);
@@ -344,8 +341,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setHetu(null);
             henkiloSaved.setHetu(null);
         }
-        // This needs to be called in order to persist new yhteystiedotryhmas.
-        this.henkiloDataRepository.save(henkiloSaved);
+        update(henkiloSaved);
         return henkiloUpdateDto;
     }
 
@@ -367,14 +363,10 @@ public class HenkiloServiceImpl implements HenkiloService {
                 Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
-        henkiloSaved.setModified(new Date());
-        henkiloSaved.setKasittelijaOid(userDetailsHelper.getCurrentUserOid());
-
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
-        // This needs to be called in order to persist new yhteystiedotryhmas.
-        // this.henkiloDataRepository.save(henkiloSaved); // TODO: Disabled
+        henkiloSaved = update(henkiloSaved);
 
         return mapper.map(henkiloSaved, HenkiloReadDto.class);
     }
@@ -548,6 +540,30 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
 
         return this.henkiloDataRepository.save(henkiloCreate);
+    }
+
+    @Override
+    public Henkilo update(Henkilo henkilo) {
+        Date nyt = new Date();
+        Optional<String> kayttajaOid = userDetailsHelper.findCurrentUserOid();
+
+        henkilo.setModified(nyt);
+        // jos käyttäjää ei ole tiedossa (esim. yksilöinnin tausta-ajo),
+        // pidetään käsittelijä ennallaan
+        kayttajaOid.ifPresent(henkilo::setKasittelijaOid);
+        Henkilo tallennettu = henkiloDataRepository.save(henkilo);
+
+        // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
+        // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
+        henkiloJpaRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).forEach(slave -> {
+            slave.setModified(nyt);
+            kayttajaOid.ifPresent(slave::setKasittelijaOid);
+            henkiloDataRepository.save(slave);
+            // rakenne ei ole rekursiivinen (vaikka kantarakenne mahdollistaakin)
+            // joten päivitystä ei tarvitse tehdä rekursiivisesti
+        });
+
+        return tallennettu;
     }
 
     private String getFreePersonOid() {
