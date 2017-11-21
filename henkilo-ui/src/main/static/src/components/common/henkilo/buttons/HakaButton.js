@@ -10,16 +10,14 @@ type Props = {
     disabled?: boolean
 }
 
-const HakaButton = (props: Props) => (<PopupButton popupStyle={props.styles}
-                 popupTitle={<span className="oph-h3 oph-strong" style={{textAlign: 'left'}}>{props.L['HAKATUNNISTEET']}:</span>}
-                 popupClass={'oph-popup-default oph-popup-bottom'}
+const HakaButton = (props: Props) => (
+        <PopupButton popupStyle={props.styles}
+               popupTitle={<span className="oph-h3 oph-strong" style={{textAlign: 'left'}}>{props.L['HAKATUNNISTEET']}:</span>}
+               popupClass={'oph-popup-default oph-popup-bottom'}
                disabled={props.disabled}
-                 popupContent={<HakatunnistePopupContent henkiloOid={props.oidHenkilo}
-                 L={props.L}
-                 />}>
-        {props.L['LISAA_HAKA_LINKKI']}
-    </PopupButton>);
-
-
+               popupButtonWrapperPositioning={'relative'}
+               popupContent={<HakatunnistePopupContent henkiloOid={props.oidHenkilo} L={props.L} />}>
+            {props.L['LISAA_HAKA_LINKKI']}
+        </PopupButton>);
 
 export default HakaButton;

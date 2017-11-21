@@ -45,10 +45,11 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: !this.props.isAnomusView, notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220, notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220, notSortable: this.props.isAnomusView,},
+            {key: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU', minWidth: 70, notSortable: true,},
             {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50, notSortable: this.props.isAnomusView},
-            {key: 'EMPTY_PLACEHOLDER', minWidth: 150, notSortable: true,},
+            {key: 'EMPTY_PLACEHOLDER', minWidth: 165, notSortable: true,},
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
         
@@ -94,8 +95,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 + ' ' + StaticUtils.getOrganisaatiotyypitFlat(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit, this.L),
                 [headingList[3]]: toLocalizedText(this.props.locale, haettuKayttooikeusRyhma.kayttoOikeusRyhma.description,
                     haettuKayttooikeusRyhma.kayttoOikeusRyhma.name),
-                [headingList[4]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
-                [headingList[5]]: !this.props.isOmattiedot
+                [headingList[4]]: this.createSelitePopupButton(haettuKayttooikeusRyhma.anomus.perustelut),
+                [headingList[5]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
+                [headingList[6]]: !this.props.isOmattiedot
                     ? <DatePicker className="oph-input"
                                   onChange={(value) => this.loppupvmAction(value, idx)}
                                   selected={this.state.dates[idx].loppupvm}
@@ -103,12 +105,24 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                   showWeekNumbers
                                   filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
                     : this.state.dates[idx].loppupvm.format(),
-                [headingList[6]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
-                [headingList[7]]: this.props.isOmattiedot
+                [headingList[7]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
+                [headingList[8]]: this.props.isOmattiedot
                     ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx)
                     : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));
     };
+
+    createSelitePopupButton(perustelut) {
+        return <PopupButton
+            popupClass={'oph-popup-default oph-popup-bottom'}
+            popupButtonWrapperPositioning={'absolute'}
+            popupArrowStyles={{marginLeft: '10px'}}
+            popupButtonClasses={'oph-button oph-button-ghost'}
+            popupStyle={{left: '-20px', width: '20rem', padding: '30px', position: 'absolute'}}
+            simple={true}
+            disabled={!perustelut}
+            popupContent={<p>{perustelut}</p>}>{this.L['AVAA']}</PopupButton>
+    }
 
     anomusHandlingButtonsForOmattiedot (haettuKayttooikeusRyhma, idx) {
         return <div>
@@ -130,18 +144,16 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
             </div>
             <div style={{display: 'table-cell'}}>
                 <PopupButton popupClass={'oph-popup-default oph-popup-bottom'}
-                             popupButtonWrapperPositioning={'absolute'}
                              popupTitle={<span className="oph-h3 oph-strong">{this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}</span>}
                              popupArrowStyles={{marginLeft: '230px'}}
                              popupButtonClasses={'oph-button oph-button-cancel'}
-                             popupStyle={{left: '-233px', width: '20rem', padding: '30px', position: 'absolute'}}
+                             popupStyle={{right: '0px', width: '20rem', padding: '30px', position: 'absolute'}}
                              popupContent={<AnomusHylkaysPopup L={this.L}
                                                                kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
                                                                index={idx}
                                                                henkilo={henkilo}
                                                                action={this.updateHaettuKayttooikeusryhma}>
-                             </AnomusHylkaysPopup>}
-                            >
+                             </AnomusHylkaysPopup>}>
                     {this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
                 </PopupButton>
             </div>

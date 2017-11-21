@@ -6,3 +6,8 @@
 .popup-button .oph-popup-content {
     text-align: left;
 }
+
+/* Override default value break-all */
+.oph-popup-content {
+    word-break: normal !important;
+}
