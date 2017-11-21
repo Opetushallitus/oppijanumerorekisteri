@@ -378,7 +378,7 @@ public class HenkiloController {
     @GetMapping("/duplikaatit")
     @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Hakee duplikaatit nimeä vertailemalla")
-    public List<HenkiloReadDto> getDuplikaatit(
+    public List<HenkiloDuplicateDto> getDuplikaatit(
             @RequestParam String etunimet,
             @RequestParam String kutsumanimi,
             @RequestParam String sukunimi) {
