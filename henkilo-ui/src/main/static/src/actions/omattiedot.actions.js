@@ -8,8 +8,8 @@ import {
     FETCH_OMATTIEDOT_FAILURE,
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST,
     FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_HENKILO_ASIOINTIKIELLI_REQUEST, FETCH_HENKILO_ASIOINTIKIELLI_SUCCESS,
-    FETCH_HENKILO_ASIOINTIKIELLI_FAILURE, FETCH_CASME_REQUEST, FETCH_CASME_FAILURE, FETCH_CASME_SUCCESS
+    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_HENKILO_ASIOINTIKIELI_REQUEST, FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
+    FETCH_HENKILO_ASIOINTIKIELI_FAILURE, FETCH_CASME_REQUEST, FETCH_CASME_FAILURE, FETCH_CASME_SUCCESS, LOCATION_CHANGE
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
 import type {OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
@@ -37,13 +37,14 @@ type OmattiedotResponse = {
 export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) => {
     if (!getState().omattiedot.locale) {
         const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
-        dispatch(() => ({type: FETCH_HENKILO_ASIOINTIKIELLI_REQUEST}));
+        dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST});
         try {
             const lang = await http.get(url);
-            dispatch(() => ({type: FETCH_HENKILO_ASIOINTIKIELLI_SUCCESS, lang}));
+            dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang});
+            dispatch({type: LOCATION_CHANGE}); // Dispatch to trigger title change
         }
         catch (error) {
-            dispatch(() => ({type: FETCH_HENKILO_ASIOINTIKIELLI_FAILURE}));
+            dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE});
             console.error('Could not fetch asiointikieli for current henkilo');
             throw error;
         }
