@@ -5,7 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.KielisyysDto;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-class AsiointikieliConstraintValidator implements ConstraintValidator<ValidateAsiointikieli, KielisyysDto> {
+public class AsiointikieliConstraintValidator implements ConstraintValidator<ValidateAsiointikieli, KielisyysDto> {
     @Override
     public void initialize(ValidateAsiointikieli validateAsiointikieli) { }
 

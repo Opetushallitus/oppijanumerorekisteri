@@ -18,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import static java.util.Arrays.asList;
+import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import static java.util.Collections.emptySet;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +51,8 @@ public class OppijaServiceImplTest {
     @Mock
     private OrganisaatioService organisaatioServiceMock;
     @Mock
+    private YksilointiService yksilointiServiceMock;
+    @Mock
     private OrikaConfiguration mapperMock;
     @Mock
     private HenkiloRepository henkiloRepositoryMock;
@@ -79,10 +82,11 @@ public class OppijaServiceImplTest {
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,
                 oppijaTuontiServiceAsyncImpl, henkiloServiceMock,
-                organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
-                henkiloJpaRepositoryMock, tuontiRepositoryMock,
-                organisaatioRepositoryMock, userDetailsHelperMock,
-                permissionChecker, kayttooikeusClientMock);
+                organisaatioServiceMock, yksilointiServiceMock, mapperMock,
+                henkiloRepositoryMock, henkiloJpaRepositoryMock,
+                tuontiRepositoryMock, organisaatioRepositoryMock,
+                userDetailsHelperMock, permissionChecker,
+                kayttooikeusClientMock);
     }
 
     @Test
