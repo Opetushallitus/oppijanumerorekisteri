@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 
 @Service
 @Transactional
@@ -58,6 +59,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final OppijaTuontiAsyncService oppijaTuontiAsyncService;
     private final HenkiloService henkiloService;
     private final OrganisaatioService organisaatioService;
+    private final YksilointiService yksilointiService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
     private final HenkiloJpaRepository henkiloJpaRepository;
@@ -71,6 +73,8 @@ public class OppijaServiceImpl implements OppijaService {
     public HenkiloReadDto create(HenkiloCreateDto dto) {
         Henkilo entity = mapper.map(dto, Henkilo.class);
         entity.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
+
+        // lisätään oppija virkailijan organisaatioihin
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         Set<Organisaatio> organisaatiot = oppijaTuontiService
                 .getOrCreateOrganisaatioByHenkilo(kayttajaOid);
@@ -78,7 +82,14 @@ public class OppijaServiceImpl implements OppijaService {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
         organisaatiot.stream().forEach(entity::addOrganisaatio);
+
         entity = henkiloService.createHenkilo(entity, kayttajaOid, true);
+
+        // yksilöidään hetuton oppija automaattisesti
+        if (entity.getHetu() == null) {
+            entity = yksilointiService.hetuttomanYksilointi(entity.getOidHenkilo());
+        }
+
         return mapper.map(entity, HenkiloReadDto.class);
     }
 
