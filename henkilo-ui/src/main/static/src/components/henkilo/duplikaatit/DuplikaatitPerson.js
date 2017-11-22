@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types'
 import {Link} from 'react-router';
 import * as R from 'ramda';
 import classNames from 'classnames';
@@ -7,22 +7,27 @@ import './DuplikaatitPerson.css';
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
 
-export default class DuplikaatitPrimaryInformation extends React.Component {
+type Props = {
+    henkilo: any,
+    L: any,
+    locale: any,
+    koodisto: any,
+    setSelection: any,
+    classNames: any,
+    isMaster: any,
+    header: any,
+    styleClasses?: any,
+    yksiloitySelected?: boolean,
+    vainLuku?: boolean,
+}
 
-    static propTypes = {
-        henkilo: PropTypes.object.isRequired,
-        L: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
-        koodisto: PropTypes.object.isRequired,
-        setSelection: PropTypes.func.isRequired,
-        classNames: PropTypes.object,
-        isMaster: PropTypes.bool,
-        header: PropTypes.string.isRequired,
-        styleClasses: PropTypes.string,
-        yksiloitySelected: PropTypes.bool,
-    };
+type State = {
+    checkboxValue: boolean,
+}
 
-    constructor(props) {
+export default class DuplikaatitPrimaryInformation extends React.Component<Props, State> {
+
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -68,19 +73,21 @@ export default class DuplikaatitPrimaryInformation extends React.Component {
                 />}>
                 {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
                 </DuplikaatitApplicationsPopup> : null}</span>
+            {!this.props.vainLuku &&
             <span><input type="checkbox" disabled={this.props.isMaster || (this.props.yksiloitySelected && this.props.henkilo.yksiloity)} checked={this.state.checkboxValue}
                          onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}/></span>
+            }
         </div>;
     }
 
-    _onCheck(oid) {
+    _onCheck(oid: string) {
         this.setState({
             checkboxValue: !this.state.checkboxValue
         });
         this.props.setSelection(oid);
     }
 
-    _parseContactInformation(locale, hakemus, koodisto) {
+    _parseContactInformation(locale: any, hakemus: any, koodisto: any) {
         const henkilotiedot = hakemus.answers.henkilotiedot;
         const kansalaisuusLowercase = henkilotiedot.kansalaisuus ? henkilotiedot.kansalaisuus.toLowerCase() : undefined;
         const maatjavaltioKoodisto = R.find( item => item.value === kansalaisuusLowercase, koodisto.maatjavaltiot1);

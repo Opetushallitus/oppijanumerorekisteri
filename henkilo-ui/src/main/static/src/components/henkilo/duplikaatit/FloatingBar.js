@@ -1,6 +1,11 @@
+// @flow
 import "./FloatingBar.css";
-import React from 'react';
+import * as React from 'react';
 
-export const FloatingBar = (props) => {
+type Props = {
+    children: React.Node,
+}
+
+export const FloatingBar = (props: Props) => {
     return <div id="floating-bar"><span className="floating-bar-content">{props.children}</span></div>
 };

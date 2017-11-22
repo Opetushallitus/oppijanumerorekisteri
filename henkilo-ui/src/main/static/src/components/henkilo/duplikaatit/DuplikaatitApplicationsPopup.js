@@ -1,15 +1,20 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import TextButton from '../../common/button/TextButton';
 import './DuplikaatitApplicationsPopup.css'
-import PropTypes from 'prop-types'
 
-export default class DuplikaatitApplicationsPopup extends React.Component {
+type Props = {
+    children: React.Node,
+    popupContent: React.Node,
+}
 
-    static propTypes = {
-        popupContent: PropTypes.element
-    };
+type State = {
+    show: boolean,
+}
 
-    constructor(props) {
+export default class DuplikaatitApplicationsPopup extends React.Component<Props, State> {
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             show: false
