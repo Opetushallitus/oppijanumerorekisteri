@@ -4,15 +4,15 @@ import {
 } from "../actions/actiontypes";
 import {mainNavigation} from "../components/navigation/navigationconfigurations";
 import type {NaviTab} from "../types/navigation.type";
-import {L, L10n} from "../types/localisation.type";
-import {Locale} from "../types/locale.type";
+import type {L, L10n} from "../types/localisation.type";
+import type {Locale} from "../types/locale.type";
 
 type State = {
     naviTabs: Array<NaviTab>,
     backButton: ?string,
     l10n: L10n,
     L: L,
-    lastPathName: string,
+    lastPathName: ?string,
 }
 
 type Action = {
@@ -93,7 +93,7 @@ const onLocationChange = (state, action) => {
     const defaultTitle = state.L['TITLE_DEFAULT'];
     const title = state.L[urlToTitle[pathname]];
 
-    if (defaultTitle || title) {
+    if (defaultTitle || title) {
         window.document.title = title ? title : defaultTitle;
     }
 
@@ -105,7 +105,7 @@ const onLocationChange = (state, action) => {
     return Object.assign({}, state, {lastPathName: pathname});
 };
 
-const getPathName = (state, payload) => {
+const getPathName = (state, payload): string => {
     if (payload && payload.pathname) {
         const parts = payload.pathname.match(/[^/]+/g);
         if (!parts) return "";
@@ -118,7 +118,7 @@ const getPathName = (state, payload) => {
                 return parts[0] + "/" + parts[1];
             } else if (parts[0] === "vahvatunnistusinfo") {
                 return parts[1] === "virhe" ? "vahvatunnistusinfo/virhe" : "vahvatunnistusinfo";
-            } else if (parts[2] && (parts[2] === "vtjvertailu" || parts[2] === "duplikaatit")) {
+            } else if (parts[2] && (parts[2] === "vtjvertailu" || parts[2] === "duplikaatit")) {
                 return parts[2];
             }
         }

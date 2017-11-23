@@ -24,7 +24,7 @@ const TopNavigation = ({tabs, pathName, backButton, L}) => {
                     }
                     )}
                 </ul>
-                : !backButton && <div><img src={ophLogo} alt="oph logo" id="ophlogo"/> <img src={okmLogo} alt="okm logo" id="okmlogo"/></div>}
+                : backButton === null && <div><img src={ophLogo} alt="oph logo" id="ophlogo"/> <img src={okmLogo} alt="okm logo" id="okmlogo"/></div>}
         </div>
     )
 };

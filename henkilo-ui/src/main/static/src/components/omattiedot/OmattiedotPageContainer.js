@@ -12,11 +12,14 @@ import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenki
 import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus } from '../../actions/kayttooikeusryhma.actions';
+import {updateEmptyNavigation} from "../../actions/navigation.actions";
 
 class OmattiedotPageContainer extends React.Component {
 
     async componentDidMount() {
         this.props.clearHenkilo();
+
+        this.props.updateEmptyNavigation();
 
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
@@ -60,4 +63,4 @@ export default connect(mapStateToProps, {fetchOmattiedot, fetchHenkilo, fetchHen
     fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
     yksiloiHenkilo, updateAndRefetchKayttajatieto, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus,
-    clearHenkilo,})(OmattiedotPageContainer)
+    clearHenkilo, updateEmptyNavigation})(OmattiedotPageContainer)

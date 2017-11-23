@@ -4,8 +4,6 @@ export const mainNavigation = [
     {path: '/kutsutut', label: 'Kutsutut'},
     {path: '/kutsulomake', label: 'Virkailijan kutsuminen Opintopolkuun'},
     {path: '/henkilohaku', label: 'Henkilöhaku'},
-    {path: '/omattiedot', label: 'Omat tiedot'},
-    {path: '/kayttooikeusryhmat', label: 'Käyttöoikeusryhmät'}
 ];
 
 export const oppijaNavi = oid => [

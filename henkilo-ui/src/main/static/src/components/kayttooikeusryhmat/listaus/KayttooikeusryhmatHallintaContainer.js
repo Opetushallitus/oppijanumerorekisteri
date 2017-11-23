@@ -6,10 +6,11 @@ import Loader from "../../common/icons/Loader";
 import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
 import type {L} from "../../../types/localisation.type";
+import {updateEmptyNavigation} from "../../../actions/navigation.actions";
 
 
 type Props = {
-    updateNavigation: (Array<any>, string, ?string) => any,
+    updateNavigation: (Array<any>, ?string, ?string) => any,
     kayttooikeusryhmat: any,
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
@@ -20,6 +21,8 @@ type Props = {
 class KayttooikeusryhmatContainer extends React.Component<Props> {
 
     componentDidMount() {
+        this.props.updateEmptyNavigation();
+
         this.props.fetchAllKayttooikeusryhma(true);
     }
 
@@ -28,7 +31,7 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
         return <div className="wrapper">
             {this.props.kayttooikeusryhmat.allKayttooikeusryhmasLoading ? <Loader/> :
                 <KayttooikeusryhmatHallintaPage {...this.props}
-                                                kayttooikeusryhmat={kayttooikeusryhmat}></KayttooikeusryhmatHallintaPage>
+                                                kayttooikeusryhmat={kayttooikeusryhmat}/>
             }
         </div>
     }
@@ -41,4 +44,4 @@ const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale]
 });
 
-export default connect(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)
+export default connect(mapStateToProps, {fetchAllKayttooikeusryhma, updateEmptyNavigation})(KayttooikeusryhmatContainer)
