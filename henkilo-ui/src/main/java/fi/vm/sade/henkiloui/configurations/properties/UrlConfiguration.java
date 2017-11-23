@@ -8,32 +8,30 @@ import org.springframework.util.StringUtils;
 
 @Configuration
 public class UrlConfiguration extends OphProperties {
+    private Environment environment;
 
     @Autowired
     public UrlConfiguration(Environment environment) {
+        this.environment = environment;
         addFiles("/henkiloui-service-oph.properties");
         addOverride("host-cas", environment.getRequiredProperty("host.host-cas"));
         addOverride("host-virkailija", environment.getRequiredProperty("host.host-virkailija"));
         addOverride("host-shibboleth", environment.getRequiredProperty("host.host-shibboleth"));
-        frontProperties.put("shibboleth.baseUrl", environment.getRequiredProperty("host.host-shibboleth"));
-        if(!StringUtils.isEmpty(environment.getProperty("front.lokalisointi.baseUrl"))) {
-            frontProperties.put("lokalisointi.baseUrl", environment.getProperty("front.lokalisointi.baseUrl"));
-        }
-        if(!StringUtils.isEmpty(environment.getProperty("front.organisaatio.baseUrl"))) {
-            frontProperties.put("organisaatio-service.baseUrl", environment.getProperty("front.organisaatio.baseUrl"));
-        }
-        if(!StringUtils.isEmpty(environment.getProperty("front.koodisto.baseUrl"))) {
-            frontProperties.put("koodisto-service.baseUrl", environment.getProperty("front.koodisto.baseUrl"));
-        }
-        if(!StringUtils.isEmpty(environment.getProperty("front.kayttooikeus.baseUrl"))) {
-            frontProperties.put("kayttooikeus-service.baseUrl", environment.getProperty("front.kayttooikeus.baseUrl"));
-        }
-        if(!StringUtils.isEmpty(environment.getProperty("front.oppijanumerorekisteri.baseUrl"))) {
-            frontProperties.put("oppijanumerorekisteri-service.baseUrl", environment.getProperty("front.oppijanumerorekisteri.baseUrl"));
-        }
-        if(!StringUtils.isEmpty(environment.getProperty("front.cas.baseUrl"))) {
-            frontProperties.put("cas.baseUrl", environment.getProperty("front.cas.baseUrl"));
-        }
+        // Required
+        this.frontProperties.put("shibboleth.baseUrl", environment.getRequiredProperty("host.host-shibboleth"));
+        // Optional, default to localhost
+        this.addUrlIfConfigured("front.lokalisointi.baseUrl", "lokalisointi.baseUrl");
+        this.addUrlIfConfigured("front.organisaatio.baseUrl", "organisaatio-service.baseUrl");
+        this.addUrlIfConfigured("front.koodisto.baseUrl", "koodisto-service.baseUrl");
+        this.addUrlIfConfigured("front.kayttooikeus.baseUrl", "kayttooikeus-service.baseUrl");
+        this.addUrlIfConfigured("front.oppijanumerorekisteri.baseUrl", "oppijanumerorekisteri-service.baseUrl");
+        this.addUrlIfConfigured("front.cas.baseUrl", "cas.baseUrl");
+    }
 
+    private void addUrlIfConfigured(String configFilePath, String frontPropertyPath) {
+        String environmentProperty = this.environment.getProperty(configFilePath);
+        if (!StringUtils.isEmpty(environmentProperty)) {
+            this.frontProperties.put(frontPropertyPath, environmentProperty);
+        }
     }
 }
