@@ -14,46 +14,21 @@ export default class DuplikaatitPersonOtherApplications extends React.Component 
     };
 
     render() {
-        
         return <div>
             {this.props.hakemukset.map(hakemus => {
-                const secondaryInformation = this._parseContactInformation(this.props.locale, hakemus, this.props.koodisto);
                 return <div className="application" key={hakemus.oid}>
-                    <span>{secondaryInformation.kansalaisuus}</span>
-                    <span>{secondaryInformation.aidinkieli}</span>
-                    <span>{secondaryInformation.matkapuhelinnumero}</span>
-                    <span>{secondaryInformation.sahkoposti}</span>
-                    <span>{secondaryInformation.lahiosoite}</span>
-                    <span>{secondaryInformation.postinumero}</span>
-                    <span>{secondaryInformation.passinumero}</span>
-                    <span>{secondaryInformation.kansallinenIdTunnus}</span>
-                    <span>{hakemus ? hakemus.state : ''}</span>
-                    <span>{hakemus ? <a className="oph-link" href={`/haku-app/virkailija/hakemus/${hakemus.oid}`}>{hakemus.oid}</a> : ''}</span>
+                    <span>{hakemus.kansalaisuus || ''}</span>
+                    <span>{hakemus.aidinkieli || ''}</span>
+                    <span>{hakemus.matkapuhelinnumero || ''}</span>
+                    <span>{hakemus.sahkoposti || ''}</span>
+                    <span>{hakemus.lahiosoite || ''}</span>
+                    <span>{hakemus.postinumero || ''}</span>
+                    <span>{hakemus.passinumero || ''}</span>
+                    <span>{hakemus.kansallinenIdTunnus || ''}</span>
+                    <span>{hakemus.state || ''}</span>
+                    <span>{hakemus.href ? <a className="oph-link" href={hakemus.href}>{hakemus.oid}</a> : ''}</span>
                 </div>
             })}
         </div>
     }
-
-
-    _parseContactInformation(locale, hakemus, koodisto) {
-        const henkilotiedot = hakemus.answers.henkilotiedot;
-        const kansalaisuusLowercase = henkilotiedot.kansalaisuus ? henkilotiedot.kansalaisuus.toLowerCase() : undefined;
-        const maatjavaltioKoodisto = R.find(item => item.value === kansalaisuusLowercase, koodisto.maatjavaltiot1);
-        const kansalaisuus = maatjavaltioKoodisto[locale];
-        const aidinkieliLowercase = henkilotiedot.aidinkieli ? henkilotiedot.aidinkieli.toLowerCase() : undefined;
-        const aidinkieliKoodisto = R.find(item => item.value === aidinkieliLowercase, koodisto.kieli);
-        const aidinkieli = aidinkieliKoodisto[locale];
-
-        return {
-            matkapuhelinnumero: henkilotiedot.matkapuhelinnumero1,
-            sahkoposti: henkilotiedot['Sähköposti'],
-            lahiosoite: henkilotiedot.lahiosoite,
-            postinumero: henkilotiedot.Postinumero,
-            passinumero: henkilotiedot.passinumero,
-            kansallinenIdTunnus: henkilotiedot.kansallinenIdTunnus,
-            kansalaisuus,
-            aidinkieli
-        }
-    }
-
 }

@@ -10,6 +10,10 @@ export default {
     "lokalisointi.baseUrl": "/",
     "lokalisointi.localisation": "lokalisointi/cxf/rest/v1/localisation",
 
+    "ataru.baseUrl": "/",
+    "ataru.prequel": "lomake-editori/auth/cas",
+    "ataru.applications": "lomake-editori/api/external/onr/applications/$1",
+
     "kayttooikeus-service.baseUrl": "/",
     "kayttooikeus-service.l10n.languages": "kayttooikeus-service/l10n/languages",
     "kayttooikeus-service.kutsu": "kayttooikeus-service/kutsu",
