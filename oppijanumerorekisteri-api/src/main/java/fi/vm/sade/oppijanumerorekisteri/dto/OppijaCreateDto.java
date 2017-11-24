@@ -28,6 +28,9 @@ public class OppijaCreateDto {
     @Size(min = 1)
     private String sukunimi;
 
+    // mahdollistaa hetuttoman yksilöinnin luonnin yhteydessä
+    private boolean yksiloity;
+
     private LocalDate syntymaaika;
 
     private String sukupuoli;
