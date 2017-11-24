@@ -109,7 +109,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 this.luoOppijaJaNavigoi(oppija)
             }
         } catch (error) {
-            this.lisaaIlmoitus('error', this.props.L['HENKILON_LUONTI_EPAONNISTUI'])
+            this.lisaaIlmoitus('error', 'HENKILON_LUONTI_EPAONNISTUI')
             throw error
         }
     }
