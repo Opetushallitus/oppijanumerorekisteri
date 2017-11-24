@@ -516,6 +516,17 @@ public class HenkiloServiceImpl implements HenkiloService {
         henkiloCreate.setModified(henkiloCreate.getCreated());
         henkiloCreate.setKasittelijaOid(kasittelijaOid);
 
+        if (henkiloCreate.isYksiloity()) {
+            // yksilöidään hetuton luonnin yhteydessä
+            if (henkiloCreate.getHetu() != null) {
+                throw new ValidationException("Henkilöllä on hetu, yksilöintiä ei voida tehdä");
+            }
+            if (henkiloCreate.isDuplicate()) {
+                throw new ValidationException("Henkilö on duplikaatti, yksilöintiä ei voida tehdä");
+            }
+            henkiloCreate.setOppijanumero(henkiloCreate.getOidHenkilo());
+        }
+
         // hylätään tyhjät passinumerot
         if (henkiloCreate.getPassinumerot() != null) {
             Set<String> passinumerot = henkiloCreate.getPassinumerot().stream()

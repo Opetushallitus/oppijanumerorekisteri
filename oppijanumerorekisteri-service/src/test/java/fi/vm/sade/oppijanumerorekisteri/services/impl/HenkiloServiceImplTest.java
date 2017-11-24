@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -261,6 +262,41 @@ public class HenkiloServiceImplTest {
         verify(henkiloJpaRepository).findByIdentifications(eq(singletonList(identification)));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
         verify(henkiloRepository, never()).save(any(Henkilo.class));
+    }
+
+    @Test
+    public void createHenkiloShouldSetOppijanumero() {
+        when(oidGenerator.generateOID()).thenReturn("oid1");
+        when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        Henkilo input = new Henkilo();
+        Henkilo output;
+
+        input.setYksiloity(false);
+        output = impl.createHenkilo(input);
+        assertThat(output)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getOppijanumero, Henkilo::isYksiloity)
+                .containsExactly("oid1", null, false);
+
+        input.setYksiloity(true);
+        output = impl.createHenkilo(input);
+        assertThat(output)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getOppijanumero, Henkilo::isYksiloity)
+                .containsExactly("oid1", "oid1", true);
+
+        input.setYksiloity(true);
+        input.setHetu("241197-9877");
+        Throwable throwable1 = catchThrowable(() -> impl.createHenkilo(input));
+        assertThat(throwable1)
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Henkilöllä on hetu");
+
+        input.setYksiloity(true);
+        input.setHetu(null);
+        input.setDuplicate(true);
+        Throwable throwable2 = catchThrowable(() -> impl.createHenkilo(input));
+        assertThat(throwable2)
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Henkilö on duplikaatti");
     }
 
     @Test
