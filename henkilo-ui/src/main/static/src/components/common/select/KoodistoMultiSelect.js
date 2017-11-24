@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import Select from 'react-select'
+import Select from 'react-virtualized-select'
 import {connect} from 'react-redux'
 import type {ReactSelectOption} from '../../../types/react-select.types'
 import type {Locale} from '../../../types/locale.type'
