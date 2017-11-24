@@ -1,10 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
@@ -24,9 +23,9 @@ public interface OppijaService {
      * organisaatioihin.
      *
      * @param dto oppijan tiedot
-     * @return oppijan tiedot
+     * @return oid
      */
-    HenkiloReadDto create(HenkiloCreateDto dto);
+    String create(OppijaCreateDto dto);
 
     /**
      * Useamman oppijan luonti (vaihe 1). Käynnistää automaattisesti oppijoiden
