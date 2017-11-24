@@ -12,6 +12,7 @@ import {updateEmptyNavigation} from "../../../actions/navigation.actions";
 type Props = {
     updateNavigation: (Array<any>, ?string, ?string) => any,
     kayttooikeusryhmat: any,
+    updateEmptyNavigation: () => void,
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
     L: L,

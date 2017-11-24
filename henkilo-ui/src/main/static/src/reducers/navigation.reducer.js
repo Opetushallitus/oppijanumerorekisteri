@@ -49,7 +49,7 @@ const urlToTitle = {
     "vahvatunnistusinfo": "TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN", // vahvatunnistusinfo/:locale/:loginToken
 };
 
-export const naviState = (state: State = {naviTabs: [], backButton: null, L: {}, l10n: {}, lastPathName: null}, action: Action) => {
+export const naviState = (state: State = {naviTabs: [], backButton: null, L: {}, l10n: {fi: {}, sv: {}, en: {}}, lastPathName: null}, action: Action) => {
     switch (action.type) {
         case UPDATE_NAVIGATION:
             return onUpdateNavigation(state, action);
@@ -91,7 +91,7 @@ const onLocationChange = (state, action) => {
     // Change document title
     const pathname = getPathName(state, action.payload);
     const defaultTitle = state.L['TITLE_DEFAULT'];
-    const title = state.L[urlToTitle[pathname]];
+    const title = pathname ? state.L[urlToTitle[pathname]] : undefined;
 
     if (defaultTitle || title) {
         window.document.title = title ? title : defaultTitle;
@@ -105,7 +105,7 @@ const onLocationChange = (state, action) => {
     return Object.assign({}, state, {lastPathName: pathname});
 };
 
-const getPathName = (state, payload): string => {
+const getPathName = (state, payload): ?string => {
     if (payload && payload.pathname) {
         const parts = payload.pathname.match(/[^/]+/g);
         if (!parts) return "";
