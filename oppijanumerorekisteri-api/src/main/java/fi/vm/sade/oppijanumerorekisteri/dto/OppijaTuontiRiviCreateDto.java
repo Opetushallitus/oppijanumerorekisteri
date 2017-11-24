@@ -17,14 +17,14 @@ import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OppijaCreateDto {
+public class OppijaTuontiRiviCreateDto {
 
     @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
     private String tunniste;
 
     @NotNull
     @Valid
-    private OppijaCreateHenkiloDto henkilo;
+    private OppijaTuontiRiviHenkiloCreateDto henkilo;
 
     @Getter
     @Setter
@@ -32,7 +32,7 @@ public class OppijaCreateDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @ValidateAtLeastOneNotNull({"oid", "hetu", "passinumero", "sahkoposti"})
-    public static class OppijaCreateHenkiloDto {
+    public static class OppijaTuontiRiviHenkiloCreateDto {
 
         private String oid;
 

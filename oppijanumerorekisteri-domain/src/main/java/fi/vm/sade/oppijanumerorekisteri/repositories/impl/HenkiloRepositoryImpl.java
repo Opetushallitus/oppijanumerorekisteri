@@ -34,12 +34,12 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteyst
 import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
 import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import static java.util.stream.Collectors.joining;
 
 import javax.persistence.Query;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
 
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
@@ -68,14 +68,17 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
-    public List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset) {
+    public List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
+        JPAQuery<Henkilo> query = criteria.getQuery(em, qHenkilo)
                 .limit(limit)
                 .offset(offset)
                 .select(qHenkilo)
-                .distinct()
-                .fetch();
+                .distinct();
+        if (sort != null) {
+            sort.apply(query, qHenkilo);
+        }
+        return query.fetch();
     }
 
     @Override
@@ -85,16 +88,6 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .select(qHenkilo.oidHenkilo)
                 .distinct()
                 .fetchCount();
-    }
-
-    @Override
-    public Set<String> findOidsBy(OppijaTuontiCriteria criteria) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
-                .select(qHenkilo.oidHenkilo)
-                .distinct()
-                .fetch()
-                .stream().collect(toSet());
     }
 
     @Override
@@ -278,6 +271,18 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .where(qHenkiloViite.masterOid.eq(qHenkilo.oidHenkilo))
                 .where(qHenkiloViite.slaveOid.eq(henkiloOid))
                 .select(qHenkilo).fetchFirst());
+    }
+
+    @Override
+    public Map<String, Henkilo> findMastersBySlaveOids(Set<String> henkiloOids) {
+        QHenkiloViite qHenkiloViite = QHenkiloViite.henkiloViite;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        return jpa().from(qHenkiloViite, qHenkilo)
+                .where(qHenkiloViite.masterOid.eq(qHenkilo.oidHenkilo))
+                .where(qHenkiloViite.slaveOid.in(henkiloOids))
+                .distinct()
+                .transform(groupBy(qHenkiloViite.slaveOid).as(qHenkilo));
     }
 
     @Override

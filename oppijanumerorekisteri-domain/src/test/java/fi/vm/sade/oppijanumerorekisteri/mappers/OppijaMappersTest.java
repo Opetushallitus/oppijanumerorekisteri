@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +23,7 @@ public class OppijaMappersTest {
                 .henkilo(Henkilo.builder().oidHenkilo("oid123").build())
                 .build();
 
-        OppijaReadDto dto = mapper.map(entity, OppijaReadDto.class);
+        OppijaTuontiRiviReadDto dto = mapper.map(entity, OppijaTuontiRiviReadDto.class);
 
         assertThat(dto.getHenkilo().getOid()).isEqualTo("oid123");
     }

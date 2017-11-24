@@ -362,6 +362,8 @@ public class HenkiloServiceTest {
                 .willReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
         given(this.kansalaisuusRepositoryMock.findOrCreate(anyString()))
                 .willReturn(EntityUtils.createKansalaisuus("246"));
+        given(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .willAnswer(returnsFirstArg());
 
         this.service.updateHenkilo(henkiloUpdateDto);
         verify(this.henkiloDataRepositoryMock).save(argument.capture());

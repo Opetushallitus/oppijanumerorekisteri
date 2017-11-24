@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,8 @@ public class YksilointiServiceTest {
     private YksilointiService yksilointiService;
 
     private HenkiloRepository henkiloRepository;
+
+    private HenkiloService henkiloService;
 
     private YksilointitietoRepository yksilointitietoRepository;
 
@@ -48,6 +51,7 @@ public class YksilointiServiceTest {
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
 
         henkiloRepository = mock(HenkiloRepository.class);
+        henkiloService = mock(HenkiloService.class);
         yksilointitietoRepository = mock(YksilointitietoRepository.class);
         UserDetailsHelper userDetailsHelper = mock(UserDetailsHelper.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
@@ -56,12 +60,12 @@ public class YksilointiServiceTest {
         YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
         YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
         this.yksilointiService = new YksilointiServiceImpl(henkiloRepository,
+                henkiloService,
                 kansalaisuusRepository,
                 kielisyysRepository,
                 yhteystiedotRyhmaRepository,
                 yhteystietoRepository,
                 yksilointitietoRepository,
-                userDetailsHelper,
                 orikaConfiguration,
                 this.vtjClient,
                 mockKoodistoClient,
@@ -83,6 +87,7 @@ public class YksilointiServiceTest {
     @Test
     public void puuttuvaaKutsumanimeaEiKorvataYksiloiManuaalisesti() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-kutsumanimi-puuttuu.json");
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity.getKutsumanimi()).isEqualTo("Teppo");
@@ -91,35 +96,35 @@ public class YksilointiServiceTest {
     @Test
     public void paivitaKutsumanimiYksiloiManuaalisesti() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-uusi-kutsumanimi.json");
-        Date before = new Date();
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity.getKutsumanimi()).isEqualTo("Taneli");
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
     }
 
     @Test
     public void paivitaSyntymaikaYksiloiManuaalisesti() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
-        Date before = new Date();
         LocalDate originalSyntymaaika = this.henkilo.getSyntymaaika();
         assertThat(originalSyntymaaika).isEqualTo("1990-03-23");
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         String paivamaara = "1901-01-01";
         assertThat(yksiloity.getSyntymaaika()).isEqualTo(paivamaara);
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
     }
 
     @Test
     public void paivitaTurvakieltoYksiloiManuaalisesti() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
         this.henkilo.setTurvakielto(true);
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
-        Date before = new Date();
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity.getTurvakielto()).isFalse();
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
     }
 
     @Test
@@ -128,10 +133,10 @@ public class YksilointiServiceTest {
         this.henkilo.setOidHenkilo(henkiloOid);
         this.henkilo.setSukunimi("Oppija");
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-oppija.json");
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
-        Date before = new Date();
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
         assertThat(yksiloity.isYksiloityVTJ()).isTrue();
         assertThat(yksiloity.getYhteystiedotRyhma())
                 .extracting("ryhmaAlkuperaTieto")
@@ -148,10 +153,10 @@ public class YksilointiServiceTest {
         this.henkilo.setYksiloity(false);
         this.henkilo.setYksiloityVTJ(false);
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-virkailija.json");
-        Date before = new Date();
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
         assertThat(yksiloity.isYksiloityVTJ()).isTrue();
         assertThat(yksiloity.getYhteystiedotRyhma())
                 .extracting("ryhmaAlkuperaTieto")
@@ -162,40 +167,42 @@ public class YksilointiServiceTest {
     public void paivitaSukupuoli() {
         this.henkilo.setSukupuoli("2");
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
-        Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getSukupuoli()).isEqualTo("1");
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
     }
 
     @Test
     public void tallennaPuuttuvaSukupuoliHetunPerusteella() {
         this.henkilo.setSukupuoli(null);
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-sukupuoli-puuttuu.json");
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
-        Date before = new Date();
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getSukupuoli()).isEqualTo("1");
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
     }
 
     @Test
     public void kielisyysTallentuu() {
         this.henkilo.setAidinkieli(null);
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
-        Date before = new Date();
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
     }
 
     @Test
     public void lisaaYksilointiTietoKunNimetEivatTasmaa() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-erilaiset-nimet.json");
-        Date before = new Date();
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
-        assertThat(yksiloity.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(yksiloity));
         ArgumentCaptor<Yksilointitieto> argumentCaptor = ArgumentCaptor.forClass(Yksilointitieto.class);
         verify(yksilointitietoRepository).save(argumentCaptor.capture());
         Yksilointitieto yksilointitieto = argumentCaptor.getValue();
@@ -205,27 +212,26 @@ public class YksilointiServiceTest {
 
     @Test
     public void hetuttomanYksilointiOnnistuu() {
-        when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         this.henkilo.setHetu(null);
 
-        Date before = new Date();
         Henkilo hlo = yksilointiService.hetuttomanYksilointi(this.henkiloOid);
         assertThat(hlo.getHetu()).isNullOrEmpty();
         assertThat(hlo.isYksiloity()).isTrue();
-        assertThat(hlo.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService).update(eq(hlo));
         assertThat(hlo.isDuplicate()).isFalse();
         assertThat(hlo.getOppijanumero()).isEqualTo(henkiloOid);
     }
 
     @Test
     public void hetuttomanYksiloinninPurkaminenOnnistuu() {
-        when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         this.henkilo.setHetu(null);
         yksilointiService.hetuttomanYksilointi(henkiloOid);
-        Date before = new Date();
+
         Henkilo purettu = yksilointiService.puraHeikkoYksilointi(henkiloOid);
         assertThat(purettu.isYksiloity()).isFalse();
-        assertThat(purettu.getModified()).isAfterOrEqualsTo(before);
+        verify(henkiloService, times(2)).update(eq(purettu));
     }
 
     @Test
