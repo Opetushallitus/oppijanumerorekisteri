@@ -16,7 +16,8 @@ type Props = {
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
     L: L,
-    router: any
+    router: any,
+    updateEmptyNavigation: () => void,
 }
 
 class KayttooikeusryhmatContainer extends React.Component<Props> {
