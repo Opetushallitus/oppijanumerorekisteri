@@ -8,7 +8,7 @@ import KutsuViews from "./KutsuViews";
 type Props = {
     view: string,
     L: {[key: string]: string},
-    toggleView: (newView: string) => void,
+    setView: (newView: string) => void,
     isAdmin: boolean,
     isOphVirkailija: boolean,
 }
@@ -23,7 +23,7 @@ class KutsututBooleanRadioButton extends React.Component<Props, State> {
 
     static propTypes = {
         view: PropTypes.string.isRequired,
-        toggleView: PropTypes.func.isRequired,
+        setView: PropTypes.func.isRequired,
     };
 
     constructor(props: Props) {
@@ -32,10 +32,15 @@ class KutsututBooleanRadioButton extends React.Component<Props, State> {
         if (this.props.isAdmin) {
             this.falseLabel = this.props.L['KUTSUTUT_OPH_BUTTON'];
             this.trueLabel = this.props.L['KUTSUTUT_KAIKKI_BUTTON'];
+            this.props.setView(KutsuViews.OPH);
         }
         else if (this.props.isOphVirkailija) {
-            this.falseLabel = this.props.L['KUTSUTUT_OMA_ORGANISAATIO_BUTTON'];
-            this.trueLabel = this.props.L['KUTSUTUT_OMA_KAYTTOOIKEUSRYHMA_BUTTON'];
+            this.falseLabel = this.props.L['KUTSUTUT_OMA_KAYTTOOIKEUSRYHMA_BUTTON'];
+            this.trueLabel = this.props.L['KUTSUTUT_OMA_ORGANISAATIO_BUTTON'];
+            this.props.setView(KutsuViews.KAYTTOOIKEUSRYHMA);
+        }
+        else {
+            this.props.setView(KutsuViews.DEFAULT);
         }
 
         this.state = {
@@ -73,7 +78,7 @@ class KutsututBooleanRadioButton extends React.Component<Props, State> {
             radioButtonValue: !this.state.radioButtonValue,
         });
 
-        this.props.toggleView(newView);
+        this.props.setView(newView);
     }
 }
 

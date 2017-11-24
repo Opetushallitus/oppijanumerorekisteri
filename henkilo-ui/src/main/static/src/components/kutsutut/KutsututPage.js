@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types'
 import moment from 'moment';
@@ -7,13 +8,65 @@ import './KutsututPage.css';
 import KutsututTable from './KutsututTable';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
-import KutsuViews from "./KutsuViews";
 import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
 import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
+import type {L, L10n} from "../../types/localisation.type";
+import type {Locale} from "../../types/locale.type";
+import type {KutsuOrganisaatio, Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
-export default class KutsututPage extends React.Component {
+type Payload = {
+    searchTerm: string,
+    organisaatioOids: string,
+    tilas: Array<string>,
+    sortBy: string,
+    direction: string,
+    view: ?string,
+    kayttooikeusryhmaIds: ?number,
+}
 
-    constructor(props) {
+type Props = {
+    l10n: L10n,
+    locale: Locale,
+    kutsus: {result: Array<KutsuOrganisaatio>},
+    deleteKutsu: (?number) => void,
+    fetchKutsus: (Payload, number, number) => void,
+    kutsuListLoading: boolean,
+    organisaatiot: Array<Organisaatio>,
+    clearKutsuList: () => void,
+    fetchOmattiedotOrganisaatios: () => void,
+    isAdmin: boolean,
+    isOphVirkailija: boolean,
+}
+
+type Kutsu = {
+    id?: number,
+    etunimi?: string,
+    sukunimi?: string,
+    sahkoposti?: string,
+    organisaatiot: Array<Organisaatio>,
+    aikaleima: string,
+}
+
+type Sort = {
+    id: string,
+    desc: string,
+}
+
+type State = {
+    allFetched: boolean,
+    confirmDeleteFor: ?Kutsu,
+    payload: Payload,
+
+}
+
+export default class KutsututPage extends React.Component<Props, State> {
+    L: L;
+    defaultLimit: number;
+    defaultOffset: number;
+    offset: number;
+    kutsuTableHeaderToSort: {[key: string]: string};
+
+    constructor(props: Props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
@@ -29,14 +82,7 @@ export default class KutsututPage extends React.Component {
             KUTSUT_SAHKOPOSTI_OTSIKKO: 'SAHKOPOSTI',
             DEFAULT: '',
         };
-        let view;
-        if (this.props.isAdmin) {
-            view = KutsuViews.OPH;
-        }
-        // OPH-virkailija (miniadmin) or normal virkailija do not have real default view
-        else {
-            view = KutsuViews.DEFAULT;
-        }
+        // Default that is fetched at start. Needs to match to KutsututBooleanRadioButton falseLabel.
 
         this.state = {
             confirmDeleteFor: null,
@@ -47,7 +93,7 @@ export default class KutsututPage extends React.Component {
                 tilas: ['AVOIN'],
                 sortBy: 'AIKALEIMA',
                 direction: 'DESC',
-                view,
+                view: null,
                 kayttooikeusryhmaIds: null,
             },
         };
@@ -64,12 +110,19 @@ export default class KutsututPage extends React.Component {
         clearKutsuList: PropTypes.func.isRequired,
     };
 
-    componentWillMount() {
-        this.fetchKutsus();
+    componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps: Props, prevState: State) {
+        // Update kutsus if payload changes. Basically payload.view change sets this for initial fetch.
+        if (Object.keys(this.state.payload)
+                .some(key => this.state.payload[key] !== prevState.payload[key])) {
+            this.fetchKutsus();
+        }
+    }
+
+    componentWillReceiveProps(nextProps: Props) {
         this.setState({
             allFetched: !nextProps.kutsuListLoading
             && (nextProps.kutsus.result.length < this.defaultLimit
@@ -85,7 +138,7 @@ export default class KutsututPage extends React.Component {
                     <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                     <span className="right">
                         <KutsututBooleanRadioButton view={this.state.payload.view}
-                                                    toggleView={this.toggleView.bind(this)} />
+                                                    setView={this.setView.bind(this)} />
                     </span>
                 </div>
                 <div className="flex-horizontal flex-align-center">
@@ -122,20 +175,20 @@ export default class KutsututPage extends React.Component {
                             <tbody>
                             <tr>
                                 <th>{this.L['KUTSUT_NIMI_OTSIKKO']}</th>
-                                <td>{this.state.confirmDeleteFor.etunimi} {this.state.confirmDeleteFor.sukunimi}</td>
+                                <td>{this.state.confirmDeleteFor && this.state.confirmDeleteFor.etunimi} {this.state.confirmDeleteFor && this.state.confirmDeleteFor.sukunimi}</td>
                             </tr>
                             <tr>
                                 <th>{this.L['KUTSUT_SAHKOPOSTI_OTSIKKO']}</th>
-                                <td>{this.state.confirmDeleteFor.sahkoposti}</td>
+                                <td>{this.state.confirmDeleteFor && this.state.confirmDeleteFor.sahkoposti}</td>
                             </tr>
                             <tr>
                                 <th>{this.L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
-                                <td>{this.state.confirmDeleteFor.organisaatiot.map(org =>
+                                <td>{this.state.confirmDeleteFor && this.state.confirmDeleteFor.organisaatiot.map(org =>
                                     <div className="kutsuOrganisaatio" key={org.oid}>{org.nimi[this.props.locale]}</div>)}</td>
                             </tr>
                             <tr>
                                 <th>{this.L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
-                                <td>{moment(new Date(this.state.confirmDeleteFor.aikaleima)).format()}</td>
+                                <td>{moment(this.state.confirmDeleteFor && this.state.confirmDeleteFor.aikaleima).format()}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -153,7 +206,7 @@ export default class KutsututPage extends React.Component {
             </div>);
     }
 
-    cancelInvitationAction(r) {
+    cancelInvitationAction(r: Kutsu) {
         return () => {
             this.setState({confirmDeleteFor: r});
         };
@@ -171,48 +224,39 @@ export default class KutsututPage extends React.Component {
         this.fetchKutsus();
     }
 
-    toggleView(newView) {
+    setView(newView: string) {
         this.setState({
-                payload: {
-                    ...this.state.payload,
-                    view: newView,
-                }
-            },
-            () => this.fetchKutsus());
+            payload: {...this.state.payload, view: newView,},
+        });
     }
 
-    onHakutermiChange(event) {
-        const hakutermi = event.value;
-        this.setState({payload: {...this.state.payload, searchTerm: hakutermi}},
-            () => {
-                if (hakutermi.length === 0 || hakutermi.length >= 3) {
-                    this.fetchKutsus();
-                }
-            });
+    onHakutermiChange(target: {value: string}) {
+        const hakutermi = target.value;
+        if (hakutermi.length === 0 || hakutermi.length >= 3) {
+            this.setState({payload: {...this.state.payload, searchTerm: hakutermi}});
+        }
     }
 
-    onOrganisaatioChange(organisaatio) {
-        const organisaatioOids = organisaatio.value;
-        this.setState({payload: {...this.state.payload, organisaatioOids},},
-            () => this.fetchKutsus());
+    onOrganisaatioChange(organisaatioTarget: {value: string}) {
+        const organisaatioOids = organisaatioTarget.value;
+        this.setState({payload: {...this.state.payload, organisaatioOids},});
     }
 
-    onKayttooikeusryhmaChange(newKayttooikeusId) {
-        this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: newKayttooikeusId,}},
-            () => this.fetchKutsus());
+    onKayttooikeusryhmaChange(newKayttooikeusId: number) {
+        this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: newKayttooikeusId,}});
     }
 
-    fetchKutsus(sort, shouldNotClear) {
+    fetchKutsus(sort: ?Sort, shouldNotClear: ?boolean) {
         let sortBy = this.state.payload.sortBy;
         let direction = this.state.payload.direction;
-        if(!shouldNotClear) {
+        if (!shouldNotClear) {
             this.props.clearKutsuList();
             this.offset = this.defaultOffset;
         }
         else {
             this.offset += this.defaultLimit;
         }
-        if(sort) {
+        if (sort) {
             sortBy = this.kutsuTableHeaderToSort[sort.id];
             direction = sort.desc ? 'DESC' : 'ASC';
         }

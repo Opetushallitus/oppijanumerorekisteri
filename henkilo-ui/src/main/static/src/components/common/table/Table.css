@@ -6,7 +6,7 @@
     border: 0;
 }
 
-.ReactTable.table .rt-resizable-header.rt-th {
+.ReactTable.table div.rt-th {
     line-height: 40px;
 }
 
@@ -39,7 +39,8 @@
     border: 0;
 }
 
-.ReactTable.table .rt-th, .ReactTable .rt-td {
+.ReactTable.table .rt-th,
+.ReactTable .rt-td {
     white-space: inherit !important;
 }
 

@@ -3,4 +3,5 @@ export default {
     ADMIN: 'ADMIN',
     OPH: 'OPH',
     KAYTTOOIKEUSRYHMA: 'KAYTTOOIKEUSRYHMA',
+    DEFAULT: '',
 };
