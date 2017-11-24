@@ -46,6 +46,7 @@ export default {
     "kayttooikeus-service.palvelu.listaus": "kayttooikeus-service/palvelu",
     "kayttooikeus-service.kayttooikeus.listaus": "kayttooikeus-service/kayttooikeus/$1",
     "kayttooikeus-service.anomus.haetut-kayttooikeusryhmat": "kayttooikeus-service/kayttooikeusanomus/haettuKayttoOikeusRyhma",
+    "kayttooikeus-service.salasana.resetointi": "kayttooikeus-service/salasana/resetointi/$1",
 
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
