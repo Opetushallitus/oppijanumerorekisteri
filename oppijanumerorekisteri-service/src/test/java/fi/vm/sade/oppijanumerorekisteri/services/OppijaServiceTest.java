@@ -3,11 +3,11 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
@@ -67,8 +67,8 @@ public class OppijaServiceTest {
         henkiloRepository.deleteAll();
     }
 
-    private OppijatReadDto create(OppijatCreateDto createDto) {
-        TuontiReadDto dto = oppijaService.create(createDto);
+    private OppijaTuontiReadDto create(OppijaTuontiCreateDto createDto) {
+        OppijaTuontiPerustiedotReadDto dto = oppijaService.create(createDto);
         int i = 0;
         while (i < 10) {
             ++i;
@@ -90,11 +90,10 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkilo() {
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .oid("oid1")
                                         .hetu("180897-945K")
                                         .etunimet("etu")
@@ -105,11 +104,11 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
-                .extracting(OppijaReadDto::getTunniste)
+                .extracting(OppijaTuontiRiviReadDto::getTunniste)
                 .containsExactly("tunniste1");
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
@@ -120,11 +119,10 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithPassinumero() {
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .passinumero("passi123")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
@@ -134,7 +132,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
@@ -145,11 +143,10 @@ public class OppijaServiceTest {
 
     @Test
     public void getOrCreateShouldCreateNewHenkiloWithIdentification() {
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .sahkoposti("example@example.com")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
@@ -159,7 +156,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
@@ -182,11 +179,10 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .oid("oid2")
                                         .hetu("180897-945K")
                                         .etunimet("etu")
@@ -197,7 +193,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
@@ -219,11 +215,10 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .hetu("180897-945K")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
@@ -233,7 +228,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
@@ -255,11 +250,10 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .passinumero("passi123")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
@@ -269,7 +263,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
@@ -295,11 +289,10 @@ public class OppijaServiceTest {
                 .modified(new Date())
                 .build();
         henkiloRepository.save(henkilo);
-        OppijatCreateDto createDto = OppijatCreateDto.builder()
-                .henkilot(Stream.of(
-                        OppijaCreateDto.builder()
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
                                 .tunniste("tunniste1")
-                                .henkilo(OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                                         .sahkoposti("example@example.com")
                                         .etunimet("etu")
                                         .kutsumanimi("etu")
@@ -309,7 +302,7 @@ public class OppijaServiceTest {
                         .collect(toList()))
                 .build();
 
-        OppijatReadDto readDto = create(createDto);
+        OppijaTuontiReadDto readDto = create(createDto);
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())

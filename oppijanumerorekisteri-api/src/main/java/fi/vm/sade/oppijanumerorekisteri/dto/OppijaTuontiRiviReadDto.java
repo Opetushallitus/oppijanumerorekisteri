@@ -14,19 +14,19 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OppijaReadDto {
+public class OppijaTuontiRiviReadDto {
 
     @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
     private String tunniste;
 
-    private OppijaReadHenkiloDto henkilo;
+    private OppijaTuontiRiviHenkiloReadDto henkilo;
 
     @Getter
     @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OppijaReadHenkiloDto {
+    public static class OppijaTuontiRiviHenkiloReadDto {
 
         private String oid;
 

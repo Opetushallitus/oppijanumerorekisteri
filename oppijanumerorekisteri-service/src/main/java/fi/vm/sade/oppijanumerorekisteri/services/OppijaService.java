@@ -4,12 +4,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 
 /**
@@ -35,7 +35,7 @@ public interface OppijaService {
      * @param dto oppijoiden tiedot
      * @return oppijoiden tuonnin perustiedot
      */
-    TuontiReadDto create(OppijatCreateDto dto);
+    OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto);
 
     /**
      * Useamman oppijan luonti (vaihe 2). Tarvitaan vain jos oppijoiden tuonnin
@@ -44,7 +44,7 @@ public interface OppijaService {
      * @param id oppijoiden tuonnin id
      * @return oppijoiden tuonnin perustiedot
      */
-    TuontiReadDto create(Long id);
+    OppijaTuontiPerustiedotReadDto create(Long id);
 
     /**
      * Palauttaa oppijoiden tuonnin perustiedot ID:lla.
@@ -52,7 +52,7 @@ public interface OppijaService {
      * @param id oppijoiden tuonnin id
      * @return oppijoiden tuonnin perustiedot
      */
-    TuontiReadDto getTuontiById(Long id);
+    OppijaTuontiPerustiedotReadDto getTuontiById(Long id);
 
     /**
      * Palauttaa oppijoiden tuonnin kaikki tiedot ID:lla.
@@ -60,7 +60,7 @@ public interface OppijaService {
      * @param id oppijoiden tuonnin id
      * @return oppijoiden tuonnin kaikki tiedot
      */
-    OppijatReadDto getOppijatByTuontiId(Long id);
+    OppijaTuontiReadDto getOppijatByTuontiId(Long id);
 
     /**
      * Palauttaa oppijoiden tuonnin yhteenvedon.
@@ -78,7 +78,7 @@ public interface OppijaService {
      * @param count sivun koko
      * @return henkilöt
      */
-    Page<OppijaReadDto.OppijaReadHenkiloDto> list(OppijaTuontiCriteria criteria, int page, int count);
+    Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count);
 
     /**
      * Palauttaa annettujen hakukriteerien mukaisen henkilöiden master-tiedot.

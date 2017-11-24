@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -54,7 +54,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public TuontiReadDto create(OppijatCreateDto dto) {
+    public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
         final byte[] data;
         try {
             data = objectMapper.writeValueAsBytes(dto);
@@ -71,7 +71,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         tuonti.setKasiteltavia(dto.getHenkilot().size());
         tuonti = tuontiRepository.save(tuonti);
 
-        return mapper.map(tuonti, TuontiReadDto.class);
+        return mapper.map(tuonti, OppijaTuontiPerustiedotReadDto.class);
     }
 
     @Override
@@ -83,9 +83,9 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
             return true;
         }
 
-        final OppijatCreateDto dto;
+        final OppijaTuontiCreateDto dto;
         try {
-            dto = objectMapper.readValue(tuonti.getData().getData(), OppijatCreateDto.class);
+            dto = objectMapper.readValue(tuonti.getData().getData(), OppijaTuontiCreateDto.class);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -97,7 +97,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
             toIndex = size;
         }
 
-        List<OppijaCreateDto> kasiteltavat = dto.getHenkilot().subList(fromIndex, toIndex);
+        List<OppijaTuontiRiviCreateDto> kasiteltavat = dto.getHenkilot().subList(fromIndex, toIndex);
         String kasittelijaOid = tuonti.getKasittelijaOid();
         Set<TuontiRivi> rivit = create(kasiteltavat, kasittelijaOid);
 
@@ -107,7 +107,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         return tuonti.isKasitelty();
     }
 
-    private Set<TuontiRivi> create(List<OppijaCreateDto> henkilot, String kasittelijaOid) {
+    private Set<TuontiRivi> create(List<OppijaTuontiRiviCreateDto> henkilot, String kasittelijaOid) {
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
         Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByHenkilo(kasittelijaOid);
         if (organisaatiot.isEmpty()) {
@@ -162,7 +162,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         private final Map<String, Henkilo> henkilotByPassinumero;
         private final Map<String, Henkilo> henkilotBySahkoposti;
 
-        public TuontiRivi map(OppijaCreateDto oppija) {
+        public TuontiRivi map(OppijaTuontiRiviCreateDto oppija) {
             Henkilo henkiloByOid = henkilotByOid.get(oppija.getHenkilo().getOid());
             Henkilo henkiloByHetu = henkilotByHetu.get(oppija.getHenkilo().getHetu());
             Henkilo henkiloByPassinumero = henkilotByPassinumero.get(oppija.getHenkilo().getPassinumero());
@@ -181,7 +181,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
             return rivi;
         }
 
-        private Henkilo newHenkilo(OppijaCreateDto oppija) {
+        private Henkilo newHenkilo(OppijaTuontiRiviCreateDto oppija) {
             Henkilo henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
             henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
             if (oppija.getHenkilo().getPassinumero() != null) {

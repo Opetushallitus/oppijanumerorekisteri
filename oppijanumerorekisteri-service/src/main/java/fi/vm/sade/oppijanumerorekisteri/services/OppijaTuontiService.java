@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import java.util.Set;
 
@@ -21,7 +21,7 @@ public interface OppijaTuontiService {
      * @param dto oppijoiden tiedot
      * @return tuonnin tiedot
      */
-    TuontiReadDto create(OppijatCreateDto dto);
+    OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto);
 
     /**
      * Tallentaa oppijoiden tuonnin henkilöinä kantaan. Tämä on oppijoiden

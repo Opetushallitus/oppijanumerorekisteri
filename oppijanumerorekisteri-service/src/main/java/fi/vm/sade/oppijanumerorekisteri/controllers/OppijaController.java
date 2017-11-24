@@ -4,12 +4,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
@@ -58,7 +58,7 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Useamman oppijan luonti",
             notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
-    public TuontiReadDto create(@Valid @RequestBody OppijatCreateDto dto) {
+    public OppijaTuontiPerustiedotReadDto create(@Valid @RequestBody OppijaTuontiCreateDto dto) {
         return oppijaService.create(dto);
     }
 
@@ -67,7 +67,7 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
-    public OppijatReadDto getOppijatByTuontiId(@PathVariable Long id) {
+    public OppijaTuontiReadDto getOppijatByTuontiId(@PathVariable Long id) {
         return oppijaService.getOppijatByTuontiId(id);
     }
 
@@ -76,7 +76,7 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Käynnistää oppijoiden tuonnin käsittelyn",
             notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
-    public TuontiReadDto create(@PathVariable Long id) {
+    public OppijaTuontiPerustiedotReadDto create(@PathVariable Long id) {
         return oppijaService.create(id);
     }
 
@@ -85,7 +85,7 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
             notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
-    public TuontiReadDto getTuontiById(@PathVariable Long id) {
+    public OppijaTuontiPerustiedotReadDto getTuontiById(@PathVariable Long id) {
         return oppijaService.getTuontiById(id);
     }
 
@@ -101,7 +101,7 @@ public class OppijaController {
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
-    public Page<OppijaReadDto.OppijaReadHenkiloDto> list(
+    public Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {

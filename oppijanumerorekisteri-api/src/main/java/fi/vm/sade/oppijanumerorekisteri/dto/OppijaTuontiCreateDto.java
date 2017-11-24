@@ -17,7 +17,7 @@ import org.hibernate.validator.constraints.Email;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OppijatCreateDto {
+public class OppijaTuontiCreateDto {
 
     @Email
     @ApiModelProperty(value = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
@@ -26,6 +26,6 @@ public class OppijatCreateDto {
     @NotNull
     @Size(min = 1)
     @Valid
-    private List<OppijaCreateDto> henkilot;
+    private List<OppijaTuontiRiviCreateDto> henkilot;
 
 }

@@ -6,12 +6,12 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.TuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -84,9 +84,9 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public TuontiReadDto create(OppijatCreateDto createDto) {
+    public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto createDto) {
         // tallennetaan tuonti käsittelemättömänä kantaan
-        TuontiReadDto readDto = oppijaTuontiService.create(createDto);
+        OppijaTuontiPerustiedotReadDto readDto = oppijaTuontiService.create(createDto);
         // käynnistetään eräajon luonnin toinen vaihe toisessa säikeessä
         oppijaTuontiAsyncService.create(readDto.getId());
 
@@ -94,22 +94,22 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
-    public TuontiReadDto getTuontiById(Long id) {
+    public OppijaTuontiPerustiedotReadDto getTuontiById(Long id) {
         Tuonti entity = getTuontiEntity(id);
-        return mapper.map(entity, TuontiReadDto.class);
+        return mapper.map(entity, OppijaTuontiPerustiedotReadDto.class);
     }
 
     @Override
     @Transactional(propagation = Propagation.NEVER)
-    public TuontiReadDto create(Long id) {
+    public OppijaTuontiPerustiedotReadDto create(Long id) {
         Tuonti entity = getTuontiEntity(id);
         oppijaTuontiAsyncService.create(entity.getId());
-        return mapper.map(entity, TuontiReadDto.class);
+        return mapper.map(entity, OppijaTuontiPerustiedotReadDto.class);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public OppijatReadDto getOppijatByTuontiId(Long id) {
+    public OppijaTuontiReadDto getOppijatByTuontiId(Long id) {
         Tuonti entity = getTuontiEntity(id);
 
         // ladataan rivit yhdellä haulla
@@ -125,7 +125,7 @@ public class OppijaServiceImpl implements OppijaService {
         }
 
         // rivit on jo ladattu valmiiksi joten tämä ei aiheuta kyselyä/rivi
-        return mapper.map(entity, OppijatReadDto.class);
+        return mapper.map(entity, OppijaTuontiReadDto.class);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OppijaReadDto.OppijaReadHenkiloDto> list(OppijaTuontiCriteria criteria, int page, int count) {
+    public Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count) {
         prepare(criteria);
         OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
                 OppijaTuontiSort.Column.MODIFIED, OppijaTuontiSort.Column.ID);
@@ -151,7 +151,7 @@ public class OppijaServiceImpl implements OppijaService {
         int offset = (page - 1) * count;
         List<Henkilo> henkilot = henkiloJpaRepository.findBy(criteria, limit, offset, sort);
         long total = henkiloJpaRepository.countBy(criteria);
-        return Page.of(page, count, mapper.mapAsList(henkilot, OppijaReadDto.OppijaReadHenkiloDto.class), total);
+        return Page.of(page, count, mapper.mapAsList(henkilot, OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto.class), total);
     }
 
     @Override

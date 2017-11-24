@@ -2,8 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijatCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -39,22 +39,22 @@ public class OppijaControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private OppijatCreateDto getValidOppijatCreateDto() {
-        return OppijatCreateDto.builder()
+    private OppijaTuontiCreateDto getValidOppijatCreateDto() {
+        return OppijaTuontiCreateDto.builder()
                 .sahkoposti("example@example.com")
                 .henkilot(Stream.of(getValidOppijaCreateDto()).collect(toList()))
                 .build();
     }
 
-    private OppijaCreateDto getValidOppijaCreateDto() {
-        return OppijaCreateDto.builder()
+    private OppijaTuontiRiviCreateDto getValidOppijaCreateDto() {
+        return OppijaTuontiRiviCreateDto.builder()
                 .tunniste("henkilo1")
                 .henkilo(getValidHenkiloCreateDto())
                 .build();
     }
 
-    private OppijaCreateDto.OppijaCreateHenkiloDto getValidHenkiloCreateDto() {
-        return OppijaCreateDto.OppijaCreateHenkiloDto.builder()
+    private OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto getValidHenkiloCreateDto() {
+        return OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
                 .hetu("170897-935L")
                 .etunimet("etu")
                 .kutsumanimi("etu")
@@ -65,7 +65,7 @@ public class OppijaControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldWork() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
 
         mvc.perform(put("/oppija")
                 .accept(MediaType.APPLICATION_JSON)
@@ -73,13 +73,13 @@ public class OppijaControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(oppijaServiceMock).create(any(OppijatCreateDto.class));
+        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
     }
 
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         dto.setSahkoposti(null);
 
         mvc.perform(put("/oppija")
@@ -88,13 +88,13 @@ public class OppijaControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(oppijaServiceMock).create(any(OppijatCreateDto.class));
+        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
     }
 
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldValidateSahkoposti() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         dto.setSahkoposti("lsdkjd");
 
         mvc.perform(put("/oppija")
@@ -109,7 +109,7 @@ public class OppijaControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldRequireHenkilot() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         dto.setHenkilot(null);
 
         mvc.perform(put("/oppija")
@@ -124,7 +124,7 @@ public class OppijaControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldContainHenkilot() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         dto.setHenkilot(emptyList());
 
         mvc.perform(put("/oppija")
@@ -139,8 +139,8 @@ public class OppijaControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldValidateHetu() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
-        OppijaCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
         oppijaCreateDto.getHenkilo().setHetu("hetu1");
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
@@ -156,8 +156,8 @@ public class OppijaControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldValidateHenkilo() throws Exception {
-        OppijatCreateDto dto = getValidOppijatCreateDto();
-        OppijaCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
         oppijaCreateDto.getHenkilo().setOid(null);
         oppijaCreateDto.getHenkilo().setHetu(null);
         oppijaCreateDto.getHenkilo().setPassinumero(null);
