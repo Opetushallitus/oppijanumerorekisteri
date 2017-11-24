@@ -22,6 +22,7 @@ class App extends React.Component {
                 ?
                 <div className="oph-typography mainContainer">
                     <TopNavigation tabs={this.props.naviTabs}
+                                   rekisterinpitaja={this.props.rekisterinpitaja}
                                    pathName={this.props.pathname}
                                    backButton={this.props.backButton}
                                    L={this.props.l10n.localisations[this.props.locale]} />
@@ -71,6 +72,7 @@ const mapStateToProps = (state, ownProps) => {
         prequelsNotLoadedCount: state.prequels.notLoadedCount,
         locale: state.locale,
         omattiedotLoaded: state.omattiedot.initialized,
+        rekisterinpitaja: state.omattiedot.isAdmin,
     };
 };
 
