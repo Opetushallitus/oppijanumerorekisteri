@@ -7,6 +7,7 @@ export type NaviType = {
 export type NaviTab = {
     path: string,
     label: string,
+    disabled?: boolean,
 }
 
 export type UpdateNaviType = (Array<NaviType>, ?string, ?string) => void;

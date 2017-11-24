@@ -1,5 +1,5 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
@@ -8,19 +8,37 @@ import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from "../../common/icons/Loader";
 import PropertySingleton from '../../../globals/PropertySingleton'
 import Notifications from "../../common/notifications/Notifications";
+import type {Notification} from '../../common/notifications/Notifications'
 import {FloatingBar} from "./FloatingBar";
 import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
+import type {Locale} from '../../../types/locale.type'
+import type {L} from '../../../types/localisation.type'
 
-class HenkiloViewDuplikaatit extends React.Component {
+type Props = {
+    router: any,
+    locale: Locale,
+    L: L,
+    oidHenkilo: string,
+    henkilo: any,
+    koodisto: any,
+    notifications: Array<Notification>,
+    removeNotification: (string, string, ?string) => void,
+    linkHenkilos: (masterOid: string, slaveOids: Array<string>, notificationId: number) => any,
+    fetchHenkilo: (oid: string) => any,
+    fetchHenkiloDuplicates: (oid: string) => any,
+    ownOid: string,
+    vainLuku?: boolean,
+}
 
-    static propTypes = {
-        oidHenkilo: PropTypes.string,
-        henkilo: PropTypes.object,
-        koodisto: PropTypes.object,
-        notifications: PropTypes.array.isRequired,
-    };
+type State = {
+    selectedDuplicates: Array<string>,
+    notifications: Array<Notification>,
+    yksiloitySelected: boolean,
+}
 
-    constructor(props) {
+class HenkiloViewDuplikaatit extends React.Component<Props, State> {
+
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -67,6 +85,7 @@ class HenkiloViewDuplikaatit extends React.Component {
                     locale={locale}
                     classNames={{'person': true, master: true}}
                     isMaster={true}
+                    vainLuku={this.props.vainLuku}
                     setSelection={this.setSelection.bind(this)}/>
                 {duplicates.map((duplicate) =>
                     <DuplikaatitPerson
@@ -78,6 +97,7 @@ class HenkiloViewDuplikaatit extends React.Component {
                         key={duplicate.oidHenkilo}
                         isMaster={false}
                         classNames={{'person': true}}
+                        vainLuku={this.props.vainLuku}
                         setSelection={this.setSelection.bind(this)}
                         yksiloitySelected={this.state.yksiloitySelected}>
                     </DuplikaatitPerson>
@@ -88,10 +108,12 @@ class HenkiloViewDuplikaatit extends React.Component {
                                closeAction={(status, id) => this.props.removeNotification(status, 'duplicatesNotifications', id)}/>
 
             </div>
+            {!this.props.vainLuku &&
             <FloatingBar>
                 <Button disabled={this.state.selectedDuplicates.length === 0 || !enabledDuplikaattiView(this.props.oidHenkilo, this.props.henkilo.masterLoading, this.props.henkilo.master.oidHenkilo) || (this.props.oidHenkilo === this.props.ownOid)}
                         action={this._link.bind(this)}>{this.props.L['DUPLIKAATIT_YHDISTA']}</Button>
             </FloatingBar>
+            }
         </div>
     }
 

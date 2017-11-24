@@ -12,10 +12,12 @@ import type {Locale} from '../../types/locale.type'
 import type {Koodisto} from '../../types/domain/koodisto/koodisto.types'
 import OppijaCreateForm from './OppijaCreateForm'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
+import type {HenkiloDuplicate} from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate'
 import Notifications from '../../components/common/notifications/Notifications'
 import type {Notification, NotificationType} from '../../components/common/notifications/Notifications'
 import PropertySingleton from '../../globals/PropertySingleton'
 import type {L} from "../../types/localisation.type";
+import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit'
 
 type Props = {
     router: any,
@@ -31,6 +33,9 @@ type Props = {
 
 type State = {
     ilmoitukset: Array<Notification>,
+    oppija: HenkiloCreate,
+    naytaDuplikaatit: boolean,
+    duplikaatit: Array<HenkiloDuplicate>,
 }
 
 /**
@@ -41,7 +46,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
 
-        this.state = {ilmoitukset: []}
+        this.state = {ilmoitukset: [], oppija: {}, naytaDuplikaatit: false, duplikaatit: []}
     }
 
     componentDidMount() {
@@ -59,15 +64,26 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                     closeAction={this.poistaIlmoitus}
                     />
                 <h1>{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</h1>
+                {this.state.naytaDuplikaatit === false &&
                 <OppijaCreateForm
                     tallenna={this.tallenna}
-                    lisaaOppijaKayttajanOrganisaatioihin={this.lisaaOppijaKayttajanOrganisaatioihin}
                     locale={this.props.locale}
                     L={this.props.L}
                     sukupuoliKoodisto={this.props.sukupuoliKoodisto}
                     kieliKoodisto={this.props.kieliKoodisto}
                     kansalaisuusKoodisto={this.props.kansalaisuusKoodisto}
                     />
+                }
+                {this.state.naytaDuplikaatit === true &&
+                <OppijaCreateDuplikaatit
+                    locale={this.props.locale}
+                    L={this.props.L}
+                    tallenna={this.luoOppijaJaNavigoi}
+                    peruuta={this.peruuta}
+                    oppija={this.state.oppija}
+                    duplikaatit={this.state.duplikaatit}
+                    />
+                }
             </div>
         )
     }
@@ -84,23 +100,37 @@ class OppijaCreateContainer extends React.Component<Props, State> {
 
     tallenna = async (oppija: HenkiloCreate) => {
         try {
-            const url = urls.url('oppijanumerorekisteri-service.oppija')
-            const oid = await http.post(url, oppija)
-            this.props.router.push(`/oppija/${oid}`)
+            // tarkistetaan ennen luontia duplikaatit
+            const duplikaatit = await this.haeDuplikaatit(oppija)
+            if (duplikaatit.length > 0) {
+                this.setState({oppija: oppija, naytaDuplikaatit: true, duplikaatit: duplikaatit})
+            } else {
+                // luodaan oppija
+                this.luoOppijaJaNavigoi(oppija)
+            }
         } catch (error) {
-            this.lisaaIlmoitus('error', this.props.L['HENKILON_LUONTI_EPAONNISTUI'])
+            this.lisaaIlmoitus('error', 'HENKILON_LUONTI_EPAONNISTUI')
+            throw error
         }
     }
 
-    lisaaOppijaKayttajanOrganisaatioihin = async (henkiloOid: string) => {
-        try {
-            const url = urls.url('oppijanumerorekisteri-service.oppija.byOid.organisaatio', henkiloOid)
-            await http.post(url)
-            this.lisaaIlmoitus('ok', 'OPPIJAN_LIITTAMINEN_ORGANISAATIOON_ONNISTUI')
-        } catch (e) {
-            this.lisaaIlmoitus('error', 'OPPIJAN_LIITTAMINEN_ORGANISAATIOON_EPAONNISTUI')
-            throw e
-        }
+    luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {
+        const oid = await this.luoOppija(oppija)
+        this.props.router.push(`/oppija/${oid}`)
+    }
+
+    peruuta = () => {
+        window.location.reload()
+    }
+
+    haeDuplikaatit = async (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
+        const url = urls.url('oppijanumerorekisteri-service.henkilo.duplikaatit', oppija.etunimet, oppija.kutsumanimi, oppija.sukunimi)
+        return await http.get(url)
+    }
+
+    luoOppija = async (oppija: HenkiloCreate): Promise<string> => {
+        const url = urls.url('oppijanumerorekisteri-service.oppija')
+        return await http.post(url, oppija) // palauttaa oid
     }
 
 }

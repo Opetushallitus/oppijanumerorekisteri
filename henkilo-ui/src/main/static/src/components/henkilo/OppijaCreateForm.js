@@ -10,7 +10,6 @@ import KoodistoSelect from '../common/select/KoodistoSelect'
 import KielisyysSelect from '../common/select/KielisyysSelect'
 import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect'
 import {isValidKutsumanimi} from '../../validation/KutsumanimiValidator'
-import DuplikaatitButton from './duplikaatit/DuplikaatitButton'
 import type {L} from "../../types/localisation.type";
 
 type Error = {
@@ -25,7 +24,6 @@ type Form = {
 
 type Props = {
     tallenna: (HenkiloCreate) => Promise<void>,
-    lisaaOppijaKayttajanOrganisaatioihin: (henkiloOid: string) => Promise<*>,
     locale: Locale,
     L: L,
     sukupuoliKoodisto: Koodisto,
@@ -108,15 +106,6 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         onChange={this.onHenkiloInputChange}
                         />
                     {this.renderErrors('sukunimi')}
-                </div>
-                <div className="oph-field">
-                    <DuplikaatitButton
-                        L={this.props.L}
-                        etunimet={this.state.henkilo.etunimet}
-                        kutsumanimi={this.state.henkilo.kutsumanimi}
-                        sukunimi={this.state.henkilo.sukunimi}
-                        lisaaOppijaKayttajanOrganisaatioihin={this.lisaaOppijaKayttajanOrganisaatioihin}
-                        />
                 </div>
                 <div className="oph-field oph-field-is-required">
                     <label className="oph-label">
@@ -282,8 +271,11 @@ class OppijaCreateForm extends React.Component<Props, State> {
             this.setState({submitted: true, errors: errors})
         } else {
             await this.setState({disabled: true})
-            await this.props.tallenna(this.getHenkilo())
-            await this.setState({disabled: false})
+            try {
+                await this.props.tallenna(this.getHenkilo())
+            } catch (error) {
+                await this.setState({disabled: false})
+            }
         }
     }
 
@@ -301,11 +293,6 @@ class OppijaCreateForm extends React.Component<Props, State> {
                 }],
             }] : null,
         }
-    }
-
-    lisaaOppijaKayttajanOrganisaatioihin = async (henkiloOid: string) => {
-        await this.props.lisaaOppijaKayttajanOrganisaatioihin(henkiloOid)
-        this.setState(initialState)
     }
 
 }

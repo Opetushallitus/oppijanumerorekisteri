@@ -65,7 +65,6 @@ export default {
     "oppijanumerorekisteri-service.henkilo.current.asiointikieli": "oppijanumerorekisteri-service/henkilo/current/asiointiKieli",
     "oppijanumerorekisteri-service.oppija.yhteenveto": "oppijanumerorekisteri-service/oppija/yhteenveto",
     "oppijanumerorekisteri-service.oppija": "oppijanumerorekisteri-service/oppija",
-    "oppijanumerorekisteri-service.oppija.byOid.organisaatio": "oppijanumerorekisteri-service/oppija/$1/organisaatio",
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
 
     "organisaatio-service.baseUrl": "/",

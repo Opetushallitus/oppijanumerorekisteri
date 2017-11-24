@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 
 type Props = {
-    action?: (Event) => void,
+    action?: (Event) => any,
     disabled?: boolean,
     href?: string,
     confirm?: boolean,
