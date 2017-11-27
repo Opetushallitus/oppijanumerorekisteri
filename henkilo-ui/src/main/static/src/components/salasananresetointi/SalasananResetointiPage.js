@@ -11,6 +11,7 @@ import PropertySingleton from '../../globals/PropertySingleton';
 import {urls} from 'oph-urls-js';
 import {http} from "../../http";
 import WideRedNotification from "../common/notifications/WideRedNotification";
+import WideGreenNotification from "../common/notifications/WideGreenNotification";
 
 type Props = {
     L: L,
@@ -22,7 +23,8 @@ type Props = {
 type State = {
     password: string,
     passwordAgain: string,
-    toggleVirhe: boolean
+    toggleVirhe: boolean,
+    toggleSuccess: boolean
 }
 
 class SalasananResetointiPage extends React.Component<Props, State> {
@@ -34,7 +36,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         this.state = {
             password: '',
             passwordAgain: '',
-            toggleVirhe: false
+            toggleVirhe: false,
+            toggleSuccess: false
         }
     }
 
@@ -69,7 +72,11 @@ class SalasananResetointiPage extends React.Component<Props, State> {
                     <WideRedNotification message={this.props.L['SALASANA_VIRHE']}
                                          closeAction={() => this.setState({toggleVirhe: false})}></WideRedNotification>
                     : null }
-
+            
+                { this.state.toggleSuccess ? 
+                    <WideGreenNotification message={this.props.L['SALASANA_ONNISTUI']} closeAction={() => this.setState({toggleSuccess: false})}></WideGreenNotification>
+                    : null}
+                    
                 <button onClick={this.submitForm} disabled={!this.validPassword()}
                     className="oph-button oph-button-primary set-password">{this.props.L['SALASANA_RESETOINTI_ASETA']}</button>
             </form>
@@ -95,6 +102,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         const url = urls.url('kayttooikeus-service.salasana.resetointi', this.props.poletti);
         try {
             http.post(url, this.state.password);
+            this.setState({toggleSuccess: true});
         } catch (error) {
             this.setState({toggleVirhe: true});
             throw error;
