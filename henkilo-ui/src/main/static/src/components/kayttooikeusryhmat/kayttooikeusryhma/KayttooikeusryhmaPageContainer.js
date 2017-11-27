@@ -1,8 +1,7 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import {emptyNavi} from '../../navigation/navigationconfigurations';
-import {updateNavigation} from '../../../actions/navigation.actions';
+import {updateKayttooikeusryhmaNavigation} from '../../../actions/navigation.actions';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import {fetchOmattiedotOrganisaatios} from '../../../actions/omattiedot.actions';
 import {fetchOppilaitostyypit} from '../../../actions/koodisto.actions';
@@ -20,7 +19,7 @@ import type {L} from "../../../types/localisation.type";
 
 type Props = {
     L: L,
-    updateNavigation: (Array<any>, string) => void,
+    updateKayttooikeusryhmaNavigation: () => void,
     fetchKayttooikeusryhmaById: (id: string) => Promise<any>,
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => Promise<any>,
     fetchOmattiedotOrganisaatios: () => void,
@@ -43,7 +42,7 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
 
     componentDidMount() {
         const kayttooikeusryhmaId: ?string  = this.props.kayttooikeusryhmaId;
-        this.props.updateNavigation(emptyNavi, '/kayttooikeusryhmat');
+        this.props.updateKayttooikeusryhmaNavigation();
         this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
@@ -81,6 +80,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps, {
-    updateNavigation, fetchOmattiedotOrganisaatios, fetchKayttooikeusryhmaById, fetchPalveluRooliByKayttooikeusryhmaId,
+    updateKayttooikeusryhmaNavigation, fetchOmattiedotOrganisaatios, fetchKayttooikeusryhmaById, fetchPalveluRooliByKayttooikeusryhmaId,
     fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus, fetchKayttooikeusryhmaSlaves
 })(KayttooikeusryhmaPageContainer)

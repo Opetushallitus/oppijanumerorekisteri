@@ -1,7 +1,9 @@
 // @flow
-export type NaviType = {
-    path: string,
-    label: string,
+
+export type NaviOptions = {
+    backButton?: ?string,
+    isUnauthenticatedPage?: boolean,
+    bgColor?: ?string,
 }
 
 export type NaviTab = {
@@ -9,6 +11,3 @@ export type NaviTab = {
     label: string,
     disabled?: boolean,
 }
-
-export type UpdateNaviType = (Array<NaviType>, ?string, ?string) => void;
-

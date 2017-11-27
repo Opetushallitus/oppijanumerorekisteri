@@ -21,11 +21,7 @@ class App extends React.Component {
             this.isInitialized()
                 ?
                 <div className="oph-typography mainContainer">
-                    <TopNavigation tabs={this.props.naviTabs}
-                                   rekisterinpitaja={this.props.rekisterinpitaja}
-                                   pathName={this.props.pathname}
-                                   backButton={this.props.backButton}
-                                   L={this.props.l10n.localisations[this.props.locale]} />
+                    <TopNavigation pathName={this.props.pathName} />
                     <div>
                         {this.props.children}
                     </div>
@@ -45,9 +41,6 @@ class App extends React.Component {
     }
 
     static propTypes = {
-        // Injected by React Redux
-        pathname: PropTypes.string.isRequired,
-
         // Injected by React Router
         children: PropTypes.node,
 
@@ -64,15 +57,12 @@ class App extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        pathname: ownProps.location.pathname,
         frontProperties: state.frontProperties,
         l10n: state.l10n,
-        naviTabs: state.naviState.naviTabs,
-        backButton: state.naviState.backButton,
         prequelsNotLoadedCount: state.prequels.notLoadedCount,
         locale: state.locale,
         omattiedotLoaded: state.omattiedot.initialized,
-        rekisterinpitaja: state.omattiedot.isAdmin,
+        pathName: ownProps.location.pathname,
     };
 };
 

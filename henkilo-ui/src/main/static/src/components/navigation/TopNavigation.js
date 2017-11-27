@@ -1,44 +1,63 @@
 // @flow
 import React from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import classNames from 'classnames/bind';
 import ophLogo from '../../img/logo_oph.svg';
 import okmLogo from '../../img/logo_okm.png';
 import type { L } from '../../types/localisation.type'
-import type { NaviTab } from '../../types/navigation.type'
+import type {NaviOptions, NaviTab} from '../../types/navigation.type'
+import Script from 'react-load-script';
+import {urls} from 'oph-urls-js';
 
 import './TopNavigation.css';
 
 type Props = {
-    tabs: Array<NaviTab>,
+    naviTabs: Array<NaviTab>,
     pathName: ?string,
-    backButton: ?string,
     L: L,
-    rekisterinpitaja: boolean,
+    isRekisterinpitaja: boolean,
+    naviOptions: NaviOptions,
 }
 
-const TopNavigation = ({tabs, pathName, backButton, L, rekisterinpitaja}: Props) => {
+const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja}: Props) => {
+    const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
     return (
         <div id="topNavigation">
-            { backButton ? <Link className="oph-link oph-link-big" to={backButton} >&#8701; {L['TAKAISIN_LINKKI']}</Link> : null }
-            { tabs.length
-                ? <ul className="tabs">
-                    {tabs
-                        .filter(data =>  !data.vainRekisterinpitajalle || rekisterinpitaja)
-                        .map((data, index) => {
+            {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
+            { !isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')}/> }
+            { naviOptions.backButton ? <Link className="oph-link oph-link-big" to={naviOptions.backButton} >&#8701; {L['TAKAISIN_LINKKI']}</Link> : null }
+            { naviTabs.length > 0
+            && <ul className="tabs">
+                { naviTabs
+                    .filter(data => !data.vainRekisterinpitajalle || isRekisterinpitaja)
+                    .map((data, index) => {
                         const className = classNames({
                             'active': data.path === pathName,
                             'disabled-link': data.disabled
                         });
                         return <li key={index}>
-                            <Link className={className} to={data.path} >{data.label}</Link>
+                            <Link className={className} to={data.path}>{data.label}</Link>
                         </li>;
-                    }
-                    )}
-                </ul>
-                : backButton === null && <div><img src={ophLogo} alt="oph logo" id="ophlogo"/> <img src={okmLogo} alt="okm logo" id="okmlogo"/></div>}
+                    })
+                }
+            </ul>
+            }
+            { isNoAuthenticationPage && <div><img src={ophLogo} alt="oph logo" id="ophlogo"/> <img src={okmLogo} alt="okm logo" id="okmlogo"/></div>}
         </div>
-    )
+    );
 };
 
-export default TopNavigation;
+TopNavigation.propTypes = {
+    pathName: PropTypes.string.isRequired,
+};
+
+const mapStateToProps = (state, ownProps) => ({
+    L: state.l10n.localisations[state.locale],
+    naviTabs: state.naviState.naviTabs,
+    isRekisterinpitaja: state.omattiedot.isAdmin,
+    naviOptions: state.naviState.naviOptions,
+});
+
+export default connect(mapStateToProps, {})(TopNavigation);

@@ -1,22 +1,19 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import {updateNavigation} from "../../../actions/navigation.actions";
+import {updateUnauthenticatedNavigation} from "../../../actions/navigation.actions";
 import './InfoPage.css';
-import background from '../../../img/unauthenticated_background.jpg';
-import {emptyNavi} from "../../navigation/navigationconfigurations";
-import type {UpdateNaviType} from "../../../types/navigation.type";
 
 
 type Props = {
     children: any,
     topicLocalised: string,
-    updateNavigation: UpdateNaviType,
+    updateUnauthenticatedNavigation: () => void,
 }
 
 class InfoPage extends React.Component<Props> {
     componentWillMount() {
-        this.props.updateNavigation(emptyNavi, null, background);
+        this.props.updateUnauthenticatedNavigation();
     }
 
     render() {
@@ -31,4 +28,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 });
 
-export default connect(mapStateToProps, {updateNavigation})(InfoPage);
+export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(InfoPage);

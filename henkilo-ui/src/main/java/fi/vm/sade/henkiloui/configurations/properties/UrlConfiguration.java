@@ -26,6 +26,7 @@ public class UrlConfiguration extends OphProperties {
         this.addUrlIfConfigured("front.kayttooikeus.baseUrl", "kayttooikeus-service.baseUrl");
         this.addUrlIfConfigured("front.oppijanumerorekisteri.baseUrl", "oppijanumerorekisteri-service.baseUrl");
         this.addUrlIfConfigured("front.cas.baseUrl", "cas.baseUrl");
+        this.addUrlIfConfigured("front.virkailija-raamit.baseUrl", "virkailija-raamit.baseUrl");
     }
 
     private void addUrlIfConfigured(String configFilePath, String frontPropertyPath) {

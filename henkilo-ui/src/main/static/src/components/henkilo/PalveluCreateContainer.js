@@ -7,10 +7,12 @@ import PalveluCreateForm from './PalveluCreateForm'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 import type {L} from "../../types/localisation.type";
+import {updateBackbuttonEmptyNavigation} from "../../actions/navigation.actions";
 
 type Props = {
     router: any,
     L: L,
+    updateBackbuttonEmptyNavigation: (string) => void,
 }
 
 type State = {
@@ -37,9 +39,13 @@ class PalveluCreateContainer extends React.Component<Props, State> {
         )
     }
 
+    componentDidMount() {
+        this.props.updateBackbuttonEmptyNavigation('/henkilohaku');
+    }
+
     setError = (error) => {
         this.setState({error: error});
-    }
+    };
 
     onSubmit = async (henkilo : HenkiloCreate) => {
         try {
@@ -48,18 +54,18 @@ class PalveluCreateContainer extends React.Component<Props, State> {
         } catch (error) {
             this.setError(this.props.L['HENKILON_LUONTI_EPAONNISTUI']);
         }
-    }
+    };
 
     createHenkilo = async (henkilo : HenkiloCreate) => {
         const henkiloUrl = urls.url('oppijanumerorekisteri-service.henkilo');
         return await http.post(henkiloUrl, henkilo);
-    }
+    };
 
     navigateToHenkilo = (oid) => {
         this.props.router.push(`/virkailija/${oid}`);
     }
 
-};
+}
 
 const mapStateToProps = (state) => {
     return {
@@ -67,4 +73,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {})(PalveluCreateContainer);
+export default connect(mapStateToProps, {updateBackbuttonEmptyNavigation})(PalveluCreateContainer);

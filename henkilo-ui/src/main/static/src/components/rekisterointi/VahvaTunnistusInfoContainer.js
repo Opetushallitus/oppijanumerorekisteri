@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import VahvaTunnistusInfoPage from "./VahvaTunnistusInfoPage";
 import VirhePage from "../common/page/VirhePage";
+import {updateUnauthenticatedNavigation} from '../../actions/navigation.actions';
 
 class VahvaTunnistusInfoContainer extends React.Component {
     render() {
@@ -19,6 +20,10 @@ class VahvaTunnistusInfoContainer extends React.Component {
             return <VahvaTunnistusInfoPage {...this.props} />;
         }
     }
+
+    componentDidMount() {
+        this.props.updateUnauthenticatedNavigation();
+    }
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -28,4 +33,4 @@ const mapStateToProps = (state, ownProps) => ({
     virhe: ownProps.route.path.indexOf('/vahvatunnistusinfo/virhe/') !== -1,
 });
 
-export default connect(mapStateToProps, {})(VahvaTunnistusInfoContainer);
+export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(VahvaTunnistusInfoContainer);

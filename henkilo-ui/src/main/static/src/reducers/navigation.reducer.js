@@ -3,13 +3,13 @@ import {
     FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_L10N_SUCCESS, LOCATION_CHANGE, UPDATE_NAVIGATION
 } from "../actions/actiontypes";
 import {mainNavigation} from "../components/navigation/navigationconfigurations";
-import type {NaviTab} from "../types/navigation.type";
+import type {NaviOptions, NaviTab} from "../types/navigation.type";
 import type {L, L10n} from "../types/localisation.type";
 import type {Locale} from "../types/locale.type";
 
 type State = {
     naviTabs: Array<NaviTab>,
-    backButton: ?string,
+    naviOptions: NaviOptions,
     l10n: L10n,
     L: L,
     lastPathName: ?string,
@@ -17,9 +17,8 @@ type State = {
 
 type Action = {
     type: string,
-    bgColor: ?string,
     naviTabs: Array<NaviTab>,
-    backLocation: ?string,
+    naviOptions: NaviOptions,
     payload: any, // redux native
     data: L10n,
     lang: Locale
@@ -49,28 +48,42 @@ const urlToTitle = {
     "vahvatunnistusinfo": "TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN", // vahvatunnistusinfo/:locale/:loginToken
 };
 
-export const naviState = (state: State = {naviTabs: [], backButton: null, L: {}, l10n: {fi: {}, sv: {}, en: {}}, lastPathName: null}, action: Action) => {
+const initialState = {
+    naviTabs: [],
+    naviOptions: {
+        backButton: null,
+        isUnauthenticatedPage: true,
+        bgColor: null,
+    },
+    L: {},
+    l10n: {
+        fi: {},
+        sv: {},
+        en: {}
+    },
+    lastPathName: null,
+};
+
+export const naviState = (state: State = initialState , action: Action) => {
     switch (action.type) {
         case UPDATE_NAVIGATION:
             return onUpdateNavigation(state, action);
         case LOCATION_CHANGE:
             return onLocationChange(state, action);
-
         // These two are needed for localizing page titles
         // L10N is guaranteed to be called first. Check frontProperties.actions.js for more information.
         case FETCH_L10N_SUCCESS:
             return Object.assign({}, state, {l10n: action.data});
         case FETCH_HENKILO_ASIOINTIKIELI_SUCCESS:
             return Object.assign({}, state, {L: state.l10n[action.lang]});
-
         default:
             return state;
     }
 };
 
-const onUpdateNavigation = (state, action) => {
-    if (action.bgColor && action.bgColor.endsWith('.jpg')) {
-        window.document.body.style.backgroundImage = `url('${action.bgColor}')`;
+const onUpdateNavigation = (state: State, action: Action) => {
+    if (action.naviOptions.bgColor && action.naviOptions.bgColor.endsWith('.jpg')) {
+        window.document.body.style.backgroundImage = `url('${action.naviOptions.bgColor}')`;
         window.document.body.style.backgroundRepeat = 'no-repeat';
         window.document.body.style.backgroundSize = 'cover';
         window.document.body.style.backgroundAttachment = 'fixed';
@@ -78,16 +91,22 @@ const onUpdateNavigation = (state, action) => {
     }
     else {
         // If bgColor is not provided guess by if component has updated navibar on mount
-        window.document.body.bgColor = action.bgColor
-            ? action.bgColor
+        window.document.body.bgColor = action.naviOptions.bgColor
+            ? action.naviOptions.bgColor
             : action.naviTabs.length
                 ? "#f6f4f0"
                 : "white";
     }
-    return Object.assign({}, state, {naviTabs: action.naviTabs, backButton: action.backLocation});
+    return Object.assign({}, state, {
+        naviTabs: action.naviTabs,
+        naviOptions: {
+            ...state.naviOptions,
+            ...action.naviOptions,
+        },
+    });
 };
 
-const onLocationChange = (state, action) => {
+const onLocationChange = (state: State, action: Action) => {
     // Change document title
     const pathname = getPathName(state, action.payload);
     const defaultTitle = state.L['TITLE_DEFAULT'];
@@ -100,7 +119,17 @@ const onLocationChange = (state, action) => {
     // Default navigation always before component mounts (only if location changes)
     if (action.payload && locationChanges(state, action)) {
         window.document.body.bgColor = "white";
-        return Object.assign({}, state, {naviTabs: mainNavigation, backButton: null, lastPathName: pathname});
+        return Object.assign({}, state, {
+            naviTabs: mainNavigation,
+            naviOptions: {
+                ...state.naviOptions,
+                ...action.naviOptions,
+                // deep pages are expected to be eather unauthorized or request their own navigation.
+                isUnauthenticatedPage: action.payload.pathname.split('/').length > 2,
+                backButton: null,
+            },
+            lastPathName: pathname,
+        });
     }
     return Object.assign({}, state, {lastPathName: pathname});
 };

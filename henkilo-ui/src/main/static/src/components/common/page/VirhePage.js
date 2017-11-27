@@ -5,10 +5,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import Button from "../button/Button";
 import type {L} from "../../../types/localisation.type";
-import type {UpdateNaviType} from "../../../types/navigation.type";
-import background from '../../../img/unauthenticated_background.jpg';
-import {emptyNavi} from "../../navigation/navigationconfigurations";
-import {updateNavigation} from "../../../actions/navigation.actions";
+import {updateUnauthenticatedNavigation} from "../../../actions/navigation.actions";
 
 type Props = {
     topic: string,
@@ -16,12 +13,12 @@ type Props = {
     buttonText: string,
     theme: string,
     L: L,
-    updateNavigation: UpdateNaviType,
+    updateUnauthenticatedNavigation: () => void,
 }
 
 class VirhePage extends React.Component<Props> {
     componentWillMount() {
-        this.props.updateNavigation(emptyNavi, null, background);
+        this.props.updateUnauthenticatedNavigation();
     }
     render() {
         const classname = this.props.theme === 'gray' ? 'virhePageVirheWrapperGray' : 'virhePageVirheWrapper';
@@ -48,4 +45,4 @@ const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {updateNavigation})(VirhePage);
+export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(VirhePage);

@@ -18,6 +18,7 @@ import type {Notification, NotificationType} from '../../components/common/notif
 import PropertySingleton from '../../globals/PropertySingleton'
 import type {L} from "../../types/localisation.type";
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit'
+import {updateDefaultNavigation} from "../../actions/navigation.actions";
 
 type Props = {
     router: any,
@@ -44,14 +45,16 @@ type State = {
 class OppijaCreateContainer extends React.Component<Props, State> {
 
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {ilmoitukset: [], oppija: {}, naytaDuplikaatit: false, duplikaatit: []}
     }
 
     componentDidMount() {
-        this.props.fetchSukupuoliKoodisto()
-        this.props.fetchKieliKoodisto()
+        this.props.updateDefaultNavigation();
+
+        this.props.fetchSukupuoliKoodisto();
+        this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto()
     }
 
@@ -89,19 +92,19 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     }
 
     lisaaIlmoitus = (type: NotificationType, messageKey: string) => {
-        const ilmoitus = {id: '' + PropertySingleton.getNewId(), type: type, notL10nMessage: messageKey}
+        const ilmoitus = {id: '' + PropertySingleton.getNewId(), type: type, notL10nMessage: messageKey};
         this.setState({ilmoitukset: [...this.state.ilmoitukset, ilmoitus]})
-    }
+    };
 
     poistaIlmoitus = (type: NotificationType, id: ?string) => {
-        const ilmoitukset = this.state.ilmoitukset.filter(ilmoitus => ilmoitus.id !== id)
+        const ilmoitukset = this.state.ilmoitukset.filter(ilmoitus => ilmoitus.id !== id);
         this.setState({ilmoitukset: ilmoitukset})
-    }
+    };
 
     tallenna = async (oppija: HenkiloCreate) => {
         try {
             // tarkistetaan ennen luontia duplikaatit
-            const duplikaatit = await this.haeDuplikaatit(oppija)
+            const duplikaatit = await this.haeDuplikaatit(oppija);
             if (duplikaatit.length > 0) {
                 this.setState({oppija: oppija, naytaDuplikaatit: true, duplikaatit: duplikaatit})
             } else {
@@ -109,27 +112,27 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 this.luoOppijaJaNavigoi(oppija)
             }
         } catch (error) {
-            this.lisaaIlmoitus('error', 'HENKILON_LUONTI_EPAONNISTUI')
+            this.lisaaIlmoitus('error', 'HENKILON_LUONTI_EPAONNISTUI');
             throw error
         }
-    }
+    };
 
     luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {
-        const oid = await this.luoOppija(oppija)
+        const oid = await this.luoOppija(oppija);
         this.props.router.push(`/oppija/${oid}`)
-    }
+    };
 
     peruuta = () => {
         window.location.reload()
-    }
+    };
 
     haeDuplikaatit = async (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
-        const url = urls.url('oppijanumerorekisteri-service.henkilo.duplikaatit', oppija.etunimet, oppija.kutsumanimi, oppija.sukunimi)
+        const url = urls.url('oppijanumerorekisteri-service.henkilo.duplikaatit', oppija.etunimet, oppija.kutsumanimi, oppija.sukunimi);
         return await http.get(url)
-    }
+    };
 
     luoOppija = async (oppija: HenkiloCreate): Promise<string> => {
-        const url = urls.url('oppijanumerorekisteri-service.oppija')
+        const url = urls.url('oppijanumerorekisteri-service.oppija');
         return await http.post(url, oppija) // palauttaa oid
     }
 
@@ -143,10 +146,11 @@ const mapStateToProps = (state) => {
         kieliKoodisto: state.koodisto.kieliKoodisto,
         kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
     }
-}
+};
 
 export default connect(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
+    updateDefaultNavigation,
 })(OppijaCreateContainer)
