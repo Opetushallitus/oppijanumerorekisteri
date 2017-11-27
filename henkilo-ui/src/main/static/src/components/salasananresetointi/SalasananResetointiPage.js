@@ -10,6 +10,7 @@ import {emptyNavi} from "../navigation/navigationconfigurations";
 import PropertySingleton from '../../globals/PropertySingleton';
 import {urls} from 'oph-urls-js';
 import {http} from "../../http";
+import WideRedNotification from "../common/notifications/WideRedNotification";
 
 type Props = {
     L: L,
@@ -20,7 +21,8 @@ type Props = {
 
 type State = {
     password: string,
-    passwordAgain: string
+    passwordAgain: string,
+    toggleVirhe: boolean
 }
 
 class SalasananResetointiPage extends React.Component<Props, State> {
@@ -31,7 +33,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
         this.state = {
             password: '',
-            passwordAgain: ''
+            passwordAgain: '',
+            toggleVirhe: false
         }
     }
 
@@ -40,7 +43,6 @@ class SalasananResetointiPage extends React.Component<Props, State> {
     }
 
     render() {
-        console.log(this.props.poletti);
         return <div className="wrapper" id="salasana-resetointi">
             <form >
                 <h3>{this.props.L['SALASANA_RESETOINTI_ASETA']}</h3>
@@ -58,6 +60,15 @@ class SalasananResetointiPage extends React.Component<Props, State> {
                     <input id="password-again" className="oph-input" type="password" value={this.state.passwordAgain}
                            onChange={(event) => this.setPasswordAgain(event)}/>
                 </div>
+
+                <div className="oph-field oph-field-inline">
+                    <div className="oph-field-text">{this.props.L['SALASANA_OHJE']}</div>
+                </div>
+
+                { this.state.toggleVirhe ?
+                    <WideRedNotification message={this.props.L['SALASANA_VIRHE']}
+                                         closeAction={() => this.setState({toggleVirhe: false})}></WideRedNotification>
+                    : null }
 
                 <button onClick={this.submitForm} disabled={!this.validPassword()}
                     className="oph-button oph-button-primary set-password">{this.props.L['SALASANA_RESETOINTI_ASETA']}</button>
@@ -79,14 +90,15 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         this.setState({passwordAgain: event.target.value});
     };
 
-    submitForm = async () => {
+    submitForm = async (event) => {
+        event.preventDefault();
         const url = urls.url('kayttooikeus-service.salasana.resetointi', this.props.poletti);
         try {
             http.post(url, this.state.password);
         } catch (error) {
+            this.setState({toggleVirhe: true});
             throw error;
         }
-        console.log('submitting', this.props.poletti);
     }
 
 }
