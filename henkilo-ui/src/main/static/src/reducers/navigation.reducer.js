@@ -75,7 +75,7 @@ export const naviState = (state: State = initialState , action: Action) => {
         case FETCH_L10N_SUCCESS:
             return Object.assign({}, state, {l10n: action.data});
         case FETCH_HENKILO_ASIOINTIKIELI_SUCCESS:
-            return Object.assign({}, state, {L: state.l10n[action.lang]});
+            return Object.assign({}, state, {L: state.l10n[action.lang] || {}});
         default:
             return state;
     }

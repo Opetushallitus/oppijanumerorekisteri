@@ -5,8 +5,7 @@ import {connect} from 'react-redux';
 import type {Locale} from '../../types/locale.type';
 import type {L} from '../../types/localisation.type';
 import './SalasananResetointiPage.css';
-import {updateNavigation} from "../../actions/navigation.actions";
-import {emptyNavi} from "../navigation/navigationconfigurations";
+import {updateUnauthenticatedNavigation} from "../../actions/navigation.actions";
 import PropertySingleton from '../../globals/PropertySingleton';
 import {urls} from 'oph-urls-js';
 import {http} from "../../http";
@@ -16,7 +15,7 @@ import WideGreenNotification from "../common/notifications/WideGreenNotification
 type Props = {
     L: L,
     locale: Locale,
-    updateNavigation: (any, any, string) => any,
+    updateUnauthenticatedNavigation: () => any,
     poletti: string
 }
 
@@ -41,8 +40,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         }
     }
 
-    componentWillMount() {
-        this.props.updateNavigation(emptyNavi, null, '#f6f4f0');
+    componentDidMount() {
+        this.props.updateUnauthenticatedNavigation();
     }
 
     render() {
@@ -70,11 +69,11 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
                 { this.state.toggleVirhe ?
                     <WideRedNotification message={this.props.L['SALASANA_VIRHE']}
-                                         closeAction={() => this.setState({toggleVirhe: false})}></WideRedNotification>
+                                         closeAction={() => this.setState({toggleVirhe: false})}/>
                     : null }
             
                 { this.state.toggleSuccess ? 
-                    <WideGreenNotification message={this.props.L['SALASANA_ONNISTUI']} closeAction={() => this.setState({toggleSuccess: false})}></WideGreenNotification>
+                    <WideGreenNotification message={this.props.L['SALASANA_ONNISTUI']} closeAction={() => this.setState({toggleSuccess: false})}/>
                     : null}
                     
                 <button onClick={this.submitForm} disabled={!this.validPassword()}
@@ -120,4 +119,4 @@ const mapStateToProps = (state, ownProps) => {
 
 };
 
-export default connect(mapStateToProps, {updateNavigation})(SalasananResetointiPage);
+export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(SalasananResetointiPage);
