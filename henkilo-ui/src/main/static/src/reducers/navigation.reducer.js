@@ -41,7 +41,7 @@ const urlToTitle = {
     "virkailija": "TITLE_VIRKAILIJA", // virkailija/:oid
     "admin": "TITLE_ADMIN", // admin/:oid
     "oppija/luonti": "TITLE_OPPIJA_LUONTI",
-    "palvelu/luonti": "TITLE_PALVELUKAYTTAJIEN_LUONTI",
+    "palvelukayttaja/luonti": "TITLE_PALVELUKAYTTAJIEN_LUONTI",
     "vtjvertailu": "TITLE_VTJ_VERTAILU", // :henkiloType/:oid/vtjvertailu
     "duplikaatit": "TITLE_DUPLIKAATTIHAKU", // :henkiloType/:oid/duplikaatit
     "vahvatunnistusinfo/virhe": "TITLE_VIRHESIVU", // vahvatunnistusinfo/virhe/:locale/:loginToken

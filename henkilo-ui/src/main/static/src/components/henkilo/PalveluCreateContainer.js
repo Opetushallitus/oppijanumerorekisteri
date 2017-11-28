@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import {http} from '../../http'
 import {urls} from 'oph-urls-js'
 import PalveluCreateForm from './PalveluCreateForm'
-import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
+import type { PalvelukayttajaCreate, PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 import type {L} from "../../types/localisation.type";
 import {updateBackbuttonEmptyNavigation} from "../../actions/navigation.actions";
@@ -47,21 +47,22 @@ class PalveluCreateContainer extends React.Component<Props, State> {
         this.setState({error: error});
     };
 
-    onSubmit = async (henkilo : HenkiloCreate) => {
+    onSubmit = async (palvelukayttajaCreate: PalvelukayttajaCreate): Promise<void> => {
         try {
-            const henkiloOid = await this.createHenkilo(henkilo);
-            this.navigateToHenkilo(henkiloOid);
+            const palvelukayttajaRead = await this.createPalvelukayttaja(palvelukayttajaCreate);
+            this.navigateToVirkailija(palvelukayttajaRead.oid);
         } catch (error) {
             this.setError(this.props.L['HENKILON_LUONTI_EPAONNISTUI']);
+            throw error
         }
     };
 
-    createHenkilo = async (henkilo : HenkiloCreate) => {
-        const henkiloUrl = urls.url('oppijanumerorekisteri-service.henkilo');
-        return await http.post(henkiloUrl, henkilo);
-    };
+    createPalvelukayttaja = async (palvelukayttaja: PalvelukayttajaCreate): Promise<PalvelukayttajaRead> => {
+        const url = urls.url('kayttooikeus-service.palvelukayttaja');
+        return await http.post(url, palvelukayttaja);
+    }
 
-    navigateToHenkilo = (oid) => {
+    navigateToVirkailija = (oid) => {
         this.props.router.push(`/virkailija/${oid}`);
     }
 
