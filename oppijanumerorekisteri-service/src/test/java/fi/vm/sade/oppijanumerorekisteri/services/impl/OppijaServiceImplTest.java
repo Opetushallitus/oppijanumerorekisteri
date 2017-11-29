@@ -2,7 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -95,7 +95,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
+        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
@@ -111,7 +111,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
+        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
@@ -127,7 +127,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
+        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
         verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
@@ -164,10 +164,10 @@ public class OppijaServiceImplTest {
         masters.put("oid1", henkilo1master);
         when(henkiloJpaRepositoryMock.findMastersBySlaveOids(any()))
                 .thenReturn(masters);
-        when(mapperMock.map(any(Henkilo.class), eq(OppijaMuutosDto.class)))
+        when(mapperMock.map(any(Henkilo.class), eq(OppijaReadDto.class)))
                 .thenAnswer((InvocationOnMock invocation) -> {
                     Henkilo entity = invocation.getArgument(0);
-                    OppijaMuutosDto dto = new OppijaMuutosDto();
+                    OppijaReadDto dto = new OppijaReadDto();
                     dto.setOid(entity.getOidHenkilo());
                     return dto;
         });
@@ -175,7 +175,7 @@ public class OppijaServiceImplTest {
         int page = 1;
         int count = 20;
 
-        Page<MasterHenkiloDto<OppijaMuutosDto>> henkilot = oppijaServiceImpl.listMastersBy(criteria, page, count);
+        Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(criteria, page, count);
 
         assertThat(henkilot).extracting(MasterHenkiloDto::getOid).containsExactly("oid1", "oid2");
         assertThat(henkilot).extracting(t -> t.getMaster().getOid()).containsExactly("oid1-master", "oid2");

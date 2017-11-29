@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
@@ -78,7 +78,7 @@ public interface OppijaService {
      * @param count sivun koko
      * @return henkilöt
      */
-    Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count);
+    Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count);
 
     /**
      * Palauttaa annettujen hakukriteerien mukaisen henkilöiden master-tiedot.
@@ -88,7 +88,7 @@ public interface OppijaService {
      * @param count sivun koko
      * @return masterit
      */
-    Page<MasterHenkiloDto<OppijaMuutosDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count);
+    Page<MasterHenkiloDto<OppijaReadDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count);
 
     /**
      * Lisää nykyisen käyttäjän organisaatiot oppijalle. Jos oppija on jo

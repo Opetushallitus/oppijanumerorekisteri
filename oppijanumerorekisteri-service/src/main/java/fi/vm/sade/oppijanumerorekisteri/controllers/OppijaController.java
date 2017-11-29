@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
@@ -101,7 +101,7 @@ public class OppijaController {
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
-    public Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(
+    public Page<OppijaListDto> list(
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
@@ -113,7 +113,7 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Muuttuneiden oppijoiden haku",
             notes = "Muuttuneet oppijat listataan vanhimmasta uusimpaan.")
-    public Page<MasterHenkiloDto<OppijaMuutosDto>> getMuuttuneet(
+    public Page<MasterHenkiloDto<OppijaReadDto>> getMuuttuneet(
             @RequestParam @ApiParam(value = "ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z", required = true) DateTime muokattuJalkeen,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(10000) int count) {
