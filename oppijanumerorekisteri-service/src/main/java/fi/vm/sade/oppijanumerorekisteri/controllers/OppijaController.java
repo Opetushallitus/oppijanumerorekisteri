@@ -13,12 +13,10 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.joda.time.DateTime;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -114,11 +112,9 @@ public class OppijaController {
     @ApiOperation(value = "Muuttuneiden oppijoiden haku",
             notes = "Muuttuneet oppijat listataan vanhimmasta uusimpaan.")
     public Page<MasterHenkiloDto<OppijaReadDto>> getMuuttuneet(
-            @RequestParam @ApiParam(value = "ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z", required = true) DateTime muokattuJalkeen,
+            OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(10000) int count) {
-        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
-        criteria.setMuokattuJalkeen(muokattuJalkeen);
         return oppijaService.listMastersBy(criteria, page, count);
     }
 
