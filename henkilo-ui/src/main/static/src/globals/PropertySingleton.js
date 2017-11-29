@@ -10,6 +10,7 @@ class PropertySingleton {
             SAHKOPOSTI: 'YHTEYSTIETO_SAHKOPOSTI',
             KAYTTOOIKEUS_SULJETTU: 'SULJETTU',
             specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\\/<>?]/,
+            numberRegex: /\d/,
             minimunPasswordLength: 8,
         };
     }

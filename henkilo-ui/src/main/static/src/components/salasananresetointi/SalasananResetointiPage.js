@@ -23,7 +23,11 @@ type State = {
     password: string,
     passwordAgain: string,
     toggleVirhe: boolean,
-    toggleSuccess: boolean
+    toggleSuccess: boolean,
+    showLoginRedirect: boolean,
+    showSetPassword: boolean,
+    showNotFoundError: boolean,
+    showForbiddenError: boolean
 }
 
 class SalasananResetointiPage extends React.Component<Props, State> {
@@ -36,7 +40,11 @@ class SalasananResetointiPage extends React.Component<Props, State> {
             password: '',
             passwordAgain: '',
             toggleVirhe: false,
-            toggleSuccess: false
+            toggleSuccess: false,
+            showLoginRedirect: false,
+            showSetPassword: true,
+            showNotFoundError: false,
+            showForbiddenError: false
         }
     }
 
@@ -45,6 +53,14 @@ class SalasananResetointiPage extends React.Component<Props, State> {
     }
 
     render() {
+        const baseErrorMessage = this.props.L['SALASANA_VIRHE'];
+        let errorMessage = '';
+        if( this.state.showNotFoundError ) {
+            errorMessage = `${baseErrorMessage} ${this.props.L['SALASANA_POLETTIA_EI_LOYTYNYT']}`;
+        } else if (this.state.showForbiddenError) {
+            errorMessage = `${baseErrorMessage} ${this.props.L['SALASANA_POLETTI_EI_VOIMASSA']}`;
+        }
+
         return <div className="wrapper" id="salasana-resetointi">
             <form >
                 <h3>{this.props.L['SALASANA_RESETOINTI_ASETA']}</h3>
@@ -63,21 +79,30 @@ class SalasananResetointiPage extends React.Component<Props, State> {
                            onChange={(event) => this.setPasswordAgain(event)}/>
                 </div>
 
+
                 <div className="oph-field oph-field-inline">
                     <div className="oph-field-text">{this.props.L['SALASANA_OHJE']}</div>
                 </div>
 
                 { this.state.toggleVirhe ?
-                    <WideRedNotification message={this.props.L['SALASANA_VIRHE']}
+                    <WideRedNotification message={errorMessage}
                                          closeAction={() => this.setState({toggleVirhe: false})}/>
                     : null }
             
                 { this.state.toggleSuccess ? 
                     <WideGreenNotification message={this.props.L['SALASANA_ONNISTUI']} closeAction={() => this.setState({toggleSuccess: false})}/>
                     : null}
-                    
-                <button onClick={this.submitForm} disabled={!this.validPassword()}
+
+                { this.state.showSetPassword ?
+                <button onClick={(event) => this.submitForm(event)} disabled={!this.validPassword()}
                     className="oph-button oph-button-primary set-password">{this.props.L['SALASANA_RESETOINTI_ASETA']}</button>
+                    : null }
+
+                { this.state.showLoginRedirect ?
+                <button className="oph-button oph-button-primary set-password"
+                        onClick={(event) => this.toLogin(event)}>{this.props.L['SALASANA_KIRJAUTUMISEEN']}</button>
+                    : null }
+
             </form>
         </div>
     }
@@ -85,7 +110,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
     validPassword() {
         return this.state.password === this.state.passwordAgain
             && this.state.password.length >= PropertySingleton.getState().minimunPasswordLength
-            && PropertySingleton.getState().specialCharacterRegex.exec(this.state.password) !== null;
+            && PropertySingleton.getState().specialCharacterRegex.exec(this.state.password) !== null
+            && PropertySingleton.getState().numberRegex.exec(this.state.password) !== null;
     }
 
     setPassword = (event) => {
@@ -96,14 +122,31 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         this.setState({passwordAgain: event.target.value});
     };
 
+    toLogin = (event) => {
+        event.preventDefault();
+        const url = urls.url('cas.login');
+        document.location.href = url;
+    };
+
     submitForm = async (event) => {
         event.preventDefault();
         const url = urls.url('kayttooikeus-service.salasana.resetointi', this.props.poletti);
         try {
-            http.post(url, this.state.password);
-            this.setState({toggleSuccess: true});
+            await http.post(url, this.state.password);
+            this.setState({
+                toggleSuccess: true,
+                showLoginRedirect: true,
+                showSetPassword: false
+            });
         } catch (error) {
+            if(error.errorType === 'NotFoundException') {
+                this.setState({showNotFoundError: true});
+            } else if(error.errorType === 'ForbiddenException') {
+                this.setState({showForbiddenError: true});
+            }
+
             this.setState({toggleVirhe: true});
+
             throw error;
         }
     }
