@@ -2,11 +2,11 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
@@ -142,7 +142,7 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(OppijaTuontiCriteria criteria, int page, int count) {
+    public Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count) {
         prepare(criteria);
         OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
                 OppijaTuontiSort.Column.MODIFIED, OppijaTuontiSort.Column.ID);
@@ -151,11 +151,11 @@ public class OppijaServiceImpl implements OppijaService {
         int offset = (page - 1) * count;
         List<Henkilo> henkilot = henkiloJpaRepository.findBy(criteria, limit, offset, sort);
         long total = henkiloJpaRepository.countBy(criteria);
-        return Page.of(page, count, mapper.mapAsList(henkilot, OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto.class), total);
+        return Page.of(page, count, mapper.mapAsList(henkilot, OppijaListDto.class), total);
     }
 
     @Override
-    public Page<MasterHenkiloDto<OppijaMuutosDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count) {
+    public Page<MasterHenkiloDto<OppijaReadDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count) {
         // haetaan henkilöt
         prepare(criteria);
         OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
@@ -172,23 +172,23 @@ public class OppijaServiceImpl implements OppijaService {
 
         // palautetaan henkilöiden tiedot mastereista
         HenkiloToMasterDto toMasterDto = new HenkiloToMasterDto(mastersBySlaveOid, mapper);
-        List<MasterHenkiloDto<OppijaMuutosDto>> masters = slaves.stream().map(toMasterDto).collect(toList());
+        List<MasterHenkiloDto<OppijaReadDto>> masters = slaves.stream().map(toMasterDto).collect(toList());
         return Page.of(page, count, masters, total);
     }
 
     @RequiredArgsConstructor
-    private static class HenkiloToMasterDto implements Function<Henkilo, MasterHenkiloDto<OppijaMuutosDto>> {
+    private static class HenkiloToMasterDto implements Function<Henkilo, MasterHenkiloDto<OppijaReadDto>> {
 
         private final Map<String, Henkilo> mastersBySlaveOid;
         private final OrikaConfiguration mapper;
 
         @Override
-        public MasterHenkiloDto<OppijaMuutosDto> apply(Henkilo slave) {
-            MasterHenkiloDto<OppijaMuutosDto> dto = new MasterHenkiloDto<>();
+        public MasterHenkiloDto<OppijaReadDto> apply(Henkilo slave) {
+            MasterHenkiloDto<OppijaReadDto> dto = new MasterHenkiloDto<>();
             String slaveOid = slave.getOidHenkilo();
             dto.setOid(slaveOid);
             Henkilo master = mastersBySlaveOid.getOrDefault(slaveOid, slave);
-            dto.setMaster(mapper.map(master, OppijaMuutosDto.class));
+            dto.setMaster(mapper.map(master, OppijaReadDto.class));
             return dto;
         }
 

@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaMuutosDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
@@ -13,12 +13,10 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.joda.time.DateTime;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -101,7 +99,7 @@ public class OppijaController {
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
-    public Page<OppijaTuontiRiviReadDto.OppijaTuontiRiviHenkiloReadDto> list(
+    public Page<OppijaListDto> list(
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
@@ -113,12 +111,10 @@ public class OppijaController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Muuttuneiden oppijoiden haku",
             notes = "Muuttuneet oppijat listataan vanhimmasta uusimpaan.")
-    public Page<MasterHenkiloDto<OppijaMuutosDto>> getMuuttuneet(
-            @RequestParam @ApiParam(value = "ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z", required = true) DateTime muokattuJalkeen,
+    public Page<MasterHenkiloDto<OppijaReadDto>> getMuuttuneet(
+            OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(10000) int count) {
-        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
-        criteria.setMuokattuJalkeen(muokattuJalkeen);
         return oppijaService.listMastersBy(criteria, page, count);
     }
 
