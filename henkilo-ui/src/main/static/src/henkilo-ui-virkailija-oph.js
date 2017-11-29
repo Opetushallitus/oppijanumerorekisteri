@@ -40,6 +40,7 @@ export default {
     "kayttooikeus-service.kayttooikeusryhma.slaves": "kayttooikeus-service/kayttooikeusryhma/$1/sallitut",
     "kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio": "kayttooikeus-service/kayttooikeusryhma/$1/$2",
     "kayttooikeus-service.kayttooikeusryhma.henkilo.oid": "kayttooikeus-service/kayttooikeusryhma/henkilo/$1",
+    "kayttooikeus-service.kayttooikeusryhma.henkilo.current": "kayttooikeus-service/kayttooikeusryhma/henkilo/current",
     "kayttooikeus-service.kayttooikeusryhma.organisaatio": "kayttooikeus-service/kayttooikeusryhma/organisaatio/$1",
     "kayttooikeus-service.kayttooikeusryhma.palvelurooli": "kayttooikeus-service/kayttooikeusryhma/$1/kayttooikeus",
     "kayttooikeus-service.virkailija-ui.basePath": "kayttooikeus-service/virkailija",

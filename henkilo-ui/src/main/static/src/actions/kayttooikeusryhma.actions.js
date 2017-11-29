@@ -40,7 +40,9 @@ const receiveAllKayttooikeusryhmasForHenkilo = (henkiloOid, kayttooikeus) => ({t
 const errorAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE, henkiloOid});
 export const fetchAllKayttooikeusryhmasForHenkilo = henkiloOid => dispatch => {
     dispatch(requestAllKayttooikeusryhmasForHenkilo(henkiloOid));
-    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid);
+    const url = henkiloOid
+        ? urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid)
+        : urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.current');
     http.get(url)
         .then(kayttooikeus => {
             dispatch(fetchOrganisations(kayttooikeus.map(kayttooikeus => kayttooikeus.organisaatioOid)))

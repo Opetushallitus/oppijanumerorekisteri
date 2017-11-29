@@ -32,7 +32,7 @@ class OmattiedotPageContainer extends React.Component {
         this.props.fetchHenkilo(userOid);
         this.props.fetchKayttajatieto(userOid);
         this.props.fetchHenkiloOrgs(userOid);
-        this.props.fetchAllKayttooikeusryhmasForHenkilo(userOid);
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(); // For current user
         this.props.fetchAllKayttooikeusAnomusForHenkilo(userOid);
     }
 
