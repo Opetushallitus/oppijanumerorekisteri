@@ -36,6 +36,7 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/static/js/*").permitAll()
                 .antMatchers("/static/css/*").permitAll()
+                .antMatchers("/static/media/*").permitAll()
                 .antMatchers("/config/frontProperties").permitAll()
                 .antMatchers("/l10n").permitAll()
                 .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
