@@ -386,16 +386,18 @@ public class HenkiloController {
     }
 
     @PostMapping("/{oid}/link")
-    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'CRUD', 'KKVASTUU'}, #permissionService)")
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
-    public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids) {
+    public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloService.linkHenkilos(oid, slaveOids);
     }
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
-    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD', 'ROLE_APP_HENKILONHALLINTA_KKVASTUU', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'CRUD', 'KKVASTUU'}, #permissionService)")
     @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
-    public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
+    public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         this.henkiloService.unlinkHenkilo(oid, slaveOid);
     }
 
