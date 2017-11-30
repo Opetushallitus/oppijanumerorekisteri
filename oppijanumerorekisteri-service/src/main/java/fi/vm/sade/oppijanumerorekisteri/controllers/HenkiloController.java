@@ -366,12 +366,10 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/duplicates")
-    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
-            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
-            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
-            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
-    public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid) {
+    public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloService.findDuplicates(oid);
     }
 
