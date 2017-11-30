@@ -17,6 +17,7 @@ export const omattiedot = (state = { omattiedotLoading: false, data: undefined, 
                 data: {oid: action.omattiedot.oidHenkilo},
                 isAdmin: action.omattiedot.isAdmin,
                 isOphVirkailija: action.omattiedot.isMiniAdmin,
+                organisaatiot: action.omattiedot.organisaatiot,
                 initialized: true,
             });
         case FETCH_OMATTIEDOT_FAILURE:

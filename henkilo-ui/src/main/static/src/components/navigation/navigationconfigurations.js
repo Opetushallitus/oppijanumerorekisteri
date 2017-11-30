@@ -4,7 +4,7 @@ export const mainNavigation = [
     {path: '/kutsutut', label: 'Kutsutut'},
     {path: '/kutsulomake', label: 'Virkailijan kutsuminen Opintopolkuun'},
     {path: '/henkilohaku', label: 'Henkilöhaku'},
-    {path: '/oppija/luonti', label: 'Oppijan luonti', vainRekisterinpitajalle: true},
+    {path: '/oppija/luonti', label: 'Oppijan luonti', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
 ];
 
 export const oppijaNavi = oid => [

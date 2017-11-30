@@ -18,11 +18,15 @@ type Props = {
     pathName: ?string,
     L: L,
     isRekisterinpitaja: boolean,
+    organisaatiot: Array<any>,
     naviOptions: NaviOptions,
 }
 
-const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja}: Props) => {
+const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, organisaatiot}: Props) => {
     const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
+    const roolit = organisaatiot
+        .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
+        .reduce((prev, curr) => prev.concat(curr)) // flatten
     return (
         <div id="topNavigation">
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
@@ -31,7 +35,9 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja}:
             { naviTabs.length > 0
             && <ul className="tabs">
                 { naviTabs
-                    .filter(data => !data.vainRekisterinpitajalle || isRekisterinpitaja)
+                    .filter(data => isRekisterinpitaja
+                        || !data.sallitutRoolit
+                        || data.sallitutRoolit.some(sallittuRooli => roolit.includes(sallittuRooli)))
                     .map((data, index) => {
                         const className = classNames({
                             'active': data.path === pathName,
@@ -57,6 +63,7 @@ const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale],
     naviTabs: state.naviState.naviTabs,
     isRekisterinpitaja: state.omattiedot.isAdmin,
+    organisaatiot: state.omattiedot.organisaatiot,
     naviOptions: state.naviState.naviOptions,
 });
 
