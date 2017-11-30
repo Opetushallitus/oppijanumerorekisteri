@@ -60,22 +60,20 @@ public class PermissionCheckerImpl implements PermissionChecker {
         if (this.isSuperUser(callingUserRoles) || this.isOwnData(userOid)) {
             return true;
         }
-        else {
-            if (callingUserRoles.contains(ROLE_OPPIJOIDENTUONTI)) {
-                // sallitaan tietojen käsittely jos virkailija ja oppija
-                // ovat samassa organisaatiossa (ja virkailijalla on
-                // oppijoiden tuonti -rooli kyseiseen organisaatioon)
-                List<String> organisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
-                if (organisaatioOids.stream()
-                        .map(organisaatioOid -> String.format(ROLE_OPPIJOIDENTUONTI_TEMPLATE, organisaatioOid))
-                        .anyMatch(rooli -> callingUserRoles.contains(rooli))) {
-                    return true;
-                }
+        if (callingUserRoles.contains(ROLE_OPPIJOIDENTUONTI)) {
+            // sallitaan tietojen käsittely jos virkailija ja oppija
+            // ovat samassa organisaatiossa (ja virkailijalla on
+            // oppijoiden tuonti -rooli kyseiseen organisaatioon)
+            List<String> organisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
+            if (organisaatioOids.stream()
+                    .map(organisaatioOid -> String.format(ROLE_OPPIJOIDENTUONTI_TEMPLATE, organisaatioOid))
+                    .anyMatch(rooli -> callingUserRoles.contains(rooli))) {
+                return true;
             }
-            String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
-            return kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles,
-                    externalPermissionService, callingUserRoles);
         }
+        String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
+        return kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles,
+                externalPermissionService, callingUserRoles);
     }
 
     @Override
