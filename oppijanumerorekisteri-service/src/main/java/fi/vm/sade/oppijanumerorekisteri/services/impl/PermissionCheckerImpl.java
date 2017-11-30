@@ -3,11 +3,11 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service("permissionChecker")
+@RequiredArgsConstructor
 public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
+    private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
+    private static final String ROLE_OPPIJOIDENTUONTI_TEMPLATE = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_%s";
 
     private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
@@ -29,12 +33,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private final UserDetailsHelper userDetailsHelper;
 
-    @Autowired
-    public PermissionCheckerImpl(KayttooikeusClient kayttooikeusClient,
-                                 UserDetailsHelper userDetailsHelper) {
-        this.kayttooikeusClient = kayttooikeusClient;
-        this.userDetailsHelper = userDetailsHelper;
-    }
+    private final OrganisaatioRepository organisaatioRepository;
 
     public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
@@ -62,6 +61,17 @@ public class PermissionCheckerImpl implements PermissionChecker {
             return true;
         }
         else {
+            if (callingUserRoles.contains(ROLE_OPPIJOIDENTUONTI)) {
+                // sallitaan tietojen käsittely jos virkailija ja oppija
+                // ovat samassa organisaatiossa (ja virkailijalla on
+                // oppijoiden tuonti -rooli kyseiseen organisaatioon)
+                List<String> organisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
+                if (organisaatioOids.stream()
+                        .map(organisaatioOid -> String.format(ROLE_OPPIJOIDENTUONTI_TEMPLATE, organisaatioOid))
+                        .anyMatch(rooli -> callingUserRoles.contains(rooli))) {
+                    return true;
+                }
+            }
             String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
             return kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles,
                     externalPermissionService, callingUserRoles);

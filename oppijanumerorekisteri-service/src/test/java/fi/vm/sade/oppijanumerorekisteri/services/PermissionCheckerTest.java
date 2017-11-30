@@ -2,8 +2,12 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
+import java.io.IOException;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,19 +16,24 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyListOf;
+import static org.mockito.ArgumentMatchers.anySetOf;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public class PermissionCheckerTest {
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
+    @MockBean
+    private OrganisaatioRepository organisaatioRepository;
 
     private PermissionChecker permissionChecker;
 
     @Before
     public void setup() {
-        this.permissionChecker = new PermissionCheckerImpl(this.kayttooikeusClient, new UserDetailsHelperImpl());
+        this.permissionChecker = new PermissionCheckerImpl(this.kayttooikeusClient, new UserDetailsHelperImpl(), organisaatioRepository);
     }
 
     @Test
@@ -77,5 +86,19 @@ public class PermissionCheckerTest {
     public void isSuperUserNot() {
         boolean isSuperUser = this.permissionChecker.isSuperUser();
         assertThat(isSuperUser).isFalse();
+    }
+
+    @Test
+    @WithMockUser(value = "kayttajaOid", roles = {
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid0",
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid1"
+    })
+    public void isAllowedToAccessPersonTODO1() throws IOException {
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid1"));
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isTrue();
+
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid2"));
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isFalse();
     }
 }

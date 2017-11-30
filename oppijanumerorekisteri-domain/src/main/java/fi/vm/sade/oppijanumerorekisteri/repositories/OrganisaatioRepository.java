@@ -4,7 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 
-public interface OrganisaatioRepository extends CrudRepository<Organisaatio, Long> {
+public interface OrganisaatioRepository extends CrudRepository<Organisaatio, Long>, OrganisaatioRepositoryCustom {
 
     Optional<Organisaatio> findByOid(String oid);
 
