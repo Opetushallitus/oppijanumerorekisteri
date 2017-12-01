@@ -24,7 +24,7 @@ type Props = {
 
 const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, organisaatiot}: Props) => {
     const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
-    const roolit = organisaatiot
+    const roolit = isNoAuthenticationPage ? [] : organisaatiot
         .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
         .reduce((prev, curr) => prev.concat(curr)) // flatten
     return (
