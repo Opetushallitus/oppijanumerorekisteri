@@ -1,12 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
@@ -68,9 +67,11 @@ public class OppijaServiceImpl implements OppijaService {
     private final KayttooikeusClient kayttooikeusClient;
 
     @Override
-    public HenkiloReadDto create(HenkiloCreateDto dto) {
+    public String create(OppijaCreateDto dto) {
         Henkilo entity = mapper.map(dto, Henkilo.class);
         entity.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
+
+        // lisätään oppija virkailijan organisaatioihin
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         Set<Organisaatio> organisaatiot = oppijaTuontiService
                 .getOrCreateOrganisaatioByHenkilo(kayttajaOid);
@@ -78,8 +79,9 @@ public class OppijaServiceImpl implements OppijaService {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
         organisaatiot.stream().forEach(entity::addOrganisaatio);
+
         entity = henkiloService.createHenkilo(entity, kayttajaOid, true);
-        return mapper.map(entity, HenkiloReadDto.class);
+        return entity.getOidHenkilo();
     }
 
     @Override
