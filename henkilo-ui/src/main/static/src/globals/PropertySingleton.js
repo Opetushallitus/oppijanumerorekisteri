@@ -12,6 +12,8 @@ class PropertySingleton {
             specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\\/<>?]/,
             numberRegex: /\d/,
             minimunPasswordLength: 8,
+            PVM_FORMAATTI: 'D.M.YYYY',
+            PVM_DBFORMAATTI: 'YYYY-MM-DD'
         };
     }
 

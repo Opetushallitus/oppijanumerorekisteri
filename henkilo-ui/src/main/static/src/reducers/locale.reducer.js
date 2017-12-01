@@ -10,8 +10,8 @@ type Action = {
 export const locale = (state: Locale = 'fi', action: Action): Locale => {
     switch (action.type) {
         case FETCH_HENKILO_ASIOINTIKIELI_SUCCESS:
-            return action.lang || 'fi';
+            return action.lang || state;
         default:
-            return 'fi';
+            return state;
     }
 };

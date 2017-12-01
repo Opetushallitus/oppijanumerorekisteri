@@ -45,7 +45,6 @@ export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) 
         }
         catch (error) {
             dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE});
-            console.error('Could not fetch asiointikieli for current henkilo');
             throw error;
         }
     }

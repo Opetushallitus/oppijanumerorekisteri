@@ -16,6 +16,7 @@ import {
 import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {ValidationMessage} from "../../../types/validation.type";
+import PropertySingleton from "../../../globals/PropertySingleton";
 
 type Props = {
     organisaatios: Array<{}>,
@@ -162,8 +163,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                 this.state.selectedList.map(selected => ({
                     id: selected.value,
                     kayttoOikeudenTila: 'MYONNA',
-                    alkupvm: moment(this.state.kayttooikeusModel.alkupvm).format(this.props.L['PVM_DBFORMAATTI']),
-                    loppupvm: moment(this.state.kayttooikeusModel.loppupvm).format(this.props.L['PVM_DBFORMAATTI']),
+                    alkupvm: moment(this.state.kayttooikeusModel.alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                    loppupvm: moment(this.state.kayttooikeusModel.loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
                 })));
             // clear
             this.setState(this.initialState);

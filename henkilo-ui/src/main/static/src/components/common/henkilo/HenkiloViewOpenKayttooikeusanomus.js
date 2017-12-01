@@ -12,6 +12,7 @@ import { http } from "../../../http"
 import {toLocalizedText} from '../../../localizabletext'
 import PopupButton from "../button/PopupButton";
 import AnomusHylkaysPopup from "../../anomus/AnomusHylkaysPopup";
+import PropertySingleton from "../../../globals/PropertySingleton";
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -55,8 +56,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         
         this.updateHaettuKayttooikeusryhma = (id, tila, idx, henkilo, hylkaysperuste) => {
             this.props.updateHaettuKayttooikeusryhma(id, tila,
-                this.state.dates[idx].alkupvm.format(this.L['PVM_DBFORMAATTI']),
-                this.state.dates[idx].loppupvm.format(this.L['PVM_DBFORMAATTI']),
+                this.state.dates[idx].alkupvm.format(PropertySingleton.state.PVM_DBFORMAATTI),
+                this.state.dates[idx].loppupvm.format(PropertySingleton.state.PVM_DBFORMAATTI),
                 henkilo, hylkaysperuste);
         };
 

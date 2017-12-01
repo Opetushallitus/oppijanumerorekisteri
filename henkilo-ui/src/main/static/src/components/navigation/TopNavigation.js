@@ -26,7 +26,7 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
     const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
     const roolit = isNoAuthenticationPage ? [] : organisaatiot
         .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
-        .reduce((prev, curr) => prev.concat(curr)) // flatten
+        .reduce((prev, curr) => prev.concat(curr)); // flatten
     return (
         <div id="topNavigation">
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
@@ -44,7 +44,7 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
                             'disabled-link': data.disabled
                         });
                         return <li key={index}>
-                            <Link className={className} to={data.path}>{data.label}</Link>
+                            <Link className={className} to={data.path}>{L[data.label] || data.label}</Link>
                         </li>;
                     })
                 }

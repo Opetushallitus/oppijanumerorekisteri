@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import PropTypes from 'prop-types'
-import languages from '../../configuration/languages';
 import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
 import type {L} from "../../types/localisation.type";
@@ -31,9 +30,15 @@ export default class BasicInfo extends React.Component<Props> {
         locale: PropTypes.string
     };
 
+    languages = [
+        {code: 'fi', name: {fi: 'Suomi', en: 'Finnish', sv: 'Finska'}},
+        {code: 'sv', name: {fi: 'Ruotsi', en: 'Swedish', sv: 'Svenska'}},
+        {code: 'en', name: {fi: 'Englanti', en: 'English', sv: 'Engelska'}}
+    ];
+
     render() {
         const {basicInfo} = this.props;
-        const languageOptions = languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
+        const languageOptions = this.languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
         return (
             <fieldset id="basicinfo">
                 <span className="oph-h2 oph-strong">{this.props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>

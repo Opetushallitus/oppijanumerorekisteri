@@ -7,6 +7,7 @@ import OphSelect from '../select/OphSelect'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import StaticUtils from "../StaticUtils";
+import PropertySingleton from "../../../globals/PropertySingleton";
 
 class Field extends React.Component {
     static propTypes = {
@@ -56,7 +57,7 @@ class Field extends React.Component {
         if (this.props.date) {
             return <DatePicker className="oph-input"
                                onChange={(value) => this.props.changeAction({target: {
-                                   value: value.format(this.props.L['PVM_DBFORMAATTI']),
+                                   value: value.format(PropertySingleton.state.PVM_DBFORMAATTI),
                                    name: this.props.inputValue,
                                }})}
                                selected={moment(StaticUtils.ddmmyyyyToDate(this.props.children))}

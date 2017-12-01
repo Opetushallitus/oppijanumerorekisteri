@@ -8,6 +8,7 @@ import 'moment/locale/fi'
 import 'moment/locale/sv'
 import PropTypes from 'prop-types'
 import {fetchPrequels} from "../actions/prequel.actions";
+import PropertySingleton from "../globals/PropertySingleton";
 
 const fetchPrequelsIntervalInMillis = 30 * 1000;
 
@@ -15,7 +16,7 @@ class App extends React.Component {
     render() {
         if (this.isInitialized()) {
             moment.locale(this.props.locale);
-            moment.defaultFormat = this.props.l10n.localisations[this.props.locale]['PVM_FORMAATTI'];
+            moment.defaultFormat = PropertySingleton.state.PVM_FORMAATTI;
         }
         return (
             this.isInitialized()

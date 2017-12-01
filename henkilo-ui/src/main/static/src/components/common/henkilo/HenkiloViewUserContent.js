@@ -6,6 +6,7 @@ import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
 import moment from 'moment';
 import type {L} from "../../../types/localisation.type";
+import PropertySingleton from "../../../globals/PropertySingleton";
 
 type Props = {
     l10n: any,
@@ -104,7 +105,7 @@ class HenkiloViewUserContent extends React.Component<Props, State> {
 
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
-        henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(this.props.l10n[this.props.locale]['PVM_DBFORMAATTI']) : henkiloUpdate.syntymaaika;
+        henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(PropertySingleton.state.PVM_DBFORMAATTI) : henkiloUpdate.syntymaaika;
         this.props.updateHenkiloAndRefetch(henkiloUpdate);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);

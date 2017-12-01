@@ -54,8 +54,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
                 id,
                 kayttooikeudenTila,
-                alkupvm: moment(this.state.dates[idx].alkupvm).format(this.L['PVM_DBFORMAATTI']),
-                loppupvm: moment(this.state.dates[idx].loppupvm).format(this.L['PVM_DBFORMAATTI']),
+                alkupvm: moment(this.state.dates[idx].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+                loppupvm: moment(this.state.dates[idx].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
             }]);
         };
 

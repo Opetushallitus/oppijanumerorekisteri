@@ -89,6 +89,8 @@ export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale): {va
     };
 };
 
+
+
 // Filter off organisations or ryhmas depending on isRyhma value.
 export const getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>, isRyhma: boolean): Array<Organisaatio> => {
     return isRyhma

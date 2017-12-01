@@ -93,12 +93,12 @@ class HenkilohakuFilters extends React.Component<Props> {
         return <div>
             <div className="henkilohakufilters-wrapper">
                 <OphCheckboxInline text={this.props.L['HENKILOHAKU_FILTERS_HAEMYOS']}>
-                    <SubOrganisationCheckbox L={this.props.L}
-                                             subOrganisationValue={this.props.initialValues.subOrganisation}
-                                             subOrganisationAction={this.props.suborganisationAction}/>
                     {
                         this.props.isAdmin ?
                             <OphInline>
+                                <SubOrganisationCheckbox L={this.props.L}
+                                                         subOrganisationValue={this.props.initialValues.subOrganisation}
+                                                         subOrganisationAction={this.props.suborganisationAction}/>
                                 <NoOrganisationCheckbox L={this.props.L}
                                                         noOrganisationValue={this.props.initialValues.noOrganisation}
                                                         noOrganisationAction={this.props.noOrganisationAction}/>
@@ -109,7 +109,12 @@ class HenkilohakuFilters extends React.Component<Props> {
                                                                  duplikaatitValue={this.props.initialValues.dublicates}
                                                                  duplikaatitAction={this.props.duplikaatitAction}/>
                             </OphInline>
-                            : null}
+                            :
+                            <OphInline>
+                                <SubOrganisationCheckbox L={this.props.L}
+                                                         subOrganisationValue={this.props.initialValues.subOrganisation}
+                                                         subOrganisationAction={this.props.suborganisationAction}/>
+                            </OphInline>}
                 </OphCheckboxInline>
 
                 <div className="flex-horizontal flex-align-center henkilohaku-suodata">
@@ -177,7 +182,7 @@ class HenkilohakuFilters extends React.Component<Props> {
     _parseRyhmaOptions(ryhmatState) {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat ? ryhmat.map(ryhma => ({
-            label: ryhma.nimi[this.props.locale],
+            label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
             value: ryhma.oid
         })) : [];
     };

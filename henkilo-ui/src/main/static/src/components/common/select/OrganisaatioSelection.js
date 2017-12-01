@@ -1,7 +1,6 @@
 // @flow
 import './OrganisaatioSelection.css';
 import React from 'react';
-import PropTypes from 'prop-types';
 import OphSelect from './OphSelect';
 import {connect} from 'react-redux';
 import type {L} from "../../../types/localisation.type";
@@ -35,16 +34,8 @@ type State = {
 class OrganisaatioSelection extends React.Component<Props, State> {
     placeholder: string;
 
-    static propTypes = {
-        selectOrganisaatio: PropTypes.func.isRequired,
-        selectedOrganisaatioOid: PropTypes.string.isRequired,
-        isRyhma: PropTypes.bool,
-        placeholder: PropTypes.string,
-    };
-
     constructor(props: Props) {
         super(props);
-
         if (this.props.placeholder) {
             this.placeholder = this.props.placeholder;
         }
