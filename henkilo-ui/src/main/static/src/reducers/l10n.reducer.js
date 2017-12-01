@@ -4,24 +4,31 @@ import {FETCH_L10N_SUCCESS, FETCH_L10N_REQUEST, FETCH_LOCALISATION_REQUEST,
 import type {L10n} from "../types/localisation.type";
 import * as R from 'ramda';
 
+// Return localisations by priority data (data1 before data2) and language (fi, sv, en). Use key if nothing is found.
+const localisationFromAllKeys = (priorityLang: string, allKeys: Array<string>, data1: L10n, data2: L10n) => {
+    const priority = [priorityLang].concat(['fi', 'sv', 'en'].filter(priority => priority !== priorityLang));
+    return allKeys
+        .map(key => ({
+            [key]: priority.map(lang => data1[lang][key] || data2[lang][key] || key)[0]
+        }))
+        .reduce((acc, current) => R.merge(acc, current), {});
+};
 
 const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
-    const mergedLocalisations: L10n = R.mergeDeepLeft(localisationData, data);
-    const fiKeys: Array<string> = Object.keys(mergedLocalisations.fi);
-    const svKeys: Array<string> = Object.keys(mergedLocalisations.sv);
-    const enKeys: Array<string> = Object.keys(mergedLocalisations.en);
+    const allKeys = [].concat(Object.keys(data.fi),
+        Object.keys(data.sv),
+        Object.keys(data.en),
+        Object.keys(localisationData.fi),
+        Object.keys(localisationData.sv),
+        Object.keys(localisationData.en));
+    const allKeysWithoutDuplicates = [...new Set(allKeys)];
+    const localisationByPriority = priorityLang => localisationFromAllKeys(priorityLang, allKeysWithoutDuplicates, localisationData, data);
 
-    if (fiKeys.length > svKeys.length) {
-        const missingSvLocalisation = R.omit(svKeys, mergedLocalisations.fi);
-        mergedLocalisations.sv = R.merge(missingSvLocalisation, mergedLocalisations.sv);
-    }
-
-    if (fiKeys.length > enKeys.length) {
-        const missingEnLocalisation = R.omit(enKeys, mergedLocalisations.fi);
-        mergedLocalisations.en = R.merge(missingEnLocalisation, mergedLocalisations.en);
-    }
-
-    return mergedLocalisations;
+    return {
+        fi: localisationByPriority('fi'),
+        sv: localisationByPriority('sv'),
+        en: localisationByPriority('en'),
+    };
 };
 
 const mapLocalisationsByLocale = (localisations: Array<any>): L10n => {
