@@ -348,7 +348,7 @@ public class HenkiloServiceTest {
                 .id(yhteystiedotRyhmaId).readOnly(true)
                 .build());
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
-                "123456-9999", "1.2.3.4.5", "fi", "suomi", "246",
+                "123456-9999", "1.2.3.4.5", "sv", "svenska", "246",
                 "arpa@kuutio.fi");
         henkiloUpdateDto.getYhteystiedotRyhma().add(YhteystiedotRyhmaDto.builder()
                 .id(yhteystiedotRyhmaId).readOnly(false)
@@ -367,6 +367,7 @@ public class HenkiloServiceTest {
 
         this.service.updateHenkilo(henkiloUpdateDto);
         verify(this.henkiloDataRepositoryMock).save(argument.capture());
+        verify(this.kayttooikeusClient, times(1)).ldapSynkroniseHenkilo(eq("1.2.3.4.5"));
 
         assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("fi");
         assertThat(argument.getValue().getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");

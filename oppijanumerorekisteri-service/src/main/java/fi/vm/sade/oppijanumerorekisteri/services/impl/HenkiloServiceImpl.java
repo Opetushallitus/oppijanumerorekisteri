@@ -333,7 +333,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloUpdateDto.getHetu()));
         }
 
-        henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
+        this.henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
         // varmistetaan että tyhjä hetu tallentuu nullina
@@ -398,6 +398,10 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setAidinkieli(null);
         }
         if (henkiloUpdateDto.getAsiointiKieli() != null && henkiloUpdateDto.getAsiointiKieli().getKieliKoodi() != null) {
+            // Request ldap sync only if asiointikieli changes.
+            if (!henkiloUpdateDto.getAsiointiKieli().getKieliKoodi().equals(henkiloSaved.getAsiointiKieli().getKieliKoodi())) {
+                this.kayttooikeusClient.ldapSynkroniseHenkilo(henkiloSaved.getOidHenkilo());
+            }
             henkiloSaved.setAsiointiKieli(this.kielisyysRepository.findByKieliKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi())
                     .orElseThrow(() -> new ValidationException("invalid.asiointikieli")));
             henkiloUpdateDto.setAsiointiKieli(null);

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
@@ -113,6 +115,18 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
                 .filter(organisaatioHenkilo -> !organisaatioHenkilo.isPassivoitu())
                 .map(OrganisaatioHenkiloDto::getOrganisaatioOid)
                 .collect(toSet());
+    }
+
+    @Override
+    public void ldapSynkroniseHenkilo(String henkiloOid) {
+        try {
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("ldapSynchronization", "NORMAL");
+            String url = this.urlConfiguration.url("kayttooikeus-service.henkilo.ldap-synkronoi", henkiloOid, queryParams);
+            cachingRestClient.put(url, JSON, "{}");
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
 }
