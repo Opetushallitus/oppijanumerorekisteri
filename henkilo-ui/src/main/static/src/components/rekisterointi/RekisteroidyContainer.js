@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import RekisteroidyPage from "./RekisteroidyPage";
-import {updateNavigation} from "../../actions/navigation.actions";
+import {updateUnauthenticatedNavigation} from "../../actions/navigation.actions";
 import {emptyNavi} from "../navigation/navigationconfigurations";
 import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
@@ -56,5 +56,5 @@ const mapStateToProps = (state, ownProps) => {
     });
 };
 
-export default connect(mapStateToProps, {updateNavigation, fetchKieliKoodisto, fetchKutsuByToken, createHenkiloByToken,
+export default connect(mapStateToProps, {updateUnauthenticatedNavigation, fetchKieliKoodisto, fetchKutsuByToken, createHenkiloByToken,
 removeNotification})(RekisteroidyContainer);
