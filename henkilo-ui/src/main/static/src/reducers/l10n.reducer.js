@@ -52,11 +52,10 @@ export const l10n = (state: State = {localisationsInitialized: false, localisati
             return {...state, localisationsInitialized: false};
         case FETCH_LOCALISATIONS_SUCCESS:
             const localisationByLocale = mapLocalisationsByLocale(action.lokalisointiPalveluLocalisations);
-            return {
+            return Object.assign({}, state, {
                 localisations: mapLocalisations(localisationByLocale, action.henkiloUiLocalisations),
                 localisationsInitialized: true
-            };
-
+            });
         default:
             return state;
     }

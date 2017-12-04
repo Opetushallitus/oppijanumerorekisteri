@@ -32,7 +32,6 @@ type State = {
 
 class SalasananResetointiPage extends React.Component<Props, State> {
 
-
     constructor(props) {
         super(props);
 
@@ -45,7 +44,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
             showSetPassword: true,
             showNotFoundError: false,
             showForbiddenError: false
-        }
+        };
     }
 
     componentDidMount() {
@@ -158,8 +157,7 @@ const mapStateToProps = (state, ownProps) => {
         locale: state.locale,
         L: state.l10n.localisations[state.locale],
         poletti: ownProps.params.poletti
-    }
-
+    };
 };
 
 export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(SalasananResetointiPage);

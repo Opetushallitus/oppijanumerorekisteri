@@ -32,7 +32,7 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
             { !isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')}/> }
             { naviOptions.backButton ? <Link className="oph-link oph-link-big" to={naviOptions.backButton} >&#8701; {L['TAKAISIN_LINKKI']}</Link> : null }
-            { naviTabs.length > 0
+            { !isNoAuthenticationPage && naviTabs.length > 0
             && <ul className="tabs">
                 { naviTabs
                     .filter(data => isRekisterinpitaja
