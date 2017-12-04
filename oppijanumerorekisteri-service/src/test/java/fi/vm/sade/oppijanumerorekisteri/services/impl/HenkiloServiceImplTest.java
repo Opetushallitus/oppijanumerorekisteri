@@ -44,6 +44,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -126,26 +127,26 @@ public class HenkiloServiceImplTest {
     public void getShouldReturnHenkiloWhenPermissionGranted() throws IOException {
         when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
-        when(permissionChecker.isAllowedToAccessPerson(any(), any(), any()))
+        when(permissionChecker.isAllowedToAccessPerson(any(), anyList(), any()))
                 .thenReturn(true);
 
         HenkiloHakuDto henkilo = impl.getByHakutermi("haku1", ExternalPermissionService.SURE);
 
         assertThat(henkilo.getOidHenkilo()).isEqualTo("1.2.3.4");
-        verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), any(), eq(ExternalPermissionService.SURE));
+        verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), anyList(), eq(ExternalPermissionService.SURE));
     }
 
     @Test
     public void getShouldThrowWhenPermissionDenied() throws IOException {
         when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
-        when(permissionChecker.isAllowedToAccessPerson(any(), any(), any()))
+        when(permissionChecker.isAllowedToAccessPerson(any(), anyList(), any()))
                 .thenReturn(false);
 
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
 
         assertThat(throwable).isInstanceOf(ForbiddenException.class);
-        verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), any(), eq(ExternalPermissionService.SURE));
+        verify(permissionChecker).isAllowedToAccessPerson(eq("1.2.3.4"), anyList(), eq(ExternalPermissionService.SURE));
     }
 
     @Test
