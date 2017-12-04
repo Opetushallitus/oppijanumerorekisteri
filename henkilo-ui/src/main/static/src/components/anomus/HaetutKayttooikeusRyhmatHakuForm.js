@@ -126,7 +126,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     _parseRyhmas(ryhmatState) {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat ? ryhmat.map(ryhma => ({
-            label: ryhma.nimi[this.props.locale],
+            label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
             value: ryhma.oid
         })) : [];
     }
