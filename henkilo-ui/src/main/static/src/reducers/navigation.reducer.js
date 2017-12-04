@@ -1,6 +1,6 @@
 // @flow
 import {
-    FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_L10N_SUCCESS, LOCATION_CHANGE, UPDATE_NAVIGATION
+    FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_LOCALISATIONS_SUCCESS, LOCATION_CHANGE, UPDATE_NAVIGATION
 } from "../actions/actiontypes";
 import {mainNavigation} from "../components/navigation/navigationconfigurations";
 import type {NaviOptions, NaviTab} from "../types/navigation.type";
@@ -20,7 +20,7 @@ type Action = {
     naviTabs: Array<NaviTab>,
     naviOptions: NaviOptions,
     payload: any, // redux native
-    data: L10n,
+    henkiloUiLocalisations: L10n,
     lang: Locale
 }
 
@@ -72,8 +72,8 @@ export const naviState = (state: State = initialState , action: Action) => {
             return onLocationChange(state, action);
         // These two are needed for localizing page titles
         // L10N is guaranteed to be called first. Check frontProperties.actions.js for more information.
-        case FETCH_L10N_SUCCESS:
-            return Object.assign({}, state, {l10n: action.data});
+        case FETCH_LOCALISATIONS_SUCCESS:
+            return Object.assign({}, state, {l10n: action.henkiloUiLocalisations});
         case FETCH_HENKILO_ASIOINTIKIELI_SUCCESS:
             return Object.assign({}, state, {L: state.l10n[action.lang] || {}});
         default:

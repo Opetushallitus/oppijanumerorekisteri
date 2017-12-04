@@ -32,7 +32,7 @@ class App extends React.Component {
     };
 
     isInitialized() {
-        return this.props.frontProperties.initialized && this.props.l10n.l10nInitialized && this.props.l10n.localisationsInitialized
+        return this.props.frontProperties.initialized && this.props.l10n.localisationsInitialized
         && this.props.omattiedotLoaded && this.props.prequelsNotLoadedCount === 0;
     }
 
@@ -50,7 +50,6 @@ class App extends React.Component {
             properties: PropTypes.array,
         }).isRequired,
         l10n: PropTypes.shape({
-            l10nInitialized: PropTypes.bool,
             localisationsInitialized: PropTypes.bool,
         }).isRequired,
     };
