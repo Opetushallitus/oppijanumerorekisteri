@@ -86,7 +86,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
     public void isAllowedToAccessPersonByPalveluRooliAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPersonByPalveluRooli("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -94,7 +94,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5")
     public void isAllowedToAccessPersonByPalveluRooliOwnData() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPersonByPalveluRooli("1.2.3.4.5", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToAccessPerson("1.2.3.4.5", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -105,7 +105,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPersonByPalveluRooli("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -116,7 +116,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(false);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPersonByPalveluRooli("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isFalse();
     }
 

@@ -14,7 +14,7 @@ public interface PermissionChecker {
     boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
                                            ExternalPermissionService externalPermissionService) throws IOException;
 
-    boolean isAllowedToAccessPersonByPalveluRooli(String userOid, Map<String, List<String>> allowedPalveluRooli, ExternalPermissionService externalPermissionService) throws IOException;
+    boolean isAllowedToAccessPerson(String userOid, Map<String, List<String>> allowedPalveluRooli, ExternalPermissionService externalPermissionService) throws IOException;
 
     boolean isSuperUser();
 }

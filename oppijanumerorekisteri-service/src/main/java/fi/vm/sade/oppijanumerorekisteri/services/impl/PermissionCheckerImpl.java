@@ -74,7 +74,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
     }
 
     @Override
-    public boolean isAllowedToAccessPersonByPalveluRooli(String userOid, Map<String, List<String>> allowedPalveluRooli,
+    public boolean isAllowedToAccessPerson(String userOid, Map<String, List<String>> allowedPalveluRooli,
                                            ExternalPermissionService externalPermissionService) throws IOException {
         Set<String> callingUserRoles = this.getCasRoles();
         if (this.isSuperUser(callingUserRoles) || this.isOwnData(userOid)) {
