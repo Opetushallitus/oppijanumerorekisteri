@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import java.io.IOException;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import org.assertj.core.util.Maps;
 import org.junit.Before;
@@ -147,5 +148,19 @@ public class PermissionCheckerTest {
 
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid2"));
         assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isFalse();
+    }
+
+    @Test
+    @WithMockUser(value = "kayttajaOid", roles = {
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid0",
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid1"
+    })
+    public void isAllowedToAccessPersonTODO2() throws IOException {
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid1"));
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isTrue();
+
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid2"));
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isFalse();
     }
 }
