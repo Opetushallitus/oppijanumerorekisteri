@@ -22,10 +22,11 @@ export const henkiloViewTabs = (oidHenkilo, henkilo, henkiloType) => {
     }
 
     return tabs.map( tab => {
-        if(tab.label === 'Hae duplikaatit' && enabledDuplikaattiView(oidHenkilo, henkilo.masterLoading, masterHenkiloOid)) {
+        console.log(tab.label);
+        if(tab.label === 'NAVI_HAE_DUPLIKAATIT' && enabledDuplikaattiView(oidHenkilo, henkilo.masterLoading, masterHenkiloOid)) {
             tab.disabled = false;
         }
-        if(tab.label === 'VTJ vertailu' && enabledVtjVertailuView(currentHenkilo)) {
+        if(tab.label === 'NAVI_VTJ_VERTAILU' && enabledVtjVertailuView(currentHenkilo)) {
             tab.disabled = false;
         }
         return tab;
