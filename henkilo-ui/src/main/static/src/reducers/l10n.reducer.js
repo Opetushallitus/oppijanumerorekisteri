@@ -9,7 +9,8 @@ const localisationFromAllKeys = (priorityLang: string, allKeys: Array<string>, d
     const priority = [priorityLang].concat(['fi', 'sv', 'en'].filter(priority => priority !== priorityLang));
     return allKeys
         .map(key => ({
-            [key]: priority.map(lang => data1[lang][key] || data2[lang][key] || key)[0]
+            [key]: priority.map(lang => data1[lang][key] || data2[lang][key])
+                .filter(localisation => localisation !== undefined)[0] || key
         }))
         .reduce((acc, current) => R.merge(acc, current), {});
 };
@@ -54,7 +55,7 @@ export const l10n = (state: State = {l10nInitialized: false, localisationsInitia
         case FETCH_LOCALISATION_REQUEST:
             return Object.assign({}, state, {localisationsInitialized: false});
         case FETCH_L10N_SUCCESS:
-            if(!state.localisationsInitialized) {
+            if (!state.localisationsInitialized) {
                 return Object.assign({}, state, {l10nInitialized: true, localisations: action.data});
             }
             return Object.assign({}, state, {
@@ -63,8 +64,8 @@ export const l10n = (state: State = {l10nInitialized: false, localisationsInitia
             });
         case FETCH_LOCALISATION_SUCCESS:
             const localisationByLocale = mapLocalisationsByLocale(action.data);
-            if(!state.l10nInitialized) {
-                return Object.assign({}, state, {localisationsInitialized: true, localisations: action.data});
+            if (!state.l10nInitialized) {
+                return Object.assign({}, state, {localisationsInitialized: true, localisations: localisationByLocale});
             }
             return Object.assign({}, state, {
                 localisations: mapLocalisations(state.localisations, localisationByLocale),
