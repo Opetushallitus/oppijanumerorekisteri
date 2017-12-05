@@ -7,12 +7,12 @@ import PalveluCreateForm from './PalveluCreateForm'
 import type { PalvelukayttajaCreate, PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 import type {L} from "../../types/localisation.type";
-import {updateBackbuttonEmptyNavigation} from "../../actions/navigation.actions";
+import {updateEmptyNavigation} from "../../actions/navigation.actions";
 
 type Props = {
     router: any,
     L: L,
-    updateBackbuttonEmptyNavigation: (string) => void,
+    updateEmptyNavigation: () => void,
 }
 
 type State = {
@@ -40,7 +40,7 @@ class PalveluCreateContainer extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.props.updateBackbuttonEmptyNavigation('/henkilohaku');
+        this.props.updateEmptyNavigation();
     }
 
     setError = (error) => {
@@ -74,4 +74,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {updateBackbuttonEmptyNavigation})(PalveluCreateContainer);
+export default connect(mapStateToProps, {updateEmptyNavigation})(PalveluCreateContainer);
