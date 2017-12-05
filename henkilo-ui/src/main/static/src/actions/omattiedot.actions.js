@@ -40,8 +40,10 @@ export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) 
         dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST});
         try {
             const lang = await http.get(url);
-            dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang});
-            dispatch({type: LOCATION_CHANGE}); // Dispatch to trigger title change
+            if (lang.length === 2) {
+                dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang});
+                dispatch({type: LOCATION_CHANGE}); // Dispatch to trigger title change
+            }
         }
         catch (error) {
             dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE});
