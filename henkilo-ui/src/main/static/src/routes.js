@@ -40,5 +40,5 @@ export default <Route path="/" component={App}>
     <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaPageContainer} />
     <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaPageContainer} />
     <Route path="/palvelukayttaja/luonti" component={PalveluCreateContainer} />
-    <Route path="/salasananresetointi/:poletti" component={SalansananResetointiPage} />
+    <Route path="/salasananresetointi/:locale/:poletti" component={SalansananResetointiPage} />
 </Route>

@@ -22,7 +22,6 @@ export const henkiloViewTabs = (oidHenkilo, henkilo, henkiloType) => {
     }
 
     return tabs.map( tab => {
-        console.log(tab.label);
         if(tab.label === 'NAVI_HAE_DUPLIKAATIT' && enabledDuplikaattiView(oidHenkilo, henkilo.masterLoading, masterHenkiloOid)) {
             tab.disabled = false;
         }

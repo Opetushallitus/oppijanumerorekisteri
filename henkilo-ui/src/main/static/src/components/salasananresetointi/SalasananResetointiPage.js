@@ -154,8 +154,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        locale: state.locale,
-        L: state.l10n.localisations[state.locale],
+        locale: ownProps.params['locale'].toLowerCase(),
+        L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
         poletti: ownProps.params.poletti
     };
 };
