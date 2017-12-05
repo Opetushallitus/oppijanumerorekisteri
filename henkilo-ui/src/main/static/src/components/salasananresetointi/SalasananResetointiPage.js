@@ -110,7 +110,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         return this.state.password === this.state.passwordAgain
             && this.state.password.length >= PropertySingleton.getState().minimunPasswordLength
             && PropertySingleton.getState().specialCharacterRegex.exec(this.state.password) !== null
-            && PropertySingleton.getState().numberRegex.exec(this.state.password) !== null;
+            && PropertySingleton.getState().numberRegex.exec(this.state.password) !== null
+            && PropertySingleton.getState().characterRegex.exec(this.state.password) !== null;
     }
 
     setPassword = (event) => {

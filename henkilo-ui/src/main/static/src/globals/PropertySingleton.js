@@ -11,6 +11,7 @@ class PropertySingleton {
             KAYTTOOIKEUS_SULJETTU: 'SULJETTU',
             specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\\/<>?]/,
             numberRegex: /\d/,
+            characterRegex: /[a-zA-Z]/,
             minimunPasswordLength: 8,
             PVM_FORMAATTI: 'D.M.YYYY',
             PVM_DBFORMAATTI: 'YYYY-MM-DD'
