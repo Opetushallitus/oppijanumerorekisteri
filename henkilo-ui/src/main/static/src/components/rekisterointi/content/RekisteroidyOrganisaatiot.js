@@ -1,7 +1,6 @@
 import './RekisteroidyOrganisaatiot.css'
 import React from 'react'
 import PropTypes from 'prop-types'
-import {connect} from 'react-redux'
 
 class RekisteroidyOrganisaatiot extends React.Component {
     static propTypes = {
@@ -44,9 +43,4 @@ class RekisteroidyOrganisaatiot extends React.Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-});
-
-export default connect(mapStateToProps)(RekisteroidyOrganisaatiot);
+export default RekisteroidyOrganisaatiot;

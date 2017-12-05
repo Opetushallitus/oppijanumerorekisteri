@@ -20,6 +20,7 @@ class VirhePage extends React.Component<Props> {
     componentWillMount() {
         this.props.updateUnauthenticatedNavigation();
     }
+
     render() {
         const classname = this.props.theme === 'gray' ? 'virhePageVirheWrapperGray' : 'virhePageVirheWrapper';
         return <div className={classname} id="virhePageVirhe">
@@ -42,7 +43,7 @@ VirhePage.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-    L: state.l10n.localisations[state.locale],
+    L: state.l10n.localisations['fi'],
 });
 
 export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(VirhePage);

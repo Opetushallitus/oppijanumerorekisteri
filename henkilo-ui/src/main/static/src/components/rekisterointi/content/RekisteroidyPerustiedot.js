@@ -74,7 +74,6 @@ class RekisteroidyPerustiedot extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    L: state.l10n.localisations[state.locale],
     notifications: state.notifications.buttonNotifications,
 });
 

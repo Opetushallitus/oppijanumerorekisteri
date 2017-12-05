@@ -54,19 +54,19 @@ class RekisteroidyPage extends React.Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.kutsu.hakaIdentifier) {
             this.createHenkilo();
         }
     }
 
     render() {
-        return <div className="borderless-colored-wrapper rekisteroidy-page">
+        return <div className="borderless-colored-wrapper rekisteroidy-page" style={{marginTop: "50px"}}>
             <div className="header-borderless">
                 <p className="oph-h2 oph-bold">{this.props.L['REKISTEROIDY_OTSIKKO']}</p>
             </div>
             <div className="wrapper">
-                <RekisteroidyOrganisaatiot organisaatiot={this.props.kutsu.organisaatiot} />
+                <RekisteroidyOrganisaatiot organisaatiot={this.props.kutsu.organisaatiot} L={this.props.L} locale={this.props.locale} />
             </div>
             <div className="flex-horizontal">
                 <div className="wrapper flex-item-1">
@@ -76,7 +76,8 @@ class RekisteroidyPage extends React.Component {
                                              isLanguageError={!this.kielikoodiIsNotEmpty(this.state.henkilo)}
                                              isPasswordError={this.isPasswordError()}
                                              isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
-                                             isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)} />
+                                             isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)}
+                                             L={this.props.L} />
                     <BottomNotificationButton action={this.createHenkilo.bind(this)}
                                               disabled={!this.state.isValid}
                                               id="rekisteroidyPage" >

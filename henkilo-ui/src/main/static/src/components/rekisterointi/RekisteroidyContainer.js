@@ -2,7 +2,6 @@ import React from 'react'
 import {connect} from 'react-redux'
 import RekisteroidyPage from "./RekisteroidyPage";
 import {updateUnauthenticatedNavigation} from "../../actions/navigation.actions";
-import {emptyNavi} from "../navigation/navigationconfigurations";
 import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
 import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";
@@ -11,11 +10,12 @@ import VirhePage from "../common/page/VirhePage";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
-        this.props.updateUnauthenticatedNavigation(emptyNavi, null, '#f6f4f0');
+        this.props.updateUnauthenticatedNavigation();
 
         this.props.fetchKieliKoodisto();
         this.props.fetchKutsuByToken(this.props.temporaryToken);
     }
+
     constructor(props) {
         super(props);
 
@@ -23,6 +23,9 @@ class RekisteroidyContainer extends React.Component {
     }
 
     render() {
+        if (!this.props.kutsu) {
+            return null;
+        }
         if (this.props.loginFailed) {
             return <VirhePage text={'REKISTEROIDY_LOGIN_FAILED'} buttonText={'REKISTEROIDY_KIRJAUTUMISSIVULLE'} />;
         }
@@ -35,14 +38,13 @@ class RekisteroidyContainer extends React.Component {
         else if (this.props.koodistoLoading || this.props.tokenLoading) {
             return <Loader />;
         }
-        return <RekisteroidyPage {...this.props} />;
+        return <RekisteroidyPage {...this.props} L={this.props.l10n[this.props.kutsu.asiointikieli]} locale={this.props.kutsu.asiointikieli} />;
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return ({
-        locale: state.locale,
-        L: state.l10n.localisations[state.locale],
+        l10n: state.l10n.localisations,
         koodistoLoading: state.koodisto.kieliKoodistoLoading,
         koodisto: state.koodisto,
         temporaryToken: ownProps.location.query['temporaryKutsuToken'],

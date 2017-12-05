@@ -125,7 +125,7 @@ const onLocationChange = (state: State, action: Action) => {
                 ...state.naviOptions,
                 ...action.naviOptions,
                 // deep pages are expected to be eather unauthorized or request their own navigation.
-                isUnauthenticatedPage: action.payload.pathname.split('/').length > 2,
+                isUnauthenticatedPage: action.payload.pathname.split('/').length > 2 || action.payload.pathname === '/rekisteroidy',
                 backButton: null,
             },
             lastPathName: pathname,
