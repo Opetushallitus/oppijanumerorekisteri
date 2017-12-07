@@ -16,7 +16,7 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             selected={alkaaInitValue}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) => date.isBefore(moment().add(vuosia, 'years'))} />
+                            filterDate={(date) => Number.isInteger(vuosia) ? date.isBefore(moment().add(vuosia, 'years')) : true} />
             </div>
             <div className="kayttooikeus-input-container">
                 <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
@@ -25,7 +25,7 @@ const CKKesto = ({alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitV
                             selected={paattyyInitValue}
                             showYearDropdown
                             showWeekNumbers
-                            filterDate={(date) => date.isBefore(moment().add(vuosia, 'years'))} />
+                            filterDate={(date) => Number.isInteger(vuosia) ? date.isBefore(moment().add(vuosia, 'years')) : true} />
             </div>
         </td>
         <td/>

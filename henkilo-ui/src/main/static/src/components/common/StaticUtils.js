@@ -123,7 +123,7 @@ class StaticUtils extends React.Component {
     }
 
     static getKayttooikeusKestoVuosissa(henkilo) {
-        return henkilo.henkiloTyyppi === 'PALVELU' ? 10 : 1;
+        return henkilo.henkiloTyyppi === 'PALVELU' ? null : 1;
     }
 }
 
