@@ -13,10 +13,8 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
+
+import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
@@ -218,6 +216,10 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
+        if(oids.size() > 1000) {
+            throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is 1000");
+        }
+
         return this.henkiloJpaRepository.findByOidIn(oids);
     }
 
