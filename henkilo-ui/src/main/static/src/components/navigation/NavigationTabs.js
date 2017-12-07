@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import {adminNavi, virkailijaNavi} from "./navigationconfigurations";
+import {adminNavi, oppijaNavi, virkailijaNavi} from "./navigationconfigurations";
 
 
 export const enabledDuplikaattiView = (oidHenkilo, masterLoading, masterHenkiloOid) => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
@@ -12,7 +12,16 @@ export const enabledVtjVertailuView = (henkilo) => henkilo.yksilointiYritetty &&
  */
 export const henkiloViewTabs = (oidHenkilo, henkilo, henkiloType) => {
     const currentHenkilo = R.path(['henkilo'], henkilo);
-    let tabs = henkiloType === 'admin' ? adminNavi(oidHenkilo) : virkailijaNavi(oidHenkilo);
+    let tabs;
+    if (henkiloType === 'admin') {
+        tabs = adminNavi(oidHenkilo);
+    }
+    else if (henkiloType === 'virkailija') {
+        tabs = virkailijaNavi(oidHenkilo);
+    }
+    else {
+        tabs = oppijaNavi(oidHenkilo);
+    }
 
     const masterHenkiloOid = R.path(['master', 'oidHenkilo'], henkilo);
 
