@@ -77,7 +77,7 @@ class VirkailijaViewPage extends React.Component {
                         this.props.kayttooikeus.kayttooikeusLoading
                         || this.props.kayttooikeus.grantableKayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                            : <HenkiloViewExistingKayttooikeus {...this.props} vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)} />
                     }
                 </div>
                 <div className="wrapper">

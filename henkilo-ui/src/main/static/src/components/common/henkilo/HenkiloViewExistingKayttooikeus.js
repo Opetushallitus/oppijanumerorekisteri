@@ -30,7 +30,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         removeNotification: PropTypes.func,
         removePrivilege: PropTypes.func,
         isOmattiedot: PropTypes.bool,
-
+        vuosia: PropTypes.number,
     };
 
     constructor(props) {
@@ -135,7 +135,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                                         selected={this.state.dates[idx].loppupvm}
                                         showYearDropdown
                                         showWeekNumbers
-                                        filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
+                                        filterDate={(date) => Number.isInteger(this.props.vuosia) ? date.isBefore(moment().add(this.props.vuosia, 'years')) : true} />
                         </div>
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton

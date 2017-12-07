@@ -76,7 +76,7 @@ class AdminViewPage extends React.Component<Props> {
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props} />
+                            : <HenkiloViewExistingKayttooikeus {...this.props} vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)} />
                     }
                 </div>
                 {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
