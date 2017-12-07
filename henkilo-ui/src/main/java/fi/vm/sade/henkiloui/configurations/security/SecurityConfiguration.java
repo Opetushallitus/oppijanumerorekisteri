@@ -3,6 +3,7 @@ package fi.vm.sade.henkiloui.configurations.security;
 import fi.vm.sade.henkiloui.configurations.properties.CasProperties;
 import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.properties.OphProperties;
+import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -89,6 +90,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     //
+    // CAS single logout filter
+    // requestSingleLogoutFilter is not configured because our users always sign out through CAS logout (using virkailija-raamit
+    // logout button) when CAS calls this filter if user has ticket to this service.
+    //
+    @Bean
+    public SingleSignOutFilter singleSignOutFilter() {
+        SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
+        singleSignOutFilter.setCasServerUrlPrefix(this.ophProperties.url("url-cas"));
+        singleSignOutFilter.setIgnoreInitConfiguration(true);
+        return singleSignOutFilter;
+    }
+
+    //
     // CAS entry point
     //
 
@@ -126,7 +140,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated()
                 .and()
                 .addFilter(casAuthenticationFilter())
-                .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint());
+                .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint())
+                .and()
+                .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class);
     }
 
     @Override
