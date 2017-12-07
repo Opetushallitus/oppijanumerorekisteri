@@ -14,7 +14,7 @@
     "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
     "prop-types": "15.6.0",
     "ramda": "0.25.0",
-    "react": "16.1.1",
+    "react": "16.2.0",
     "react-addons-update": "15.6.0",
     "react-columns": "1.1.0",
     "react-datepicker": "0.48.0",
@@ -24,9 +24,9 @@
     "react-router": "3.2.0",
     "react-router-redux": "4.0.8",
     "react-scroll-to-component": "1.0.2",
-    "react-select-fast-filter-options": "^0.2.3",
-    "react-virtualized": "^9.12.0",
-    "react-virtualized-select": "^3.1.0",
+    "react-select-fast-filter-options": "0.2.3",
+    "react-virtualized": "9.12.0",
+    "react-virtualized-select": "3.1.0",
     "react-table": "6.7.4",
     "react-timeout": "1.0.1",
     "react-visibility-sensor": "3.11.0",
@@ -34,7 +34,7 @@
     "redux": "3.7.2",
     "redux-thunk": "2.2.0",
     "shallow-equal-fuzzy": "0.0.2",
-    "react-load-script": "^0.0.6"
+    "react-load-script": "0.0.6"
   },
   "devDependencies": {
     "react-scripts": "1.0.17",
