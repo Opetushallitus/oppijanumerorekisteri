@@ -95,6 +95,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     //
     // CAS single logout filter
+    // requestSingleLogoutFilter is not configured because our users always sign out through CAS logout (using virkailija-raamit
+    // logout button) when CAS calls this filter if user has ticket to this service.
     //
     @Bean
     public SingleSignOutFilter singleSignOutFilter() {
