@@ -21,6 +21,7 @@ import {cas} from "./cas.reducer";
 import {oppijoidenTuontiYhteenveto, oppijoidenTuontiListaus} from "./oppijoidentuonti.reducer";
 import {palvelutState} from "./palvelut.reducer";
 import {kayttooikeusState} from "./kayttooikeus.reducer";
+import {notificationList} from "./notification.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
     ryhmatState,
     OrganisaatioKayttooikeusryhmat,
     organisaatio,
+    notificationList,
     notifications,
     haetutKayttooikeusryhmat,
     henkilohakuState,
