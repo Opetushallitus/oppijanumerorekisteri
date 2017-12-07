@@ -13,7 +13,7 @@ export const notificationList = ( state: State = [], action: Action) => {
 
     switch (action.type) {
         case NOTIFICATION_ADD:
-            return [ action.key, ...state];
+            return state.includes(action.key) ? state : [action.key, ...state];
         case NOTIFICATION_REMOVE:
             return state.filter( (key: string) => key !== action.key);
         default:
