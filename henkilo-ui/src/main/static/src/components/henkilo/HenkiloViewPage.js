@@ -1,5 +1,4 @@
 // @flow
-import './AdminViewPage.css';
 import React from 'react';
 import type {Locale} from '../../types/locale.type'
 import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent';
@@ -11,9 +10,10 @@ import HenkiloViewCreateKayttooikeus from "../common/henkilo/HenkiloViewCreateKa
 import Loader from "../common/icons/Loader";
 import HenkiloViewContactContent from "../common/henkilo/HenkiloViewContactContent";
 import StaticUtils from '../common/StaticUtils'
+import type {L10n} from "../../types/localisation.type";
 
 type Props = {
-    l10n: any,
+    l10n: L10n,
     locale: Locale,
     updateHenkiloAndRefetch: (any) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
@@ -23,9 +23,10 @@ type Props = {
     createBasicInfo: (boolean, (any) => void, (any) => void, any) => any,
     readOnlyButtons: ((any) => void) => any,
     passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
+    oidHenkilo: string,
 }
 
-class AdminViewPage extends React.Component<Props> {
+class HenkiloViewPage extends React.Component<Props> {
 
     existingKayttooikeusRef: any;
 
@@ -40,19 +41,9 @@ class AdminViewPage extends React.Component<Props> {
             <div>
                 <div className="wrapper">
                     {
-                        this.props.henkilo.henkiloLoading
-                        || this.props.koodisto.kieliKoodistoLoading
-                        || this.props.koodisto.kansalaisuusKoodistoLoading
-                        || this.props.koodisto.sukupuoliKoodistoLoading
-                        || this.props.henkilo.kayttajatietoLoading
-                        || this.props.koodisto.yhteystietotyypitKoodistoLoading
-                            ? <Loader />
-                            : <HenkiloViewUserContent {...this.props}
-                                                      readOnly={true}
-                                                      locale={this.props.locale}
-                                                      showPassive={false}
-                                                      basicInfo={this.props.createBasicInfo}
-                                                      readOnlyButtons={this.props.readOnlyButtons} />
+                        <HenkiloViewUserContent basicInfo={this.props.createBasicInfo}
+                                                readOnlyButtons={this.props.readOnlyButtons}
+                                                oidHenkilo={this.props.oidHenkilo} />
                     }
                 </div>
                 {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
@@ -105,4 +96,4 @@ class AdminViewPage extends React.Component<Props> {
     }
 }
 
-export default AdminViewPage;
+export default HenkiloViewPage;

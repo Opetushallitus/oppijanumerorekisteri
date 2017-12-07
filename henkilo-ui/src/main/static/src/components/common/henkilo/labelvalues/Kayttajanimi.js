@@ -1,5 +1,6 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import LabelValue from "./LabelValue";
 
 const Kayttajanimi = (props) => <LabelValue {...props} values={{
@@ -18,6 +19,11 @@ Kayttajanimi.propTypes = {
     }).isRequired,
     disabled: PropTypes.bool.isRequired,
     isError: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
-export default Kayttajanimi;
+const mapStateToProps = (state) => ({
+    henkilo: state.henkilo,
+});
+
+export default connect(mapStateToProps, {})(Kayttajanimi);

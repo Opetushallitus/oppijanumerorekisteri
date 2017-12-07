@@ -35,7 +35,7 @@ import Syntymaaika from "../common/henkilo/labelvalues/Syntymaaika";
 import Hetu from "../common/henkilo/labelvalues/Hetu";
 import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
 import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
-import AdminViewPage from "./AdminViewPage";
+import HenkiloViewPage from "./HenkiloViewPage";
 import VtjOverrideButton from "../common/henkilo/buttons/VtjOverrideButton";
 import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo";
 import PuraHetuttomanYksilointiButton from "../common/henkilo/buttons/PuraHetuttomanYksilointi";
@@ -43,7 +43,7 @@ import PuraHetuttomanYksilointiButton from "../common/henkilo/buttons/PuraHetutt
 class AdminViewContainer extends React.Component {
     componentDidMount() {
         this.props.clearHenkilo();
-        if(this.props.oidHenkilo === this.props.ownOid) {
+        if (this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.push('/omattiedot');
         }
 
@@ -67,12 +67,17 @@ class AdminViewContainer extends React.Component {
     }
 
     render() {
-        const readOnlyButtons = this.isPalvelukayttaja() ? this._readOnlyButtonsPalvelu : this._readOnlyButtons;
-        const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
-            readOnlyButtons: readOnlyButtons, updatePassword: updatePassword,
+        const readOnlyButtons = this._readOnlyButtons;
+        const props = {
+            ...this.props,
+            L: this.L,
+            locale: this.props.locale,
+            createBasicInfo: this._createBasicInfo,
+            readOnlyButtons: readOnlyButtons,
+            updatePassword: updatePassword,
         };
-        return <AdminViewPage {...props} />;
-    };
+        return <HenkiloViewPage {...props} />;
+    }
 
     constructor(props) {
         super(props);
@@ -84,16 +89,6 @@ class AdminViewContainer extends React.Component {
                 L: this.L, locale: this.props.locale,};
             const linkitetytProps = {henkilo: this.props.henkilo, L: this.L, unlinkHenkilo: this.props.unlinkHenkilo,
                 fetchHenkiloSlaves: this.props.fetchHenkiloSlaves};
-            if (this.isPalvelukayttaja()) {
-                return [
-                    [
-                        <Sukunimi {...props} autofocus={true} label="HENKILO_PALVELUN_NIMI" />,
-                    ],
-                    [
-                        <Kayttajanimi {...props} disabled={!!R.path(['henkilo', 'kayttajatieto', 'username'], props)} />,
-                    ]
-                ]
-            }
             return [
                 [
                     <Sukunimi {...props} autofocus={true} />,
@@ -153,17 +148,7 @@ class AdminViewContainer extends React.Component {
             ];
         };
 
-        this._readOnlyButtonsPalvelu = (edit) => ([
-            <EditButton editAction={edit} L={this.L}/>,
-            <PassivoiButton henkilo={this.props.henkilo} L={this.L} passivoiAction={this.props.passivoiHenkilo}/>,
-            <PasswordButton oidHenkilo={this.props.oidHenkilo}
-                            L={this.L}
-                            styles={{top: '3rem', left: '0', width: '18rem'}}/>,
-        ]);
-    };
-
-    isPalvelukayttaja = (): boolean => this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU'
-
+    }
 }
 
 const mapStateToProps = (state, ownProps) => {

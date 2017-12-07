@@ -32,7 +32,7 @@ class PasswordButton extends React.Component<Props> {
 const mapStateToProps = (state) => {
     return {
         notifications: state.notifications,
-        updatePassword,
+        L: state.l10n.localisations[state.locale],
     };
 };
 

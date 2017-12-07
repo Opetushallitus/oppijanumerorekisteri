@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import VirkailijaViewPage from "../../components/henkilo/VirkailijaViewPage";
+import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, passivoiHenkiloOrg, updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto, updatePassword, fetchHenkiloSlaves, unlinkHenkilo, clearHenkilo
@@ -70,7 +70,7 @@ class VirkailijaViewContainer extends React.Component {
         const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
             readOnlyButtons: this._readOnlyButtons,
         };
-        return <VirkailijaViewPage {...props} />;
+        return <HenkiloViewPage {...props} />;
     };
 
     constructor(props) {
