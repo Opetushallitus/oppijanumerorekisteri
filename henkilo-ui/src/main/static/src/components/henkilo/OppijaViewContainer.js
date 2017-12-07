@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import OppijaViewPage from "../../components/henkilo/OppijaViewPage";
 import {
     fetchHenkilo, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo
+    updatePassword, yksiloiHenkilo, fetchHenkiloSlaves, unlinkHenkilo,
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto,
@@ -24,6 +24,8 @@ import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
 import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
 import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import PropertySingleton from '../../globals/PropertySingleton'
+import LinkitetytHenkilot from "../common/henkilo/labelvalues/LinkitetytHenkilot"
+import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo"
 
 
 class OppijaViewContainer extends React.Component {
@@ -37,6 +39,7 @@ class OppijaViewContainer extends React.Component {
             this.props.updateHenkiloNavigation(oppijaNavi(this.props.oidHenkilo));
 
             this.props.fetchHenkilo(this.props.oidHenkilo);
+            this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
             this.props.fetchYhteystietotyypitKoodisto();
             this.props.fetchKieliKoodisto();
             this.props.fetchKansalaisuusKoodisto();
@@ -59,6 +62,8 @@ class OppijaViewContainer extends React.Component {
             const props = {henkilo: this.props.henkilo, koodisto: this.props.koodisto, readOnly: readOnly,
                 updateModelFieldAction: updateModelAction, updateDateFieldAction: updateDateAction,
                 L: this.L, locale: this.props.locale,};
+            const linkitetytHenkilotProps = {henkilo: this.props.henkilo, L: this.L, unlinkHenkilo: this.props.unlinkHenkilo,
+                fetchHenkiloSlaves: this.props.fetchHenkiloSlaves };
             return [
                 [
                     <Sukunimi {...props} autofocus={true} />,
@@ -74,7 +79,8 @@ class OppijaViewContainer extends React.Component {
                     <Asiointikieli {...props} henkiloUpdate={henkiloUpdate} />,
                 ],
                 [
-
+                    <LinkitetytHenkilot {...linkitetytHenkilotProps} />,
+                    <MasterHenkilo henkilo={this.props.henkilo} oidHenkilo={this.props.oidHenkilo} />
                 ],
             ];
         };
@@ -107,4 +113,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {fetchHenkilo, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
 fetchKansalaisuusKoodisto, updateHenkiloAndRefetch, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation})(OppijaViewContainer);
+    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation, fetchHenkiloSlaves, unlinkHenkilo})(OppijaViewContainer);

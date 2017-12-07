@@ -46,6 +46,7 @@ class VirkailijaViewContainer extends React.Component {
 
             this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
+            this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
             this.props.fetchKieliKoodisto();
             this.props.fetchKansalaisuusKoodisto();
             this.props.fetchSukupuoliKoodisto();
