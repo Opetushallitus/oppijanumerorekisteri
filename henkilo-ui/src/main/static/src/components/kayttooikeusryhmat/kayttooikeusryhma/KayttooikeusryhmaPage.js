@@ -463,7 +463,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             .map((item: ReactSelectOption) => item.value);
         const organisaatiot = this.state.kayttooikeusryhmaForm.organisaatioSelections
             .map((item: ReactSelectOption) => item.value);
-        const ryhmaRestrictionviite = this.state.ryhmaRestrictionViite ? [this.state.ryhmaRestrictionViite] : [];
+        const ryhmaRestrictionviite = this.state.ryhmaRestrictionViite ? [this.state.ryhmaRestrictionViite.organisaatioTyyppi] : [];
         return this.state.ryhmaRestrictionViite ? organisaatioTyypit.concat(organisaatiot).concat(ryhmaRestrictionviite) : organisaatioTyypit.concat(organisaatiot);
     };
 
