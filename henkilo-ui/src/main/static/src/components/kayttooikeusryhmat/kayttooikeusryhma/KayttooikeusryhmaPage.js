@@ -72,7 +72,8 @@ type State = {
     showPassivoiModal: boolean,
     ryhmaRestrictionViite: any,
     toggleTallenna: boolean,
-    togglePassivoi: boolean
+    togglePassivoi: boolean,
+    toggleErrorOnSave: boolean
 };
 
 export default class KayttooikeusryhmaPage extends React.Component<Props, State> {
@@ -92,7 +93,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         showPassivoiModal: false,
         ryhmaRestrictionViite: undefined,
         toggleTallenna: false,
-        togglePassivoi: false
+        togglePassivoi: false,
+        toggleErrorOnSave: false
     };
 
     componentDidMount() {
@@ -176,7 +178,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 </ul>
             </LocalNotification>
 
-
+            <LocalNotification toggle={this.state.toggleErrorOnSave} type={'error'} title={this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}></LocalNotification>
             {this.state.showPassivoiModal ?
                 <OphModal title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']} onClose={() => {this.setState({showPassivoiModal: false})}}>
                     <div className="passivoi-modal">
@@ -508,6 +510,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
+            this.setState({toggleErrorOnSave: true});
             throw error;
         }
     }
@@ -521,6 +524,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
               this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
+            this.setState({toggleErrorOnSave: true});
             throw error;
         }
     }
@@ -534,6 +538,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
+            this.setState({toggleErrorOnSave: true});
             throw error;
         }
     }
