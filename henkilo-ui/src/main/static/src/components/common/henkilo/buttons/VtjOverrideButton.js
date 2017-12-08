@@ -1,20 +1,22 @@
 // @flow
-
-import React from 'react'
+import React from 'react';
+import {connect} from 'react-redux';
 import ConfirmButton from "../../button/ConfirmButton";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
+import type {L} from "../../../../types/localisation.type";
+import {overrideHenkiloVtjData} from "../../../../actions/henkilo.actions";
 
 type Props = {
     henkilo: HenkiloState,
-    L: any,
-    overrideAction: (string) => any,
+    L: L,
+    overrideHenkiloVtjData: (string) => void,
     disabled?: boolean
 }
 
 const VtjOverrideButton = (props: Props) =>{
     return props.henkilo.henkilo.yksiloityVTJ && props.henkilo.henkilo.hetu
         ? <ConfirmButton key="vtjOverride"
-                         action={() => props.overrideAction(props.henkilo.henkilo.oidHenkilo)}
+                         action={() => props.overrideHenkiloVtjData(props.henkilo.henkilo.oidHenkilo)}
                          normalLabel={props.L['VTJ_OVERRIDE_LINKKI']}
                          confirmLabel={props.L['VTJ_OVERRIDE_LINKKI_CONFIRM']}
                          id="vtjOverride"
@@ -22,4 +24,9 @@ const VtjOverrideButton = (props: Props) =>{
         : null;
 };
 
-export default VtjOverrideButton;
+const mapStateToProps = state => ({
+    L: state.l10n.localisations[state.locale],
+    henkilo: state.henkilo,
+});
+
+export default connect(mapStateToProps, {overrideHenkiloVtjData})(VtjOverrideButton);

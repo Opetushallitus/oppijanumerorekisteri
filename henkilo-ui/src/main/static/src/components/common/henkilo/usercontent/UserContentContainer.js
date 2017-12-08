@@ -16,6 +16,8 @@ import Kayttajanimi from "../labelvalues/Kayttajanimi";
 import * as R from 'ramda';
 import AbstractUserContent from "./AbstractUserContent";
 import OppijaUserContent from "./OppijaUserContent";
+import AdminUserContent from "./AdminUserContent";
+import VirkailijaUserContent from "./VirkailijaUserContent";
 
 type Props = {
     L: L,
@@ -72,30 +74,56 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     render() {
+        let content;
+        if (this.props.view === 'OPPIJA') {
+            content = <OppijaUserContent
+                readOnly={this.state.readOnly}
+                discardAction={this._discard.bind(this)}
+                updateAction={this._update.bind(this)}
+                updateModelAction={this._updateModelField.bind(this)}
+                updateDateAction={this._updateDateField.bind(this)}
+                henkiloUpdate={this.state.henkiloUpdate}
+                edit={this._edit.bind(this)}
+            />;
+        }
+        else if (this.props.view === 'ADMIN') {
+            content = <AdminUserContent
+                readOnly={this.state.readOnly}
+                discardAction={this._discard.bind(this)}
+                updateAction={this._update.bind(this)}
+                updateModelAction={this._updateModelField.bind(this)}
+                updateDateAction={this._updateDateField.bind(this)}
+                henkiloUpdate={this.state.henkiloUpdate}
+                edit={this._edit.bind(this)}
+                oidHenkilo={this.props.oidHenkilo}
+            />;
+        }
+        else if (this.props.view === 'VIRKAILIJA') {
+            content = <VirkailijaUserContent
+                readOnly={this.state.readOnly}
+                discardAction={this._discard.bind(this)}
+                updateAction={this._update.bind(this)}
+                updateModelAction={this._updateModelField.bind(this)}
+                updateDateAction={this._updateDateField.bind(this)}
+                henkiloUpdate={this.state.henkiloUpdate}
+                edit={this._edit.bind(this)}
+                oidHenkilo={this.props.oidHenkilo}
+            />
+        }
+        else {
+            content = <AbstractUserContent
+                basicInfo={this.createBasicInfo()}
+                readOnlyButtons={this.createReadOnlyButtons()}
+                readOnly={this.state.readOnly}
+                discardAction={this._discard.bind(this)}
+                updateAction={this._update.bind(this)}
+            />;
+        }
         return <div className="henkiloViewUserContentWrapper">
                     <div className="header">
                         <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
                     </div>
-                    {
-                        this.props.view === 'OPPIJA'
-                            ? <OppijaUserContent
-                                readOnly={this.state.readOnly}
-                                discardAction={this._discard.bind(this)}
-                                updateAction={this._update.bind(this)}
-                                updateModelAction={this._updateModelField.bind(this)}
-                                updateDateAction={this._updateDateField.bind(this)}
-                                henkiloUpdate={this.state.henkiloUpdate}
-                                edit={this._edit.bind(this)}
-                            />
-                            : <AbstractUserContent
-                                basicInfo={this.createBasicInfo()}
-                                readOnlyButtons={this.createReadOnlyButtons()}
-                                readOnly={this.state.readOnly}
-                                discardAction={this._discard.bind(this)}
-                                updateAction={this._update.bind(this)}
-                            />
-
-                    }
+                    { content }
                 </div>;
     }
 

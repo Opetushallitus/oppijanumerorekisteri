@@ -4,6 +4,7 @@ import {
     fetchHenkilo, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
     updatePassword, yksiloiHenkilo, fetchHenkiloSlaves, unlinkHenkilo,
 } from "../../actions/henkilo.actions";
+import {fetchHenkilo} from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto
@@ -105,6 +106,9 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchHenkilo, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
-fetchKansalaisuusKoodisto, updateHenkiloAndRefetch, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateAndRefetchKayttajatieto, updateHenkiloNavigation, fetchHenkiloSlaves, unlinkHenkilo})(OppijaViewContainer);
+export default connect(mapStateToProps, {
+    fetchHenkilo,
+    fetchYhteystietotyypitKoodisto,
+    fetchKieliKoodisto,
+    fetchKansalaisuusKoodisto,
+    updateHenkiloNavigation})(OppijaViewContainer);

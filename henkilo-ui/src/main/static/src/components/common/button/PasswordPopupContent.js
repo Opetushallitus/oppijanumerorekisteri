@@ -1,11 +1,33 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types'
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import Notifications from "../notifications/Notifications"
+import Notifications from '../notifications/Notifications';
 import './PasswordPopupContent.css';
 import PropertySingleton from "../../../globals/PropertySingleton";
+import type {L} from "../../../types/localisation.type";
+import {updatePassword} from "../../../actions/henkilo.actions";
+import {removeNotification} from "../../../actions/notifications.actions";
 
-export default class PasswordPopupContent extends React.Component {
+type Props = {
+    oidHenkilo: string,
+    L: L,
+    updatePassword: (string, string) => void,
+    notifications: {updatePassword: Array<any>},
+    removeNotification: (string, string, number) => void,
+}
+
+type State = {
+    password: string,
+    passwordValid: ?boolean,
+    passwordConfirmed: string,
+    passwordConfirmedValid: ?boolean,
+    passwordButtonClicked: boolean,
+}
+
+class PasswordPopupContent extends React.Component<Props, State> {
+    passwordInput: any;
 
     static propTypes = {
         oidHenkilo: PropTypes.string.isRequired,
@@ -17,13 +39,14 @@ export default class PasswordPopupContent extends React.Component {
         removeNotification: PropTypes.func,
     };
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             password: '',
             passwordValid: null,
             passwordConfirmed: '',
             passwordConfirmedValid: null,
+            passwordButtonClicked: false,
         }
     }
 
@@ -62,27 +85,28 @@ export default class PasswordPopupContent extends React.Component {
                             onClick={() => this.changePassword()}>{L['SALASANA_ASETA']}</button>
                     <div className="clear"/>
                     <Notifications notifications={this.props.notifications.updatePassword}
-                       L={L} styles={{marginTop: '10px', wordBreak: 'normal'}}
-                       closeAction={(status, id) => this.props.removeNotification(status, 'updatePassword', id)} />
+                                   L={L}
+                                   styles={{marginTop: '10px', wordBreak: 'normal'}}
+                                   closeAction={(status, id: any) => this.props.removeNotification(status, 'updatePassword', id)} />
                 </div>);
     }
 
-    handlePasswordChange(event) {
+    handlePasswordChange(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({password: event.target.value,
             passwordValid: this.validatePassword(event.target.value),
             passwordConfirmedValid: false});
     }
 
-    handlePasswordConfirmedChange(event) {
+    handlePasswordConfirmedChange(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({passwordConfirmed: event.target.value,
             passwordConfirmedValid: this.validateConfirmedPassword(event.target.value)});
     }
 
-    validatePassword(password) {
+    validatePassword(password: string) {
         return this._checkPasswordRules(password);
     }
 
-    validateConfirmedPassword(password) {
+    validateConfirmedPassword(password: string) {
         return this.state.password === password;
     }
 
@@ -95,9 +119,17 @@ export default class PasswordPopupContent extends React.Component {
      * 8+ characters
      * Includes special characters
      */
-    _checkPasswordRules(password) {
+    _checkPasswordRules(password: string) {
         return (password.length >= PropertySingleton.getState().minimunPasswordLength
             && PropertySingleton.getState().specialCharacterRegex.exec(password) !== null);
     }
 
 }
+
+const mapStateToProps = state => ({
+    L: state.l10n.localisations[state.locale],
+    notifications: state.notifications,
+
+});
+
+export default connect(mapStateToProps, {updatePassword, removeNotification})(PasswordPopupContent);

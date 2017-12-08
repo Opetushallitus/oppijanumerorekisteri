@@ -18,8 +18,15 @@ import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henki
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {L} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
-import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
+import {fetchHenkiloSlaves, yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
+import Kayttajanimi from "../labelvalues/Kayttajanimi";
+import LinkitetytHenkilot from "../labelvalues/LinkitetytHenkilot";
+import MasterHenkilo from "../labelvalues/MasterHenkilo";
+import PuraHetuttomanYksilointiButton from "../buttons/PuraHetuttomanYksilointi";
+import HakaButton from "../buttons/HakaButton";
+import VtjOverrideButton from "../buttons/VtjOverrideButton";
+import PasswordButton from "../buttons/PasswordButton";
 
 type Props = {
     readOnly: boolean,
@@ -34,18 +41,21 @@ type Props = {
     L: L,
     locale: Locale,
     yksiloiHenkilo: () => void,
+    isAdmin: boolean,
+    oidHenkilo: string,
 }
 
 type State = {
 
 }
 
-class OppijaUserContent extends React.Component<Props, State> {
-
+class AdminUserContent extends React.Component<Props, State> {
     render() {
         return this.props.henkilo.henkiloLoading
         || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading
+        || this.props.koodisto.sukupuoliKoodistoLoading
+        || this.props.henkilo.kayttajatietoLoading
         || this.props.koodisto.yhteystietotyypitKoodistoLoading
             ? <Loader />
             : <AbstractUserContent
@@ -58,7 +68,7 @@ class OppijaUserContent extends React.Component<Props, State> {
     }
 
     createBasicInfo = () => {
-        const basicInfoProps = {
+        const props = {
             readOnly: this.props.readOnly,
             updateModelFieldAction: this.props.updateModelAction,
             updateDateFieldAction: this.props.updateDateAction,
@@ -68,21 +78,24 @@ class OppijaUserContent extends React.Component<Props, State> {
         // Basic info box content
         return [
             [
-                <Sukunimi autofocus
-                          {...basicInfoProps}/>,
-                <Etunimet {...basicInfoProps}/>,
-                <Syntymaaika {...basicInfoProps}/>,
-                <Hetu {...basicInfoProps} />,
-                <Kutsumanimi {...basicInfoProps} />,
+                <Sukunimi {...props} autofocus={true} />,
+                <Etunimet {...props} />,
+                <Syntymaaika {...props} />,
+                <Hetu {...props} />,
+                <Kutsumanimi {...props} />,
             ],
             [
-                <Kansalaisuus {...basicInfoProps} />,
-                <Aidinkieli {...basicInfoProps} />,
-                <Oppijanumero {...basicInfoProps} />,
-                <Asiointikieli {...basicInfoProps} />,
+                <Kansalaisuus {...props} />,
+                <Aidinkieli {...props} />,
+                <Oppijanumero {...props} />,
+                <Asiointikieli {...props} />,
             ],
             [
-
+                <Kayttajanimi {...props}
+                              disabled={!this.props.isAdmin}
+                />,
+                <LinkitetytHenkilot />,
+                <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />
             ],
         ];
     };
@@ -97,7 +110,19 @@ class OppijaUserContent extends React.Component<Props, State> {
                 disabled={duplicate || passivoitu}
             />,
             <YksiloiHetutonButton disabled={duplicate || passivoitu} />,
+            <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />,
             <PassivoiButton disabled={duplicate || passivoitu} />,
+            <HakaButton
+                oidHenkilo={this.props.oidHenkilo}
+                styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
+                disabled={duplicate || passivoitu}
+            />,
+            <VtjOverrideButton disabled={duplicate || passivoitu} />,
+            <PasswordButton
+                oidHenkilo={this.props.oidHenkilo}
+                styles={{top: '3rem', left: '0', width: '18rem'}}
+                disabled={duplicate || passivoitu}
+            />,
         ];
     };
 
@@ -108,7 +133,8 @@ const mapStateToProps = state => ({
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
+    isAdmin: state.omattiedot.isAdmin,
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo})(OppijaUserContent);
+export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(AdminUserContent);
 

@@ -32,7 +32,8 @@ const Asiointikieli = (props: Props) => <LabelValue
                 optionsName: 'asiointiKieli.kieliKoodi',
             })),
         // For readOnly view
-        value: props.henkilo && props.henkilo.henkilo.asiointiKieli && props.koodisto.kieli
+        value: props.henkilo && props.henkilo.henkilo && props.henkilo.henkilo.asiointiKieli && props.koodisto.kieli.length
+        && props.koodisto.kieli
             .filter(kieli => kieli.value === props.henkilo.henkilo.asiointiKieli.kieliKoodi)[0][props.locale],
         // For edit view
         selectValue: props.henkiloUpdate.asiointiKieli && props.henkiloUpdate.asiointiKieli.kieliKoodi,
@@ -61,4 +62,4 @@ const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps)(Asiointikieli);
+export default connect(mapStateToProps, {})(Asiointikieli);

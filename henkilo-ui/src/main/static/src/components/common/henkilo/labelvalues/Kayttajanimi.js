@@ -1,15 +1,29 @@
+// @flow
 import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import LabelValue from "./LabelValue";
+import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-const Kayttajanimi = (props) => <LabelValue {...props} values={{
-    label: 'HENKILO_KAYTTAJANIMI',
-    value: props.henkilo.kayttajatieto.username,
-    inputValue: 'kayttajanimi',
-    disabled: props.disabled,
-    isError: props.isError,
-}} />;
+type Props = {
+    henkilo: HenkiloState,
+    readOnly: boolean,
+    updateModelFieldAction: () => void,
+    disabled: boolean,
+    isError: boolean,
+}
+
+const Kayttajanimi = (props: Props) => <LabelValue
+    updateModelFieldAction={props.updateModelFieldAction}
+    readOnly={props.readOnly}
+    values={{
+        label: 'HENKILO_KAYTTAJANIMI',
+        value: props.henkilo.kayttajatieto.username,
+        inputValue: 'kayttajanimi',
+        disabled: props.disabled,
+        isError: props.isError,
+    }}
+/>;
 
 Kayttajanimi.propTypes = {
     henkilo: PropTypes.shape({

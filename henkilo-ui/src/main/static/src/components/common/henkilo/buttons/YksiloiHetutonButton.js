@@ -3,18 +3,20 @@ import React from 'react';
 import {connect} from 'react-redux';
 import ConfirmButton from "../../button/ConfirmButton";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
+import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
+import type {L} from "../../../../types/localisation.type";
 
 type Props = {
     henkilo: HenkiloState,
-    L: any,
-    yksiloiAction: (string) => any,
+    L: L,
+    yksiloiHenkilo: (string) => void,
     disabled?: boolean
 }
 
 const YksiloiHetutonButton = (props: Props) =>
     !props.henkilo.henkilo.yksiloityVTJ && !props.henkilo.henkilo.hetu && !props.henkilo.henkilo.yksiloity
         ? <ConfirmButton key="yksilointi"
-                         action={() => props.yksiloiAction(props.henkilo.henkilo.oidHenkilo)}
+                         action={() => props.yksiloiHenkilo(props.henkilo.henkilo.oidHenkilo)}
                          normalLabel={props.L['YKSILOI_LINKKI']}
                          confirmLabel={props.L['YKSILOI_LINKKI_CONFIRM']}
                          disabled={props.disabled}
@@ -26,4 +28,4 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(YksiloiHetutonButton);
+export default connect(mapStateToProps, {yksiloiHenkilo})(YksiloiHetutonButton);

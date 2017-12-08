@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
@@ -5,8 +6,18 @@ import {Link} from 'react-router'
 import {fetchHenkiloMaster, unlinkHenkilo} from "../../../../actions/henkilo.actions"
 import LabelValue from "./LabelValue"
 import TextButton from "../../button/TextButton";
+import type {L} from "../../../../types/localisation.type";
+import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-class MasterHenkilo extends React.Component {
+type Props = {
+    oidHenkilo: string,
+    henkilo: HenkiloState,
+    L: L,
+    fetchHenkiloMaster: (string) => void,
+    unlinkHenkilo: (string, string) => void,
+}
+
+class MasterHenkilo extends React.Component<Props> {
     static propTypes = {
         oidHenkilo: PropTypes.string.isRequired,
         henkilo: PropTypes.shape({
@@ -16,12 +27,6 @@ class MasterHenkilo extends React.Component {
             }).isRequired,
         }).isRequired,
     };
-
-    constructor(props) {
-        super(props);
-
-        this.L = this.props.l10n[this.props.locale];
-    }
 
     componentDidMount() {
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
@@ -39,13 +44,12 @@ class MasterHenkilo extends React.Component {
                                     <Link to={'/virkailija/' + this.props.henkilo.master.oidHenkilo}>
                                         {this.props.henkilo.master.kutsumanimi + ' ' + this.props.henkilo.master.sukunimi}
                                     </Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.master.oidHenkilo, this.props.oidHenkilo)}>
-                                    {this.L['HENKILO_POISTA_LINKITYS']}
+                                    {this.props.L['HENKILO_POISTA_LINKITYS']}
                                 </TextButton>
                                 </div>,
                             label: 'HENKILO_LINKITETYT_MASTER',
                         }}
-                        readOnly
-                        L={this.L} />
+                        readOnly />
                     : null
             }
             </div>;
@@ -58,11 +62,13 @@ class MasterHenkilo extends React.Component {
 
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,
+        L: state.l10n.localisations[state.locale],
         isLoading: state.henkilo.master.masterLoading,
+        henkilo: state.henkilo,
     };
 };
 

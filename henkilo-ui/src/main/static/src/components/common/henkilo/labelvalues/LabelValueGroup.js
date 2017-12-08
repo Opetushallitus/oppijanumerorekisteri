@@ -1,10 +1,24 @@
+// @flow
 import React from 'react';
+import {connect} from 'react-redux';
 import Columns from 'react-columns';
+import type {L} from "../../../../types/localisation.type";
 
-const LabelValueGroup = ({label, L, valueGroup}) => <div id={label}>
+type Props = {
+    L: L,
+    label: string,
+    valueGroup: any,
+}
+
+const LabelValueGroup = ({label, L, valueGroup}: Props) => <div id={label}>
             <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
                 <span className="oph-bold">{L[label]}</span>
                 {valueGroup}
             </Columns>
         </div>;
-export default LabelValueGroup;
+
+const mapStateToProps = state => ({
+    L: state.l10n.localisations[state.locale],
+});
+
+export default connect(mapStateToProps, {})(LabelValueGroup);
