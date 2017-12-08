@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import OppijaViewPage from "../../components/henkilo/OppijaViewPage";
 import {
     fetchHenkilo, passivoiHenkilo, updateHenkiloAndRefetch, updateAndRefetchKayttajatieto,
     updatePassword, yksiloiHenkilo, fetchHenkiloSlaves, unlinkHenkilo,
@@ -11,21 +10,10 @@ import {
 } from "../../actions/koodisto.actions";
 import {updateHenkiloNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../navigation/navigationconfigurations";
-import YksiloiHetutonButton from "../common/henkilo/buttons/YksiloiHetutonButton";
-import EditButton from "../common/henkilo/buttons/EditButton";
-import PassivoiButton from "../common/henkilo/buttons/PassivoiButton";
-import Sukunimi from "../common/henkilo/labelvalues/Sukunimi";
-import Syntymaaika from "../common/henkilo/labelvalues/Syntymaaika";
-import Kutsumanimi from "../common/henkilo/labelvalues/Kutsumanimi";
-import Etunimet from "../common/henkilo/labelvalues/Etunimet";
-import Hetu from "../common/henkilo/labelvalues/Hetu";
-import Kansalaisuus from "../common/henkilo/labelvalues/Kansalaisuus";
-import Aidinkieli from "../common/henkilo/labelvalues/Aidinkieli";
-import Oppijanumero from "../common/henkilo/labelvalues/Oppijanumero";
-import Asiointikieli from "../common/henkilo/labelvalues/Asiointikieli";
 import PropertySingleton from '../../globals/PropertySingleton'
 import LinkitetytHenkilot from "../common/henkilo/labelvalues/LinkitetytHenkilot"
 import MasterHenkilo from "../common/henkilo/labelvalues/MasterHenkilo"
+import HenkiloViewPage from "./HenkiloViewPage";
 
 
 class OppijaViewContainer extends React.Component {
@@ -47,9 +35,15 @@ class OppijaViewContainer extends React.Component {
     }
 
     render() {
-        const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
-            readOnlyButtons: this._readOnlyButtons, };
-        return <OppijaViewPage {...props} />;
+        const props = {
+            ...this.props,
+            L: this.L,
+            locale: this.props.locale,
+            createBasicInfo: this._createBasicInfo,
+            readOnlyButtons: this._readOnlyButtons,
+            view: 'OPPIJA',
+        };
+        return <HenkiloViewPage {...props} />;
     }
 
     constructor(props) {

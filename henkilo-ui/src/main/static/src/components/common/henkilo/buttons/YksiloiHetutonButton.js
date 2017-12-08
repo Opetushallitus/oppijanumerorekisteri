@@ -1,5 +1,6 @@
 // @flow
-import React from 'react'
+import React from 'react';
+import {connect} from 'react-redux';
 import ConfirmButton from "../../button/ConfirmButton";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
@@ -20,4 +21,9 @@ const YksiloiHetutonButton = (props: Props) =>
                          id="yksilointi" />
         : null;
 
-export default YksiloiHetutonButton;
+const mapStateToProps = state => ({
+    henkilo: state.henkilo,
+    L: state.l10n.localisations[state.locale],
+});
+
+export default connect(mapStateToProps, {})(YksiloiHetutonButton);

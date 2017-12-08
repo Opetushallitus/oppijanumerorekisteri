@@ -6,7 +6,6 @@ import StaticUtils from "../../StaticUtils";
 import moment from 'moment';
 import type {L} from "../../../../types/localisation.type";
 import PropertySingleton from "../../../../globals/PropertySingleton";
-import Loader from "../../icons/Loader";
 import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto} from "../../../../actions/henkilo.actions";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import EditButton from "../buttons/EditButton";
@@ -16,6 +15,7 @@ import Sukunimi from "../labelvalues/Sukunimi";
 import Kayttajanimi from "../labelvalues/Kayttajanimi";
 import * as R from 'ramda';
 import AbstractUserContent from "./AbstractUserContent";
+import OppijaUserContent from "./OppijaUserContent";
 
 type Props = {
     L: L,
@@ -36,6 +36,7 @@ type Props = {
     updateHenkiloAndRefetch: (any) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
     oidHenkilo: string,
+    view: string,
 }
 
 type State = {
@@ -60,12 +61,7 @@ class UserContentContainer extends React.Component<Props, State> {
 
     componentWillReceiveProps(nextProps: Props) {
         if (this.state.isLoading) {
-            const allLoaded = !nextProps.henkilo.henkiloLoading
-                && !nextProps.koodisto.kieliKoodistoLoading
-                && !nextProps.koodisto.kansalaisuusKoodistoLoading
-                && !nextProps.koodisto.sukupuoliKoodistoLoading
-                && !nextProps.henkilo.kayttajatietoLoading
-                && !nextProps.koodisto.yhteystietotyypitKoodistoLoading;
+            const allLoaded = !nextProps.henkilo.henkiloLoading;
             if (allLoaded) {
                 this.setState({
                     isLoading: false,
@@ -76,20 +72,31 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     render() {
-        return (
-            this.state.isLoading
-                ? <Loader />
-                : <div className="henkiloViewUserContentWrapper">
+        return <div className="henkiloViewUserContentWrapper">
                     <div className="header">
                         <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
                     </div>
-                    <AbstractUserContent basicInfo={this.createBasicInfo()}
-                                         readOnlyButtons={this.createReadOnlyButtons()}
-                                         readOnly={this.state.readOnly}
-                                         discardAction={this._discard.bind(this)}
-                                         updateAction={this._update.bind(this)} />
-                </div>
-        );
+                    {
+                        this.props.view === 'OPPIJA'
+                            ? <OppijaUserContent
+                                readOnly={this.state.readOnly}
+                                discardAction={this._discard.bind(this)}
+                                updateAction={this._update.bind(this)}
+                                updateModelAction={this._updateModelField.bind(this)}
+                                updateDateAction={this._updateDateField.bind(this)}
+                                henkiloUpdate={this.state.henkiloUpdate}
+                                edit={this._edit.bind(this)}
+                            />
+                            : <AbstractUserContent
+                                basicInfo={this.createBasicInfo()}
+                                readOnlyButtons={this.createReadOnlyButtons()}
+                                readOnly={this.state.readOnly}
+                                discardAction={this._discard.bind(this)}
+                                updateAction={this._update.bind(this)}
+                            />
+
+                    }
+                </div>;
     }
 
     createBasicInfo() {

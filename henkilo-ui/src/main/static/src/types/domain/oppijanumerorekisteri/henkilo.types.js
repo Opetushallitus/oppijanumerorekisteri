@@ -7,7 +7,7 @@ import type {Kielisyys} from "./kielisyys.types";
 export type Henkilo = {
     oidHenkilo: string,
     hetu: string,
-    pasivoitu: boolean,
+    passivoitu: boolean,
     henkiloTyyppi: 'OPPIJA' | 'VIRKAILIJA' | 'PALVELU',
     etunimet: string,
     kutsumanimi: string,
@@ -15,7 +15,7 @@ export type Henkilo = {
     aidinkieli: Kielisyys,
     asiointiKieli: Kielisyys,
     kielisyys: Array<Kielisyys>,
-    kansalaisuus: Array<Kielisyys>,
+    kansalaisuus: Array<Kansalaisuus>,
     kasittelijaOid: string,
     syntymaaika: string,
     sukupuoli: string,

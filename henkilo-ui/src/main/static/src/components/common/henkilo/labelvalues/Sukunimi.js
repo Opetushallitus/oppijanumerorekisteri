@@ -4,13 +4,26 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import LabelValue from "./LabelValue";
 import StaticUtils from "../../StaticUtils";
+import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-const Sukunimi = (props) => <LabelValue {...props} values={{
-    label: props.label || 'HENKILO_SUKUNIMI',
-    value: props.henkilo.henkilo.sukunimi,
-    inputValue: 'sukunimi',
-    disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-}} />;
+type Props = {
+    henkilo: HenkiloState,
+    readOnly: boolean,
+    autofocus: boolean,
+    updateModelFieldAction: () => void,
+}
+
+const Sukunimi = (props: Props) => <LabelValue
+    readOnly={props.readOnly}
+    updateModelFieldAction={props.updateModelFieldAction}
+    autofocus={props.autofocus}
+    values={{
+        label: props.label || 'HENKILO_SUKUNIMI',
+        value: props.henkilo.henkilo.sukunimi,
+        inputValue: 'sukunimi',
+        disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
+    }}
+/>;
 
 Sukunimi.propTypes = {
     henkilo: PropTypes.shape({henkilo: PropTypes.shape({

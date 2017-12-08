@@ -5,8 +5,8 @@ import EditButtons from "../buttons/EditButtons";
 import Columns from 'react-columns';
 
 type Props = {
-    basicInfo: Array<{}>,
-    readOnlyButtons: Array<{}>,
+    basicInfo: Array<any>,
+    readOnlyButtons: Array<any>,
     readOnly: boolean,
     discardAction: () => void,
     updateAction: () => void,

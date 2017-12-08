@@ -24,6 +24,7 @@ type Props = {
     readOnlyButtons: ((any) => void) => any,
     passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
     oidHenkilo: string,
+    view: string,
 }
 
 class HenkiloViewPage extends React.Component<Props> {
@@ -43,7 +44,8 @@ class HenkiloViewPage extends React.Component<Props> {
                     {
                         <HenkiloViewUserContent basicInfo={this.props.createBasicInfo}
                                                 readOnlyButtons={this.props.readOnlyButtons}
-                                                oidHenkilo={this.props.oidHenkilo} />
+                                                oidHenkilo={this.props.oidHenkilo}
+                                                view={this.props.view} />
                     }
                 </div>
                 {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
@@ -56,21 +58,24 @@ class HenkiloViewPage extends React.Component<Props> {
                     }
                 </div>
                 }
-                <div className="wrapper">
+                {this.props.view !== 'OPPIJA' && <div className="wrapper">
                     {
                         this.props.henkilo.henkiloOrgsLoading
                             ? <Loader />
                             : <HenkiloViewOrganisationContent {...this.props} readOnly={true} locale={this.props.locale} />
                     }
-                </div>
-                <div className="wrapper" ref={(ref) => this.existingKayttooikeusRef = ref}>
+                </div>}
+                {this.props.view !== 'OPPIJA' && <div className="wrapper" ref={(ref) => this.existingKayttooikeusRef = ref}>
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExistingKayttooikeus {...this.props} vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)} />
+                            : <HenkiloViewExistingKayttooikeus
+                                {...this.props}
+                                vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                            />
                     }
-                </div>
-                {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
+                </div>}
+                {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' && this.props.view !== 'OPPIJA' &&
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
@@ -79,18 +84,18 @@ class HenkiloViewPage extends React.Component<Props> {
                     }
                 </div>
                 }
-                <div className="wrapper">
+                {this.props.view !== 'OPPIJA' && <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }
-                </div>
-                <div className="wrapper">
+                </div>}
+                {this.props.view !== 'OPPIJA' && <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus {...this.props}
                                                    vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
                                                    existingKayttooikeusRef={this.existingKayttooikeusRef} />
-                </div>
+                </div>}
             </div>
         )
     }
