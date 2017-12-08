@@ -13,6 +13,8 @@ import StaticUtils from '../common/StaticUtils'
 import type {L10n} from "../../types/localisation.type";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 import PropertySingleton from "../../globals/PropertySingleton";
+import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {ReactSelectOption} from "../../types/react-select.types";
 
 type Props = {
     l10n: L10n,
@@ -25,8 +27,17 @@ type Props = {
     createBasicInfo: (boolean, (any) => void, (any) => void, any) => any,
     readOnlyButtons: ((any) => void) => any,
     passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
+    organisaatioKayttooikeusryhmat: {kayttooikeusryhmat: Array<any>},
     oidHenkilo: string,
     view: string,
+    organisaatios: {
+        organisaatiot: {
+            organisaatiot: Array<Organisaatio>,
+        }
+    },
+    ryhmas: {
+        ryhmas: Array<{nimi: {fi: string, sv: string, en: string,}, oid: string}>,
+    },
 }
 
 class HenkiloViewPage extends React.Component<Props> {
@@ -112,15 +123,16 @@ class HenkiloViewPage extends React.Component<Props> {
         )
     }
 
-    _parseOrganisaatioOptions(): Array<string> {
+    _parseOrganisaatioOptions(): Array<ReactSelectOption> {
         const locale = this.props.locale;
         if (this.props.organisaatios && this.props.organisaatios.organisaatiot) {
             return this.props.organisaatios.organisaatiot.organisaatiot
                 .map(organisaatio => {
-                    const organisaatioName = organisaatio.nimi[locale] ? organisaatio.nimi[locale] :
-                        organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
+                    const organisaatioName: string = organisaatio.nimi[locale]
+                        ? organisaatio.nimi[locale]
+                        : organisaatio.nimi.fi || organisaatio.nimi.sv || organisaatio.nimi.en || organisaatio.oid || '';
                     const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid
-                        ? `${organisaatioName} (${organisaatio.organisaatiotyypit.join(',')})`
+                        ? `${organisaatioName} (${organisaatio.tyypit.join(',')})`
                         : `${organisaatioName}`;
                     return {
                         label,
