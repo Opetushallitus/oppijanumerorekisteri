@@ -18,6 +18,7 @@ import AbstractUserContent from "./AbstractUserContent";
 import OppijaUserContent from "./OppijaUserContent";
 import AdminUserContent from "./AdminUserContent";
 import VirkailijaUserContent from "./VirkailijaUserContent";
+import OmattiedotUserContent from "./OmattiedotUserContent";
 
 type Props = {
     L: L,
@@ -100,6 +101,18 @@ class UserContentContainer extends React.Component<Props, State> {
         }
         else if (this.props.view === 'VIRKAILIJA') {
             content = <VirkailijaUserContent
+                readOnly={this.state.readOnly}
+                discardAction={this._discard.bind(this)}
+                updateAction={this._update.bind(this)}
+                updateModelAction={this._updateModelField.bind(this)}
+                updateDateAction={this._updateDateField.bind(this)}
+                henkiloUpdate={this.state.henkiloUpdate}
+                edit={this._edit.bind(this)}
+                oidHenkilo={this.props.oidHenkilo}
+            />
+        }
+        else if (this.props.view === 'OMATTIEDOT') {
+            content = <OmattiedotUserContent
                 readOnly={this.state.readOnly}
                 discardAction={this._discard.bind(this)}
                 updateAction={this._update.bind(this)}

@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import type {Locale} from '../../types/locale.type';
-import HenkiloViewUserContent from '../common/henkilo/usercontent/UserContentContainer';
+import UserContentContainer from '../common/henkilo/usercontent/UserContentContainer';
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
@@ -11,6 +11,8 @@ import Loader from "../common/icons/Loader";
 import HenkiloViewContactContent from "../common/henkilo/HenkiloViewContactContent";
 import StaticUtils from '../common/StaticUtils'
 import type {L10n} from "../../types/localisation.type";
+import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
+import PropertySingleton from "../../globals/PropertySingleton";
 
 type Props = {
     l10n: L10n,
@@ -42,7 +44,7 @@ class HenkiloViewPage extends React.Component<Props> {
             <div>
                 <div className="wrapper">
                     {
-                        <HenkiloViewUserContent basicInfo={this.props.createBasicInfo}
+                        <UserContentContainer basicInfo={this.props.createBasicInfo}
                                                 readOnlyButtons={this.props.readOnlyButtons}
                                                 oidHenkilo={this.props.oidHenkilo}
                                                 view={this.props.view} />
@@ -58,7 +60,7 @@ class HenkiloViewPage extends React.Component<Props> {
                     }
                 </div>
                 }
-                {this.props.view !== 'OPPIJA' && <div className="wrapper">
+                {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA' && <div className="wrapper">
                     {
                         this.props.henkilo.henkiloOrgsLoading
                             ? <Loader />
@@ -91,14 +93,52 @@ class HenkiloViewPage extends React.Component<Props> {
                             : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }
                 </div>}
-                {this.props.view !== 'OPPIJA' && <div className="wrapper">
+                {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA' && <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus {...this.props}
                                                    vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
                                                    existingKayttooikeusRef={this.existingKayttooikeusRef} />
                 </div>}
+                {this.props.view === 'OMATTIEDOT' &&
+                this.props.henkilo.henkiloLoading
+                    ? <Loader />
+                    : <HenkiloViewCreateKayttooikeusanomus
+                        {...this.props}
+                        organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
+                        ryhmaOptions={this._parseRyhmaOptions.call(this)}
+                        kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
+                    />
+                }
             </div>
         )
     }
+
+    _parseOrganisaatioOptions(): Array<string> {
+        const locale = this.props.locale;
+        if (this.props.organisaatios && this.props.organisaatios.organisaatiot) {
+            return this.props.organisaatios.organisaatiot.organisaatiot
+                .map(organisaatio => {
+                    const organisaatioName = organisaatio.nimi[locale] ? organisaatio.nimi[locale] :
+                        organisaatio.nimi.en || organisaatio.nimi.fi || organisaatio.nimi.sv || '';
+                    const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid
+                        ? `${organisaatioName} (${organisaatio.organisaatiotyypit.join(',')})`
+                        : `${organisaatioName}`;
+                    return {
+                        label,
+                        value: organisaatio.oid
+                    };
+                });
+        }
+        return [];
+    }
+
+    _parseRyhmaOptions() {
+        return this.props.ryhmas ?
+            this.props.ryhmas.ryhmas.map(ryhma => ({
+                label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                value: ryhma.oid
+            })) : [];
+    }
+
 }
 
 export default HenkiloViewPage;
