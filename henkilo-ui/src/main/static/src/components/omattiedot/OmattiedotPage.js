@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent'
-import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent'
+import React from 'react';
+import HenkiloViewUserContent from '../common/henkilo/usercontent/UserContentContainer';
+import HenkiloViewContactContent from '../common/henkilo/HenkiloViewContactContent';
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";

@@ -1,6 +1,8 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import Button from "../../button/Button"
+// @flow
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import Button from '../../button/Button';
 
 const EditButtons = ({discardAction, updateAction, L}) =>
     <div>
@@ -14,4 +16,8 @@ EditButtons.propTypes = {
     L: PropTypes.object,
 };
 
-export default EditButtons;
+const mapStateToProps = (state) => ({
+    L: state.l10n.localisations[state.locale],
+});
+
+export default connect(mapStateToProps, {})(EditButtons);

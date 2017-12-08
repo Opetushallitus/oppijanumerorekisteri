@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
-import type {Locale} from '../../types/locale.type'
-import HenkiloViewUserContent from '../common/henkilo/HenkiloViewUserContent';
+import type {Locale} from '../../types/locale.type';
+import HenkiloViewUserContent from '../common/henkilo/usercontent/UserContentContainer';
 import HenkiloViewOrganisationContent from '../common/henkilo/HenkiloViewOrganisationContent'
 import HenkiloViewExistingKayttooikeus from "../common/henkilo/HenkiloViewExistingKayttooikeus";
 import HenkiloViewExpiredKayttooikeus from "../common/henkilo/HenkiloViewExpiredKayttooikeus";

@@ -66,7 +66,7 @@ export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getS
                 const casUrl = urls.url('cas.login', {authToken,});
                 http.get(casUrl).then(async loginPage => {
                         // Login failed
-                        if(loginPage.indexOf('Log In Successful') === -1) {
+                        if (loginPage.indexOf('Log In Successful') === -1) {
                             dispatch({type: LOGIN_FAILED});
                         }
                         else {

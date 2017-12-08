@@ -1,22 +1,21 @@
 // @flow
-import './HenkiloViewUserContent.css';
+import './UserContentContainer.css';
 import React from 'react';
 import {connect} from 'react-redux';
-import Columns from 'react-columns'
-import StaticUtils from "../StaticUtils";
-import EditButtons from "./buttons/EditButtons";
+import StaticUtils from "../../StaticUtils";
 import moment from 'moment';
-import type {L} from "../../../types/localisation.type";
-import PropertySingleton from "../../../globals/PropertySingleton";
-import Loader from "../icons/Loader";
-import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto} from "../../../actions/henkilo.actions";
-import type {Henkilo} from "../../../types/domain/oppijanumerorekisteri/henkilo.types";
-import EditButton from "./buttons/EditButton";
-import PassivoiButton from "./buttons/PassivoiButton";
-import PasswordButton from "./buttons/PasswordButton";
-import Sukunimi from "./labelvalues/Sukunimi";
-import Kayttajanimi from "./labelvalues/Kayttajanimi";
+import type {L} from "../../../../types/localisation.type";
+import PropertySingleton from "../../../../globals/PropertySingleton";
+import Loader from "../../icons/Loader";
+import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto} from "../../../../actions/henkilo.actions";
+import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
+import EditButton from "../buttons/EditButton";
+import PassivoiButton from "../buttons/PassivoiButton";
+import PasswordButton from "../buttons/PasswordButton";
+import Sukunimi from "../labelvalues/Sukunimi";
+import Kayttajanimi from "../labelvalues/Kayttajanimi";
 import * as R from 'ramda';
+import AbstractUserContent from "./AbstractUserContent";
 
 type Props = {
     L: L,
@@ -46,7 +45,7 @@ type State = {
     isLoading: boolean,
 }
 
-class HenkiloViewUserContent extends React.Component<Props, State> {
+class UserContentContainer extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -80,37 +79,17 @@ class HenkiloViewUserContent extends React.Component<Props, State> {
         return (
             this.state.isLoading
                 ? <Loader />
-                : <div className="henkiloViewUserContentWrapper user-content">
-                    <div>
-                        <div className="header">
-                            <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
-                        </div>
-                        {/* By default rootStyles is { overflowX: 'hidden' }. This causes scroll bars to appear when inner content expands. */}
-                        <Columns columns={3} gap="10px" rootStyles={{}}>
-                            {
-                                this.createBasicInfo()
-                                    .map((info, idx) =>
-                                        <div key={idx} className="henkiloViewContent">
-                                            {
-                                                info.map((values, idx2) => <div key={idx2}>{values}</div>)
-                                            }
-                                        </div>
-                                    )
-                            }
-                        </Columns>
+                : <div className="henkiloViewUserContentWrapper">
+                    <div className="header">
+                        <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
                     </div>
-                    {this.state.readOnly
-                        ? <div className="henkiloViewButtons">
-                            {this.createReadOnlyButtons().map((button, idx) => <div style={{display: 'inline-block'}} key={idx}>{button}</div>)}
-                        </div>
-                        : <div className="henkiloViewEditButtons">
-                            <EditButtons discardAction={this._discard.bind(this)}
-                                         updateAction={this._update.bind(this)}
-                                         L={this.props.L} />
-                        </div>
-                    }
+                    <AbstractUserContent basicInfo={this.createBasicInfo()}
+                                         readOnlyButtons={this.createReadOnlyButtons()}
+                                         readOnly={this.state.readOnly}
+                                         discardAction={this._discard.bind(this)}
+                                         updateAction={this._update.bind(this)} />
                 </div>
-        )
+        );
     }
 
     createBasicInfo() {
@@ -197,10 +176,10 @@ class HenkiloViewUserContent extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     koodisto: state.koodisto,
     henkilo: state.henkilo,
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto})(HenkiloViewUserContent);
+export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto})(UserContentContainer);
