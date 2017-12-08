@@ -5,7 +5,7 @@ import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
-import {fetchKutsus, renewKutsu} from "../../actions/kutsu.actions";
+import {renewKutsu} from "../../actions/kutsu.actions";
 
 class KutsututTable extends React.Component {
 
@@ -80,8 +80,8 @@ class KutsututTable extends React.Component {
     }
 
     createResendCell(kutsu) {
-        const resendAction = () => {
-            this.props.renewKutsu(kutsu.id);
+        const resendAction = async () => {
+            await this.props.renewKutsu(kutsu.id);
             this.props.fetchKutsus(this.state.sorted[0]);
         };
         return kutsu.tila === 'AVOIN' &&
@@ -126,4 +126,4 @@ const mapStateToProps = (state, ownProps) => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {renewKutsu, fetchKutsus})(KutsututTable);
+export default connect(mapStateToProps, {renewKutsu})(KutsututTable);

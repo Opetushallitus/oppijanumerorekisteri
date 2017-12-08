@@ -216,9 +216,9 @@ export default class KutsututPage extends React.Component<Props, State> {
         this.setState({confirmDeleteFor: null});
     }
 
-    cancelInvitationConfirmed() {
+    async cancelInvitationConfirmed() {
         if (this.state.confirmDeleteFor) {
-            this.props.deleteKutsu(this.state.confirmDeleteFor.id);
+            await this.props.deleteKutsu(this.state.confirmDeleteFor.id);
             this.setState({confirmDeleteFor: null});
         }
         this.fetchKutsus();
