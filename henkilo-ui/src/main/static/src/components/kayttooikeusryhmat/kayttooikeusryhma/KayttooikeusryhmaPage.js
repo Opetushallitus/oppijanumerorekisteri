@@ -23,6 +23,7 @@ import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
 import type {L} from "../../../types/localisation.type";
 import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import {LocalNotification} from "../../common/Notification/LocalNotification";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -166,6 +167,16 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 }
 
             </div>
+
+            <LocalNotification toggle={!this._validateKayttooikeusryhmaInputs()} type={'info'} title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO']}>
+                <ul>
+                    { this._validateKayttooikeusryhmaNimet() ? null : <li>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI']}</li> }
+                    { this._validateKayttooikeusryhmaDescriptions() ? null : <li>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS']}</li>}
+                    { this._validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections() ? null : <li>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS']}</li>}
+                </ul>
+            </LocalNotification>
+
+
             {this.state.showPassivoiModal ?
                 <OphModal title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']} onClose={() => {this.setState({showPassivoiModal: false})}}>
                     <div className="passivoi-modal">
@@ -285,10 +296,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 ...this.state.kayttooikeusryhmaForm,
                 ryhmaRestriction: !this.state.kayttooikeusryhmaForm.ryhmaRestriction
             }
-        }, () => {
-            console.log(this.state.kayttooikeusryhmaForm.ryhmaRestriction);
         });
-
     };
 
     _onOrganisaatioSelection = (selection: ReactSelectOption): void => {
@@ -421,13 +429,23 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _validateKayttooikeusryhmaInputs = (): boolean => {
-        const newKayttooikeusryhma = this.state.kayttooikeusryhmaForm;
-        const name = newKayttooikeusryhma.name;
-        const description = newKayttooikeusryhma.description;
-        const palveluJaKayttooikeusSelections = newKayttooikeusryhma.palveluJaKayttooikeusSelections;
-        return palveluJaKayttooikeusSelections.length > 0
-            && description.fi.length > 0 && description.sv.length > 0 && description.en.length > 0
-            && name.fi.length > 0 && name.sv.length > 0 && name.en.length > 0;
+        return this._validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections()
+            && this._validateKayttooikeusryhmaDescriptions()
+            && this._validateKayttooikeusryhmaNimet();
+    };
+
+    _validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections = (): boolean => {
+        return this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.length > 0;
+    };
+
+    _validateKayttooikeusryhmaDescriptions = (): boolean => {
+        const description = this.state.kayttooikeusryhmaForm.description;
+        return description.fi.length > 0 && description.sv.length > 0 && description.en.length > 0;
+    };
+
+    _validateKayttooikeusryhmaNimet = (): boolean => {
+        const name = this.state.kayttooikeusryhmaForm.name;
+        return name.fi.length > 0 && name.sv.length > 0 && name.en.length > 0;
     };
 
     _parseNameData = (): TextGroup => {

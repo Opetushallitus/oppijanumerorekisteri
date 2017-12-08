@@ -9,13 +9,13 @@ type Action = {
     key: string
 }
 
-export const notificationList = ( state: State = [], action: Action) => {
+export const notificationList = ( state: State = [], action: Action): State => {
 
     switch (action.type) {
         case NOTIFICATION_ADD:
             return state.includes(action.key) ? state : [action.key, ...state];
         case NOTIFICATION_REMOVE:
-            return state.filter( (key: string) => key !== action.key);
+            return state.filter( (key: string) => key !== action.key );
         default:
             return state;
     }
