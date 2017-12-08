@@ -7,8 +7,8 @@ const FORMATS = [
     {
         // used (at least) in koodistopalvelu
         isValid: (localizableText) => Array.isArray(localizableText) && localizableText.length > 0,
-        getValue: (localizableText, uiLang: Locale) => {
-            const value = R.find(R.propEq('kieli', uiLang.toUpperCase()))(localizableText);
+        getValue: (localizableText: any, uiLang: Locale) => {
+            const value: any = R.find(R.propEq('kieli', uiLang.toUpperCase()))(localizableText);
             return value ? value.nimi : value
         },
         getFallbackValue: (localizableText) => localizableText[0]

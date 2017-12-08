@@ -90,10 +90,10 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
     _parseContactInformation(locale: any, hakemus: any, koodisto: any) {
         const henkilotiedot = hakemus.answers.henkilotiedot;
         const kansalaisuusLowercase = henkilotiedot.kansalaisuus ? henkilotiedot.kansalaisuus.toLowerCase() : undefined;
-        const maatjavaltioKoodisto = R.find( item => item.value === kansalaisuusLowercase, koodisto.maatjavaltiot1);
+        const maatjavaltioKoodisto: any = R.find( item => item.value === kansalaisuusLowercase, koodisto.maatjavaltiot1);
         const kansalaisuus = maatjavaltioKoodisto[locale];
         const aidinkieliLowercase = henkilotiedot.aidinkieli ? henkilotiedot.aidinkieli.toLowerCase() : undefined;
-        const aidinkieliKoodisto = R.find( item => item.value === aidinkieliLowercase, koodisto.kieli);
+        const aidinkieliKoodisto: any = R.find( item => item.value === aidinkieliLowercase, koodisto.kieli);
         const aidinkieli = aidinkieliKoodisto[locale];
 
         return {

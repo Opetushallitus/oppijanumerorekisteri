@@ -1,10 +1,10 @@
 // @flow
 
-import type {TextGroup} from "./textgroup.types";
+import type {Text} from "./text.types";
 
 export type PalveluRooli = {
     palveluName: string,
-    palveluTexts: TextGroup,
+    palveluTexts: Array<Text>,
     rooli: string,
-    rooliTexts: TextGroup
+    rooliTexts: Array<Text>
 };

@@ -39,9 +39,11 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
             {
                 this.props.items
                     .filter( (item: Kayttooikeusryhma) => {
-                        if(this.props.filter.length === 0) {return true}
-                        const nimi: any = R.find( (text: Text) => text.lang === this.props.locale.toUpperCase())(R.path(['nimi', 'texts'], item));
-                        const text = R.path(['text'], nimi);
+                        if(this.props.filter.length === 0) {
+                            return true;
+                        }
+                        const nimi: ?Text = R.find( (text: Text) => text.lang === this.props.locale.toUpperCase())(item.nimi.texts);
+                        const text: string = nimi ? nimi.text : '';
                         return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0 ? true : false;
                     })
                     .map( (item: Kayttooikeusryhma, index: number) => {

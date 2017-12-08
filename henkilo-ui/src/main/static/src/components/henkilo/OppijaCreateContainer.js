@@ -30,6 +30,7 @@ type Props = {
     kieliKoodisto: Koodisto,
     fetchKansalaisuusKoodisto: () => void,
     kansalaisuusKoodisto: Koodisto,
+    updateDefaultNavigation: () => void
 }
 
 type State = {

@@ -11,6 +11,8 @@ import type {PalveluKayttooikeus} from "../../../types/domain/kayttooikeus/palve
 import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
 import PalveluJaKayttooikeusSelections from "./PalveluJaKayttooikeusSelections";
 import type {L} from "../../../types/localisation.type";
+import type {TextGroup} from "../../../types/domain/kayttooikeus/textgroup.types";
+import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 
 type Props = {
     L: L,
@@ -52,7 +54,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
         const lang = this.props.locale.toUpperCase();
         const palveluKayttooikeusOptions: Array<any> = nextProps.kayttooikeusState.palveluKayttooikeus.map(
             (palveluKayttooikeus: PalveluKayttooikeus) => {
-                const textObject = R.find(R.propEq('lang', lang))(palveluKayttooikeus.oikeusLangs);
+                const textObject: ?Text = R.find(R.propEq('lang', lang))(palveluKayttooikeus.oikeusLangs.texts);
                 return {label: R.path(['text'], textObject), value: palveluKayttooikeus.rooli}
             });
         this.setState({palveluKayttooikeusOptions});

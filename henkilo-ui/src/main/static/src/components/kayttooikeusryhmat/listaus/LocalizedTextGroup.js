@@ -2,10 +2,10 @@
 import type {Locale} from "../../../types/locale.type";
 import * as R from 'ramda';
 import React from 'react';
-import type {TextGroup} from "../../../types/domain/kayttooikeus/textgroup.types";
+import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 
 type Props = {
-    texts: TextGroup,
+    texts: Array<Text>,
     locale: Locale
 };
 
