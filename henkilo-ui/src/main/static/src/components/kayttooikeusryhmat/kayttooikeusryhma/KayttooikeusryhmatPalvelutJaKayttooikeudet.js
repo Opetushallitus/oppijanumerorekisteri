@@ -11,7 +11,6 @@ import type {PalveluKayttooikeus} from "../../../types/domain/kayttooikeus/palve
 import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
 import PalveluJaKayttooikeusSelections from "./PalveluJaKayttooikeusSelections";
 import type {L} from "../../../types/localisation.type";
-import type {TextGroup} from "../../../types/domain/kayttooikeus/textgroup.types";
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 
 type Props = {
