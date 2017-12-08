@@ -66,65 +66,64 @@ class OppijaUserContent extends React.Component<Props, State> {
     }
 
     render() {
-        // Basic info box content
-        const _createBasicInfo = (readOnly, updateModelAction, updateDateAction, henkiloUpdate: Henkilo) => {
-            const props = {
-                readOnly: readOnly,
-                updateModelFieldAction: updateModelAction,
-                updateDateFieldAction: updateDateAction,
-            };
-            return [
-                [
-                    <Sukunimi autofocus
-                              {...props}/>,
-                    <Etunimet {...props}/>,
-                    <Syntymaaika henkiloUpdate={henkiloUpdate}
-                                 {...props}/>,
-                    <Hetu {...props} />,
-                    <Kutsumanimi {...props} />,
-                ],
-                [
-                    <Kansalaisuus {...props}
-                                  henkiloUpdate={henkiloUpdate} />,
-                    <Aidinkieli {...props}
-                                henkiloUpdate={henkiloUpdate} />,
-                    <Oppijanumero {...props} />,
-                    <Asiointikieli {...props}
-                                   henkiloUpdate={henkiloUpdate} />,
-                ],
-                [
-
-                ],
-            ];
-        };
-
-        // Basic info default buttons
-        const _readOnlyButtons = (edit) => {
-            const duplicate = this.props.henkilo.henkilo.duplicate;
-            const passivoitu = this.props.henkilo.henkilo.passivoitu;
-            return [
-                <EditButton
-                    editAction={edit}
-                    disabled={duplicate || passivoitu}
-                />,
-                <YksiloiHetutonButton
-                    disabled={duplicate || passivoitu}
-                    yksiloiAction={yksiloiHenkilo}
-                />,
-                <PassivoiButton disabled={duplicate || passivoitu} />,
-            ];
-        };
-
         return this.state.isLoading
             ? <Loader />
             : <AbstractUserContent
                 readOnly={this.props.readOnly}
                 discardAction={this.props.discardAction}
                 updateAction={this.props.updateAction}
-                basicInfo={_createBasicInfo(this.props.readOnly, this.props.updateModelAction, this.props.updateDateAction, this.props.henkiloUpdate)}
-                readOnlyButtons={_readOnlyButtons(this.props.edit)}
+                basicInfo={this.createBasicInfo()}
+                readOnlyButtons={this.createReadOnlyButtons()}
             />;
     }
+
+    createBasicInfo = () => {
+        const basicInfoProps = {
+            readOnly: this.props.readOnly,
+            updateModelFieldAction: this.props.updateModelAction,
+            updateDateFieldAction: this.props.updateDateAction,
+            henkiloUpdate: this.props.henkiloUpdate,
+        };
+
+        // Basic info box content
+        return [
+            [
+                <Sukunimi autofocus
+                          {...basicInfoProps}/>,
+                <Etunimet {...basicInfoProps}/>,
+                <Syntymaaika {...basicInfoProps}/>,
+                <Hetu {...basicInfoProps} />,
+                <Kutsumanimi {...basicInfoProps} />,
+            ],
+            [
+                <Kansalaisuus {...basicInfoProps} />,
+                <Aidinkieli {...basicInfoProps} />,
+                <Oppijanumero {...basicInfoProps} />,
+                <Asiointikieli {...basicInfoProps} />,
+            ],
+            [
+
+            ],
+        ];
+    };
+
+    // Basic info default buttons
+    createReadOnlyButtons = () => {
+        const duplicate = this.props.henkilo.henkilo.duplicate;
+        const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        return [
+            <EditButton
+                editAction={this.props.edit}
+                disabled={duplicate || passivoitu}
+            />,
+            <YksiloiHetutonButton
+                disabled={duplicate || passivoitu}
+                yksiloiAction={yksiloiHenkilo}
+            />,
+            <PassivoiButton disabled={duplicate || passivoitu} />,
+        ];
+    };
+
 }
 
 const mapStateToProps = state => ({

@@ -65,7 +65,7 @@ class UserContentContainer extends React.Component<Props, State> {
             if (allLoaded) {
                 this.setState({
                     isLoading: false,
-                    henkiloUpdate: JSON.parse(JSON.stringify(this.props.henkilo.henkilo)), // deep copy
+                    henkiloUpdate: JSON.parse(JSON.stringify(nextProps.henkilo.henkilo)), // deep copy
                 });
             }
         }
