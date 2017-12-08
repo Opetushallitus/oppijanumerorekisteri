@@ -19,7 +19,7 @@ export const virkailijaNavi = (oid) => [
 ];
 
 export const adminNavi = (oid) => [
-    {path: `/admin/${oid}`, label: 'Henkilön tiedot'},
+    {path: `/admin/${oid}`, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/admin/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true},
     {path: `/admin/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true}
 ];
