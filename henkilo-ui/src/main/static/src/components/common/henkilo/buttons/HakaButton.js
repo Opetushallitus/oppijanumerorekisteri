@@ -1,10 +1,12 @@
 // @flow
-import React from 'react'
+import React from 'react';
+import {connect} from 'react-redux';
 import PopupButton from "../../button/PopupButton";
 import HakatunnistePopupContent from "../../button/HakaPopupContent";
+import type {L} from "../../../../types/localisation.type";
 
 type Props = {
-    L: any,
+    L: L,
     oidHenkilo: string,
     styles: any,
     disabled?: boolean
@@ -20,4 +22,8 @@ const HakaButton = (props: Props) => (
             {props.L['LISAA_HAKA_LINKKI']}
         </PopupButton>);
 
-export default HakaButton;
+const mapStateToProps = state => ({
+    L: state.l10n.localisations[state.locale],
+});
+
+export default connect(mapStateToProps, {})(HakaButton);

@@ -6,11 +6,13 @@ import classNames from 'classnames';
 import './DuplikaatitPerson.css';
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
+import type {L} from "../../../types/localisation.type";
+import type {Locale} from "../../../types/locale.type";
 
 type Props = {
     henkilo: any,
-    L: any,
-    locale: any,
+    L: L,
+    locale: Locale,
     koodisto: any,
     setSelection: any,
     classNames: any,

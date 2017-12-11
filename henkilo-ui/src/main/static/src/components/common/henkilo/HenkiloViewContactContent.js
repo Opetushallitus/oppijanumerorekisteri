@@ -1,19 +1,51 @@
-import './HenkiloViewContactContent.css'
-import React from 'react'
-import PropTypes from 'prop-types'
-import Columns from 'react-columns'
+// @flow
+import './HenkiloViewContactContent.css';
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import Columns from 'react-columns';
 import Field from '../field/Field';
-import Button from "../button/Button";
+import Button from '../button/Button';
 import StaticUtils from "../StaticUtils";
 import EditButtons from "./buttons/EditButtons";
-import PropertySingleton from '../../../globals/PropertySingleton'
-import AddIcon from "../icons/AddIcon";
-import IconButton from "../button/IconButton";
-import CrossIcon from "../icons/CrossIcon";
+import PropertySingleton from '../../../globals/PropertySingleton';
+import AddIcon from '../icons/AddIcon';
+import IconButton from '../button/IconButton';
+import CrossIcon from '../icons/CrossIcon';
+import {updateHenkiloAndRefetch} from '../../../actions/henkilo.actions';
+import type {L} from "../../../types/localisation.type";
+import type {Locale} from "../../../types/locale.type";
+import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import type {Henkilo} from "../../../types/domain/oppijanumerorekisteri/henkilo.types";
 
-class HenkiloViewContactContent extends React.Component{
+type Props = {
+    L: L,
+    locale: Locale,
+    henkilo: HenkiloState,
+    readOnly: boolean,
+    koodisto: {
+        yhteystietotyypit: Array<{}>,
+    },
+    updateHenkiloAndRefetch: (Henkilo) => void,
+}
+
+type ContactInfo = {
+    id: number,
+    henkiloUiId: ?string,
+    name: string,
+    readOnly: boolean,
+    value: Array<{label: string, value: string, inputValue: string,}>,
+}
+
+type State = {
+    readOnly: boolean,
+    showPassive: boolean,
+    contactInfo: Array<ContactInfo>,
+    yhteystietoRemoveList: Array<number>,
+}
+
+class HenkiloViewContactContent extends React.Component<Props, State> {
     static propTypes = {
-        l10n: PropTypes.object.isRequired,
         henkilo: PropTypes.shape({henkilo: PropTypes.object.isRequired,}).isRequired,
         readOnly: PropTypes.bool.isRequired,
         locale: PropTypes.string.isRequired,
@@ -21,10 +53,12 @@ class HenkiloViewContactContent extends React.Component{
         updateHenkiloAndRefetch: PropTypes.func.isRequired,
     };
 
+    henkiloUpdate: Henkilo;
+    contactInfoTemplate: Array<{label: string, value: ?string, inputValue: ?string}>;
+    _preEditData: {contactInfo: Array<ContactInfo>};
+
     constructor(props) {
         super(props);
-
-        this.L = this.props.l10n[this.props.locale];
 
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
         this.contactInfoTemplate = [
@@ -62,7 +96,7 @@ class HenkiloViewContactContent extends React.Component{
                         <div key={idx2} id={yhteystietoFlat.label}>
                             { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
                                 ? <Columns columns={2} className="labelValue">
-                                    <span className="oph-bold">{this.L[yhteystietoFlat.label]}</span>
+                                    <span className="oph-bold">{this.props.L[yhteystietoFlat.label]}</span>
                                     <Field inputValue={yhteystietoFlat.inputValue}
                                            changeAction={this._updateModelField.bind(this)}
                                            readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}>
@@ -80,7 +114,7 @@ class HenkiloViewContactContent extends React.Component{
                 <div className="contact-content-add-new"
                      onClick={() => this._createYhteystiedotRyhma(PropertySingleton.getState().TYOOSOITE)}
                      key="add-new">
-                    <span className="oph-bold oph-blue-lighten-1"><AddIcon /> {this.L['HENKILO_LUOYHTEYSTIETO']}</span>
+                    <span className="oph-bold oph-blue-lighten-1"><AddIcon /> {this.props.L['HENKILO_LUOYHTEYSTIETO']}</span>
                 </div>);
         }
         return content;
@@ -95,7 +129,7 @@ class HenkiloViewContactContent extends React.Component{
             <div className="henkiloViewUserContentWrapper contact-content">
                 <div>
                     <div className="header">
-                        <p className="oph-h2 oph-bold">{this.L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
+                        <p className="oph-h2 oph-bold">{this.props.L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
                     </div>
                     <div className="henkiloViewContent">
                         <Columns columns={3} gap="25px" >
@@ -105,17 +139,17 @@ class HenkiloViewContactContent extends React.Component{
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.L['MUOKKAA_LINKKI']}</Button>
+                        <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.props.L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={this.L} />
+                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={this.props.L} />
                     </div>
                 }
             </div>
         )
     };
 
-    _removeYhteystieto(id) {
+    _removeYhteystieto(id: number) {
         this.setState({
             yhteystietoRemoveList: [...this.state.yhteystietoRemoveList, id],
         });
@@ -181,7 +215,7 @@ class HenkiloViewContactContent extends React.Component{
                 return yhteystietoFlatList;
             });
 
-    createFlatYhteystieto(contactInfoTemplate, yhteystietoList, idx, yhteystiedotRyhma, yhteystietotyypit, locale, henkiloUiId) {
+    createFlatYhteystieto(contactInfoTemplate, yhteystietoList, idx, yhteystiedotRyhma, yhteystietotyypit, locale, henkiloUiId): ContactInfo {
         return {
             value: contactInfoTemplate.map(((template, idx2) => (
                 {
@@ -200,4 +234,9 @@ class HenkiloViewContactContent extends React.Component{
     }
 }
 
-export default HenkiloViewContactContent
+const mapStateToProps = state => ({
+    L: state.l10n.localisations[state.locale],
+    locale: state.locale,
+});
+
+export default connect(mapStateToProps, {updateHenkiloAndRefetch})(HenkiloViewContactContent);

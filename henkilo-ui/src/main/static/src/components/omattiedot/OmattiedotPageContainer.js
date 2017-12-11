@@ -1,18 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import OmattiedotPage from './OmattiedotPage';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, passivoiHenkilo, updateHenkiloAndRefetch,
-    updateAndRefetchKayttajatieto,
-    updatePassword, yksiloiHenkilo, clearHenkilo,
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo,
 } from "../../actions/henkilo.actions";
-import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
+import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo} from "../../actions/kayttooikeusryhma.actions";
 import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
-import { fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus } from '../../actions/kayttooikeusryhma.actions';
 import {updateEmptyNavigation} from "../../actions/navigation.actions";
+import HenkiloViewPage from "../henkilo/HenkiloViewPage";
 
 class OmattiedotPageContainer extends React.Component {
 
@@ -37,7 +33,7 @@ class OmattiedotPageContainer extends React.Component {
     }
 
     render() {
-        return <OmattiedotPage {...this.props} />;
+        return <HenkiloViewPage {...this.props} view="OMATTIEDOT" />;
     }
 
 }
@@ -59,8 +55,17 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchOmattiedot, fetchHenkilo, fetchHenkiloOrgs, fetchYhteystietotyypitKoodisto, fetchKieliKoodisto,
-    fetchKansalaisuusKoodisto, fetchSukupuoliKoodisto, updateHenkiloAndRefetch, fetchKayttajatieto, updatePassword, passivoiHenkilo,
-    yksiloiHenkilo, updateAndRefetchKayttajatieto, fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma, fetchAllOrganisaatios, fetchAllRyhmas, fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus,
-    clearHenkilo, updateEmptyNavigation})(OmattiedotPageContainer)
+export default connect(mapStateToProps, {fetchOmattiedot,
+    fetchHenkilo,
+    fetchHenkiloOrgs,
+    fetchYhteystietotyypitKoodisto,
+    fetchKieliKoodisto,
+    fetchKansalaisuusKoodisto,
+    fetchSukupuoliKoodisto,
+    fetchKayttajatieto,
+    fetchAllKayttooikeusryhmasForHenkilo,
+    fetchAllKayttooikeusAnomusForHenkilo,
+    fetchAllOrganisaatios,
+    fetchAllRyhmas,
+    clearHenkilo,
+    updateEmptyNavigation})(OmattiedotPageContainer)

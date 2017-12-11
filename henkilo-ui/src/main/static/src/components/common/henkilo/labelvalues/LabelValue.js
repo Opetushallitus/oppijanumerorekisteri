@@ -1,7 +1,7 @@
-import React from 'react'
-import {connect} from 'react-redux'
-import PropTypes from 'prop-types'
-import Columns from 'react-columns'
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import Columns from 'react-columns';
 import Field from "../../field/Field";
 
 const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}) => !values.showOnlyOnWrite || !readOnly

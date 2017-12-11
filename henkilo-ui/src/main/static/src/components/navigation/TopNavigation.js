@@ -24,9 +24,9 @@ type Props = {
 
 const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, organisaatiot}: Props) => {
     const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
-    const roolit = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot
+    const roolit: Array<string> = (isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot)
         .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
-        .reduce((prev, curr) => prev.concat(curr)); // flatten
+        .reduce((prev, curr) => prev.concat(curr), []); // flatten
     return (
         <div id="topNavigation" className={classNames({'oph-bg-blue': !isNoAuthenticationPage})}>
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
@@ -63,7 +63,7 @@ TopNavigation.propTypes = {
     pathName: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     naviTabs: state.naviState.naviTabs,
     isRekisterinpitaja: state.omattiedot.isAdmin,

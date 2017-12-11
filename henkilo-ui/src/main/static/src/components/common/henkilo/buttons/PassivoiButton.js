@@ -1,25 +1,33 @@
 // @flow
-import React from 'react'
+import React from 'react';
+import {connect} from 'react-redux';
 import ConfirmButton from "../../button/ConfirmButton";
 import Button from "../../button/Button";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
+import {passivoiHenkilo} from "../../../../actions/henkilo.actions";
+import type {L} from "../../../../types/localisation.type";
 
 type Props = {
     henkilo: HenkiloState,
-    L: any,
-    passivoiAction: (string) => any,
+    L: L,
+    passivoiHenkilo: (string) => void,
     disabled?: boolean
 }
 
 const PassivoiButton = (props: Props) => props.henkilo.henkilo.passivoitu
     ? <Button key="passivoi"
-              disabled={!!props.disabled}
+              disabled={!!props.henkilo.henkilo.passivoitu}
               action={(e: Event) => {}}>{props.L['PASSIVOI_PASSIVOITU']}</Button>
     : <ConfirmButton key="passivoi"
-                     action={() => props.passivoiAction(props.henkilo.henkilo.oidHenkilo)}
+                     action={() => props.passivoiHenkilo(props.henkilo.henkilo.oidHenkilo)}
                      normalLabel={props.L['PASSIVOI_LINKKI']}
                      confirmLabel={props.L['PASSIVOI_LINKKI_CONFIRM']}
                      id="passivoi"
-                    disabled={props.disabled}/>;
+                    disabled={!!props.disabled}/>;
 
-export default PassivoiButton;
+const mapStateToProps = (state) => ({
+    L: state.l10n.localisations[state.locale],
+    henkilo: state.henkilo,
+});
+
+export default connect(mapStateToProps, {passivoiHenkilo})(PassivoiButton);

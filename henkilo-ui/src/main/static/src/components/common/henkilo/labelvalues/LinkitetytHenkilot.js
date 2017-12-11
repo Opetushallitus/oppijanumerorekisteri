@@ -1,11 +1,23 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types'
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 import {Link} from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
 import * as R from 'ramda';
+import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
+import type {L} from "../../../../types/localisation.type";
+import {unlinkHenkilo, fetchHenkiloSlaves} from '../../../../actions/henkilo.actions';
 
-export default class LinkitetytHenkilot extends React.Component {
+type Props = {
+    henkilo: HenkiloState,
+    L: L,
+    unlinkHenkilo: (string, string) => void,
+    fetchHenkiloSlaves: (string) => void,
+}
+
+class LinkitetytHenkilot extends React.Component<Props> {
     static propTypes = {
         henkilo: PropTypes.shape({
             henkilo: PropTypes.shape({
@@ -24,24 +36,34 @@ export default class LinkitetytHenkilot extends React.Component {
 
     render() {
         return <div>{this.props.henkilo.slaves.length
-            ? <LabelValueGroup {...this.props} valueGroup={this.valueGroup()} label={'HENKILO_LINKITETYT'}/>
+            ? <LabelValueGroup valueGroup={this.valueGroup()} label={'HENKILO_LINKITETYT'}/>
             : null}
         </div>;
     }
 
     valueGroup() {
-        return R.path(['henkilo', 'slaves'], this.props) ? <div> {this.props.henkilo.slaves.map((slave, index) =>
-            <div key={index} className="nowrap">
-                <Link to={'/virkailija/' + slave.oidHenkilo}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
-                {this.props.L['HENKILO_POISTA_LINKITYS']}
-            </TextButton>
-            </div>)}
-        </div> : null;
+        return R.path(['henkilo', 'slaves'], this.props)
+            ? <div>
+                {this.props.henkilo.slaves.map((slave, index) =>
+                    <div key={index} className="nowrap">
+                        <Link to={'/virkailija/' + slave.oidHenkilo}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
+                        {this.props.L['HENKILO_POISTA_LINKITYS']}
+                    </TextButton>
+                    </div>
+                )}
+            </div>
+            : null;
     }
 
     async removeLink(masterOid, slaveOid) {
         await this.props.unlinkHenkilo(masterOid, slaveOid);
         this.props.fetchHenkiloSlaves(masterOid);
     }
-
 }
+
+const mapStateToProps = state => ({
+    L: state.l10n.localisations[state.locale],
+    henkilo: state.henkilo,
+});
+
+export default connect(mapStateToProps, {unlinkHenkilo, fetchHenkiloSlaves})(LinkitetytHenkilot);
