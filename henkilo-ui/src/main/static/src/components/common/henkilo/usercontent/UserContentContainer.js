@@ -116,17 +116,22 @@ class UserContentContainer extends React.Component<Props, State> {
         if (this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU') {
             info.push(this.props.L['HENKILO_ADDITIOINALINFO_PALVELU']);
         }
-        if (this.props.henkilo.henkilo.yksiloity) {
-            info.push(this.props.L['HENKILO_ADDITIONALINFO_YKSILOITY']);
-        }
-        if (this.props.henkilo.henkilo.yksiloityVTJ) {
-            info.push(this.props.L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
-        }
-        if (!this.props.henkilo.henkilo.yksiloity && !this.props.henkilo.henkilo.yksiloityVTJ) {
-            info.push(this.props.L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
+        else {
+            if (this.props.henkilo.henkilo.yksiloity) {
+                info.push(this.props.L['HENKILO_ADDITIONALINFO_YKSILOITY']);
+            }
+            if (this.props.henkilo.henkilo.yksiloityVTJ) {
+                info.push(this.props.L['HENKILO_ADDITIONALINFO_YKSILOITYVTJ']);
+            }
+            if (!this.props.henkilo.henkilo.yksiloity && !this.props.henkilo.henkilo.yksiloityVTJ) {
+                info.push(this.props.L['HENKILO_ADDITIOINALINFO_EIYKSILOITY']);
+            }
         }
         if (this.props.henkilo.henkilo.duplicate) {
             info.push(this.props.L['HENKILO_ADDITIONALINFO_DUPLIKAATTI']);
+        }
+        if (this.props.henkilo.henkilo.passivoitu) {
+            info.push(this.props.L['PASSIVOI_PASSIVOITU']);
         }
         return info.length ? ' (' + StaticUtils.flatArray(info) + ')' : '';
     }

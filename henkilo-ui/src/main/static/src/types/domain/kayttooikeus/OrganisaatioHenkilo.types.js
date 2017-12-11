@@ -4,6 +4,7 @@ import type {TextGroup} from "./textgroup.types";
 export type Organisaatio = {
     nimi: TextGroup,
     tyypit: Array<string>,
+    organisaatiotyypit: Array<string>, // It is unclear which api returns this
     oid: string,
     parentOid: ?string,
     parentOidPath: string,

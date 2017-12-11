@@ -59,7 +59,7 @@ TopNavigation.propTypes = {
     pathName: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     naviTabs: state.naviState.naviTabs,
     isRekisterinpitaja: state.omattiedot.isAdmin,

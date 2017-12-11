@@ -70,7 +70,10 @@ class VirkailijaUserContent extends React.Component<Props, State> {
         // Basic info box content
         return [
             [
-                <Sukunimi autofocus={true} />,
+                <Sukunimi
+                    autofocus={true}
+                    {...props}
+                />,
                 <Etunimet {...props} />,
                 <Kutsumanimi {...props} />,
                 <Asiointikieli {...props} />,

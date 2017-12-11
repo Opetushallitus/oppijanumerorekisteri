@@ -1,6 +1,6 @@
-import React from 'react'
+// @flow
 
-class StaticUtils extends React.Component {
+class StaticUtils {
     static ddmmyyyyToDate(date) {
         const from = date.split(".");
         return new Date(from[2], from[1]-1, from[0]);
@@ -93,7 +93,7 @@ class StaticUtils extends React.Component {
     };
 
     static flatArray(arr) {
-        return arr && arr.length ? arr.reduce((type1, type2) => type1.concat(', ', type2)) : '';
+        return (arr && arr.length) ? arr.filter(item => item).reduce((type1, type2) => type1.concat(', ', type2)) : '';
     };
 
     static getOrganisaatiotyypitFlat(tyypit, L, uppercase) {

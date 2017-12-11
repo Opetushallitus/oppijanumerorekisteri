@@ -42,7 +42,7 @@ export type HenkiloState = {
     +yksilointitiedot: Array<any>
 }
 
-const initialState: HenkiloState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: true, henkilo: {},
+const initialState: HenkiloState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: false, henkilo: {},
     henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
     henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
     linkingLoading: false, masterLoading: true, master: {}, yksilointitiedotLoading: false, yksilointitiedot: []};

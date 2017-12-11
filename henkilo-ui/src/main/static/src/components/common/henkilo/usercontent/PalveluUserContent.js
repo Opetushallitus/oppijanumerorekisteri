@@ -8,7 +8,7 @@ import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henki
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {L} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
-import {fetchHenkiloSlaves, yksiloiHenkilo} from "../../../../actions/henkilo.actions";
+import {fetchHenkiloSlaves, fetchKayttajatieto, yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
 import Kayttajanimi from "../labelvalues/Kayttajanimi";
 import PasswordButton from "../buttons/PasswordButton";
@@ -30,6 +30,7 @@ type Props = {
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
     oidHenkilo: string,
+    fetchKayttajatieto: (string) => void,
 }
 
 type State = {
@@ -37,13 +38,15 @@ type State = {
 }
 
 class PalveluUserContent extends React.Component<Props, State> {
+    componentDidMount() {
+        if (!this.props.henkilo.kayttajatieto.username && !this.props.henkilo.kayttajatietoLoading) {
+            this.props.fetchKayttajatieto(this.props.oidHenkilo);
+        }
+    }
+
     render() {
         return this.props.henkilo.henkiloLoading
-        || this.props.koodisto.kieliKoodistoLoading
-        || this.props.koodisto.kansalaisuusKoodistoLoading
-        || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.henkilo.kayttajatietoLoading
-        || this.props.koodisto.yhteystietotyypitKoodistoLoading
             ? <Loader />
             : <AbstractUserContent
                 readOnly={this.props.readOnly}
@@ -87,7 +90,7 @@ class PalveluUserContent extends React.Component<Props, State> {
                 editAction={this.props.edit}
                 disabled={duplicate || passivoitu}
             />,
-            <PassivoiButton disabled={duplicate || passivoitu} />,
+            this.props.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,
             <PasswordButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={{top: '3rem', left: '0', width: '18rem'}}
@@ -106,5 +109,5 @@ const mapStateToProps = state => ({
     isAdmin: state.omattiedot.isAdmin,
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(PalveluUserContent);
+export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves, fetchKayttajatieto})(PalveluUserContent);
 

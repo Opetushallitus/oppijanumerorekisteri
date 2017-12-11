@@ -13,7 +13,6 @@ import Oppijanumero from "../labelvalues/Oppijanumero";
 import Asiointikieli from "../labelvalues/Asiointikieli";
 import EditButton from "../buttons/EditButton";
 import YksiloiHetutonButton from "../buttons/YksiloiHetutonButton";
-import PassivoiButton from "../buttons/PassivoiButton";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {L} from "../../../../types/localisation.type";
@@ -97,7 +96,6 @@ class OppijaUserContent extends React.Component<Props, State> {
                 disabled={duplicate || passivoitu}
             />,
             <YksiloiHetutonButton disabled={duplicate || passivoitu} />,
-            <PassivoiButton disabled={duplicate || passivoitu} />,
         ];
     };
 
