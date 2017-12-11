@@ -28,12 +28,12 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
         .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
         .reduce((prev, curr) => prev.concat(curr)); // flatten
     return (
-        <div id="topNavigation">
+        <div id="topNavigation" className="oph-bg-blue">
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
             { !isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')}/> }
-            { naviOptions.backButton ? <Link className="oph-link oph-link-big" to={naviOptions.backButton} >&#8701; {L['TAKAISIN_LINKKI']}</Link> : null }
             { !isNoAuthenticationPage && naviTabs.length > 0
             && <ul className="tabs">
+                { naviOptions.backButton ? <li><Link to={naviOptions.backButton} >&#8701; {L['TAKAISIN_LINKKI']} <i class="fa fa-fw" aria-hidden="true">&nbsp;</i></Link></li> : null }
                 { naviTabs
                     .filter(data => isRekisterinpitaja
                         || !data.sallitutRoolit
@@ -44,7 +44,11 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
                             'disabled-link': data.disabled
                         });
                         return <li key={index}>
-                            <Link className={className} to={data.path}>{L[data.label] || data.label}</Link>
+                            <Link className={className} to={data.path}>
+                                {L[data.label] || data.label}
+                                {data.path === pathName && <i className="fa fa-angle-down" aria-hidden="true"></i>}
+                                {data.path !== pathName && <i className="fa fa-fw" aria-hidden="true">&nbsp;</i>}
+                            </Link>
                         </li>;
                     })
                 }

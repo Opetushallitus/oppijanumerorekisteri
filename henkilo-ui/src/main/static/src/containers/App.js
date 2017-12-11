@@ -23,7 +23,7 @@ class App extends React.Component {
                 ?
                 <div className="oph-typography mainContainer">
                     <TopNavigation pathName={this.props.pathName} />
-                    <div>
+                    <div className="mainContent">
                         {this.props.children}
                     </div>
                 </div>
