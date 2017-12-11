@@ -48,7 +48,8 @@ class HenkiloViewUserContent extends React.Component<Props, State> {
                         <div className="header">
                             <p className="oph-h2 oph-bold">{this.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
                         </div>
-                        <Columns columns={3} gap="10px">
+                        {/* By default rootStyles is { overflowX: 'hidden' }. This causes scroll bars to appear when inner content expands. */}
+                        <Columns columns={3} gap="10px" rootStyles={{}}>
                             {
                                 this.props.basicInfo(this.state.readOnly, this._updateModelField.bind(this),
                                     this._updateDateField.bind(this), this.state.henkiloUpdate).map((info, idx) =>
