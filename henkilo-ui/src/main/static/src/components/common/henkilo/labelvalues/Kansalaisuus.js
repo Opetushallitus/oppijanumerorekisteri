@@ -24,7 +24,7 @@ const Kansalaisuus = (props: Props) => <LabelValue
     readOnly={props.readOnly}
     updateModelFieldAction={props.updateModelFieldAction}
     values={
-        props.henkilo.henkilo.kansalaisuus && props.henkilo.henkilo.kansalaisuus.length
+        props.henkilo.henkilo.kansalaisuus && props.henkilo.henkilo.kansalaisuus.length > 1
             ? props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
                 ({
                     label: 'HENKILO_KANSALAISUUS',
@@ -34,7 +34,7 @@ const Kansalaisuus = (props: Props) => <LabelValue
                         .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
                     selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
                     disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-                })).reduce((a,b) => a.concat(b))
+                }))[0]
             : {
                 label: 'HENKILO_KANSALAISUUS',
                 data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
