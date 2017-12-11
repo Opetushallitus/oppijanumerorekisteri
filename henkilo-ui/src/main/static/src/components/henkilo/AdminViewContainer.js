@@ -41,16 +41,7 @@ class AdminViewContainer extends React.Component {
     }
 
     render() {
-        const readOnlyButtons = this._readOnlyButtons;
-        const props = {
-            ...this.props,
-            L: this.L,
-            locale: this.props.locale,
-            createBasicInfo: this._createBasicInfo,
-            readOnlyButtons: readOnlyButtons,
-            updatePassword: updatePassword,
-        };
-        return <HenkiloViewPage {...props} view="ADMIN" />;
+        return <HenkiloViewPage {...this.props} view="ADMIN" />;
     }
 
     constructor(props) {

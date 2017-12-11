@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo, fetchHenkiloSlaves
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -51,17 +51,9 @@ class VirkailijaViewContainer extends React.Component {
     }
 
     render() {
-        const props = {...this.props, L: this.L, locale: this.props.locale, createBasicInfo: this._createBasicInfo,
-            readOnlyButtons: this._readOnlyButtons,
-        };
-        return <HenkiloViewPage {...props} view="VIRKAILIJA" />;
+        return <HenkiloViewPage {...this.props} view="VIRKAILIJA" />;
     };
 
-    constructor(props) {
-        super(props);
-
-        this.L = this.props.l10n[this.props.locale];
-    };
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -83,6 +75,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {
     fetchHenkilo,
+    fetchHenkiloSlaves,
     fetchHenkiloOrgs,
     fetchKieliKoodisto,
     fetchKansalaisuusKoodisto,
