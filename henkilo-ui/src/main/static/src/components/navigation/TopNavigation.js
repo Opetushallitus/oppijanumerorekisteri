@@ -28,7 +28,7 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
         .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
         .reduce((prev, curr) => prev.concat(curr)); // flatten
     return (
-        <div id="topNavigation" className="oph-bg-blue">
+        <div id="topNavigation" className={classNames({'oph-bg-blue': !isNoAuthenticationPage})}>
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
             { !isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')}/> }
             { !isNoAuthenticationPage && naviTabs.length > 0
