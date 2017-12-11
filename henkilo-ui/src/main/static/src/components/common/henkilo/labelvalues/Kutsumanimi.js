@@ -10,6 +10,7 @@ type Props = {
     isError: boolean,
     readOnly: boolean,
     updateModelFieldAction: () => void,
+    defaultValue: string,
 }
 
 const Kutsumanimi = (props: Props) => <LabelValue
@@ -17,7 +18,7 @@ const Kutsumanimi = (props: Props) => <LabelValue
     updateModelFieldAction={props.updateModelFieldAction}
     values={{
         label: 'HENKILO_KUTSUMANIMI',
-        value: props.henkilo.henkilo.kutsumanimi,
+        value: props.defaultValue || props.henkilo.henkilo.kutsumanimi,
         inputValue: 'kutsumanimi',
         isError: props.isError,
     }}

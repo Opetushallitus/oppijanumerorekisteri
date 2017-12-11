@@ -60,6 +60,10 @@ class RekisteroidyPage extends React.Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+
+    }
+
     render() {
         return <div className="borderless-colored-wrapper rekisteroidy-page" style={{marginTop: "50px"}}>
             <div className="header-borderless">
@@ -70,14 +74,15 @@ class RekisteroidyPage extends React.Component {
             </div>
             <div className="flex-horizontal">
                 <div className="wrapper flex-item-1">
-                    <RekisteroidyPerustiedot henkilo={{henkilo: this.state.henkilo}}
-                                             koodisto={this.props.koodisto}
-                                             updatePayloadModel={this.updatePayloadModelInput.bind(this)}
-                                             isLanguageError={!this.kielikoodiIsNotEmpty(this.state.henkilo)}
-                                             isPasswordError={this.isPasswordError()}
-                                             isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
-                                             isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)}
-                                             L={this.props.L} />
+                    <RekisteroidyPerustiedot
+                        henkilo={{henkilo: this.state.henkilo}}
+                        koodisto={this.props.koodisto}
+                        updatePayloadModel={this.updatePayloadModelInput.bind(this)}
+                        isLanguageError={!this.kielikoodiIsNotEmpty(this.state.henkilo)}
+                        isPasswordError={this.isPasswordError()}
+                        isUsernameError={!this.kayttajanimiIsNotEmpty(this.state.henkilo)}
+                        isKutsumanimiError={!this.etunimetContainsKutsumanimi(this.state.henkilo)}
+                    />
                     <BottomNotificationButton action={this.createHenkilo.bind(this)}
                                               disabled={!this.state.isValid}
                                               id="rekisteroidyPage" >

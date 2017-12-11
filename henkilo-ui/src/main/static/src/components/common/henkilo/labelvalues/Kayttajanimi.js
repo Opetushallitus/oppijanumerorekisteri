@@ -11,19 +11,23 @@ type Props = {
     updateModelFieldAction: () => void,
     disabled: boolean,
     isError: boolean,
+    defaultValue: string,
 }
 
-const Kayttajanimi = (props: Props) => <LabelValue
-    updateModelFieldAction={props.updateModelFieldAction}
-    readOnly={props.readOnly}
-    values={{
-        label: 'HENKILO_KAYTTAJANIMI',
-        value: props.henkilo.kayttajatieto.username,
-        inputValue: 'kayttajanimi',
-        disabled: props.disabled,
-        isError: props.isError,
-    }}
-/>;
+const Kayttajanimi = (props: Props) => {
+    console.log();
+    return <LabelValue
+        updateModelFieldAction={props.updateModelFieldAction}
+        readOnly={props.readOnly}
+        values={{
+            label: 'HENKILO_KAYTTAJANIMI',
+            value: props.defaultValue || props.henkilo.kayttajatieto.username,
+            inputValue: 'kayttajanimi',
+            disabled: props.disabled,
+            isError: props.isError,
+        }}
+    />;
+};
 
 Kayttajanimi.propTypes = {
     henkilo: PropTypes.shape({

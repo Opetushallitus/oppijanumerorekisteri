@@ -23,10 +23,10 @@ class RekisteroidyContainer extends React.Component {
     }
 
     render() {
-        if (!this.props.kutsu) {
-            return null;
+        if (this.props.koodistoLoading || this.props.tokenLoading) {
+            return <Loader />;
         }
-        if (this.props.loginFailed) {
+        else if (this.props.loginFailed) {
             return <VirhePage text={'REKISTEROIDY_LOGIN_FAILED'} buttonText={'REKISTEROIDY_KIRJAUTUMISSIVULLE'} />;
         }
         else if (this.loggedIn !== undefined) {
@@ -35,10 +35,11 @@ class RekisteroidyContainer extends React.Component {
         else if (this.props.temporaryTokenInvalid) {
             return <VirhePage text={'REKISTEROIDY_TEMP_TOKEN_INVALID'} />;
         }
-        else if (this.props.koodistoLoading || this.props.tokenLoading) {
-            return <Loader />;
-        }
-        return <RekisteroidyPage {...this.props} L={this.props.l10n[this.props.kutsu.asiointikieli]} locale={this.props.kutsu.asiointikieli} />;
+        return <RekisteroidyPage
+            {...this.props}
+            L={this.props.l10n[this.props.kutsu.asiointikieli]}
+            locale={this.props.kutsu.asiointikieli}
+        />;
     }
 }
 

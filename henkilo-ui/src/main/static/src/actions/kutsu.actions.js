@@ -2,7 +2,7 @@ import {
     DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_KUTSU_SUCCESS,
     FETCH_KUTSUBYTOKEN_REQUEST, FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE,
     CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST, LOGIN_FAILED, CLEAR_KUTSU_LIST, RENEW_KUTSU_REQUEST,
-    RENEW_KUTSU_SUCCESS, RENEW_KUTSU_FAILURE, FETCH_HENKILO_ASIOINTIKIELI_SUCCESS
+    RENEW_KUTSU_SUCCESS, RENEW_KUTSU_FAILURE, FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_HENKILO_SUCCESS
 } from './actiontypes';
 
 import {http} from "../http";
@@ -50,6 +50,13 @@ export const fetchKutsuByToken = (temporaryToken) => dispatch => {
         .then(json => {
             dispatch(kutsuByTokenSuccess({...json, temporaryToken}));
             dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang: json.asiointikieli});
+            dispatch({type: FETCH_HENKILO_SUCCESS, henkilo: {
+                    ...json,
+                    etunimet: json.etunimi,
+                    asiointiKieli: {
+                        kieliKoodi: json.asiointikieli,
+                    },
+                }})
         })
         .catch(() => dispatch(kutsuByTokenFailure()));
 };
