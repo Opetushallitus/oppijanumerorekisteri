@@ -2,6 +2,7 @@ import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, UPDATE_PASSWORD_SUCCESS,
     UPDATE_PASSWORD_FAILURE, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
     VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE, LINK_HENKILOS_SUCCESS,
+    FETCH_HENKILO_DUPLICATES_SUCCESS,
     LINK_HENKILOS_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE
 } from "../actions/actiontypes";
 
@@ -33,6 +34,17 @@ const createButtonNotification = (type, buttonNotification) => ({
 export const notifications = (state={existingKayttooikeus: [], buttonNotifications: [], updatePassword: [],
     henkilohakuNotifications: [], duplicatesNotifications: []}, action) => {
     switch (action.type) {
+        case FETCH_HENKILO_DUPLICATES_SUCCESS:
+            if (action.duplicates.every(duplikaatti => duplikaatti.oidHenkilo === action.master)) {
+                return Object.assign({}, state, {
+                    duplicatesNotifications: [...state.duplicatesNotifications, {
+                        type: 'ok',
+                        notL10nMessage: 'DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT',
+                        id: PropertySingleton.getNewId(),
+                    }],
+                });
+            }
+            return state
         case LINK_HENKILOS_SUCCESS:
             return Object.assign({}, state, {
                 duplicatesNotifications: [...state.duplicatesNotifications, {
