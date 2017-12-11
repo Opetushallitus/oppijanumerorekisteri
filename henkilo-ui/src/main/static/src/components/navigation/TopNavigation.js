@@ -33,7 +33,7 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
             { !isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')}/> }
             { !isNoAuthenticationPage && naviTabs.length > 0
             && <ul className="tabs">
-                { naviOptions.backButton ? <li><Link to={naviOptions.backButton} >&#8701; {L['TAKAISIN_LINKKI']} <i class="fa fa-fw" aria-hidden="true">&nbsp;</i></Link></li> : null }
+                { naviOptions.backButton ? <li><Link to={naviOptions.backButton} >&#8701; {L['TAKAISIN_LINKKI']} <i className="fa fa-fw" aria-hidden="true">&nbsp;</i></Link></li> : null }
                 { naviTabs
                     .filter(data => isRekisterinpitaja
                         || !data.sallitutRoolit
