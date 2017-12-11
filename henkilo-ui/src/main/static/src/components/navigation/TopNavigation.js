@@ -24,9 +24,9 @@ type Props = {
 
 const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, organisaatiot}: Props) => {
     const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
-    const roolit = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot
+    const roolit: Array<string> = (isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot)
         .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
-        .reduce((prev, curr) => prev.concat(curr)); // flatten
+        .reduce((prev, curr) => prev.concat(curr), []); // flatten
     return (
         <div id="topNavigation">
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}

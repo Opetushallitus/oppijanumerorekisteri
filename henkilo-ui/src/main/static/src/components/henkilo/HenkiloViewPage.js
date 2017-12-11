@@ -55,10 +55,12 @@ class HenkiloViewPage extends React.Component<Props> {
             <div>
                 <div className="wrapper">
                     {
-                        <UserContentContainer basicInfo={this.props.createBasicInfo}
-                                                readOnlyButtons={this.props.readOnlyButtons}
-                                                oidHenkilo={this.props.oidHenkilo}
-                                                view={this.props.view} />
+                        <UserContentContainer
+                            basicInfo={this.props.createBasicInfo}
+                            readOnlyButtons={this.props.readOnlyButtons}
+                            oidHenkilo={this.props.oidHenkilo}
+                            view={this.props.view}
+                        />
                     }
                 </div>
                 {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
@@ -109,15 +111,12 @@ class HenkiloViewPage extends React.Component<Props> {
                                                    vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
                                                    existingKayttooikeusRef={this.existingKayttooikeusRef} />
                 </div>}
-                {this.props.view === 'OMATTIEDOT' &&
-                this.props.henkilo.henkiloLoading
-                    ? <Loader />
-                    : <HenkiloViewCreateKayttooikeusanomus
-                        {...this.props}
-                        organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
-                        ryhmaOptions={this._parseRyhmaOptions.call(this)}
-                        kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
-                    />
+                {this.props.view === 'OMATTIEDOT' && <HenkiloViewCreateKayttooikeusanomus
+                    {...this.props}
+                    organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
+                    ryhmaOptions={this._parseRyhmaOptions.call(this)}
+                    kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
+                />
                 }
             </div>
         )
@@ -132,7 +131,7 @@ class HenkiloViewPage extends React.Component<Props> {
                         ? organisaatio.nimi[locale]
                         : organisaatio.nimi.fi || organisaatio.nimi.sv || organisaatio.nimi.en || organisaatio.oid || '';
                     const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid
-                        ? `${organisaatioName} (${organisaatio.tyypit.join(',')})`
+                        ? `${organisaatioName} (${organisaatio.organisaatiotyypit.join(',')})`
                         : `${organisaatioName}`;
                     return {
                         label,

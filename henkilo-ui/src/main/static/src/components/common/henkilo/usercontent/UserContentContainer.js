@@ -8,17 +8,11 @@ import type {L} from "../../../../types/localisation.type";
 import PropertySingleton from "../../../../globals/PropertySingleton";
 import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto} from "../../../../actions/henkilo.actions";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
-import EditButton from "../buttons/EditButton";
-import PassivoiButton from "../buttons/PassivoiButton";
-import PasswordButton from "../buttons/PasswordButton";
-import Sukunimi from "../labelvalues/Sukunimi";
-import Kayttajanimi from "../labelvalues/Kayttajanimi";
-import * as R from 'ramda';
-import AbstractUserContent from "./AbstractUserContent";
 import OppijaUserContent from "./OppijaUserContent";
 import AdminUserContent from "./AdminUserContent";
 import VirkailijaUserContent from "./VirkailijaUserContent";
 import OmattiedotUserContent from "./OmattiedotUserContent";
+import PalveluUserContent from "./PalveluUserContent";
 
 type Props = {
     L: L,
@@ -75,101 +69,42 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     render() {
+        const henkiloTyyppi = this.props.henkilo && this.props.henkilo.henkilo && this.props.henkilo.henkilo.henkiloTyyppi;
+        const userContentProps = {
+            readOnly: this.state.readOnly,
+            discardAction: this._discard.bind(this),
+            updateAction: this._update.bind(this),
+            updateModelAction: this._updateModelField.bind(this),
+            updateDateAction: this._updateDateField.bind(this),
+            henkiloUpdate: this.state.henkiloUpdate,
+            edit: this._edit.bind(this),
+            oidHenkilo: this.props.oidHenkilo,
+        };
         let content;
-        if (this.props.view === 'OPPIJA') {
-            content = <OppijaUserContent
-                readOnly={this.state.readOnly}
-                discardAction={this._discard.bind(this)}
-                updateAction={this._update.bind(this)}
-                updateModelAction={this._updateModelField.bind(this)}
-                updateDateAction={this._updateDateField.bind(this)}
-                henkiloUpdate={this.state.henkiloUpdate}
-                edit={this._edit.bind(this)}
-            />;
+        if (henkiloTyyppi === 'PALVELU') {
+            content = <PalveluUserContent {...userContentProps} />;
+        }
+        else if (this.props.view === 'OPPIJA') {
+            content = <OppijaUserContent {...userContentProps} />;
         }
         else if (this.props.view === 'ADMIN') {
-            content = <AdminUserContent
-                readOnly={this.state.readOnly}
-                discardAction={this._discard.bind(this)}
-                updateAction={this._update.bind(this)}
-                updateModelAction={this._updateModelField.bind(this)}
-                updateDateAction={this._updateDateField.bind(this)}
-                henkiloUpdate={this.state.henkiloUpdate}
-                edit={this._edit.bind(this)}
-                oidHenkilo={this.props.oidHenkilo}
-            />;
+            content = <AdminUserContent {...userContentProps} />;
         }
         else if (this.props.view === 'VIRKAILIJA') {
-            content = <VirkailijaUserContent
-                readOnly={this.state.readOnly}
-                discardAction={this._discard.bind(this)}
-                updateAction={this._update.bind(this)}
-                updateModelAction={this._updateModelField.bind(this)}
-                updateDateAction={this._updateDateField.bind(this)}
-                henkiloUpdate={this.state.henkiloUpdate}
-                edit={this._edit.bind(this)}
-                oidHenkilo={this.props.oidHenkilo}
-            />
+            content = <VirkailijaUserContent {...userContentProps} />
         }
         else if (this.props.view === 'OMATTIEDOT') {
-            content = <OmattiedotUserContent
-                readOnly={this.state.readOnly}
-                discardAction={this._discard.bind(this)}
-                updateAction={this._update.bind(this)}
-                updateModelAction={this._updateModelField.bind(this)}
-                updateDateAction={this._updateDateField.bind(this)}
-                henkiloUpdate={this.state.henkiloUpdate}
-                edit={this._edit.bind(this)}
-                oidHenkilo={this.props.oidHenkilo}
-            />
+            content = <OmattiedotUserContent {...userContentProps} />
         }
         else {
-            content = <AbstractUserContent
-                basicInfo={this.createBasicInfo()}
-                readOnlyButtons={this.createReadOnlyButtons()}
-                readOnly={this.state.readOnly}
-                discardAction={this._discard.bind(this)}
-                updateAction={this._update.bind(this)}
-            />;
+            throw new Error('Unidentified view');
         }
         return <div className="henkiloViewUserContentWrapper">
-                    <div className="header">
-                        <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
-                    </div>
-                    { content }
-                </div>;
-    }
-
-    createBasicInfo() {
-        return this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU'
-            ? [
-                [
-                    <Sukunimi autofocus={true}
-                              label="HENKILO_PALVELUN_NIMI"
-                              readOnly={this.state.readOnly}
-                              updateModelFieldAction={this._updateModelField.bind(this)} />,
-                ],
-                [
-                    <Kayttajanimi disabled={!!R.path(['kayttajatieto', 'username'], this.props.henkilo)}
-                                  readOnly={this.state.readOnly}
-                                  updateModelFieldAction={this._updateModelField.bind(this)} />,
-                ],
-            ]
-            : this.props.basicInfo(this.state.readOnly,
-                this._updateModelField.bind(this),
-                this._updateDateField.bind(this),
-                this.state.henkiloUpdate);
-    }
-
-    createReadOnlyButtons() {
-        return this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU'
-            ? [
-                <EditButton editAction={this._edit.bind(this)} />,
-                <PassivoiButton />,
-                <PasswordButton oidHenkilo={this.props.oidHenkilo}
-                                styles={{top: '3rem', left: '0', width: '18rem'}}/>,
-            ]
-            : this.props.readOnlyButtons(this._edit.bind(this));
+            <div className="header">
+                <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
+            </div>
+            { content }
+        </div>;
     }
 
     _edit() {
@@ -178,6 +113,9 @@ class UserContentContainer extends React.Component<Props, State> {
 
     _additionalInfo() {
         const info = [];
+        if (this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU') {
+            info.push(this.props.L['HENKILO_ADDITIOINALINFO_PALVELU']);
+        }
         if (this.props.henkilo.henkilo.yksiloity) {
             info.push(this.props.L['HENKILO_ADDITIONALINFO_YKSILOITY']);
         }
