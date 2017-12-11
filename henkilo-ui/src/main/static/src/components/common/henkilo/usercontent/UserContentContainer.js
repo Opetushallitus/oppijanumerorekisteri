@@ -49,7 +49,7 @@ class UserContentContainer extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            henkiloUpdate: {},
+            henkiloUpdate: props.henkilo.henkilo ? JSON.parse(JSON.stringify(props.henkilo.henkilo)) : {},
             readOnly: true,
             showPassive: false,
             isLoading: true,
