@@ -13,6 +13,9 @@ import AdminUserContent from "./AdminUserContent";
 import VirkailijaUserContent from "./VirkailijaUserContent";
 import OmattiedotUserContent from "./OmattiedotUserContent";
 import PalveluUserContent from "./PalveluUserContent";
+import {isValidKutsumanimi} from "../../../../validation/KutsumanimiValidator";
+import {NOTIFICATIONTYPES} from "../../Notification/NotificationTypes";
+import {LocalNotification} from "../../Notification/LocalNotification";
 
 type Props = {
     L: L,
@@ -104,6 +107,21 @@ class UserContentContainer extends React.Component<Props, State> {
                 <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
             </div>
             { content }
+
+            <LocalNotification title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
+                               type={NOTIFICATIONTYPES.WARNING}
+                               toggle={this._validForm()}>
+                <ul>
+                    {this._validKutsumanimi() ? <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li> : null}
+                </ul>
+            </LocalNotification>
+
+            <LocalNotification title={this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']}
+                                type={NOTIFICATIONTYPES.ERROR}
+                                toggle={true}>
+
+            </LocalNotification>
+
         </div>;
     }
 
@@ -164,6 +182,18 @@ class UserContentContainer extends React.Component<Props, State> {
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event)
         });
     }
+
+    _validForm = (): boolean => {
+        return this._validKutsumanimi();
+    };
+
+    _validKutsumanimi = (): boolean => {
+        const etunimet = this.state.henkiloUpdate.etunimet;
+        const kutsumanimi = this.state.henkiloUpdate.kutsumanimi;
+        return !this.state.readOnly &&
+            !isValidKutsumanimi(etunimet, kutsumanimi);
+    };
+
 
 }
 

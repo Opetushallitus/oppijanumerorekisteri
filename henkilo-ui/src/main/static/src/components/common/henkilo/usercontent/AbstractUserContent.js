@@ -36,6 +36,8 @@ const AbstractUserContent = ({basicInfo, readOnlyButtons, readOnly, discardActio
             />
         </div>
     }
+
+
 </div>;
 
 export default AbstractUserContent;
