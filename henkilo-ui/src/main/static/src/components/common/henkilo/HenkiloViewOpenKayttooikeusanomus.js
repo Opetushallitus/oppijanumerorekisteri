@@ -1,18 +1,20 @@
-import './HenkiloViewOpenKayttooikeusanomus.css'
-import React from 'react'
-import PropTypes from 'prop-types'
-import Table from '../table/Table'
-import moment from 'moment'
-import DatePicker from 'react-datepicker'
-import StaticUtils from "../StaticUtils"
-import MyonnaButton from "./buttons/MyonnaButton"
-import Button from "../button/Button"
-import { urls } from "oph-urls-js"
-import { http } from "../../../http"
+import './HenkiloViewOpenKayttooikeusanomus.css';
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import Table from '../table/Table';
+import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import StaticUtils from '../StaticUtils';
+import MyonnaButton from './buttons/MyonnaButton';
+import Button from '../button/Button';
+import { urls } from 'oph-urls-js';
+import { http } from '../../../http';
 import {toLocalizedText} from '../../../localizabletext'
 import PopupButton from "../button/PopupButton";
-import AnomusHylkaysPopup from "../../anomus/AnomusHylkaysPopup";
-import PropertySingleton from "../../../globals/PropertySingleton";
+import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
+import PropertySingleton from '../../../globals/PropertySingleton';
+import {updateHaettuKayttooikeusryhma} from "../../../actions/kayttooikeusryhma.actions";
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -198,4 +200,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     };
 }
 
-export default HenkiloViewOpenKayttooikeusanomus;
+const mapStateToProps = state => ({
+
+});
+
+export default connect(mapStateToProps, {updateHaettuKayttooikeusryhma})(HenkiloViewOpenKayttooikeusanomus);

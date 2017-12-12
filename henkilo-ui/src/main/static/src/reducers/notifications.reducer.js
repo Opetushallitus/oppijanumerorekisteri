@@ -44,7 +44,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     }],
                 });
             }
-            return state
+            return state;
         case LINK_HENKILOS_SUCCESS:
             return Object.assign({}, state, {
                 duplicatesNotifications: [...state.duplicatesNotifications, {

@@ -9,6 +9,7 @@ export type KayttooikeusState = {
     +palveluKayttooikeus: Array<PalveluKayttooikeus>
 }
 
+
 export const kayttooikeusState = (state: KayttooikeusState = {palveluKayttooikeusLoading: false, palveluKayttooikeus: []}, action: PalveluKayttooikeusAction): KayttooikeusState => {
 
     switch (action.type) {

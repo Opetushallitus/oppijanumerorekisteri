@@ -1,9 +1,11 @@
-import './HenkiloViewExpiredKayttooikeus.css'
-import React from 'react'
-import PropTypes from 'prop-types'
-import update from 'react-addons-update'
-import Table from '../table/Table'
-import moment from 'moment'
+// @flow
+import './HenkiloViewExpiredKayttooikeus.css';
+import React from 'react';
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
+import update from 'react-addons-update';
+import Table from '../table/Table';
+import moment from 'moment';
 import DatePicker from "react-datepicker";
 import MyonnaButton from "./buttons/MyonnaButton";
 import Notifications from "../notifications/Notifications";
@@ -12,9 +14,68 @@ import StaticUtils from '../StaticUtils'
 import HaeJatkoaikaaButton from "../../omattiedot/HaeJatkoaikaaButton";
 import WideBlueNotification from "../../common/notifications/WideBlueNotification";
 import PropertySingleton from "../../../globals/PropertySingleton";
-import { toLocalizedText } from '../../../localizabletext'
+import { toLocalizedText } from '../../../localizabletext';
+import {addKayttooikeusToHenkilo, removePrivilege, fetchAllKayttooikeusAnomusForHenkilo} from '../../../actions/kayttooikeusryhma.actions';
+import type {L, L10n} from "../../../types/localisation.type";
+import type {Locale} from "../../../types/locale.type";
+import type {TableHeading} from "../../../types/react-table.types";
+import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import {createKayttooikeusanomus} from "../../../actions/kayttooikeusryhma.actions";
+import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
-class HenkiloViewExistingKayttooikeus extends React.Component {
+type Props = {
+    l10n: L10n,
+    locale: Locale,
+    oidHenkilo: string,
+    omattiedot: {data: {oid: string}},
+    henkilo: HenkiloState,
+    kayttooikeus: KayttooikeusRyhmaState,
+    organisaatioCache: {[string]: {
+            nimi: {},
+            tyypit: Array<string>,
+        }},
+    notifications: {
+        existingKayttooikeus: Array<any>,
+    },
+    removeNotification: (string, string, ?string) => void,
+    removePrivilege: (string, string, number) => void,
+    fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
+    isOmattiedot: boolean,
+    vuosia: number,
+    addKayttooikeusToHenkilo: (string, string, Array<{
+        id: number,
+        kayttooikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+    }>) => void,
+    createKayttooikeusanomus: ({
+        organisaatioOrRyhmaOid: string,
+        email: ?string,
+        tehtavaNimike: string,
+        perustelut: string,
+        kayttooikeusRyhmaIds: Array<number>,
+        anojaOid: string,
+    }) => void,
+}
+type EmailOption = {
+    value: ?string,
+}
+
+type State = {
+    dates: Array<{alkupvm: moment, loppupvm: moment,}>,
+    emailSelection: Array<EmailOption>,
+    emailOptions: Array<EmailOption>,
+    showMissingEmailNotification: boolean,
+    missingEmail: boolean,
+}
+
+class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
+    L: L;
+    headingList: Array<TableHeading>;
+    tableHeadings: Array<TableHeading>;
+    _rows: Array<{}>;
+    updateKayttooikeusryhma: (number, string, number, string) => void;
+
     static propTypes = {
         l10n: PropTypes.object.isRequired,
         locale: PropTypes.string.isRequired,
@@ -34,7 +95,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         vuosia: PropTypes.number,
     };
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.L = this.props.l10n[this.props.locale];
@@ -49,7 +110,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
             {key: 'HIGHLIGHT', hide: true},
             {key: 'HENKILO_KAYTTOOIKEUS_ANO_JATKOAIKA', notSortable: true, hide: !this.props.isOmattiedot},
         ];
-        this.tableHeadings = this.headingList.map(heading => Object.assign(heading, {label: this.L[heading.key] || ''}));
+        this.tableHeadings = this.headingList.map(heading => Object.assign({}, heading, {label: (this.L[heading.key] || '')}));
 
         this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
             this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
@@ -71,14 +132,16 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState(this.createEmailOptions(nextProps.henkilo));
+    componentWillReceiveProps(nextProps: Props) {
+        this.setState({
+            ...this.createEmailOptions(nextProps.henkilo),
+        });
     }
 
 
-    createEmailOptions(henkilo) {
+    createEmailOptions(henkilo): {emailSelection: Array<EmailOption>, missingEmail: boolean, showMissingEmailNotification: boolean, emailOptions: Array<EmailOption>} {
         const emailOptions = this._parseEmailOptions(henkilo);
-        if(emailOptions.length === 1) {
+        if (emailOptions.length === 1) {
             return {
                 emailSelection: this.props.kayttooikeus.kayttooikeus
                     .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
@@ -88,21 +151,23 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 emailOptions,
             };
         }
-        else if(emailOptions.length > 1) {
+        else if (emailOptions.length > 1) {
             return {
                 missingEmail: false,
-                showMissingEmailNotification: false, emailOptions,
+                showMissingEmailNotification: false,
+                emailOptions,
                 emailSelection: this.props.kayttooikeus.kayttooikeus
                     .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
-                    .map(uusittavaKayttooikeusRyhma => ''),
+                    .map(uusittavaKayttooikeusRyhma => ({value: ''})),
             };
         }
         return {
             missingEmail: true,
-            showMissingEmailNotification: true, emailOptions,
+            showMissingEmailNotification: true,
+            emailOptions,
             emailSelection: this.props.kayttooikeus.kayttooikeus
                 .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
-                .map(uusittavaKayttooikeusRyhma => ''),
+                .map(uusittavaKayttooikeusRyhma => ({value: ''})),
         };
     }
 
@@ -151,9 +216,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                                                    L={this.L}
                                                    disabled={this.hasNoPermission(uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)} />,
                     [headingList[7]]: this.props.notifications.existingKayttooikeus.some(notification => {
-                        return notification.ryhmaIdList
+                        return notification.ryhmaIdList && notification.ryhmaIdList
                             .some(ryhmaId => ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId
-                            && uusittavaKayttooikeusRyhma.organisaatioOid === notification.organisaatioOid);
+                                && uusittavaKayttooikeusRyhma.organisaatioOid === (notification.organisaatioOid && notification.organisaatioOid));
                     }),
                     [headingList[8]]: <div>
                         {this.createEmailSelectionIfMoreThanOne(idx)}
@@ -168,7 +233,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus
             .filter(haettuKayttooikeusRyhma => haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId
                 && uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid)[0];
-        return this.state.emailSelection[idx] === '' || this.state.emailOptions.length === 0 || anomusAlreadyExists;
+        return this.state.emailSelection[idx].value === '' || this.state.emailOptions.length === 0 || anomusAlreadyExists;
     }
 
     createEmailSelectionIfMoreThanOne(idx) {
@@ -187,7 +252,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
     hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
         return !this.props.kayttooikeus.grantableKayttooikeusLoading
             && !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
-            && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
+                && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
     }
 
     render() {
@@ -197,9 +262,11 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 <div className="header">
                     <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                 </div>
-                <Notifications notifications={this.props.notifications.existingKayttooikeus}
-                               L={this.L}
-                               closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)} />
+                <Notifications
+                    notifications={this.props.notifications.existingKayttooikeus}
+                    L={this.L}
+                    closeAction={(status, id) => this.props.removeNotification(status, 'existingKayttooikeus', id)}
+                />
                 {
                     this.props.isOmattiedot && this.state.showMissingEmailNotification
                         ? <WideBlueNotification message={this.L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_OLEMASSAOLEVA_KAYTTOOIKEUS']}
@@ -231,8 +298,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
         return emails.map(email => ({value: email, label: email}));
     }
 
-
-
     async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
         const anomusData = {
@@ -249,4 +314,16 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
 
 }
 
-export default HenkiloViewExistingKayttooikeus;
+const mapStateToProps = state => ({
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    henkilo: state.henkilo,
+    kayttooikeus: state.kayttooikeus,
+    notifications: state.notifications,
+});
+
+export default connect(mapStateToProps, {
+    addKayttooikeusToHenkilo,
+    removePrivilege,
+    fetchAllKayttooikeusAnomusForHenkilo,
+    createKayttooikeusanomus})(HenkiloViewExistingKayttooikeus);
