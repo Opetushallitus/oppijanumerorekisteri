@@ -20,7 +20,6 @@ class Field extends React.Component {
         autofocus: PropTypes.bool,
         placeholder: PropTypes.string,
         isError: PropTypes.bool,
-        extras: PropTypes.object,
     };
 
     constructor(props) {
@@ -37,7 +36,7 @@ class Field extends React.Component {
             'oph-input': !this.props.readOnly && !this.props.data,
             'oph-input-has-error': this.props.isError,
         });
-        return <span><span>{this.createField(className)}</span> {this.props.extras}</span>;
+        return <span>{this.createField(className)}</span>;
     }
 
     createField(className) {
@@ -46,13 +45,15 @@ class Field extends React.Component {
             return <span className={className}>{this.props.children}</span>;
         }
         if (this.props.data) {
-            return <OphSelect className={className}
-                                    options={this.props.data}
-                                    name={this.props.inputValue}
-                                    onChange={this.props.changeAction}
-                                    value={this.props.selectValue}
-                                    placeholder=""
-                                    disabled={this.props.disabled}
+            return <OphSelect
+                className={className}
+                options={this.props.data}
+                name={this.props.inputValue}
+                onChange={this.props.changeAction}
+                value={this.props.selectValue}
+                placeholder=""
+                disabled={this.props.disabled}
+                clearableAction={this.props.clearableAction}
             />;
         }
         if (this.props.date) {

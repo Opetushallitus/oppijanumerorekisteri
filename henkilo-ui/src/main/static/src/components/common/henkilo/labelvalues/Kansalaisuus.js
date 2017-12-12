@@ -8,8 +8,6 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Locale} from "../../../../types/locale.type";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {ReactSelectOption} from "../../../../types/react-select.types";
-import IconButton from "../../button/IconButton";
-import CrossIcon from "../../icons/CrossIcon";
 
 type Props = {
     henkilo: HenkiloState,
@@ -26,7 +24,7 @@ const Kansalaisuus = (props: Props) => {
     const kansalaisuus = (props.henkiloUpdate && props.henkiloUpdate.kansalaisuus) || [];
     const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
     return <div>
-        {kansalaisuus.map((values, idx) => <span>
+        {kansalaisuus.map((values, idx) => <div>
             <LabelValue
                 key={idx}
                 readOnly={props.readOnly}
@@ -42,14 +40,10 @@ const Kansalaisuus = (props: Props) => {
                         .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
                     selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
                     disabled: disabled,
+                    clearableAction: () => props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))}),
                 }}
-            >
-                {!props.readOnly
-                && <IconButton onClick={() => props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))})}>
-                    <CrossIcon/>
-                </IconButton>}
-            </LabelValue>
-            </span>
+            />
+            </div>
         )}
 
         {!props.readOnly && <LabelValue

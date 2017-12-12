@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Columns from 'react-columns';
 import Field from "../../field/Field";
 
-const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel, children}) => !values.showOnlyOnWrite || !readOnly
+const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}) => !values.showOnlyOnWrite || !readOnly
     ? <div id={values.label}>
         <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
             {!hideLabel ? <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span> : <span>&nbsp;</span>}
@@ -15,7 +15,6 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
                        ? updateModelFieldAction
                        : updateDateFieldAction}
                    readOnly={values.readOnly || readOnly}
-                   extras={children}
             >
                 {values.value}
             </Field>
