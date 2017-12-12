@@ -37,7 +37,7 @@ class Field extends React.Component {
             'oph-input': !this.props.readOnly && !this.props.data,
             'oph-input-has-error': this.props.isError,
         });
-        return <div>{this.createField(className)} {this.props.extras}</div>;
+        return <span><span>{this.createField(className)}</span> {this.props.extras}</span>;
     }
 
     createField(className) {
@@ -80,7 +80,7 @@ class Field extends React.Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 

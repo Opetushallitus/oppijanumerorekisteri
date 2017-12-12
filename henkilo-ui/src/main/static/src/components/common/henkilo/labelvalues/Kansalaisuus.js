@@ -8,7 +8,6 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Locale} from "../../../../types/locale.type";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {ReactSelectOption} from "../../../../types/react-select.types";
-import CloseButton from "../../button/CloseButton";
 import IconButton from "../../button/IconButton";
 import CrossIcon from "../../icons/CrossIcon";
 
@@ -20,7 +19,7 @@ type Props = {
     locale: Locale,
     henkiloUpdate: Henkilo,
     readOnly: boolean,
-    updateModelFieldAction: () => void,
+    updateModelFieldAction: ({}) => void,
 }
 
 const Kansalaisuus = (props: Props) => {
@@ -45,9 +44,13 @@ const Kansalaisuus = (props: Props) => {
                     disabled: disabled,
                 }}
             >
-                <IconButton onClick={() => {}}><CrossIcon/></IconButton>
+                {!props.readOnly
+                && <IconButton onClick={() => props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))})}>
+                    <CrossIcon/>
+                </IconButton>}
             </LabelValue>
-        </span>)}
+            </span>
+        )}
 
         {!props.readOnly && <LabelValue
             readOnly={props.readOnly}
