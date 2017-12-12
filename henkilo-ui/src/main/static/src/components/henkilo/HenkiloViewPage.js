@@ -87,6 +87,8 @@ class HenkiloViewPage extends React.Component<Props> {
                             : <HenkiloViewExistingKayttooikeus
                                 {...this.props}
                                 vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                                oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
+                                isOmattiedot={this.props.view === 'OMATTIEDOT'}
                             />
                     }
                 </div>}
@@ -95,7 +97,10 @@ class HenkiloViewPage extends React.Component<Props> {
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
                             ? <Loader />
-                            : <HenkiloViewOpenKayttooikeusanomus {...this.props} />
+                            : <HenkiloViewOpenKayttooikeusanomus
+                                {...this.props}
+                                isOmattiedot={this.props.view === 'OMATTIEDOT'}
+                            />
                     }
                 </div>
                 }
@@ -106,18 +111,22 @@ class HenkiloViewPage extends React.Component<Props> {
                             : <HenkiloViewExpiredKayttooikeus {...this.props} />
                     }
                 </div>}
-                {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA' && <div className="wrapper">
-                    <HenkiloViewCreateKayttooikeus {...this.props}
-                                                   vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
-                                                   existingKayttooikeusRef={this.existingKayttooikeusRef} />
+                {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA'
+                && <div className="wrapper">
+                    <HenkiloViewCreateKayttooikeus
+                        {...this.props}
+                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                        existingKayttooikeusRef={this.existingKayttooikeusRef}
+                    />
                 </div>}
-                {this.props.view === 'OMATTIEDOT' && <HenkiloViewCreateKayttooikeusanomus
-                    {...this.props}
-                    organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
-                    ryhmaOptions={this._parseRyhmaOptions.call(this)}
-                    kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
-                />
-                }
+                {this.props.view === 'OMATTIEDOT' && <div className="wrapper">
+                    <HenkiloViewCreateKayttooikeusanomus
+                        {...this.props}
+                        organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
+                        ryhmaOptions={this._parseRyhmaOptions.call(this)}
+                        kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
+                    />
+                </div>}
             </div>
         )
     }

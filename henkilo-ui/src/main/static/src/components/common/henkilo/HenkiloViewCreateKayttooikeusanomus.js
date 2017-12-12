@@ -1,18 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
 import * as R from 'ramda';
 import {ShowText} from '../../common/ShowText';
-import IconButton from "../button/IconButton";
-import CrossCircleIcon from "../icons/CrossCircleIcon";
-import EmailSelect from "./select/EmailSelect";
+import IconButton from '../button/IconButton';
+import CrossCircleIcon from '../icons/CrossCircleIcon';
+import EmailSelect from './select/EmailSelect';
 import WideBlueNotification from "../../common/notifications/WideBlueNotification";
 import KayttooikeusryhmaSelectModal from '../select/KayttooikeusryhmaSelectModal'
 import Loader from "../icons/Loader";
+import {
+    createKayttooikeusanomus,
+    fetchOrganisaatioKayttooikeusryhmat
+} from "../../../actions/kayttooikeusryhma.actions";
 
-export default class HenkiloViewCreateKayttooikeusanomus extends React.Component {
+class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
     static propTypes = {
         l10n: PropTypes.object.isRequired,
@@ -284,12 +289,12 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     };
 
     _addKayttooikeusryhmaSelection(kayttooikeusryhma) {
-        const locale = this.props.locale.toUpperCase()
+        const locale = this.props.locale.toUpperCase();
         const kayttooikeusryhmaSelection = {
             value: kayttooikeusryhma.id,
             label: R.path(['text'], R.find(R.propEq('lang', locale))(kayttooikeusryhma.nimi.texts)),
             description: R.path(['text'], R.find(R.propEq('lang', locale))(kayttooikeusryhma.kuvaus ? kayttooikeusryhma.kuvaus.texts : [])),
-        }
+        };
 
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections;
         kayttooikeusryhmaSelections.push(kayttooikeusryhmaSelection);
@@ -317,3 +322,9 @@ export default class HenkiloViewCreateKayttooikeusanomus extends React.Component
     }
 
 }
+
+const mapStateToProps = state => ({
+
+});
+
+export default connect(mapStateToProps, {fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus})(HenkiloViewCreateKayttooikeusanomus);
