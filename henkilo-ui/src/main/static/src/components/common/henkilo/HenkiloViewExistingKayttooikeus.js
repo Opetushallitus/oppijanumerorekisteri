@@ -12,6 +12,7 @@ import StaticUtils from '../StaticUtils'
 import HaeJatkoaikaaButton from "../../omattiedot/HaeJatkoaikaaButton";
 import WideBlueNotification from "../../common/notifications/WideBlueNotification";
 import PropertySingleton from "../../../globals/PropertySingleton";
+import { toLocalizedText } from '../../../localizabletext'
 
 class HenkiloViewExistingKayttooikeus extends React.Component {
     static propTypes = {
@@ -120,7 +121,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component {
                 const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid]
                     || StaticUtils.defaultOrganisaatio(uusittavaKayttooikeusRyhma.organisaatioOid, this.props.l10n);
                 return {
-                    [headingList[0]]: organisaatio.nimi[this.props.locale] + ' '
+                    [headingList[0]]: toLocalizedText(this.props.locale, organisaatio.nimi) + ' '
                     + StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L),
                     [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                         .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,

@@ -6,6 +6,7 @@ import type {Locale} from '../../../types/locale.type'
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 import StaticUtils from "../StaticUtils";
 import type {L} from "../../../types/localisation.type";
+import { toLocalizedText } from '../../../localizabletext'
 
 type Props = {
     l10n: any,
@@ -105,7 +106,7 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
     flatOrganisations(organisations: Array<any>): Array<OrganisaatioFlat> {
         return organisations.map(organisation =>
             ({
-                name: organisation.nimi[this.props.locale],
+                name: toLocalizedText(this.props.locale, organisation.nimi),
                 typesFlat: organisation.tyypit.length ? '(' + StaticUtils.flatArray(organisation.tyypit) + ')' : '',
                 role: organisation.tehtavanimike,
                 passive: organisation.passivoitu,
