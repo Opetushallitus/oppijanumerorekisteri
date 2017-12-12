@@ -53,7 +53,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
         const lang = this.props.locale.toUpperCase();
         const palveluKayttooikeusOptions: Array<any> = nextProps.kayttooikeusState.palveluKayttooikeus.map(
             (palveluKayttooikeus: PalveluKayttooikeus) => {
-                const textObject: ?Text = R.find(R.propEq('lang', lang))(palveluKayttooikeus.oikeusLangs.texts);
+                const textObject: ?Text = R.find(R.propEq('lang', lang))(palveluKayttooikeus.oikeusLangs);
                 return {label: R.path(['text'], textObject), value: palveluKayttooikeus.rooli}
             });
         this.setState({palveluKayttooikeusOptions});
