@@ -20,6 +20,7 @@ class Field extends React.Component {
         autofocus: PropTypes.bool,
         placeholder: PropTypes.string,
         isError: PropTypes.bool,
+        extras: PropTypes.object,
     };
 
     constructor(props) {
@@ -36,7 +37,7 @@ class Field extends React.Component {
             'oph-input': !this.props.readOnly && !this.props.data,
             'oph-input-has-error': this.props.isError,
         });
-        return (this.createField(className))
+        return <div>{this.createField(className)} {this.props.extras}</div>;
     }
 
     createField(className) {

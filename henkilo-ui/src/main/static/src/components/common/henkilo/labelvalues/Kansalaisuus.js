@@ -8,6 +8,9 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Locale} from "../../../../types/locale.type";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {ReactSelectOption} from "../../../../types/react-select.types";
+import CloseButton from "../../button/CloseButton";
+import IconButton from "../../button/IconButton";
+import CrossIcon from "../../icons/CrossIcon";
 
 type Props = {
     henkilo: HenkiloState,
@@ -20,36 +23,55 @@ type Props = {
     updateModelFieldAction: () => void,
 }
 
-const Kansalaisuus = (props: Props) => <LabelValue
-    readOnly={props.readOnly}
-    updateModelFieldAction={props.updateModelFieldAction}
-    values={
-        props.henkilo.henkilo.kansalaisuus && props.henkilo.henkilo.kansalaisuus.length > 1
-            ? props.henkilo.henkilo.kansalaisuus.map((values, idx) =>
-                ({
+const Kansalaisuus = (props: Props) => {
+    const kansalaisuus = (props.henkiloUpdate && props.henkiloUpdate.kansalaisuus) || [];
+    const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
+    return <div>
+        {kansalaisuus.map((values, idx) => <span>
+            <LabelValue
+                key={idx}
+                readOnly={props.readOnly}
+                updateModelFieldAction={props.updateModelFieldAction}
+                values={{
                     label: 'HENKILO_KANSALAISUUS',
-                    data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
-                        optionsName: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',})),
+                    data: props.koodisto.kansalaisuus.map(koodi => ({
+                        value: koodi.value,
+                        label: koodi[props.locale],
+                        optionsName: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
+                    })),
                     value: props.koodisto.kansalaisuus
                         .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
                     selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
-                    disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-                }))[0]
-            : {
+                    disabled: disabled,
+                }}
+            >
+                <IconButton onClick={() => {}}><CrossIcon/></IconButton>
+            </LabelValue>
+        </span>)}
+
+        {!props.readOnly && <LabelValue
+            readOnly={props.readOnly}
+            updateModelFieldAction={props.updateModelFieldAction}
+            values={{
                 label: 'HENKILO_KANSALAISUUS',
-                data: props.koodisto.kansalaisuus.map(koodi => ({value: koodi.value, label: koodi[props.locale],
-                    optionsName: 'kansalaisuus.0.kansalaisuusKoodi'})),
+                data: props.koodisto.kansalaisuus.map(koodi => ({
+                    value: koodi.value,
+                    label: koodi[props.locale],
+                    optionsName: 'kansalaisuus.' + (kansalaisuus.length) + '.kansalaisuusKoodi',
+                })),
                 value: null,
-                disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
-            }
-    }
-/>;
+                selectValue: props.henkiloUpdate.kansalaisuus[kansalaisuus.length] && props.henkiloUpdate.kansalaisuus[kansalaisuus.length].kansalaisuusKoodi,
+                disabled: disabled,
+            }}
+        />}
+    </div>;
+};
 
 Kansalaisuus.propTypes = {
     henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        kansalaisuus: PropTypes.array,
-        yksiloityVTJ: PropTypes.bool,
-    })}),
+            kansalaisuus: PropTypes.array,
+            yksiloityVTJ: PropTypes.bool,
+        })}),
     koodisto: PropTypes.shape({
         kansalaisuus: PropTypes.array,
     }),
