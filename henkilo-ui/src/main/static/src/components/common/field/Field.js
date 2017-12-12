@@ -63,6 +63,7 @@ class Field extends React.Component {
                                selected={moment(StaticUtils.ddmmyyyyToDate(this.props.children))}
                                showYearDropdown
                                showWeekNumbers
+                               disabled={this.props.disabled}
             />;
         }
         return <input className={className}

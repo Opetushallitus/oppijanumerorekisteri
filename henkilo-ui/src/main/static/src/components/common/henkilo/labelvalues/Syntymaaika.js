@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import moment from 'moment';
 import LabelValue from './LabelValue';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
@@ -28,13 +27,6 @@ const Syntymaaika = (props: Props) => {
             disabled: !!props.henkilo.henkilo.hetu,
         }}
     />;
-};
-
-Syntymaaika.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-            syntymaaika: PropTypes.string,
-            hetu: PropTypes.string,
-        })}),
 };
 
 const mapStateToProps = state => ({
