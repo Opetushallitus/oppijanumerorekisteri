@@ -20,7 +20,6 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
         const headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO'},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'},
             {key: 'HENKILO_KAYTTOOIKEUS_TILA'},
-            {key: 'HENKILO_KAYTTOOIKEUS_SULJETTU'},
             {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 150},
         ];
         this.tableHeadings = headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
@@ -36,8 +35,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
                 [headingList[1]]: kayttooikeus.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: this.L[kayttooikeus.tila],
-                [headingList[3]]: moment(new Date(kayttooikeus.voimassaPvm)).format(),
-                [headingList[4]]: moment(kayttooikeus.kasitelty).format() + ' / ' + kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid,
+                [headingList[3]]: moment(kayttooikeus.kasitelty).format() + ' / ' + kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid,
             }));
     };
 
