@@ -19,7 +19,7 @@ class AdminViewContainer extends React.Component {
     componentDidMount() {
         this.props.clearHenkilo();
         if (this.props.oidHenkilo === this.props.ownOid) {
-            this.props.router.push('/omattiedot');
+            this.props.router.replace('/omattiedot');
         }
 
         this.props.fetchHenkilo(this.props.oidHenkilo);

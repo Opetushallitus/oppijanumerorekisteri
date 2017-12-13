@@ -15,7 +15,7 @@ class OppijaViewContainer extends React.Component {
         PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
 
         if (this.props.isAdmin) {
-            this.props.router.push('/admin/' + this.props.oidHenkilo);
+            this.props.router.replace(`/admin/${this.props.oidHenkilo}`);
         }
         else {
             this.props.updateHenkiloNavigation(oppijaNavi(this.props.oidHenkilo));
