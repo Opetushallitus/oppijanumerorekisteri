@@ -10,3 +10,4 @@
 [lints]
 
 [options]
+module.file_ext=.css
