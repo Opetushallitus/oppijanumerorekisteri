@@ -9,6 +9,7 @@ import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli
 import LocalizedTextGroup from "./LocalizedTextGroup";
 import './KayttooikeusryhmaTiedot.css';
 import type {L} from "../../../types/localisation.type";
+import { Link } from 'react-router';
 
 type Props = {
     item: Kayttooikeusryhma,
@@ -66,7 +67,9 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
                     <div className="flex-item-2"></div>
                 </div>)}
             </div>
-            <button onClick={() => {this.props.router.push(`/kayttooikeusryhmat/${this.props.item.id}`)}} className="oph-button oph-button-primary">{this.props.L['MUOKKAA']}</button>
+            <Link to={`/kayttooikeusryhmat/${this.props.item.id}`} className="oph-button oph-button-primary">
+                {this.props.L['MUOKKAA']}
+            </Link>
         </div> : null
     }
 
