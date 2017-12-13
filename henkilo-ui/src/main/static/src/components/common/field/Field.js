@@ -53,7 +53,7 @@ class Field extends React.Component {
                 value={this.props.selectValue}
                 placeholder=""
                 disabled={this.props.disabled}
-                clearableAction={this.props.clearableAction}
+                clearable={this.props.clearable}
             />;
         }
         if (this.props.date) {

@@ -8,16 +8,16 @@ import IconButton from "../button/IconButton";
 import CrossIcon from "../icons/CrossIcon";
 
 const OphSelect = (props) => {
-    const clearRender = props.clearableAction
-        ? () => <IconButton onClick={props.clearableAction} >
+    const clearRenderer = props.clearable
+        ? () => {return <IconButton>
             <CrossIcon/>
-        </IconButton>
+        </IconButton>}
         : undefined;
     return <Select
-        clearable={!!clearRender}
+        clearable={props.clearable}
         deleteRemoves={false}
         {...props}
-        clearRenderer={clearRender}
+        clearRenderer={clearRenderer}
     />;
 };
 

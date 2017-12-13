@@ -28,7 +28,14 @@ const Kansalaisuus = (props: Props) => {
             <LabelValue
                 key={idx}
                 readOnly={props.readOnly}
-                updateModelFieldAction={props.updateModelFieldAction}
+                updateModelFieldAction={(newOption) => {
+                    if (newOption === null) {
+                        props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))});
+                    }
+                    else {
+                        props.updateModelFieldAction({optionsName: newOption.optionsName, value: newOption.value});
+                    }
+                }}
                 values={{
                     label: 'HENKILO_KANSALAISUUS',
                     data: props.koodisto.kansalaisuus.map(koodi => ({
@@ -40,7 +47,7 @@ const Kansalaisuus = (props: Props) => {
                         .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
                     selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
                     disabled: disabled,
-                    clearableAction: () => props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))}),
+                    clearable: true,
                 }}
             />
             </div>
