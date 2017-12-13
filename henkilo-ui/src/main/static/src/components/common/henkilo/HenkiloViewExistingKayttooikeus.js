@@ -202,6 +202,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                                         selected={this.state.dates[idx].loppupvm}
                                         showYearDropdown
                                         showWeekNumbers
+                                        disabled={this.hasNoPermission(uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)}
                                         filterDate={(date) => Number.isInteger(this.props.vuosia) ? date.isBefore(moment().add(this.props.vuosia, 'years')) : true} />
                         </div>
                         <div style={{display: 'table-cell'}}>
