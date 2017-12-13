@@ -10,9 +10,10 @@ type Props = {
     readOnly: boolean,
     discardAction: () => void,
     updateAction: () => void,
+    isValidForm: boolean
 }
 
-const AbstractUserContent = ({basicInfo, readOnlyButtons, readOnly, discardAction, updateAction}: Props) => <div className="user-content">
+const AbstractUserContent = ({basicInfo, readOnlyButtons, readOnly, discardAction, updateAction, isValidForm}: Props) => <div className="user-content">
     {/* By default rootStyles is { overflowX: 'hidden' }. This causes scroll bars to appear when inner content expands. */}
     <Columns columns={3} gap="10px" rootStyles={{}}>
         {
@@ -33,9 +34,12 @@ const AbstractUserContent = ({basicInfo, readOnlyButtons, readOnly, discardActio
         : <div className="henkiloViewEditButtons">
             <EditButtons discardAction={discardAction}
                          updateAction={updateAction}
+                         isValidForm={isValidForm}
             />
         </div>
     }
+
+
 </div>;
 
 export default AbstractUserContent;

@@ -13,6 +13,11 @@ import AdminUserContent from "./AdminUserContent";
 import VirkailijaUserContent from "./VirkailijaUserContent";
 import OmattiedotUserContent from "./OmattiedotUserContent";
 import PalveluUserContent from "./PalveluUserContent";
+import {isValidKutsumanimi} from "../../../../validation/KutsumanimiValidator";
+import {LocalNotification} from "../../Notification/LocalNotification";
+import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
+import type {GlobalNotificationConfig} from "../../../../types/notification.types";
+import {GLOBAL_NOTIFICATION_KEYS} from "../../Notification/GlobalNotificationKeys";
 
 type Props = {
     L: L,
@@ -79,6 +84,7 @@ class UserContentContainer extends React.Component<Props, State> {
             henkiloUpdate: this.state.henkiloUpdate,
             edit: this._edit.bind(this),
             oidHenkilo: this.props.oidHenkilo,
+            isValidForm: this._validForm()
         };
         let content;
         if (henkiloTyyppi === 'PALVELU') {
@@ -104,6 +110,14 @@ class UserContentContainer extends React.Component<Props, State> {
                 <p className="oph-h2 oph-bold">{this.props.L['HENKILO_PERUSTIEDOT_OTSIKKO'] + this._additionalInfo()}</p>
             </div>
             { content }
+
+            <LocalNotification title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
+                               type={NOTIFICATIONTYPES.WARNING}
+                               toggle={!this.state.readOnly && !this._validForm()}>
+                <ul>
+                    {this._validKutsumanimi() ? null : <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>}
+                </ul>
+            </LocalNotification>
         </div>;
     }
 
@@ -146,7 +160,13 @@ class UserContentContainer extends React.Component<Props, State> {
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
         henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(PropertySingleton.state.PVM_DBFORMAATTI) : henkiloUpdate.syntymaaika;
-        this.props.updateHenkiloAndRefetch(henkiloUpdate);
+        const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
+            autoClose: 10000,
+            title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+            type: NOTIFICATIONTYPES.ERROR,
+            key: GLOBAL_NOTIFICATION_KEYS.HENKILOUPDATEFAILED
+        };
+        this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
         }
@@ -164,6 +184,17 @@ class UserContentContainer extends React.Component<Props, State> {
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event)
         });
     }
+
+    _validForm = (): boolean => {
+        return this._validKutsumanimi();
+    };
+
+    _validKutsumanimi = (): boolean => {
+        const etunimet = this.state.henkiloUpdate.etunimet;
+        const kutsumanimi = this.state.henkiloUpdate.kutsumanimi;
+        return isValidKutsumanimi(etunimet, kutsumanimi);
+    };
+
 
 }
 

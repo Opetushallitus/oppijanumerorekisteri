@@ -1,6 +1,10 @@
 // @flow
 
-import {NOTIFICATION_ADD, NOTIFICATION_REMOVE} from "./actiontypes";
+import {GLOBAL_NOTIFICATION} from "./actiontypes";
+import type {GlobalNotificationConfig} from "../types/notification.types";
 
-export const addNotification = (key: string) => ({ type: NOTIFICATION_ADD, key });
-export const clearNotification = (key: string) => ({ type: NOTIFICATION_REMOVE, key});
+export const addGlobalNotification = (payload: GlobalNotificationConfig) =>
+    (dispatch: any) => dispatch({ type: GLOBAL_NOTIFICATION.ADD, payload });
+
+export const removeGlobalNotification = (key: string) =>
+    (dispatch: any) => dispatch({ type: GLOBAL_NOTIFICATION.REMOVE, key});

@@ -13,12 +13,11 @@ import type {Koodisto} from '../../types/domain/koodisto/koodisto.types'
 import OppijaCreateForm from './OppijaCreateForm'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import type {HenkiloDuplicate} from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate'
-import Notifications from '../../components/common/notifications/Notifications'
-import type {Notification, NotificationType} from '../../components/common/notifications/Notifications'
-import PropertySingleton from '../../globals/PropertySingleton'
 import type {L} from "../../types/localisation.type";
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit'
 import {updateDefaultNavigation} from "../../actions/navigation.actions";
+import {addGlobalNotification} from "../../actions/notification.actions";
+import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
 
 type Props = {
     router: any,
@@ -34,7 +33,6 @@ type Props = {
 }
 
 type State = {
-    ilmoitukset: Array<Notification>,
     oppija: HenkiloCreate,
     naytaDuplikaatit: boolean,
     duplikaatit: Array<HenkiloDuplicate>,
@@ -48,7 +46,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {ilmoitukset: [], oppija: {}, naytaDuplikaatit: false, duplikaatit: []}
+        this.state = {oppija: {}, naytaDuplikaatit: false, duplikaatit: []}
     }
 
     componentDidMount() {
@@ -62,11 +60,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     render() {
         return (
             <div className="wrapper">
-                <Notifications
-                    notifications={this.state.ilmoitukset}
-                    L={this.props.L}
-                    closeAction={this.poistaIlmoitus}
-                    />
                 <h1>{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</h1>
                 {this.state.naytaDuplikaatit === false &&
                 <OppijaCreateForm
@@ -92,16 +85,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
         )
     }
 
-    lisaaIlmoitus = (type: NotificationType, messageKey: string) => {
-        const ilmoitus = {id: '' + PropertySingleton.getNewId(), type: type, notL10nMessage: messageKey};
-        this.setState({ilmoitukset: [...this.state.ilmoitukset, ilmoitus]})
-    };
-
-    poistaIlmoitus = (type: NotificationType, id: ?string) => {
-        const ilmoitukset = this.state.ilmoitukset.filter(ilmoitus => ilmoitus.id !== id);
-        this.setState({ilmoitukset: ilmoitukset})
-    };
-
     tallenna = async (oppija: HenkiloCreate) => {
         try {
             // tarkistetaan ennen luontia duplikaatit
@@ -113,7 +96,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 this.luoOppijaJaNavigoi(oppija)
             }
         } catch (error) {
-            this.lisaaIlmoitus('error', 'HENKILON_LUONTI_EPAONNISTUI');
+            this.props.addGlobalNotification({type: NOTIFICATIONTYPES.ERROR, title: this.props.L['HENKILON_LUONTI_EPAONNISTUI']});
             throw error
         }
     };
@@ -154,4 +137,5 @@ export default connect(mapStateToProps, {
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
     updateDefaultNavigation,
+    addGlobalNotification
 })(OppijaCreateContainer)
