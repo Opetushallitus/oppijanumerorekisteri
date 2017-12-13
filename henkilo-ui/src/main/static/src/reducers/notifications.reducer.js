@@ -116,7 +116,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
             // For button notifications (remove all)
             removeNotifications = state[action.group].filter(notification => notification.id === action.id);
             // For kayttooikeus table notifications (remove single one)
-            if(!removeNotifications) {
+            if (removeNotifications.length === 0) {
                 removeNotifications  = action.id
                     ? [state[action.group].filter(notification => action.id === notification.organisaatioOid + notification.ryhmaIdList.join(''))[0]]
                     : [state[action.group].filter(notification => notification.type === action.status)[0]];

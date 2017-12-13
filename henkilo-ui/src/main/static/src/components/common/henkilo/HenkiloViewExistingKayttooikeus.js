@@ -22,6 +22,7 @@ import type {TableHeading} from "../../../types/react-table.types";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import {createKayttooikeusanomus} from "../../../actions/kayttooikeusryhma.actions";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
+import {removeNotification} from '../../../actions/notifications.actions'
 
 type Props = {
     l10n: L10n,
@@ -325,5 +326,6 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, {
     addKayttooikeusToHenkilo,
     removePrivilege,
+    removeNotification,
     fetchAllKayttooikeusAnomusForHenkilo,
     createKayttooikeusanomus})(HenkiloViewExistingKayttooikeus);
