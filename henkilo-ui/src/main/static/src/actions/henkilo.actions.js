@@ -63,7 +63,8 @@ export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => (as
         if(errorNotificationConfig) {
             dispatch(addGlobalNotification(errorNotificationConfig));
         }
-        dispatch(errorHenkiloUpdate(error))
+        dispatch(errorHenkiloUpdate(error));
+        throw error;
     }
 });
 
