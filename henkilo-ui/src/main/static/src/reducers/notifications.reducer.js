@@ -38,7 +38,7 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
             if (action.duplicates.every(duplikaatti => duplikaatti.oidHenkilo === action.master)) {
                 return Object.assign({}, state, {
                     duplicatesNotifications: [...state.duplicatesNotifications, {
-                        type: 'ok',
+                        type: 'info',
                         notL10nMessage: 'DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT',
                         id: PropertySingleton.getNewId(),
                     }],

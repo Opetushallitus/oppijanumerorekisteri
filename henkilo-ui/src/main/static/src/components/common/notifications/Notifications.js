@@ -2,6 +2,7 @@
 import React from 'react'
 import WideGreenNotification from "./WideGreenNotification";
 import WideRedNotification from "./WideRedNotification";
+import WideBlueNotification from "./WideBlueNotification";
 import type {L} from "../../../types/localisation.type";
 
 export type NotificationType = 'ok' | 'error'
@@ -34,6 +35,12 @@ const Notifications = ({notifications, L, closeAction, styles}: Props) => <div s
                              closeAction={() => closeAction(notification.type, notification.organisaatioOid && notification.ryhmaIdList
                                  ? notification.organisaatioOid + notification.ryhmaIdList.join('')
                                  : notification.id)} /> )}
+    {notifications.filter(notification => notification.type === 'info').map((notification, idx) =>
+        <WideBlueNotification key={idx}
+                              message={L[notification.notL10nMessage]}
+                              closeAction={() => closeAction(notification.type, notification.organisaatioOid && notification.ryhmaIdList
+                                ? notification.organisaatioOid + notification.ryhmaIdList.join('')
+                                : notification.id)} /> )}
 </div>;
 
 export default Notifications;
