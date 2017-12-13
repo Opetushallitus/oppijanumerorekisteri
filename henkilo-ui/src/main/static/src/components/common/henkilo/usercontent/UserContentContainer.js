@@ -84,6 +84,7 @@ class UserContentContainer extends React.Component<Props, State> {
             henkiloUpdate: this.state.henkiloUpdate,
             edit: this._edit.bind(this),
             oidHenkilo: this.props.oidHenkilo,
+            isValidForm: this._validForm()
         };
         let content;
         if (henkiloTyyppi === 'PALVELU') {
@@ -112,9 +113,9 @@ class UserContentContainer extends React.Component<Props, State> {
 
             <LocalNotification title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
                                type={NOTIFICATIONTYPES.WARNING}
-                               toggle={this._validForm()}>
+                               toggle={!this.state.readOnly && !this._validForm()}>
                 <ul>
-                    {this._validKutsumanimi() ? <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li> : null}
+                    {this._validKutsumanimi() ? null : <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>}
                 </ul>
             </LocalNotification>
         </div>;
@@ -160,7 +161,7 @@ class UserContentContainer extends React.Component<Props, State> {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
         henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(PropertySingleton.state.PVM_DBFORMAATTI) : henkiloUpdate.syntymaaika;
         const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
-            autoClose: 5000,
+            autoClose: 10000,
             title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
             type: NOTIFICATIONTYPES.ERROR,
             key: GLOBAL_NOTIFICATION_KEYS.HENKILOUPDATEFAILED
@@ -191,8 +192,7 @@ class UserContentContainer extends React.Component<Props, State> {
     _validKutsumanimi = (): boolean => {
         const etunimet = this.state.henkiloUpdate.etunimet;
         const kutsumanimi = this.state.henkiloUpdate.kutsumanimi;
-        return !this.state.readOnly &&
-            !isValidKutsumanimi(etunimet, kutsumanimi);
+        return isValidKutsumanimi(etunimet, kutsumanimi);
     };
 
 

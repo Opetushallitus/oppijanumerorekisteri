@@ -31,6 +31,7 @@ type Props = {
     isAdmin: boolean,
     oidHenkilo: string,
     fetchKayttajatieto: (string) => void,
+    isValidForm: boolean
 }
 
 type State = {
@@ -54,6 +55,7 @@ class PalveluUserContent extends React.Component<Props, State> {
                 updateAction={this.props.updateAction}
                 basicInfo={this.createBasicInfo()}
                 readOnlyButtons={this.createReadOnlyButtons()}
+                isValidForm={true}
             />;
     }
 

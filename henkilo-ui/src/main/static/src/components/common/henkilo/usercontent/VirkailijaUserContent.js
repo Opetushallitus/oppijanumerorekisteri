@@ -35,6 +35,7 @@ type Props = {
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
     oidHenkilo: string,
+    isValidForm: boolean
 }
 
 type State = {
@@ -56,6 +57,7 @@ class VirkailijaUserContent extends React.Component<Props, State> {
                 updateAction={this.props.updateAction}
                 basicInfo={this.createBasicInfo()}
                 readOnlyButtons={this.createReadOnlyButtons()}
+                isValidForm={this.props.isValidForm}
             />;
     }
 

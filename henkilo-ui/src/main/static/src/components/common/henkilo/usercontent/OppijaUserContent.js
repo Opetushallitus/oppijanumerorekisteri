@@ -33,6 +33,7 @@ type Props = {
     L: L,
     locale: Locale,
     yksiloiHenkilo: () => void,
+    isValidForm: boolean
 }
 
 type State = {
@@ -53,6 +54,7 @@ class OppijaUserContent extends React.Component<Props, State> {
                 updateAction={this.props.updateAction}
                 basicInfo={this.createBasicInfo()}
                 readOnlyButtons={this.createReadOnlyButtons()}
+                isValidForm={this.props.isValidForm}
             />;
     }
 
