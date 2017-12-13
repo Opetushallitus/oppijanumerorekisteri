@@ -32,6 +32,7 @@ import {
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
+import {addGlobalNotification} from "./notification.actions";
 
 const requestHenkilo = (oid) => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
@@ -51,13 +52,19 @@ export const fetchHenkilo = (oid) => (async dispatch => {
 const requestHenkiloUpdate = (oid) => ({type: UPDATE_HENKILO_REQUEST, oid});
 const receiveHenkiloUpdate = (oid) => ({type: UPDATE_HENKILO_SUCCESS, oid, receivedAt: Date.now()});
 const errorHenkiloUpdate = error => ({type: UPDATE_HENKILO_FAILURE, error});
-export const updateHenkiloAndRefetch = (payload) => (dispatch => {
+export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => (async dispatch => {
     dispatch(requestHenkiloUpdate(payload.oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo');
-    http.put(url, payload).then(oid => {
+    try {
+        const oid = await http.put(url, payload);
         dispatch(receiveHenkiloUpdate(oid));
         dispatch(fetchHenkilo(oid));
-    }).catch(e => dispatch(errorHenkiloUpdate(e)));
+    } catch (error) {
+        if(errorNotificationConfig) {
+            dispatch(addGlobalNotification(errorNotificationConfig));
+        }
+        dispatch(errorHenkiloUpdate(error))
+    }
 });
 
 const requestKayttajatieto = (oid) => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});

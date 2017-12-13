@@ -1,0 +1,13 @@
+#global-notifications {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translate(-50%, 10px);
+    width: 1300px;
+    opacity: 0.95;
+}
+
+#global-notifications .oph-alert {
+    margin-bottom: 20px;
+}
+

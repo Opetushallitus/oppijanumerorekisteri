@@ -14,8 +14,10 @@ import VirkailijaUserContent from "./VirkailijaUserContent";
 import OmattiedotUserContent from "./OmattiedotUserContent";
 import PalveluUserContent from "./PalveluUserContent";
 import {isValidKutsumanimi} from "../../../../validation/KutsumanimiValidator";
-import {NOTIFICATIONTYPES} from "../../Notification/NotificationTypes";
 import {LocalNotification} from "../../Notification/LocalNotification";
+import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
+import type {GlobalNotificationConfig} from "../../../../types/notification.types";
+import {GLOBAL_NOTIFICATION_KEYS} from "../../Notification/GlobalNotificationKeys";
 
 type Props = {
     L: L,
@@ -115,13 +117,6 @@ class UserContentContainer extends React.Component<Props, State> {
                     {this._validKutsumanimi() ? <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li> : null}
                 </ul>
             </LocalNotification>
-
-            <LocalNotification title={this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']}
-                                type={NOTIFICATIONTYPES.ERROR}
-                                toggle={true}>
-
-            </LocalNotification>
-
         </div>;
     }
 
@@ -164,7 +159,13 @@ class UserContentContainer extends React.Component<Props, State> {
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
         henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(PropertySingleton.state.PVM_DBFORMAATTI) : henkiloUpdate.syntymaaika;
-        this.props.updateHenkiloAndRefetch(henkiloUpdate);
+        const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
+            autoClose: 5000,
+            title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
+            type: NOTIFICATIONTYPES.ERROR,
+            key: GLOBAL_NOTIFICATION_KEYS.HENKILOUPDATEFAILED
+        };
+        this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
         }

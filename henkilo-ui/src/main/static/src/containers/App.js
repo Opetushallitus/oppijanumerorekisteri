@@ -9,10 +9,13 @@ import 'moment/locale/sv'
 import PropTypes from 'prop-types'
 import {fetchPrequels} from "../actions/prequel.actions";
 import PropertySingleton from "../globals/PropertySingleton";
+import {removeGlobalNotification} from "../actions/notification.actions";
+import { GlobalNotifications } from "../components/common/Notification/GlobalNotifications";
 
 const fetchPrequelsIntervalInMillis = 30 * 1000;
 
 class App extends React.Component {
+
     render() {
         if (this.isInitialized()) {
             moment.locale(this.props.locale);
@@ -22,6 +25,8 @@ class App extends React.Component {
             this.isInitialized()
                 ?
                 <div className="oph-typography mainContainer">
+                    <GlobalNotifications notificationList={this.props.notificationList}
+                                         removeGlobalNotification={this.props.removeGlobalNotification}></GlobalNotifications>
                     <TopNavigation pathName={this.props.pathName} />
                     <div className="mainContent">
                         {this.props.children}
@@ -63,7 +68,8 @@ const mapStateToProps = (state, ownProps) => {
         locale: state.locale,
         omattiedotLoaded: state.omattiedot.initialized,
         pathName: ownProps.location.pathname,
+        notificationList: state.notificationList
     };
 };
 
-export default connect(mapStateToProps, {fetchFrontProperties, fetchPrequels})(App)
+export default connect(mapStateToProps, {fetchFrontProperties, fetchPrequels, removeGlobalNotification })(App)

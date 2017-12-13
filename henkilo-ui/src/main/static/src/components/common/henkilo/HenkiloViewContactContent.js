@@ -17,6 +17,7 @@ import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {Henkilo} from "../../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
 
 type Props = {
     L: L,
@@ -26,7 +27,7 @@ type Props = {
     koodisto: {
         yhteystietotyypit: Array<{}>,
     },
-    updateHenkiloAndRefetch: (Henkilo) => void,
+    updateHenkiloAndRefetch: (Henkilo, ?GlobalNotificationConfig) => void,
 }
 
 type ContactInfo = {
