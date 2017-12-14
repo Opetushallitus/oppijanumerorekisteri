@@ -1,6 +1,7 @@
 // @flow
 
 import {GLOBAL_NOTIFICATION} from "../actions/actiontypes";
+import type {GlobalNotificationConfig} from "../types/notification.types";
 
 
 export type NoficationListState = Array<GlobalNotificationConfig>;
