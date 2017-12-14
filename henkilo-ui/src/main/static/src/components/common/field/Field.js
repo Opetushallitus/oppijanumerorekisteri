@@ -4,10 +4,8 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import OphSelect from '../select/OphSelect'
-import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import StaticUtils from "../StaticUtils";
-import PropertySingleton from "../../../globals/PropertySingleton";
+import SimpleDatePicker from '../../henkilo/SimpleDatePicker'
 
 class Field extends React.Component {
     static propTypes = {
@@ -42,7 +40,10 @@ class Field extends React.Component {
     createField(className) {
         const type = {type: this.props.password ? 'password' : 'text'};
         if (this.props.readOnly) {
-            return <span className={className}>{this.props.children}</span>;
+            const value = this.props.date && this.props.children
+                ? moment(this.props.children).format()
+                : this.props.children
+            return <span className={className}>{value}</span>;
         }
         if (this.props.data) {
             return <OphSelect
@@ -57,14 +58,12 @@ class Field extends React.Component {
             />;
         }
         if (this.props.date) {
-            return <DatePicker className="oph-input"
+            return <SimpleDatePicker className="oph-input"
                                onChange={(value) => this.props.changeAction({target: {
-                                   value: value.format(PropertySingleton.state.PVM_DBFORMAATTI),
+                                   value: value,
                                    name: this.props.inputValue,
                                }})}
-                               selected={moment(StaticUtils.ddmmyyyyToDate(this.props.children))}
-                               showYearDropdown
-                               showWeekNumbers
+                               value={this.props.children}
                                disabled={this.props.disabled}
             />;
         }
