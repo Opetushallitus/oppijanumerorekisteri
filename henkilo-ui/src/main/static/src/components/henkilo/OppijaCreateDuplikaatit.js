@@ -24,8 +24,8 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
         const henkilo = {
             henkilo: this.props.oppija,
             duplicates: this.props.duplikaatit,
-        }
-        const notifications = []
+        };
+        const notifications = [];
 
         return (
             <div>
@@ -55,7 +55,7 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
 
     tallenna = (event: SyntheticEvent<HTMLButtonElement>) => {
         this.props.tallenna(this.props.oppija)
-    }
+    };
 
     peruuta = (event: SyntheticEvent<HTMLButtonElement>) => {
         this.props.peruuta()
