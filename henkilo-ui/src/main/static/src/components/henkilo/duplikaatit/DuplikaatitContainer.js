@@ -1,4 +1,4 @@
-
+// @flow
 import VirkailijaDuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
@@ -8,8 +8,26 @@ import { fetchMaatJaValtiotKoodisto, fetchKieliKoodisto } from '../../../actions
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import {removeNotification} from "../../../actions/notifications.actions";
 import {henkiloViewTabs} from "../../navigation/NavigationTabs";
+import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import type {L10n} from "../../../types/localisation.type";
+import type {Locale} from "../../../types/locale.type";
 
-class VirkailijaDuplikaatitContainer extends React.Component {
+type Props = {
+    l10n: L10n,
+    locale: Locale,
+    oidHenkilo: string,
+    henkilo: HenkiloState,
+    henkiloType: string,
+    fetchHenkilo: string => void,
+    fetchOmattiedot: () => void,
+    fetchHenkiloMaster: string => void,
+    fetchHenkiloDuplicates: string => void,
+    fetchMaatJaValtiotKoodisto: () => void,
+    fetchKieliKoodisto: () => void,
+    updateHenkiloNavigation: (Array<{}>) => void,
+}
+
+class VirkailijaDuplikaatitContainer extends React.Component<Props> {
 
     static propTypes = {  };
 

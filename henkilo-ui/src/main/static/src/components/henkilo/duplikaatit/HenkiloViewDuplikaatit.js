@@ -13,19 +13,21 @@ import {FloatingBar} from "./FloatingBar";
 import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 import type {Locale} from '../../../types/locale.type'
 import type {L} from '../../../types/localisation.type'
+import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 
 type Props = {
     router: any,
     locale: Locale,
     L: L,
     oidHenkilo: string,
-    henkilo: any,
+    henkilo: HenkiloState,
+    henkiloType: string,
     koodisto: any,
     notifications: Array<Notification>,
     removeNotification: (string, string, ?string) => void,
-    linkHenkilos: (masterOid: string, slaveOids: Array<string>, notificationId: number) => any,
-    fetchHenkilo: (oid: string) => any,
-    fetchHenkiloDuplicates: (oid: string) => any,
+    linkHenkilos: (masterOid: string, slaveOids: Array<string>, notificationId: number) => void,
+    fetchHenkilo: (oid: string) => void,
+    fetchHenkiloDuplicates: (oid: string) => void,
     ownOid: string,
     vainLuku?: boolean,
 }
@@ -123,7 +125,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
         await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates, notificationId);
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
-        this.props.router.push(`/virkailija/${this.props.oidHenkilo}`);
+        this.props.router.push(`/${this.props.henkiloType}/${this.props.oidHenkilo}`);
     }
 
     setSelection(oid) {
@@ -135,7 +137,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     ownOid: state.omattiedot.data.oid,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,

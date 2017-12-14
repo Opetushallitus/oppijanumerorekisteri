@@ -39,6 +39,8 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
 
     render() {
         const henkilo = this.props.henkilo;
+        // In case of PALVELU expect virkailija
+        const targetPage = henkilo.henkiloTyyppi === 'OPPIJA' ? 'oppija' : 'virkailija';
         const hakemus = henkilo.hakemukset ? R.head(henkilo.hakemukset) : null;
         const muutHakemukset = henkilo.hakemukset ? R.tail(henkilo.hakemukset) : [];
         const locale = this.props.locale;
@@ -55,7 +57,7 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
             <span>{henkilo.sukunimi}</span>
             <span>{henkilo.sukupuoli === '2' ? L['HENKILO_YHTEISET_NAINEN'] : L['HENKILO_YHTEISET_MIES']}</span>
             <span>{henkilo.syntymaaika}</span>
-            <span><Link className="oph-link" to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
+            <span><Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
             <span>{contactInformation.kansalaisuus}</span>
             <span>{contactInformation.aidinkieli}</span>
             <span>{contactInformation.matkapuhelinnumero}</span>
