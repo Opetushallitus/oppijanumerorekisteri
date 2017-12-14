@@ -1,5 +1,6 @@
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
+import * as R from 'ramda';
 import {
     DELETE_HENKILOORGS_FAILURE,
     DELETE_HENKILOORGS_REQUEST, DELETE_HENKILOORGS_SUCCESS,
@@ -239,7 +240,7 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
 };
 
 const requestHenkiloDuplicates = (oidHenkilo) => ({type: FETCH_HENKILO_DUPLICATES_REQUEST, oidHenkilo});
-const requestHenkiloDuplicatesSuccess = (master, duplicates) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, master, duplicates});
+const requestHenkiloDuplicatesSuccess = (master, duplicates, ataruApplications) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, master, duplicates, ataruApplications});
 const requestHenkiloDuplicatesFailure = () => ({type: FETCH_HENKILO_DUPLICATES_FAILURE});
 
 export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
@@ -247,7 +248,10 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
     const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
     try {
         const duplicates = await http.get(url);
-        dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates));
+        const ataruApplications = R.fromPairs(await Promise.all(
+            duplicates.map(async (d) => [d.oidHenkilo, await http.get(urls.url('ataru.applications', d.oidHenkilo))])
+        ));
+        dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates, ataruApplications));
     } catch (error) {
         dispatch(requestHenkiloDuplicatesFailure());
         throw error;

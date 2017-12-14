@@ -39,12 +39,10 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
 
     render() {
         const henkilo = this.props.henkilo;
-        // In case of PALVELU expect virkailija
         const targetPage = henkilo.henkiloTyyppi === 'OPPIJA' ? 'oppija' : 'virkailija';
-        const hakemus = henkilo.hakemukset ? R.head(henkilo.hakemukset) : null;
-        const muutHakemukset = henkilo.hakemukset ? R.tail(henkilo.hakemukset) : [];
+        const hakemus = R.head(henkilo.hakemukset) || {};
+        const muutHakemukset = R.tail(henkilo.hakemukset);
         const locale = this.props.locale;
-        const contactInformation = hakemus ? this._parseContactInformation(locale, hakemus, this.props.koodisto) : {} ;
         const styleClasses = classNames(this.props.classNames);
         const L = this.props.L;
 
@@ -57,17 +55,17 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
             <span>{henkilo.sukunimi}</span>
             <span>{henkilo.sukupuoli === '2' ? L['HENKILO_YHTEISET_NAINEN'] : L['HENKILO_YHTEISET_MIES']}</span>
             <span>{henkilo.syntymaaika}</span>
-            <span><Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
-            <span>{contactInformation.kansalaisuus}</span>
-            <span>{contactInformation.aidinkieli}</span>
-            <span>{contactInformation.matkapuhelinnumero}</span>
-            <span>{contactInformation.sahkoposti}</span>
-            <span>{contactInformation.lahiosoite}</span>
-            <span>{contactInformation.postinumero}</span>
-            <span>{contactInformation.passinumero}</span>
-            <span>{contactInformation.kansallinenIdTunnus}</span>
-            <span>{hakemus ? hakemus.state : ''}</span>
-            <span>{hakemus ? <a className="oph-link" href={`/haku-app/virkailija/hakemus/${hakemus.oid}`}>{hakemus.oid}</a> : ''}</span>
+            <span><Link className="oph-link" to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
+            <span>{hakemus.kansalaisuus || ''}</span>
+            <span>{hakemus.aidinkieli || ''}</span>
+            <span>{hakemus.matkapuhelinnumero || ''}</span>
+            <span>{hakemus.sahkoposti || ''}</span>
+            <span>{hakemus.lahiosoite || ''}</span>
+            <span>{hakemus.postinumero || ''}</span>
+            <span>{hakemus.passinumero || ''}</span>
+            <span>{hakemus.kansallinenIdTunnus || ''}</span>
+            <span>{hakemus.state || ''}</span>
+            <span>{hakemus.href ? <a className="oph-link" href={hakemus.href}>{hakemus.oid}</a> : ''}</span>
             <span>{muutHakemukset.length > 0 ? <DuplikaatitApplicationsPopup
                 popupContent={<DuplikaatitPersonOtherApplications
                     hakemukset={muutHakemukset}
@@ -90,30 +88,4 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
         });
         this.props.setSelection(oid);
     }
-
-    _parseContactInformation(locale: any, hakemus: any, koodisto: any) {
-        const henkilotiedot = hakemus.answers.henkilotiedot;
-        const kansalaisuusLowercase = henkilotiedot.kansalaisuus ? henkilotiedot.kansalaisuus.toLowerCase() : undefined;
-        const maatjavaltioKoodisto: any = R.find( item => item.value === kansalaisuusLowercase, koodisto.maatjavaltiot1);
-        const kansalaisuus = maatjavaltioKoodisto[locale];
-        const aidinkieliLowercase = henkilotiedot.aidinkieli ? henkilotiedot.aidinkieli.toLowerCase() : undefined;
-        const aidinkieliKoodisto: any = R.find( item => item.value === aidinkieliLowercase, koodisto.kieli);
-        const aidinkieli = aidinkieliKoodisto[locale];
-
-        return {
-            matkapuhelinnumero: henkilotiedot.matkapuhelinnumero1,
-            sahkoposti: henkilotiedot['Sähköposti'],
-            lahiosoite: henkilotiedot.lahiosoite,
-            postinumero: henkilotiedot.Postinumero,
-            passinumero: henkilotiedot.passinumero,
-            kansallinenIdTunnus: henkilotiedot.kansallinenIdTunnus,
-            kansalaisuus,
-            aidinkieli
-
-        }
-    }
-
-
-
 }
-

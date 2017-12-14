@@ -34,6 +34,7 @@ export type HenkiloState = {
     +slavesLoading: boolean,
     +unlinkingLoading: boolean,
     +duplicates: Array<HenkiloDuplicate>,
+    +ataruApplications: any,
     +duplicatesLoading: boolean,
     +linkingLoading: boolean,
     +masterLoading: boolean,
@@ -42,10 +43,29 @@ export type HenkiloState = {
     +yksilointitiedot: Array<any>
 }
 
-const initialState: HenkiloState = {henkiloLoading: true, henkiloOrgsLoading: true, kayttajatietoLoading: false, henkilo: {},
-    henkiloOrgs: [], kayttajatieto: {}, buttonNotifications: {}, notifications: [], henkiloOrganisaatiosLoading: true,
-    henkiloOrganisaatios: [], slaves: [], slavesLoading: false, unlinkingLoading: false, duplicates: [], duplicatesLoading: false,
-    linkingLoading: false, masterLoading: true, master: {}, yksilointitiedotLoading: false, yksilointitiedot: []};
+const initialState: HenkiloState = {
+    henkiloLoading: true,
+    henkiloOrgsLoading: true,
+    kayttajatietoLoading: false,
+    henkilo: {},
+    henkiloOrgs: [],
+    kayttajatieto: {},
+    buttonNotifications: {},
+    notifications: [],
+    henkiloOrganisaatiosLoading: true,
+    henkiloOrganisaatios: [],
+    slaves: [],
+    slavesLoading: false,
+    unlinkingLoading: false,
+    duplicates: [],
+    ataruApplications: {},
+    duplicatesLoading: false,
+    linkingLoading: false,
+    masterLoading: true,
+    master: {},
+    yksilointitiedotLoading: false,
+    yksilointitiedot: []
+};
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
     return henkiloOrgs.map(henkiloOrg =>
@@ -111,7 +131,7 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             return Object.assign({}, state, {duplicatesLoading: true});
         case FETCH_HENKILO_DUPLICATES_SUCCESS:
             const duplicates = R.filter( duplicate => duplicate.oidHenkilo !== action.master, action.duplicates);
-            return Object.assign({}, state, {duplicatesLoading: false, duplicates});
+            return Object.assign({}, state, {duplicatesLoading: false, duplicates, ataruApplications: action.ataruApplications});
         case FETCH_HENKILO_DUPLICATES_FAILURE:
             return Object.assign({}, state, {duplicatesLoading: false});
         case LINK_HENKILOS_REQUEST:
