@@ -30,6 +30,7 @@ type Props = {
     fetchKansalaisuusKoodisto: () => void,
     kansalaisuusKoodisto: Koodisto,
     updateDefaultNavigation: () => void,
+    addGlobalNotification: ({type: string, title: string}) => void,
 }
 
 type State = {

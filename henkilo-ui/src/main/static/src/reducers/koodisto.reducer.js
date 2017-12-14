@@ -16,25 +16,26 @@ const mapKoodistoValuesByLocale = (koodisto: Koodisto): any => koodisto.map(kood
     })
 );
 
-type State = {
+export type KoodistoState = {
     kieliKoodistoLoading: boolean,
     kansalaisuusKoodistoLoading: boolean,
     sukupuoliKoodistoLoading: boolean,
     yhteystietotyypitKoodistoLoading: boolean,
-    kieli: any,
+    yhteystietotyypit: Array<any>,
+    kieli: Array<any>,
     kieliKoodisto: Koodisto,
-    kansalaisuus: any,
+    kansalaisuus: Array<any>,
     kansalaisuusKoodisto: Koodisto,
-    sukupuoli: any,
+    sukupuoli: Array<any>,
     sukupuoliKoodisto: Koodisto,
     oppilaitostyypitLoading: boolean,
-    oppilaitostyypit: any,
+    oppilaitostyypit: Array<any>,
 }
 
-export const koodisto = (state: State = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,
+export const koodisto = (state: KoodistoState = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,
                              yhteystietotyypitKoodistoLoading: true, kieli: [], kieliKoodisto: [], kansalaisuus: [], kansalaisuusKoodisto: [], sukupuoli: [], sukupuoliKoodisto: [],
                              yhteystietotyypit: [], maatjavaltiot1KoodistoLoading: true, maatjavaltiot1: [],
-                            oppilaitostyypitLoading: false, oppilaitostyypit: []}, action: any): State => {
+                            oppilaitostyypitLoading: false, oppilaitostyypit: []}, action: any): KoodistoState => {
     switch (action.type) {
         case FETCH_KANSALAISUUSKOODISTO_REQUEST:
             return Object.assign({}, state, {kansalaisuusKoodistoLoading: true});

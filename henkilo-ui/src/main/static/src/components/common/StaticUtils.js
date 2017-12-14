@@ -1,13 +1,19 @@
 // @flow
 
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
+import type {L, L10n} from "../../types/localisation.type";
+import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {Locale} from "../../types/locale.type";
+import type {ReactSelectOption} from "../../types/react-select.types";
+
 class StaticUtils {
-    static ddmmyyyyToDate(date) {
+    static ddmmyyyyToDate(date: string) {
         const from = date.split(".");
-        return new Date(from[2], from[1]-1, from[0]);
+        return new Date(Number(from[2]), Number(from[1])-1, Number(from[0]));
     };
 
     // Example fieldpath: organisaatio.nimet.0.nimiValue
-    static updateFieldByDotAnnotation(obj, event) {
+    static updateFieldByDotAnnotation(obj: {}, event: ReactSelectOption & SyntheticInputEvent<HTMLInputElement>) {
         let value;
         let fieldpath;
         if (event === null) {
@@ -38,12 +44,12 @@ class StaticUtils {
         return obj;
     };
 
-    static reduceListToObject = (a,b) => {
+    static reduceListToObject = (a: {},b: {}) => {
         a[Object.keys(b)[0]] = b[Object.keys(b)[0]];
         return a
     };
 
-    static findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate, ryhmakuvaus, yhteystietotyyppi, label) {
+    static findOrCreateYhteystiedotRyhmaFlat(henkiloUpdate: Henkilo, ryhmakuvaus: string, yhteystietotyyppi: string, label: string) {
         let yhteystiedotRyhmaIndex = null;
         let yhteystietoIndex = null;
         let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma
@@ -88,15 +94,15 @@ class StaticUtils {
         };
     };
 
-    static hasHetuAndIsYksiloity(henkilo) {
+    static hasHetuAndIsYksiloity(henkilo: HenkiloState) {
         return !!henkilo.henkilo.hetu && henkilo.henkilo.yksiloityVTJ;
     };
 
-    static flatArray(arr) {
+    static flatArray(arr: Array<string>) {
         return (arr && arr.length) ? arr.filter(item => item).reduce((type1, type2) => type1.concat(', ', type2)) : '';
     };
 
-    static getOrganisaatiotyypitFlat(tyypit, L, uppercase) {
+    static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: L, uppercase?: boolean) {
         return tyypit && tyypit.length
             ? '(' + tyypit
                 .map(tyyppi => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)
@@ -104,7 +110,7 @@ class StaticUtils {
             : '';
     };
 
-    static defaultOrganisaatio = (organisaatioOid, l10n) => ({
+    static defaultOrganisaatio = (organisaatioOid: string, l10n?: L10n) => ({
         oid: organisaatioOid,
         nimi: {
             fi: (l10n && l10n['fi'] && l10n['fi']['ORGANISAATIO_NIMI_EI_LOYDY']) || organisaatioOid,
@@ -114,15 +120,15 @@ class StaticUtils {
         tyypit: [],
     });
 
-    static getLocalisedText(texts, locale) {
+    static getLocalisedText(texts: Array<{lang: string, text: string}>, locale: Locale) {
         return texts.filter(text => text.lang.toLowerCase() === locale)[0].text;
     };
 
-    static stringIsNotEmpty(entity) {
+    static stringIsNotEmpty(entity: ?string) {
         return entity && entity !== '';
     }
 
-    static getKayttooikeusKestoVuosissa(henkilo) {
+    static getKayttooikeusKestoVuosissa(henkilo: Henkilo) {
         return henkilo.henkiloTyyppi === 'PALVELU' ? null : 1;
     }
 }

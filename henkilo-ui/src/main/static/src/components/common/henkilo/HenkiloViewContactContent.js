@@ -18,20 +18,19 @@ import type {Locale} from "../../../types/locale.type";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {Henkilo} from "../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
 type Props = {
     L: L,
     locale: Locale,
     henkilo: HenkiloState,
     readOnly: boolean,
-    koodisto: {
-        yhteystietotyypit: Array<{}>,
-    },
+    koodisto: KoodistoState,
     updateHenkiloAndRefetch: (Henkilo, ?GlobalNotificationConfig) => void,
 }
 
 type ContactInfo = {
-    id: number,
+    id: ?number,
     henkiloUiId: ?string,
     name: string,
     readOnly: boolean,
@@ -42,7 +41,7 @@ type State = {
     readOnly: boolean,
     showPassive: boolean,
     contactInfo: Array<ContactInfo>,
-    yhteystietoRemoveList: Array<number>,
+    yhteystietoRemoveList: Array<number | string>,
 }
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
@@ -89,8 +88,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                         !this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly
                             ? <IconButton onClick={() =>
                                 this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} >
-                            <CrossIcon />
-                        </IconButton>
+                                <CrossIcon />
+                            </IconButton>
                             : null
                     }</span>
                     { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
@@ -150,10 +149,12 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         )
     };
 
-    _removeYhteystieto(id: number) {
-        this.setState({
-            yhteystietoRemoveList: [...this.state.yhteystietoRemoveList, id],
-        });
+    _removeYhteystieto(id: ?number | ?string) {
+        if (id) {
+            this.setState({
+                yhteystietoRemoveList: [...this.state.yhteystietoRemoveList, id],
+            });
+        }
     };
 
     _edit() {
@@ -174,7 +175,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 
     _update() {
         this.state.yhteystietoRemoveList.forEach(yhteystietoId => this.henkiloUpdate.yhteystiedotRyhma
-            .splice(this.henkiloUpdate.yhteystiedotRyhma.findIndex(yhteystieto => yhteystieto.id === yhteystietoId || yhteystieto.henkiloUiId === yhteystietoId), 1));
+            .splice(this.henkiloUpdate.yhteystiedotRyhma
+                .findIndex(yhteystieto => yhteystieto.id === yhteystietoId || yhteystieto.henkiloUiId === yhteystietoId), 1));
         this.setState({yhteystietoRemoveList: []});
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     };
@@ -191,6 +193,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             ryhmaKuvaus: yhteystietoryhmaTyyppi,
             yhteystieto: this.contactInfoTemplate.map(template => ({yhteystietoTyyppi: template.label})),
             henkiloUiId: henkiloUiId,
+            id: null,
         };
         this.henkiloUpdate.yhteystiedotRyhma.push(newYhteystiedotRyhma);
         const contactInfo = [...this.state.contactInfo,
