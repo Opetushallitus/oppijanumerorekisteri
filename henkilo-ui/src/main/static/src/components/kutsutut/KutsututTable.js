@@ -6,6 +6,7 @@ import './KutsututTable.css';
 import Table from '../common/table/Table';
 import Button from '../common/button/Button';
 import {renewKutsu} from "../../actions/kutsu.actions";
+import { toLocalizedText } from '../../localizabletext';
 
 class KutsututTable extends React.Component {
 
@@ -70,7 +71,7 @@ class KutsututTable extends React.Component {
 
     createOrganisaatiotCell(kutsu) {
         return (<div>
-                { kutsu.organisaatiot.map(org => <div key={org.organisaatioOid}>{org.nimi[this.props.locale] || org.organisaatioOid}</div>)}
+                { kutsu.organisaatiot.map(org => <div key={org.organisaatioOid}>{toLocalizedText(this.props.locale, org.nimi) || org.organisaatioOid}</div>)}
                 </div>);
     }
 

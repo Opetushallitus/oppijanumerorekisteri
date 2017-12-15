@@ -10,6 +10,7 @@ import StaticUtils from "../common/StaticUtils";
 import Loader from "../common/icons/Loader";
 import * as R from 'ramda';
 import { Link } from 'react-router';
+import { toLocalizedText } from '../../localizabletext';
 
 class HenkilohakuPage extends React.Component {
     static propTypes = {
@@ -175,7 +176,7 @@ class HenkilohakuPage extends React.Component {
             [headingKeys[0]]: <Link to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.nimi || ''}</Link>,
             [headingKeys[1]]: henkilo.kayttajatunnus || '',
             [headingKeys[2]]: <ul>{henkilo.organisaatioNimiList.map((organisaatio, idx2) =>
-                <li key={idx2}>{(organisaatio.localisedLabels[this.props.locale] || organisaatio.identifier)
+                <li key={idx2}>{(toLocalizedText(this.props.locale, organisaatio.localisedLabels) || organisaatio.identifier)
                 + ' ' + StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L, true)}</li>)}</ul>,
         }));
     };
