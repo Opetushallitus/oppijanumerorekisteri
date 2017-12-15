@@ -237,7 +237,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
     inputChange(value) {
         if (value.length >= 3) {
             this.setState({
-                organisaatioOptions: this.props.organisaatioOptions.filter(organisaatioOption => organisaatioOption.label.toLowerCase().indexOf(value) >= 0)
+                organisaatioOptions: this.props.organisaatioOptions.filter(organisaatioOption => organisaatioOption.label.toLowerCase().indexOf(value.toLowerCase()) >= 0)
             });
         } else {
             this.setState({organisaatioOptions: []});
