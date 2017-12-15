@@ -216,7 +216,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids) {
-        if(oids.size() > 1000) {
+        if(oids.size() > 5000) {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is 1000");
         }
 
