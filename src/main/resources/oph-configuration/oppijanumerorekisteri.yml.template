@@ -21,16 +21,16 @@ spring:
       autodetection: class,hbm
     current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-hikari:
   datasource:
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
-    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
+    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
-    connection-test-query: SELECT 1
-    maximum-pool-size: 20
-    connection-timeout: 10000
-    max-lifetime: 60000
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 10000
+      max-lifetime: 900000
 dev:
   username: user
   password: password
