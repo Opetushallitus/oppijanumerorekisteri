@@ -1,6 +1,5 @@
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import React from 'react';
-import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import Table from '../table/Table';
 import moment from 'moment';
@@ -14,7 +13,6 @@ import {toLocalizedText} from '../../../localizabletext'
 import PopupButton from "../button/PopupButton";
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import {updateHaettuKayttooikeusryhma} from "../../../actions/kayttooikeusryhma.actions";
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     static propTypes = {
@@ -200,8 +198,4 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
     };
 }
 
-const mapStateToProps = state => ({
-
-});
-
-export default connect(mapStateToProps, {updateHaettuKayttooikeusryhma})(HenkiloViewOpenKayttooikeusanomus);
+export default HenkiloViewOpenKayttooikeusanomus;

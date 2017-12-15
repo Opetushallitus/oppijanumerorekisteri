@@ -12,6 +12,7 @@ import {henkiloViewTabs} from "../navigation/NavigationTabs";
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo, getGrantablePrivileges,
+    updateHaettuKayttooikeusryhma,
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 
@@ -85,6 +86,7 @@ export default connect(mapStateToProps, {
     updateHenkiloNavigation,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma,
     fetchOmattiedotOrganisaatios,
     getGrantablePrivileges,
     clearHenkilo})(VirkailijaViewContainer);

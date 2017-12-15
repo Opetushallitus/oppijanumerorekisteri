@@ -4,7 +4,7 @@ import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo,
 } from "../../actions/henkilo.actions";
-import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo} from "../../actions/kayttooikeusryhma.actions";
+import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo, updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import {updateEmptyNavigation} from "../../actions/navigation.actions";
@@ -65,6 +65,7 @@ export default connect(mapStateToProps, {fetchOmattiedot,
     fetchKayttajatieto,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma,
     fetchAllOrganisaatios,
     fetchAllRyhmas,
     clearHenkilo,

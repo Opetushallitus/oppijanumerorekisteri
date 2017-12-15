@@ -11,6 +11,7 @@ import {henkiloViewTabs} from "../navigation/NavigationTabs";
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo,
+    updateHaettuKayttooikeusryhma,
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import HenkiloViewPage from "./HenkiloViewPage";
@@ -80,6 +81,7 @@ export default connect(mapStateToProps, {
     updateHenkiloNavigation,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma,
     fetchOmattiedotOrganisaatios,
     fetchHenkiloSlaves,
     clearHenkilo})(AdminViewContainer);
