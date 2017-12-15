@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import * as R from 'ramda';
 import './DuplikaatitPersonOtherApplications.css';
 
 export default class DuplikaatitPersonOtherApplications extends React.Component {

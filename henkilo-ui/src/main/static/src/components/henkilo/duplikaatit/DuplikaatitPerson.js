@@ -39,10 +39,8 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
 
     render() {
         const henkilo = this.props.henkilo;
-        const targetPage = henkilo.henkiloTyyppi === 'OPPIJA' ? 'oppija' : 'virkailija';
         const hakemus = R.head(henkilo.hakemukset) || {};
         const muutHakemukset = R.tail(henkilo.hakemukset);
-        const locale = this.props.locale;
         const styleClasses = classNames(this.props.classNames);
         const L = this.props.L;
 
