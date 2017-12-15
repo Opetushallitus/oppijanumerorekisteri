@@ -36,7 +36,7 @@ class Field extends React.Component {
             'oph-input': !this.props.readOnly && !this.props.data,
             'oph-input-has-error': this.props.isError,
         });
-        return (this.createField(className))
+        return <span>{this.createField(className)}</span>;
     }
 
     createField(className) {
@@ -45,13 +45,15 @@ class Field extends React.Component {
             return <span className={className}>{this.props.children}</span>;
         }
         if (this.props.data) {
-            return <OphSelect className={className}
-                                    options={this.props.data}
-                                    name={this.props.inputValue}
-                                    onChange={this.props.changeAction}
-                                    value={this.props.selectValue}
-                                    placeholder=""
-                                    disabled={this.props.disabled}
+            return <OphSelect
+                className={className}
+                options={this.props.data}
+                name={this.props.inputValue}
+                onChange={this.props.changeAction}
+                value={this.props.selectValue}
+                placeholder=""
+                disabled={this.props.disabled}
+                clearable={this.props.clearable}
             />;
         }
         if (this.props.date) {
@@ -79,7 +81,7 @@ class Field extends React.Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 

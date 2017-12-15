@@ -14,7 +14,8 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
                    changeAction={!values.date
                        ? updateModelFieldAction
                        : updateDateFieldAction}
-                   readOnly={values.readOnly || readOnly}>
+                   readOnly={values.readOnly || readOnly}
+            >
                 {values.value}
             </Field>
         </Columns>
