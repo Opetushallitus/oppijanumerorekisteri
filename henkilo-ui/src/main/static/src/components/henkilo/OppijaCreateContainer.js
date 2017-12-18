@@ -37,6 +37,7 @@ type State = {
     oppija: HenkiloCreate,
     naytaDuplikaatit: boolean,
     duplikaatit: Array<HenkiloDuplicate>,
+    loading: boolean,
 }
 
 /**
@@ -47,7 +48,12 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {oppija: {}, naytaDuplikaatit: false, duplikaatit: []}
+        this.state = {
+            oppija: {},
+            naytaDuplikaatit: false,
+            duplikaatit: [],
+            loading: false,
+        }
     }
 
     componentDidMount() {
@@ -90,14 +96,15 @@ class OppijaCreateContainer extends React.Component<Props, State> {
             const duplikaatit = await this.haeDuplikaatit(oppija);
             if (duplikaatit.length > 0) {
                 this.setState({oppija: oppija, naytaDuplikaatit: true, duplikaatit: duplikaatit})
-            } else {
+            }
+            else {
                 // luodaan oppija
                 this.luoOppijaJaNavigoi(oppija)
             }
         } catch (error) {
             this.props.addGlobalNotification({type: NOTIFICATIONTYPES.ERROR, title: this.props.L['HENKILON_LUONTI_EPAONNISTUI']});
             throw error
-        }
+        };
     };
 
     luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {

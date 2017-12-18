@@ -11,6 +11,7 @@ import KielisyysSelect from '../common/select/KielisyysSelect'
 import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect'
 import {isValidKutsumanimi} from '../../validation/KutsumanimiValidator'
 import type {L} from "../../types/localisation.type";
+import LoaderWithText from "../common/loadingbar/LoaderWithText";
 
 type Error = {
     name: string,
@@ -33,6 +34,7 @@ type Props = {
 
 type State = {
     disabled: boolean,
+    loading: boolean,
     submitted: boolean,
     errors: Array<Error>,
     henkilo: HenkiloCreate,
@@ -41,6 +43,7 @@ type State = {
 
 const initialState = {
     disabled: false,
+    loading: false,
     submitted: false,
     errors: [],
     henkilo: {etunimet: '', kutsumanimi: '', sukunimi: ''},
@@ -188,13 +191,15 @@ class OppijaCreateForm extends React.Component<Props, State> {
                     {this.renderErrors('sahkoposti')}
                 </div>
                 <div className="oph-field">
-                    <button type="submit"
-                            className="oph-button oph-button-primary"
-                            disabled={this.state.disabled}>
-                        {this.props.L['TALLENNA_LINKKI']}
-                    </button>
+                    {!this.state.loading
+                        ? <button type="submit"
+                                  className="oph-button oph-button-primary"
+                                  disabled={this.state.disabled}>
+                            {this.props.L['TALLENNA_LINKKI']}
+                        </button>
+                        : <LoaderWithText labelkey="LOMAKE_LOADING" />}
                     {this.state.submitted && this.state.errors.length > 0 &&
-                        <span className="oph-field-text oph-error">{this.props.L['LOMAKE_SISALTAA_VIRHEITA']}</span>
+                    <span className="oph-field-text oph-error">{this.props.L['LOMAKE_SISALTAA_VIRHEITA']}</span>
                     }
                 </div>
             </form>
@@ -207,7 +212,10 @@ class OppijaCreateForm extends React.Component<Props, State> {
 
     onHenkiloChange = (event: {name: string, value: any}) => {
         const henkilo = {...this.state.henkilo, [event.name]: event.value};
-        const state: State = {henkilo: henkilo, form: this.state.form, disabled: this.state.disabled, submitted: this.state.submitted, errors: this.state.errors};
+        const state: State = {
+            ...this.state,
+            henkilo: henkilo,
+        };
         const errors = [...this.state.errors];
         if (this.state.submitted) {
             state.errors = this.validate(henkilo);
@@ -226,7 +234,10 @@ class OppijaCreateForm extends React.Component<Props, State> {
 
     onFormInputChange = (event: SyntheticEvent<HTMLInputElement>) => {
         const form = {...this.state.form, [event.currentTarget.name]: event.currentTarget.value};
-        const state: State = {henkilo: this.state.henkilo, form: form, disabled: this.state.disabled, submitted: this.state.submitted, errors: this.state.errors};
+        const state: State = {
+            ...this.state,
+            form: form,
+        };
         this.setState(state)
     };
 
@@ -282,11 +293,11 @@ class OppijaCreateForm extends React.Component<Props, State> {
         if (errors.length > 0) {
             this.setState({submitted: true, errors: errors})
         } else {
-            await this.setState({disabled: true});
+            await this.setState({disabled: true, loading: true});
             try {
                 await this.props.tallenna(this.getHenkilo())
             } catch (error) {
-                await this.setState({disabled: false})
+                await this.setState({disabled: false, loading: true})
             }
         }
     };

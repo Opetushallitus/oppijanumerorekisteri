@@ -22,7 +22,10 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
 
     render() {
         const henkilo = {
-            henkilo: this.props.oppija,
+            henkilo: {
+                ...this.props.oppija,
+                henkiloTyyppi: 'OPPIJA',
+            },
             duplicates: this.props.duplikaatit,
         };
         const notifications = [];
