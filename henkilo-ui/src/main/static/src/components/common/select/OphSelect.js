@@ -30,11 +30,11 @@ const OphSelect = (props: Props) => {
         : undefined;
     return <Select
         deleteRemoves={false}
+        maxHeight={200}
         {...props}
         clearable={!!props.clearable}
         clearRenderer={clearRenderer}
         clearValueText={props.L['POISTA']}
-        maxHeight={200}
     />;
 };
 
