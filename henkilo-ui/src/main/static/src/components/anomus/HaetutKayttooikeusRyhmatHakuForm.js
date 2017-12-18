@@ -67,13 +67,13 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         return (
             <form>
                 <div className="flex-horizontal flex-align-center">
-                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
+                    <div id="kayttooikeusryhmaHenkiloHakuWrapper" className="flex-item-1 haetut-kayttooikeusryhmat-form-item">
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                             defaultNameQuery={this.state.searchTerm}
                                             placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_HENKILO']}
                                             loading={this.props.haetutKayttooikeusryhmatLoading}/>
                     </div>
-                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline">
+                    <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline large-kayttooikeus-filter">
                         <span className="flex-item-1">
                             <OrganisaatioSelection id="organisaatiofilter"
                                                    L={this.props.L}
@@ -87,14 +87,21 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                             <CloseButton closeAction={() => this.onOrganisaatioChange(undefined)}/>
                         </span>
                     </div>
+                </div>
+                <div className="flex-horizontal flex-align-center margin-top-5">
                     {this.props.isAdmin || this.props.isOphVirkailija ?
-                        <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline">
+                        <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline large-kayttooikeus-filter">
                             <span className="flex-item-1">
                                 <OphSelect id="ryhmafilter"
                                            options={this._parseRyhmas(this.props.ryhmat)}
                                            value={this.state.selectedRyhma}
                                            placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
-                                           onChange={this.onRyhmaChange.bind(this)}>
+                                           onChange={this.onRyhmaChange.bind(this)}
+                                           maxHeight={400}
+                                           optionHeight={(object) => {
+                                               const length = object.option.label.length;
+                                               return 25 + ((length/50) * 20);
+                                           }}>
                                 </OphSelect>
                             </span>
                             <span className="haetut-kayttooikeusryhmat-close-button">
@@ -104,7 +111,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                         : null}
 
                     {this.props.isAdmin &&
-                    <div className="haetut-kayttooikeusryhmat-form-item">
+                    <div id="kayttooikeusryhmaRadioButtonWrapper" className="haetut-kayttooikeusryhmat-form-item">
                         <BooleanRadioButtonGroup value={this.state.naytaKaikki}
                                                  onChange={this.onNaytaKaikkiChange}
                                                  trueLabel={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_NAYTA_KAIKKI']}

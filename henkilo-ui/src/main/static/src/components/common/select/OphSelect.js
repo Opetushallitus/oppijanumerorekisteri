@@ -34,6 +34,7 @@ const OphSelect = (props: Props) => {
         clearable={!!props.clearable}
         clearRenderer={clearRenderer}
         clearValueText={props.L['POISTA']}
+        maxHeight={200}
     />;
 };
 

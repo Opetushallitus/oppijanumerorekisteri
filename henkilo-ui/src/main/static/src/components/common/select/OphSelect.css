@@ -65,3 +65,8 @@
 .Select-menu-outer {
     cursor: pointer;
 }
+
+/* Override react-select/dist/react-select.css (198px) to allow custom maxHeight */
+.Select-menu, .Select-menu-outer {
+    max-height: none;
+}
