@@ -62,24 +62,22 @@ class OppijaCreateContainer extends React.Component<Props, State> {
         return (
             <div className="wrapper">
                 <h1>{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</h1>
-                {this.state.naytaDuplikaatit === false &&
-                <OppijaCreateForm
-                    tallenna={this.tallenna}
-                    locale={this.props.locale}
-                    L={this.props.L}
-                    sukupuoliKoodisto={this.props.sukupuoliKoodisto}
-                    kieliKoodisto={this.props.kieliKoodisto}
-                    kansalaisuusKoodisto={this.props.kansalaisuusKoodisto}
+                {this.state.naytaDuplikaatit === false
+                    ? <OppijaCreateForm
+                        tallenna={this.tallenna}
+                        locale={this.props.locale}
+                        L={this.props.L}
+                        sukupuoliKoodisto={this.props.sukupuoliKoodisto}
+                        kieliKoodisto={this.props.kieliKoodisto}
+                        kansalaisuusKoodisto={this.props.kansalaisuusKoodisto}
                     />
-                }
-                {this.state.naytaDuplikaatit === true &&
-                <OppijaCreateDuplikaatit
-                    locale={this.props.locale}
-                    L={this.props.L}
-                    tallenna={this.luoOppijaJaNavigoi}
-                    peruuta={this.peruuta}
-                    oppija={this.state.oppija}
-                    duplikaatit={this.state.duplikaatit}
+                    : <OppijaCreateDuplikaatit
+                        locale={this.props.locale}
+                        L={this.props.L}
+                        tallenna={this.luoOppijaJaNavigoi}
+                        peruuta={this.peruuta}
+                        oppija={this.state.oppija}
+                        duplikaatit={this.state.duplikaatit}
                     />
                 }
             </div>
