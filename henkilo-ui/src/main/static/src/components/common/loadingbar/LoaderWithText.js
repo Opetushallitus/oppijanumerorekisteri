@@ -1,4 +1,5 @@
 // @flow
+import './LoaderWithText.css';
 import React from 'react';
 import {connect} from 'react-redux';
 import type {L} from "../../../types/localisation.type";
@@ -10,7 +11,7 @@ type Props = {
     labelkey: ?string,
 }
 
-const LoaderWithText = (props: Props) => <span style={{display: 'inline-block'}}><Loader /><span>{props.labelkey ? props.L[props.labelkey]: props.label || ''}</span></span>;
+const LoaderWithText = (props: Props) => <div className="loader-with-text"><Loader /><span>{props.labelkey ? props.L[props.labelkey]: props.label || ''}</span></div>;
 
 const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
