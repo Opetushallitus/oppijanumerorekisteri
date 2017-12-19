@@ -55,9 +55,9 @@ class OrganisaatioSelection extends React.Component<Props, State> {
                           onChange={this.props.selectOrganisaatio}
                           value={this.props.selectedOrganisaatioOid}
                           noResultsText={ this.props.L['EI_TULOKSIA']}
-                          optionHeight={45} />;
+                          optionHeight={45}
+                          maxHeight={400}/>;
     }
-
 }
 
 const mapStateToProps = (state) => ({
