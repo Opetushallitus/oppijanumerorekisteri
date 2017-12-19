@@ -19,6 +19,8 @@ import type {L} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
 import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
+import {hasAnyPalveluRooli} from "../../../../utilities/organisaatio.util";
+import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 
 type Props = {
     readOnly: boolean,
@@ -33,7 +35,8 @@ type Props = {
     L: L,
     locale: Locale,
     yksiloiHenkilo: () => void,
-    isValidForm: boolean
+    isValidForm: boolean,
+    omattiedot: OmattiedotState
 }
 
 type State = {
@@ -92,13 +95,11 @@ class OppijaUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        return [
-            <EditButton
-                editAction={this.props.edit}
-                disabled={duplicate || passivoitu}
-            />,
-            <YksiloiHetutonButton disabled={duplicate || passivoitu} />,
-        ];
+        const readOnlyButtons = [<EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/>];
+        if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI'])) {
+            readOnlyButtons.push(<YksiloiHetutonButton disabled={duplicate || passivoitu} />);
+        }
+        return readOnlyButtons;
     };
 
 }
@@ -108,6 +109,7 @@ const mapStateToProps = state => ({
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
+    omattiedot: state.omattiedot
 });
 
 export default connect(mapStateToProps, {yksiloiHenkilo})(OppijaUserContent);
