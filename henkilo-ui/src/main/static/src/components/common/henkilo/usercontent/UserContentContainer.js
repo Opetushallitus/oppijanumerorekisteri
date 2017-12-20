@@ -3,9 +3,7 @@ import './UserContentContainer.css';
 import React from 'react';
 import {connect} from 'react-redux';
 import StaticUtils from "../../StaticUtils";
-import moment from 'moment';
 import type {L} from "../../../../types/localisation.type";
-import PropertySingleton from "../../../../globals/PropertySingleton";
 import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto} from "../../../../actions/henkilo.actions";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import OppijaUserContent from "./OppijaUserContent";
@@ -159,7 +157,6 @@ class UserContentContainer extends React.Component<Props, State> {
 
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
-        henkiloUpdate.syntymaaika = henkiloUpdate.syntymaika && henkiloUpdate.syntymaaika.includes('.') ? moment(StaticUtils.ddmmyyyyToDate(henkiloUpdate.syntymaaika)).format(PropertySingleton.state.PVM_DBFORMAATTI) : henkiloUpdate.syntymaaika;
         const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
             autoClose: 10000,
             title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],

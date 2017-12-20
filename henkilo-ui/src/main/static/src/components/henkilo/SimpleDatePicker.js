@@ -11,6 +11,7 @@ type Props = {
     value: ?string,
     onChange: (value: ?string) => void,
     format?: string,
+    disabled?: boolean,
 }
 
 /**
@@ -26,7 +27,9 @@ class SimpleDatePicker extends React.Component<Props> {
                 selected={this.getMomentValue()}
                 onChange={this.onChange}
                 showYearDropdown
+                showWeekNumbers
                 dropdownMode="select"
+                disabled={this.props.disabled}
                 />
         )
     }

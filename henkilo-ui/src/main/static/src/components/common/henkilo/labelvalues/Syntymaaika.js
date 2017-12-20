@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import moment from 'moment';
 import LabelValue from './LabelValue';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
@@ -21,9 +20,7 @@ const Syntymaaika = (props: Props) => {
             label: 'HENKILO_SYNTYMAAIKA',
             inputValue: 'syntymaaika',
             date: true,
-            value: props.henkiloUpdate && props.henkiloUpdate.syntymaaika
-                ? moment(new Date(props.henkiloUpdate.syntymaaika)).format()
-                : moment().format(),
+            value: props.henkiloUpdate.syntymaaika,
             disabled: !!props.henkilo.henkilo.hetu,
         }}
     />;
