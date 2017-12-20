@@ -42,6 +42,7 @@ type State = {
     showPassive: boolean,
     contactInfo: Array<ContactInfo>,
     yhteystietoRemoveList: Array<number | string>,
+    modified: boolean,
 }
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
@@ -75,6 +76,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             showPassive: false,
             contactInfo: this._initialiseYhteystiedot(this.henkiloUpdate, this.contactInfoTemplate, this.props.koodisto.yhteystietotyypit, this.props.locale, []),
             yhteystietoRemoveList: [],
+            modified: false
         };
     };
 
@@ -84,14 +86,16 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.henkiloUiId) === -1)
             .map((yhteystiedotRyhmaFlat, idx) =>
                 <div key={idx}>
-                    <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name} {
-                        !this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly
-                            ? <IconButton onClick={() =>
-                                this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} >
-                                <CrossIcon />
-                            </IconButton>
+                    <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name}</span>
+                    {
+                        !this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly ?
+                            <span className="float-right">
+                                <IconButton onClick={() => this._removeYhteystieto(yhteystiedotRyhmaFlat.id || yhteystiedotRyhmaFlat.henkiloUiId)} >
+                                    <CrossIcon />
+                                </IconButton>
+                            </span>
                             : null
-                    }</span>
+                    }
                     { yhteystiedotRyhmaFlat.value.map((yhteystietoFlat, idx2) =>
                         <div key={idx2} id={yhteystietoFlat.label}>
                             { (!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly) || yhteystietoFlat.value
@@ -142,7 +146,10 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                         <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.props.L['MUOKKAA_LINKKI']}</Button>
                     </div>
                     : <div className="henkiloViewEditButtons">
-                        <EditButtons discardAction={this._discard.bind(this)} updateAction={this._update.bind(this)} L={this.props.L} />
+                        <EditButtons discardAction={this._discard.bind(this)}
+                                     updateAction={this._update.bind(this)}
+                                     L={this.props.L}
+                                     isValidForm={this.state.modified} />
                     </div>
                 }
             </div>
@@ -153,6 +160,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         if (id) {
             this.setState({
                 yhteystietoRemoveList: [...this.state.yhteystietoRemoveList, id],
+                modified: true,
             });
         }
     };
@@ -170,6 +178,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             readOnly: true,
             contactInfo: this._preEditData.contactInfo,
             yhteystietoRemoveList: [],
+            modified: false,
         });
     };
 
@@ -183,6 +192,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 
     _updateModelField(event) {
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);
+        this.setState({modified: true,});
     };
 
     _createYhteystiedotRyhma(yhteystietoryhmaTyyppi) {
@@ -201,7 +211,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 newYhteystiedotRyhma, this.props.koodisto.yhteystietotyypit, this.props.locale, henkiloUiId)
         ];
         this.setState({
-            contactInfo: contactInfo
+            contactInfo: contactInfo,
+            modified: true,
         });
     };
 
