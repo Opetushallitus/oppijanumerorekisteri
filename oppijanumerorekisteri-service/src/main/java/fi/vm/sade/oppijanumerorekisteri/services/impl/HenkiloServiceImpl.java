@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
@@ -69,6 +70,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private final KayttooikeusClient kayttooikeusClient;
     private final HakuappClient hakuappClient;
+    private final AtaruClient ataruClient;
+
 
 
     @Override
@@ -643,8 +646,11 @@ public class HenkiloServiceImpl implements HenkiloService {
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
                 .stream().filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(kayttajaOid)).collect(toList()); // remove current user from duplicate search results
         Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
-        Map<String, List<Map<String, Object>>> hakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
-        henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakemukset.get(h.getOidHenkilo())));
+        Map<String, List<Map<String, Object>>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
+        Map<String, List<Map<String, Object>>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
+
+        henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakuAppHakemukset.get(h.getOidHenkilo())));
+//        henkiloDuplicateDtos.forEach(h -> h.set)
         return henkiloDuplicateDtos;
     }
 

@@ -60,6 +60,9 @@ authentication:
   hakuapp:
     username: {{authentication_app_username_to_haku}}
     password: {{authentication_app_password_to_haku}}
+  ataru:
+    username: {{oppijanumerorekisteri_ataru_username}}
+    password: {{oppijanumerorekisteri_ataru_password}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000
