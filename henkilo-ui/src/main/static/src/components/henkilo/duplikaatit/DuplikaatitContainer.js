@@ -26,15 +26,14 @@ type Props = {
     fetchHenkiloMaster: string => void,
     fetchHenkiloDuplicates: string => void,
     fetchMaatJaValtiotKoodisto: () => void,
+    fetchKansalaisuusKoodisto: () => void,
     fetchKieliKoodisto: () => void,
     updateHenkiloNavigation: (Array<{}>) => void,
 }
 
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {
 
-    static propTypes = {  };
-
-    async componentDidMount() {
+    componentDidMount() {
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);

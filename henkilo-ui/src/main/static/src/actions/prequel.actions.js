@@ -8,14 +8,11 @@ const requestKayttooikeusPrequel = () => ({type: FETCH_PREQUEL_REQUEST});
 const receivedKayttooikeusPrequel = () => ({type: FETCH_PREQUEL_SUCCESS});
 const requestOppijanumerorekisteriPrequel = () => ({type: FETCH_PREQUEL_REQUEST});
 const receiveOppijanumerorekisteriPrequel= (json) => ({type: FETCH_PREQUEL_SUCCESS, data: json});
-const requestAtaruPrequel = () => ({type: FETCH_PREQUEL_REQUEST});
-const receivedAtaruPrequel = () => ({type: FETCH_PREQUEL_SUCCESS});
 
 export const fetchPrequels = () => async (dispatch: Dispatch) => {
     return Promise.all([
         fetchOppijanumerorekisteriPrequel(dispatch),
         fetchKayttooikeusPrequel(dispatch),
-        fetchAtaruPrequel(dispatch)
     ]);
 };
 
@@ -31,8 +28,4 @@ const fetchKayttooikeusPrequel = async (dispatch: Dispatch) => {
     dispatch(receivedKayttooikeusPrequel());
 };
 
-const fetchAtaruPrequel = async (dispatch: Dispatch) => {
-    dispatch(requestAtaruPrequel());
-    await http.get(urls.url('ataru.prequel'));
-    dispatch(receivedAtaruPrequel());
-};
+
