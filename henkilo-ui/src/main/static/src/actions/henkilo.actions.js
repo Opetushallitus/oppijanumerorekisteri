@@ -37,7 +37,7 @@ import {addGlobalNotification} from "./notification.actions";
 
 const requestHenkilo = (oid) => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
-const receiveHenkiloFailure = () => ({type: FETCH_HENKILO_FAILURE});
+const receiveHenkiloFailure = (data) => ({type: FETCH_HENKILO_FAILURE, data});
 export const fetchHenkilo = (oid) => (async dispatch => {
     dispatch(requestHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.oid', oid);
@@ -45,7 +45,7 @@ export const fetchHenkilo = (oid) => (async dispatch => {
         const henkilo = await http.get(url);
         dispatch(receiveHenkilo(henkilo));
     } catch(error) {
-        dispatch(receiveHenkiloFailure());
+        dispatch(receiveHenkiloFailure(error));
         throw error;
     }
 });

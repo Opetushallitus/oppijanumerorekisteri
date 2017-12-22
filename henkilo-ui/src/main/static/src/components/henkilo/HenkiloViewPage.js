@@ -15,6 +15,7 @@ import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCr
 import PropertySingleton from "../../globals/PropertySingleton";
 import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {ReactSelectOption} from "../../types/react-select.types";
+import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 
 type Props = {
     l10n: L10n,
@@ -51,6 +52,9 @@ class HenkiloViewPage extends React.Component<Props> {
     }
 
     render() {
+        if (this.props.henkilo.henkiloKayttoEstetty) {
+            return <VirheKayttoEstetty L={this.props.l10n[this.props.locale]} />
+        }
         return (
             <div>
                 <div className="wrapper">
