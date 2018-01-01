@@ -60,6 +60,9 @@ authentication:
   hakuapp:
     username: {{authentication_app_username_to_haku}}
     password: {{authentication_app_password_to_haku}}
+  henkilotietomuutos:
+    username: {{authentication_app_username_to_henkilotietomuutos}}
+    password: {{authentication_app_password_to_henkilotietomuutos}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000
@@ -70,3 +73,6 @@ oppijanumerorekisteri:
       fixed-delay-in-millis: 900000
       batch-size: 300
       vtj-request-delay-in-millis: 200
+    vtjsync:
+      enabled: true
+      fixed-delay-in-millis: 86400000
