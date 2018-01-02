@@ -6,6 +6,7 @@ import {fetchAllOrganisaatios, fetchAllRyhmas} from '../../actions/organisaatio.
 import {updateHaettuKayttooikeusryhmaInAnomukset, clearHaettuKayttooikeusryhma} from '../../actions/kayttooikeusryhma.actions'
 import PropertySingleton from '../../globals/PropertySingleton'
 import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions'
+import { addGlobalNotification } from "../../actions/notification.actions";
 
 class AnomusPageContainer extends React.Component {
     render() {
@@ -38,5 +39,6 @@ export default connect(mapStateToProps, {
     updateHaettuKayttooikeusryhmaInAnomukset,
     clearHaettuKayttooikeusryhma,
     clearHaetutKayttooikeusryhmat,
-    fetchOmattiedotOrganisaatios
+    fetchOmattiedotOrganisaatios,
+    addGlobalNotification
 })(AnomusPageContainer);
