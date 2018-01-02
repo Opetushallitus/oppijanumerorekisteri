@@ -1,5 +1,7 @@
 // @flow
-import {FETCH_LOCALISATIONS_SUCCESS, FETCH_LOCALISATIONS_REQUEST} from '../actions/actiontypes';
+import {
+    FETCH_LOCALISATIONS_SUCCESS, FETCH_LOCALISATIONS_REQUEST
+} from '../actions/actiontypes';
 import type {L10n} from "../types/localisation.type";
 import * as R from 'ramda';
 
@@ -31,14 +33,6 @@ const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
     };
 };
 
-const mapLocalisationsByLocale = (localisations: Array<any>): L10n => {
-    const result = { fi: {}, sv: {}, en: {} };
-    localisations.forEach( (localisation: any) => {
-        result[localisation.locale][localisation.key] = localisation.value;
-    });
-    return result;
-};
-
 type State = {
     localisationsInitialized: boolean,
     localisations: L10n
@@ -51,9 +45,8 @@ export const l10n = (state: State = {localisationsInitialized: false, localisati
         case FETCH_LOCALISATIONS_REQUEST:
             return {...state, localisationsInitialized: false};
         case FETCH_LOCALISATIONS_SUCCESS:
-            const localisationByLocale = mapLocalisationsByLocale(action.lokalisointiPalveluLocalisations);
             return Object.assign({}, state, {
-                localisations: mapLocalisations(localisationByLocale, action.henkiloUiLocalisations),
+                localisations: mapLocalisations(state.localisations, action.localisations),
                 localisationsInitialized: true
             });
         default:
