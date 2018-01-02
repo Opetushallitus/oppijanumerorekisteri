@@ -530,6 +530,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     @Override
+    @Transactional
     public boolean addHetuToVTJRegister(String hetu) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         long affectedRows = jpa().update(qHenkilo)
