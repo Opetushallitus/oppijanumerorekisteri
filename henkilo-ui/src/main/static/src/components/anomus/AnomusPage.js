@@ -188,10 +188,11 @@ class AnomusPage extends React.Component<Props, State> {
 
     createNotificationMessage(henkilo: any, messageKey: string): string {
         const message = this.props.l10n[this.props.locale][messageKey];
+        const henkiloLocalized = this.props.l10n[this.props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'];
         const etunimet = henkilo.etunimet;
         const sukunimi = henkilo.sukunimi;
         const oid = henkilo.oid;
-        return `Henkilön ${etunimet} ${sukunimi} (${oid}) ${message}`;
+        return `${henkiloLocalized} ${etunimet} ${sukunimi} (${oid}) ${message}`;
     }
 }
 
