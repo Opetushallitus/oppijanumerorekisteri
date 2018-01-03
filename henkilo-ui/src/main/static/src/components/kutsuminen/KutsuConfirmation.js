@@ -9,11 +9,11 @@ import './KutsuConfirmation.css';
 import {http} from '../../http';
 import {urls} from 'oph-urls-js';
 import type {
-    KutsuKayttooikeusryhma,
     KutsuOrganisaatio
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {BasicinfoType} from "./BasicinfoForm";
 import type {L10n} from "../../types/localisation.type";
+import type { MyonnettyKayttooikeusryhma } from "../../types/domain/kayttooikeus/kayttooikeusryhma.types"
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -86,7 +86,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         )
     }
 
-    renderAddedOrgPermission(permission: KutsuKayttooikeusryhma) {
+    renderAddedOrgPermission(permission: MyonnettyKayttooikeusryhma) {
         return (
             <div key={permission.ryhmaId}>
                 <span className="oph-h4 oph-strong">{toLocalizedText(this.props.locale, permission.ryhmaNames)}</span>

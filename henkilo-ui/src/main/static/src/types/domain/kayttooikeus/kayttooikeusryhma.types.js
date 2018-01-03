@@ -23,3 +23,12 @@ export type KayttooikeusRyhmaModify = {
     ryhmaRestriction: boolean
 }
 
+export type MyonnettyKayttooikeusryhma = {
+    ryhmaId: number,
+    ryhmaTunniste: string,
+    ryhmaNames: TextGroup,
+    ryhmaKuvaus: ?TextGroup,
+    myonnettyTapahtumaId: ?number,
+    alkuPvm: ?string,
+    voimassaPvm: ?string,
+}
