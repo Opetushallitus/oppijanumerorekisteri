@@ -3,7 +3,6 @@ import React from 'react'
 import {connect} from 'react-redux';
 import PopupButton from "../../button/PopupButton";
 import PasswordPopupContent from "../../button/PasswordPopupContent";
-import {updatePassword} from "../../../../actions/henkilo.actions";
 import {removeNotification} from "../../../../actions/notifications.actions";
 import type {L} from "../../../../types/localisation.type";
 
@@ -36,4 +35,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {updatePassword, removeNotification})(PasswordButton);
+export default connect(mapStateToProps, {removeNotification})(PasswordButton);
