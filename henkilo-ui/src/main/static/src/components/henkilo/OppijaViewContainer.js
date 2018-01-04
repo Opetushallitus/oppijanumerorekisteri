@@ -11,7 +11,7 @@ import PropertySingleton from '../../globals/PropertySingleton'
 import HenkiloViewPage from "./HenkiloViewPage";
 
 class OppijaViewContainer extends React.Component {
-    componentDidMount() {
+    async componentDidMount() {
         PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
 
         if (this.props.isAdmin) {
@@ -20,7 +20,7 @@ class OppijaViewContainer extends React.Component {
         else {
             this.props.updateHenkiloNavigation(oppijaNavi(this.props.oidHenkilo));
 
-            this.props.fetchHenkilo(this.props.oidHenkilo);
+            await this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
             this.props.fetchYhteystietotyypitKoodisto();
             this.props.fetchKieliKoodisto();
