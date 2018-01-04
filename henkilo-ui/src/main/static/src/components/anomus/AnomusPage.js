@@ -81,17 +81,13 @@ class AnomusPage extends React.Component<Props, State> {
     };
 
     componentWillReceiveProps(nextProps: Props) {
-        if (!nextProps.haetutKayttooikeusryhmatLoading
-            && nextProps.kayttooikeusAnomus.length !== this.props.kayttooikeusAnomus.length) {
+        if (!nextProps.haetutKayttooikeusryhmatLoading) {
             this.setState({
                 allFetched: nextProps.kayttooikeusAnomus.length < this.defaultLimit * (this.state.page + 1),
             });
         }
         if (!this.props.haetutKayttooikeusryhmatLoading) {
             this.initialised = true;
-        }
-        if(nextProps.kayttooikeusAnomus.length === 0) {
-            this.setState({allFetched: true});
         }
     };
 
