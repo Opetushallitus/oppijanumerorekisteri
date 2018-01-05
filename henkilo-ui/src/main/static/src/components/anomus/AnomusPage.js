@@ -5,8 +5,9 @@ import './AnomusPage.css'
 import Loader from '../common/icons/Loader'
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm'
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus"
-import WideGreenNotification from "../common/notifications/WideGreenNotification";
 import type {Locale} from "../../types/locale.type";
+import type {GlobalNotificationConfig} from "../../types/notification.types";
+import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -33,7 +34,8 @@ type Props = {
     fetchAllRyhmas: () => void,
     isAdmin: boolean,
     updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, string) => Promise<any>,
-    clearHaettuKayttooikeusryhma: (number) => void
+    clearHaettuKayttooikeusryhma: (number) => void,
+    addGlobalNotification: (GlobalNotificationConfig) => void
 };
 
 type State = {
@@ -42,10 +44,6 @@ type State = {
     allFetched: boolean,
     page: number,
     kayttooikeus: any,
-    showHylkaysSuccess: boolean,
-    showHylkaysFailure: boolean,
-    showHyvaksyminenSuccess: boolean,
-    showHyvaksyminenFailure: boolean,
     anomusModifiedHenkilo: any
 }
 
@@ -68,10 +66,6 @@ class AnomusPage extends React.Component<Props, State> {
         allFetched: false,
         page: 0,
         kayttooikeus: {},
-        showHylkaysSuccess: false,
-        showHylkaysFailure: false,
-        showHyvaksyminenSuccess: false,
-        showHyvaksyminenFailure: false,
         anomusModifiedHenkilo: undefined
     };
 
@@ -92,22 +86,9 @@ class AnomusPage extends React.Component<Props, State> {
     };
 
     render() {
-        const L = this.props.l10n[this.props.locale];
         return (
           <div className="anomus-table">
               <HaetutKayttooikeusRyhmatHakuForm onSubmit={this.onSubmit.bind(this)}/>
-              { this.state.showHylkaysSuccess
-              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
-                                        closeAction={() => this.setState({showHylkaysSuccess: false})}/> }
-              { this.state.showHyvaksyminenSuccess
-              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS'])}
-                                        closeAction={() => this.setState({showHyvaksyminenSuccess: false})}/> }
-              { this.state.showHylkaysFailure
-              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
-                                        closeAction={() => this.setState({showHylkaysSuccess: false})}/> }
-              { this.state.showHyvaksyminenFailure
-              && <WideGreenNotification message={this.createNotificationMessage(L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'])}
-                                        closeAction={() => this.setState({showHyvaksyminenFailure: false})}/>}
 
               {
                   this.props.haetutKayttooikeusryhmatLoading && !this.initialised
@@ -180,19 +161,34 @@ class AnomusPage extends React.Component<Props, State> {
     async updateHaettuKayttooikeusryhma(id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, henkilo: any, hylkaysperuste: string) {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste);
-            kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysSuccess: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenSuccess: true, anomusModifiedHenkilo: henkilo});
+            this.setState({anomusModifiedHenkilo: henkilo});
+            const notificationMessageKey = kayttoOikeudenTila === 'HYLATTY' ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS' : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
+            this.props.addGlobalNotification({
+                key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
+                type: NOTIFICATIONTYPES.SUCCESS,
+                title: this.createNotificationMessage(henkilo, notificationMessageKey),
+                autoClose: 10000
+            });
             this.props.clearHaettuKayttooikeusryhma(id);
         } catch (error) {
-            kayttoOikeudenTila === 'HYLATTY' ? this.setState({showHylkaysFailure: true, anomusModifiedHenkilo: henkilo}) : this.setState({showHyvaksyminenFailure: true, anomusModifiedHenkilo: henkilo});
+            const notificationMessageKey = kayttoOikeudenTila === 'HYLATTY' ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE' : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
+            this.props.addGlobalNotification({
+                key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
+                type: NOTIFICATIONTYPES.ERROR,
+                title: this.createNotificationMessage(henkilo, notificationMessageKey),
+                autoClose: 10000
+            });
             throw error;
         }
     };
 
-    createNotificationMessage(notificationResult: string): string {
-        const etunimet: string = this.state.anomusModifiedHenkilo.etunimet;
-        const sukunimi = this.state.anomusModifiedHenkilo.sukunimi;
-        const oid = this.state.anomusModifiedHenkilo.oid;
-        return `Henkilön ${etunimet} ${sukunimi} (${oid}) ${notificationResult}`;
+    createNotificationMessage(henkilo: any, messageKey: string): string {
+        const message = this.props.l10n[this.props.locale][messageKey];
+        const henkiloLocalized = this.props.l10n[this.props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'];
+        const etunimet = henkilo.etunimet;
+        const sukunimi = henkilo.sukunimi;
+        const oid = henkilo.oid;
+        return `${henkiloLocalized} ${etunimet} ${sukunimi} (${oid}) ${message}`;
     }
 }
 
