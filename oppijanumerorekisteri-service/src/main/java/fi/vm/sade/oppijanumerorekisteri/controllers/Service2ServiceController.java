@@ -132,7 +132,7 @@ public class Service2ServiceController {
     }
 
     @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI', 'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @PostMapping("/henkilo/perustiedotAsAdmin")
     public Iterable<HenkiloHakuPerustietoDto> listAsAdmin(@RequestParam(required = false) Long offset,
                                                 @RequestParam(required = false) Long limit,
