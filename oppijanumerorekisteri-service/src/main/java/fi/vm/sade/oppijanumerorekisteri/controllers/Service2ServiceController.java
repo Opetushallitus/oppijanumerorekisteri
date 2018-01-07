@@ -7,6 +7,7 @@ import io.swagger.annotations.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindException;
@@ -143,8 +144,8 @@ public class Service2ServiceController {
     @ApiOperation(value = "Päivittää henkilön tietoja muutostietopalvelun antamilla muutoksilla.",
             notes = "Päivittää kutsussa annettuun OID:n täsmäävän henkilön tiedot")
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_MUUTOSTIETOPALVELU')")
-    @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT)
-    public HenkiloReadDto forceUpdateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto) throws BindException {
+    @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public HenkiloReadDto forceUpdateHenkilo(@Validated @RequestBody HenkiloUpdateDto henkiloUpdateDto) {
         return this.henkiloService.forceUpdateHenkilo(henkiloUpdateDto);
     }
 }
