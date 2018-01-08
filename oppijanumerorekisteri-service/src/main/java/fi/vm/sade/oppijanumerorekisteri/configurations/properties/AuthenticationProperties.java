@@ -30,7 +30,15 @@ public class AuthenticationProperties {
         private String password;
     }
 
+    @Getter
+    @Setter
+    public static class Henkilotietomuutos {
+        private String username;
+        private String password;
+    }
+
     private Kayttooikeus kayttooikeus = new Kayttooikeus();
     private Vtj vtj = new Vtj();
     private Hakuapp hakuapp = new Hakuapp();
+    private Henkilotietomuutos henkilotietomuutos = new Henkilotietomuutos();
 }

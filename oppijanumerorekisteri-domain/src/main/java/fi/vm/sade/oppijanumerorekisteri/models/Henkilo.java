@@ -70,6 +70,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date vtjsynced;
 
+    @Column(name = "vtj_register", columnDefinition = "boolean default false", nullable = false)
+    private boolean vtjRegister;
+
     @Column(nullable = false)
     private boolean passivoitu;
 

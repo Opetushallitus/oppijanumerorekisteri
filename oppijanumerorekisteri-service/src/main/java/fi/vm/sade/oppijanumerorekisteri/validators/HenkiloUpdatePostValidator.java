@@ -52,38 +52,63 @@ public class HenkiloUpdatePostValidator implements Validator {
         this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .ifPresent(henkilo -> validateHetu(henkilo, henkiloUpdateDto, errors));
 
-        if(henkiloUpdateDto.getKutsumanimi() != null && henkiloUpdateDto.getEtunimet() != null) {
-            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkiloUpdateDto.getEtunimet());
-            if (!kutsumanimiValidator.isValid(henkiloUpdateDto.getKutsumanimi())) {
+        validateKutsumanimi(henkiloUpdateDto, errors);
+
+        KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
+        validateSukupuoli(henkiloUpdateDto, koodiValidator);
+        validateKansalaisuus(henkiloUpdateDto, koodiValidator);
+        validateYhteystiedot(henkiloUpdateDto, koodiValidator);
+    }
+
+    public void validateWithoutHetu(Object o, Errors errors) {
+        HenkiloUpdateDto dto = (HenkiloUpdateDto) o;
+
+        validateKutsumanimi(dto, errors);
+
+        KoodiValidator validator = new KoodiValidator(koodistoService, errors);
+        validateSukupuoli(dto, validator);
+        validateKansalaisuus(dto, validator);
+        validateYhteystiedot(dto, validator);
+    }
+
+    private void validateKutsumanimi(HenkiloUpdateDto dto, Errors errors) {
+        if(dto.getKutsumanimi() != null && dto.getEtunimet() != null) {
+            KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(dto.getEtunimet());
+            if (!kutsumanimiValidator.isValid(dto.getKutsumanimi())) {
                 errors.rejectValue("kutsumanimi",
                         "kutsumanimi.must.exist.in.etunimet",
-                        new Object[]{henkiloUpdateDto.getKutsumanimi(), henkiloUpdateDto.getEtunimet()},
+                        new Object[]{dto.getKutsumanimi(), dto.getEtunimet()},
                         "Kutsumanimen on oltava osa etunimeä");
             }
         }
+    }
 
-        KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
-
-        koodiValidator.validate(Koodisto.SUKUPUOLI, henkiloUpdateDto.getSukupuoli(),
+    private void validateSukupuoli(HenkiloUpdateDto dto, KoodiValidator validator) {
+        validator.validate(Koodisto.SUKUPUOLI, dto.getSukupuoli(),
                 "sukupuoli", "invalid.sukupuoli");
+    }
 
-        Set<KansalaisuusDto> kansalaisuusDtoSet = henkiloUpdateDto.getKansalaisuus();
+    private void validateKansalaisuus(HenkiloUpdateDto dto, KoodiValidator validator) {
+        Set<KansalaisuusDto> kansalaisuusDtoSet = dto.getKansalaisuus();
         if (kansalaisuusDtoSet != null) {
             Set<String> kansalaisuusKoodit = kansalaisuusDtoSet.stream()
                     .map(KansalaisuusDto::getKansalaisuusKoodi).collect(toSet());
-            koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusKoodit,
+            validator.validate(Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusKoodit,
                     "kansalaisuus", "invalid.kansalaisuusKoodi");
         }
+    }
 
-        Set<YhteystiedotRyhmaDto> yhteystiedot = henkiloUpdateDto.getYhteystiedotRyhma();
+    private void validateYhteystiedot(HenkiloUpdateDto dto, KoodiValidator validator) {
+        Set<YhteystiedotRyhmaDto> yhteystiedot = dto.getYhteystiedotRyhma();
         if (yhteystiedot != null && !yhteystiedot.isEmpty()) {
             Set<String> tyypit = yhteystiedot.stream()
                     .map(YhteystiedotRyhmaDto::getRyhmaKuvaus).collect(toSet());
-            koodiValidator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
+            validator.validate(Koodisto.YHTEYSTIETOTYYPIT, tyypit,
                     "yhteystiedotRyhma", "invalid.ryhmaKuvaus");
+
             Set<String> alkuperat = yhteystiedot.stream()
                     .map(YhteystiedotRyhmaDto::getRyhmaAlkuperaTieto).collect(toSet());
-            koodiValidator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
+            validator.validate(Koodisto.YHTEYSTIETOJEN_ALKUPERA, alkuperat,
                     "yhteystiedotRyhma", "invalid.ryhmaAlkuperaTieto");
         }
     }

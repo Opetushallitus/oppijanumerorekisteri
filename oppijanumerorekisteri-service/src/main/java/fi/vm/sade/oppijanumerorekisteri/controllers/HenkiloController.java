@@ -112,7 +112,7 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
-    @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 1000 henkilön tietoja kerralla.")
+    @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"

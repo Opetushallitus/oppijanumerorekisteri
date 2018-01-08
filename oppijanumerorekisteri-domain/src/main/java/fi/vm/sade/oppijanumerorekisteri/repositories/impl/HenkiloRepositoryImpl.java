@@ -6,6 +6,7 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.core.types.dsl.Expressions;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 import com.querydsl.core.types.dsl.StringPath;
@@ -513,6 +514,30 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                         qHenkilo.yksiloityVTJ.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
                 )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findHetusMissingFromVTJRegister() {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return jpa()
+            .from(qHenkilo)
+            .where(allOf(
+                    qHenkilo.hetu.isNotNull(),
+                    qHenkilo.passivoitu.isFalse(),
+                    qHenkilo.vtjRegister.isFalse()
+            )).select(qHenkilo.hetu).fetch();
+    }
+
+    @Override
+    @Transactional
+    public boolean addHetuToVTJRegister(String hetu) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        long affectedRows = jpa().update(qHenkilo)
+                .where(qHenkilo.hetu.equalsIgnoreCase(hetu))
+                .set(qHenkilo.vtjRegister, Boolean.TRUE)
+                .execute();
+        return affectedRows > 0;
     }
 
 }
