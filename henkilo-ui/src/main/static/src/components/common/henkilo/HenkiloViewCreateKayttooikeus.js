@@ -17,6 +17,7 @@ import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {ValidationMessage} from "../../../types/validation.type";
 import PropertySingleton from "../../../globals/PropertySingleton";
+import type { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet'
 
 type Props = {
     organisaatios: Array<{}>,
@@ -39,7 +40,7 @@ type KayttooikeusModel = {
 };
 
 type State  = {
-    selectedList: Array<{value: number}>,
+    selectedList: Array<ValittuKayttooikeusryhma>,
     validationMessages: {[key: string]: ValidationMessage},
     kayttooikeusData: Array<{}>,
     kayttooikeusModel: KayttooikeusModel,
@@ -50,7 +51,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
     initialState: State;
     organisationAction: ({value: string}) => void;
     close: (number) => void;
-    kayttooikeudetAction: ({value: number}) => void;
+    kayttooikeudetAction: (ValittuKayttooikeusryhma) => void;
     createKayttooikeusAction: () => void;
     kestoAlkaaAction: (moment) => void;
     kestoPaattyyAction: (moment) => void;
@@ -107,7 +108,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
             this.props.fetchAllowedKayttooikeusryhmasForOrganisation(this.props.oidHenkilo, value.value);
         };
 
-        this.kayttooikeudetAction = (value) => {
+        this.kayttooikeudetAction = (value: ValittuKayttooikeusryhma) => {
             if (value.value) {
                 this.setState({
                     selectedList: [...this.state.selectedList, value],

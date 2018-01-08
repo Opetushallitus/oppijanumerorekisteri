@@ -1,15 +1,30 @@
+// @flow
 import React from 'react'
-import PropTypes from 'prop-types'
-import OphSelect from "../../select/OphSelect";
-import StaticUtils from "../../StaticUtils";
+import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal'
+import { toLocalizedText } from '../../../../localizabletext'
+import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils'
+import type { MyonnettyKayttooikeusryhma } from '../../../../types/domain/kayttooikeus/kayttooikeusryhma.types'
+import type { L } from '../../../../types/localisation.type'
+import type { Locale } from '../../../../types/locale.type'
 
-const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale}) => {
-    const filteredOptions = kayttooikeusData && kayttooikeusData.filter(kayttooikeus =>
-        selectedList.indexOf(kayttooikeus.ryhmaId) === -1)
-            .map(kayttooikeus => ({
-                value: kayttooikeus.ryhmaId,
-                label: StaticUtils.getLocalisedText(kayttooikeus.ryhmaNames.texts, locale),
-            }));
+export type ValittuKayttooikeusryhma = {
+    value: number,
+    label: string,
+}
+
+type Props = {
+    kayttooikeusData: Array<MyonnettyKayttooikeusryhma>,
+    selectedList: Array<ValittuKayttooikeusryhma>,
+    kayttooikeusAction: (ValittuKayttooikeusryhma) => void,
+    close: (kayttooikeusryhmaId: number) => void,
+    L: L,
+    locale: Locale,
+}
+
+const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale}: Props) => {
+    const kayttooikeusryhmat = kayttooikeusData && kayttooikeusData
+        .filter(myonnetty => selectedList.every(selected => selected.value !== myonnetty.ryhmaId))
+        .map(myonnettyToKayttooikeusryhma)
     return <tr key="kayttooikeusKayttooikeudetField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
@@ -17,9 +32,16 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
         <td>
             <div>
                 <div>
-                    <OphSelect disabled={kayttooikeusData === undefined}
-                               options={filteredOptions}
-                               onChange={kayttooikeusAction} />
+                    <KayttooikeusryhmaSelectModal
+                        locale={locale}
+                        L={L}
+                        kayttooikeusryhmat={kayttooikeusryhmat}
+                        onSelect={(kayttooikeusryhma) => kayttooikeusAction({
+                            value: kayttooikeusryhma.id,
+                            label: toLocalizedText(locale, kayttooikeusryhma.nimi)
+                        })}
+                        disabled={kayttooikeusData === undefined}
+                        />
                 </div>
             </div>
             <div>
@@ -41,15 +63,6 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
         </td>
         <td />
     </tr>;
-};
-
-CKKayttooikeudet.propTypes = {
-    kayttooikeusData: PropTypes.array,
-    selectedList: PropTypes.array,
-    kayttooikeusAction: PropTypes.func,
-    close: PropTypes.func,
-    L: PropTypes.object,
-    locale: PropTypes.string,
 };
 
 export default CKKayttooikeudet;
