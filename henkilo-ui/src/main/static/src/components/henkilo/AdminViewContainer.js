@@ -17,13 +17,13 @@ import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import HenkiloViewPage from "./HenkiloViewPage";
 
 class AdminViewContainer extends React.Component {
-    componentDidMount() {
+    async componentDidMount() {
         this.props.clearHenkilo();
         if (this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.replace('/omattiedot');
         }
 
-        this.props.fetchHenkilo(this.props.oidHenkilo);
+        await this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
         this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
         this.props.fetchKieliKoodisto();

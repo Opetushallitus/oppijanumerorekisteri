@@ -9,12 +9,12 @@ export const mainNavigation = [
 
 export const oppijaNavi = oid => [
     {path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT'},
-    {path: `/oppija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', },
+    {path: `/oppija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
 ];
 
 export const virkailijaNavi = (oid) => [
     {path: `/virkailija/${oid}`, label: 'NAVI_HENKILON_TIEDOT'},
-    {path: `/virkailija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true},
+    {path: `/virkailija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
     {path: `/virkailija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true}
 ];
 

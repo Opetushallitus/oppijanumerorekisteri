@@ -12,6 +12,7 @@ import Script from 'react-load-script';
 import {urls} from 'oph-urls-js';
 
 import './TopNavigation.css';
+import {parsePalveluRoolit} from "../../utilities/organisaatio.util";
 
 type Props = {
     naviTabs: Array<NaviTab>,
@@ -24,9 +25,8 @@ type Props = {
 
 const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, organisaatiot}: Props) => {
     const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
-    const roolit: Array<string> = (isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot)
-        .map(organisaatio => organisaatio.kayttooikeudet.map(kayttooikeus => `${kayttooikeus.palvelu}_${kayttooikeus.oikeus}`))
-        .reduce((prev, curr) => prev.concat(curr), []); // flatten
+    const organisaatioList = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot;
+    const roolit: Array<string> = parsePalveluRoolit(organisaatioList);
     return (
         <div id="topNavigation" className={classNames({'oph-bg-blue': !isNoAuthenticationPage})}>
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}

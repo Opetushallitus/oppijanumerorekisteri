@@ -1,0 +1,16 @@
+.VirheKayttoEstetty {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.VirheKayttoEstetty_toiminnot {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.VirheKayttoEstetty_toiminto {
+    flex: 1;
+}

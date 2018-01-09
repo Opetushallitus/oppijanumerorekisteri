@@ -23,6 +23,7 @@ export type HenkiloState = {
     +henkiloLoading: boolean,
     +henkiloOrgsLoading: boolean,
     +kayttajatietoLoading: boolean,
+    +henkiloKayttoEstetty: boolean,
     +henkilo: Henkilo | any,
     +henkiloOrgs: Array<any>,
     +kayttajatieto: KayttajatiedotRead | any,
@@ -47,6 +48,7 @@ const initialState: HenkiloState = {
     henkiloLoading: true,
     henkiloOrgsLoading: true,
     kayttajatietoLoading: false,
+    henkiloKayttoEstetty: false,
     henkilo: {},
     henkiloOrgs: [],
     kayttajatieto: {},
@@ -72,6 +74,20 @@ const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
         Object.assign({}, henkiloOrg, organisations[henkiloOrg.organisaatioOid] || StaticUtils.defaultOrganisaatio(henkiloOrg.organisaatioOid)));
 };
 
+const isKayttoEstetty = (data: ?Object | ?string) => (data && data.status === 403)
+    // oppijanumerorekisteri palauttaa väärän status-koodin
+    || isKayttoEstettyOppijanumerorekisteri(data)
+
+const isKayttoEstettyOppijanumerorekisteri = (data: ?Object | ?string) => {
+    if (typeof data === 'object' && data !== null) {
+        const { status, path, message } = data
+        return status === 401
+            && path && path.startsWith('/oppijanumerorekisteri-service/')
+            && message && message.endsWith('AccessDeniedException') !== -1
+    }
+    return false
+}
+
 export const henkilo = (state: HenkiloState = initialState, action: any): HenkiloState => {
 
     switch (action.type) {
@@ -81,7 +97,7 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case FETCH_HENKILO_SUCCESS:
             return Object.assign({}, state, {henkiloLoading: false, henkilo: action.henkilo});
         case FETCH_HENKILO_FAILURE:
-            return {...state, henkiloLoading: false};
+            return {...state, henkiloLoading: false, henkiloKayttoEstetty: isKayttoEstetty(action.data)};
         case UPDATE_HENKILO_FAILURE:
             return Object.assign({}, state, {henkiloLoading: false});
         case FETCH_KAYTTAJATIETO_REQUEST:

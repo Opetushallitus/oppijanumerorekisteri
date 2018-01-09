@@ -17,12 +17,13 @@ import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
 import {getOrganisaatios} from "./OrganisaatioUtilities";
 import type {
-    KutsuKayttooikeusryhma,
     KutsuOrganisaatio, Organisaatio,
     OrganisaatioHenkilo
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
-import OphSelect from "../common/select/OphSelect";
 import type {L} from "../../types/localisation.type";
+import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal'
+import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils'
+import type { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 
 type Props = {
     changeOrganization: () => void,
@@ -36,8 +37,8 @@ type Props = {
     kutsuSetOrganisaatio: (number, Organisaatio) => void,
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio: (string, string) => void,
     currentHenkiloOid: string,
-    addOrganisaatioPermission: (string, ?KutsuKayttooikeusryhma) => void,
-    removeOrganisaatioPermission: (string, KutsuKayttooikeusryhma) => void,
+    addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
+    removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
 }
 
 class AddedOrganisation extends React.Component<Props> {
@@ -54,14 +55,8 @@ class AddedOrganisation extends React.Component<Props> {
     render() {
         const addedOrg = this.props.addedOrg;
         const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
-        const selectablePermissions = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
-        const permissionsSelect = {
-            options: selectablePermissions.map(permission => ({
-                value: permission.ryhmaId,
-                label: toLocalizedText(this.props.locale, permission.ryhmaNames),
-                disabled: !addedOrg.oid
-            }))
-        };
+        const selectablePermissions: Array<MyonnettyKayttooikeusryhma> | any = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
+        const kayttooikeusryhmat = selectablePermissions.map(myonnettyToKayttooikeusryhma)
 
         return (
             <div className="added-org" key={addedOrg.oid}>
@@ -85,13 +80,15 @@ class AddedOrganisation extends React.Component<Props> {
                         {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_MYONNA_KAYTTOOIKEUKSIA']}
                     </label>
 
-                    <OphSelect name="permission-select"
-                            className={'permissionSelect'}
-                            onChange={this.addPermission.bind(this, selectablePermissions)}
-                            options={permissionsSelect.options}
-                            placeholder={this.props.L['VIRKAILIJAN_LISAYS_SUODATA_KAYTTOOIKEUKSIA']}
-                            noResultsText={this.props.L['EI_TULOKSIA']}>
-                    </OphSelect>
+                    <div className="permissionSelect">
+                        <KayttooikeusryhmaSelectModal
+                            locale={this.props.locale}
+                            L={this.props.L}
+                            kayttooikeusryhmat={kayttooikeusryhmat}
+                            onSelect={this.addPermission.bind(this, selectablePermissions)}
+                            disabled={!addedOrg.oid}
+                            />
+                    </div>
 
                     <ul className="kutsuminen-selected-permissions">
                         {addedOrg.selectedPermissions.map(permission => {
@@ -115,9 +112,8 @@ class AddedOrganisation extends React.Component<Props> {
         this.props.kutsuRemoveOrganisaatio(oid);
     }
 
-    addPermission(selectablePermissions, selection) {
-        const ryhmaId = parseInt(selection.value, 10);
-        const selectedPermission = R.find(R.propEq('ryhmaId', ryhmaId))(selectablePermissions);
+    addPermission(selectablePermissions, kayttooikeusryhma) {
+        const selectedPermission = R.find(R.propEq('ryhmaId', kayttooikeusryhma.id))(selectablePermissions);
         this.props.addOrganisaatioPermission(this.props.addedOrg.oid, selectedPermission);
     }
 
