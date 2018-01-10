@@ -21,16 +21,16 @@ spring:
       autodetection: class,hbm
     current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-hikari:
   datasource:
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
-    jdbc-url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
+    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
-    connection-test-query: SELECT 1
-    maximum-pool-size: 20
-    connection-timeout: 10000
-    max-lifetime: 60000
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 10000
+      max-lifetime: 900000
 dev:
   username: user
   password: password
@@ -63,6 +63,9 @@ authentication:
   ataru:
     username: {{oppijanumerorekisteri_ataru_username}}
     password: {{oppijanumerorekisteri_ataru_password}}
+  henkilotietomuutos:
+    username: {{authentication_app_username_to_henkilotietomuutos}}
+    password: {{authentication_app_password_to_henkilotietomuutos}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   henkilo-viite-split-size: 5000
@@ -73,3 +76,6 @@ oppijanumerorekisteri:
       fixed-delay-in-millis: 900000
       batch-size: 300
       vtj-request-delay-in-millis: 200
+    vtjsync:
+      enabled: true
+      fixed-delay-in-millis: 86400000

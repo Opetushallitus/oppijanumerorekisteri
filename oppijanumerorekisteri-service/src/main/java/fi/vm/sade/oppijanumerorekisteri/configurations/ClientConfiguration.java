@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations;
 
-import fi.vm.sade.javautils.httpclient.ApacheOphHttpClient;
+import fi.vm.sade.javautils.httpclient.apache.ApacheOphHttpClient;
 import fi.vm.sade.javautils.httpclient.OphHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,6 @@ public class ClientConfiguration {
         int timeOut = 10000;
         long connectionLives = 600;
         return ApacheOphHttpClient
-                .createDefaultOphHttpClient(ConfigEnums.SUBSYSTEMCODE.value(), this.urlConfiguration, timeOut, connectionLives);
+                .createDefaultOphClient(ConfigEnums.SUBSYSTEMCODE.value(), this.urlConfiguration, timeOut, connectionLives);
     }
 }

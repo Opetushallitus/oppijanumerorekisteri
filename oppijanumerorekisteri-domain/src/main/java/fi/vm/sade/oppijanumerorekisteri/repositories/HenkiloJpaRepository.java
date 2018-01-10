@@ -166,4 +166,15 @@ public interface HenkiloJpaRepository {
      */
     long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria);
 
+    /**
+     * Palauttaa kaikki sellaiset henkilöt, jotka eivät vielä olleet rekisterissä.
+     * @return henkilöiden hetut
+     */
+    List<String> findHetusMissingFromVTJRegister();
+
+    /**
+     * Asettaa henkilön VTJ rekisteriin.
+     */
+    boolean addHetuToVTJRegister(String hetu);
+
 }

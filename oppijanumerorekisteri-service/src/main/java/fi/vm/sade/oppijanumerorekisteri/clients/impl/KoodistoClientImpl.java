@@ -1,8 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.javautils.httpclient.ApacheOphHttpClient;
 import fi.vm.sade.javautils.httpclient.OphHttpClient;
+import fi.vm.sade.javautils.httpclient.apache.ApacheOphHttpClient;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
@@ -25,7 +25,7 @@ public class KoodistoClientImpl implements KoodistoClient {
     public KoodistoClientImpl(ObjectMapper objectMapper, UrlConfiguration urlConfiguration,
                                   AuthenticationProperties authenticationProperties) {
         this.objectMapper = objectMapper;
-        this.httpClient = ApacheOphHttpClient.createDefaultOphHttpClient("oppijanumerorekisteri.oppijanumerorekisteri-service", urlConfiguration, 10000, 60);
+        this.httpClient = ApacheOphHttpClient.createDefaultOphClient("oppijanumerorekisteri.oppijanumerorekisteri-service", urlConfiguration, 10000, 60);
     }
 
     @Override
