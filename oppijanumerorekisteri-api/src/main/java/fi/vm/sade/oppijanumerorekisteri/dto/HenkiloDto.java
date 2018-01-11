@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import lombok.Builder;
 
@@ -71,5 +72,18 @@ public class HenkiloDto implements Serializable {
     private HenkiloDto huoltaja;
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
+
+    public Optional<String> getYhteystieto(String ryhmaKuvaus, YhteystietoTyyppi yhteystietoTyyppi) {
+        if (yhteystiedotRyhma == null) {
+            return Optional.empty();
+        }
+        return yhteystiedotRyhma.stream()
+                .filter(yhteystietoryhma -> ryhmaKuvaus.equals(yhteystietoryhma.getRyhmaKuvaus()))
+                .flatMap(yhteystietoryhma -> yhteystietoryhma.getYhteystieto().stream())
+                .filter(yhteystieto -> yhteystietoTyyppi.equals(yhteystieto.getYhteystietoTyyppi())
+                        && yhteystieto.getYhteystietoArvo() != null && !yhteystieto.getYhteystietoArvo().isEmpty())
+                .map(YhteystietoDto::getYhteystietoArvo)
+                .findFirst();
+    }
 
 }
