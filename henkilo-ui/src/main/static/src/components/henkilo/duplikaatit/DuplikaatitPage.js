@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import PropTypes from 'prop-types'
 import HenkiloViewDuplikaatit from './HenkiloViewDuplikaatit';
 import Loader from "../../common/icons/Loader";
 import type {L10n} from "../../../types/localisation.type";
@@ -15,12 +14,6 @@ type Props = {
 }
 
 export default class DuplikaatitPage extends React.Component<Props> {
-
-    static proptypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.object.isRequired,
-        henkiloType: PropTypes.string.isRequired,
-    };
 
     render() {
         const L = this.props.l10n[this.props.locale];

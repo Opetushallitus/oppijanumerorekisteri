@@ -25,7 +25,6 @@ public class UrlConfiguration extends OphProperties {
         this.addUrlIfConfigured("front.koodisto.baseUrl", "koodisto-service.baseUrl");
         this.addUrlIfConfigured("front.kayttooikeus.baseUrl", "kayttooikeus-service.baseUrl");
         this.addUrlIfConfigured("front.oppijanumerorekisteri.baseUrl", "oppijanumerorekisteri-service.baseUrl");
-        this.addUrlIfConfigured("front.ataru.baseUrl", "ataru.baseUrl");
         this.addUrlIfConfigured("front.cas.baseUrl", "cas.baseUrl");
         this.addUrlIfConfigured("front.virkailija-raamit.baseUrl", "virkailija-raamit.baseUrl");
     }

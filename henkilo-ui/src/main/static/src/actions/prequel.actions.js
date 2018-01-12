@@ -28,4 +28,3 @@ const fetchKayttooikeusPrequel = async (dispatch: Dispatch) => {
     dispatch(receivedKayttooikeusPrequel());
 };
 
-
