@@ -1,5 +1,6 @@
 // @flow
 import type {TextGroup} from "./textgroup.types";
+import type { MyonnettyKayttooikeusryhma } from "./kayttooikeusryhma.types"
 
 export type Organisaatio = {
     nimi: TextGroup,
@@ -18,14 +19,9 @@ export type OrganisaatioHenkilo = {
     organisaatio: Organisaatio,
 };
 
-export type KutsuKayttooikeusryhma = {
-    ryhmaId: number,
-    ryhmaNames: any,
-}
-
 export type KutsuOrganisaatio = {
     oid: string,
     organisation: {oid: string},
-    selectablePermissions: Array<KutsuKayttooikeusryhma>,
-    selectedPermissions: Array<KutsuKayttooikeusryhma>,
+    selectablePermissions: Array<MyonnettyKayttooikeusryhma>,
+    selectedPermissions: Array<MyonnettyKayttooikeusryhma>,
 };

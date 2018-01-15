@@ -146,6 +146,7 @@ export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) =
             dispatch(receiveAddKayttooikeusToHenkilo(organisaatioOid, payload.map(payload => payload.id)));
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
             dispatch(fetchHenkiloOrgs(henkiloOid));
+            dispatch(getGrantablePrivileges(henkiloOid))
         })
         .catch(() => dispatch(errorAddKayttooikeusToHenkilo(organisaatioOid, payload.map(payload => payload.id))));
 };

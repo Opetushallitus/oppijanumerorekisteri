@@ -14,6 +14,7 @@ EditButtons.propTypes = {
     discardAction: PropTypes.func,
     updateAction: PropTypes.func,
     L: PropTypes.object,
+    isValidForm: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({

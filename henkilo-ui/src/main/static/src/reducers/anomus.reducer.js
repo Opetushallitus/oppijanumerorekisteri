@@ -9,7 +9,9 @@ export const haetutKayttooikeusryhmat = (state = {isLoading: true, data: []}, ac
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST:
             return Object.assign({}, state, {isLoading: true});
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS:
-            return Object.assign({}, state, {isLoading: false, data: [...state.data, ...action.haetutKayttooikeusryhmat]});
+            const uudet = action.haetutKayttooikeusryhmat
+                .filter(uusi => state.data.every(vanha => vanha.id !== uusi.id))
+            return Object.assign({}, state, {isLoading: false, data: [...state.data, ...uudet]});
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE:
             return Object.assign({}, state, {isLoading: false});
         case CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT:

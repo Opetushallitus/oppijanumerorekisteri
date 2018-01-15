@@ -8,16 +8,17 @@ import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
 import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
 type Props = {
     henkilo: any,
     L: L,
     locale: Locale,
-    koodisto: any,
-    setSelection: any,
+    koodisto: KoodistoState,
+    setSelection: (string) => void,
     classNames: any,
-    isMaster: any,
-    header: any,
+    isMaster: boolean,
+    header: string,
     styleClasses?: any,
     yksiloitySelected?: boolean,
     vainLuku?: boolean,
@@ -39,8 +40,9 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
 
     render() {
         const henkilo = this.props.henkilo;
-        const hakemus = R.head(henkilo.hakemukset) || {};
-        const muutHakemukset = R.tail(henkilo.hakemukset);
+        const targetPage = henkilo.henkiloTyyppi === 'OPPIJA' ? 'oppija' : 'virkailija';
+        const hakemus = (henkilo.hakemukset && R.head(henkilo.hakemukset)) || {};
+        const muutHakemukset = (henkilo.hakemukset && R.tail(henkilo.hakemukset)) || [];
         const styleClasses = classNames(this.props.classNames);
         const L = this.props.L;
 
@@ -53,7 +55,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
             <span>{henkilo.sukunimi}</span>
             <span>{henkilo.sukupuoli === '2' ? L['HENKILO_YHTEISET_NAINEN'] : L['HENKILO_YHTEISET_MIES']}</span>
             <span>{henkilo.syntymaaika}</span>
-            <span><Link className="oph-link" to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
+            <span><Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
             <span>{hakemus.kansalaisuus || ''}</span>
             <span>{hakemus.aidinkieli || ''}</span>
             <span>{hakemus.matkapuhelinnumero || ''}</span>

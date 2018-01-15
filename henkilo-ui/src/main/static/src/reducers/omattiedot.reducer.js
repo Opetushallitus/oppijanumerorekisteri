@@ -1,13 +1,42 @@
+// @flow
 import {
     FETCH_OMATTIEDOT_REQUEST, FETCH_OMATTIEDOT_SUCCESS, FETCH_OMATTIEDOT_FAILURE,
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST, FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
     FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_CASME_SUCCESS
 } from '../actions/actiontypes';
 import {getOrganisaatioOptionsAndFilter} from "../components/kutsuminen/OrganisaatioUtilities";
+import type {KayttooikeusOrganisaatiot} from "../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
 
-export const omattiedot = (state = { omattiedotLoading: false, data: undefined, initialized: false,
-    omattiedotOrganisaatiosLoading: false, organisaatios: [], casMeSuccess: false,
-    organisaatioOptions: [], organisaatioOptionsFilter: [], organisaatioRyhmaOptions: [], organisaatioRyhmaFilter: [],}, action) => {
+
+export type OmattiedotState = {|
+    omattiedotLoading: boolean,
+    data: any,
+    initialized: boolean,
+    omattiedotOrganisaatiosLoading: boolean,
+    organisaatios: Array<any>,
+    casMeSuccess: boolean,
+    organisaatioOptions: Array<any>,
+    organisaatioOptionsFilter: Array<any>,
+    organisaatioRyhmaOptions: Array<any>,
+    organisaatioRyhmaFilter: Array<any>,
+    organisaatiot: Array<KayttooikeusOrganisaatiot>
+|}
+
+const initialState: OmattiedotState = {
+    omattiedotLoading: false,
+    data: undefined,
+    initialized: false,
+    omattiedotOrganisaatiosLoading: false,
+    organisaatios: [],
+    casMeSuccess: false,
+    organisaatioOptions: [],
+    organisaatioOptionsFilter: [],
+    organisaatioRyhmaOptions: [],
+    organisaatioRyhmaFilter: [],
+    organisaatiot: []
+};
+
+export const omattiedot = (state: OmattiedotState = initialState, action: any) => {
     switch(action.type) {
         case FETCH_OMATTIEDOT_REQUEST:
             return Object.assign({}, state, { omattiedotLoading: true });

@@ -14,8 +14,9 @@ const LocalizedTextGroup = (props: Props) => {
         return null;
     }
     const lang = props.locale.toUpperCase();
-    const localizedText: any = R.find(R.propEq('lang', lang))(props.texts);
-    return <span>{localizedText.text}</span>
+    const localizedText: ?Text = props.texts.find(text => text.lang.toUpperCase() === lang)
+    const text = localizedText ? localizedText.text : ''
+    return <span>{text}</span>
 };
 
 export default LocalizedTextGroup;

@@ -51,7 +51,7 @@ export const http = {
         body: JSON.stringify(payload),
         headers: {
             ...getCommonOptions().headers,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
         },
         }).then(parseResponseBody)
         .then((response) => resolveResponse(response, resolve, reject))
@@ -63,7 +63,7 @@ export const http = {
         body: JSON.stringify(payload),
         headers: {
             ...getCommonOptions().headers,
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
         },
         }).then(parseResponseBody)
         .then((response) => resolveResponse(response, resolve, reject))

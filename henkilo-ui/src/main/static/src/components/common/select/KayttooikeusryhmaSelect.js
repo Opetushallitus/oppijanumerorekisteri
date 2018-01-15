@@ -70,7 +70,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
     render() {
         const invalid = !this.state.valittu;
         return (
-            <form onSubmit={this.onSubmit} className="flex-horizontal KayttooikeusryhmaSelect">
+            <div className="flex-horizontal KayttooikeusryhmaSelect">
                 <div className="flex-1 flex-same-size">
                     <input
                         className="oph-input"
@@ -83,13 +83,14 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
                 </div>
                 <div className="flex-1 flex-same-size valinta">
                     {this.renderValittuKayttooikeusryhma(this.state.valittu)}
-                    <button type="submit"
+                    <button type="button"
                             className="oph-button oph-button-primary lisaa"
+                            onClick={this.onSubmit}
                             disabled={invalid}>
                         {this.props.L['OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN']}
                     </button>
                 </div>
-            </form>
+            </div>
         )
     }
 

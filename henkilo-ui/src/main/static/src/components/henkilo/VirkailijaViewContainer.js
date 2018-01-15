@@ -17,7 +17,7 @@ import {
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 
 class VirkailijaViewContainer extends React.Component {
-    componentDidMount() {
+    async componentDidMount() {
         this.props.clearHenkilo();
         if (this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.replace('/omattiedot');
@@ -29,7 +29,7 @@ class VirkailijaViewContainer extends React.Component {
             const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
             this.props.updateHenkiloNavigation(tabs);
 
-            this.props.fetchHenkilo(this.props.oidHenkilo);
+            await this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
             this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
             this.props.fetchKieliKoodisto();

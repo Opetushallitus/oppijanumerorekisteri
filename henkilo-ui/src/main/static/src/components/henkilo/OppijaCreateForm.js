@@ -11,6 +11,7 @@ import KielisyysSelect from '../common/select/KielisyysSelect'
 import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect'
 import {isValidKutsumanimi} from '../../validation/KutsumanimiValidator'
 import type {L} from "../../types/localisation.type";
+import LoaderWithText from "../common/loadingbar/LoaderWithText";
 
 type Error = {
     name: string,
@@ -33,6 +34,7 @@ type Props = {
 
 type State = {
     disabled: boolean,
+    loading: boolean,
     submitted: boolean,
     errors: Array<Error>,
     henkilo: HenkiloCreate,
@@ -41,11 +43,12 @@ type State = {
 
 const initialState = {
     disabled: false,
+    loading: false,
     submitted: false,
     errors: [],
     henkilo: {etunimet: '', kutsumanimi: '', sukunimi: ''},
     form: {passinumero: '', sahkoposti: ''},
-}
+};
 
 /**
  * Oppijan luonti -lomake.
@@ -53,7 +56,7 @@ const initialState = {
 class OppijaCreateForm extends React.Component<Props, State> {
 
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = initialState
     }
@@ -62,7 +65,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
         // oppijanumerorekisteri käyttää kielikoodiston koodeja pienillä kirjaimilla
         const kieliKoodisto = this.props.kieliKoodisto.map(koodi => {
             return {...koodi, koodiArvo: koodi.koodiArvo.toLowerCase()}
-        })
+        });
         return (
             <form onSubmit={this.tallenna}>
                 <div className="oph-field oph-field-is-required">
@@ -70,7 +73,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['HENKILO_ETUNIMET']}
                     </label>
                     <input
-                        className={classNames('oph-input', {'oph-input-has-error': this.hasError('etunimet')})}
+                        className={classNames('oph-input', {'oph-input-has-error': this.isSubmittedAndHasError('etunimet')})}
                         placeholder={this.props.L['HENKILO_ETUNIMET']}
                         type="text"
                         name="etunimet"
@@ -98,7 +101,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['HENKILO_SUKUNIMI']}
                     </label>
                     <input
-                        className={classNames('oph-input', {'oph-input-has-error': this.hasError('sukunimi')})}
+                        className={classNames('oph-input', {'oph-input-has-error': this.isSubmittedAndHasError('sukunimi')})}
                         placeholder={this.props.L['HENKILO_SUKUNIMI']}
                         type="text"
                         name="sukunimi"
@@ -111,9 +114,9 @@ class OppijaCreateForm extends React.Component<Props, State> {
                     <label className="oph-label">
                         {this.props.L['HENKILO_SYNTYMAAIKA']}
                     </label>
-                    <div></div>
+                    <div/>
                     <SimpleDatePicker
-                        className={classNames('oph-input', {'oph-input-has-error': this.hasError('syntymaaika')})}
+                        className={classNames('oph-input', {'oph-input-has-error': this.isSubmittedAndHasError('syntymaaika')})}
                         placeholder={this.props.L['HENKILO_SYNTYMAAIKA']}
                         value={this.state.henkilo.syntymaaika}
                         onChange={(value) => this.onHenkiloChange({name: 'syntymaaika', value: value})}
@@ -125,7 +128,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['HENKILO_SUKUPUOLI']}
                     </label>
                     <KoodistoSelect
-                        className={classNames({'oph-input-has-error': this.hasError('sukupuoli')})}
+                        className={classNames({'oph-input-has-error': this.isSubmittedAndHasError('sukupuoli')})}
                         placeholder={this.props.L['HENKILO_SUKUPUOLI']}
                         koodisto={this.props.sukupuoliKoodisto}
                         value={this.state.henkilo.sukupuoli}
@@ -138,7 +141,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['HENKILO_AIDINKIELI']}
                     </label>
                     <KielisyysSelect
-                        className={classNames({'oph-input-has-error': this.hasError('aidinkieli')})}
+                        className={classNames({'oph-input-has-error': this.isSubmittedAndHasError('aidinkieli')})}
                         placeholder={this.props.L['HENKILO_AIDINKIELI']}
                         koodisto={kieliKoodisto}
                         value={this.state.henkilo.aidinkieli}
@@ -151,7 +154,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['HENKILO_KANSALAISUUS']}
                     </label>
                     <KansalaisuusMultiSelect
-                        className={classNames({'oph-input-has-error': this.hasError('kansalaisuus')})}
+                        className={classNames({'oph-input-has-error': this.isSubmittedAndHasError('kansalaisuus')})}
                         placeholder={this.props.L['HENKILO_KANSALAISUUS']}
                         koodisto={this.props.kansalaisuusKoodisto}
                         value={this.state.henkilo.kansalaisuus}
@@ -164,7 +167,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['HENKILO_PASSINUMERO']}
                     </label>
                     <input
-                        className={classNames('oph-input', {'oph-input-has-error': this.hasError('passinumero')})}
+                        className={classNames('oph-input', {'oph-input-has-error': this.isSubmittedAndHasError('passinumero')})}
                         placeholder={this.props.L['HENKILO_PASSINUMERO']}
                         type="text"
                         name="passinumero"
@@ -178,7 +181,7 @@ class OppijaCreateForm extends React.Component<Props, State> {
                         {this.props.L['YHTEYSTIETO_SAHKOPOSTI']}
                     </label>
                     <input
-                        className={classNames('oph-input', {'oph-input-has-error': this.hasError('sahkoposti')})}
+                        className={classNames('oph-input', {'oph-input-has-error': this.isSubmittedAndHasError('sahkoposti')})}
                         placeholder={this.props.L['YHTEYSTIETO_SAHKOPOSTI']}
                         type="email"
                         name="sahkoposti"
@@ -188,13 +191,15 @@ class OppijaCreateForm extends React.Component<Props, State> {
                     {this.renderErrors('sahkoposti')}
                 </div>
                 <div className="oph-field">
-                    <button type="submit"
-                            className="oph-button oph-button-primary"
-                            disabled={this.state.disabled}>
-                        {this.props.L['TALLENNA_LINKKI']}
-                    </button>
+                    {!this.state.loading
+                        ? <button type="submit"
+                                  className="oph-button oph-button-primary"
+                                  disabled={this.state.disabled}>
+                            {this.props.L['TALLENNA_LINKKI']}
+                        </button>
+                        : <LoaderWithText labelkey="LOMAKE_LOADING" />}
                     {this.state.submitted && this.state.errors.length > 0 &&
-                        <span className="oph-field-text oph-error">{this.props.L['LOMAKE_SISALTAA_VIRHEITA']}</span>
+                    <span className="oph-field-text oph-error">{this.props.L['LOMAKE_SISALTAA_VIRHEITA']}</span>
                     }
                 </div>
             </form>
@@ -203,25 +208,41 @@ class OppijaCreateForm extends React.Component<Props, State> {
 
     onHenkiloInputChange = (event: SyntheticEvent<HTMLInputElement>) => {
         this.onHenkiloChange({name: event.currentTarget.name, value: event.currentTarget.value})
-    }
+    };
 
     onHenkiloChange = (event: {name: string, value: any}) => {
-        const henkilo = {...this.state.henkilo, [event.name]: event.value}
-        const state: State = {henkilo: henkilo, form: this.state.form, disabled: this.state.disabled, submitted: this.state.submitted, errors: this.state.errors}
+        const henkilo = {...this.state.henkilo, [event.name]: event.value};
+        const state: State = {
+            ...this.state,
+            henkilo: henkilo,
+        };
+        const errors = [...this.state.errors];
         if (this.state.submitted) {
-            state.errors = this.validate(henkilo)
+            state.errors = this.validate(henkilo);
+        }
+        else {
+            if (!this.hasError('kutsumanimi') && !isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
+                errors.push({name: 'kutsumanimi', value: this.props.L['HENKILO_KUTSUMANIMI_VALIDOINTI']});
+                state.errors = errors;
+            }
+            else if (this.hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
+                state.errors = errors.filter(error => error.name !== 'kutsumanimi');
+            }
         }
         this.setState(state)
-    }
+    };
 
     onFormInputChange = (event: SyntheticEvent<HTMLInputElement>) => {
-        const form = {...this.state.form, [event.currentTarget.name]: event.currentTarget.value}
-        const state: State = {henkilo: this.state.henkilo, form: form, disabled: this.state.disabled, submitted: this.state.submitted, errors: this.state.errors}
+        const form = {...this.state.form, [event.currentTarget.name]: event.currentTarget.value};
+        const state: State = {
+            ...this.state,
+            form: form,
+        };
         this.setState(state)
-    }
+    };
 
     validate = (henkilo: HenkiloCreate) => {
-        let errors = []
+        let errors = [];
 
         if (!henkilo.etunimet) {
             errors.push({name: 'etunimet', value: this.props.L['LOMAKE_PAKOLLINEN_TIETO']})
@@ -249,39 +270,41 @@ class OppijaCreateForm extends React.Component<Props, State> {
         }
 
         return errors
-    }
+    };
 
-    hasError = (name: string): boolean => {
+    isSubmittedAndHasError = (name: string): boolean => {
         return this.state.submitted && this.state.errors.findIndex(error => error.name === name) !== -1
-    }
+    };
+
+    hasError = (name: string): boolean => this.state.errors.findIndex(error => error.name === name) !== -1;
 
     renderErrors = (name: string) => {
         return this.state.errors.filter(error => error.name === name).map(this.renderError)
-    }
+    };
 
     renderError = (error: Error, index: number) => {
         return <div key={index} className="oph-field-text oph-error">{error.value}</div>
-    }
+    };
 
     tallenna = async (event: SyntheticEvent<HTMLButtonElement>) => {
-        event.preventDefault()
+        event.preventDefault();
 
-        const errors = this.validate(this.state.henkilo)
+        const errors = this.validate(this.state.henkilo);
         if (errors.length > 0) {
             this.setState({submitted: true, errors: errors})
         } else {
-            await this.setState({disabled: true})
+            await this.setState({disabled: true, loading: true});
             try {
                 await this.props.tallenna(this.getHenkilo())
             } catch (error) {
-                await this.setState({disabled: false})
+                await this.setState({disabled: false, loading: true})
             }
         }
-    }
+    };
 
     // palauttaa lomakkeelta henkilön kaikki tiedot valmiina lähetettäväksi
     getHenkilo = (): HenkiloCreate => {
-        const properties = PropertySingleton.getState()
+        const properties = PropertySingleton.getState();
         return {...this.state.henkilo,
             passinumerot: this.state.form.passinumero ? [this.state.form.passinumero] : null,
             yhteystiedotRyhma: this.state.form.sahkoposti ? [{

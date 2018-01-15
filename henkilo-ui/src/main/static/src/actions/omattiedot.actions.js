@@ -13,6 +13,7 @@ import {
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
 import type {OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Omattiedot} from "../types/domain/kayttooikeus/Omattiedot.types";
 
 type GetState = () => {
     omattiedot: {
@@ -22,16 +23,6 @@ type GetState = () => {
         organisaatios: Array<OrganisaatioHenkilo>,
     },
     locale: string,
-}
-
-type OmattiedotResponse = {
-    oidHenkilo: string,
-    isAdmin: boolean,
-    isMiniAdmin: boolean,
-    organisaatiot: Array<{
-        organisaatioOid: string,
-        kayttooikeudet: Array<{oikeus: string, palvelu: string,}>
-    }>
 }
 
 export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) => {
@@ -53,14 +44,14 @@ export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) 
 };
 
 const requestOmattiedot = () : {type: string} => ({type: FETCH_OMATTIEDOT_REQUEST});
-const receiveOmattiedotSuccess = (json: OmattiedotResponse) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
+const receiveOmattiedotSuccess = (json: Omattiedot) => ({type: FETCH_OMATTIEDOT_SUCCESS, omattiedot: json});
 const receiveOmattiedotFailure = (error) => ({type: FETCH_OMATTIEDOT_FAILURE, error});
 export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetState) => {
     if (!getState().omattiedot.data) {
         dispatch(requestOmattiedot());
         const url = urls.url('kayttooikeus-service.henkilo.current.omattiedot');
         try {
-            const omattiedot = await http.get(url);
+            const omattiedot: Omattiedot = await http.get(url);
             dispatch(receiveOmattiedotSuccess(omattiedot));
         } catch (error) {
             dispatch(receiveOmattiedotFailure(error));

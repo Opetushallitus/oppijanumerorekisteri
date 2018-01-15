@@ -73,7 +73,7 @@ export const naviState = (state: State = initialState , action: Action) => {
         // These two are needed for localizing page titles
         // L10N is guaranteed to be called first. Check frontProperties.actions.js for more information.
         case FETCH_LOCALISATIONS_SUCCESS:
-            return Object.assign({}, state, {l10n: action.henkiloUiLocalisations});
+            return Object.assign({}, state, {l10n: action.localisations});
         case FETCH_HENKILO_ASIOINTIKIELI_SUCCESS:
             return Object.assign({}, state, {L: state.l10n[action.lang] || {}});
         default:
