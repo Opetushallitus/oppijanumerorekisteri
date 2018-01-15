@@ -1,5 +1,5 @@
 // @flow
-import VirkailijaDuplikaatitPage from './DuplikaatitPage';
+import DuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
 import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster, linkHenkilos} from '../../../actions/henkilo.actions';
@@ -32,21 +32,19 @@ type Props = {
 
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {
 
-    componentDidMount() {
-        this.props.fetchHenkilo(this.props.oidHenkilo);
+    async componentDidMount() {
         this.props.fetchOmattiedot();
-        this.props.fetchHenkiloMaster(this.props.oidHenkilo);
-        this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchMaatJaValtiotKoodisto();
         this.props.fetchKieliKoodisto();
-
+        this.props.fetchHenkiloMaster(this.props.oidHenkilo);
+        this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
+        await this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.updateHenkiloNavigation(henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, this.props.henkiloType));
     }
 
     render() {
-
-        return <VirkailijaDuplikaatitPage {...this.props} />
+        return <DuplikaatitPage {...this.props} />;
     }
 
 }
@@ -57,7 +55,7 @@ const mapStateToProps = (state, ownProps) => {
         henkiloType: ownProps.params['henkiloType'],
         l10n: state.l10n.localisations,
         locale: state.locale,
-        henkilo: state.henkilo.henkilo,
+        henkilo: state.henkilo,
         koodisto: state.koodisto,
         notifications: state.notifications.duplicatesNotifications,
     };

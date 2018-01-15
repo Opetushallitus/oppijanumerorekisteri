@@ -27,7 +27,7 @@ type State = {
     checkboxValue: boolean,
 }
 
-export default class DuplikaatitPrimaryInformation extends React.Component<Props, State> {
+export default class DuplikaatitPerson extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
