@@ -5,12 +5,14 @@ import Loader from "../../common/icons/Loader";
 import type {L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
 type Props = {
     l10n: L10n,
     locale: Locale,
     henkiloType: string,
     henkilo: HenkiloState,
+    koodisto: KoodistoState
 }
 
 export default class DuplikaatitPage extends React.Component<Props> {

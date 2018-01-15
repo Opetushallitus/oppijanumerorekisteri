@@ -14,6 +14,7 @@ import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 import type {Locale} from '../../../types/locale.type'
 import type {L} from '../../../types/localisation.type'
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
 type Props = {
     router: any,
@@ -22,7 +23,7 @@ type Props = {
     oidHenkilo: string,
     henkilo: HenkiloState,
     henkiloType: string,
-    koodisto: any,
+    koodisto: KoodistoState,
     notifications: Array<Notification>,
     removeNotification: (string, string, ?string) => void,
     linkHenkilos: (masterOid: string, slaveOids: Array<string>, notificationId: number) => void,
