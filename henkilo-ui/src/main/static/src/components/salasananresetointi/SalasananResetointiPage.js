@@ -6,11 +6,11 @@ import type {Locale} from '../../types/locale.type';
 import type {L} from '../../types/localisation.type';
 import './SalasananResetointiPage.css';
 import {updateUnauthenticatedNavigation} from "../../actions/navigation.actions";
-import PropertySingleton from '../../globals/PropertySingleton';
 import {urls} from 'oph-urls-js';
 import {http} from "../../http";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import WideGreenNotification from "../common/notifications/WideGreenNotification";
+import {isValidPassword} from "../../validation/PasswordValidator";
 
 type Props = {
     L: L,
@@ -83,6 +83,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
                     <div className="oph-field-text">{this.props.L['SALASANA_OHJE']}</div>
                 </div>
 
+                
+
                 { this.state.toggleVirhe ?
                     <WideRedNotification message={errorMessage}
                                          closeAction={() => this.setState({toggleVirhe: false})}/>
@@ -108,8 +110,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
     validPassword() {
         return this.state.password === this.state.passwordAgain
-            && this.state.password.length >= PropertySingleton.getState().minimunPasswordLength
-            && PropertySingleton.getState().specialCharacterRegex.exec(this.state.password) !== null;
+            && isValidPassword(this.state.password);
     }
 
     setPassword = (event) => {

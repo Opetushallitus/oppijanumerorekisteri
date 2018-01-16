@@ -1,6 +1,5 @@
 import {
-    ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, UPDATE_PASSWORD_SUCCESS,
-    UPDATE_PASSWORD_FAILURE, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
+    ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
     VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE, LINK_HENKILOS_SUCCESS,
     FETCH_HENKILO_DUPLICATES_SUCCESS,
     LINK_HENKILOS_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE
@@ -78,28 +77,6 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     type: 'error',
                     notL10nMessage: action.notL10nMessage || 'NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI',
                     id: action.id,
-                }],
-            };
-        case UPDATE_PASSWORD_SUCCESS:
-            return {
-                ...state,
-                updatePassword: [{
-                    type: 'ok',
-                    notL10nMessage: 'NOTIFICATION_SALASANA_OK_TOPIC',
-                    notL10nTopic: 'NOTIFICATION_SALASANA_OK_TOPIC',
-                    notL10nText: 'NOTIFICATION_SALASANA_OK_TEXT',
-                    id: 1
-                }],
-            };
-        case UPDATE_PASSWORD_FAILURE:
-            return {
-                ...state,
-                updatePassword: [{
-                    type: 'error',
-                    notL10nMessage: 'NOTIFICATION_SALASANA_ERROR_TOPIC',
-                    notL10nTopic: 'NOTIFICATION_SALASANA_ERROR_TOPIC',
-                    notL10nText: 'NOTIFICATION_SALASANA_ERROR_TEXT',
-                    id: 1
                 }],
             };
         case HENKILOHAKU_FAILURE:

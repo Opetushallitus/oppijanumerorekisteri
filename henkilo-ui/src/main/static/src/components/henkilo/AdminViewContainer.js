@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux';
 import {
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, updatePassword, fetchHenkiloSlaves, clearHenkilo
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, fetchHenkiloSlaves, clearHenkilo
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -77,7 +77,6 @@ export default connect(mapStateToProps, {
     fetchSukupuoliKoodisto,
     fetchYhteystietotyypitKoodisto,
     fetchKayttajatieto,
-    updatePassword,
     updateHenkiloNavigation,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
