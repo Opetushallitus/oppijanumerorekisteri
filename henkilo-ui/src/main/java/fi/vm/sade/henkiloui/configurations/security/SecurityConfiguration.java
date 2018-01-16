@@ -133,6 +133,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers("/l10n").permitAll()
                     .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
                     .antMatchers("/vahvatunnistusinfo/virhe/*/*").permitAll()
+                    .antMatchers("/vahvatunnistusinfo/lisatiedot/**").permitAll()
                     .antMatchers("/rekisteroidy").permitAll()
                     .antMatchers("/salasananresetointi/*/*").permitAll()
                     // Admin domain
