@@ -12,6 +12,18 @@ class VahvaTunnistusInfoContainer extends React.Component {
                               text="VAHVATUNNISTUSINFO_VIRHE_TOKEN_TEKSTI"
                               buttonText="VAHVATUNNISTUSINFO_VIRHE_TOKEN_LINKKI" />;
         }
+        else if (this.props.loginToken === 'vaara') {
+            return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_HETU_VAARA_OTSIKKO"
+                              text="VAHVATUNNISTUSINFO_VIRHE_HETU_VAARA_TEKSTI"
+                              buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
+                              />;
+        }
+        else if (this.props.loginToken === 'kaytossa') {
+            return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_HETU_KAYTOSSA_OTSIKKO"
+                              text="VAHVATUNNISTUSINFO_VIRHE_HETU_KAYTOSSA_TEKSTI"
+                              buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
+                              />;
+        }
         else if(this.props.virhe) {
             return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO"
                               text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
