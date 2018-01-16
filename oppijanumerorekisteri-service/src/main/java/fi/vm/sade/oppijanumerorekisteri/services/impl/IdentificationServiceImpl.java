@@ -4,14 +4,11 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
-import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
@@ -24,8 +21,6 @@ import java.util.Optional;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -125,26 +120,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
 
         if (StringUtils.hasLength(henkiloVahvaTunnistusDto.getTyosahkopostiosoite())) {
-            Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloToUpdate.getYhteystiedotRyhma();
-            YhteystiedotRyhma yhteystietoryhma = yhteystietoryhmat.stream()
-                    .filter(ytr -> YhteystietoryhmaUtils.TYYPPI_TYOOSOITE.equals(ytr.getRyhmaKuvaus()))
-                    .filter(ytr -> !ytr.isReadOnly())
-                    .findFirst().orElseGet(() -> {
-                        YhteystiedotRyhma ytr = new YhteystiedotRyhma();
-                        ytr.setRyhmaKuvaus(YhteystietoryhmaUtils.TYYPPI_TYOOSOITE);
-                        ytr.setYhteystieto(new HashSet<>());
-                        yhteystietoryhmat.add(ytr);
-                        return ytr;
-                    });
-            Yhteystieto yhteystieto = yhteystietoryhma.getYhteystieto().stream()
-                    .filter(yt -> YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI.equals(yt.getYhteystietoTyyppi()))
-                    .findFirst().orElseGet(() -> {
-                        Yhteystieto yt = new Yhteystieto();
-                        yt.setYhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI);
-                        yhteystietoryhma.getYhteystieto().add(yt);
-                        return yt;
-                    });
-            yhteystieto.setYhteystietoArvo(henkiloVahvaTunnistusDto.getTyosahkopostiosoite());
+            YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite());
         }
 
         henkiloRepository.save(henkiloToUpdate);
