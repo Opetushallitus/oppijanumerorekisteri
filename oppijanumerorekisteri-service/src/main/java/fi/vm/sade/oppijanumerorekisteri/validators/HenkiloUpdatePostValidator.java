@@ -52,12 +52,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .ifPresent(henkilo -> validateHetu(henkilo, henkiloUpdateDto, errors));
 
-        validateKutsumanimi(henkiloUpdateDto, errors);
-
-        KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
-        validateSukupuoli(henkiloUpdateDto, koodiValidator);
-        validateKansalaisuus(henkiloUpdateDto, koodiValidator);
-        validateYhteystiedot(henkiloUpdateDto, koodiValidator);
+        this.validateWithoutHetu(henkiloUpdateDto, errors);
     }
 
     public void validateWithoutHetu(Object o, Errors errors) {
@@ -114,7 +109,7 @@ public class HenkiloUpdatePostValidator implements Validator {
     }
 
     private void validateHetu(Henkilo henkiloByOid, HenkiloUpdateDto dto, Errors errors) {
-        if (!Objects.equals(henkiloByOid.getHetu(), dto.getHetu())) {
+        if (dto.getHetu() != null && !Objects.equals(henkiloByOid.getHetu(), dto.getHetu())) {
             if (henkiloByOid.isYksiloityVTJ()) {
                 // estetään hetun muuttaminen jos yksilöinti on jo tehty
                 errors.rejectValue("hetu", "socialsecuritynr.already.set");
