@@ -101,7 +101,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
             this.setState({ ...this.state, form: form })
             if (this.state.form.errors.length === 0) {
                 const tunnistusParameters = { kielisyys: this.props.locale, loginToken: this.props.loginToken }
-                const tunnistusUrl = urls.url('kayttooikeus-service.cas.tunnistus.lisatiedot', tunnistusParameters)
+                const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters)
                 const loginParameters = await http.post(tunnistusUrl, form.values)
                 const loginUrl = urls.url('cas.login', loginParameters)
                 window.location.replace(loginUrl)
