@@ -10,6 +10,8 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
@@ -112,8 +114,9 @@ public class HenkiloUpdatePostValidatorTest {
         verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.set"));
     }
 
+    // null hetu = not updated
     @Test
-    public void validateShouldRejectNullHetuWhenYksiloituVtjIsTrue() {
+    public void validateShouldNotRejectNullHetuWhenYksiloituVtjIsTrue() {
         HenkiloUpdateDto dto = new HenkiloUpdateDto();
         dto.setHetu(null);
         Henkilo entity = new Henkilo();
@@ -123,7 +126,7 @@ public class HenkiloUpdatePostValidatorTest {
 
         validator.validate(dto, errors);
 
-        verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.set"));
+        verifyZeroInteractions(this.errors);
     }
 
     @Test
@@ -158,5 +161,4 @@ public class HenkiloUpdatePostValidatorTest {
 
         verify(errors).rejectValue(eq("hetu"), eq("socialsecuritynr.already.exists"));
     }
-
 }
