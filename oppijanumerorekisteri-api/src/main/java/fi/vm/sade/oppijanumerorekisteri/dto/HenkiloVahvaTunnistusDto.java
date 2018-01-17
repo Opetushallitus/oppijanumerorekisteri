@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import static java.util.Objects.requireNonNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,15 +14,20 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HenkiloVahvaTunnistusDto {
+
     @NotNull
     @Size(min = 1)
     private String hetu;
 
-    @NotNull
-    @Size(min = 1)
-    private String etunimet;
+    private String tyosahkopostiosoite;
 
-    @NotNull
-    @Size(min = 1)
-    private String sukunimi;
+    public HenkiloVahvaTunnistusDto(String hetu) {
+        this.hetu = requireNonNull(hetu);
+    }
+
+    @Deprecated
+    public HenkiloVahvaTunnistusDto(String hetu, String etunimet, String sukunimi) {
+        this(hetu);
+    }
+
 }

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -115,6 +116,12 @@ public class IdentificationServiceImpl implements IdentificationService {
 
         // No current hetu and hetu not already used => set hetu
         this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
+
+        if (StringUtils.hasLength(henkiloVahvaTunnistusDto.getTyosahkopostiosoite())) {
+            YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite());
+        }
+
+        henkiloRepository.save(henkiloToUpdate);
     }
 
     private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
