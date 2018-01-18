@@ -21,6 +21,8 @@ import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
 import {hasAnyPalveluRooli} from "../../../../utilities/organisaatio.util";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
+import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
+import MasterHenkilo from '../labelvalues/MasterHenkilo';
 
 type Props = {
     readOnly: boolean,
@@ -35,6 +37,7 @@ type Props = {
     L: L,
     locale: Locale,
     yksiloiHenkilo: () => void,
+    oidHenkilo: string,
     isValidForm: boolean,
     omattiedot: OmattiedotState
 }
@@ -86,7 +89,8 @@ class OppijaUserContent extends React.Component<Props, State> {
                 <Asiointikieli {...basicInfoProps} />,
             ],
             [
-
+                <LinkitetytHenkilot />,
+                <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />
             ],
         ];
     };
