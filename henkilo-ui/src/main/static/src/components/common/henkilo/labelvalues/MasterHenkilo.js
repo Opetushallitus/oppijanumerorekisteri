@@ -15,6 +15,7 @@ type Props = {
     L: L,
     fetchHenkiloMaster: (string) => void,
     unlinkHenkilo: (string, string) => void,
+    oppija?: boolean,
 }
 
 class MasterHenkilo extends React.Component<Props> {
@@ -41,7 +42,7 @@ class MasterHenkilo extends React.Component<Props> {
                         values={{
                             value:
                                 <div className="nowrap">
-                                    <Link to={'/virkailija/' + this.props.henkilo.master.oidHenkilo}>
+                                    <Link to={this.getLinkHref(this.props.henkilo.master.oidHenkilo)}>
                                         {this.props.henkilo.master.kutsumanimi + ' ' + this.props.henkilo.master.sukunimi}
                                     </Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.master.oidHenkilo, this.props.oidHenkilo)}>
                                     {this.props.L['HENKILO_POISTA_LINKITYS']}
@@ -53,6 +54,11 @@ class MasterHenkilo extends React.Component<Props> {
                     : null
             }
             </div>;
+    }
+
+    getLinkHref(oid) {
+        const url = this.props.oppija ? 'oppija' : 'virkailija'
+        return `/${url}/${oid}`
     }
 
     async removeLink(masterOid, slaveOid) {

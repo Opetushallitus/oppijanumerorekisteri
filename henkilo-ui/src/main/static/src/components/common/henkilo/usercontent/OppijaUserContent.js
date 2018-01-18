@@ -89,8 +89,8 @@ class OppijaUserContent extends React.Component<Props, State> {
                 <Asiointikieli {...basicInfoProps} />,
             ],
             [
-                <LinkitetytHenkilot />,
-                <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />
+                <LinkitetytHenkilot oppija={true} />,
+                <MasterHenkilo oidHenkilo={this.props.oidHenkilo} oppija={true} />
             ],
         ];
     };

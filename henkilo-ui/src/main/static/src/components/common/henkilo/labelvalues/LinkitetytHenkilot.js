@@ -15,6 +15,7 @@ type Props = {
     L: L,
     unlinkHenkilo: (string, string) => void,
     fetchHenkiloSlaves: (string) => void,
+    oppija?: boolean,
 }
 
 class LinkitetytHenkilot extends React.Component<Props> {
@@ -46,13 +47,18 @@ class LinkitetytHenkilot extends React.Component<Props> {
             ? <div>
                 {this.props.henkilo.slaves.map((slave, index) =>
                     <div key={index} className="nowrap">
-                        <Link to={'/virkailija/' + slave.oidHenkilo}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
+                        <Link to={this.getLinkHref(slave.oidHenkilo)}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
                         {this.props.L['HENKILO_POISTA_LINKITYS']}
                     </TextButton>
                     </div>
                 )}
             </div>
             : null;
+    }
+
+    getLinkHref(oid) {
+        const url = this.props.oppija ? 'oppija' : 'virkailija'
+        return `/${url}/${oid}`
     }
 
     async removeLink(masterOid, slaveOid) {
