@@ -379,6 +379,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
         henkilo.setVtjsynced(new Date());
+        henkiloService.update(henkilo);
     }
 
     @Override
@@ -425,6 +426,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         yksilointitietoRepository.delete(yksilointitieto);
+        henkiloService.update(henkilo);
     }
 
     @Override
