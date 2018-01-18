@@ -1,52 +1,80 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.generic.rest.CachingRestClient;
+import fi.vm.sade.javautils.http.OphHttpRequest;
+import fi.vm.sade.javautils.http.OphHttpResponse;
+import fi.vm.sade.javautils.http.auth.CasAuthenticator;
+import fi.vm.sade.javautils.http.OphHttpClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class AtaruClientImpl implements AtaruClient{
 
     private final ObjectMapper objectMapper;
     private final UrlConfiguration urlConfiguration;
-    private final static CachingRestClient cachingRestClient = new CachingRestClient()
-            .setClientSubSystemCode("oppijanumerorekisteri.oppijanumerorekisteri-service");
+    private final AuthenticationProperties authenticationProperties;
+    private final OphHttpClient ophHttpClient;
 
     @Autowired
     public AtaruClientImpl(ObjectMapper objectMapper, UrlConfiguration urlConfiguration,
                            AuthenticationProperties authenticationProperties) {
-        String username = authenticationProperties.getAtaru().getUsername();
-        String password = authenticationProperties.getAtaru().getPassword();
-
+        this.authenticationProperties = authenticationProperties;
         this.objectMapper = objectMapper;
         this.urlConfiguration = urlConfiguration;
-        cachingRestClient.setWebCasUrl(this.urlConfiguration.url("cas.url"));
-        cachingRestClient.setCasService(this.urlConfiguration.url("cas.service.ataru"));
-        cachingRestClient.setUsername(authenticationProperties.getAtaru().getUsername());
-        cachingRestClient.setPassword(authenticationProperties.getAtaru().getPassword());
+        this.ophHttpClient = createOphHttpClient();
     }
 
     @Override
     public Map<String, List<Map<String, Object>>> fetchApplicationsByOid(Set<String> oids) {
-      String url = this.urlConfiguration.url("ataru.applications", oids.iterator().next());
-        try {
-            InputStream response = cachingRestClient.get(url);
-            return objectMapper.readValue(
-                    response, new TypeReference<Map<String, List<Map<String, Object>>>>(){});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed fetching hakemukset for henkilos: " + oids.toString(), e);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed fetching hakemukset for henkilos: " + oids.toString(), e);
-        }
+        TypeReference<List<Map<String, Object>>> hakemusType = new TypeReference<List<Map<String, Object>>>() {};
+
+        Map<String, List<Map<String, Object>>> collect = oids.stream()
+                .collect(Collectors.toMap(Function.identity(), oid -> {
+                    OphHttpResponse response = makeRequest(oid);
+                    if (response.getStatusCode() == 200) {
+                        try (InputStream is = response.asInputStream()) {
+                            return objectMapper.readValue(is, hakemusType);
+
+                        } catch (IOException e) {
+                            log.error("Failed to read ataru response: {}", e);
+                            return Collections.emptyList();
+                        }
+                    }
+                    return Collections.emptyList();
+                }));
+        return collect;
+    }
+
+    private OphHttpResponse makeRequest(String oid) {
+        String url = urlConfiguration.url("ataru.applications", oid);
+        OphHttpRequest request = OphHttpRequest.Builder.get(url).build();
+        return this.ophHttpClient.execute(request);
+    }
+
+    private OphHttpClient createOphHttpClient() {
+        CasAuthenticator authenticator = new CasAuthenticator.Builder()
+                .username(authenticationProperties.getAtaru().getUsername())
+                .password(authenticationProperties.getAtaru().getPassword())
+                .webCasUrl(urlConfiguration.url("cas.url"))
+                .casServiceUrl(urlConfiguration.url("cas.service.ataru"))
+                .casServiceSessionInitUrl(urlConfiguration.url("cas.service.ataru"))
+                .sessionCookieName("ring-session")
+                .addSpringSecSuffix(false)
+                .build();
+
+        return new OphHttpClient.Builder().authenticator(authenticator).build();
     }
 }

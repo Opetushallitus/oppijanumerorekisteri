@@ -650,11 +650,29 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .stream().filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(kayttajaOid)).collect(toList()); // remove current user from duplicate search results
         Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
         Map<String, List<Map<String, Object>>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
-        Map<String, List<Map<String, Object>>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
+        addOriginService(hakuAppHakemukset, "haku-app");
 
-        henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakuAppHakemukset.get(h.getOidHenkilo())));
-//        henkiloDuplicateDtos.forEach(h -> h.set)
+        Map<String, List<Map<String, Object>>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
+        addOriginService(ataruHakemukset, "ataru");
+
+        henkiloDuplicateDtos.forEach(duplicate -> {
+            String oidHenkilo = duplicate.getOidHenkilo();
+            List<Map<String, Object>> hakemukset = new ArrayList<>();
+            if(hakuAppHakemukset.get(oidHenkilo) != null) {
+                hakemukset.addAll(hakuAppHakemukset.get(oidHenkilo));
+            }
+            if(ataruHakemukset.get(oidHenkilo) != null) {
+                hakemukset.addAll(ataruHakemukset.get(oidHenkilo));
+            }
+            duplicate.setHakemukset(hakemukset);
+        });
         return henkiloDuplicateDtos;
+    }
+
+    private void addOriginService(Map<String, List<Map<String, Object>>> hakemukset, String originService) {
+        hakemukset.forEach( (key, value) -> {
+            value.forEach( hakemus -> hakemus.put("service", originService));
+        });
     }
 
     @Override
