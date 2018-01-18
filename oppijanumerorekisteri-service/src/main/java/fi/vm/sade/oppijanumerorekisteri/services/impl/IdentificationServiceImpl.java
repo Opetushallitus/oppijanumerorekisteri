@@ -123,7 +123,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite());
         }
 
-        henkiloRepository.save(henkiloToUpdate);
+        henkiloService.update(henkiloToUpdate);
     }
 
     private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {
