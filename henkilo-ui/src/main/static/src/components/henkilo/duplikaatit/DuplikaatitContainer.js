@@ -14,6 +14,7 @@ import {henkiloViewTabs} from "../../navigation/NavigationTabs";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
+import PropertySingleton from '../../../globals/PropertySingleton';
 
 type Props = {
     l10n: L10n,
@@ -35,6 +36,9 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     static propTypes = {  };
 
     async componentDidMount() {
+        if (this.props.externalPermissionService) {
+            PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+        }
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
@@ -114,6 +118,7 @@ const concatApplications = (henkilo, ataruApplications, locale, koodisto) => {
 const mapStateToProps = (state, ownProps) => {
     return {
         oidHenkilo: ownProps.params['oid'],
+        externalPermissionService: ownProps.location.query.permissionCheckService,
         henkiloType: ownProps.params['henkiloType'],
         l10n: state.l10n.localisations,
         locale: state.locale,

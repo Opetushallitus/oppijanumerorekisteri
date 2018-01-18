@@ -12,7 +12,9 @@ import HenkiloViewPage from "./HenkiloViewPage";
 
 class OppijaViewContainer extends React.Component {
     async componentDidMount() {
-        PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+        if (this.props.externalPermissionService) {
+            PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+        }
 
         if (this.props.isAdmin) {
             this.props.router.replace(`/admin/${this.props.oidHenkilo}`);
