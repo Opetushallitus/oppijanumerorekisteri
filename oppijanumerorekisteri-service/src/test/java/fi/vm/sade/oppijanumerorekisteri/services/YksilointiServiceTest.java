@@ -253,6 +253,7 @@ public class YksilointiServiceTest {
         assertThat(henkilo.isYksiloityVTJ()).isTrue();
         assertThat(henkilo.isYksiloity()).isFalse();
         verify(yksilointitietoRepository).delete(eq(yksilointitieto));
+        verify(henkiloService).update(eq(henkilo));
     }
 
     @Test
@@ -274,7 +275,7 @@ public class YksilointiServiceTest {
         yksilointiService.yliajaHenkilonTiedot("");
 
         assertThat(henkilo.getYhteystiedotRyhma().size()).isEqualTo(3);
-
+        verify(henkiloService).update(eq(henkilo));
     }
 
 
