@@ -60,6 +60,9 @@ authentication:
   hakuapp:
     username: {{authentication_app_username_to_haku}}
     password: {{authentication_app_password_to_haku}}
+  ataru:
+    username: {{oppijanumerorekisteri_ataru_username}}
+    password: {{oppijanumerorekisteri_ataru_password}}
   henkilotietomuutos:
     username: {{authentication_app_username_to_henkilotietomuutos}}
     password: {{authentication_app_password_to_henkilotietomuutos}}
