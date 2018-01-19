@@ -62,7 +62,7 @@ public class MuutostietoClientImpl implements MuutostietoClient {
 
     private List<String> deserializeHetus(OphHttpResponse response) {
         try (InputStream is = response.asInputStream()) {
-            return objectMapper.readValue(is, List.class);
+            return objectMapper.readValue(is, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
         } catch (IOException e) {
             log.error("Failed to read response: {}", e);
             return Collections.emptyList();
