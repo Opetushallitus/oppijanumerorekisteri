@@ -33,6 +33,7 @@ import {
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
 import {addGlobalNotification} from "./notification.actions";
+import {NOTIFICATIONTYPES} from "../components/common/Notification/notificationtypes";
 
 const requestHenkilo = (oid) => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
@@ -287,17 +288,29 @@ export const fetchHenkiloMaster = (oidHenkilo) => async (dispatch) => {
 };
 
 const linkHenkilosRequest = (masterOid, slaveOids) => ({type: LINK_HENKILOS_REQUEST, masterOid, slaveOids});
-const linkHenkilosSuccess = (slaveOids, notificationId) => ({type: LINK_HENKILOS_SUCCESS, slaveOids, notificationId});
-const linkHenkilosFailure = (notificationId) => ({type: LINK_HENKILOS_FAILURE, notificationId});
+const linkHenkilosSuccess = (slaveOids) => ({type: LINK_HENKILOS_SUCCESS, slaveOids});
+const linkHenkilosFailure = () => ({type: LINK_HENKILOS_FAILURE});
 
-export const linkHenkilos = (masterOid, slaveOids, notificationId) => async(dispatch) => {
+export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) => async(dispatch) => {
     dispatch(linkHenkilosRequest(masterOid, slaveOids));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.link', masterOid);
     try {
         await http.post(url, slaveOids);
-        dispatch(linkHenkilosSuccess(slaveOids, notificationId));
+        dispatch(linkHenkilosSuccess(slaveOids));
+        dispatch(addGlobalNotification({
+            key: 'LINKED_DUPLICATES_SUCCESS',
+            type: NOTIFICATIONTYPES.SUCCESS,
+            title: successMessage,
+            autoClose: 10000
+        }));
     } catch (error) {
-        dispatch(linkHenkilosFailure(notificationId));
+        dispatch(linkHenkilosFailure());
+        dispatch(addGlobalNotification({
+            key: 'LINKED_DUPLICATES_FAILURE',
+            type: NOTIFICATIONTYPES.ERROR,
+            title: failMessage,
+            autoClose: 10000
+        }));
         throw error;
     }
 };

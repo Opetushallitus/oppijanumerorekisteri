@@ -2,7 +2,7 @@
 import DuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
-import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster, linkHenkilos} from '../../../actions/henkilo.actions';
+import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster} from '../../../actions/henkilo.actions';
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import {fetchKansalaisuusKoodisto,
         fetchMaatJaValtiotKoodisto,
@@ -69,7 +69,6 @@ export default connect(mapStateToProps, {
     fetchKansalaisuusKoodisto,
     fetchMaatJaValtiotKoodisto,
     fetchKieliKoodisto,
-    linkHenkilos,
     updateHenkiloNavigation,
     removeNotification
 })(VirkailijaDuplikaatitContainer);

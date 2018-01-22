@@ -96,11 +96,11 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
     }
 
     _parseAtaruHakemus(hakemus: any): DuplikaatitHakemus {
-        const href = hakemus.haku ? `/lomake-editori/applications/haku/${hakemus.haku}?application-key=${hakemus.oid}` : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`
-        const aidinkieliKoodi = hakemus.aidinkieli.toLocaleLowerCase();
-        const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.maatjavaltiot1, this.props.locale);
-        const kansalaisuusKoodi = hakemus.kansalaisuus.toLocaleLowerCase();
-        const kansalaisuus = this._koodistoLabel(kansalaisuusKoodi, this.props.koodisto.kieli, this.props.locale);
+        const href = hakemus.haku ? `/lomake-editori/applications/haku/${hakemus.haku}?application-key=${hakemus.oid}` : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
+        const aidinkieliKoodi = (hakemus.aidinkieli || "").toLocaleLowerCase();
+        const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
+        const kansalaisuusKoodi = (hakemus.kansalaisuus || "").toLocaleLowerCase();
+        const kansalaisuus = this._koodistoLabel(kansalaisuusKoodi, this.props.koodisto.kansalaisuus, this.props.locale);
 
         return {
             oid: hakemus.oid,
@@ -110,7 +110,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
             sahkoposti: hakemus.email,
             lahiosoite: hakemus.lahiosoite,
             postinumero: hakemus.postinumero,
-            passinumero: hakemus.passinnumero,
+            passinumero: hakemus.passinNumero,
             kansallinenIdTunnus: hakemus.idTunnus,
             href: href,
             state: null
@@ -119,9 +119,9 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
 
     _parseHakuappHakemus(hakemus: any): DuplikaatitHakemus {
         const henkilotiedot = hakemus.answers.henkilotiedot;
-        const aidinkieliKoodi = henkilotiedot.aidinkieli.toLocaleLowerCase();
+        const aidinkieliKoodi = (henkilotiedot.aidinkieli || "").toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
-        const kansalaisuusKoodi = henkilotiedot.kansalaisuus.toLocaleLowerCase();
+        const kansalaisuusKoodi = (henkilotiedot.kansalaisuus || "").toLocaleLowerCase();
         const kansalaisuus = this._koodistoLabel(kansalaisuusKoodi, this.props.koodisto.maatjavaltiot1, this.props.locale);
         return {
             oid: hakemus.oid,
