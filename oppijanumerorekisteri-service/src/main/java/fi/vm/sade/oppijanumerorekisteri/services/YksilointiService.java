@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -38,6 +38,15 @@ public interface YksilointiService {
      * @param henkiloOid
      */
     void yliajaHenkilonTiedot(String henkiloOid);
+
+    /**
+     * Palauttaa epäonnistuneet yksilöinnit.
+     *
+     * @param page sivunumero
+     * @param count sivun koko
+     * @return yksilöintitiedot
+     */
+    Page<YksilointiVertailuDto> listEpaonnistunutYksilointi(int page, int count);
 
     /**
      * Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle.

@@ -335,6 +335,15 @@ public class HenkiloController {
         yksilointiService.yliajaHenkilonTiedot(oid);
     }
 
+    @GetMapping("/yksilointitiedot")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Hakee epäonnistuneet yksilöinnit")
+    public Page<YksilointiVertailuDto> listYksilointitiedot(
+            @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
+            @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
+        return yksilointiService.listEpaonnistunutYksilointi(page, count);
+    }
+
     @GetMapping("/{oid}/yksilointi")
     @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
