@@ -140,7 +140,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
         }
         if (!hasNoDataInconsistency(henkilo)) {
-            log.warn("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
+            log.debug("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
         }
         /*
          * Fake SSNs (900-series) are skipped since they have no counterpart in VTJ database, e.g. 123456-912X.
@@ -148,7 +148,7 @@ public class IdentificationServiceImpl implements IdentificationService {
          * test environment uses the 900-series SSNs.
          */
         if (!henkilo.hasNoFakeHetu()) {
-            log.info("Henkilo {} is using a fake SSN and cannot be identified.", henkilo.getOidHenkilo());
+            log.debug("Henkilo {} is using a fake SSN and cannot be identified.", henkilo.getOidHenkilo());
         }
     }
 
