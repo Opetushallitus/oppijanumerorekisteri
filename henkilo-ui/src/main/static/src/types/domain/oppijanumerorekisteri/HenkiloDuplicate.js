@@ -17,3 +17,4 @@ export type HenkiloDuplicate = {
     asiointiKieli: Kielisyys ,
     hakemukset: Array<any>,
 }
+

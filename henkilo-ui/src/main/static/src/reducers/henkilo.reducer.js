@@ -145,7 +145,7 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case FETCH_HENKILO_DUPLICATES_REQUEST:
             return Object.assign({}, state, {duplicatesLoading: true});
         case FETCH_HENKILO_DUPLICATES_SUCCESS:
-            const duplicates = R.filter( duplicate => duplicate.oidHenkilo !== action.master, action.duplicates);
+            const duplicates = action.duplicates.filter( (duplicate: HenkiloDuplicate) => duplicate.oidHenkilo === action.master);
             return Object.assign({}, state, {duplicatesLoading: false, duplicates});
         case FETCH_HENKILO_DUPLICATES_FAILURE:
             return Object.assign({}, state, {duplicatesLoading: false});

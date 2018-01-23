@@ -10,6 +10,7 @@ import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import type {DuplikaatitHakemus} from "../../../types/duplikaatithakemus.types";
+import type {Hakemus} from "../../../types/domain/oppijanumerorekisteri/Hakemus.type";
 
 type Props = {
     henkilo: any,
@@ -91,11 +92,12 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         this.props.setSelection(oid);
     }
 
-    _parseHakemus(hakemus: any): DuplikaatitHakemus {
-        return hakemus.service === 'ataru' ? this._parseAtaruHakemus(hakemus) : this._parseHakuappHakemus(hakemus);
+    _parseHakemus(hakemus: Hakemus): DuplikaatitHakemus {
+        const hakemusData: {[string]: any} = hakemus.hakemusData;
+        return hakemusData.service === 'ataru' ? this._parseAtaruHakemus(hakemusData) : this._parseHakuappHakemus(hakemusData);
     }
 
-    _parseAtaruHakemus(hakemus: any): DuplikaatitHakemus {
+    _parseAtaruHakemus(hakemus: Hakemus): DuplikaatitHakemus {
         const href = hakemus.haku ? `/lomake-editori/applications/haku/${hakemus.haku}?application-key=${hakemus.oid}` : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
         const aidinkieliKoodi = (hakemus.aidinkieli || "").toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
@@ -117,7 +119,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         }
     };
 
-    _parseHakuappHakemus(hakemus: any): DuplikaatitHakemus {
+    _parseHakuappHakemus(hakemus: Hakemus): DuplikaatitHakemus {
         const henkilotiedot = hakemus.answers.henkilotiedot;
         const aidinkieliKoodi = (henkilotiedot.aidinkieli || "").toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
