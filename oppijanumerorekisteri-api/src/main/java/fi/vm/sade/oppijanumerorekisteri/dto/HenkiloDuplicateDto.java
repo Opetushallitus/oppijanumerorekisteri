@@ -27,6 +27,6 @@ public class HenkiloDuplicateDto {
     private boolean yksiloity;
     private KielisyysDto aidinkieli;
     private KielisyysDto asiointiKieli;
-    private List<Map<String, Object>> hakemukset;
+    private List<HakemusDto> hakemukset;
     private HenkiloTyyppi henkiloTyyppi;
 }

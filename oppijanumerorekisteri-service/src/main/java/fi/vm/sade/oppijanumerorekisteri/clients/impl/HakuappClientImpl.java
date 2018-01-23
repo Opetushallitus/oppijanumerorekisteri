@@ -8,6 +8,7 @@ import fi.vm.sade.generic.rest.CachingRestClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 
@@ -38,17 +40,28 @@ public class HakuappClientImpl implements HakuappClient {
     }
 
     @Override
-    public Map<String, List<Map<String, Object>>> fetchApplicationsByOid(Set<String> oids) {
+    public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
         String url = this.urlConfiguration.url("haku-app.applications");
         try {
             HttpResponse response = cachingRestClient.post(url, JSON, objectMapper.writeValueAsString(Sets.newHashSet(oids)));
             Map<String, List<Map<String, Object>>> applicationsByPersonOid = objectMapper.readValue(
                     response.getEntity().getContent(), new TypeReference<Map<String, List<Map<String, Object>>>>(){});
-            return applicationsByPersonOid;
+            Map<String, List<HakemusDto>> hakemuksetByHenkiloOid = new HashMap<>();
+            applicationsByPersonOid.keySet().forEach( henkiloOid -> {
+                List<Map<String, Object>> hakemukset = applicationsByPersonOid.get(henkiloOid);
+                List<HakemusDto> hakemusList = hakemukset.stream().map(hakemusData -> {
+                    hakemusData.put("service", "haku-app");
+                    return new HakemusDto(hakemusData);
+                }).collect(Collectors.toList());
+
+                hakemuksetByHenkiloOid.put(henkiloOid, hakemusList);
+            });
+
+            return hakemuksetByHenkiloOid;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed fetching hakemukset for henkilos: " + oids.toString(), e);
+            throw new RuntimeException("Failed fetching hakemuksetDto for henkilos: " + oids.toString(), e);
         } catch (IOException e) {
-            throw new RuntimeException("Failed fetching hakemukset for henkilos: " + oids.toString(), e);
+            throw new RuntimeException("Failed fetching hakemuksetDto for henkilos: " + oids.toString(), e);
         }
 
     }

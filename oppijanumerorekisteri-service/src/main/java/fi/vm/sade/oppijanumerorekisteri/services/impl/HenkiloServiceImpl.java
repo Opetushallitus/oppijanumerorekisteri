@@ -649,31 +649,25 @@ public class HenkiloServiceImpl implements HenkiloService {
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
                 .stream().filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(kayttajaOid)).collect(toList()); // remove current user from duplicate search results
         Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
-        Map<String, List<Map<String, Object>>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
-        addOriginService(hakuAppHakemukset, "haku-app");
-
-        Map<String, List<Map<String, Object>>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
-        addOriginService(ataruHakemukset, "ataru");
+        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
+        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
 
         henkiloDuplicateDtos.forEach(duplicate -> {
             String oidHenkilo = duplicate.getOidHenkilo();
-            List<Map<String, Object>> hakemukset = new ArrayList<>();
+            List<HakemusDto> hakemusDtos = new ArrayList<>();
             if(hakuAppHakemukset.get(oidHenkilo) != null) {
-                hakemukset.addAll(hakuAppHakemukset.get(oidHenkilo));
+                hakemusDtos.addAll(hakuAppHakemukset.get(oidHenkilo));
             }
             if(ataruHakemukset.get(oidHenkilo) != null) {
-                hakemukset.addAll(ataruHakemukset.get(oidHenkilo));
+                hakemusDtos.addAll(ataruHakemukset.get(oidHenkilo));
             }
-            duplicate.setHakemukset(hakemukset);
+            duplicate.setHakemukset(hakemusDtos);
         });
+
         return henkiloDuplicateDtos;
     }
 
-    private void addOriginService(Map<String, List<Map<String, Object>>> hakemukset, String originService) {
-        hakemukset.forEach( (key, value) -> {
-            value.forEach( hakemus -> hakemus.put("service", originService));
-        });
-    }
+
 
     @Override
     @Transactional
