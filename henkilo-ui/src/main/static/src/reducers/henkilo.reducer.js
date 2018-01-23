@@ -60,7 +60,6 @@ const initialState: HenkiloState = {
     slavesLoading: false,
     unlinkingLoading: false,
     duplicates: [],
-    ataruApplications: {},
     duplicatesLoading: false,
     linkingLoading: false,
     masterLoading: true,
@@ -146,8 +145,8 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case FETCH_HENKILO_DUPLICATES_REQUEST:
             return Object.assign({}, state, {duplicatesLoading: true});
         case FETCH_HENKILO_DUPLICATES_SUCCESS:
-            const duplicates = R.filter( duplicate => duplicate.oidHenkilo !== action.master, action.duplicates);
-            return Object.assign({}, state, {duplicatesLoading: false, duplicates, ataruApplications: action.ataruApplications});
+            const duplicates = action.duplicates.filter( (duplicate: HenkiloDuplicate) => duplicate.oidHenkilo === action.master);
+            return Object.assign({}, state, {duplicatesLoading: false, duplicates});
         case FETCH_HENKILO_DUPLICATES_FAILURE:
             return Object.assign({}, state, {duplicatesLoading: false});
         case LINK_HENKILOS_REQUEST:

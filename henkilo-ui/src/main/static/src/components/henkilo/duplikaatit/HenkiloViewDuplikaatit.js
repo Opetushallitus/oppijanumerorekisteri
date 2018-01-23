@@ -6,14 +6,16 @@ import Button from '../../common/button/Button';
 import * as R from 'ramda';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from "../../common/icons/Loader";
-import PropertySingleton from '../../../globals/PropertySingleton'
-import Notifications from "../../common/notifications/Notifications";
 import type {Notification} from '../../common/notifications/Notifications'
 import {FloatingBar} from "./FloatingBar";
 import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 import type {Locale} from '../../../types/locale.type'
 import type {L} from '../../../types/localisation.type'
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
+import {LocalNotification} from "../../common/Notification/LocalNotification";
+import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
+import { linkHenkilos } from "../../../actions/henkilo.actions";
 
 type Props = {
     router: any,
@@ -22,10 +24,10 @@ type Props = {
     oidHenkilo: string,
     henkilo: HenkiloState,
     henkiloType: string,
-    koodisto: any,
+    koodisto: KoodistoState,
     notifications: Array<Notification>,
     removeNotification: (string, string, ?string) => void,
-    linkHenkilos: (masterOid: string, slaveOids: Array<string>, notificationId: number) => void,
+    linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void,
     fetchHenkilo: (oid: string) => void,
     fetchHenkiloDuplicates: (oid: string) => void,
     ownOid: string,
@@ -45,7 +47,6 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
 
         this.state = {
             selectedDuplicates: [],
-            notifications: [],
             yksiloitySelected: this.props.henkilo.henkilo.yksiloity || this.props.henkilo.henkilo.yksiloityVTJ,
         }
     }
@@ -105,9 +106,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
                     </DuplikaatitPerson>
                 )}
                 {this.props.henkilo.duplicatesLoading ? <Loader/> : null}
-                <Notifications L={this.props.L}
-                               notifications={this.props.notifications}
-                               closeAction={(status, id) => this.props.removeNotification(status, 'duplicatesNotifications', id)}/>
+                <LocalNotification title={this.props.L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']} type={NOTIFICATIONTYPES.INFO} toggle={!this.props.henkilo.duplicates}></LocalNotification>
 
             </div>
             {!this.props.vainLuku &&
@@ -120,9 +119,9 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
     }
 
     async _link() {
-        const notificationId = PropertySingleton.getNewId();
-        this.setState({notifications: [...this.state.notifications, notificationId,]});
-        await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates, notificationId);
+        const successMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'];
+        const failMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'];
+        await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates, successMessage, failMessage);
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
         this.props.router.push(`/${this.props.henkiloType}/${this.props.oidHenkilo}`);
@@ -143,4 +142,4 @@ const mapStateToProps = (state) => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {})(HenkiloViewDuplikaatit);
+export default connect(mapStateToProps, {linkHenkilos})(HenkiloViewDuplikaatit);
