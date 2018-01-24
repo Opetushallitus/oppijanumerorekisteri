@@ -59,7 +59,7 @@ public class AtaruClientImpl implements AtaruClient{
                             throw new HttpConnectionException("Failed to read response from ataru. Requested applications for user oid: " + oid + " " + e.toString());
                         }
                     } else {
-                        throw new HttpConnectionException("Failed to read response from ataru. Requested applications for users: " + oids.toString());
+                        throw new HttpConnectionException("Failed to fetch applications from ataru. Status code: " + response.getStatusCode() + ". Requested applications for users: " + oids.toString());
                     }
                 }));
         return hakemuksetByHenkiloOid;
