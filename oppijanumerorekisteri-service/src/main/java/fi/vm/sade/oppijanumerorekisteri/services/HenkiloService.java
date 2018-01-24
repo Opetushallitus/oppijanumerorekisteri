@@ -80,6 +80,8 @@ public interface HenkiloService {
 
     List<HenkiloDuplicateDto> findDuplicates(String oid);
 
+    List<HakemusDto> getApplications(String oid);
+
     List<HenkiloDuplicateDto> getDuplikaatit(HenkiloDuplikaattiCriteria criteria);
 
     List<String> linkHenkilos(String masterOid, List<String> slaveOids);

@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
@@ -35,6 +36,7 @@ import org.springframework.validation.BindException;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import static java.util.Collections.emptyList;
 import java.util.stream.Collectors;
@@ -636,6 +638,22 @@ public class HenkiloServiceImpl implements HenkiloService {
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
         List<Henkilo> candidates = this.henkiloJpaRepository.findDuplikaatit(criteria);
         return getHenkiloDuplicateDtoList(candidates);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HakemusDto> getApplications(String oid) {
+        HashSet<String> oids = new HashSet<>(Arrays.asList(oid));
+        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(oids);
+        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(oids);
+        List<HakemusDto> hakemukset = new ArrayList<>();
+        if(hakuAppHakemukset.get(oid) != null) {
+            hakemukset.addAll(hakuAppHakemukset.get(oid));
+        }
+        if(ataruHakemukset.get(oid) != null) {
+            hakemukset.addAll(ataruHakemukset.get(oid));
+        }
+        return hakemukset;
     }
 
     @Override
