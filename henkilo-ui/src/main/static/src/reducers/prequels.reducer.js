@@ -3,7 +3,7 @@ import {
 } from '../actions/actiontypes';
 
 // notLoadedCount = number of prequels
-export const prequels = (state = {notLoadedCount: 3,}, action) => {
+export const prequels = (state = {notLoadedCount: 2}, action) => {
     switch (action.type) {
         case FETCH_PREQUEL_REQUEST:
             return Object.assign({}, state);

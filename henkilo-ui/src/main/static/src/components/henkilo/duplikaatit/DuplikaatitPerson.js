@@ -9,6 +9,8 @@ import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplicat
 import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
+import type {DuplikaatitHakemus} from "../../../types/duplikaatithakemus.types";
+import type {Hakemus} from "../../../types/domain/oppijanumerorekisteri/Hakemus.type";
 
 type Props = {
     henkilo: any,
@@ -28,7 +30,7 @@ type State = {
     checkboxValue: boolean,
 }
 
-export default class DuplikaatitPrimaryInformation extends React.Component<Props, State> {
+export default class DuplikaatitPerson extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -41,8 +43,9 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
     render() {
         const henkilo = this.props.henkilo;
         const targetPage = henkilo.henkiloTyyppi === 'OPPIJA' ? 'oppija' : 'virkailija';
-        const hakemus = (henkilo.hakemukset && R.head(henkilo.hakemukset)) || {};
-        const muutHakemukset = (henkilo.hakemukset && R.tail(henkilo.hakemukset)) || [];
+        const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map( (hakemus: any) => this._parseHakemus(hakemus)) : undefined;
+        const hakemus = (hakemukset && R.head(hakemukset)) || {};
+        const muutHakemukset = (hakemukset && R.tail(hakemukset)) || [];
         const styleClasses = classNames(this.props.classNames);
         const L = this.props.L;
 
@@ -88,4 +91,57 @@ export default class DuplikaatitPrimaryInformation extends React.Component<Props
         });
         this.props.setSelection(oid);
     }
+
+    _parseHakemus(hakemus: Hakemus): DuplikaatitHakemus {
+        const hakemusData: {[string]: any} = hakemus.hakemusData;
+        return hakemusData.service === 'ataru' ? this._parseAtaruHakemus(hakemusData) : this._parseHakuappHakemus(hakemusData);
+    }
+
+    _parseAtaruHakemus(hakemus: Hakemus): DuplikaatitHakemus {
+        const href = hakemus.haku ? `/lomake-editori/applications/haku/${hakemus.haku}?application-key=${hakemus.oid}` : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
+        const aidinkieliKoodi = (hakemus.aidinkieli || "").toLocaleLowerCase();
+        const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
+        const kansalaisuusKoodi = (hakemus.kansalaisuus || "").toLocaleLowerCase();
+        const kansalaisuus = this._koodistoLabel(kansalaisuusKoodi, this.props.koodisto.kansalaisuus, this.props.locale);
+
+        return {
+            oid: hakemus.oid,
+            kansalaisuus: kansalaisuus,
+            aidinkieli: aidinkieli,
+            matkapuhelinnumero: hakemus.matkapuhelin,
+            sahkoposti: hakemus.email,
+            lahiosoite: hakemus.lahiosoite,
+            postinumero: hakemus.postinumero,
+            passinumero: hakemus.passinNumero,
+            kansallinenIdTunnus: hakemus.idTunnus,
+            href: href,
+            state: null
+        }
+    };
+
+    _parseHakuappHakemus(hakemus: Hakemus): DuplikaatitHakemus {
+        const henkilotiedot = hakemus.answers.henkilotiedot;
+        const aidinkieliKoodi = (henkilotiedot.aidinkieli || "").toLocaleLowerCase();
+        const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
+        const kansalaisuusKoodi = (henkilotiedot.kansalaisuus || "").toLocaleLowerCase();
+        const kansalaisuus = this._koodistoLabel(kansalaisuusKoodi, this.props.koodisto.maatjavaltiot1, this.props.locale);
+        return {
+            oid: hakemus.oid,
+            kansalaisuus: kansalaisuus,
+            aidinkieli: aidinkieli,
+            matkapuhelinnumero: henkilotiedot.matkapuhelinnumero1,
+            sahkoposti: henkilotiedot['Sähköposti'],
+            lahiosoite: henkilotiedot.lahiosoite,
+            postinumero: henkilotiedot.Postinumero,
+            passinumero: henkilotiedot.passinumero,
+            kansallinenIdTunnus: henkilotiedot.kansallinenIdTunnus,
+            href: `/haku-app/virkailija/hakemus/${hakemus.oid}`,
+            state: hakemus.state
+        }
+    };
+
+    _koodistoLabel(koodi, koodisto, locale): ?string {
+        const koodistoItem = R.find(koodistoItem => koodistoItem.value === koodi, koodisto);
+        return koodistoItem ? koodistoItem[locale] : null;
+    };
 }

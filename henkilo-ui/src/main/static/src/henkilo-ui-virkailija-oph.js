@@ -10,10 +10,6 @@ export default {
     "lokalisointi.baseUrl": "/",
     "lokalisointi.localisation": "lokalisointi/cxf/rest/v1/localisation",
 
-    "ataru.baseUrl": "/",
-    "ataru.prequel": "lomake-editori/auth/cas",
-    "ataru.applications": "lomake-editori/api/external/onr/applications/$1",
-
     "kayttooikeus-service.baseUrl": "/",
     "kayttooikeus-service.l10n.languages": "kayttooikeus-service/l10n/languages",
     "kayttooikeus-service.kutsu": "kayttooikeus-service/kutsu",
@@ -60,6 +56,7 @@ export default {
     "oppijanumerorekisteri-service.henkilo.master": "oppijanumerorekisteri-service/henkilo/$1/master",
     "oppijanumerorekisteri-service.henkilo.link": "oppijanumerorekisteri-service/henkilo/$1/link",
     "oppijanumerorekisteri-service.henkilo.unlink": "oppijanumerorekisteri-service/henkilo/$1/unlink/$2",
+    "oppijanumerorekisteri-service.henkilo.hakemukset": "oppijanumerorekisteri-service/henkilo/$1/hakemukset",
     "oppijanumerorekisteri-service.henkilo.duplicates": "oppijanumerorekisteri-service/henkilo/$1/duplicates",
     "oppijanumerorekisteri-service.henkilo.duplikaatit": "oppijanumerorekisteri-service/henkilo/duplikaatit?etunimet=$1&kutsumanimi=$2&sukunimi=$3",
     "oppijanumerorekisteri-service.henkilo": "oppijanumerorekisteri-service/henkilo",
