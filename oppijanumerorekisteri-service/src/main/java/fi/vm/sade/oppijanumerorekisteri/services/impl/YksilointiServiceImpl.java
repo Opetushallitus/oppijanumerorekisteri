@@ -3,9 +3,13 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.NimiDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -13,6 +17,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
@@ -32,7 +37,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -427,6 +434,34 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         yksilointitietoRepository.delete(yksilointitieto);
         henkiloService.update(henkilo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<YksilointiVertailuDto> listEpaonnistunutYksilointi(int page, int count) {
+        YksilointitietoCriteria criteria = new YksilointitietoCriteria();
+        criteria.setPassivoitu(false);
+        criteria.setDuplikaatti(false);
+        criteria.setOnHetu(true);
+        criteria.setYksiloityVtj(false);
+        logger.info("Haetaan epäonnistuneet yksilöinnit {} (sivu: {}, määrä: {})", criteria, page, count);
+
+        int limit = count;
+        int offset = (page - 1) * count;
+        Iterable<Yksilointitieto> entities = yksilointitietoRepository.findBy(criteria, limit, offset);
+        long total = yksilointitietoRepository.countBy(criteria);
+
+        List<YksilointiVertailuDto> dtos = StreamSupport.stream(entities.spliterator(), false)
+                .map(this::yksilointietoToVertailuDto)
+                .collect(toList());
+        return Page.of(page, count, dtos, total);
+    }
+
+    private YksilointiVertailuDto yksilointietoToVertailuDto(Yksilointitieto yksilointitieto) {
+        YksilointiVertailuDto dto = new YksilointiVertailuDto();
+        dto.setOppijanumerorekisteri(mapper.map(yksilointitieto.getHenkilo(), HenkiloOidHetuNimiDto.class));
+        dto.setVaestotietojarjestelma(mapper.map(yksilointitieto, NimiDto.class));
+        return dto;
     }
 
     @Override

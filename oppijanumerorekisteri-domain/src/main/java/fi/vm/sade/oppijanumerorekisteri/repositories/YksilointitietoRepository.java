@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(propagation = Propagation.MANDATORY)
 @Repository
-public interface YksilointitietoRepository extends JpaRepository<Yksilointitieto, Long> {
+public interface YksilointitietoRepository extends JpaRepository<Yksilointitieto, Long>, YksilointitietoRepositoryCustom {
 
     Optional<Yksilointitieto> findByHenkilo(Henkilo henkilo);
 
