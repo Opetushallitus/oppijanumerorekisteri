@@ -249,13 +249,22 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch, getState) 
     const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
     try {
         const duplicates = await http.get(url);
+        if(duplicates.length === 0) {
+            dispatch(addGlobalNotification({
+                key: 'NOTIFICATION_DUPLIKAATIT_TYHJA_LISTA',
+                type: NOTIFICATIONTYPES.INFO,
+                title: localizeWithState('NOTIFICATION_DUPLIKAATIT_TYHJA_LISTA', getState()),
+                autoClose: 10000
+            }));
+        }
         dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates));
     } catch (error) {
         dispatch(requestHenkiloDuplicatesFailure());
         dispatch(addGlobalNotification({
             key: 'FETCH_DUPLICATES_FAIL',
             type: NOTIFICATIONTYPES.ERROR,
-            title: localizeWithState('NOTIFICATION_DUPLIKAATIT_VIRHE', getState())
+            title: localizeWithState('NOTIFICATION_DUPLIKAATIT_VIRHE', getState()),
+            autoClose: 10000
         }));
         throw error;
     }
