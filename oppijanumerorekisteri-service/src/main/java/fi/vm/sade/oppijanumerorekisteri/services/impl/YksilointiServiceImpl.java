@@ -442,6 +442,8 @@ public class YksilointiServiceImpl implements YksilointiService {
         YksilointitietoCriteria criteria = new YksilointitietoCriteria();
         criteria.setPassivoitu(false);
         criteria.setDuplikaatti(false);
+        criteria.setOnHetu(true);
+        criteria.setYksiloityVtj(false);
         logger.info("Haetaan epäonnistuneet yksilöinnit {} (sivu: {}, määrä: {})", criteria, page, count);
 
         int limit = count;

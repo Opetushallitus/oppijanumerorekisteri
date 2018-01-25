@@ -16,6 +16,8 @@ public class YksilointitietoCriteria {
 
     private Boolean passivoitu;
     private Boolean duplikaatti;
+    private Boolean onHetu;
+    private Boolean yksiloityVtj;
 
     public JPAQuery<?> getQuery(EntityManager entityManager, QYksilointitieto qYksilointitieto) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
@@ -29,6 +31,15 @@ public class YksilointitietoCriteria {
         }
         if (duplikaatti != null) {
             query.where(qHenkilo.duplicate.eq(duplikaatti));
+        }
+        if (Boolean.TRUE.equals(onHetu)) {
+            query.where(qHenkilo.hetu.isNotNull());
+        }
+        if (Boolean.FALSE.equals(onHetu)) {
+            query.where(qHenkilo.hetu.isNull());
+        }
+        if (yksiloityVtj != null) {
+            query.where(qHenkilo.yksiloityVTJ.eq(yksiloityVtj));
         }
 
         return query;
