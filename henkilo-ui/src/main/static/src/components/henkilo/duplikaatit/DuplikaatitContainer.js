@@ -46,7 +46,6 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
         this.props.fetchHenkiloHakemukset(this.props.oidHenkilo);
-        await this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.updateHenkiloNavigation(henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, this.props.henkiloType));
     }
 
