@@ -382,6 +382,13 @@ public class HenkiloController {
         return this.henkiloService.findDuplicates(oid);
     }
 
+    @GetMapping("/{oid}/hakemukset")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @ApiOperation("Hakee henkilön hakemukset haku-app:sta ja atarusta.")
+    public List<HakemusDto> getApplications(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        return this.henkiloService.getApplications(oid);
+    }
+
     @GetMapping("/duplikaatit")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")

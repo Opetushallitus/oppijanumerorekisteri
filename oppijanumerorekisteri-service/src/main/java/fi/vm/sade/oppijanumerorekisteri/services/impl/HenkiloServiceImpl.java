@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Sets;
+import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
@@ -34,6 +36,7 @@ import org.springframework.validation.BindException;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import static java.util.Collections.emptyList;
 import java.util.stream.Collectors;
@@ -71,6 +74,8 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private final KayttooikeusClient kayttooikeusClient;
     private final HakuappClient hakuappClient;
+    private final AtaruClient ataruClient;
+
 
 
     @Override
@@ -631,8 +636,24 @@ public class HenkiloServiceImpl implements HenkiloService {
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
-        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplikaatit(criteria);
+        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplikaatit(criteria).stream().filter(duplicate -> !duplicate.getOidHenkilo().equals(oid)).collect(toList());
         return getHenkiloDuplicateDtoList(candidates);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HakemusDto> getApplications(String oid) {
+        HashSet<String> oids = new HashSet<>(Arrays.asList(oid));
+        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(oids);
+        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(oids);
+        List<HakemusDto> hakemukset = new ArrayList<>();
+        if(hakuAppHakemukset.get(oid) != null) {
+            hakemukset.addAll(hakuAppHakemukset.get(oid));
+        }
+        if(ataruHakemukset.get(oid) != null) {
+            hakemukset.addAll(ataruHakemukset.get(oid));
+        }
+        return hakemukset;
     }
 
     @Override
@@ -646,10 +667,25 @@ public class HenkiloServiceImpl implements HenkiloService {
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
                 .stream().filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(kayttajaOid)).collect(toList()); // remove current user from duplicate search results
         Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
-        Map<String, List<Map<String, Object>>> hakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
-        henkiloDuplicateDtos.forEach(h -> h.setHakemukset(hakemukset.get(h.getOidHenkilo())));
+        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
+        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
+
+        henkiloDuplicateDtos.forEach(duplicate -> {
+            String oidHenkilo = duplicate.getOidHenkilo();
+            List<HakemusDto> hakemusDtos = new ArrayList<>();
+            if(hakuAppHakemukset.get(oidHenkilo) != null) {
+                hakemusDtos.addAll(hakuAppHakemukset.get(oidHenkilo));
+            }
+            if(ataruHakemukset.get(oidHenkilo) != null) {
+                hakemusDtos.addAll(ataruHakemukset.get(oidHenkilo));
+            }
+            duplicate.setHakemukset(hakemusDtos);
+        });
+
         return henkiloDuplicateDtos;
     }
+
+
 
     @Override
     @Transactional
