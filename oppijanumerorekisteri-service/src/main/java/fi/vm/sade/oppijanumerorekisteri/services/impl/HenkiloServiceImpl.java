@@ -636,7 +636,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
-        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplikaatit(criteria);
+        List<Henkilo> candidates = this.henkiloJpaRepository.findDuplikaatit(criteria).stream().filter(duplicate -> !duplicate.getOidHenkilo().equals(oid)).collect(toList());
         return getHenkiloDuplicateDtoList(candidates);
     }
 
