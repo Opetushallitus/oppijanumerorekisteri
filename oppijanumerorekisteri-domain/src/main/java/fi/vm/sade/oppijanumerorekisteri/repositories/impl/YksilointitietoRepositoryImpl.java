@@ -19,6 +19,7 @@ public class YksilointitietoRepositoryImpl implements YksilointitietoRepositoryC
     public Iterable<Yksilointitieto> findBy(YksilointitietoCriteria criteria, int limit, int offset) {
         QYksilointitieto qYksilointitieto = QYksilointitieto.yksilointitieto;
         return criteria.getQuery(entityManager, qYksilointitieto)
+                .orderBy(qYksilointitieto.id.asc())
                 .limit(limit).offset(offset)
                 .select(qYksilointitieto).fetch();
     }
