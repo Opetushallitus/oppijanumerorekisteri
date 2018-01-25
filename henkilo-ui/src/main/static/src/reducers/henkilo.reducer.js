@@ -11,6 +11,7 @@ import {
     LINK_HENKILOS_REQUEST, LINK_HENKILOS_SUCCESS, LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_REQUEST,
     FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_FAILURE, CLEAR_HENKILO, UPDATE_HENKILO_FAILURE,
     FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
+    FETCH_HENKILO_HAKEMUKSET,
 
 } from "../actions/actiontypes";
 import StaticUtils from '../components/common/StaticUtils'
@@ -18,6 +19,7 @@ import * as R from 'ramda';
 import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {KayttajatiedotRead} from "../types/domain/kayttooikeus/KayttajatiedotRead";
 import type {HenkiloDuplicate} from "../types/domain/oppijanumerorekisteri/HenkiloDuplicate";
+import type {Hakemus} from "../types/domain/oppijanumerorekisteri/Hakemus.type";
 
 export type HenkiloState = {
     +henkiloLoading: boolean,
@@ -41,7 +43,9 @@ export type HenkiloState = {
     +masterLoading: boolean,
     +master: any,
     +yksilointitiedotLoading: boolean,
-    +yksilointitiedot: Array<any>
+    +yksilointitiedot: Array<any>,
+    +hakemuksetLoading: boolean,
+    +hakemukset: Array<Hakemus>
 }
 
 const initialState: HenkiloState = {
@@ -65,7 +69,9 @@ const initialState: HenkiloState = {
     masterLoading: true,
     master: {},
     yksilointitiedotLoading: false,
-    yksilointitiedot: []
+    yksilointitiedot: [],
+    hakemuksetLoading: false,
+    hakemukset: []
 };
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
@@ -145,8 +151,7 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case FETCH_HENKILO_DUPLICATES_REQUEST:
             return Object.assign({}, state, {duplicatesLoading: true});
         case FETCH_HENKILO_DUPLICATES_SUCCESS:
-            const duplicates = action.duplicates.filter( (duplicate: HenkiloDuplicate) => duplicate.oidHenkilo !== action.master);
-            return Object.assign({}, state, {duplicatesLoading: false, duplicates});
+            return Object.assign({}, state, {duplicatesLoading: false, duplicates: action.duplicates});
         case FETCH_HENKILO_DUPLICATES_FAILURE:
             return Object.assign({}, state, {duplicatesLoading: false});
         case LINK_HENKILOS_REQUEST:
@@ -155,6 +160,12 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             return Object.assign({}, state, {linkingLoading: false});
         case LINK_HENKILOS_FAILURE:
             return Object.assign({}, state, {linkingLoading: false});
+        case FETCH_HENKILO_HAKEMUKSET.REQUEST:
+            return {...state, hakemuksetLoading: true};
+        case FETCH_HENKILO_HAKEMUKSET.SUCCESS:
+            return {...state, hakemuksetLoading: false, hakemukset: action.hakemukset};
+        case FETCH_HENKILO_HAKEMUKSET.FAILURE:
+            return {...state, hakemuksetLoading: false};
         case FETCH_HENKILO_YKSILOINTITIETO_REQUEST:
             return {...state,  yksilointitiedotLoading: true};
         case FETCH_HENKILO_YKSILOINTITIETO_SUCCESS:
