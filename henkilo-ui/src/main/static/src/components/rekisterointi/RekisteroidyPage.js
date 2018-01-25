@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot'
 import RekisteroidyOrganisaatiot from "./content/RekisteroidyOrganisaatiot";
 import StaticUtils from "../common/StaticUtils";
-import PropertySingleton from "../../globals/PropertySingleton"
 import RekisteroidyHaka from "./content/RekisteroidyHaka";
 import Modal from "../common/modal/Modal";
 import LoadingBarTimer from "../common/loadingbar/LoadingBarTimer";
 import BottomNotificationButton from "../common/button/BottomNotificationButton";
+import {isValidPassword} from "../../validation/PasswordValidator";
 
 class RekisteroidyPage extends React.Component {
     static propTypes = {
@@ -33,8 +33,7 @@ class RekisteroidyPage extends React.Component {
             (henkilo) => !this.etunimetContainsKutsumanimi(henkilo) ? props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'] : null,
             (henkilo) => !this.kayttajanimiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KAYTTAJANIMI'] : null,
             (henkilo) => !this.passwordsAreSame(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH'] : null,
-            (henkilo) => !this.passwordExceedsMinLength(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_LENGTH'].replace('%s', PropertySingleton.getState().minimunPasswordLength) : null,
-            (henkilo) => !this.passwordHasSpecialCharacter(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_SPECIALCHARACTER'] : null,
+            (henkilo) => !isValidPassword(henkilo.password) ? props.L['REKISTEROIDY_ERROR_PASSWORD_INVALID'] : null,
             (henkilo) => !this.kielikoodiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KIELIKOODI'] : null,
         ];
 
@@ -58,10 +57,6 @@ class RekisteroidyPage extends React.Component {
         if (this.props.kutsu.hakaIdentifier) {
             this.createHenkilo();
         }
-    }
-
-    componentWillReceiveProps(nextProps) {
-
     }
 
     render() {
@@ -133,8 +128,7 @@ class RekisteroidyPage extends React.Component {
         return this.etunimetContainsKutsumanimi(henkilo)
             && this.kayttajanimiIsNotEmpty(henkilo)
             && this.passwordsAreSame(henkilo)
-            && this.passwordExceedsMinLength(henkilo)
-            && this.passwordHasSpecialCharacter(henkilo)
+            && isValidPassword(henkilo.password)
             && this.kielikoodiIsNotEmpty(henkilo);
     }
 
@@ -150,15 +144,6 @@ class RekisteroidyPage extends React.Component {
 
     passwordIsNotEmpty(henkilo) {
         return StaticUtils.stringIsNotEmpty(henkilo.password);
-    }
-
-    passwordExceedsMinLength(henkilo) {
-        return this.passwordIsNotEmpty(henkilo)
-            && henkilo.password.length >= PropertySingleton.getState().minimunPasswordLength;
-    }
-
-    passwordHasSpecialCharacter(henkilo) {
-        return (PropertySingleton.getState().specialCharacterRegex.exec(henkilo.password)) !== null;
     }
 
     passwordsAreSame(henkilo) {
@@ -182,8 +167,7 @@ class RekisteroidyPage extends React.Component {
 
     isPasswordError() {
         return !this.passwordIsNotEmpty(this.state.henkilo)
-            || !this.passwordHasSpecialCharacter(this.state.henkilo)
-            || !this.passwordExceedsMinLength(this.state.henkilo)
+            || !isValidPassword(this.state.henkilo.password)
             || !this.passwordsAreSame(this.state.henkilo);
     }
 

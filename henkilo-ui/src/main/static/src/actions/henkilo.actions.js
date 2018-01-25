@@ -7,8 +7,7 @@ import {
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE, UPDATE_HENKILO_REQUEST,
-    UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_PASSWORD_REQUEST,
-    UPDATE_PASSWORD_SUCCESS, UPDATE_PASSWORD_FAILURE, YKSILOI_HENKILO_FAILURE,
+    UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, YKSILOI_HENKILO_FAILURE,
     YKSILOI_HENKILO_REQUEST,
     YKSILOI_HENKILO_SUCCESS,
     PURA_YKSILOINTI_REQUEST, PURA_YKSILOINTI_SUCCESS, PURA_YKSILOINTI_FAILURE,
@@ -90,18 +89,6 @@ export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
             dispatch(fetchKayttajatieto(oid));
         });
 });
-
-const requestUpdatePassword = (oid) => ({type: UPDATE_PASSWORD_REQUEST, oid});
-const receiveUpdatePassword = (oid) => ({type: UPDATE_PASSWORD_SUCCESS, oid, receivedAt: Date.now()});
-const errorUpdatePassword = (e) => ({type: UPDATE_PASSWORD_FAILURE,
-    buttonNotification: {position: 'updatePassword', notL10nMessage: 'SALASANA_ERROR_TOPIC', notL10nText: 'SALASANA_ERROR_TEXT'},
-    receivedAt: Date.now(), });
-export const updatePassword = (oid, password) => dispatch => {
-    dispatch(requestUpdatePassword(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.password', oid);
-    http.post(url, password).then(() => {dispatch(receiveUpdatePassword(oid))})
-        .catch(e => dispatch(errorUpdatePassword(e)));
-};
 
 const requestPassivoiHenkilo = (oid) => ({type: PASSIVOI_HENKILO_REQUEST, oid, });
 const receivePassivoiHenkilo = () => ({type: PASSIVOI_HENKILO_SUCCESS, receivedAt: Date.now(), });
