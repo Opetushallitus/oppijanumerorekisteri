@@ -12,20 +12,32 @@ import HenkiloViewPage from "./HenkiloViewPage";
 
 class OppijaViewContainer extends React.Component {
     async componentDidMount() {
-        PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+        if (this.props.externalPermissionService) {
+            PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+        }
 
         if (this.props.isAdmin) {
             this.props.router.replace(`/admin/${this.props.oidHenkilo}`);
         }
         else {
-            this.props.updateHenkiloNavigation(oppijaNavi(this.props.oidHenkilo));
-
-            await this.props.fetchHenkilo(this.props.oidHenkilo);
-            this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
-            this.props.fetchYhteystietotyypitKoodisto();
-            this.props.fetchKieliKoodisto();
-            this.props.fetchKansalaisuusKoodisto();
+            this.fetch(this.props.oidHenkilo)
         }
+    }
+
+    async componentWillReceiveProps(nextProps) {
+        if (nextProps.oidHenkilo !== this.props.oidHenkilo) {
+            this.fetch(nextProps.oidHenkilo)
+        }
+    }
+
+    async fetch(oid) {
+        this.props.updateHenkiloNavigation(oppijaNavi(oid));
+
+        await this.props.fetchHenkilo(oid);
+        this.props.fetchHenkiloSlaves(oid);
+        this.props.fetchYhteystietotyypitKoodisto();
+        this.props.fetchKieliKoodisto();
+        this.props.fetchKansalaisuusKoodisto();
     }
 
     render() {

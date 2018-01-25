@@ -13,6 +13,7 @@ import {henkiloViewTabs} from "../../navigation/NavigationTabs";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
+import PropertySingleton from '../../../globals/PropertySingleton';
 
 type Props = {
     l10n: L10n,
@@ -34,6 +35,10 @@ type Props = {
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {
 
     async componentDidMount() {
+        if (this.props.externalPermissionService) {
+            PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
+        }
+        this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchMaatJaValtiotKoodisto();
@@ -41,7 +46,6 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
         this.props.fetchHenkiloHakemukset(this.props.oidHenkilo);
-        await this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.updateHenkiloNavigation(henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, this.props.henkiloType));
     }
 
@@ -54,6 +58,7 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
 const mapStateToProps = (state, ownProps) => {
     return {
         oidHenkilo: ownProps.params['oid'],
+        externalPermissionService: ownProps.location.query.permissionCheckService,
         henkiloType: ownProps.params['henkiloType'],
         l10n: state.l10n.localisations,
         locale: state.locale,
