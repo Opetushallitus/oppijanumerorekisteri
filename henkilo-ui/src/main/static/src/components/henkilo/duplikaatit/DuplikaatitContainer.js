@@ -2,7 +2,7 @@
 import DuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
-import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster} from '../../../actions/henkilo.actions';
+import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster, fetchHenkiloHakemukset} from '../../../actions/henkilo.actions';
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import {fetchKansalaisuusKoodisto,
         fetchMaatJaValtiotKoodisto,
@@ -23,6 +23,7 @@ type Props = {
     fetchHenkilo: string => void,
     fetchOmattiedot: () => void,
     fetchHenkiloMaster: string => void,
+    fetchHenkiloHakemukset: string => void,
     fetchHenkiloDuplicates: string => void,
     fetchMaatJaValtiotKoodisto: () => void,
     fetchKansalaisuusKoodisto: () => void,
@@ -39,6 +40,7 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
         this.props.fetchKieliKoodisto();
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
         this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
+        this.props.fetchHenkiloHakemukset(this.props.oidHenkilo);
         await this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.updateHenkiloNavigation(henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, this.props.henkiloType));
     }
@@ -66,6 +68,7 @@ export default connect(mapStateToProps, {
     fetchOmattiedot,
     fetchHenkiloDuplicates,
     fetchHenkiloMaster,
+    fetchHenkiloHakemukset,
     fetchKansalaisuusKoodisto,
     fetchMaatJaValtiotKoodisto,
     fetchKieliKoodisto,

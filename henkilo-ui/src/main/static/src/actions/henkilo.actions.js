@@ -28,12 +28,13 @@ import {
     LINK_HENKILOS_FAILURE, FETCH_HENKILO_MASTER_FAILURE, FETCH_HENKILO_MASTER_SUCCESS, FETCH_HENKILO_MASTER_REQUEST,
     CLEAR_HENKILO, FETCH_HENKILO_YKSILOINTITIETO_REQUEST, FETCH_HENKILO_YKSILOINTITIETO_SUCCESS,
     FETCH_HENKILO_YKSILOINTITIETO_FAILURE, VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
-    VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS, VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE
+    VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS, VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE, FETCH_HENKILO_HAKEMUKSET
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
 import {addGlobalNotification} from "./notification.actions";
 import {NOTIFICATIONTYPES} from "../components/common/Notification/notificationtypes";
+import {localizeWithState} from "../utilities/localisation.util";
 
 const requestHenkilo = (oid) => ({type: FETCH_HENKILO_REQUEST, oid});
 const receiveHenkilo = (json) => ({type: FETCH_HENKILO_SUCCESS, henkilo: json, receivedAt: Date.now()});
@@ -243,7 +244,7 @@ const requestHenkiloDuplicates = (oidHenkilo) => ({type: FETCH_HENKILO_DUPLICATE
 const requestHenkiloDuplicatesSuccess = (master, duplicates) => ({type: FETCH_HENKILO_DUPLICATES_SUCCESS, master, duplicates});
 const requestHenkiloDuplicatesFailure = () => ({type: FETCH_HENKILO_DUPLICATES_FAILURE});
 
-export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
+export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch, getState) => {
     dispatch(requestHenkiloDuplicates(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
     try {
@@ -251,6 +252,33 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch) => {
         dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates));
     } catch (error) {
         dispatch(requestHenkiloDuplicatesFailure());
+        dispatch(addGlobalNotification({
+            key: 'FETCH_DUPLICATES_FAIL',
+            type: NOTIFICATIONTYPES.ERROR,
+            title: localizeWithState('NOTIFICATION_DUPLIKAATIT_VIRHE', getState())
+        }));
+        throw error;
+    }
+};
+
+const requestHenkiloHakemukset = (oid) => ({type: FETCH_HENKILO_HAKEMUKSET.REQUEST, oid});
+const requestHenkiloHakemuksetSuccess = (hakemukset) => ({type: FETCH_HENKILO_HAKEMUKSET.SUCCESS, hakemukset});
+const requestHenkiloHakemuksetFailure = () => ({type: FETCH_HENKILO_HAKEMUKSET.FAILURE});
+
+export const fetchHenkiloHakemukset = (oid) => async(dispatch, getState) => {
+    dispatch(requestHenkiloHakemukset(oid));
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.hakemukset', oid);
+    try {
+        const hakemukset = await http.get(url, oid);
+        dispatch(requestHenkiloHakemuksetSuccess(hakemukset));
+    } catch (error) {
+        dispatch(requestHenkiloHakemuksetFailure());
+        dispatch(addGlobalNotification({
+            key: 'HENKILOHAKEMUKSET_FAILURE',
+            type: NOTIFICATIONTYPES.ERROR,
+            title: localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE', getState()),
+            autoClose: 10000
+        }));
         throw error;
     }
 };

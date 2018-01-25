@@ -53,6 +53,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
 
     render() {
         const master = this.props.henkilo.henkilo;
+        master.hakemukset = this.props.henkilo.hakemukset;
         const duplicates = this.props.henkilo.duplicates;
         const koodisto = this.props.koodisto;
         const locale = this.props.locale;

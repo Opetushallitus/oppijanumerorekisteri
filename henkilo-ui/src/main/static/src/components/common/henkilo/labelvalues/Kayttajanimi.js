@@ -15,7 +15,6 @@ type Props = {
 }
 
 const Kayttajanimi = (props: Props) => {
-    console.log();
     return <LabelValue
         updateModelFieldAction={props.updateModelFieldAction}
         readOnly={props.readOnly}

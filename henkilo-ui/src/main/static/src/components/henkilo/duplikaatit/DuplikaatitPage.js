@@ -21,7 +21,7 @@ export default class DuplikaatitPage extends React.Component<Props> {
         const L = this.props.l10n[this.props.locale];
         return <div className="wrapper">
             <span className="oph-h3 oph-strong">{L['DUPLIKAATIT_HEADER']}, {this.props.henkilo.henkilo.kutsumanimi} {this.props.henkilo.henkilo.sukunimi}</span>
-            {!this.props.henkilo.henkiloLoading ? <HenkiloViewDuplikaatit {...this.props} /> : <Loader />}
+            {!this.props.henkilo.henkiloLoading && !this.props.henkilo.hakemuksetLoading ? <HenkiloViewDuplikaatit {...this.props} /> : <Loader />}
         </div>
     }
 
