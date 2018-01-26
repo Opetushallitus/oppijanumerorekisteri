@@ -15,6 +15,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+// NOTE: Since this works like patch is initialising null to all fields reasonable to prevent accidental list overrides
 public class HenkiloUpdateDto {
     private String oidHenkilo;
 
@@ -38,11 +39,11 @@ public class HenkiloUpdateDto {
 
     private KielisyysDto aidinkieli;
 
-    private Set<KielisyysDto> kielisyys = new HashSet<>();
+    private Set<KielisyysDto> kielisyys = null;
 
-    private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
+    private Set<KansalaisuusDto> kansalaisuus = null;
 
-    private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
+    private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = null;
 
     private HenkiloTyyppi henkiloTyyppi;
 }
