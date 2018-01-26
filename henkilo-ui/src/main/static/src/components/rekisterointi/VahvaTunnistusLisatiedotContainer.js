@@ -8,6 +8,7 @@ import type { Locale } from '../../types/locale.type'
 import type { L } from '../../types/localisation.type'
 import { urls } from 'oph-urls-js'
 import { http } from '../../http'
+import { isValidPassword } from '../../validation/PasswordValidator'
 
 type Props = {
     updateUnauthenticatedNavigation: () => void,
@@ -90,7 +91,9 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
             }
         })
         if (values.salasana) {
-            // TODO: lisää salasanavalidointi (KJHH-984)
+            if (!isValidPassword(values.salasana)) {
+                errors.push({ name: 'salasana', text: L['SALASANA_OHJE'] })
+            }
         }
         return errors
     }
