@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 
@@ -38,6 +39,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private final YksilointiService yksilointiService;
     private final HenkiloService henkiloService;
+    private final DuplicateService duplicateService;
 
     private Henkilo getHenkiloByOid(String oid) {
         return henkiloRepository.findByOidHenkilo(oid).orElseThrow(()
@@ -110,7 +112,7 @@ public class IdentificationServiceImpl implements IdentificationService {
                     oppijaWithSameHetu.setHetu(null);
                     // Hetu is unique so we need to flush when moving it
                     this.henkiloRepository.saveAndFlush(oppijaWithSameHetu);
-                    this.henkiloService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
+                    this.duplicateService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
                 });
 
         // No current hetu and hetu not already used => set hetu

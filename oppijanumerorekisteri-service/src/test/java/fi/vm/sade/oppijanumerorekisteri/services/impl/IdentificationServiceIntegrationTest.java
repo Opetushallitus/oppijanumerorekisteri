@@ -26,8 +26,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.*;
 
 // Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
 // See IdentificationServiceIntegrationTest2 if you want to add more tests.
@@ -61,7 +63,7 @@ public class IdentificationServiceIntegrationTest {
 
     @Test
     public void identifyHenkilos() {
-        @SuppressWarnings("unchedked")
+        @SuppressWarnings("unchecked")
         List<Henkilo> unidentifiedHenkilos = this.entityManager
                 .createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
 

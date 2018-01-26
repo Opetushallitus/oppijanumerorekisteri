@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +31,8 @@ import java.util.Date;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,6 +46,9 @@ public class HenkiloControllerTest {
 
     @MockBean
     private HenkiloService henkiloService;
+
+    @MockBean
+    private DuplicateService duplicateService;
 
     @MockBean
     private IdentificationService identificationService;

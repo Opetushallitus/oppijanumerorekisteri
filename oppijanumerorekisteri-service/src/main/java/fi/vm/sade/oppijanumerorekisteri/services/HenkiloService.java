@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,7 +51,7 @@ public interface HenkiloService {
 
     HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
 
-    HenkiloReadDto forceUpdateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
+    HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto);
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
@@ -76,17 +77,7 @@ public interface HenkiloService {
 
     Henkilo update(Henkilo henkilo);
 
-    List<HenkiloReadDto> findSlavesByMasterOid(String oid);
-
-    List<HenkiloDuplicateDto> findDuplicates(String oid);
-
-    List<HakemusDto> getApplications(String oid);
-
-    List<HenkiloDuplicateDto> getDuplikaatit(HenkiloDuplikaattiCriteria criteria);
-
-    List<String> linkHenkilos(String masterOid, List<String> slaveOids);
-
-    void unlinkHenkilo(String oid, String slaveOid);
+    List<HenkiloReadDto> findSlavesByMasterOid(String masterOid);
 
     String getAsiointikieli(String oidHenkilo);
 

@@ -16,13 +16,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Answers;
-import static org.mockito.Matchers.contains;
 import org.mockito.Mock;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import org.mockito.runners.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
 public class ValidateAtLeastOneNotNullValidatorTest {
 
     private ValidateAtLeastOneNotNullValidator validator;
