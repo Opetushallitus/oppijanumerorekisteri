@@ -5,11 +5,9 @@ import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,23 +27,14 @@ import javax.validation.constraints.Min;
 @RestController
 @RequestMapping("/henkilo")
 @Validated
+@RequiredArgsConstructor
 public class HenkiloController {
-    private HenkiloService henkiloService;
-    private IdentificationService identificationService;
+    private final HenkiloService henkiloService;
+    private final DuplicateService duplicateService;
+    private final IdentificationService identificationService;
 
-    private PermissionChecker permissionChecker;
+    private final PermissionChecker permissionChecker;
     private final YksilointiService yksilointiService;
-
-    @Autowired
-    public HenkiloController(HenkiloService henkiloService,
-                             IdentificationService identificationService,
-                             PermissionChecker permissionChecker,
-                             YksilointiService yksilointiService) {
-        this.henkiloService = henkiloService;
-        this.identificationService = identificationService;
-        this.permissionChecker = permissionChecker;
-        this.yksilointiService = yksilointiService;
-    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
@@ -379,14 +368,14 @@ public class HenkiloController {
     @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
     public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.henkiloService.findDuplicates(oid);
+        return this.duplicateService.findDuplicates(oid);
     }
 
     @GetMapping("/{oid}/hakemukset")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
     @ApiOperation("Hakee henkilön hakemukset haku-app:sta ja atarusta.")
     public List<HakemusDto> getApplications(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.henkiloService.getApplications(oid);
+        return this.duplicateService.getApplications(oid);
     }
 
     @GetMapping("/duplikaatit")
@@ -398,7 +387,7 @@ public class HenkiloController {
             @RequestParam String kutsumanimi,
             @RequestParam String sukunimi) {
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi);
-        return henkiloService.getDuplikaatit(criteria);
+        return this.duplicateService.getDuplikaatit(criteria);
     }
 
     @PostMapping("/{oid}/link")
@@ -406,7 +395,7 @@ public class HenkiloController {
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.henkiloService.linkHenkilos(oid, slaveOids);
+        return this.duplicateService.linkHenkilos(oid, slaveOids);
     }
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
@@ -414,7 +403,7 @@ public class HenkiloController {
     @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
     public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        this.henkiloService.unlinkHenkilo(oid, slaveOid);
+        this.duplicateService.unlinkHenkilo(oid, slaveOid);
     }
 
     @ApiOperation("Hae käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")

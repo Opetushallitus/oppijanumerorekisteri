@@ -98,7 +98,7 @@ public class HenkiloServiceImplTest {
         impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
                 kielisyysRepository, kansalaisuusRepository, yhteystietoConverter, orikaConfiguration, oidGenerator,
                 userDetailsHelper,  permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator,
-                oppijanumerorekisteriProperties, kayttooikeusClient, hakuappClient, ataruClient);
+                oppijanumerorekisteriProperties, kayttooikeusClient);
     }
 
     @Test

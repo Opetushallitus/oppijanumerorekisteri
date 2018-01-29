@@ -18,11 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyListOf;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.anySetOf;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -60,7 +56,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = {"USER"})
     public void isAllowedToAccessPersonFromKayttooikeusService() throws Exception {
         given(this.kayttooikeusClient.checkUserPermissionToUser(eq("1.2.3.4.5"), eq("1.2.3.4.0"),
-                anyListOf(String.class), eq(null), anySetOf(String.class)))
+                anyList(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
@@ -71,7 +67,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = {"USER"})
     public void isAllowedToAccessPersonNot() throws Exception {
         given(this.kayttooikeusClient.checkUserPermissionToUser(eq("1.2.3.4.5"), eq("1.2.3.4.0"),
-                anyListOf(String.class), eq(null), anySetOf(String.class)))
+                anyList(), eq(null), anySet()))
                 .willReturn(false);
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
