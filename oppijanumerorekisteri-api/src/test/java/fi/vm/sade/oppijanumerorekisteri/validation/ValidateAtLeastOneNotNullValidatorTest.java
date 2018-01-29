@@ -110,7 +110,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
     }
 
     @Test
-    public void isValidShouldReturnFalseWenAllNonNull() {
+    public void isValidShouldReturnFalseWhenAllNonNull() {
         List<String> fields = asList("stringValue", "integerValue");
         validator.initialize(createAnnotation(fields));
 

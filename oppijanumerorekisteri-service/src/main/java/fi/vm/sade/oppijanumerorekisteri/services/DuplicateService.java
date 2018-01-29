@@ -16,11 +16,5 @@ public interface DuplicateService {
 
     List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
-    Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids);
-
-    boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos);
-
-    boolean isHenkiloIdentified(Henkilo henkilo);
-
     void unlinkHenkilo(String oid, String slaveOid);
 }

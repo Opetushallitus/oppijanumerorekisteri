@@ -64,6 +64,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<HenkiloDuplicateDto> getDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
         List<Henkilo> henkilot = henkiloJpaRepository.findDuplikaatit(criteria);
         return getHenkiloDuplicateDtoList(henkilot);
@@ -172,8 +173,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         });
     }
 
-    @Override
-    public Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
+    private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
         Henkilo originalMaster = this.henkiloDataRepository.findByOidHenkilo(henkiloOid)
                 .orElseThrow( () -> new NotFoundException("User with oid " + henkiloOid + " was not found"));
         List<Henkilo> candidates = this.henkiloDataRepository.findByOidHenkiloIsIn(similarHenkiloOids);
@@ -184,7 +184,7 @@ public class DuplicateServiceImpl implements DuplicateService {
          */
         List<Henkilo> allHenkilos = new ArrayList<>(candidates);
         allHenkilos.add(originalMaster);
-        if(hasMoreThanOneIdentifiedHenkilo(allHenkilos)) {
+        if (hasMoreThanOneIdentifiedHenkilo(allHenkilos)) {
             throw new ForbiddenException("More than one identified Henkilo");
         }
 
@@ -194,13 +194,11 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .reduce( originalMaster, (currentMaster, candidate) -> isHenkiloIdentified(candidate) ? candidate : currentMaster );
     }
 
-    @Override
-    public boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
+    private boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
         return henkilos.stream().filter(this::isHenkiloIdentified).count() > 1;
     }
 
-    @Override
-    public boolean isHenkiloIdentified(Henkilo henkilo) {
+    private boolean isHenkiloIdentified(Henkilo henkilo) {
         return henkilo.isYksiloity() || henkilo.isYksiloityVTJ() || henkilo.getHetu() != null;
     }
 
