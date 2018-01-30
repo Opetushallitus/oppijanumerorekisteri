@@ -141,6 +141,7 @@ const mapStateToProps = (state) => ({
     ownOid: state.omattiedot.data.oid,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
+    koodisto: state.koodisto
 });
 
 export default connect(mapStateToProps, {linkHenkilos})(HenkiloViewDuplikaatit);
