@@ -24,6 +24,7 @@ type Props = {
     styleClasses?: any,
     yksiloitySelected?: boolean,
     vainLuku?: boolean,
+    henkiloType: string,
 }
 
 type State = {
@@ -42,7 +43,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
 
     render() {
         const henkilo = this.props.henkilo;
-        const targetPage = henkilo.henkiloTyyppi === 'OPPIJA' ? 'oppija' : 'virkailija';
+        const targetPage = this.props.henkiloType
         const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map( (hakemus: any) => this._parseHakemus(hakemus)) : undefined;
         const hakemus = (hakemukset && R.head(hakemukset)) || {};
         const muutHakemukset = (hakemukset && R.tail(hakemukset)) || [];

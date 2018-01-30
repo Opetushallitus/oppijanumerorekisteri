@@ -17,6 +17,7 @@ export default {
     "kayttooikeus-service.renewKutsu": "kayttooikeus-service/kutsu/$1/renew",
     "kayttooikeus-service.kutsu.by-token": "kayttooikeus-service/kutsu/token/$1",
     "kayttooikeus-service.buildversion": "kayttooikeus-service/buildversion.txt",
+    "kayttooikeus-service.henkilo.byOid": "kayttooikeus-service/henkilo/$1",
     "kayttooikeus-service.henkilo.organisaatios": "kayttooikeus-service/henkilo/$1/organisaatio",
     "kayttooikeus-service.henkilo.organisaatiohenkilos": "kayttooikeus-service/henkilo/$1/organisaatiohenkilo",
     "kayttooikeus-service.henkilo.hakatunnus": "kayttooikeus-service/henkilo/$1/hakatunnus",

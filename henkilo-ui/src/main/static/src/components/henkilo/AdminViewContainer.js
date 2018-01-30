@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux';
 import {
+    fetchKayttaja,
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, fetchHenkiloSlaves, clearHenkilo
 } from "../../actions/henkilo.actions";
 import {
@@ -29,6 +30,7 @@ class AdminViewContainer extends React.Component {
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
+        this.props.fetchKayttaja(this.props.oidHenkilo)
         this.props.fetchKayttajatieto(this.props.oidHenkilo);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
@@ -76,6 +78,7 @@ export default connect(mapStateToProps, {
     fetchKansalaisuusKoodisto,
     fetchSukupuoliKoodisto,
     fetchYhteystietotyypitKoodisto,
+    fetchKayttaja,
     fetchKayttajatieto,
     updateHenkiloNavigation,
     fetchAllKayttooikeusryhmasForHenkilo,

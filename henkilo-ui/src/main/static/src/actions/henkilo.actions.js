@@ -4,6 +4,7 @@ import {
     DELETE_HENKILOORGS_FAILURE,
     DELETE_HENKILOORGS_REQUEST, DELETE_HENKILOORGS_SUCCESS,
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILO_FAILURE, FETCH_HENKILOORGS_REQUEST,
+    FETCH_KAYTTAJA_REQUEST, FETCH_KAYTTAJA_SUCCESS, FETCH_KAYTTAJA_FAILURE,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE, UPDATE_HENKILO_REQUEST,
@@ -68,6 +69,18 @@ export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => (as
         throw error;
     }
 });
+
+export const fetchKayttaja = (oid) => (async dispatch => {
+    dispatch({ type: FETCH_KAYTTAJA_REQUEST, oid })
+    const url = urls.url('kayttooikeus-service.henkilo.byOid', oid)
+    try {
+        const kayttaja = await http.get(url)
+        dispatch({ type: FETCH_KAYTTAJA_SUCCESS, kayttaja })
+    } catch (error) {
+        dispatch({ type: FETCH_KAYTTAJA_FAILURE, oid })
+        throw error
+    }
+})
 
 const requestKayttajatieto = (oid) => ({type: FETCH_KAYTTAJATIETO_REQUEST, oid});
 const receiveKayttajatieto = (json) => ({type: FETCH_KAYTTAJATIETO_SUCCESS, kayttajatieto: json, receivedAt: Date.now()});

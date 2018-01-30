@@ -16,11 +16,13 @@ import {LocalNotification} from "../../Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../../types/notification.types";
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
+import type { Kayttaja } from '../../../../types/domain/kayttooikeus/kayttaja.types'
 
 type Props = {
     L: L,
     henkilo: {
         henkilo: Henkilo,
+        kayttaja: Kayttaja,
         henkiloLoading: boolean,
         kayttajatietoLoading: boolean,
     },
@@ -73,7 +75,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     render() {
-        const henkiloTyyppi = this.props.henkilo && this.props.henkilo.henkilo && this.props.henkilo.henkilo.henkiloTyyppi;
+        const kayttajaTyyppi = this.props.henkilo && this.props.henkilo.kayttaja && this.props.henkilo.kayttaja.kayttajaTyyppi;
         const userContentProps = {
             readOnly: this.state.readOnly,
             discardAction: this._discard.bind(this),
@@ -87,7 +89,7 @@ class UserContentContainer extends React.Component<Props, State> {
             isValidForm: this._validForm()
         };
         let content;
-        if (henkiloTyyppi === 'PALVELU') {
+        if (kayttajaTyyppi === 'PALVELU') {
             content = <PalveluUserContent {...userContentProps} />;
         }
         else if (this.props.view === 'OPPIJA') {
@@ -130,7 +132,7 @@ class UserContentContainer extends React.Component<Props, State> {
 
     _additionalInfo() {
         const info = [];
-        if (this.props.henkilo.henkilo.henkiloTyyppi === 'PALVELU') {
+        if (this.props.henkilo.kayttaja.kayttajaTyyppi === 'PALVELU') {
             info.push(this.props.L['HENKILO_ADDITIOINALINFO_PALVELU']);
         }
         else {

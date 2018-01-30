@@ -8,7 +8,6 @@ export type Henkilo = {
     oidHenkilo: string,
     hetu: string,
     passivoitu: boolean,
-    henkiloTyyppi: 'OPPIJA' | 'VIRKAILIJA' | 'PALVELU',
     etunimet: string,
     kutsumanimi: string,
     sukunimi: string,
@@ -34,7 +33,6 @@ export type Henkilo = {
 }
 
 export type HenkiloCreate = {
-    henkiloTyyppi?: string,
     etunimet?: string,
     kutsumanimi?: string,
     sukunimi?: string,
