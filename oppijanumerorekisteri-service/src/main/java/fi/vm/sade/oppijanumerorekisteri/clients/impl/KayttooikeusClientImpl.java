@@ -21,9 +21,12 @@ import java.util.Set;
 import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import java.util.Optional;
 import static java.util.stream.Collectors.toSet;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClientException;
 
 @Component
@@ -43,6 +46,22 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         cachingRestClient.setCasService(this.urlConfiguration.url("kayttooikeus-service.security-check"));
         cachingRestClient.setUsername(authenticationProperties.getKayttooikeus().getUsername());
         cachingRestClient.setPassword(authenticationProperties.getKayttooikeus().getPassword());
+    }
+
+    @Override
+    public Optional<KayttajaReadDto> getKayttajaByOid(String oid) {
+        String url = urlConfiguration.url("kayttooikeus-service.henkilo.byOid", oid);
+        try {
+            KayttajaReadDto dto = cachingRestClient.get(url, KayttajaReadDto.class);
+            return Optional.of(dto);
+        } catch (CachingRestClient.HttpException ex) {
+            if (ex.getStatusCode() == HttpStatus.OK.value()) {
+                return Optional.empty();
+            }
+            throw new RestClientException(ex.getMessage(), ex);
+        } catch (IOException ex) {
+            throw new RestClientException(ex.getMessage(), ex);
+        }
     }
 
     @Override

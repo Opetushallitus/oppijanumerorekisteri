@@ -189,7 +189,7 @@ public class HenkiloServiceTest {
     @Test
     public void getHetusAndOids() {
         Henkilo henkiloMock = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(0L), "1.2.3.4.1", "arpa@kuutio.fi");
+                "fi", "suomi", "246", new Date(), new Date(0L), "1.2.3.4.1", "arpa@kuutio.fi");
         HenkiloHetuAndOidDto henkiloHetuAndOidDto = DtoUtils.createHenkiloHetuAndOidDto("1.2.3.4.5", "123456-9999",
                 new Date(0L));
 
@@ -298,7 +298,7 @@ public class HenkiloServiceTest {
     @Test
     public void getHenkiloOidHetuNimiByName() {
         Henkilo henkiloMock = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         List<Henkilo> henkiloMockList = Collections.singletonList(henkiloMock);
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDtoMock = DtoUtils.createHenkiloOidHetuNimiDto("arpa noppa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5");
@@ -339,7 +339,7 @@ public class HenkiloServiceTest {
     @Test
     public void updateHenkiloFromHenkiloUpdateDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "123456-9999",
-                "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246",
+                "1.2.3.4.5", false, "fi", "suomi", "246",
                 new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         long yhteystiedotRyhmaId = henkilo.getYhteystiedotRyhma().stream().mapToLong(YhteystiedotRyhma::getId).max().orElse(0L) + 1;
         henkilo.getYhteystiedotRyhma().add(YhteystiedotRyhma.builder()
@@ -432,7 +432,7 @@ public class HenkiloServiceTest {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, null, syntymaaika, modified);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", modified, modified, "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
+                "fi", "suomi", "246", modified, modified, "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
 
         given(this.henkiloDataRepositoryMock.findByOidHenkilo(any()))
                 .willReturn(Optional.of(henkilo));
@@ -446,7 +446,7 @@ public class HenkiloServiceTest {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "fi", "suomi", "246", null, null, null, new Date());
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+                "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
 
         given(this.henkiloDataRepositoryMock.findByOidHenkilo(any()))
                 .willReturn(Optional.empty());
@@ -463,7 +463,7 @@ public class HenkiloServiceTest {
         HenkiloPerustietoDto henkiloPerustietoDtoMock = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio",
                 "123456-9999", "", "fi", "suomi", "246", null, null, syntymaaika, modified);
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "", false,
-                HenkiloTyyppi.VIRKAILIJA, "fi", "suomi", "246", modified, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
+                "fi", "suomi", "246", modified, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
 
 
         given(this.henkiloDataRepositoryMock.findByHetu(henkiloPerustietoDtoInput.getHetu())).willReturn(Optional.of(henkilo));

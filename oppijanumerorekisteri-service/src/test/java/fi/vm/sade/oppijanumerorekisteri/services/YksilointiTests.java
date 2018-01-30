@@ -2,12 +2,12 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.ScheduledTasks;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import static java.util.Collections.singletonList;
@@ -31,6 +31,8 @@ public class YksilointiTests {
 
     @MockBean
     private VtjClient vtjClientMock;
+    @MockBean
+    private KayttooikeusClient kayttooikeusClientMock;
     @Autowired
     private DatabaseService databaseService;
 
@@ -55,7 +57,6 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        henkiloCreateDto.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
         HenkiloDto henkiloReadDto = henkiloService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(hetu);
@@ -89,7 +90,6 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        henkiloCreateDto.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
         HenkiloDto henkiloReadDto = henkiloService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(hetu);
@@ -124,7 +124,6 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        henkiloCreateDto.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
         HenkiloDto henkiloReadDto = henkiloService.createHenkilo(henkiloCreateDto);
 
         DateTime modifiedSince = DateTime.now();

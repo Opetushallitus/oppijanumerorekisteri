@@ -1,13 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringExpression;
-import com.querydsl.core.types.dsl.StringPath;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import lombok.*;
 import org.springframework.util.CollectionUtils;
@@ -30,7 +25,6 @@ public class HenkiloCriteria implements OppijanumerorekisteriCriteria {
 
     private Set<String> henkiloOids;
     private String hetu;
-    private HenkiloTyyppi tyyppi;
     private Boolean passivoitu;
     private Boolean duplikaatti;
     private String nameQuery;
@@ -42,9 +36,6 @@ public class HenkiloCriteria implements OppijanumerorekisteriCriteria {
         }
         if (StringUtils.hasLength(this.hetu)) {
             builder.and(henkilo.hetu.eq(hetu));
-        }
-        if (tyyppi != null) {
-            builder.and(henkilo.henkiloTyyppi.eq(tyyppi));
         }
         if (passivoitu != null) {
             builder.and(henkilo.passivoitu.eq(passivoitu));

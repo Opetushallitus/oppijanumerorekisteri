@@ -56,8 +56,6 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private Set<KansalaisuusDto> kansalaisuus;
 
-    private HenkiloTyyppi henkiloTyyppi;
-
     private String sukupuoli;
 
     private Date modified;
@@ -84,9 +82,8 @@ public class HenkiloPerustietoDto implements Serializable {
         return isFind() || !isEmpty(getSukunimi());
     }
 
-    @JsonIgnore
-    @AssertTrue(message = "invalid.henkilotyyppi.empty")
-    public boolean isHenkilotyyppiValidIfCreate() {
-        return isFind() || henkiloTyyppi != null;
+    @Deprecated
+    public HenkiloTyyppi getHenkiloTyyppi() {
+        return HenkiloTyyppi.OPPIJA;
     }
 }

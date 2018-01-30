@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
@@ -18,7 +17,6 @@ public class HenkiloPopulator implements Populator<Henkilo> {
     private final String oid;
     private final List<Populator<YhteystiedotRyhma>> yhteystietoRyhmas = new ArrayList<>();
     private String hetu;
-    private HenkiloTyyppi tyyppi = HenkiloTyyppi.VIRKAILIJA;
     private Populator<Henkilo> master;
     private DateTime created;
     private DateTime modified;
@@ -29,11 +27,6 @@ public class HenkiloPopulator implements Populator<Henkilo> {
 
     public static HenkiloPopulator henkilo(String oid) {
         return new HenkiloPopulator(oid);
-    }
-
-    public HenkiloPopulator tyyppi(HenkiloTyyppi tyyppi) {
-        this.tyyppi = tyyppi;
-        return this;
     }
     
     public HenkiloPopulator hetu(String hetu) {
@@ -71,7 +64,6 @@ public class HenkiloPopulator implements Populator<Henkilo> {
             henkilo.setHetu(hetu);
             henkilo.setCreated(created == null ? new Date() : created.toDate());
             henkilo.setModified(modified != null ? modified.toDate() : henkilo.getCreated());
-            henkilo.setHenkiloTyyppi(tyyppi);
             entityManager.persist(henkilo);
 
             yhteystietoRyhmas.forEach(ryhmaPopulator -> {

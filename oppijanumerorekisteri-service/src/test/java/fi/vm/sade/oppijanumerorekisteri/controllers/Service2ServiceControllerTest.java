@@ -145,7 +145,7 @@ public class Service2ServiceControllerTest  {
     public void findOrCreateNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .hetu("081296-967T").oidHenkilo("1.2.3.4.5").henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA).build();
+                .hetu("081296-967T").oidHenkilo("1.2.3.4.5").build();
         String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
@@ -188,7 +188,6 @@ public class Service2ServiceControllerTest  {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder()
                 .etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
-                .henkiloTyyppi(HenkiloTyyppi.VIRKAILIJA)
                 .build();
         String inputContent = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +

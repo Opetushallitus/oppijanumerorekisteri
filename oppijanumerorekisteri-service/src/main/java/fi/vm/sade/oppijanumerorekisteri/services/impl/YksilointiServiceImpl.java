@@ -1,12 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.NimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
+import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
@@ -64,6 +65,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     private final VtjClient vtjClient;
     private final KoodistoClient koodistoClient;
+    private final KayttooikeusClient kayttooikeusClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
@@ -216,7 +218,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         Optional.of(yksiloityHenkilo)
                 .filter(yHenkilo -> (yHenkilo.getOsoitteet() != null && !yHenkilo.getOsoitteet().isEmpty()) ||
                         !StringUtils.isEmpty(yHenkilo.getSahkoposti()))
-                .filter(yHenkilo -> HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi()))
+                .filter(yHenkilo -> isOppija(henkilo.getOidHenkilo()))
                 .map(yHenkilo -> addYhteystiedot(yHenkilo, henkilo.getAsiointiKieli()))
                 .ifPresent(yhteystiedotRyhmas -> yhteystiedotRyhmas.forEach(yksilointitieto::addYhteystiedotRyhma));
 
@@ -330,11 +332,9 @@ public class YksilointiServiceImpl implements YksilointiService {
                     yhteystiedotRyhmaRepository.delete(yhteystiedotRyhmaI);
                     iterator.remove();
                 }));
-        Optional.of(henkilo.getHenkiloTyyppi()).filter(HenkiloTyyppi.OPPIJA::equals)
-                .filter(henkiloTyyppi -> !CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) ||
-                        !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti()))
-                .ifPresent(henkiloTyyppi ->
-                        henkilo.addAllYhteystiedotRyhmas(addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli())));
+        if (isOppija(henkilo.getOidHenkilo()) && (!CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) || !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti()))) {
+            henkilo.addAllYhteystiedotRyhmas(addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli()));
+        }
     }
 
     private boolean isKansalaisuusKoodiValid(List<String> kansalaisuusKoodiList) {
@@ -426,8 +426,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             yksilointitieto.setKansalaisuus(new HashSet<>());
         }
 
-        if(HenkiloTyyppi.OPPIJA.equals(henkilo.getHenkiloTyyppi()) &&
-                (yksilointitieto.getYhteystiedotRyhma() != null && !yksilointitieto.getYhteystiedotRyhma().isEmpty())) {
+        if (yksilointitieto.getYhteystiedotRyhma() != null && !yksilointitieto.getYhteystiedotRyhma().isEmpty()) {
             henkilo.getYhteystiedotRyhma().addAll(yksilointitieto.getYhteystiedotRyhma());
             yksilointitieto.setYhteystiedotRyhma(new HashSet<>());
         }
@@ -490,6 +489,10 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (henkilo.getYksilointiSynkronoinnit().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
             henkiloService.update(henkilo);
         }
+    }
+
+    private boolean isOppija(String oid) {
+        return kayttooikeusClient.getKayttajaByOid(oid).map(KayttajaReadDto::isOppija).orElse(true);
     }
 
 }

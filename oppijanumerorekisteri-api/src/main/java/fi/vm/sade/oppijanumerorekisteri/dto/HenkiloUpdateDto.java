@@ -45,6 +45,4 @@ public class HenkiloUpdateDto {
     private Set<KansalaisuusDto> kansalaisuus = null;
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = null;
-
-    private HenkiloTyyppi henkiloTyyppi;
 }

@@ -1,7 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -41,6 +42,8 @@ public class YksilointiServiceTest {
 
     private YksilointitietoRepository yksilointitietoRepository;
 
+    private KayttooikeusClient kayttooikeusClientMock;
+
     private final String henkiloOid = "1.2.246.562.24.27470134096";
     private Henkilo henkilo;
 
@@ -48,6 +51,7 @@ public class YksilointiServiceTest {
     public void setup() {
         this.vtjClient = new MockVtjClient();
         MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
+        kayttooikeusClientMock = mock(KayttooikeusClient.class);
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
 
         henkiloRepository = mock(HenkiloRepository.class);
@@ -69,6 +73,7 @@ public class YksilointiServiceTest {
                 orikaConfiguration,
                 this.vtjClient,
                 mockKoodistoClient,
+                kayttooikeusClientMock,
                 oppijanumerorekisteriProperties);
 
         when(kielisyysRepository.findByKieliKoodi(anyString()))
@@ -79,7 +84,7 @@ public class YksilointiServiceTest {
 
         String hetu = "010101-123N";
         this.henkilo = EntityUtils.createHenkilo("Teppo Taneli", "Teppo", "Testaaja", hetu, this.henkiloOid,
-                false, HenkiloTyyppi.OPPIJA, "fi", "suomi", "246", new Date(), new Date(),
+                false, "fi", "suomi", "246", new Date(), new Date(),
                 "1.2.3.4.1", "arpa@kuutio.fi", LocalDate.of(1990, 3, 23));
         when(henkiloRepository.findByOidHenkilo(anyString())).thenReturn(Optional.of(this.henkilo));
     }
@@ -149,11 +154,14 @@ public class YksilointiServiceTest {
         final String henkiloOid = "yksiloimatonVirkailija";
         this.henkilo.setOidHenkilo(henkiloOid);
         this.henkilo.setSukunimi("Virkailija");
-        this.henkilo.setHenkiloTyyppi(HenkiloTyyppi.VIRKAILIJA);
         this.henkilo.setYksiloity(false);
         this.henkilo.setYksiloityVTJ(false);
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-virkailija.json");
         when(henkiloService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        KayttajaReadDto dto = new KayttajaReadDto();
+        dto.setOid(henkiloOid);
+        dto.setKayttajaTyyppi("VIRKAILIJA");
+        when(kayttooikeusClientMock.getKayttajaByOid(any())).thenReturn(Optional.of(dto));
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
         verify(henkiloService).update(eq(yksiloity));
@@ -260,7 +268,6 @@ public class YksilointiServiceTest {
     public void yliajaHenkiloTiedotOnnistuuYhteystietoRyhmienOsalta() {
         Yksilointitieto yksilointitieto = new Yksilointitieto();
         Henkilo henkilo = new Henkilo();
-        henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
 
         YhteystiedotRyhma yhteystiedotRyhma1 = new YhteystiedotRyhma();
         henkilo.getYhteystiedotRyhma().add(yhteystiedotRyhma1);

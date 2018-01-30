@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -28,5 +26,9 @@ public class HenkiloDuplicateDto {
     private KielisyysDto aidinkieli;
     private KielisyysDto asiointiKieli;
     private List<HakemusDto> hakemukset;
-    private HenkiloTyyppi henkiloTyyppi;
+
+    @Deprecated
+    public HenkiloTyyppi getHenkiloTyyppi() {
+        return HenkiloTyyppi.OPPIJA;
+    }
 }

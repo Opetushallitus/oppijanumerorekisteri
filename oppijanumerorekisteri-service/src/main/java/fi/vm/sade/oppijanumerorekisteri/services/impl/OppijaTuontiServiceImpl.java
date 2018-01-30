@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
@@ -181,7 +180,6 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
         private Henkilo newHenkilo(OppijaTuontiRiviCreateDto oppija) {
             Henkilo henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
-            henkilo.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
             if (oppija.getHenkilo().getPassinumero() != null) {
                 henkilo.setPassinumerot(Stream.of(oppija.getHenkilo().getPassinumero()).collect(toSet()));
             }

@@ -26,8 +26,6 @@ public class HenkiloDto implements Serializable {
 
     private boolean passivoitu;
 
-    private HenkiloTyyppi henkiloTyyppi;
-
     private String etunimet;
 
     private String kutsumanimi;
@@ -72,4 +70,8 @@ public class HenkiloDto implements Serializable {
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 
+    @Deprecated
+    public HenkiloTyyppi getHenkiloTyyppi() {
+        return HenkiloTyyppi.OPPIJA;
+    }
 }
