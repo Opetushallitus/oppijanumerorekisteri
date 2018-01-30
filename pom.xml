@@ -55,8 +55,8 @@
         <ant-jsch.version>1.9.9</ant-jsch.version>
 
         <!-- DB. These are updated in spring-boot 2 -->
-        <postgresql.version>42.1.4</postgresql.version>
-        <hikaricp.version>2.7.4</hikaricp.version>
+        <postgresql.version>42.2.1</postgresql.version>
+        <hikaricp.version>2.7.6</hikaricp.version>
     </properties>
 
     <dependencyManagement>
