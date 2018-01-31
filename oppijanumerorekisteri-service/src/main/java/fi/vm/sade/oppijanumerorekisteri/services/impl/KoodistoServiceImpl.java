@@ -22,7 +22,7 @@ public class KoodistoServiceImpl implements KoodistoService {
     @Override
     @Cacheable
     public Iterable<KoodiType> list(Koodisto koodisto) {
-        return koodistoClient.getKoodisForKoodisto(koodisto.getUri(), koodisto.getVersio(), true);
+        return koodistoClient.getKoodisForKoodisto(koodisto.getUri(), koodisto.getVersio(), false);
     }
 
 }
