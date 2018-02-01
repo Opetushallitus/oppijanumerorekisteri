@@ -28,7 +28,6 @@ public class KutsumanimiValidatorTest {
         KutsumanimiValidator validator = new KutsumanimiValidator("AnnaFIA Fia-Maarit");
         assertThat(validator.isValid("Fia")).isTrue();
 
-        //
         validator = new KutsumanimiValidator("Manh Man");
         assertThat(validator.isValid("Man")).isTrue();
     }
