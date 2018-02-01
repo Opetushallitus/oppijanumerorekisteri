@@ -20,14 +20,23 @@ public class KutsumanimiValidatorTest {
         assertThat(validator.isValid("liina")).isFalse();
         assertThat(validator.isValid("iisa")).isFalse();
         assertThat(validator.isValid("Sanna")).isFalse();
-
-        validator = new KutsumanimiValidator("Manh Man");
-        assertThat(validator.isValid("Man")).isTrue();
-
-        validator = new KutsumanimiValidator("Jorma teppo");
-        assertThat(validator.isValid("jorma")).isTrue();
-        assertThat(validator.isValid("Teppo")).isTrue();
-
     }
 
+    @Test
+    public void testCornerCases() {
+        // First etunimi contains kutsumanimi which is in two part other name
+        KutsumanimiValidator validator = new KutsumanimiValidator("AnnaFIA Fia-Maarit");
+        assertThat(validator.isValid("Fia")).isTrue();
+
+        //
+        validator = new KutsumanimiValidator("Manh Man");
+        assertThat(validator.isValid("Man")).isTrue();
+    }
+
+    @Test
+    public void testCaseInsensitivity() {
+        KutsumanimiValidator validator = new KutsumanimiValidator("Jorma teppo");
+        assertThat(validator.isValid("jorma")).isTrue();
+        assertThat(validator.isValid("Teppo")).isTrue();
+    }
 }
