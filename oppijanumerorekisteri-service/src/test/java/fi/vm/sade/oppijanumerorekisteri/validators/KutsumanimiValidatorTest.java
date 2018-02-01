@@ -7,19 +7,46 @@ public class KutsumanimiValidatorTest {
 
     @Test
     public void testIsValid() {
-        KutsumanimiValidator validator = new KutsumanimiValidator("Anna-Liisa Milla Karoliina");
+        KutsumanimiValidator validator = new KutsumanimiValidator("Anna-Liisa Milla Karoliina Anitra Kristiina");
 
         assertThat(validator.isValid("Anna")).isTrue();
         assertThat(validator.isValid("Liisa")).isTrue();
         assertThat(validator.isValid("Anna-Liisa")).isTrue();
         assertThat(validator.isValid("Milla")).isTrue();
         assertThat(validator.isValid("Karoliina")).isTrue();
-        assertThat(validator.isValid("Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Anitra")).isTrue();
+        assertThat(validator.isValid("Kristiina")).isTrue();
 
         assertThat(validator.isValid("Karo")).isFalse();
         assertThat(validator.isValid("liina")).isFalse();
         assertThat(validator.isValid("iisa")).isFalse();
         assertThat(validator.isValid("Sanna")).isFalse();
+    }
+
+    @Test
+    public void testMultipleNames() {
+        KutsumanimiValidator validator = new KutsumanimiValidator("Anna-Liisa Milla Karoliina Anitra Kristiina");
+        assertThat(validator.isValid("Anna-Liisa Milla")).isTrue();
+        assertThat(validator.isValid("Anna-Liisa Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Anna-Liisa Milla Karoliina Anitra")).isTrue();
+        assertThat(validator.isValid("Anna-Liisa Milla Karoliina Anitra Kristiina")).isTrue();
+        assertThat(validator.isValid("Milla Karoliina Anitra Kristiina")).isTrue();
+        assertThat(validator.isValid("Karoliina Anitra Kristiina")).isTrue();
+        assertThat(validator.isValid("Anitra Kristiina")).isTrue();
+
+        assertThat(validator.isValid("Anna Liisa")).isTrue();
+        assertThat(validator.isValid("Liisa Milla")).isTrue();
+        assertThat(validator.isValid("Anna Liisa Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Liisa Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Liisa Milla Karoliina Anitra")).isTrue();
+        assertThat(validator.isValid("Anna Liisa Milla Karoliina Anitra")).isTrue();
+        assertThat(validator.isValid("Liisa Milla Karoliina Anitra Kristiina")).isTrue();
+        assertThat(validator.isValid("Anna Liisa Milla Karoliina Anitra Kristiina")).isTrue();
+
+        assertThat(validator.isValid("Anna Milla")).isFalse();
+        assertThat(validator.isValid("Milla Anitra")).isFalse();
+        assertThat(validator.isValid("Liisa Anna")).isFalse();
+
     }
 
     @Test

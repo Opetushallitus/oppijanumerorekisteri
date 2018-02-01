@@ -1,21 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.validators;
 
-import static java.util.Objects.requireNonNull;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+
 public final class KutsumanimiValidator {
 
-    private final Set<Character> valimerkit = Stream.of(' ', '-').collect(toSet());
     private final String etunimet;
 
     public KutsumanimiValidator(String etunimet) {
@@ -30,20 +22,43 @@ public final class KutsumanimiValidator {
                 .map(String::trim)
                 .collect(toList());
         // e.g. "arpa-kuutio" => "arpa" "kuutio"
-        Set<String> separatedByDash = separatedByWhitespace.stream()
+        List<String> separatedByDash = separatedByWhitespace.stream()
                 .filter(etunimi -> etunimi.contains("-"))
                 .flatMap(etunimi -> Arrays.stream(etunimi.split("-")))
-                .collect(toSet());
-        // e.g. "arpa noppa kuutio" "arpa noppa" "noppa kuutio"
-        Set<String> permutationsOfWhitespaceSeparation = separatedByWhitespace
-                .subList(0, separatedByWhitespace.size()-1).stream()
-                .map(etunimi -> etunimi + " " + separatedByWhitespace.get(separatedByWhitespace.indexOf(etunimi)+1))
+                .collect(toList());
+        // e.g. "arpa-tupla noppa kuutio" "arpa-tupla noppa" "noppa kuutio" "arpa-tupla noppa kuutio"
+        Set<String> subsequentPairs = separatedByWhitespace.stream()
+                .flatMap(etunimi -> this.getStream(separatedByWhitespace, etunimi))
+                .collect(Collectors.toSet());
+        // e.g. "arpa-tupla noppa kuutio" "arpa tupla noppa" "noppa kuutio" "arpa tupla noppa kuutio"
+        List<String> withoutDashes = separatedByWhitespace.stream()
+                .flatMap(etunimi -> etunimi.contains("-") ? Arrays.stream(etunimi.split("-")) : Stream.of(etunimi))
+                .collect(toList());
+        Set<String> subsequentWithoutDash = withoutDashes.stream()
+                .flatMap(etunimi -> this.getStream(withoutDashes, etunimi))
                 .collect(Collectors.toSet());
         // Compare all valid cases
-        return Stream.of(separatedByWhitespace, separatedByDash, permutationsOfWhitespaceSeparation)
+        return Stream.of(separatedByWhitespace, separatedByDash, subsequentPairs, subsequentWithoutDash)
                 .flatMap(Collection::stream)
                 .map(String::toLowerCase)
+                .distinct()
                 .anyMatch(etunimi -> etunimi.equals(kutsumanimiLowerCase));
+    }
+
+    private Stream<? extends String> getStream(List<String> separatedByWhitespace, String etunimi) {
+        int currentIndex = separatedByWhitespace.indexOf(etunimi);
+        int lastIndex = separatedByWhitespace.size();
+        Set<String> set = new HashSet<>();
+        //
+        for (int tupleSize = 2; tupleSize <= lastIndex; tupleSize++) {
+            for (int i = currentIndex; i <= lastIndex-tupleSize; i++) {
+                String flatSet = separatedByWhitespace.subList(i, i + tupleSize).stream()
+                        .reduce((x, y) -> x + " " + y)
+                        .orElseThrow(RuntimeException::new);
+                set.add(flatSet);
+            }
+        }
+        return set.stream();
     }
 
 }
