@@ -26,6 +26,7 @@ type Props = {
 }
 
 type State = {
+    loading: boolean,
     sent: boolean,
 }
 
@@ -44,6 +45,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            loading: false,
             sent: false
         }
     }
@@ -63,7 +65,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                     <div className="row">
                         {this.state.sent
                             ? <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
-                            : <Button action={this._sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
+                            : <Button action={this._sendInvitation.bind(this)} loading={this.state.loading} disabled={this.state.loading}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
                 </div>
@@ -115,10 +117,12 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         };
 
         try {
+            this.setState({loading: true})
             const url = urls.url('kayttooikeus-service.kutsu');
             await http.post(url, payload);
-            this.setState({sent: true});
+            this.setState({loading: false, sent: true});
         } catch (error) {
+            this.setState({loading: false})
             throw error;
         }
     }

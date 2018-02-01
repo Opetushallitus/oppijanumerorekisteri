@@ -3,6 +3,7 @@ import './Button.css'
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
+import Loader from '../icons/Loader';
 
 type Props = {
     action?: (Event) => any,
@@ -16,6 +17,7 @@ type Props = {
     children: any,
     className?: string,
     key?: string,
+    loading?: boolean,
 }
 
 class Button extends React.Component<Props> {
@@ -55,6 +57,7 @@ class Button extends React.Component<Props> {
                         disabled={this.props.disabled}
                         onClick={this.props.action}
                         ref={this.props.inputRef}>
+                    {this.props.loading && <Loader inButton={true} /> }
                     {this.props.children}
                 </button>
         );
