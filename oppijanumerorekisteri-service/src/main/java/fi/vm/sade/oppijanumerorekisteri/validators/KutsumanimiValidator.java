@@ -17,38 +17,41 @@ public final class KutsumanimiValidator {
     public boolean isValid(String kutsumanimi) {
         String kutsumanimiLowerCase = kutsumanimi.toLowerCase();
 
-        // e.g. "arpa-noppa kuutio" => "arpa-noppa" "kuutio"
+        // Basic set
         List<String> separatedByWhitespace = Arrays.stream(this.etunimet.split(" "))
                 .map(String::trim)
                 .collect(toList());
+
         // e.g. "arpa-tupla noppa kuutio" => "arpa-tupla" "noppa" "kuutio" "arpa-tupla noppa" "noppa kuutio" "arpa-tupla noppa kuutio"
         Set<String> subsequentPairs = separatedByWhitespace.stream()
-                .flatMap(etunimi -> this.getStream(separatedByWhitespace, etunimi))
+                .flatMap(etunimi -> this.findSequentialTuples(separatedByWhitespace, etunimi))
                 .collect(Collectors.toSet());
-        // e.g. "arpa-tupla noppa kuutio" "arpa tupla noppa" "noppa kuutio" "arpa tupla noppa kuutio"
-        List<String> withoutDashes = separatedByWhitespace.stream()
-                .flatMap(etunimi -> etunimi.contains("-") ? Arrays.stream(etunimi.split("-")) : Stream.of(etunimi))
+
+        // Basic set separated by dashes and spaces
+        List<String> withoutDashes = Arrays.stream(this.etunimet.split("[ \\-]"))
+                .map(String::trim)
                 .collect(toList());
+        // e.g. "arpa-tupla noppa kuutio" "arpa tupla noppa" "noppa kuutio" "arpa tupla noppa kuutio"
         Set<String> subsequentWithoutDash = withoutDashes.stream()
-                .flatMap(etunimi -> this.getStream(withoutDashes, etunimi))
+                .flatMap(etunimi -> this.findSequentialTuples(withoutDashes, etunimi))
                 .collect(Collectors.toSet());
         // Compare all valid cases
-        return Stream.of(separatedByWhitespace, subsequentPairs, subsequentWithoutDash)
+        return Stream.of(subsequentPairs, subsequentWithoutDash)
                 .flatMap(Collection::stream)
                 .map(String::toLowerCase)
                 .distinct()
                 .anyMatch(etunimi -> etunimi.equals(kutsumanimiLowerCase));
     }
 
-    private Stream<? extends String> getStream(List<String> separatedByWhitespace, String etunimi) {
+    private Stream<? extends String> findSequentialTuples(List<String> separatedByWhitespace, String etunimi) {
         int currentIndex = separatedByWhitespace.indexOf(etunimi);
-        int lastIndex = separatedByWhitespace.size();
+        int finalIndex = separatedByWhitespace.size();
         Set<String> set = new HashSet<>();
-        //
-        for (int tupleSize = 1; tupleSize <= lastIndex; tupleSize++) {
-            for (int i = currentIndex; i <= lastIndex-tupleSize; i++) {
+        // Go through sequential tuples with all valid tuple sizes
+        for (int tupleSize = 1; tupleSize <= finalIndex; tupleSize++) {
+            for (int i = currentIndex; i <= finalIndex-tupleSize; i++) {
                 String flatSet = separatedByWhitespace.subList(i, i + tupleSize).stream()
-                        .reduce((x, y) -> x + " " + y)
+                        .reduce((currentEtunimi, nextEtunimi) -> currentEtunimi + " " + nextEtunimi)
                         .orElseThrow(RuntimeException::new);
                 set.add(flatSet);
             }
