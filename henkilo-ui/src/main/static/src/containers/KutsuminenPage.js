@@ -14,6 +14,8 @@ import ValidationMessageButton from "../components/common/button/ValidationMessa
 import type {ValidationMessage} from "../types/validation.type";
 import type {BasicinfoType} from "../components/kutsuminen/BasicinfoForm";
 import StaticUtils from "../components/common/StaticUtils";
+import { fetchHenkilo } from '../actions/henkilo.actions'
+import { LocalNotification } from '../components/common/Notification/LocalNotification';
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
@@ -22,6 +24,8 @@ type Props = {
     locale: string,
     addedOrgs: Array<KutsuOrganisaatio>,
     kutsuAddOrganisaatio: (KutsuOrganisaatio) => void,
+    kayttajaOid: string,
+    fetchHenkilo: (oid: string) => Promise<*>,
     henkilo: Henkilo,
 }
 
@@ -75,12 +79,20 @@ class KutsuFormPage extends React.Component<Props, State>  {
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
+        await this.fetchKayttaja(this.props.kayttajaOid)
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    async componentWillReceiveProps(nextProps: Props) {
+        if (this.props.kayttajaOid !== nextProps.kayttajaOid) {
+            await this.fetchKayttaja(nextProps.kayttajaOid)
+        }
         this.updateOrganisaatioValidation(nextProps.addedOrgs);
+    }
+
+    async fetchKayttaja(oid: string) {
+        await this.props.fetchHenkilo(oid)
     }
 
     render() {
@@ -95,15 +107,20 @@ class KutsuFormPage extends React.Component<Props, State>  {
         };
         const {basicInfo} = this.state;
 
-        if (this.props.omattiedotLoading) {
+        if (this.props.omattiedotLoading || this.props.henkiloLoading) {
             return (<div className="wrapper"><Loader /></div>);
         }
         else {
+            const disabled = this.isDisabled(this.props.henkilo)
             return (
                 <div>
                     <form className="wrapper">
                         <p className="oph-h2 oph-bold">{this.props.L['VIRKAILIJAN_LISAYS_OTSIKKO']}</p>
+                        <LocalNotification type="error" title={this.props.L['KUTSU_ESTETTY']} toggle={disabled}>
+                            {this.props.L['KUTSU_ESTETTY_SYY']}
+                        </LocalNotification>
                         <BasicInfoForm L={this.props.L}
+                                       disabled={disabled}
                                        basicInfo={basicInfo}
                                        setBasicInfo={this.setBasicInfo.bind(this)}
                                        locale={this.props.locale}>
@@ -126,6 +143,10 @@ class KutsuFormPage extends React.Component<Props, State>  {
                 </div>
             )
         }
+    }
+
+    isDisabled(henkilo: Henkilo) {
+        return !henkilo.hetu || !henkilo.yksiloityVTJ
     }
 
     static isValid(basicInfo: BasicinfoType): boolean {
@@ -193,10 +214,12 @@ const mapStateToProps = (state, ownProps) => {
         l10n: state.l10n.localisations,
         L: state.l10n.localisations[state.locale],
         omattiedotLoading: state.omattiedot.omattiedotLoading,
-        henkilo: state.henkilo,
+        kayttajaOid: state.omattiedot.data.oid,
+        henkiloLoading: state.henkilo.henkiloLoading,
+        henkilo: state.henkilo.henkilo,
         addedOrgs: state.kutsuminenOrganisaatios,
         locale: state.locale
     };
 };
 
-export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio})(KutsuFormPage);
+export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo})(KutsuFormPage);

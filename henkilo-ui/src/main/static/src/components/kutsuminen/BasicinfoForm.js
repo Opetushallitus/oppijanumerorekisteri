@@ -14,6 +14,7 @@ export type BasicinfoType = {
 }
 
 type Props = {
+    disabled: boolean,
     basicInfo: BasicinfoType,
     L: L,
     setBasicInfo: () => void,
@@ -48,6 +49,7 @@ export default class BasicInfo extends React.Component<Props> {
                         <input autoFocus
                                type="text"
                                className="oph-input"
+                               disabled={this.props.disabled}
                                value={basicInfo.etunimi || ''}
                                onChange={this.updateEtunimi.bind(this)}
                         />
@@ -56,6 +58,7 @@ export default class BasicInfo extends React.Component<Props> {
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_SUKUNIMI']}</label>
                         <input type="text"
                                className="oph-input"
+                               disabled={this.props.disabled}
                                value={basicInfo.sukunimi || ''}
                                onChange={this.updateSukunimi.bind(this)}/>
                     </li>
@@ -63,12 +66,14 @@ export default class BasicInfo extends React.Component<Props> {
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_SPOSTI']}</label>
                         <input type="text"
                                className="oph-input"
+                               disabled={this.props.disabled}
                                value={basicInfo.email}
                                onChange={this.updateEmail.bind(this)}/>
                     </li>
                     <li>
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_ASIOINTIKIELI']}</label>
                         <OphSelect name="languageSelection"
+                                   disabled={this.props.disabled}
                                    value={basicInfo.languageCode}
                                    options={languageOptions}
                                    onChange={this.selectLanguage.bind(this)}
