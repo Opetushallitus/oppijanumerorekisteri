@@ -89,7 +89,7 @@ export const updateAndRefetchKayttajatieto = (oid, username) => (async (dispatch
         dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
         dispatch(fetchKayttajatieto(oid));
     } catch (error) {
-        if(error.errorType === 'IncorrectResultSizeDataAccessException') {
+        if(error.errorType === 'IllegalArgumentException') {
             dispatch(addGlobalNotification({
                 autoClose: 10000,
                 title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
