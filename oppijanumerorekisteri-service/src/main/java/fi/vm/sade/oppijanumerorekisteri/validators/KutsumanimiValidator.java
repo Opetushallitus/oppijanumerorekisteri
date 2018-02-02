@@ -50,8 +50,8 @@ public final class KutsumanimiValidator {
         Set<String> set = new HashSet<>();
         // Go through sequential tuples with all valid tuple sizes
         IntStream.range(1, finalIndex + 1).forEach(tupleSize ->
-                IntStream.range(currentIndex, finalIndex - tupleSize + 1).forEach(i -> {
-                    String flatTuple = basicDataSet.subList(i, i + tupleSize).stream()
+                IntStream.range(currentIndex, finalIndex - tupleSize + 1).forEach(currentTuple -> {
+                    String flatTuple = basicDataSet.subList(currentTuple, currentTuple + tupleSize).stream()
                             .reduce((currentEtunimi, nextEtunimi) -> currentEtunimi + " " + nextEtunimi)
                             .orElseThrow(RuntimeException::new);
                     set.add(flatTuple);
