@@ -21,12 +21,7 @@ public final class KutsumanimiValidator {
         List<String> separatedByWhitespace = Arrays.stream(this.etunimet.split(" "))
                 .map(String::trim)
                 .collect(toList());
-        // e.g. "arpa-kuutio" => "arpa" "kuutio"
-        List<String> separatedByDash = separatedByWhitespace.stream()
-                .filter(etunimi -> etunimi.contains("-"))
-                .flatMap(etunimi -> Arrays.stream(etunimi.split("-")))
-                .collect(toList());
-        // e.g. "arpa-tupla noppa kuutio" "arpa-tupla noppa" "noppa kuutio" "arpa-tupla noppa kuutio"
+        // e.g. "arpa-tupla noppa kuutio" => "arpa-tupla" "noppa" "kuutio" "arpa-tupla noppa" "noppa kuutio" "arpa-tupla noppa kuutio"
         Set<String> subsequentPairs = separatedByWhitespace.stream()
                 .flatMap(etunimi -> this.getStream(separatedByWhitespace, etunimi))
                 .collect(Collectors.toSet());
@@ -38,7 +33,7 @@ public final class KutsumanimiValidator {
                 .flatMap(etunimi -> this.getStream(withoutDashes, etunimi))
                 .collect(Collectors.toSet());
         // Compare all valid cases
-        return Stream.of(separatedByWhitespace, separatedByDash, subsequentPairs, subsequentWithoutDash)
+        return Stream.of(separatedByWhitespace, subsequentPairs, subsequentWithoutDash)
                 .flatMap(Collection::stream)
                 .map(String::toLowerCase)
                 .distinct()
@@ -50,7 +45,7 @@ public final class KutsumanimiValidator {
         int lastIndex = separatedByWhitespace.size();
         Set<String> set = new HashSet<>();
         //
-        for (int tupleSize = 2; tupleSize <= lastIndex; tupleSize++) {
+        for (int tupleSize = 1; tupleSize <= lastIndex; tupleSize++) {
             for (int i = currentIndex; i <= lastIndex-tupleSize; i++) {
                 String flatSet = separatedByWhitespace.subList(i, i + tupleSize).stream()
                         .reduce((x, y) -> x + " " + y)
