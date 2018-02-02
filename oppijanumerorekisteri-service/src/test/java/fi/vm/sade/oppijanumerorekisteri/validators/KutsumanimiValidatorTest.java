@@ -24,6 +24,20 @@ public class KutsumanimiValidatorTest {
     }
 
     @Test
+    public void testBasicCasesWithMultipleDashes() {
+        KutsumanimiValidator validator = new KutsumanimiValidator("Anna Liisa Milla-Karoliina Anitra-Kristiina");
+
+        assertThat(validator.isValid("Anna")).isTrue();
+        assertThat(validator.isValid("Liisa")).isTrue();
+        assertThat(validator.isValid("Milla-Karoliina")).isTrue();
+        assertThat(validator.isValid("Milla")).isTrue();
+        assertThat(validator.isValid("Karoliina")).isTrue();
+        assertThat(validator.isValid("Anitra-Kristiina")).isTrue();
+        assertThat(validator.isValid("Anitra")).isTrue();
+        assertThat(validator.isValid("Kristiina")).isTrue();
+    }
+
+    @Test
     public void testMultipleNames() {
         KutsumanimiValidator validator = new KutsumanimiValidator("Anna-Liisa Milla Karoliina Anitra Kristiina");
         // Sequential pairs

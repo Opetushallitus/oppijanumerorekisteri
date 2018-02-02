@@ -43,13 +43,13 @@ public final class KutsumanimiValidator {
                 .anyMatch(etunimi -> etunimi.equals(kutsumanimi.toLowerCase()));
     }
 
-    private Stream<? extends String> findSequentialTuples(List<String> basicDataSet, String etunimi) {
+    private Stream<String> findSequentialTuples(List<String> basicDataSet, String etunimi) {
         int currentIndex = basicDataSet.indexOf(etunimi);
         int finalIndex = basicDataSet.size();
         Set<String> set = new HashSet<>();
         // Go through sequential tuples with all valid tuple sizes
         for (int tupleSize = 1; tupleSize <= finalIndex; tupleSize++) {
-            for (int i = currentIndex; i <= finalIndex-tupleSize; i++) {
+            for (int i = currentIndex; i <= finalIndex - tupleSize; i++) {
                 String flatSet = basicDataSet.subList(i, i + tupleSize).stream()
                         .reduce((currentEtunimi, nextEtunimi) -> currentEtunimi + " " + nextEtunimi)
                         .orElseThrow(RuntimeException::new);
