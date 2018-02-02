@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -27,12 +28,12 @@ public final class KutsumanimiValidator {
     public boolean isValid(String kutsumanimi) {
         // e.g. "arpa-tupla noppa kuutio" => "arpa-tupla" "noppa" "kuutio" "arpa-tupla noppa" "noppa kuutio" "arpa-tupla noppa kuutio"
         Set<String> subsequentTuples = this.basicDataSeparatedByWhitespace.stream()
-                .flatMap(etunimi -> this.findSequentialTuples(this.basicDataSeparatedByWhitespace, etunimi))
+                .flatMap(etunimi -> this.findSequentialTuples(etunimi, this.basicDataSeparatedByWhitespace))
                 .collect(Collectors.toSet());
 
         // e.g. "arpa-tupla noppa kuutio" => "arpa" "tupla" "noppa" "kuutio" "arpa tupla noppa" "noppa kuutio" "arpa tupla noppa kuutio"
         Set<String> subsequentTuplesWithoutDash = this.basicDataSeparatedByWhitespaceAndDashes.stream()
-                .flatMap(etunimi -> this.findSequentialTuples(this.basicDataSeparatedByWhitespaceAndDashes, etunimi))
+                .flatMap(etunimi -> this.findSequentialTuples(etunimi, this.basicDataSeparatedByWhitespaceAndDashes))
                 .collect(Collectors.toSet());
 
         // Compare all valid cases
@@ -43,19 +44,18 @@ public final class KutsumanimiValidator {
                 .anyMatch(etunimi -> etunimi.equals(kutsumanimi.toLowerCase()));
     }
 
-    private Stream<String> findSequentialTuples(List<String> basicDataSet, String etunimi) {
+    private Stream<String> findSequentialTuples(String etunimi, List<String> basicDataSet) {
         int currentIndex = basicDataSet.indexOf(etunimi);
         int finalIndex = basicDataSet.size();
         Set<String> set = new HashSet<>();
         // Go through sequential tuples with all valid tuple sizes
-        for (int tupleSize = 1; tupleSize <= finalIndex; tupleSize++) {
-            for (int i = currentIndex; i <= finalIndex - tupleSize; i++) {
-                String flatSet = basicDataSet.subList(i, i + tupleSize).stream()
-                        .reduce((currentEtunimi, nextEtunimi) -> currentEtunimi + " " + nextEtunimi)
-                        .orElseThrow(RuntimeException::new);
-                set.add(flatSet);
-            }
-        }
+        IntStream.range(1, finalIndex + 1).forEach(tupleSize ->
+                IntStream.range(currentIndex, finalIndex - tupleSize + 1).forEach(i -> {
+                    String flatTuple = basicDataSet.subList(i, i + tupleSize).stream()
+                            .reduce((currentEtunimi, nextEtunimi) -> currentEtunimi + " " + nextEtunimi)
+                            .orElseThrow(RuntimeException::new);
+                    set.add(flatTuple);
+                }));
         return set.stream();
     }
 
