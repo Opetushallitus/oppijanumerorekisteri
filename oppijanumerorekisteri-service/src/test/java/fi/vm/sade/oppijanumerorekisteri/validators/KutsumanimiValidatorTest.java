@@ -6,7 +6,7 @@ import org.junit.Test;
 public class KutsumanimiValidatorTest {
 
     @Test
-    public void testIsValid() {
+    public void testBasicCases() {
         KutsumanimiValidator validator = new KutsumanimiValidator("Anna-Liisa Milla Karoliina Anitra Kristiina");
 
         assertThat(validator.isValid("Anna")).isTrue();
@@ -26,27 +26,35 @@ public class KutsumanimiValidatorTest {
     @Test
     public void testMultipleNames() {
         KutsumanimiValidator validator = new KutsumanimiValidator("Anna-Liisa Milla Karoliina Anitra Kristiina");
-        assertThat(validator.isValid("Anna-Liisa Milla")).isTrue();
-        assertThat(validator.isValid("Anna-Liisa Milla Karoliina")).isTrue();
-        assertThat(validator.isValid("Anna-Liisa Milla Karoliina Anitra")).isTrue();
-        assertThat(validator.isValid("Anna-Liisa Milla Karoliina Anitra Kristiina")).isTrue();
-        assertThat(validator.isValid("Milla Karoliina Anitra Kristiina")).isTrue();
-        assertThat(validator.isValid("Karoliina Anitra Kristiina")).isTrue();
-        assertThat(validator.isValid("Anitra Kristiina")).isTrue();
-
+        // Sequential pairs
         assertThat(validator.isValid("Anna Liisa")).isTrue();
         assertThat(validator.isValid("Liisa Milla")).isTrue();
-        assertThat(validator.isValid("Anna Liisa Milla Karoliina")).isTrue();
-        assertThat(validator.isValid("Liisa Milla Karoliina")).isTrue();
-        assertThat(validator.isValid("Liisa Milla Karoliina Anitra")).isTrue();
-        assertThat(validator.isValid("Anna Liisa Milla Karoliina Anitra")).isTrue();
-        assertThat(validator.isValid("Liisa Milla Karoliina Anitra Kristiina")).isTrue();
-        assertThat(validator.isValid("Anna Liisa Milla Karoliina Anitra Kristiina")).isTrue();
+        assertThat(validator.isValid("Anna-Liisa Milla")).isTrue();
+        assertThat(validator.isValid("Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Karoliina Anitra")).isTrue();
+        assertThat(validator.isValid("Anitra Kristiina")).isTrue();
 
         assertThat(validator.isValid("Anna Milla")).isFalse();
         assertThat(validator.isValid("Milla Anitra")).isFalse();
         assertThat(validator.isValid("Liisa Anna")).isFalse();
 
+        // Sequential triples
+        assertThat(validator.isValid("Anna-Liisa Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Liisa Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Karoliina Anitra Kristiina")).isTrue();
+
+        // Sqeuantial quadruples
+        assertThat(validator.isValid("Anna-Liisa Milla Karoliina Anitra")).isTrue();
+        assertThat(validator.isValid("Milla Karoliina Anitra Kristiina")).isTrue();
+        assertThat(validator.isValid("Anna Liisa Milla Karoliina")).isTrue();
+        assertThat(validator.isValid("Liisa Milla Karoliina Anitra")).isTrue();
+
+        // Sqeuanetial quintuple
+        assertThat(validator.isValid("Anna Liisa Milla Karoliina Anitra")).isTrue();
+        assertThat(validator.isValid("Liisa Milla Karoliina Anitra Kristiina")).isTrue();
+
+        // Sequential hextuple
+        assertThat(validator.isValid("Anna Liisa Milla Karoliina Anitra Kristiina")).isTrue();
     }
 
     @Test
@@ -64,5 +72,6 @@ public class KutsumanimiValidatorTest {
         KutsumanimiValidator validator = new KutsumanimiValidator("Jorma teppo");
         assertThat(validator.isValid("jorma")).isTrue();
         assertThat(validator.isValid("Teppo")).isTrue();
+        assertThat(validator.isValid("jorma Teppo")).isTrue();
     }
 }
