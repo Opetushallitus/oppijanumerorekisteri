@@ -67,7 +67,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     render() {
         return (
             <div className="wrapper">
-                <h1>{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</h1>
+                <span className="oph-h2 oph-bold">{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</span>
                 {this.state.naytaDuplikaatit === false
                     ? <OppijaCreateForm
                         tallenna={this.tallenna}

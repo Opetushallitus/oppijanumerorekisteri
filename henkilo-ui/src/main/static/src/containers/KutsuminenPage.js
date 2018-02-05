@@ -101,9 +101,8 @@ class KutsuFormPage extends React.Component<Props, State>  {
         else {
             return (
                 <div>
-                    <form className="wrapper kutsuFormWrapper">
-
-                        <span>{this.props.L['POISTA_MERKKIA']}</span>
+                    <form className="wrapper">
+                        <p className="oph-h2 oph-bold">{this.props.L['VIRKAILIJAN_LISAYS_OTSIKKO']}</p>
                         <BasicInfoForm L={this.props.L}
                                        basicInfo={basicInfo}
                                        setBasicInfo={this.setBasicInfo.bind(this)}

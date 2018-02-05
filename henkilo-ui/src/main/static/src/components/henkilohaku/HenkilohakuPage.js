@@ -106,12 +106,12 @@ class HenkilohakuPage extends React.Component {
     };
 
     render() {
-        return <div className="borderless-wrapper">
+        return <div className="wrapper">
             {this.props.notifications.filter(notification => notification.type === 'error').map( (notification, index) =>
                 <WideRedNotification key={index} closeAction={() => this.props.removeNotification('error', 'henkilohakuNotifications', 'HENKILOHAKU_ERROR')}
                                      message={this.L[notification.notL10nMessage]} />)
             }
-            <p className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</p>
+            <span className="oph-h2 oph-bold">{this.L['HENKILOHAKU_OTSIKKO']}</span>
             <DelayedSearchInput setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
                                 defaultNameQuery={this.state.henkilohakuModel.nameQuery}
                                 loading={this.props.henkilohakuLoading} />

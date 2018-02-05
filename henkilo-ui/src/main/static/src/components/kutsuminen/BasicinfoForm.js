@@ -41,7 +41,7 @@ export default class BasicInfo extends React.Component<Props> {
         const languageOptions = this.languages.map( language => ({ value: language.code, label: language.name[this.props.locale] }));
         return (
             <fieldset id="basicinfo">
-                <span className="oph-h2 oph-strong">{this.props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
+                <span className="oph-h2">{this.props.L['VIRKAILIJAN_TIEDOT_OTSIKKO']}</span>
                 <ul className="flex-outer">
                     <li>
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_ETUNIMI']}</label>

@@ -180,9 +180,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>
-                    <div className="header">
+                    {!this.props.piilotaOtsikko && <div className="header">
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</p>
-                    </div>
+                    </div>}
                     <div>
                         <Table headings={this.tableHeadings}
                                data={this._rows}
