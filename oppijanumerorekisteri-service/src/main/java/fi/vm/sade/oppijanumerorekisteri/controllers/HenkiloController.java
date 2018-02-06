@@ -317,7 +317,7 @@ public class HenkiloController {
     }
 
     @PutMapping("/{oid}/yksilointitiedot/yliajayksiloimaton")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'VTJ_VERTAILUNAKYMA'}}, #permissionService)")
     @ApiOperation("Yliajaa henkilön tiedot yksilöintitiedoilla. Tarkoitettu henkilöille, joiden VTJ-yksilöinti on epäonnistunut")
     public void yliajaHenkilonTiedot(@PathVariable String oid,
                                      @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
