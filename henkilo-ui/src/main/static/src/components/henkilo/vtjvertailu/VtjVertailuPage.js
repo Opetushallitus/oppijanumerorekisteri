@@ -22,7 +22,22 @@ import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import type {L} from "../../../types/localisation.type";
 
+type Props = {
+    oidHenkilo: string,
+    henkiloType: string,
+    henkilo: HenkiloState,
+    ownOid: string,
+    omattiedot: OmattiedotState,
+    L: L,
+    fetchHenkilo: (string) => void,
+    fetchHenkiloYksilointitieto: (string) => void ,
+    fetchHenkiloMaster: (string) => void,
+    fetchOmattiedot: () => void,
+    updateHenkiloNavigation: (any) => void,
+    overrideYksiloimatonHenkiloVtjData: (string) => void,
+    fetchHenkiloSlaves: (string) => void
 
+}
 
 type State = {
     showSuccess: boolean,
@@ -101,22 +116,7 @@ class VtjVertailuPage extends React.Component<Props, State> {
 
 }
 
-type Props = {
-    oidHenkilo: string,
-    henkiloType: string,
-    henkilo: HenkiloState,
-    ownOid: string,
-    omattiedot: OmattiedotState,
-    L: L,
-    fetchHenkilo: (string) => void,
-    fetchHenkiloYksilointitieto: (string) => void ,
-    fetchHenkiloMaster: (string) => void,
-    fetchOmattiedot: () => void,
-    updateHenkiloNavigation: (any) => void,
-    overrideYksiloimatonHenkiloVtjData: (string) => void,
-    fetchHenkiloSlaves: (string) => void
 
-}
 
 const mapStateToProps = (state, ownProps) => {
     return {
