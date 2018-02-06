@@ -54,7 +54,7 @@ class Button extends React.Component<Props> {
                 </a>
                 :
                 <button className={className}
-                        disabled={this.props.disabled}
+                        disabled={this.props.disabled || this.props.loading}
                         onClick={this.props.action}
                         ref={this.props.inputRef}>
                     {this.props.loading && <Loader inButton={true} /> }

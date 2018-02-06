@@ -57,7 +57,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                     <div className="row">
                         {this.state.sent
                             ? <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
-                            : <Button action={this._sendInvitation.bind(this)} loading={this.state.loading} disabled={this.state.loading}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
+                            : <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
                     <LocalNotification type="error" title={L['KUTSU_LUONTI_EPAONNISTUI']} toggle={this.state.notifications.length > 0}>
