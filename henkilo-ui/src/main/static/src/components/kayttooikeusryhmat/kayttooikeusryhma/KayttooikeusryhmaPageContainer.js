@@ -16,6 +16,7 @@ import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import {fetchPalveluKayttooikeus} from "../../../actions/kayttooikeus.actions";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {L} from "../../../types/localisation.type";
+import type { KayttooikeusOrganisaatiot } from '../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
 
 type Props = {
     L: L,
@@ -29,6 +30,7 @@ type Props = {
     fetchKayttooikeusryhmaSlaves: (id: string) => Promise<any>,
     fetchPalveluKayttooikeus: (palveluName: string) => void,
     organisaatios: any,
+    kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     koodisto: any,
     locale: Locale,
     kayttooikeus: any,
@@ -71,6 +73,7 @@ const mapStateToProps = (state, ownProps) => {
         kayttooikeusryhmaId: ownProps.routeParams['id'],
         L: state.l10n.localisations[state.locale],
         organisaatios: state.omattiedot.organisaatios,
+        kayttooikeudet: state.omattiedot.organisaatiot,
         koodisto: state.koodisto,
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
