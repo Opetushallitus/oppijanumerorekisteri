@@ -44,7 +44,7 @@ public class CasController {
     }
 
     @ApiOperation("Yrittää asettaa vahvasti tunnistautuneelle henkilölle henkilötunnuksen")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilo/{oidHenkilo}/vahvaTunnistus", method = RequestMethod.PUT)
     public void setVahvaTunnistusHetu(@PathVariable String oidHenkilo,
                                       @Validated @RequestBody HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto) {

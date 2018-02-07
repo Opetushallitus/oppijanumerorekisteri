@@ -43,6 +43,7 @@ public class OppijaController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Yksittäisen oppijan luonti",
             notes = "Lisää automaattisesti oppijan käyttäjän organisaatioihin.")
@@ -52,6 +53,7 @@ public class OppijaController {
 
     @PutMapping
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Useamman oppijan luonti",
             notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
@@ -61,6 +63,7 @@ public class OppijaController {
 
     @GetMapping("/tuonti={id}")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
@@ -70,6 +73,7 @@ public class OppijaController {
 
     @PostMapping("/tuonti={id}")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Käynnistää oppijoiden tuonnin käsittelyn",
             notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
@@ -79,6 +83,7 @@ public class OppijaController {
 
     @GetMapping("/tuonti={id}/perustiedot")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
             notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
@@ -88,6 +93,7 @@ public class OppijaController {
 
     @GetMapping("/yhteenveto")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin yhteenveto")
     public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
@@ -96,6 +102,7 @@ public class OppijaController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
     public Page<OppijaListDto> list(
@@ -107,6 +114,7 @@ public class OppijaController {
 
     @GetMapping("/muuttuneet")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Muuttuneiden oppijoiden haku",
             notes = "Muuttuneet oppijat listataan vanhimmasta uusimpaan.")
@@ -118,21 +126,21 @@ public class OppijaController {
     }
 
     @PostMapping("/{henkiloOid}/organisaatio")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation(value = "Lisää nykyisen käyttäjän organisaatiot oppijalle")
     public void addKayttajanOrganisaatiot(@PathVariable String henkiloOid) {
         oppijaService.addKayttajanOrganisaatiot(henkiloOid);
     }
 
     @PutMapping("/{henkiloOid}/organisaatio/{organisaatioOid}")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation(value = "Lisää oppijan organisaatioon")
     public void addOrganisaatio(@PathVariable String henkiloOid, @PathVariable String organisaatioOid) {
         oppijaService.addOrganisaatio(henkiloOid, organisaatioOid);
     }
 
     @DeleteMapping("/{henkiloOid}/organisaatio/{organisaatioOid}")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation(value = "Poistaa oppijan organisaatiosta")
     public void deleteOrganisaatio(@PathVariable String henkiloOid, @PathVariable String organisaatioOid) {
         oppijaService.deleteOrganisaatio(henkiloOid, organisaatioOid);

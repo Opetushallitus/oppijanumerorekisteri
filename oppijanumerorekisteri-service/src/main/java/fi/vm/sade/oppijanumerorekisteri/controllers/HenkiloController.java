@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -41,6 +40,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Slice<HenkiloHakuDto> list(
             HenkiloHakuCriteria criteria,
@@ -54,6 +54,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
             notes = "Hakutermillä haetaan henkilön nimen, henkilötunnuksen ja OID:n mukaan."
@@ -66,7 +67,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/yhteystieto={arvo}/oid")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation(value = "Hakee henkilöiden OID:t yhteystiedon perusteella.")
     public Iterable<String> getByYhteystieto(@PathVariable String arvo) {
         return henkiloService.listOidByYhteystieto(arvo);
@@ -83,6 +84,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
     public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
@@ -95,6 +97,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
     public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
@@ -105,6 +108,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
@@ -169,7 +173,7 @@ public class HenkiloController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/{oid}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Passivoi henkilön mukaanlukien käyttöoikeudet ja organisaatiot.",
             notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
@@ -201,6 +205,7 @@ public class HenkiloController {
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "bad input")})
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -214,6 +219,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilotByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloDto> findHenkilotByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
@@ -238,14 +244,14 @@ public class HenkiloController {
 
     @GetMapping("/{oid}/identification")
     @ApiOperation("Henkilön tunnistetietojen haku.")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Iterable<IdentificationDto> getIdentifications(@PathVariable String oid) {
         return identificationService.listByHenkiloOid(oid);
     }
 
     @PostMapping("/{oid}/identification")
     @ApiOperation("Henkilön tunnistetietojen lisääminen.")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Iterable<IdentificationDto> addIdentification(@PathVariable String oid,
                                                          @RequestBody @Validated IdentificationDto identification) {
         return identificationService.create(oid, identification);
@@ -256,6 +262,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilotypes", method = RequestMethod.GET)
     public List<String> findPossibleHenkiloTypes() {
@@ -302,6 +309,7 @@ public class HenkiloController {
 
     @PutMapping("/{oid}/yksilointitiedot")
     @PreAuthorize("hasAnyRole('ROLE_APP_KAYTTOOIKEUS_SCHEDULE',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Päivittään yksilöidyn henkilön tiedot VTJ:stä")
     public void paivitaYksilointitiedot(@PathVariable String oid) {
@@ -325,7 +333,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/yksilointitiedot")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Hakee epäonnistuneet yksilöinnit")
     public Page<YksilointiVertailuDto> listYksilointitiedot(
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
@@ -334,21 +342,21 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/yksilointi")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
     public Iterable<String> listPalvelutunnisteet(@PathVariable String oid) {
         return yksilointiService.listPalvelutunnisteet(oid);
     }
 
     @PutMapping("/{oid}/yksilointi/{palvelutunniste}")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Aktivoi yksilöinnin annetulle palvelutunnisteelle")
     public void enableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.enableYksilointi(oid, palvelutunniste);
     }
 
     @DeleteMapping("/{oid}/yksilointi/{palvelutunniste}")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
     public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.disableYksilointi(oid, palvelutunniste);
@@ -380,6 +388,7 @@ public class HenkiloController {
 
     @GetMapping("/duplikaatit")
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation("Hakee duplikaatit nimeä vertailemalla")
     public List<HenkiloDuplicateDto> getDuplikaatit(
