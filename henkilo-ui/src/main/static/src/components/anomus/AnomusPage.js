@@ -115,6 +115,7 @@ class AnomusPage extends React.Component<Props, State> {
                                   fetchMoreAction: this.onSubmitWithoutClear.bind(this),
                               }}
                               tableLoading={this.props.haetutKayttooikeusryhmatLoading}
+                              piilotaOtsikko={true}
                               striped />
                       </div>
               }

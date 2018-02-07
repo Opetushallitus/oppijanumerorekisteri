@@ -72,7 +72,9 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         return this.props.henkilo.henkiloLoading
             ? <Loader />
             :(<div className="kayttooikeus-anomus-wrapper">
-                <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
+                <div className="header">
+                    <span className="oph-h2 oph-bold">{L['OMATTIEDOT_OTSIKKO']}</span>
+                </div>
                 {this.state.emailOptions.showMissingEmailNotification ?
                     <WideBlueNotification message={L['OMATTIEDOT_PUUTTUVA_SAHKOPOSTI_UUSI_ANOMUS']} closeAction={() => {
                         this.setState(
