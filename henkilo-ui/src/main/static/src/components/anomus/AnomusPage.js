@@ -33,7 +33,7 @@ type Props = {
     haetutKayttooikeusryhmatLoading: boolean,
     fetchAllRyhmas: () => void,
     isAdmin: boolean,
-    updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, string) => Promise<any>,
+    updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, ?string) => Promise<any>,
     clearHaettuKayttooikeusryhma: (number) => void,
     addGlobalNotification: (GlobalNotificationConfig) => void
 };
@@ -159,7 +159,7 @@ class AnomusPage extends React.Component<Props, State> {
         }, () => this.props.fetchHaetutKayttooikeusryhmat(parameters));
     };
 
-    async updateHaettuKayttooikeusryhma(id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, henkilo: any, hylkaysperuste: string) {
+    async updateHaettuKayttooikeusryhma(id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, henkilo: any, hylkaysperuste?: string): Promise<any> {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste);
             this.setState({anomusModifiedHenkilo: henkilo});
