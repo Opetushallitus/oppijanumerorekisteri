@@ -13,7 +13,7 @@ import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
  */
 
-type Parameters = {
+export type FetchHaetutKayttooikeusryhmatParameters = {
     orderBy: string,
     limit: number,
     showOwnAnomus: boolean,
@@ -29,7 +29,7 @@ type Props = {
     organisaatioCache: any,
     clearHaetutKayttooikeusryhmat: () => void,
     fetchAllOrganisaatios: () => void,
-    fetchHaetutKayttooikeusryhmat: (Parameters) => void,
+    fetchHaetutKayttooikeusryhmat: (FetchHaetutKayttooikeusryhmatParameters) => void,
     haetutKayttooikeusryhmatLoading: boolean,
     fetchAllRyhmas: () => void,
     isAdmin: boolean,
@@ -39,7 +39,7 @@ type Props = {
 };
 
 type State = {
-    parameters: Parameters,
+    parameters: FetchHaetutKayttooikeusryhmatParameters,
     sorted: Array<any>,
     allFetched: boolean,
     page: number,

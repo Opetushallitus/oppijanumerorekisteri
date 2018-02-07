@@ -17,6 +17,7 @@ import PropertySingleton from '../../../globals/PropertySingleton';
 import type {L, L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {HaettuKayttooikeusryhma} from "../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types";
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 type Heading = {
     key: string,
@@ -34,9 +35,10 @@ type State = {
 type Props = {
     l10n: L10n,
     locale: Locale,
-    updateHaettuKayttooikeusryhma: (number, string, string, string, any, ?string) => Promise<any>,
+    updateHaettuKayttooikeusryhma?: (number, string, string, string, any, string) => Promise<any>,
     isOmattiedot?: boolean,
-    kayttooikeus?: {
+    omattiedot?: OmattiedotState,
+    kayttooikeus: {
         kayttooikeusAnomus: Array<any>,
         grantableKayttooikeus: any,
         grantableKayttooikeusLoading: boolean
@@ -65,7 +67,6 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        console.log(props);
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [{key: 'ANOTTU_PVM'},
             {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: !this.props.isAnomusView, notSortable: this.props.isAnomusView},
@@ -111,13 +112,13 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     createRows() {
         const headingList = this.headingList.map(heading => heading.key);
         this._rows = this._getKayttooikeusAnomukset(this.props)
-            .map((haettuKayttooikeusRyhma, idx) => ({
+            .map((haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
                 [headingList[0]]: moment(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm)).format(),
                 [headingList[1]]: haettuKayttooikeusRyhma.anomus.henkilo.etunimet + ' ' + haettuKayttooikeusRyhma.anomus.henkilo.sukunimi,
                 [headingList[2]]: toLocalizedText(this.props.locale, this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi)
                 + ' ' + StaticUtils.getOrganisaatiotyypitFlat(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit, this.L),
-                [headingList[3]]: toLocalizedText(this.props.locale, haettuKayttooikeusRyhma.kayttoOikeusRyhma.description,
-                    haettuKayttooikeusRyhma.kayttoOikeusRyhma.name),
+                [headingList[3]]: toLocalizedText(this.props.locale, haettuKayttooikeusRyhma.kayttoOikeusRyhma.nimi,
+                    haettuKayttooikeusRyhma.kayttoOikeusRyhma.tunniste),
                 [headingList[4]]: this.createSelitePopupButton(haettuKayttooikeusRyhma.anomus.perustelut),
                 [headingList[5]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
                 [headingList[6]]: !this.props.isOmattiedot
@@ -150,7 +151,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     anomusHandlingButtonsForOmattiedot (haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) {
         return <div>
             <div style={{display: 'table-cell', paddingRight: '10px'}}>
-                <Button action={this.cancelAnomus.bind(this, haettuKayttooikeusRyhma, idx)}>{this.L['HENKILO_KAYTTOOIKEUSANOMUS_PERU']}</Button>
+                <Button action={this.cancelAnomus.bind(this, haettuKayttooikeusRyhma)}>{this.L['HENKILO_KAYTTOOIKEUSANOMUS_PERU']}</Button>
             </div>
         </div>
     };
@@ -185,17 +186,19 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     };
 
     updateHaettuKayttooikeusryhma = (id: number, tila: string, idx: number, henkilo: any, hylkaysperuste?: string) => {
-        this.props.updateHaettuKayttooikeusryhma(id, tila,
-            this.state.dates[idx].alkupvm.format(PropertySingleton.state.PVM_DBFORMAATTI),
-            this.state.dates[idx].loppupvm.format(PropertySingleton.state.PVM_DBFORMAATTI),
-            henkilo, hylkaysperuste);
+        const dates = this.state.dates[idx];
+        const alkupvm: string = dates.alkupvm.format(PropertySingleton.state.PVM_DBFORMAATTI);
+        const loppupvm: string = dates.loppupvm.format(PropertySingleton.state.PVM_DBFORMAATTI);
+        if(this.props.updateHaettuKayttooikeusryhma) {
+            this.props.updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste || '');
+        }
     };
 
     async cancelAnomus(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
         const url = urls.url('kayttooikeus-service.omattiedot.anomus.muokkaus');
         await http.put(url, haettuKayttooikeusRyhma.id);
-        if(this.props.fetchAllKayttooikeusAnomusForHenkilo) {
-            this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.isOmattiedot.data.oid);
+        if(this.props.fetchAllKayttooikeusAnomusForHenkilo && this.props.omattiedot) {
+            this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
         }
     };
 
