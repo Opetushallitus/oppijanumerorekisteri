@@ -7,10 +7,13 @@ import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
 import type {L} from "../../../types/localisation.type";
 import {updateEmptyNavigation} from "../../../actions/navigation.actions";
+import type { KayttooikeusOrganisaatiot } from '../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
+import { hasAnyPalveluRooli } from '../../../utilities/organisaatio.util'
 
 
 type Props = {
     updateNavigation: (Array<any>, ?string, ?string) => any,
+    muokkausoikeus: boolean,
     kayttooikeusryhmat: any,
     updateEmptyNavigation: () => void,
     fetchAllKayttooikeusryhma: (boolean) => void,
@@ -41,6 +44,7 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+    muokkausoikeus: hasAnyPalveluRooli(state.omattiedot.organisaatiot, ['KOOSTEROOLIENHALLINTA_CRUD', 'HENKILONHALLINTA_OPHREKISTERI']),
     kayttooikeusryhmat: state.kayttooikeus,
     locale: state.locale,
     L: state.l10n.localisations[state.locale]
