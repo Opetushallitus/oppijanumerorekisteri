@@ -104,6 +104,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                                   selected={this.state.dates[idx].loppupvm}
                                   showYearDropdown
                                   showWeekNumbers
+                                  disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.kayttoOikeusRyhma.id)}
                                   filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
                     : this.state.dates[idx].loppupvm.format(),
                 [headingList[7]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
@@ -149,6 +150,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                              popupArrowStyles={{marginLeft: '230px'}}
                              popupButtonClasses={'oph-button oph-button-cancel'}
                              popupStyle={{right: '0px', width: '20rem', padding: '30px', position: 'absolute'}}
+                             disabled={noPermission}
                              popupContent={<AnomusHylkaysPopup L={this.L}
                                                                kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
                                                                index={idx}
