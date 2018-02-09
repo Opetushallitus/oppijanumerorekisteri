@@ -21,6 +21,7 @@ import {AnojaKayttooikeusryhmat} from "../../anomus/AnojaKayttooikeusryhmat";
 import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import * as R from 'ramda';
 import {localize, localizeTextGroup} from "../../../utilities/localisation.util";
+import './HenkiloViewOpenKayttooikeusanomus.css';
 
 type Heading = {
     key: string,
@@ -177,7 +178,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const noPermission = this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.kayttoOikeusRyhma.id);
         const henkilo =haettuKayttooikeusRyhma.anomus.henkilo;
         return <div>
-            <div style={{display: 'table-cell', paddingRight: '10px'}}>
+            <div className="anomuslistaus-myonnabutton" style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
                     'MYONNETTY', idx, henkilo)}
                               L={this.L}
@@ -187,7 +188,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 <PopupButton popupClass={'oph-popup-default oph-popup-bottom'}
                              popupTitle={<span className="oph-h3 oph-strong">{this.L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_HAKEMUS']}</span>}
                              popupArrowStyles={{marginLeft: '230px'}}
-                             popupButtonClasses={'oph-button oph-button-cancel'}
+                             popupButtonClasses={'oph-button oph-button-cancel oph-button-small'}
                              popupStyle={{right: '0px', width: '20rem', padding: '30px', position: 'absolute'}}
                              popupContent={<AnomusHylkaysPopup L={this.L}
                                                                kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
