@@ -24,8 +24,6 @@ import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
 import type {L} from "../../../types/localisation.type";
 import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import {LocalNotification} from "../../common/Notification/LocalNotification";
-import type { KayttooikeusOrganisaatiot } from '../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
-import { hasAnyPalveluRooli } from '../../../utilities/organisaatio.util'
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -58,7 +56,6 @@ type Props = {
     L: L,
     router: any,
     organisaatios: Array<OrganisaatioHenkilo>,
-    kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     koodisto: any,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
@@ -113,7 +110,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     render() {
-        const hasPermission = hasAnyPalveluRooli(this.props.kayttooikeudet, ['KOOSTEROOLIENHALLINTA_CRUD', 'HENKILONHALLINTA_OPHREKISTERI'])
         return <div className="wrapper">
 
             <KayttooikeusryhmatNimi {...this.props}
@@ -156,7 +152,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             />
 
             <div className="kayttooikeusryhmat-lisaa-page-buttons">
-                <button disabled={!this._validateKayttooikeusryhmaInputs() || !hasPermission} className="oph-button oph-button-primary"
+                <button disabled={!this._validateKayttooikeusryhmaInputs()} className="oph-button oph-button-primary"
                         onClick={() => {
                             this.props.kayttooikeusryhmaId ?
                                 this.updateKayttooikeusryhma() :
@@ -168,7 +164,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 {
                     this.props.kayttooikeusryhmaId ?
                         <button className="oph-button oph-button-cancel"
-                                disabled={!hasPermission}
                                 onClick={() => {this.setState({ showPassivoiModal: true })}}>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}</button>
                         : null
                 }
