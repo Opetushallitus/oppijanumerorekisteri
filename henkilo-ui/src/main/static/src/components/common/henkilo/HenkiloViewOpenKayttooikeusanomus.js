@@ -263,15 +263,14 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     }
 
     _parseAnojaKayttooikeus = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): KayttooikeusryhmaData => {
-        const kayttooikeusryhmaNimi = myonnettyKayttooikeusryhma.ryhmaNames && myonnettyKayttooikeusryhma.ryhmaNames.texts && localizeTextGroup(myonnettyKayttooikeusryhma.ryhmaNames.texts, this.props.locale) || '';
+        const kayttooikeusryhmaNimiTexts = myonnettyKayttooikeusryhma.ryhmaNames && myonnettyKayttooikeusryhma.ryhmaNames.texts;
+        const kayttooikeusryhmaNimi = kayttooikeusryhmaNimiTexts ? localizeTextGroup(kayttooikeusryhmaNimiTexts, this.props.locale) || '' : '';
         const organisaatioNimi = this._parseOrganisaatioNimi(myonnettyKayttooikeusryhma);
-        const result: KayttooikeusryhmaData = {
+        return {
             voimassaPvm: this._parseVoimassaPvm(myonnettyKayttooikeusryhma),
             organisaatioNimi: organisaatioNimi,
             kayttooikeusryhmaNimi: kayttooikeusryhmaNimi
         };
-
-        return result;
     };
 
     _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
