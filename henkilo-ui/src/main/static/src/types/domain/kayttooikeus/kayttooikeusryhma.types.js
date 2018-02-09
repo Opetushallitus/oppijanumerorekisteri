@@ -30,8 +30,11 @@ export type MyonnettyKayttooikeusryhma = {
     ryhmaId: number,
     ryhmaTunniste: string,
     ryhmaNames: TextGroup,
+    organisaatioOid: string,
     ryhmaKuvaus: ?TextGroup,
     myonnettyTapahtumaId: ?number,
     alkuPvm: ?string,
     voimassaPvm: ?string,
+    tila?: string,
+    kasitelty?: string
 }

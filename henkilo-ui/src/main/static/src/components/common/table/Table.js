@@ -1,7 +1,7 @@
 // @flow
 
 import './Table.css'
-import React from 'react'
+import * as React from 'react'
 import VisibilitySensor from 'react-visibility-sensor'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
@@ -29,7 +29,7 @@ type Props = {
     manual?: boolean,
     onFetchData: (any) => void,
     getTdProps?: () => void,
-    subComponent?: (any) => void,
+    subComponent?: (any) => React.Node,
     defaultSorted: Array<any>,
     fetchMoreSettings: {
         fetchMoreAction: () => void,
@@ -62,6 +62,7 @@ class Table extends React.Component<Props> {
                             noDataText={this.props.noDataText || ''}
                             data={this.props.data}
                             SubComponent={this.props.subComponent}
+                            freezeWhenExpanded={this.props.subComponent ? true : false}
                             columns={
                                 this.props.headings.map(heading => ({
                                     getHeaderProps: this.getHeaderProps,
@@ -97,7 +98,7 @@ class Table extends React.Component<Props> {
         );
     };
 
-    getHeaderProps(state, rowInfo, column) {
+    getHeaderProps(state: any, rowInfo: any, column: any) {
         const sorting = state.sorted && state.sorted.length
             ? state.sorted.filter(sorting => column.id === sorting.id)[0]
             : undefined;

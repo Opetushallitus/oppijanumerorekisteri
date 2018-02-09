@@ -13,9 +13,9 @@ export const localizeWithState = ( key: string, state: any): string => {
     return localize(key, state.l10n.localisations, state.locale);
 };
 
-export const localizeTextGroup = (texts: Array<Text>, locale: Locale) => {
+export const localizeTextGroup = (texts: Array<Text>, locale: Locale): ?string => {
     if(isEmpty(texts) || texts === undefined || texts === null) {
-        return null;
+        return undefined;
     }
 
     const lang = locale.toUpperCase();

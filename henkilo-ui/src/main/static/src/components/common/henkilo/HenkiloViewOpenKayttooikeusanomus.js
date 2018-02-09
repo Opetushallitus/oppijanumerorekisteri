@@ -1,7 +1,6 @@
 // @flow
 
-import './HenkiloViewOpenKayttooikeusanomus.css';
-import React from 'react';
+import * as React from 'react';
 import Table from '../table/Table';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
@@ -18,6 +17,10 @@ import type {L, L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {HaettuKayttooikeusryhma} from "../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
+import {AnojaKayttooikeusryhmat} from "../../anomus/AnojaKayttooikeusryhmat";
+import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
+import * as R from 'ramda';
+import {localize, localizeTextGroup} from "../../../utilities/localisation.util";
 
 type Heading = {
     key: string,
@@ -28,8 +31,21 @@ type Heading = {
     hide?: boolean
 }
 
+export type KayttooikeusryhmaData = {
+    voimassaPvm: any,
+    organisaatioNimi: string,
+    kayttooikeusryhmaNimi: string
+}
+
+export type AnojaKayttooikeusryhmaData = {
+    anojaOid: string,
+    kayttooikeudet: Array<KayttooikeusryhmaData>,
+    error: boolean
+}
+
 type State = {
-    dates: Array<{alkupvm: any, loppupvm: any}>
+    dates: Array<{alkupvm: any, loppupvm: any}>,
+    kayttooikeusRyhmatByAnoja: Array<AnojaKayttooikeusryhmaData>,
 }
 
 type Props = {
@@ -85,6 +101,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
+            kayttooikeusRyhmatByAnoja: [],
         };
     };
 
@@ -209,9 +226,76 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
     };
     
-    showExtraInfo = (row: any) => {
-        console.log(this);
-        console.log(this.props.kayttooikeus.kayttooikeusAnomus[row.index]);
+    fetchKayttooikeusryhmatByAnoja(row: any): React.Node {
+        const anojaOid: string = this._getAnojaOidByRowIndex(row.index);
+
+        if(!this._hasAnojaKayttooikeusData(anojaOid)) {
+            this._parseAnojaKayttooikeusryhmat(anojaOid);
+        }
+
+        return <AnojaKayttooikeusryhmat locale={this.props.locale}
+                                        data={this._findAnojaKayttooikeusData(anojaOid)}
+                                        l10n={this.props.l10n}></AnojaKayttooikeusryhmat>;
+    };
+
+    _getAnojaOidByRowIndex = (index: number): string => {
+        return this.props.kayttooikeus.kayttooikeusAnomus[index].anomus.henkilo.oid;
+    };
+
+    _parseAnojaKayttooikeusryhmat(anojaOid: string): void {
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', anojaOid);
+        http.get(url).then( (myonnettyKayttooikeusryhmat: Array<MyonnettyKayttooikeusryhma>) => {
+            const kayttooikeudet: Array<KayttooikeusryhmaData> = myonnettyKayttooikeusryhmat
+                .filter( (myonnettyKayttooikeusryhmat: MyonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhmat.tila !== 'ANOTTU')
+                .map( this._parseAnojaKayttooikeus );
+            const anojaKayttooikeusryhmat = { anojaOid, kayttooikeudet: kayttooikeudet, error: false };
+            const kayttooikeusRyhmatByAnoja = this.state.kayttooikeusRyhmatByAnoja;
+            kayttooikeusRyhmatByAnoja.push(anojaKayttooikeusryhmat);
+            this.setState({ kayttooikeusRyhmatByAnoja: kayttooikeusRyhmatByAnoja });
+        }).catch( (error: any) => {
+            const anojaKayttooikeusryhmat = { anojaOid, kayttooikeudet: [], error: true };
+            const kayttooikeusRyhmatByAnoja = this.state.kayttooikeusRyhmatByAnoja;
+            kayttooikeusRyhmatByAnoja.push(anojaKayttooikeusryhmat);
+            this.setState({ kayttooikeusRyhmatByAnoja: kayttooikeusRyhmatByAnoja });
+            console.error(`Anojan ${anojaOid} käyttöoikeuksien hakeminen epäonnistui`);
+        });
+    }
+
+    _parseAnojaKayttooikeus = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): KayttooikeusryhmaData => {
+        const kayttooikeusryhmaNimi = myonnettyKayttooikeusryhma.ryhmaNames && myonnettyKayttooikeusryhma.ryhmaNames.texts && localizeTextGroup(myonnettyKayttooikeusryhma.ryhmaNames.texts, this.props.locale) || '';
+        const organisaatioNimi = this._parseOrganisaatioNimi(myonnettyKayttooikeusryhma);
+        const result: KayttooikeusryhmaData = {
+            voimassaPvm: this._parseVoimassaPvm(myonnettyKayttooikeusryhma),
+            organisaatioNimi: organisaatioNimi,
+            kayttooikeusryhmaNimi: kayttooikeusryhmaNimi
+        };
+
+        return result;
+    };
+
+    _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
+        const organisaatio = this.props.organisaatioCache[myonnettyKayttooikeusryhma.organisaatioOid];
+        return organisaatio && organisaatio.nimi ?
+            organisaatio.nimi[this.props.locale] || organisaatio.nimi['fi'] || organisaatio.nimi['en'] || organisaatio.nimi['sv']:
+            localize('HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY', this.props.l10n, this.props.locale);
+    };
+
+    _parseVoimassaPvm = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
+        const noLoppupvm = localize('HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM', this.props.l10n, this.props.locale);
+        if(!myonnettyKayttooikeusryhma.voimassaPvm) {
+            return noLoppupvm;
+        } else if(myonnettyKayttooikeusryhma.tila !== 'SULJETTU') {
+            return myonnettyKayttooikeusryhma.voimassaPvm ? moment(new Date(myonnettyKayttooikeusryhma.voimassaPvm)).format() : noLoppupvm;
+        }
+        return myonnettyKayttooikeusryhma.kasitelty ? new Date(myonnettyKayttooikeusryhma.kasitelty).toString() : noLoppupvm;
+    };
+
+    _hasAnojaKayttooikeusData = (anojaOid: string): boolean => {
+        return this.state.kayttooikeusRyhmatByAnoja.some( (anojaKayttooikeusryhmaData: AnojaKayttooikeusryhmaData) => anojaKayttooikeusryhmaData.anojaOid === anojaOid);
+    };
+
+    _findAnojaKayttooikeusData = (anojaOid: string): ?AnojaKayttooikeusryhmaData => {
+        return R.find(R.propEq('anojaOid', anojaOid))(this.state.kayttooikeusRyhmatByAnoja);
     };
 
     render() {
@@ -230,7 +314,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                                fetchMoreSettings={this.props.fetchMoreSettings}
                                isLoading={this.props.tableLoading}
                                striped={this.props.striped}
-                               subComponent={this.showExtraInfo}/>
+                               subComponent={this.fetchKayttooikeusryhmatByAnoja.bind(this)}/>
                     </div>
                 </div>
             </div>

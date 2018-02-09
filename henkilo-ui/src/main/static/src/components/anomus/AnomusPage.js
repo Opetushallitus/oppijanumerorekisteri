@@ -72,6 +72,7 @@ class AnomusPage extends React.Component<Props, State> {
     componentDidMount() {
         this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
         this.props.fetchAllRyhmas();
+        this.props.fetchAllOrganisaatios();
     };
 
     componentWillReceiveProps(nextProps: Props) {
