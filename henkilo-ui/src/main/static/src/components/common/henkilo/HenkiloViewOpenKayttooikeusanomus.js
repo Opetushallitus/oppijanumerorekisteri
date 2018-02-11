@@ -59,6 +59,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                 this.state.dates[idx].alkupvm.format(PropertySingleton.state.PVM_DBFORMAATTI),
                 this.state.dates[idx].loppupvm.format(PropertySingleton.state.PVM_DBFORMAATTI),
                 henkilo, hylkaysperuste);
+
+            this.setState({showHylkaysPopup: false});
         };
 
         this.state = {
@@ -150,6 +152,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component {
                              popupArrowStyles={{marginLeft: '230px'}}
                              popupButtonClasses={'oph-button oph-button-cancel'}
                              popupStyle={{right: '0px', width: '20rem', padding: '30px', position: 'absolute'}}
+                             toggle={this.state.showHylkaysPopup}
                              disabled={noPermission}
                              popupContent={<AnomusHylkaysPopup L={this.L}
                                                                kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
