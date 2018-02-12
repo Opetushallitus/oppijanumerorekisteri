@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import {connect} from 'react-redux';
 import {
@@ -15,8 +17,34 @@ import Button from "../../common/button/Button";
 import {enabledVtjVertailuView, henkiloViewTabs} from "../../navigation/NavigationTabs";
 import WideGreenNotification from "../../common/notifications/WideGreenNotification";
 import WideRedNotification from "../../common/notifications/WideRedNotification";
+import {hasAnyPalveluRooli} from "../../../utilities/organisaatio.util";
+import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
+import type {L} from "../../../types/localisation.type";
 
-class VtjVertailuPage extends React.Component {
+type Props = {
+    oidHenkilo: string,
+    henkiloType: string,
+    henkilo: HenkiloState,
+    ownOid: string,
+    omattiedot: OmattiedotState,
+    L: L,
+    fetchHenkilo: (string) => void,
+    fetchHenkiloYksilointitieto: (string) => void ,
+    fetchHenkiloMaster: (string) => void,
+    fetchOmattiedot: () => void,
+    updateHenkiloNavigation: (any) => void,
+    overrideYksiloimatonHenkiloVtjData: (string) => void,
+    fetchHenkiloSlaves: (string) => void
+
+}
+
+type State = {
+    showSuccess: boolean,
+    showError: boolean
+}
+
+class VtjVertailuPage extends React.Component<Props, State> {
 
     constructor() {
         super();
@@ -40,20 +68,20 @@ class VtjVertailuPage extends React.Component {
     }
 
     render() {
-        return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading || this.props.omattiedotLoading ? <Loader/> :
+        return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading || this.props.omattiedot.omattiedotLoading ? <Loader/> :
             <div className="wrapper">
                 <h1>{this.props.L['HENKILO_VTJ_VERTAILU']}</h1>
                 {this.state.showSuccess ? <WideGreenNotification message={this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS']} closeAction={this.hideSuccess.bind(this)}/> : null }
                 {this.state.showError ? <WideRedNotification message={this.props.L['HENKILO_VTJ_YLIAJA_FAILURE']} closeAction={this.hideError.bind(this)}/> : null}
                 <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L}/>
                 <Button action={this.overrideHenkiloInformation.bind(this)}
-                        disabled={!enabledVtjVertailuView(this.props.henkilo.henkilo) || this.props.oidHenkilo === this.props.ownOid}>
+                        disabled={this.isDisabled()}>
                     {this.props.L['HENKILO_VTJ_YLIAJA']}
                 </Button>
             </div>;
     }
 
-    async overrideHenkiloInformation() {
+    async overrideHenkiloInformation(): Promise<any> {
         try {
             await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
             this.showSuccess();
@@ -63,23 +91,32 @@ class VtjVertailuPage extends React.Component {
         }
     }
 
-    showError() {
+    isDisabled(): boolean {
+        const hasAccess = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA']);
+        const currentUserIsViewedHenkilo = this.props.oidHenkilo === this.props.ownOid;
+        const isEnabledVtjVertailuView = enabledVtjVertailuView(this.props.henkilo.henkilo);
+        return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
+    }
+
+    showError(): void{
         this.setState({showError: true});
     }
     
-    hideError() {
+    hideError(): void {
         this.setState({showError: false});
     }
 
-    showSuccess() {
+    showSuccess(): void {
         this.setState({showSuccess: true});
     }
 
-    hideSuccess() {
+    hideSuccess(): void {
         this.setState({showSuccess: false});
     }
 
 }
+
+
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -88,6 +125,7 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         ownOid: state.omattiedot.data.oid,
         omattiedotLoading: state.omattiedot.omattiedotLoading,
+        omattiedot: state.omattiedot,
         L: state.l10n.localisations[state.locale]
     }
 };
