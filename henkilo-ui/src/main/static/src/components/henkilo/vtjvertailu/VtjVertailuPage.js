@@ -17,7 +17,7 @@ import Button from "../../common/button/Button";
 import {enabledVtjVertailuView, henkiloViewTabs} from "../../navigation/NavigationTabs";
 import WideGreenNotification from "../../common/notifications/WideGreenNotification";
 import WideRedNotification from "../../common/notifications/WideRedNotification";
-import {parsePalveluRoolit} from "../../../utilities/organisaatio.util";
+import {hasAnyPalveluRooli} from "../../../utilities/organisaatio.util";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import type {L} from "../../../types/localisation.type";
@@ -92,10 +92,10 @@ class VtjVertailuPage extends React.Component<Props, State> {
     }
 
     isDisabled(): boolean {
-        const isVtjRole = parsePalveluRoolit(this.props.omattiedot.organisaatiot).includes('OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA');
+        const hasAccess = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA']);
         const currentUserIsViewedHenkilo = this.props.oidHenkilo === this.props.ownOid;
         const isEnabledVtjVertailuView = enabledVtjVertailuView(this.props.henkilo.henkilo);
-        return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !isVtjRole;
+        return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
     }
 
     showError(): void{
