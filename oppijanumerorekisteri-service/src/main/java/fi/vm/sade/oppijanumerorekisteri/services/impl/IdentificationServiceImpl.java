@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
@@ -100,15 +99,8 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
         Optional<Henkilo> henkilosWithSameHetu = this.henkiloRepository.findByHetu(henkiloVahvaTunnistusDto.getHetu());
 
-        // If another virkailija with same hetu exists => error
         henkilosWithSameHetu
-                .filter((henkiloWithSameHetu) -> henkiloWithSameHetu.getHenkiloTyyppi() == HenkiloTyyppi.VIRKAILIJA)
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
-                .ifPresent((virkailijaWithSameHetu) -> {throw new RuntimeException("Hetu already exists for other virkailija");});
-
-        // Oppija with same hetu => combine
-        henkilosWithSameHetu
-                .filter((henkiloWithSameHetu) -> henkiloWithSameHetu.getHenkiloTyyppi() == HenkiloTyyppi.OPPIJA)
                 .ifPresent((oppijaWithSameHetu) -> {
                     oppijaWithSameHetu.setHetu(null);
                     // Hetu is unique so we need to flush when moving it
