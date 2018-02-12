@@ -10,6 +10,7 @@ export const mainNavigation = [
 export const oppijaNavi = oid => [
     {path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/oppija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
+    {path: `/virkailija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'] }
 ];
 
 export const virkailijaNavi = (oid) => [
