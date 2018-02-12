@@ -8,8 +8,11 @@ import LabelValue from "./LabelValue"
 import TextButton from "../../button/TextButton";
 import type {L} from "../../../../types/localisation.type";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
+import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
+import { hasAnyPalveluRooli } from '../../../../utilities/organisaatio.util'
 
 type Props = {
+    kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     oidHenkilo: string,
     henkilo: HenkiloState,
     L: L,
@@ -34,6 +37,7 @@ class MasterHenkilo extends React.Component<Props> {
     }
 
     render() {
+        const hasPermission = hasAnyPalveluRooli(this.props.kayttooikeudet, ['HENKILONHALLINTA_OPHREKISTERI'])
         return <div>
             {
                 !this.props.isLoading && this.props.henkilo.master.oidHenkilo && this.props.oidHenkilo !== this.props.henkilo.master.oidHenkilo
@@ -44,9 +48,15 @@ class MasterHenkilo extends React.Component<Props> {
                                 <div className="nowrap">
                                     <Link to={this.getLinkHref(this.props.henkilo.master.oidHenkilo)}>
                                         {this.props.henkilo.master.kutsumanimi + ' ' + this.props.henkilo.master.sukunimi}
-                                    </Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.master.oidHenkilo, this.props.oidHenkilo)}>
-                                    {this.props.L['HENKILO_POISTA_LINKITYS']}
-                                </TextButton>
+                                    </Link>
+                                    {hasPermission &&
+                                    <span>
+                                        <span> | </span>
+                                        <TextButton action={this.removeLink.bind(this, this.props.henkilo.master.oidHenkilo, this.props.oidHenkilo)}>
+                                            {this.props.L['HENKILO_POISTA_LINKITYS']}
+                                        </TextButton>
+                                    </span>
+                                    }
                                 </div>,
                             label: 'HENKILO_LINKITETYT_MASTER',
                         }}
@@ -75,6 +85,7 @@ const mapStateToProps = (state) => {
         L: state.l10n.localisations[state.locale],
         isLoading: state.henkilo.master.masterLoading,
         henkilo: state.henkilo,
+        kayttooikeudet: state.omattiedot.organisaatiot,
     };
 };
 
