@@ -12,7 +12,7 @@ export const updateNavigation = (naviTabs: Array<NaviTab>, naviOptions: NaviOpti
 
 export const updateDefaultNavigation = () => updateNavigation(mainNavigation, {
     isUnauthenticatedPage: false,
-    bgColor: 'white',
+    bgColor: '#f6f4f0',
     backButton: null,
 });
 

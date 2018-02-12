@@ -7,7 +7,7 @@ import {
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE, UPDATE_HENKILO_REQUEST,
-    UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, YKSILOI_HENKILO_FAILURE,
+    UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE, YKSILOI_HENKILO_FAILURE,
     YKSILOI_HENKILO_REQUEST,
     YKSILOI_HENKILO_SUCCESS,
     PURA_YKSILOINTI_REQUEST, PURA_YKSILOINTI_SUCCESS, PURA_YKSILOINTI_FAILURE,
@@ -79,15 +79,26 @@ export const fetchKayttajatieto = (oid) => (dispatch => {
 });
 
 const requestKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_REQUEST, kayttajatieto});
-const receiveKayttajatietoUpdate = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_SUCCESS, kayttajatieto, receivedAt: Date.now()});
-export const updateAndRefetchKayttajatieto = (oid, username) => (dispatch => {
+const requestKayttajatietoUpdateSuccess = (kayttajatieto) => ({type: UPDATE_KAYTTAJATIETO_SUCCESS, kayttajatieto});
+const requestKayttajatietoUpdateFailure = () => ({type: UPDATE_KAYTTAJATIETO_FAILURE});
+export const updateAndRefetchKayttajatieto = (oid, username) => (async (dispatch, getState) => {
     dispatch(requestKayttajatietoUpdate(username));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.put(url, {username: username})
-        .then(kayttajatieto => {
-            dispatch(receiveKayttajatietoUpdate(kayttajatieto));
-            dispatch(fetchKayttajatieto(oid));
-        });
+    try {
+        const kayttajatieto = await http.put(url, {username: username});
+        dispatch(requestKayttajatietoUpdateSuccess(kayttajatieto));
+        dispatch(fetchKayttajatieto(oid));
+    } catch (error) {
+        if(error.errorType === 'IllegalArgumentException') {
+            dispatch(addGlobalNotification({
+                autoClose: 10000,
+                title: localizeWithState('NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS', getState()),
+                type: NOTIFICATIONTYPES.ERROR,
+                key: 'NOTIFICATION_HENKILOTIEDOT_KAYTTAJANIMI_EXISTS'
+            }));
+        }
+        dispatch(requestKayttajatietoUpdateFailure());
+    }
 });
 
 const requestPassivoiHenkilo = (oid) => ({type: PASSIVOI_HENKILO_REQUEST, oid, });

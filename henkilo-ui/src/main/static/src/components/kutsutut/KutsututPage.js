@@ -135,7 +135,7 @@ export default class KutsututPage extends React.Component<Props, State> {
         return (
             <div className="wrapper" id="kutsutut-page">
                 <div className="header">
-                    <span className="oph-h2 oph-strong">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
+                    <span className="oph-h2 oph-bold">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                     <span className="right">
                         <KutsututBooleanRadioButton view={this.state.payload.view}
                                                     setView={this.setView.bind(this)} />

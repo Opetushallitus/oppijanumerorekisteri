@@ -15,7 +15,6 @@ import {isValidKutsumanimi} from "../../../../validation/KutsumanimiValidator";
 import {LocalNotification} from "../../Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../../types/notification.types";
-import {GLOBAL_NOTIFICATION_KEYS} from "../../Notification/GlobalNotificationKeys";
 
 type Props = {
     L: L,
@@ -161,7 +160,7 @@ class UserContentContainer extends React.Component<Props, State> {
             autoClose: 10000,
             title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
             type: NOTIFICATIONTYPES.ERROR,
-            key: GLOBAL_NOTIFICATION_KEYS.HENKILOUPDATEFAILED
+            key: 'HENKILOUPDATEFAILED'
         };
         this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
         if (henkiloUpdate.kayttajanimi !== undefined) {

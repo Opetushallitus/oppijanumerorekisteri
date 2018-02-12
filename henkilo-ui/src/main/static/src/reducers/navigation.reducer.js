@@ -88,14 +88,13 @@ const onUpdateNavigation = (state: State, action: Action) => {
         window.document.body.style.backgroundSize = 'cover';
         window.document.body.style.backgroundAttachment = 'fixed';
         window.document.body.style.backgroundPosition = '0px 100px';
+        window.document.body.bgColor = 'white';
     }
     else {
         // If bgColor is not provided guess by if component has updated navibar on mount
         window.document.body.bgColor = action.naviOptions.bgColor
             ? action.naviOptions.bgColor
-            : action.naviTabs.length
-                ? "#f6f4f0"
-                : "white";
+            : "#f6f4f0";
     }
     return Object.assign({}, state, {
         naviTabs: action.naviTabs,
@@ -118,7 +117,7 @@ const onLocationChange = (state: State, action: Action) => {
 
     // Default navigation always before component mounts (only if location changes)
     if (action.payload && locationChanges(state, action)) {
-        window.document.body.bgColor = "white";
+        window.document.body.bgColor = "#f6f4f0";
         return Object.assign({}, state, {
             naviTabs: mainNavigation,
             naviOptions: {
