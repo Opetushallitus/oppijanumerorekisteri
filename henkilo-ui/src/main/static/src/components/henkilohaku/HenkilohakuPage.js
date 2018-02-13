@@ -28,7 +28,6 @@ class HenkilohakuPage extends React.Component {
         henkilohakuResult: PropTypes.array.isRequired,
         henkiloHakuFilters: PropTypes.object.isRequired,
         henkilohakuLoading: PropTypes.bool.isRequired,
-        router: PropTypes.object.isRequired,
         notifications: PropTypes.arrayOf(PropTypes.shape({
             type: PropTypes.string.isRequired,
             id: PropTypes.string.isRequired,

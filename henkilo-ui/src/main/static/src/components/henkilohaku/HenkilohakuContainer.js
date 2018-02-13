@@ -1,5 +1,6 @@
+// @flow
+
 import React from 'react'
-import PropTypes from 'prop-types'
 import HenkilohakuPage from "./HenkilohakuPage";
 import {connect} from 'react-redux';
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
@@ -8,22 +9,34 @@ import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions
 import {clearHenkilohaku, henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
 import {fetchAllRyhmas} from "../../actions/organisaatio.actions";
 import {removeNotification} from "../../actions/notifications.actions";
+import type {Locale} from "../../types/locale.type";
+import type {L10n} from "../../types/localisation.type";
+import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
 
-class HenkilohakuContainer extends React.Component {
-    static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
-    };
+type Props = {
+    l10n: L10n,
+    locale: Locale,
+    fetchOmattiedotOrganisaatios: () => void,
+    fetchAllKayttooikeusryhma: () => void,
+    fetchAllRyhmas: () => void,
+    henkilohaku: () => void,
+    henkilo: Henkilo,
+    henkilohakuState: any,
+    updateFilters: (HenkilohakuCriteria) => void,
+    notifications: Array<any>,
+    removeNotification: (string, string, string) => void,
+    clearHenkilohaku: () => void,
+    isAdmin: boolean
+}
 
-    constructor(props) {
-        super(props);
+class HenkilohakuContainer extends React.Component<Props,> {
 
-        this.initialCriteria = {
-            noOrganisation: false,
-            subOrganisation: true,
-            passivoitu: false,
-            dublicates: false,
-        };
+    initialCriteria: HenkilohakuCriteria = {
+        noOrganisation: false,
+        subOrganisation: true,
+        passivoitu: false,
+        dublicates: false,
     };
 
     componentWillMount() {
@@ -43,7 +56,6 @@ class HenkilohakuContainer extends React.Component {
                                henkiloHakuFilters={this.props.henkilohakuState.filters}
                                updateFilters={this.props.updateFilters}
                                henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
-                               router={this.props.router}
                                notifications={this.props.notifications}
                                removeNotification={this.props.removeNotification}
                                clearHenkilohaku={this.props.clearHenkilohaku}
