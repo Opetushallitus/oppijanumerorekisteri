@@ -13,7 +13,7 @@ import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
  */
 
-type Parameters = {
+export type FetchHaetutKayttooikeusryhmatParameters = {
     orderBy: string,
     limit: number,
     showOwnAnomus: boolean,
@@ -29,17 +29,17 @@ type Props = {
     organisaatioCache: any,
     clearHaetutKayttooikeusryhmat: () => void,
     fetchAllOrganisaatios: () => void,
-    fetchHaetutKayttooikeusryhmat: (Parameters) => void,
+    fetchHaetutKayttooikeusryhmat: (FetchHaetutKayttooikeusryhmatParameters) => void,
     haetutKayttooikeusryhmatLoading: boolean,
     fetchAllRyhmas: () => void,
     isAdmin: boolean,
-    updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, string) => Promise<any>,
+    updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, ?string) => Promise<any>,
     clearHaettuKayttooikeusryhma: (number) => void,
     addGlobalNotification: (GlobalNotificationConfig) => void
 };
 
 type State = {
-    parameters: Parameters,
+    parameters: FetchHaetutKayttooikeusryhmatParameters,
     sorted: Array<any>,
     allFetched: boolean,
     page: number,
@@ -72,6 +72,7 @@ class AnomusPage extends React.Component<Props, State> {
     componentDidMount() {
         this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
         this.props.fetchAllRyhmas();
+        this.props.fetchAllOrganisaatios();
     };
 
     componentWillReceiveProps(nextProps: Props) {
@@ -159,7 +160,7 @@ class AnomusPage extends React.Component<Props, State> {
         }, () => this.props.fetchHaetutKayttooikeusryhmat(parameters));
     };
 
-    async updateHaettuKayttooikeusryhma(id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, henkilo: any, hylkaysperuste: string) {
+    async updateHaettuKayttooikeusryhma(id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string, henkilo: any, hylkaysperuste?: string): Promise<any> {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste);
             this.setState({anomusModifiedHenkilo: henkilo});

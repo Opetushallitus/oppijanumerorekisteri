@@ -1,6 +1,7 @@
+// @flow
+
 import './Table.css'
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import VisibilitySensor from 'react-visibility-sensor'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
@@ -10,34 +11,34 @@ import SortIconNone from "../icons/SortIconNone";
 import classNames from 'classnames/bind';
 import Loader from "../icons/Loader";
 
-class Table extends React.Component {
-    static propTypes = {
-        headings: PropTypes.arrayOf(PropTypes.shape({
-            key: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-            maxWidth: PropTypes.number,
-            minWidth: PropTypes.number,
-        }).isRequired).isRequired,
-        data: PropTypes.arrayOf(PropTypes.objectOf(
-            PropTypes.oneOfType([
-                PropTypes.string,
-                PropTypes.object,
-                PropTypes.bool,
-            ]).isRequired)).isRequired,
-        noDataText: PropTypes.string.isRequired,
-        striped: PropTypes.bool,
-        highlight: PropTypes.bool,
-        manual: PropTypes.bool,
-        onFetchData: PropTypes.func,
-        getTdProps: PropTypes.func,
-        defaultSorted: PropTypes.array,
+type Heading = {
+    key: string,
+    label?: string,
+    maxWidth?: number,
+    minWidth?: number,
+    notSortable?: boolean,
+    hide?: boolean
+}
 
-        fetchMoreSettings: PropTypes.shape({
-            fetchMoreAction: PropTypes.func,
-            isActive: PropTypes.bool,
-        }),
-        isLoading: PropTypes.bool,
-    };
+type Props = {
+    headings: Array<Heading>,
+    data: Array<string | number | boolean>,
+    noDataText: string,
+    striped?: boolean,
+    highlight?: boolean,
+    manual?: boolean,
+    onFetchData: (any) => void,
+    getTdProps?: () => void,
+    subComponent?: (any) => React.Node,
+    defaultSorted: Array<any>,
+    fetchMoreSettings: {
+        fetchMoreAction: () => void,
+        isActive: boolean
+    },
+    isLoading: boolean
+};
+
+class Table extends React.Component<Props> {
 
     static defaultProps = {
         fetchMoreSettings: {},
@@ -60,6 +61,8 @@ class Table extends React.Component {
                             loadingText=""
                             noDataText={this.props.noDataText || ''}
                             data={this.props.data}
+                            SubComponent={this.props.subComponent}
+                            freezeWhenExpanded={this.props.subComponent ? true : false}
                             columns={
                                 this.props.headings.map(heading => ({
                                     getHeaderProps: this.getHeaderProps,
@@ -78,10 +81,7 @@ class Table extends React.Component {
                                     show: !heading.hide,
                                 }))
                             }
-                            getTrProps={(state, rowInfo, column) => {
-                                return {
-                                    className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null,
-                                }}}
+                            getTrProps={(state, rowInfo, column) => ({ className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null })}
                             getTdProps={this.props.getTdProps}
                             onFetchData={this.props.onFetchData} />
                 <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction && this.props.fetchMoreSettings.fetchMoreAction();} }}
@@ -98,7 +98,7 @@ class Table extends React.Component {
         );
     };
 
-    getHeaderProps(state, rowInfo, column) {
+    getHeaderProps(state: any, rowInfo: any, column: any) {
         const sorting = state.sorted && state.sorted.length
             ? state.sorted.filter(sorting => column.id === sorting.id)[0]
             : undefined;

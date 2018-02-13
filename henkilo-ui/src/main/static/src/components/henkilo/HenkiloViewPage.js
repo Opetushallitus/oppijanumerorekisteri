@@ -36,6 +36,7 @@ type Props = {
             organisaatiot: Array<Organisaatio>,
         }
     },
+    organisaatioCache: any,
     ryhmas: {
         ryhmas: Array<{nimi: {fi: string, sv: string, en: string,}, oid: string}>,
     },

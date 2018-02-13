@@ -1,0 +1,13 @@
+.anoja-kayttooikeusryhmat {
+    padding: 15px 15px 30px 15px;
+    border-bottom: 1px solid #d4d4d4;
+    border-top: 1px solid #d4d4d4;
+}
+
+.anoja-kayttooikeusryhmat .ReactTable {
+    margin-bottom: 0;
+}
+
+.anoja-kayttooikeusryhmat .ReactTable .rt-thead {
+    font-weight: bold;
+}
