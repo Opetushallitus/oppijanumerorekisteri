@@ -7,7 +7,6 @@ import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
 import type {L} from "../../../types/localisation.type";
 import {updateEmptyNavigation} from "../../../actions/navigation.actions";
-import type { KayttooikeusOrganisaatiot } from '../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
 import { hasAnyPalveluRooli } from '../../../utilities/organisaatio.util'
 
 
