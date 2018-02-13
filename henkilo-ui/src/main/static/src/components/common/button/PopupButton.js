@@ -9,6 +9,7 @@ type Props = {
     popupContent: Node, // React element as popup content
     children: any, // Button text
 
+    toggle?: boolean,
     popupClass?: string, // css-classes for popup (see oph style guide)
     popupStyle?: any, // css-styles for positioning popup
     disabled?: boolean,
@@ -32,6 +33,12 @@ class PopupButton extends React.Component<Props, State> {
         show: false,
         defaultPopupClass: 'oph-popup-default oph-popup-bottom'
     };
+
+    componentWillReceiveProps(nextProps: Props) {
+        if(nextProps.toggle !== undefined) {
+            this.setState({show: nextProps.toggle});
+        }
+    }
 
     render(): Node {
         const wrapperStyle = this.props.popupButtonWrapperPositioning ? {position: this.props.popupButtonWrapperPositioning} : {};

@@ -10,12 +10,13 @@ export const mainNavigation = [
 export const oppijaNavi = oid => [
     {path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/oppija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
+    {path: `/oppija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'] }
 ];
 
 export const virkailijaNavi = (oid) => [
     {path: `/virkailija/${oid}`, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/virkailija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
-    {path: `/virkailija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true}
+    {path: `/virkailija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'] }
 ];
 
 export const adminNavi = (oid) => [
@@ -23,7 +24,5 @@ export const adminNavi = (oid) => [
     {path: `/admin/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true},
     {path: `/admin/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true}
 ];
-
-export const kayttooikeusryhmatNavigation = [];
 
 export const emptyNavi = [];

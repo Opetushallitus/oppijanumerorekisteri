@@ -113,8 +113,9 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case UPDATE_KAYTTAJATIETO_REQUEST:
             return Object.assign({}, state, {kayttajatietoLoading: true});
         case UPDATE_KAYTTAJATIETO_SUCCESS:
-        case UPDATE_KAYTTAJATIETO_FAILURE:
             return Object.assign({}, state, {kayttatietoLoading: false, kayttajatieto: action.kayttajatieto});
+        case UPDATE_KAYTTAJATIETO_FAILURE:
+            return {...state, kayttajatietoLoading: false, kayttajatieto: state.kayttajatieto};
         case FETCH_HENKILOORGS_REQUEST:
             return Object.assign({}, state, {henkiloOrgsLoading: true});
         case FETCH_HENKILOORGS_SUCCESS:

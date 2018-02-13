@@ -12,6 +12,7 @@ import type {L} from "../../../types/localisation.type";
 import { Link } from 'react-router';
 
 type Props = {
+    muokkausoikeus: boolean,
     item: Kayttooikeusryhma,
     locale: Locale,
     L: L,
@@ -67,7 +68,7 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
                     <div className="flex-item-2"></div>
                 </div>)}
             </div>
-            <Link to={`/kayttooikeusryhmat/${this.props.item.id}`} className="oph-button oph-button-primary">
+            <Link to={`/kayttooikeusryhmat/${this.props.item.id}`} className="oph-button oph-button-primary" disabled={!this.props.muokkausoikeus}>
                 {this.props.L['MUOKKAA']}
             </Link>
         </div> : null

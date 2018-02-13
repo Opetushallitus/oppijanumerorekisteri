@@ -47,6 +47,7 @@ export type AnojaKayttooikeusryhmaData = {
 type State = {
     dates: Array<{alkupvm: any, loppupvm: any}>,
     kayttooikeusRyhmatByAnoja: Array<AnojaKayttooikeusryhmaData>,
+    showHylkaysPopup: boolean
 }
 
 type Props = {
@@ -95,6 +96,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50, notSortable: this.props.isAnomusView},
             {key: 'EMPTY_PLACEHOLDER', minWidth: 165, notSortable: true,},
         ];
+
         this.tableHeadings = this.headingList.map(heading => ({ ...heading, label: this.L[heading.key]}));
 
         this.state = {
@@ -102,7 +104,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
-            kayttooikeusRyhmatByAnoja: [],
+            kayttooikeusRyhmatByAnoja: []
         };
     };
 
@@ -145,6 +147,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                                   selected={this.state.dates[idx].loppupvm}
                                   showYearDropdown
                                   showWeekNumbers
+                                  disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.kayttoOikeusRyhma.id)}
                                   filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
                     : this.state.dates[idx].loppupvm.format(),
                 [headingList[7]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
@@ -190,6 +193,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                              popupArrowStyles={{marginLeft: '230px'}}
                              popupButtonClasses={'oph-button oph-button-cancel oph-button-small'}
                              popupStyle={{right: '0px', width: '20rem', padding: '30px', position: 'absolute'}}
+                             toggle={this.state.showHylkaysPopup}
+                             disabled={noPermission}
                              popupContent={<AnomusHylkaysPopup L={this.L}
                                                                kayttooikeusryhmaId={haettuKayttooikeusRyhma.id}
                                                                index={idx}
@@ -210,6 +215,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         if(this.props.updateHaettuKayttooikeusryhma) {
             this.props.updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste || '');
         }
+        this.setState({showHylkaysPopup: false});
     };
 
     async cancelAnomus(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {

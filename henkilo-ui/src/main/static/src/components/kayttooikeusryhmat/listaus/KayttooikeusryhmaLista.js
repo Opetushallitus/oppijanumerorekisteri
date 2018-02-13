@@ -10,6 +10,7 @@ import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 import type {L} from "../../../types/localisation.type";
 
 type Props = {
+    muokkausoikeus: boolean,
     items: Array<Kayttooikeusryhma>,
     labelPath: Array<string>,
     locale: Locale,

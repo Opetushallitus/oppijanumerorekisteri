@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import PropTypes from 'prop-types'
 import * as R from "ramda";
 import Modal from "../common/modal/Modal";
 import Button from "../common/button/Button";
@@ -12,8 +11,9 @@ import type {
     KutsuOrganisaatio
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {BasicinfoType} from "./BasicinfoForm";
-import type {L10n} from "../../types/localisation.type";
+import type { L10n, L } from "../../types/localisation.type";
 import type { MyonnettyKayttooikeusryhma } from "../../types/domain/kayttooikeus/kayttooikeusryhma.types"
+import { LocalNotification } from "../common/Notification/LocalNotification";
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -26,24 +26,18 @@ type Props = {
 }
 
 type State = {
+    notifications: Array<string>,
+    loading: boolean,
     sent: boolean,
 }
 
 export default class KutsuConfirmation extends React.Component<Props, State> {
 
-    static propTypes = {
-        addedOrgs: PropTypes.array,
-        modalCloseFn: PropTypes.func,
-        modalOpen: PropTypes.bool,
-        basicInfo: PropTypes.object,
-        clearBasicInfo: PropTypes.func,
-        locale: PropTypes.string,
-        l10n: PropTypes.object,
-    };
-
     constructor(props: Props) {
         super(props);
         this.state = {
+            notifications: [],
+            loading: false,
             sent: false
         }
     }
@@ -63,9 +57,14 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                     <div className="row">
                         {this.state.sent
                             ? <Button action={this.onClose.bind(this)}>{L['VIRKAILIJAN_LISAYS_LAHETETTY']}</Button>
-                            : <Button action={this._sendInvitation.bind(this)}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
+                            : <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
+                    <LocalNotification type="error" title={L['KUTSU_LUONTI_EPAONNISTUI']} toggle={this.state.notifications.length > 0}>
+                        <ul>
+                            {this.state.notifications.map((notification, index) => <li key={index}>{notification}</li>)}
+                        </ul>
+                    </LocalNotification>
                 </div>
             </Modal>
         )
@@ -95,10 +94,10 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     _sendInvitation(e: Event) {
-        this.sendInvitation(e);
+        this.sendInvitation(e, this.props.l10n[this.props.locale]);
     }
 
-    async sendInvitation(e: Event) {
+    async sendInvitation(e: Event, L: L) {
         e.preventDefault();
 
         const payload = {
@@ -115,10 +114,18 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         };
 
         try {
+            this.setState({loading: true})
             const url = urls.url('kayttooikeus-service.kutsu');
             await http.post(url, payload);
-            this.setState({sent: true});
+            this.setState({loading: false, sent: true});
         } catch (error) {
+            const notifications = []
+            if (error && error.message === 'kutsu_with_sahkoposti_already_sent') {
+                notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_ON_JO_LAHETETTY'])
+            } else {
+                notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'])
+            }
+            this.setState({loading: false, notifications: notifications})
             throw error;
         }
     }

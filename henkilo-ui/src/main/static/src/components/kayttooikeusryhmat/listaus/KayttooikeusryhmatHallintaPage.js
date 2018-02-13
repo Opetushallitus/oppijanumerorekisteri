@@ -8,6 +8,7 @@ import type {L} from "../../../types/localisation.type";
 
 
 type Props = {
+    muokkausoikeus: boolean,
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     locale: Locale,
     L: L,
