@@ -13,6 +13,7 @@ import type {Locale} from "../../types/locale.type";
 import type {L10n} from "../../types/localisation.type";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
+import type {HenkilohakuState} from "../../reducers/henkilohaku.reducer";
 
 type Props = {
     l10n: L10n,
@@ -22,7 +23,7 @@ type Props = {
     fetchAllRyhmas: () => void,
     henkilohaku: () => void,
     henkilo: Henkilo,
-    henkilohakuState: any,
+    henkilohakuState: HenkilohakuState,
     updateFilters: (HenkilohakuCriteria) => void,
     notifications: Array<any>,
     removeNotification: (string, string, string) => void,

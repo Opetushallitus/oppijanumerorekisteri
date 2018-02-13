@@ -9,13 +9,18 @@ import type {HenkilohakuCriteria} from "../types/domain/kayttooikeus/Henkilohaku
 import type {HenkilohakuResult} from "../types/domain/kayttooikeus/HenkilohakuResult.types";
 
 export type HenkilohakuState = {
-    +filters?: HenkilohakuCriteria,
+    +filters: HenkilohakuCriteria,
     +henkilohakuLoading?: boolean,
     +result: Array<HenkilohakuResult>
 }
 
 const initialState: HenkilohakuState = {
-    filters: undefined,
+    filters: {
+        noOrganisation: false,
+        subOrganisation: true,
+        passivoitu: false,
+        dublicates: false
+    },
     henkilohakuLoading: false,
     result: []
 };
