@@ -26,7 +26,7 @@ type Props = {
     fetchAllKayttooikeusryhma: () => void,
     fetchAllRyhmas: () => void,
     henkilohaku: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
-    henkilohakuCount: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
+    henkilohakuCount: (HenkilohakuCriteria) => void,
     henkilo: Henkilo,
     henkilohakuState: HenkilohakuState,
     updateFilters: (HenkilohakuCriteria) => void,

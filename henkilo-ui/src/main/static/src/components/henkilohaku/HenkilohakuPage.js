@@ -24,7 +24,7 @@ type Props = {
     initialCriteria: HenkilohakuCriteria,
     isAdmin: boolean,
     henkilohakuAction: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
-    henkilohakuCount: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
+    henkilohakuCount: (HenkilohakuCriteria) => void,
     updateFilters: (HenkilohakuCriteria) => void,
     henkilohakuResult: Array<HenkilohakuResult>,
     henkilohakuResultCount: number,
@@ -225,7 +225,8 @@ class HenkilohakuPage extends React.Component<Props, State> {
                     offset: shouldNotClear ? 100*this.state.page : 0,
                     orderBy: this.state.sorted.length ? (this.state.sorted[0].desc ? this.state.sorted[0].id + '_DESC' : this.state.sorted[0].id + "_ASC") : undefined,
                 };
-                const organisaatioOids = henkilohakuModel.organisaatioOids ? [...henkilohakuModel.organisaatioOids] : undefined;
+
+                const organisaatioOids: any = henkilohakuModel.organisaatioOids ? [henkilohakuModel.organisaatioOids] : undefined;
 
                 const henkilohakuCriteria: HenkilohakuCriteria = {
                     ...this.state.henkilohakuModel,
@@ -240,7 +241,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
                 };
 
                 this.props.henkilohakuAction(henkilohakuCriteria, queryParams);
-                this.props.henkilohakuCount(henkilohakuCountCriteria, queryParams);
+                this.props.henkilohakuCount(henkilohakuCountCriteria);
             });
         }
     };

@@ -34,14 +34,14 @@ const henkilohakuCountRequest = (criteria: HenkilohakuCriteria) => ({type: HENKI
 const henkilohakuCountSuccess = (count: number) => ({type: HENKILOHAKUCOUNT_SUCCESS, count});
 const henkilohakuCountFailure = () => ({type: HENKILOHAKUCOUNT_FAILURE});
 
-export const henkilohakuCount = (criteria: HenkilohakuCriteria, queryParams?: HenkilohakuQueryparameters) => async (dispatch: any) => {
+export const henkilohakuCount = (criteria: HenkilohakuCriteria) => async (dispatch: any) => {
     dispatch(henkilohakuCountRequest(criteria));
-    const url = urls.url('kayttooikeus-service.henkilo.henkilohakucount', queryParams ? queryParams : {});
+    const url = urls.url('kayttooikeus-service.henkilo.henkilohakucount');
     try {
         const count: number = await http.post(url, criteria);
         dispatch(henkilohakuCountSuccess(count));
     } catch (error) {
         dispatch(henkilohakuCountFailure());
-        console.error('henkilohakucount epäonnistui hakuehdoilla:', criteria, queryParams, error);
+        console.error('henkilohakucount epäonnistui hakuehdoilla:', criteria, error);
     }
 };
