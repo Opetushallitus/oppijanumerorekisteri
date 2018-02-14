@@ -6,14 +6,18 @@ import {connect} from 'react-redux';
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
-import {clearHenkilohaku, henkilohaku, updateFilters} from "../../actions/henkilohaku.actions";
+import {clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters} from "../../actions/henkilohaku.actions";
 import {fetchAllRyhmas} from "../../actions/organisaatio.actions";
 import {removeNotification} from "../../actions/notifications.actions";
 import type {Locale} from "../../types/locale.type";
 import type {L10n} from "../../types/localisation.type";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
-import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
+import type {
+    HenkilohakuCriteria,
+    HenkilohakuQueryparameters
+} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
 import type {HenkilohakuState} from "../../reducers/henkilohaku.reducer";
+import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
 
 type Props = {
     l10n: L10n,
@@ -21,14 +25,16 @@ type Props = {
     fetchOmattiedotOrganisaatios: () => void,
     fetchAllKayttooikeusryhma: () => void,
     fetchAllRyhmas: () => void,
-    henkilohaku: () => void,
+    henkilohaku: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
+    henkilohakuCount: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
     henkilo: Henkilo,
     henkilohakuState: HenkilohakuState,
     updateFilters: (HenkilohakuCriteria) => void,
     notifications: Array<any>,
     removeNotification: (string, string, string) => void,
     clearHenkilohaku: () => void,
-    isAdmin: boolean
+    isAdmin: boolean,
+    omattiedot: OmattiedotState
 }
 
 class HenkilohakuContainer extends React.Component<Props,> {
@@ -47,13 +53,15 @@ class HenkilohakuContainer extends React.Component<Props,> {
     }
 
     render() {
-        return !this.props.allKayttooikeusryhmasLoading
+        return !this.props.allKayttooikeusryhmasLoading && !this.props.omattiedot.omattiedotLoading
             ? <HenkilohakuPage l10n={this.props.l10n}
                                locale={this.props.locale}
                                initialCriteria={this.initialCriteria}
                                henkilo={this.props.henkilo}
                                henkilohakuAction={this.props.henkilohaku}
+                               henkilohakuCount={this.props.henkilohakuCount}
                                henkilohakuResult={this.props.henkilohakuState.result}
+                               henkilohakuResultCount={this.props.henkilohakuState.resultCount}
                                henkiloHakuFilters={this.props.henkilohakuState.filters}
                                updateFilters={this.props.updateFilters}
                                henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
@@ -74,10 +82,11 @@ const mapStateToProps = (state, ownProps) => {
         henkilohakuState: state.henkilohakuState,
         notifications: state.notifications.henkilohakuNotifications,
         isAdmin: state.omattiedot.isAdmin,
-        ryhmas: state.ryhmatState
+        ryhmas: state.ryhmatState,
+        omattiedot: state.omattiedot
     };
 };
 
 
 export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, fetchAllKayttooikeusryhma,
-    henkilohaku, updateFilters, removeNotification, clearHenkilohaku, fetchAllRyhmas})(HenkilohakuContainer);
+    henkilohaku, updateFilters, removeNotification, clearHenkilohaku, fetchAllRyhmas, henkilohakuCount})(HenkilohakuContainer);

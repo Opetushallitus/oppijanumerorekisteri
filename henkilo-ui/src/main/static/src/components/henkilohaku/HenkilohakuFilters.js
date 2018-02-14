@@ -1,7 +1,6 @@
 // @flow
 import './HenkilohakuFilters.css';
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import OphCheckboxInline from "../common/forms/OphCheckboxInline";
 import SubOrganisationCheckbox from "./criterias/SubOrganisationCheckbox";
@@ -19,6 +18,7 @@ import CloseButton from "../common/button/CloseButton";
 import * as R from 'ramda';
 import type {L} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
+import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
 
 type Props = {
     L: L,
@@ -33,12 +33,7 @@ type Props = {
     noOrganisationAction: () => void,
     organisaatioSelectAction: ({value: ?string}) => void,
     kayttooikeusSelectionAction: ({value: ?string}) => void,
-    initialValues: {
-        subOrganisation: boolean,
-        noOrganisation: boolean,
-        passivoitu: boolean,
-        dublicates: boolean,
-    },
+    initialValues: HenkilohakuCriteria,
     kayttooikeusryhmas: Array<{
         id: number,
         description: {
@@ -53,35 +48,6 @@ type Props = {
 }
 
 class HenkilohakuFilters extends React.Component<Props> {
-    static propTypes = {
-        locale: PropTypes.string.isRequired,
-        initialValues: PropTypes.shape({
-            subOrganisation: PropTypes.bool.isRequired,
-            noOrganisation: PropTypes.bool.isRequired,
-            passivoitu: PropTypes.bool.isRequired,
-            dublicates: PropTypes.bool.isRequired,
-        }).isRequired,
-        selectedOrganisation: PropTypes.string,
-        organisaatioList: PropTypes.array.isRequired,
-        selectedKayttooikeus: PropTypes.number,
-
-        kayttooikeusSelectionAction: PropTypes.func.isRequired,
-        organisaatioSelectAction: PropTypes.func.isRequired,
-        suborganisationAction: PropTypes.func.isRequired,
-        noOrganisationAction: PropTypes.func.isRequired,
-        passiivisetAction: PropTypes.func.isRequired,
-        duplikaatitAction: PropTypes.func.isRequired,
-
-        kayttooikeusryhmas: PropTypes.arrayOf(PropTypes.shape({
-            id: PropTypes.number.isRequired,
-            description: PropTypes.shape({
-                texts: PropTypes.arrayOf(PropTypes.shape({
-                    text: PropTypes.string,
-                    lang: PropTypes.string.isRequired,
-                }).isRequired),
-            }).isRequired,
-        }).isRequired).isRequired,
-    };
 
     componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
@@ -188,15 +154,17 @@ class HenkilohakuFilters extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state, ownProps) => ({
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-    isAdmin: state.omattiedot.isAdmin,
-    isOphVirkailija: state.omattiedot.isOphVirkailija,
-    ryhmas: state.ryhmatState,
-    organisaatioList: state.omattiedot.organisaatios,
-    kayttooikeusryhmas: state.kayttooikeus.allKayttooikeusryhmas,
-});
+const mapStateToProps = (state) => {
+    return {
+        L: state.l10n.localisations[state.locale],
+        locale: state.locale,
+        isAdmin: state.omattiedot.isAdmin,
+        isOphVirkailija: state.omattiedot.isOphVirkailija,
+        ryhmas: state.ryhmatState,
+        organisaatioList: state.omattiedot.organisaatios,
+        kayttooikeusryhmas: state.kayttooikeus.allKayttooikeusryhmas,
+    };
+}
 
 export default connect(mapStateToProps, {
     fetchOmattiedotOrganisaatios,

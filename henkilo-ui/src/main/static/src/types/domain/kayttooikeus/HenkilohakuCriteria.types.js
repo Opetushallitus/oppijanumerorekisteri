@@ -9,6 +9,7 @@ export type HenkilohakuCriteria = {
     kayttooikeusryhmaId?: string,
     ryhmaOids?: Array<string>,
     nameQuery?: string,
+    isCountSearch?: boolean
 }
 
 export type HenkilohakuQueryparameters = {
