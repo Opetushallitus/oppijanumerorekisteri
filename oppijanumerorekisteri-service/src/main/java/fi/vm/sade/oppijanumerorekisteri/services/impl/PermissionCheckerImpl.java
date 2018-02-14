@@ -16,11 +16,14 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 
 @Service("permissionChecker")
 @RequiredArgsConstructor
 public class PermissionCheckerImpl implements PermissionChecker {
+    private static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
     private static final String ROLE_OPPIJOIDENTUONTI_TEMPLATE = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_%s";
@@ -93,7 +96,10 @@ public class PermissionCheckerImpl implements PermissionChecker {
     }
 
     private boolean isSuperUser(Set<String> roles) {
-        return roles.contains(ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI");
+        Set<String> rekisterinpitajaroolit = Stream.of(
+                ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA",
+                ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI").collect(toSet());
+        return roles.stream().anyMatch(rekisterinpitajaroolit::contains);
     }
 
     private boolean isOwnData(String dataHenkiloOid) {
