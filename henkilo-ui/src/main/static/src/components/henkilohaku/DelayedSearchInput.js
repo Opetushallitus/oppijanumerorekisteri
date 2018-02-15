@@ -15,7 +15,7 @@ class DelayedSearchInput extends React.Component {
     constructor(props) {
         super(props);
 
-        this.timeout = this.props.customTimeout || 200;
+        this.timeout = this.props.customTimeout || 500;
 
         this.state = {
             timeoutEvent: null,

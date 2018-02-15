@@ -204,12 +204,15 @@ class HenkilohakuPage extends React.Component<Props, State> {
 
     updateToSearchModel(key: string, isEvent?: boolean) {
         return (entity: any) => {
+            // Don't launch henkilohaku if nameQuery field was changed to length 1
+            const callback = key === 'nameQuery' && entity.value.length === 1 ? undefined : this.searchQuery;
+            
             this.setState({
                 henkilohakuModel: {
                     ...this.state.henkilohakuModel,
                     [key]: !isEvent ? entity.value : entity.target.checked
                 }
-            }, this.searchQuery); // Do query when model updates.
+            }, callback); // Do query when model updates.
         }
     };
 
