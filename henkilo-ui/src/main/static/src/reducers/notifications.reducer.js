@@ -49,15 +49,6 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     id: action.id,
                 }],
             };
-        case HENKILOHAKU_FAILURE:
-            return {
-                ...state,
-                henkilohakuNotifications: [...state.henkilohakuNotifications, {
-                    type: 'error',
-                    notL10nMessage: 'HENKILOHAKU_ERROR',
-                    id: 'HENKILOHAKU_ERROR',
-                }],
-            };
         case NOTIFICATION_REMOVED:
             let removeNotifications;
             // For button notifications (remove all)

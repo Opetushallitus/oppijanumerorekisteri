@@ -30,8 +30,6 @@ type Props = {
     henkilo: Henkilo,
     henkilohakuState: HenkilohakuState,
     updateFilters: (HenkilohakuCriteria) => void,
-    notifications: Array<any>,
-    removeNotification: (string, string, string) => void,
     clearHenkilohaku: () => void,
     isAdmin: boolean,
     omattiedot: OmattiedotState
@@ -65,8 +63,6 @@ class HenkilohakuContainer extends React.Component<Props,> {
                                henkiloHakuFilters={this.props.henkilohakuState.filters}
                                updateFilters={this.props.updateFilters}
                                henkilohakuLoading={this.props.henkilohakuState.henkilohakuLoading}
-                               notifications={this.props.notifications}
-                               removeNotification={this.props.removeNotification}
                                clearHenkilohaku={this.props.clearHenkilohaku}
                                isAdmin={this.props.isAdmin}/>
             : <Loader />
@@ -80,7 +76,6 @@ const mapStateToProps = (state, ownProps) => {
         henkilo: state.henkilo,
         allKayttooikeusryhmasLoading: state.kayttooikeus.allKayttooikeusryhmasLoading,
         henkilohakuState: state.henkilohakuState,
-        notifications: state.notifications.henkilohakuNotifications,
         isAdmin: state.omattiedot.isAdmin,
         ryhmas: state.ryhmatState,
         omattiedot: state.omattiedot
@@ -89,4 +84,4 @@ const mapStateToProps = (state, ownProps) => {
 
 
 export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, fetchAllKayttooikeusryhma,
-    henkilohaku, updateFilters, removeNotification, clearHenkilohaku, fetchAllRyhmas, henkilohakuCount})(HenkilohakuContainer);
+    henkilohaku, updateFilters, clearHenkilohaku, fetchAllRyhmas, henkilohakuCount})(HenkilohakuContainer);

@@ -30,12 +30,6 @@ type Props = {
     henkilohakuResultCount: number,
     henkiloHakuFilters: HenkilohakuCriteria,
     henkilohakuLoading: boolean,
-    notifications: Array<{
-        type: string,
-        id: string,
-        notL10nMessage: string
-    }>,
-    removeNotification: (string, string, string) => void,
     clearHenkilohaku: () => void
 }
 
@@ -101,10 +95,6 @@ class HenkilohakuPage extends React.Component<Props, State> {
 
     render() {
         return <div className="wrapper">
-            {this.props.notifications.filter(notification => notification.type === 'error').map( (notification, index) =>
-                <WideRedNotification key={index} closeAction={() => this.props.removeNotification('error', 'henkilohakuNotifications', 'HENKILOHAKU_ERROR')}
-                                     message={this.L[notification.notL10nMessage]} />)
-            }
             <div className="oph-h2 oph-bold henkilohaku-main-header">{this.L['HENKILOHAKU_OTSIKKO']}</div>
             <DelayedSearchInput setSearchQueryAction={this.updateToSearchModel('nameQuery').bind(this)}
                                 defaultNameQuery={this.state.henkilohakuModel.nameQuery}
