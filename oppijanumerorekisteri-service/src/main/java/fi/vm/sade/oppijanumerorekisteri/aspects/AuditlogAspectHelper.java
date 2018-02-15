@@ -8,14 +8,15 @@ import fi.vm.sade.oppijanumerorekisteri.audit.*;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class AuditlogAspectHelper {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private VirkailijaAuditLogger virkailijaLogger = new VirkailijaAuditLogger();
-    private ApiAuditLogger apiLogger = new ApiAuditLogger();
+    private final VirkailijaAuditLogger virkailijaLogger;
 
     void logCreateHenkilo(Henkilo henkilo, Object returnHenkilo) {
         Target target = new Target.Builder()
@@ -48,7 +49,7 @@ public class AuditlogAspectHelper {
         Changes changes = new Changes.Builder()
                 .updated(AuditMessageFields.HENKILO, "", getJson(henkilo))
                 .build();
-        apiLogger.log(OnrOperation.FORCE_UPDATE_HENKILO, target, changes);
+        virkailijaLogger.log(OnrOperation.FORCE_UPDATE_HENKILO, target, changes);
     }
 
     void logDisableHenkilo(String henkiloOid, Object returnHenkilo) {
