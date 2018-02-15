@@ -45,7 +45,7 @@ class RekisteroidyPage extends React.Component {
                 asiointiKieli: {
                     kieliKoodi: this.props.kutsu.asiointikieli,
                 },
-                kayttajanimi: this.createDefaultUsername(),
+                kayttajanimi: '',
                 password: '',
                 passwordAgain: '',
             },
@@ -114,14 +114,6 @@ class RekisteroidyPage extends React.Component {
             henkilo: henkilo,
             isValid: this.isValid(henkilo),
         });
-    }
-
-    createDefaultUsername() {
-        const email = this.props.kutsu.sahkoposti;
-        return (email
-            && email.split('@')[0]
-            && email.split('@')[0].replace(/[^A-Za-z0-9]/g, ''))
-            || '';
     }
 
     isValid(henkilo) {
