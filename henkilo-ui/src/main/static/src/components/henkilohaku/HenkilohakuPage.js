@@ -5,7 +5,6 @@ import React from 'react'
 import HenkilohakuFilters from "./HenkilohakuFilters";
 import Table from "../common/table/Table";
 import DelayedSearchInput from "./DelayedSearchInput";
-import WideRedNotification from "../common/notifications/WideRedNotification";
 import StaticUtils from "../common/StaticUtils";
 import Loader from "../common/icons/Loader";
 import { Link } from 'react-router';

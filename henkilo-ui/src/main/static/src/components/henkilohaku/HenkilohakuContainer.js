@@ -8,7 +8,6 @@ import Loader from "../common/icons/Loader";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import {clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters} from "../../actions/henkilohaku.actions";
 import {fetchAllRyhmas} from "../../actions/organisaatio.actions";
-import {removeNotification} from "../../actions/notifications.actions";
 import type {Locale} from "../../types/locale.type";
 import type {L10n} from "../../types/localisation.type";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
