@@ -102,15 +102,22 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
     };
 
     flatOrganisations(organisations: Array<any>): Array<OrganisaatioFlat> {
-        return organisations.map(organisation =>
-            ({
+        return organisations.map(organisation => {
+            const typesFlat = organisation.tyypit ? this.organisationTypesFlat(organisation.tyypit)
+                : organisation.organisaatiotyypit ? this.organisationTypesFlat(organisation.organisaatiotyypit) : '';
+            return {
                 name: toLocalizedText(this.props.locale, organisation.nimi),
-                typesFlat: organisation.tyypit.length ? '(' + StaticUtils.flatArray(organisation.tyypit) + ')' : '',
+                typesFlat: typesFlat,
                 role: organisation.tehtavanimike,
                 passive: organisation.passivoitu,
                 id: organisation.oid,
-            }));
+            }
+        });
     };
+
+    organisationTypesFlat(tyypit: any) {
+        return tyypit.length ? '(' + StaticUtils.flatArray(tyypit) + ')' : '';
+    }
 }
 
 const mapStateToProps = state => ({
