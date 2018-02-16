@@ -9,8 +9,11 @@ import * as R from 'ramda';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {L} from "../../../../types/localisation.type";
 import {unlinkHenkilo, fetchHenkiloSlaves} from '../../../../actions/henkilo.actions';
+import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
+import { hasAnyPalveluRooli } from '../../../../utilities/organisaatio.util'
 
 type Props = {
+    kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     henkilo: HenkiloState,
     L: L,
     unlinkHenkilo: (string, string) => void,
@@ -43,13 +46,20 @@ class LinkitetytHenkilot extends React.Component<Props> {
     }
 
     valueGroup() {
+        const hasPermission = hasAnyPalveluRooli(this.props.kayttooikeudet, ['HENKILONHALLINTA_OPHREKISTERI'])
         return R.path(['henkilo', 'slaves'], this.props)
             ? <div>
                 {this.props.henkilo.slaves.map((slave, index) =>
                     <div key={index} className="nowrap">
-                        <Link to={this.getLinkHref(slave.oidHenkilo)}>{slave.kutsumanimi} {slave.sukunimi}</Link> | <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
-                        {this.props.L['HENKILO_POISTA_LINKITYS']}
-                    </TextButton>
+                        <Link to={this.getLinkHref(slave.oidHenkilo)}>{slave.kutsumanimi} {slave.sukunimi}</Link>
+                        {hasPermission &&
+                        <span>
+                            <span> | </span>
+                            <TextButton action={this.removeLink.bind(this, this.props.henkilo.henkilo.oidHenkilo, slave.oidHenkilo)}>
+                                {this.props.L['HENKILO_POISTA_LINKITYS']}
+                            </TextButton>
+                        </span>
+                        }
                     </div>
                 )}
             </div>
@@ -70,6 +80,7 @@ class LinkitetytHenkilot extends React.Component<Props> {
 const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     henkilo: state.henkilo,
+    kayttooikeudet: state.omattiedot.organisaatiot,
 });
 
 export default connect(mapStateToProps, {unlinkHenkilo, fetchHenkiloSlaves})(LinkitetytHenkilot);
