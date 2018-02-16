@@ -31,18 +31,18 @@ export const AnojaKayttooikeusryhmat = (props: Props) => {
     const kayttooikeudet: ?Array<KayttooikeusryhmaData> = path(['data', 'kayttooikeudet'], props);
     const headings = [
         {
-            Header: 'Anojan olemassa olevat ja vanhentuneet käyttöoikeudet',
+            Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'],
             columns: [
             {
-                Header: 'Organisaatio nimi',
+                Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'],
                 accessor: 'organisaatioNimi'
             },
             {
-                Header: 'Kayttöoikeuden nimi',
+                Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'],
                 accessor: 'kayttooikeusryhmaNimi'
             },
             {
-                Header: 'Käyttöoikeuden päättymispäivämäärä',
+                Header: props.l10n[props.locale]['HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_VOIMASSAPVM_HEADER'],
                 accessor: 'voimassaPvm'
             }]
         }

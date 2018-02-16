@@ -320,7 +320,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                                fetchMoreSettings={this.props.fetchMoreSettings}
                                isLoading={this.props.tableLoading}
                                striped={this.props.striped}
-                               subComponent={this.fetchKayttooikeusryhmatByAnoja.bind(this)}/>
+                               subComponent={this.props.isAnomusView ? this.fetchKayttooikeusryhmatByAnoja.bind(this) : null}/>
                     </div>
                 </div>
             </div>
