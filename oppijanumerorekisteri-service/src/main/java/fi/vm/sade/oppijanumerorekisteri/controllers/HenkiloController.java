@@ -372,7 +372,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/duplicates")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
     public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
@@ -380,7 +380,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/hakemukset")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Hakee henkilön hakemukset haku-app:sta ja atarusta.")
     public List<HakemusDto> getApplications(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.duplicateService.getApplications(oid);
@@ -400,7 +400,7 @@ public class HenkiloController {
     }
 
     @PostMapping("/{oid}/link")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'CRUD', 'KKVASTUU'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'CRUD', 'KKVASTUU'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
