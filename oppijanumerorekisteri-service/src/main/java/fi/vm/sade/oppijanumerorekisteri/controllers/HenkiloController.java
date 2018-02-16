@@ -408,10 +408,9 @@ public class HenkiloController {
     }
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'CRUD', 'KKVASTUU'}, #permissionService)")
+    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
-    public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+    public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
         this.duplicateService.unlinkHenkilo(oid, slaveOid);
     }
 
