@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import PropTypes from 'prop-types'
 import moment from 'moment';
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
@@ -12,7 +11,8 @@ import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSin
 import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import type {L, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
-import type {KutsuOrganisaatio, Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
 
 type Payload = {
     searchTerm: string,
@@ -27,8 +27,8 @@ type Payload = {
 type Props = {
     l10n: L10n,
     locale: Locale,
-    kutsus: {result: Array<KutsuOrganisaatio>},
-    deleteKutsu: (?number) => void,
+    kutsus: {result: Array<KutsuRead>},
+    deleteKutsu: (number) => void,
     fetchKutsus: (Payload, number, number) => void,
     kutsuListLoading: boolean,
     organisaatiot: Array<Organisaatio>,
@@ -98,17 +98,6 @@ export default class KutsututPage extends React.Component<Props, State> {
             },
         };
     }
-
-    static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
-        kutsus: PropTypes.object.isRequired,
-        deleteKutsu: PropTypes.func.isRequired,
-        fetchKutsus: PropTypes.func.isRequired,
-        kutsuListLoading: PropTypes.bool.isRequired,
-        organisaatiot: PropTypes.array.isRequired,
-        clearKutsuList: PropTypes.func.isRequired,
-    };
 
     componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
@@ -217,7 +206,7 @@ export default class KutsututPage extends React.Component<Props, State> {
     }
 
     async cancelInvitationConfirmed() {
-        if (this.state.confirmDeleteFor) {
+        if (this.state.confirmDeleteFor && this.state.confirmDeleteFor.id) {
             await this.props.deleteKutsu(this.state.confirmDeleteFor.id);
             this.setState({confirmDeleteFor: null});
         }

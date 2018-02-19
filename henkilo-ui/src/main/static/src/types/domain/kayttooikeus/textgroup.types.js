@@ -7,3 +7,8 @@ export type TextGroup = {
     sv?: string,
     en?: string,
 }
+
+export type TextGroupMap = {
+    id: number,
+    texts: {[string]: string}
+}

@@ -1,10 +1,30 @@
+// @flow
+
 import React from 'react';
 import {connect} from 'react-redux';
 import {clearKutsuList, deleteKutsu, fetchKutsus} from '../actions/kutsu.actions';
 import KutsututPage from '../components/kutsutut/KutsututPage';
 import {fetchOmattiedotOrganisaatios} from '../actions/omattiedot.actions';
+import type {KutsuRead} from "../types/domain/kayttooikeus/Kutsu.types";
+import type {L10n} from "../types/localisation.type";
+import type {Locale} from "../types/locale.type";
 
-class KutsututPageContainer extends React.Component {
+type Props = {
+    path: string,
+    kutsus: {result: Array<KutsuRead>},
+    l10n: L10n,
+    locale: Locale,
+    kutsuListLoading: boolean,
+    organisaatiot: Array<any>,
+    isAdmin: boolean,
+    isOphVirkailija: boolean,
+    fetchKutsus: (any) => void,
+    deleteKutsu: (number) => void,
+    fetchOmattiedotOrganisaatios: () => void,
+    clearKutsuList: () => void
+}
+
+class KutsututPageContainer extends React.Component<Props> {
     render() {
         return <KutsututPage {...this.props} />;
     }

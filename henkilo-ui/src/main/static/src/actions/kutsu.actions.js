@@ -2,12 +2,16 @@ import {
     DELETE_KUTSU_SUCCESS, DELETE_KUTSU_REQUEST, FETCH_KUTSU_REQUEST, FETCH_KUTSU_SUCCESS,
     FETCH_KUTSUBYTOKEN_REQUEST, FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE,
     CREATE_HENKILOBYTOKEN_SUCCESS, CREATE_HENKILOBYTOKEN_REQUEST, LOGIN_FAILED, CLEAR_KUTSU_LIST, RENEW_KUTSU_REQUEST,
-    RENEW_KUTSU_SUCCESS, RENEW_KUTSU_FAILURE, FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_HENKILO_SUCCESS
+    RENEW_KUTSU_SUCCESS, RENEW_KUTSU_FAILURE, FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, FETCH_HENKILO_SUCCESS,
+    FETCH_KUTSU_FAILURE
 } from './actiontypes';
 
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
 import {fetchCasMe} from "./omattiedot.actions";
+import {addGlobalNotification} from "./notification.actions";
+import {localizeWithState} from "../utilities/localisation.util";
+import {NOTIFICATIONTYPES} from "../components/common/Notification/notificationtypes";
 
 const requestDeleteKutsu = (id) => ({type: DELETE_KUTSU_REQUEST, id});
 const receiveDeleteKutsu = (id, json) => ({type: DELETE_KUTSU_SUCCESS, id, receivedAt: Date.now()});
@@ -32,10 +36,23 @@ export const renewKutsu = (id) => async dispatch => {
 
 const requestKutsus = () => ({type: FETCH_KUTSU_REQUEST});
 const receiveKutsus = (json) => ({type: FETCH_KUTSU_SUCCESS, kutsus: json, receivedAt: Date.now()});
-export const fetchKutsus = (payload, offset, amount) => dispatch => {
+const requestKutsusFailure = () => ({type: FETCH_KUTSU_FAILURE});
+
+export const fetchKutsus = (payload, offset, amount) => async (dispatch, getState) => {
     dispatch(requestKutsus());
     const url = urls.url('kayttooikeus-service.kutsu', {...payload, offset, amount});
-    http.get(url).then(json => {dispatch(receiveKutsus(json))});
+    try {
+        const kutsus = await http.get(url);
+        dispatch(receiveKutsus(kutsus));
+    } catch (error) {
+        dispatch(addGlobalNotification({
+            key: 'KUTSUTUT_VIRKAILIJA_FETCHING_FAILED',
+            autoClose: 10000,
+            type: NOTIFICATIONTYPES.ERROR,
+            title: localizeWithState('KUTSUTUT_VIRKAILIJA_FETCHING_FAILED', getState())
+        }));
+        dispatch(requestKutsusFailure());
+    }
 };
 
 export const clearKutsuList = () => (dispatch) => dispatch({type: CLEAR_KUTSU_LIST});
