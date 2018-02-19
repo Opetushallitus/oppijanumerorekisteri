@@ -12,7 +12,6 @@ import {fetchHenkiloSlaves, fetchKayttajatieto, yksiloiHenkilo} from "../../../.
 import Loader from "../../icons/Loader";
 import Kayttajanimi from "../labelvalues/Kayttajanimi";
 import PasswordButton from "../buttons/PasswordButton";
-import * as R from 'ramda';
 import PassivoiButton from "../buttons/PassivoiButton";
 
 type Props = {
@@ -76,7 +75,7 @@ class PalveluUserContent extends React.Component<Props, State> {
                 />,
             ],
             [
-                <Kayttajanimi disabled={!!R.path(['kayttajatieto', 'username'], this.props.henkilo)}
+                <Kayttajanimi disabled={!this.props.isAdmin}
                               {...props}
                 />,
             ],
