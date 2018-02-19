@@ -22,6 +22,7 @@ type Payload = {
     direction: string,
     view: ?string,
     kayttooikeusryhmaIds: ?number,
+    subOrganisations?: boolean
 }
 
 type Props = {
@@ -95,11 +96,12 @@ export default class KutsututPage extends React.Component<Props, State> {
                 direction: 'DESC',
                 view: null,
                 kayttooikeusryhmaIds: null,
+                subOrganisations: true
             },
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
     }
 
@@ -249,7 +251,7 @@ export default class KutsututPage extends React.Component<Props, State> {
             sortBy = this.kutsuTableHeaderToSort[sort.id];
             direction = sort.desc ? 'DESC' : 'ASC';
         }
-        this.setState({payload: {...this.state.payload, subOrganisations: true, sortBy, direction}},
+        this.setState({payload: {...this.state.payload, sortBy, direction}},
             () => this.props.fetchKutsus(this.state.payload, this.offset, this.defaultLimit));
     }
 }

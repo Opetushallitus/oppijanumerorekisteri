@@ -1,9 +1,19 @@
+// @flow
+
 import {
     FETCH_KUTSU_SUCCESS, FETCH_KUTSU_REQUEST, FETCH_KUTSUBYTOKEN_REQUEST,
     FETCH_KUTSUBYTOKEN_SUCCESS, FETCH_KUTSUBYTOKEN_FAILURE, CLEAR_KUTSU_LIST, FETCH_KUTSU_FAILURE,
 } from '../actions/actiontypes';
+import type {KutsuRead} from "../types/domain/kayttooikeus/Kutsu.types";
 
-export const kutsuList = (state = {loaded: false, result: [], kutsuByToken: {}, kutsuByTokenLoading: true,}, action) => {
+export type KutsuListState = {
+    loaded: boolean,
+    result: Array<KutsuRead>,
+    kutsuByToken: any,
+    kutsuByTokenLoading: boolean
+}
+
+export const kutsuList = (state: KutsuListState = {loaded: false, result: [], kutsuByToken: {}, kutsuByTokenLoading: true,}, action: any) => {
     switch (action.type) {
         case FETCH_KUTSU_REQUEST:
             return Object.assign({}, state, {loaded: false});
