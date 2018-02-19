@@ -126,7 +126,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
     toLogin = (event) => {
         event.preventDefault();
-        const url = urls.url('cas.login');
+        const url = urls.url('virkailijan-tyopoyta.base');
         document.location.href = url;
     };
 
