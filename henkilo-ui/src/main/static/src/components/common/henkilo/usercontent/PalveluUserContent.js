@@ -54,7 +54,7 @@ class PalveluUserContent extends React.Component<Props, State> {
                 updateAction={this.props.updateAction}
                 basicInfo={this.createBasicInfo()}
                 readOnlyButtons={this.createReadOnlyButtons()}
-                isValidForm={true}
+                isValidForm={this.props.isValidForm}
             />;
     }
 
