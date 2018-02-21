@@ -614,7 +614,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .findMastersByOids(henkiloOids);
         return henkilot.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.map(e, HenkiloDto.class)));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.map(e.getValue(), HenkiloDto.class)));
     }
 
     private Henkilo getEntityByOid(String henkiloOid) {
