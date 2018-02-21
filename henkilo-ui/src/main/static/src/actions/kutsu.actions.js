@@ -52,6 +52,7 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch, getStat
             title: localizeWithState('KUTSUTUT_VIRKAILIJA_FETCHING_FAILED', getState())
         }));
         dispatch(requestKutsusFailure());
+        throw error;
     }
 };
 
