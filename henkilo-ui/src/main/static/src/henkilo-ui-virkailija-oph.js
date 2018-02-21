@@ -89,6 +89,9 @@ export default {
     "shibboleth.identification": "shibbolethVirkailija/virkailija$1",
     "shibboleth.kayttooikeus-service.cas.tunnistus": "kayttooikeus-service/cas/tunnistus",
 
+    "virkailijan-tyopoyta.baseUrl": "/",
+    "virkailijan-tyopoyta.base": "virkailijan-tyopoyta",
+
     "virkailija-raamit.baseUrl": "/",
     "virkailija-raamit.raamit.js": "virkailija-raamit/apply-raamit.js",
     "virkailija-raamit.raamit.css": "virkailija-raamit/apply-raamit.css"

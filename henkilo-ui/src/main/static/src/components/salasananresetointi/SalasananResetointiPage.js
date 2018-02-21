@@ -11,6 +11,7 @@ import {http} from "../../http";
 import WideRedNotification from "../common/notifications/WideRedNotification";
 import WideGreenNotification from "../common/notifications/WideGreenNotification";
 import {isValidPassword} from "../../validation/PasswordValidator";
+import Button from '../common/button/Button';
 
 type Props = {
     L: L,
@@ -22,6 +23,7 @@ type Props = {
 type State = {
     password: string,
     passwordAgain: string,
+    loading: boolean,
     toggleVirhe: boolean,
     toggleSuccess: boolean,
     showLoginRedirect: boolean,
@@ -38,6 +40,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         this.state = {
             password: '',
             passwordAgain: '',
+            loading: false,
             toggleVirhe: false,
             toggleSuccess: false,
             showLoginRedirect: false,
@@ -95,8 +98,8 @@ class SalasananResetointiPage extends React.Component<Props, State> {
                     : null}
 
                 { this.state.showSetPassword ?
-                <button onClick={(event) => this.submitForm(event)} disabled={!this.validPassword()}
-                    className="oph-button oph-button-primary set-password">{this.props.L['SALASANA_RESETOINTI_ASETA']}</button>
+                <Button action={(event) => this.submitForm(event)} disabled={!this.validPassword()} loading={this.state.loading}
+                    className="set-password">{this.props.L['SALASANA_RESETOINTI_ASETA']}</Button>
                     : null }
 
                 { this.state.showLoginRedirect ?
@@ -123,7 +126,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
     toLogin = (event) => {
         event.preventDefault();
-        const url = urls.url('cas.login');
+        const url = urls.url('virkailijan-tyopoyta.base');
         document.location.href = url;
     };
 
@@ -131,20 +134,25 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         event.preventDefault();
         const url = urls.url('kayttooikeus-service.salasana.resetointi', this.props.poletti);
         try {
+            this.setState({
+                loading: true,
+            })
             await http.post(url, this.state.password);
             this.setState({
+                loading: false,
                 toggleSuccess: true,
                 showLoginRedirect: true,
                 showSetPassword: false
             });
         } catch (error) {
+            const newState = { loading: false }
             if(error.errorType === 'NotFoundException') {
-                this.setState({showNotFoundError: true});
+                this.setState({ ...newState, showNotFoundError: true});
             } else if(error.errorType === 'ForbiddenException') {
-                this.setState({showForbiddenError: true});
+                this.setState({ ...newState, showForbiddenError: true});
             }
 
-            this.setState({toggleVirhe: true});
+            this.setState({ ...newState, toggleVirhe: true});
 
             throw error;
         }
