@@ -15,6 +15,7 @@ import {isValidKutsumanimi} from "../../../../validation/KutsumanimiValidator";
 import {LocalNotification} from "../../Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../../types/notification.types";
+import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
 
 type Props = {
     L: L,
@@ -114,6 +115,9 @@ class UserContentContainer extends React.Component<Props, State> {
                 <ul>
                     {this._validKutsumanimi() ? null : <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KUTSUMANIMI_VIRHE']}</li>}
                 </ul>
+                <ul>
+                    {this._validKayttajatunnus() ? null : <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']}</li>}
+                </ul>
             </LocalNotification>
         </div>;
     }
@@ -182,7 +186,8 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _validForm = (): boolean => {
-        return this._validKutsumanimi();
+        return this._validKutsumanimi()
+            && this._validKayttajatunnus();
     };
 
     _validKutsumanimi = (): boolean => {
@@ -191,6 +196,10 @@ class UserContentContainer extends React.Component<Props, State> {
         return isValidKutsumanimi(etunimet, kutsumanimi);
     };
 
+    _validKayttajatunnus = (): boolean => {
+        const kayttajatunnus = this.state.henkiloUpdate.kayttajanimi
+        return !kayttajatunnus || isValidKayttajatunnus(kayttajatunnus)
+    }
 
 }
 
