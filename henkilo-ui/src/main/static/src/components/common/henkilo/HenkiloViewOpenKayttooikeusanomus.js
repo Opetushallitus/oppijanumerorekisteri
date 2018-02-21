@@ -221,8 +221,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         if(this.props.updateHaettuKayttooikeusryhma) {
             this.props.updateHaettuKayttooikeusryhma(id, tila, alkupvm, loppupvm, henkilo, hylkaysperuste || '');
         }
-        const disabledMyonnettyButtons = this.state.disabledMyonnettyButtons;
-        const disabledHylkaaButtons = this.state.disabledHylkaaButtons;
+        const disabledMyonnettyButtons = {...this.state.disabledMyonnettyButtons};
+        const disabledHylkaaButtons = {...this.state.disabledHylkaaButtons};
         if(tila === 'MYONNETTY') {
             disabledMyonnettyButtons[id] = true;
         }
