@@ -1,47 +1,38 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import com.querydsl.core.BooleanBuilder;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.types.ExpressionUtils.anyOf;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanPath;
 import com.querydsl.core.types.dsl.Expressions;
-import static com.querydsl.core.types.dsl.Expressions.allOf;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.QExternalId;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
-import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijanumerorekisteriCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import fi.vm.sade.oppijanumerorekisteri.models.QIdentification;
-import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
-import fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma;
-import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto;
-import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
-import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
-import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
-import static java.util.stream.Collectors.joining;
-
-import javax.persistence.Query;
-
-import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.types.ExpressionUtils.anyOf;
+import static com.querydsl.core.types.dsl.Expressions.allOf;
+import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
+import static fi.vm.sade.oppijanumerorekisteri.models.QKansalaisuus.kansalaisuus;
+import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystiedotRyhma.yhteystiedotRyhma;
+import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
 
@@ -284,6 +275,51 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .where(qHenkiloViite.slaveOid.in(henkiloOids))
                 .distinct()
                 .transform(groupBy(qHenkiloViite.slaveOid).as(qHenkilo));
+    }
+
+    /**
+     * @param henkiloOids
+     * @return Henkilo objects which are either masters for slave oids or just the henkilo record when the oid was a
+     * master oid.
+     */
+    @Override
+    public Map<String, Henkilo> findMastersByOids(Set<String> henkiloOids) {
+        QHenkiloViite qHenkiloViite = QHenkiloViite.henkiloViite;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        Map<String, String> slaveToMasterOid = new HashMap<>();
+        Map<String, Henkilo> res = new HashMap<>();
+
+        jpa().from(qHenkiloViite)
+                .where(qHenkiloViite.slaveOid.in(henkiloOids))
+                .select(qHenkiloViite.masterOid, qHenkiloViite.slaveOid)
+                .fetch()
+                .forEach(queryResult -> {
+                    slaveToMasterOid
+                            .put(queryResult.get(qHenkiloViite.slaveOid), queryResult.get(qHenkiloViite.masterOid));
+                });
+
+        Set<String> foundSlaves = slaveToMasterOid.keySet();
+
+        Stream<String> masterOids = henkiloOids
+                .stream()
+                .filter(oid -> !foundSlaves.contains(oid));
+
+        Set<String> queryOids =
+                Stream.concat(masterOids, slaveToMasterOid.values().stream())
+                        .collect(Collectors.toSet());
+
+        Map<String, Henkilo> henkilot = jpa().from(qHenkilo)
+                .where(qHenkilo.oidHenkilo.in(queryOids))
+                .distinct()
+                .transform(groupBy(qHenkilo.oidHenkilo).as(qHenkilo));
+
+        henkiloOids.forEach(oid -> {
+            String masterOid = henkilot.containsKey(oid) ? oid : slaveToMasterOid.get(oid);
+            res.put(oid, henkilot.get(masterOid));
+        });
+
+        return res;
     }
 
     @Override

@@ -1,17 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
-import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
-import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface HenkiloService {
 
@@ -64,6 +63,8 @@ public interface HenkiloService {
     List<String> listPossibleHenkiloTypesAccessible();
 
     HenkiloReadDto getMasterByOid(String henkiloOid);
+
+    Map<String, HenkiloDto> getMastersByOids(Set<String> henkiloOids);
 
     HenkiloReadDto getByHetu(String hetu);
 
