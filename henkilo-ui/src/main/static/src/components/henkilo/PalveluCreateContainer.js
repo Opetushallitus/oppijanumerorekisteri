@@ -7,12 +7,12 @@ import PalveluCreateForm from './PalveluCreateForm'
 import type { PalvelukayttajaCreate, PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 import type {L} from "../../types/localisation.type";
-import {updateEmptyNavigation} from "../../actions/navigation.actions";
+import {updatePalvelukayttajaNavigation} from "../../actions/navigation.actions";
 
 type Props = {
     router: any,
     L: L,
-    updateEmptyNavigation: () => void,
+    updatePalvelukayttajaNavigation: () => void,
 }
 
 type State = {
@@ -31,7 +31,7 @@ class PalveluCreateContainer extends React.Component<Props, State> {
                     ? <WideRedNotification message={this.state.error} closeAction={() => this.setError()} />
                     : null
                 }
-                <h1>{this.props.L['PALVELUKAYTTAJAN_LUONTI_OTSIKKO']}</h1>
+                <span className="oph-h2 oph-bold">{this.props.L['PALVELUKAYTTAJAN_LUONTI_OTSIKKO']}</span>
                 <PalveluCreateForm onSubmit={this.onSubmit}
                                    L={this.props.L}>
                 </PalveluCreateForm>
@@ -40,7 +40,7 @@ class PalveluCreateContainer extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.props.updateEmptyNavigation();
+        this.props.updatePalvelukayttajaNavigation();
     }
 
     setError = (error) => {
@@ -74,4 +74,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {updateEmptyNavigation})(PalveluCreateContainer);
+export default connect(mapStateToProps, {updatePalvelukayttajaNavigation})(PalveluCreateContainer);

@@ -7,6 +7,11 @@ export const mainNavigation = [
     {path: '/oppija/luonti', label: 'NAVI_OPPIJAN_LUONTI', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
 ];
 
+export const palvelukayttajaNavigation = [
+    {path: '/palvelukayttaja', label: 'NAVI_PALVELUKAYTTAJA_HAKU'},
+    {path: '/palvelukayttaja/luonti', label: 'NAVI_PALVELUKAYTTAJA_LUONTI'},
+];
+
 export const oppijaNavi = oid => [
     {path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/oppija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },

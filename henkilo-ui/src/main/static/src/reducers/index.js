@@ -19,6 +19,7 @@ import {haetutKayttooikeusryhmat} from "./anomus.reducer";
 import {henkilohakuState} from "./henkilohaku.reducer";
 import {cas} from "./cas.reducer";
 import {oppijoidenTuontiYhteenveto, oppijoidenTuontiListaus} from "./oppijoidentuonti.reducer";
+import {palvelukayttajat} from "./palvelukayttaja.reducer";
 import {palvelutState} from "./palvelut.reducer";
 import {kayttooikeusState} from "./kayttooikeus.reducer";
 import {notificationList} from "./notification.reducer";
@@ -46,6 +47,7 @@ const rootReducer = combineReducers({
     cas,
     oppijoidenTuontiYhteenveto,
     oppijoidenTuontiListaus,
+    palvelukayttajat,
     palvelutState,
     kayttooikeusState
 });
