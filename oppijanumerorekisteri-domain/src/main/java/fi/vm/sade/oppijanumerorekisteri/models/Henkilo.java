@@ -107,6 +107,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "kielisyys_id",
             referencedColumnName = "id"))
+    @BatchSize(size = 1000)
     private Set<Kielisyys> kielisyys = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)

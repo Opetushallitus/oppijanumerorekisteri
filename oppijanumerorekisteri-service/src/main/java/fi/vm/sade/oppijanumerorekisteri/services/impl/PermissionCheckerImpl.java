@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,9 +17,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
+
+import static java.util.stream.Collectors.toSet;
 
 @Service("permissionChecker")
 @RequiredArgsConstructor
@@ -50,6 +51,21 @@ public class PermissionCheckerImpl implements PermissionChecker {
             }
         }
 
+        return permissionCheckedPersons;
+    }
+
+    public Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, List<String> allowedRoles,
+                                                         ExternalPermissionService permissionCheckService) throws IOException {
+        if (persons == null || persons.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        Map<String, HenkiloDto> permissionCheckedPersons = new HashMap<>();
+        for (Map.Entry<String, HenkiloDto> person : persons.entrySet()) {
+            if (person.getValue() != null && this.isAllowedToAccessPerson(person.getValue().getOidHenkilo(), allowedRoles, permissionCheckService)) {
+                permissionCheckedPersons.put(person.getKey(), person.getValue());
+            }
+        }
         return permissionCheckedPersons;
     }
 

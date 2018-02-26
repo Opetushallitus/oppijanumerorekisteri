@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -16,10 +16,11 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import javax.validation.constraints.Min;
+import java.util.Map;
 
 
 @Api(tags = "Henkilot")
@@ -227,6 +228,24 @@ public class HenkiloController {
                                                           ExternalPermissionService permissionService) throws IOException {
         return this.permissionChecker.getPermissionCheckedHenkilos(
                 this.henkiloService.getHenkilosByOids(oids),
+                Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),
+                permissionService
+        );
+    }
+
+    @ApiOperation(value = "Henkilöiden master tietojen haku OID:ien perusteella max 5000 kerrallaan.",
+            notes = "Hakee henkilöiden master tiedot annetun OID:ien pohjalta max 5000 kerrallaan.")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/masterHenkilosByOidList", method = RequestMethod.POST)
+    public Map<String, HenkiloDto> masterHenkilosByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
+                                                           @RequestHeader(value = "External-Permission-Service", required = false)
+                                                          ExternalPermissionService permissionService) throws IOException {
+
+        return this.permissionChecker.getPermissionCheckedHenkilos(
+                this.henkiloService.getMastersByOids(Sets.newHashSet(oids)),
                 Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),
                 permissionService
         );

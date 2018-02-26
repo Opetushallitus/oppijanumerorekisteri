@@ -1,10 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.Slice;
-import fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
@@ -12,42 +7,49 @@ import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
-
-import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.*;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
-import fi.vm.sade.oppijanumerorekisteri.services.*;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import lombok.RequiredArgsConstructor;
+import ma.glasnost.orika.metadata.TypeBuilder;
+import org.joda.time.DateTime;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
-import static java.util.Collections.emptyList;
-import java.util.stream.Collectors;
-
 import java.util.function.Function;
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import ma.glasnost.orika.metadata.TypeBuilder;
-import org.joda.time.DateTime;
 
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -603,6 +605,20 @@ public class HenkiloServiceImpl implements HenkiloService {
                 .findMasterBySlaveOid(henkiloOid)
                 .orElseGet(() -> getEntityByOid(henkiloOid));
         return mapper.map(henkilo, HenkiloReadDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, HenkiloDto> getMastersByOids(Set<String> henkiloOids) {
+        if(henkiloOids.size() > MAX_FETCH_PERSONS) {
+            throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + henkiloOids.size());
+        }
+
+        return henkiloJpaRepository
+                .findMastersByOids(henkiloOids)
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.map(e.getValue(), HenkiloDto.class)));
     }
 
     private Henkilo getEntityByOid(String henkiloOid) {

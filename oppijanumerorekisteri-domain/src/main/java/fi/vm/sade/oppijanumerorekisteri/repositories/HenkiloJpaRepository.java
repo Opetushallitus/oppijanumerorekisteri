@@ -8,14 +8,10 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.Oppijanumerorekist
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
-import java.util.Collection;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 // High speed repository for jpa queries with querydsl.
 @Repository
@@ -108,6 +104,8 @@ public interface HenkiloJpaRepository {
      * @return henkilöt
      */
     Map<String, Henkilo> findMastersBySlaveOids(Set<String> henkiloOids);
+
+    Map<String, Henkilo> findMastersByOids(Set<String> henkiloOids);
 
     List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
