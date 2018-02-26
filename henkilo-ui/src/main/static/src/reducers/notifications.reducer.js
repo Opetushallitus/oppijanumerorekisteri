@@ -1,6 +1,6 @@
 import {
     ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE, ADD_KAYTTOOIKEUS_TO_HENKILO_SUCCESS, DELETE_HENKILOORGS_FAILURE, NOTIFICATION_REMOVED, PASSIVOI_HENKILO_FAILURE,
-    VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, HENKILOHAKU_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE
+    VTJ_OVERRIDE_HENKILO_FAILURE, YKSILOI_HENKILO_FAILURE, CREATE_HENKILOBYTOKEN_FAILURE
 } from "../actions/actiontypes";
 
 
@@ -47,15 +47,6 @@ export const notifications = (state={existingKayttooikeus: [], buttonNotificatio
                     type: 'error',
                     notL10nMessage: action.notL10nMessage || 'NOTIFICATION_LISAA_KAYTTOOIKEUS_EPAONNISTUI',
                     id: action.id,
-                }],
-            };
-        case HENKILOHAKU_FAILURE:
-            return {
-                ...state,
-                henkilohakuNotifications: [...state.henkilohakuNotifications, {
-                    type: 'error',
-                    notL10nMessage: 'HENKILOHAKU_ERROR',
-                    id: 'HENKILOHAKU_ERROR',
                 }],
             };
         case NOTIFICATION_REMOVED:
