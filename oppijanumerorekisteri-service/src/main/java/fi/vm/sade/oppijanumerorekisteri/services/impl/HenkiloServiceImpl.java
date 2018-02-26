@@ -610,9 +610,13 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, HenkiloDto> getMastersByOids(Set<String> henkiloOids) {
-        Map<String, Henkilo> henkilot = henkiloJpaRepository
-                .findMastersByOids(henkiloOids);
-        return henkilot.entrySet()
+        if(henkiloOids.size() > MAX_FETCH_PERSONS) {
+            throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + henkiloOids.size());
+        }
+
+        return henkiloJpaRepository
+                .findMastersByOids(henkiloOids)
+                .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.map(e.getValue(), HenkiloDto.class)));
     }

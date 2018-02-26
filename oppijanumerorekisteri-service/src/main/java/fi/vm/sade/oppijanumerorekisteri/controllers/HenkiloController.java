@@ -233,8 +233,8 @@ public class HenkiloController {
         );
     }
 
-    @ApiOperation(value = "Henkilöiden master tietojen haku OID:ien perusteella.",
-            notes = "Hakee henkilöiden master tiedot annetun OID:ien pohjalta.")
+    @ApiOperation(value = "Henkilöiden master tietojen haku OID:ien perusteella max 5000 kerrallaan.",
+            notes = "Hakee henkilöiden master tiedot annetun OID:ien pohjalta max 5000 kerrallaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
