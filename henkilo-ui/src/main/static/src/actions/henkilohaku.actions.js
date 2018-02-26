@@ -35,6 +35,7 @@ export const henkilohaku = (payload: HenkilohakuCriteria, queryParams: Henkiloha
             type: NOTIFICATIONTYPES.ERROR,
             autoClose: 10000
         }));
+        throw error;
     }
 };
 
@@ -54,6 +55,6 @@ export const henkilohakuCount = (criteria: HenkilohakuCriteria) => async (dispat
         dispatch(henkilohakuCountSuccess(count));
     } catch (error) {
         dispatch(henkilohakuCountFailure());
-        console.error('henkilohakucount epäonnistui hakuehdoilla:', criteria, error);
+        throw error;
     }
 };
