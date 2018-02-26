@@ -324,6 +324,12 @@ public class HenkiloServiceImpl implements HenkiloService {
                     Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
                 .stream().findFirst().orElseThrow(NotFoundException::new);
 
+        if (henkiloSaved.isPassivoitu() && Boolean.FALSE.equals(henkiloUpdateDto.getPassivoitu())) {
+            if (!permissionChecker.isSuperUser()) {
+                throw new ForbiddenException("Vain rekisterinpitäjä voi aktivoida henkilön");
+            }
+        }
+
         // Do not update all values if henkilo is already vtj yksiloity
         if (henkiloSaved.isYksiloityVTJ()) {
             henkiloUpdateDto.setEtunimet(null);

@@ -101,7 +101,7 @@ public class DtoUtils {
         YhteystiedotRyhmaDto yhteystiedotRyhma = DtoUtils.createYhteystiedotRyhmaDto(yhteystietoArvo);
         LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
 
-        return new HenkiloUpdateDto(oidHenkilo, etunimet, kutsumanimi, sukunimi, hetu,
+        return new HenkiloUpdateDto(oidHenkilo, null, etunimet, kutsumanimi, sukunimi, hetu,
                 syntymaAika, null, "1", asiointikieli, aidinkieli,
                 Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)),
                 HenkiloTyyppi.VIRKAILIJA);
