@@ -244,7 +244,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     hasNoPermission(organisaatioOid: string, kayttooikeusryhmaId: number) {
         return !this.props.kayttooikeus.grantableKayttooikeusLoading
             && !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
-            && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].indexOf(kayttooikeusryhmaId) === 0);
+            && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].includes(kayttooikeusryhmaId));
     };
     
     fetchKayttooikeusryhmatByAnoja(row: any): React.Node {
