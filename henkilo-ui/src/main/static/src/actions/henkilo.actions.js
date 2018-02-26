@@ -6,6 +6,7 @@ import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILO_FAILURE, FETCH_HENKILOORGS_REQUEST,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     PASSIVOI_HENKILO_FAILURE, PASSIVOI_HENKILO_REQUEST, PASSIVOI_HENKILO_SUCCESS,
+    AKTIVOI_HENKILO_FAILURE, AKTIVOI_HENKILO_REQUEST, AKTIVOI_HENKILO_SUCCESS,
     UPDATE_HENKILO_FAILURE, UPDATE_HENKILO_REQUEST,
     UPDATE_HENKILO_SUCCESS, UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE, YKSILOI_HENKILO_FAILURE,
     YKSILOI_HENKILO_REQUEST,
@@ -115,6 +116,26 @@ export const passivoiHenkilo = (oid) => (dispatch => {
     }).catch(e => dispatch(errorPassivoiHenkilo(e)));
 });
 
+export const aktivoiHenkilo = (oid) => async (dispatch, getState) => {
+    dispatch({ type: AKTIVOI_HENKILO_REQUEST, oid });
+    try {
+        const url = urls.url('oppijanumerorekisteri-service.henkilo', oid);
+        // henkilö put toimii kuten patch joten ei tarvita kaikkia tietoja
+        const data = { oidHenkilo: oid, passivoitu: false }
+        await http.put(url, data)
+        dispatch({ type: AKTIVOI_HENKILO_SUCCESS, oid });
+        dispatch(fetchHenkilo(oid));
+    } catch (error) {
+        dispatch({ type: AKTIVOI_HENKILO_FAILURE, oid, error })
+        dispatch(addGlobalNotification({
+            key: 'AKTIVOI_EPAONNISTUI',
+            type: NOTIFICATIONTYPES.ERROR,
+            title: localizeWithState('AKTIVOI_EPAONNISTUI', getState()),
+            autoClose: 10000,
+        }));
+        throw error;
+    }
+};
 
 const requestHenkiloYksilointitieto = (oid) => ({type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST, oid});
 const receiveHenkiloYksilointitieto = (payload) => ({type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, payload});

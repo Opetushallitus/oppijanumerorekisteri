@@ -27,6 +27,7 @@ import PuraHetuttomanYksilointiButton from "../buttons/PuraHetuttomanYksilointi"
 import HakaButton from "../buttons/HakaButton";
 import VtjOverrideButton from "../buttons/VtjOverrideButton";
 import PasswordButton from "../buttons/PasswordButton";
+import AktivoiButton from '../buttons/AktivoiButton';
 
 type Props = {
     readOnly: boolean,
@@ -40,6 +41,7 @@ type Props = {
     koodisto: any,
     L: L,
     locale: Locale,
+    aktivoiHenkilo: (oid: string) => void,
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
     oidHenkilo: string,
@@ -114,6 +116,11 @@ class AdminUserContent extends React.Component<Props, State> {
             <YksiloiHetutonButton disabled={duplicate || passivoitu} />,
             <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />,
             <PassivoiButton disabled={duplicate || passivoitu} />,
+            this.props.henkilo.henkilo.passivoitu ? <AktivoiButton
+                L={this.props.L}
+                oid={this.props.henkilo.henkilo.oidHenkilo}
+                onClick={this.props.aktivoiHenkilo}
+                /> : null,
             <HakaButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
