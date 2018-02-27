@@ -33,7 +33,7 @@ export default <Route path="/" component={App}>
     <Route path="/:henkiloType/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
     <Route path="/admin/:oid" component={AdminViewContainer} />
-    <Route path="/uudelleenrekisterointi/:locale/:loginToken/:onTyosahkopostiosoite" component={VahvaTunnistusLisatiedotContainer} />
+    <Route path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana" component={VahvaTunnistusLisatiedotContainer} />
     <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/rekisteroidy" component={RekisteroidyContainer} />
