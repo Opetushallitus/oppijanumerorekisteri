@@ -101,6 +101,8 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
                 .ifPresent((oppijaWithSameHetu) -> {
                     oppijaWithSameHetu.setHetu(null);
+                    oppijaWithSameHetu.setYksiloity(false);
+                    oppijaWithSameHetu.setYksiloityVTJ(false);
                     // Hetu is unique so we need to flush when moving it
                     this.henkiloRepository.saveAndFlush(oppijaWithSameHetu);
                     this.duplicateService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
