@@ -16,7 +16,7 @@ import java.util.Set;
 // Note: can return only Henkilo objects
 @Transactional(propagation = Propagation.MANDATORY)
 @Repository
-public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaRepository<Henkilo, Long> {
+public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaRepository<Henkilo, Long>, HenkiloJpaRepository {
     @EntityGraph("henkiloDto")
     List<Henkilo> findByOidHenkiloIsIn(Collection<String> oidHenkilo);
 
@@ -25,5 +25,11 @@ public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaReposit
     Optional<Henkilo> findByHetu(String hetu);
 
     List<Henkilo> findByHetuIn(Set<String> hetut);
+
+    /**
+     * Palauttaa kaikki sellaiset henkilöt, jotka eivät vielä olleet rekisterissä. Rajoitettu 5000 kerralla.
+     * @return halutut henkilöt
+     */
+    List<Henkilo> findTop5000ByHetuIsNotNullAndPassivoituIsFalseAndVtjRegisterIsFalseAndYksiloityVTJIsTrue();
 
 }

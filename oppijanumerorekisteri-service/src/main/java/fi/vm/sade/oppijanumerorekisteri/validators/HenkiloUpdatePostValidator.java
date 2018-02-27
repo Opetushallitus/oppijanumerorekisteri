@@ -4,7 +4,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KansalaisuusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
@@ -27,17 +26,14 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     private HenkiloRepository henkiloRepository;
 
-    private HenkiloJpaRepository henkiloJpaRepository;
 
     @Autowired
     public HenkiloUpdatePostValidator(UserDetailsHelper userDetailsHelper,
                                       KoodistoService koodistoService,
-                                      HenkiloRepository henkiloRepository,
-                                      HenkiloJpaRepository henkiloJpaRepository) {
+                                      HenkiloRepository henkiloRepository) {
         this.userDetailsHelper = userDetailsHelper;
         this.koodistoService = koodistoService;
         this.henkiloRepository = henkiloRepository;
-        this.henkiloJpaRepository = henkiloJpaRepository;
     }
 
     @Override

@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
@@ -48,8 +47,6 @@ public class OppijaServiceTest {
 
     @Autowired
     private HenkiloRepository henkiloRepository;
-    @Autowired
-    private HenkiloJpaRepository henkiloJpaRepository;
     @Autowired
     private IdentificationRepository identificationRepository;
     @Autowired
@@ -137,7 +134,7 @@ public class OppijaServiceTest {
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
         Henkilo henkilo = henkilot.iterator().next();
-        Iterable<String> passinumerot = henkiloJpaRepository.findPassinumerotByOid(henkilo.getOidHenkilo());
+        Iterable<String> passinumerot = henkiloRepository.findPassinumerotByOid(henkilo.getOidHenkilo());
         assertThat(passinumerot).containsExactly("passi123");
     }
 
@@ -197,7 +194,7 @@ public class OppijaServiceTest {
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
-                .extracting(t -> t.getTunniste(), t -> t.getHenkilo().getOid())
+                .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid2"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
     }
@@ -232,7 +229,7 @@ public class OppijaServiceTest {
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
-                .extracting(t -> t.getTunniste(), t -> t.getHenkilo().getOid())
+                .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
     }
@@ -267,7 +264,7 @@ public class OppijaServiceTest {
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
-                .extracting(t -> t.getTunniste(), t -> t.getHenkilo().getOid())
+                .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
     }
@@ -306,7 +303,7 @@ public class OppijaServiceTest {
 
         assertThat(readDto.getId()).isNotNull();
         assertThat(readDto.getHenkilot())
-                .extracting(t -> t.getTunniste(), t -> t.getHenkilo().getOid())
+                .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
                 .containsExactly(tuple("tunniste1", "oid1"));
         assertThat(henkiloRepository.findAll()).hasSize(1);
     }

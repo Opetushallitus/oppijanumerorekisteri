@@ -23,13 +23,21 @@ public class OppijanumerorekisteriProperties {
 
         private final Yksilointi yksilointi = new Yksilointi();
 
+        private final Vtjsync vtjsync = new Vtjsync();
+
         @Getter
         @Setter
         public static class Yksilointi {
             private Boolean enabled = true;
-            private String cron = "0 0/1 * * * *";
             private Long batchSize = 300L;
             private Long vtjRequestDelayInMillis = 200L;
+        }
+
+        @Getter
+        @Setter
+        public static class Vtjsync {
+            private Boolean enabled = true;
+            private Long fixedDelayInMillis = 200L;
         }
     }
 }

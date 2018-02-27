@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -11,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
@@ -34,14 +32,12 @@ public class HenkiloUpdatePostValidatorTest {
     @Mock
     private HenkiloRepository henkiloRepository;
     @Mock
-    private HenkiloJpaRepository henkiloJpaRepository;
-    @Mock
     private Errors errors;
 
     @Before
     public void setup() {
         validator = new HenkiloUpdatePostValidator(userDetailsHelper,
-                koodistoService, henkiloRepository, henkiloJpaRepository);
+                koodistoService, henkiloRepository);
     }
 
     @Test

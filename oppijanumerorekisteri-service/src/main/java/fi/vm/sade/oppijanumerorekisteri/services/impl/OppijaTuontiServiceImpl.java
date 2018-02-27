@@ -17,7 +17,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiData;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
@@ -46,7 +45,6 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final HenkiloService henkiloService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
-    private final HenkiloJpaRepository henkiloJpaRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
     private final KayttooikeusClient kayttooikeusClient;
@@ -76,7 +74,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean create(long id, int eräkoko) {
+    public boolean create(long id, int erakoko) {
         Tuonti tuonti = tuontiRepository.findForUpdateById(id)
                 .orElseThrow(DataInconsistencyException::new);
         if (tuonti.isKasitelty()) {
@@ -91,7 +89,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         }
 
         int fromIndex = tuonti.getKasiteltyja();
-        int toIndex = fromIndex + eräkoko;
+        int toIndex = fromIndex + erakoko;
         int size = dto.getHenkilot().size();
         if (toIndex > size) {
             toIndex = size;
@@ -122,7 +120,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .collect(toSet());
         Map<String, Henkilo> henkilotByOid = henkiloRepository
                 .findByOidHenkiloIsIn(oids).stream()
-                .collect(toMap(henkilo -> henkilo.getOidHenkilo(), identity()));
+                .collect(toMap(Henkilo::getOidHenkilo, identity()));
         // hetu
         Set<String> hetut = henkilot.stream()
                 .map(t -> t.getHenkilo().getHetu())
@@ -130,20 +128,20 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .collect(toSet());
         Map<String, Henkilo> henkilotByHetu = henkiloRepository
                 .findByHetuIn(hetut).stream()
-                .collect(toMap(henkilo -> henkilo.getHetu(), identity()));
+                .collect(toMap(Henkilo::getHetu, identity()));
         // passinumerot
         Set<String> passinumerot = henkilot.stream()
                 .map(t -> t.getHenkilo().getPassinumero())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotByPassinumero = henkiloJpaRepository
+        Map<String, Henkilo> henkilotByPassinumero = henkiloRepository
                 .findAndMapByPassinumerot(passinumerot);
         // sähköpostit
         Set<String> sahkopostit = henkilot.stream()
                 .map(t -> t.getHenkilo().getSahkoposti())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotBySahkoposti = henkiloJpaRepository
+        Map<String, Henkilo> henkilotBySahkoposti = henkiloRepository
                 .findAndMapByIdentifiers(SAHKOPOSTI_IDP_ENTITY_ID, sahkopostit);
 
         TuontiRiviMapper tuontiRiviMapper = new TuontiRiviMapper(kasittelijaOid, organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero, henkilotBySahkoposti);
@@ -173,7 +171,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                     .findFirst().orElseGet(() -> newHenkilo(oppija));
 
             // liitetään henkilö organisaatioihin
-            organisaatiot.stream().forEach(henkilo::addOrganisaatio);
+            organisaatiot.forEach(henkilo::addOrganisaatio);
             henkilo = henkiloService.update(henkilo);
 
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);

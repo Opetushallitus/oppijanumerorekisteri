@@ -30,7 +30,7 @@ public interface HenkiloService {
 
     boolean getOidExists(String oid);
 
-    Henkilo disableHenkilo(String oid) throws IOException;
+    Henkilo disableHenkilo(String oid);
 
     String getOidByHetu(String hetu);
 

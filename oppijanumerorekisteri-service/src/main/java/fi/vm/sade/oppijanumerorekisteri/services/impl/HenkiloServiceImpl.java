@@ -56,7 +56,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class HenkiloServiceImpl implements HenkiloService {
     public static final int MAX_FETCH_PERSONS = 5000;
 
-    private final HenkiloJpaRepository henkiloJpaRepository;
     private final HenkiloRepository henkiloDataRepository;
     private final HenkiloViiteRepository henkiloViiteRepository;
     private final KielisyysRepository kielisyysRepository;
@@ -86,13 +85,13 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
-        return henkiloJpaRepository.findBy(henkiloCriteria, limit, offset);
+        return henkiloDataRepository.findBy(henkiloCriteria, limit, offset);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
-        return this.henkiloJpaRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
+        return this.henkiloDataRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
     }
 
     @Override
@@ -108,7 +107,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         // haetaan yksi ylimääräinen rivi, jotta voidaan päätellä onko seuraavaa viipaletta
         Long limit = count + 1L;
         Long offset = (page - 1L) * count;
-        return Slice.of(page, count, henkiloJpaRepository.findBy(henkiloCriteria, limit, offset));
+        return Slice.of(page, count, henkiloDataRepository.findBy(henkiloCriteria, limit, offset));
     }
 
     @Override
@@ -121,7 +120,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         }
         HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
-        return mapper.map(henkiloJpaRepository.findWithYhteystiedotBy(henkiloCriteria),
+        return mapper.map(henkiloDataRepository.findWithYhteystiedotBy(henkiloCriteria),
                 new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
                 new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
     }
@@ -132,7 +131,7 @@ public class HenkiloServiceImpl implements HenkiloService {
         OppijaCriteria criteria = OppijaCriteria.builder()
                 .passivoitu(false).duplikaatti(false)
                 .hakutermi(hakutermi).build();
-        List<HenkiloHakuDto> henkilot = henkiloJpaRepository.findBy(criteria, 1L, 0L);
+        List<HenkiloHakuDto> henkilot = henkiloDataRepository.findBy(criteria, 1L, 0L);
 
         if (henkilot.isEmpty() || henkilot.size() > 1) {
             throw new NotFoundException("Henkilöä ei löytynyt hakuehdoilla");
@@ -159,7 +158,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Iterable<String> listOidByYhteystieto(String arvo) {
-        return henkiloJpaRepository.findOidByYhteystieto(arvo);
+        return henkiloDataRepository.findOidByYhteystieto(arvo);
     }
 
     private KayttooikeudetDto getKayttooikeudet(HenkiloHakuCriteria criteria) {
@@ -188,7 +187,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public Boolean getHasHetu() {
-        Optional<String> hetu = this.henkiloJpaRepository.findHetuByOid(this.userDetailsHelper.getCurrentUserOid());
+        Optional<String> hetu = this.henkiloDataRepository.findHetuByOid(this.userDetailsHelper.getCurrentUserOid());
         return !hetu.orElse("").isEmpty();
     }
 
@@ -201,7 +200,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional
-    public Henkilo disableHenkilo(String oid) throws IOException {
+    public Henkilo disableHenkilo(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid)
                 .orElseThrow(() -> new NotFoundException("Henkilö not found"));
         henkilo.setPassivoitu(true);
@@ -215,7 +214,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public String getOidByHetu(String hetu) {
-        return this.henkiloJpaRepository.findOidByHetu(hetu).orElseThrow(NotFoundException::new);
+        return this.henkiloDataRepository.findOidByHetu(hetu).orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -225,7 +224,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + oids.size());
         }
 
-        return this.henkiloJpaRepository.findByOidIn(oids);
+        return this.henkiloDataRepository.findByOidIn(oids);
     }
 
     @Override
@@ -239,14 +238,14 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi) {
         List<String> etunimetList = Arrays.stream(etunimet.split(" ")).collect(Collectors.toList());
-        List<Henkilo> henkilos = this.henkiloJpaRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(etunimetList, sukunimi);
+        List<Henkilo> henkilos = this.henkiloDataRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(etunimetList, sukunimi);
         return this.mapper.mapAsList(henkilos, HenkiloOidHetuNimiDto.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
-        return henkiloJpaRepository.findOidHetuNimiByHetu(hetu).orElseThrow(NotFoundException::new);
+        return henkiloDataRepository.findOidHetuNimiByHetu(hetu).orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -260,8 +259,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     private Optional<Henkilo> findHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
         return Stream.<Function<HenkiloPerustietoDto, Optional<Henkilo>>>of(
                 dto -> Optional.ofNullable(dto.getOidHenkilo()).flatMap(oid -> Optional.of(getEntityByOid(oid))),
-                dto -> Optional.ofNullable(dto.getExternalIds()).flatMap(externalIds -> findUnique(henkiloJpaRepository.findByExternalIds(externalIds))),
-                dto -> Optional.ofNullable(dto.getIdentifications()).flatMap(identifications -> findUnique(henkiloJpaRepository.findByIdentifications(identifications))),
+                dto -> Optional.ofNullable(dto.getExternalIds()).flatMap(externalIds -> findUnique(henkiloDataRepository.findByExternalIds(externalIds))),
+                dto -> Optional.ofNullable(dto.getIdentifications()).flatMap(identifications -> findUnique(henkiloDataRepository.findByIdentifications(identifications))),
                 dto -> Optional.ofNullable(dto.getHetu()).flatMap(henkiloDataRepository::findByHetu)
         ).map(transformer -> transformer.apply(henkiloPerustietoDto))
                 .filter(Optional::isPresent)
@@ -441,7 +440,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(@NotNull String henkiloOid) {
         return new HenkilonYhteystiedotViewDto(yhteystietoConverter.toHenkiloYhteystiedot(
-                this.henkiloJpaRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid(henkiloOid))
+                this.henkiloDataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid(henkiloOid))
         ));
     }
 
@@ -449,7 +448,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public Optional<YhteystiedotDto> getHenkiloYhteystiedot(@NotNull String henkiloOid, @NotNull String ryhma) {
         return Optional.ofNullable(yhteystietoConverter.toHenkiloYhteystiedot(
-                this.henkiloJpaRepository.findYhteystiedot(new YhteystietoCriteria()
+                this.henkiloDataRepository.findYhteystiedot(new YhteystietoCriteria()
                         .withHenkiloOid(henkiloOid)
                         .withRyhma(ryhma))
         ).get(ryhma));
@@ -458,14 +457,14 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloHetuAndOidDto> getHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
-        List<Henkilo> hetusAndOids = this.henkiloJpaRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
+        List<Henkilo> hetusAndOids = this.henkiloDataRepository.findHetusAndOids(syncedBeforeTimestamp, offset, limit);
         return mapper.mapAsList(hetusAndOids, HenkiloHetuAndOidDto.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public HenkiloDto getHenkiloByIDPAndIdentifier(String idp, String identifier) {
-        Henkilo henkilo = this.henkiloJpaRepository.findByIdentification(IdentificationDto.of(idp, identifier))
+        Henkilo henkilo = this.henkiloDataRepository.findByIdentification(IdentificationDto.of(idp, identifier))
                 .orElseThrow(NotFoundException::new);
         return this.mapper.map(henkilo, HenkiloDto.class);
     }
@@ -502,7 +501,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount) {
-        return this.henkiloJpaRepository.findOidsModifiedSince(criteria, modifiedSince, offset, amount);
+        return this.henkiloDataRepository.findOidsModifiedSince(criteria, modifiedSince, offset, amount);
     }
 
     @Override
@@ -585,7 +584,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
         // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
-        henkiloJpaRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).forEach(slave -> {
+        henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).forEach(slave -> {
             slave.setModified(nyt);
             kayttajaOid.ifPresent(slave::setKasittelijaOid);
             henkiloDataRepository.save(slave);
@@ -607,7 +606,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloReadDto getMasterByOid(String henkiloOid) {
-        Henkilo henkilo = henkiloJpaRepository
+        Henkilo henkilo = henkiloDataRepository
                 .findMasterBySlaveOid(henkiloOid)
                 .orElseGet(() -> getEntityByOid(henkiloOid));
         return mapper.map(henkilo, HenkiloReadDto.class);
@@ -620,7 +619,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + henkiloOids.size());
         }
 
-        return henkiloJpaRepository
+        return henkiloDataRepository
                 .findMastersByOids(henkiloOids)
                 .entrySet()
                 .stream()
@@ -644,7 +643,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloReadDto> findSlavesByMasterOid(String masterOid) {
-        List<Henkilo> henkilos = this.henkiloJpaRepository.findSlavesByMasterOid(masterOid);
+        List<Henkilo> henkilos = this.henkiloDataRepository.findSlavesByMasterOid(masterOid);
         return henkilos.stream().map( h -> mapper.map(h, HenkiloReadDto.class)).collect(Collectors.toList());
     }
 
