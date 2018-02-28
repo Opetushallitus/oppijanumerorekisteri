@@ -5,6 +5,7 @@ import type {L, L10n} from "../../types/localisation.type";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {Locale} from "../../types/locale.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
+import type { Kayttaja } from "../../types/domain/kayttooikeus/kayttaja.types";
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {
@@ -128,8 +129,8 @@ class StaticUtils {
         return entity && entity !== '';
     }
 
-    static getKayttooikeusKestoVuosissa(henkilo: Henkilo) {
-        return henkilo.henkiloTyyppi === 'PALVELU' ? null : 1;
+    static getKayttooikeusKestoVuosissa(kayttaja: Kayttaja) {
+        return kayttaja.kayttajaTyyppi === 'PALVELU' ? null : 1;
     }
 }
 

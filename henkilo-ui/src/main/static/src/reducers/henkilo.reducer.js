@@ -2,6 +2,7 @@
 
 import {
     FETCH_HENKILO_REQUEST, FETCH_HENKILO_SUCCESS, FETCH_HENKILO_FAILURE, FETCH_HENKILOORGS_REQUEST,
+    FETCH_KAYTTAJA_REQUEST, FETCH_KAYTTAJA_SUCCESS, FETCH_KAYTTAJA_FAILURE,
     FETCH_HENKILOORGS_SUCCESS, FETCH_KAYTTAJATIETO_FAILURE, FETCH_KAYTTAJATIETO_REQUEST, FETCH_KAYTTAJATIETO_SUCCESS,
     FETCH_HENKILO_ORGANISAATIOS_REQUEST, FETCH_HENKILO_ORGANISAATIOS_SUCCESS,
     UPDATE_KAYTTAJATIETO_REQUEST, UPDATE_KAYTTAJATIETO_SUCCESS, UPDATE_KAYTTAJATIETO_FAILURE, UPDATE_HENKILO_REQUEST,
@@ -20,6 +21,7 @@ import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types"
 import type {KayttajatiedotRead} from "../types/domain/kayttooikeus/KayttajatiedotRead";
 import type {HenkiloDuplicate} from "../types/domain/oppijanumerorekisteri/HenkiloDuplicate";
 import type {Hakemus} from "../types/domain/oppijanumerorekisteri/Hakemus.type";
+import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types'
 
 export type HenkiloState = {
     +henkiloLoading: boolean,
@@ -27,6 +29,7 @@ export type HenkiloState = {
     +kayttajatietoLoading: boolean,
     +henkiloKayttoEstetty: boolean,
     +henkilo: Henkilo | any,
+    +kayttaja: Kayttaja | any,
     +henkiloOrgs: Array<any>,
     +kayttajatieto: KayttajatiedotRead | any,
     +buttonNotifications: any,
@@ -54,6 +57,7 @@ const initialState: HenkiloState = {
     kayttajatietoLoading: false,
     henkiloKayttoEstetty: false,
     henkilo: {},
+    kayttaja: {},
     henkiloOrgs: [],
     kayttajatieto: {},
     buttonNotifications: {},
@@ -105,6 +109,11 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             return {...state, henkiloLoading: false, henkiloKayttoEstetty: isKayttoEstetty(action.data)};
         case UPDATE_HENKILO_FAILURE:
             return Object.assign({}, state, {henkiloLoading: false});
+        case FETCH_KAYTTAJA_REQUEST:
+        case FETCH_KAYTTAJA_FAILURE:
+            return state
+        case FETCH_KAYTTAJA_SUCCESS:
+            return { ...state, kayttaja: action.kayttaja }
         case FETCH_KAYTTAJATIETO_REQUEST:
             return Object.assign({}, state, {kayttajatietoLoading: true});
         case FETCH_KAYTTAJATIETO_SUCCESS:

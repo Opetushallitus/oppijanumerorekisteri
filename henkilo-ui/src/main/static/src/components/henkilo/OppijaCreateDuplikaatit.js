@@ -24,7 +24,6 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
         const henkilo = {
             henkilo: {
                 ...this.props.oppija,
-                henkiloTyyppi: 'OPPIJA',
             },
             duplicates: this.props.duplikaatit,
         };
@@ -39,6 +38,7 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
                     henkilo={henkilo}
                     notifications={notifications}
                     vainLuku={true}
+                    henkiloType="oppija"
                 />
                 <div className="oph-field">
                     <button type="button"

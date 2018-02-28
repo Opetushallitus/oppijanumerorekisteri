@@ -68,7 +68,7 @@ class HenkiloViewPage extends React.Component<Props> {
                         />
                     }
                 </div>
-                {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' &&
+                {this.props.henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' &&
                 <div className="wrapper">
                     {
                         this.props.henkilo.henkiloLoading
@@ -91,13 +91,13 @@ class HenkiloViewPage extends React.Component<Props> {
                             ? <Loader />
                             : <HenkiloViewExistingKayttooikeus
                                 {...this.props}
-                                vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                                vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.kayttaja)}
                                 oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
                                 isOmattiedot={this.props.view === 'OMATTIEDOT'}
                             />
                     }
                 </div>}
-                {this.props.henkilo.henkilo.henkiloTyyppi !== 'PALVELU' && this.props.view !== 'OPPIJA' &&
+                {this.props.henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && this.props.view !== 'OPPIJA' &&
                 <div className="wrapper">
                     {
                         this.props.kayttooikeus.kayttooikeusAnomusLoading
@@ -120,7 +120,7 @@ class HenkiloViewPage extends React.Component<Props> {
                 && <div className="wrapper">
                     <HenkiloViewCreateKayttooikeus
                         {...this.props}
-                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.henkilo)}
+                        vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.kayttaja)}
                         existingKayttooikeusRef={this.existingKayttooikeusRef}
                     />
                 </div>}
