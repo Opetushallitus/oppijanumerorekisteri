@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -18,6 +17,8 @@ import java.util.Set;
 // NOTE: Since this works like patch is initialising null to all fields reasonable to prevent accidental list overrides
 public class HenkiloUpdateDto {
     private String oidHenkilo;
+
+    private Boolean passivoitu;
 
     private String etunimet;
 
