@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
@@ -30,6 +31,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.util.HashSet;
@@ -58,10 +60,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class HenkiloServiceImplTest {
 
+    @InjectMocks
     private HenkiloServiceImpl impl;
 
-    @Mock
-    private HenkiloJpaRepository henkiloJpaRepository;
     @Mock
     private HenkiloViiteRepository henkiloViiteRepository;
     @Mock
@@ -93,17 +94,9 @@ public class HenkiloServiceImplTest {
     @Mock
     private AtaruClient ataruClient;
 
-    @Before
-    public void setup() {
-        impl = new HenkiloServiceImpl(henkiloJpaRepository, henkiloRepository, henkiloViiteRepository,
-                kielisyysRepository, kansalaisuusRepository, yhteystietoConverter, orikaConfiguration, oidGenerator,
-                userDetailsHelper,  permissionChecker, henkiloUpdatePostValidator, henkiloCreatePostValidator,
-                oppijanumerorekisteriProperties, kayttooikeusClient);
-    }
-
     @Test
     public void getShouldReturnThrowWhenNoHenkilo() {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
+        when(henkiloRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(emptyList());
 
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1", ExternalPermissionService.SURE));
@@ -114,7 +107,7 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldThrowWhenMultipleHenkilo() {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
+        when(henkiloRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
                 .thenReturn(Arrays.asList(
                         HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build(),
                         HenkiloHakuDto.builder().oidHenkilo("5.6.7.8").build()
@@ -128,8 +121,8 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldReturnHenkiloWhenPermissionGranted() throws IOException {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
-                .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
+        when(henkiloRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
+                .thenReturn(Lists.newArrayList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
         when(permissionChecker.isAllowedToAccessPerson(any(), anyList(), any()))
                 .thenReturn(true);
 
@@ -141,8 +134,8 @@ public class HenkiloServiceImplTest {
 
     @Test
     public void getShouldThrowWhenPermissionDenied() throws IOException {
-        when(henkiloJpaRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
-                .thenReturn(Arrays.asList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
+        when(henkiloRepository.findBy(any(OppijaCriteria.class), anyLong(), anyLong()))
+                .thenReturn(Lists.newArrayList(HenkiloHakuDto.builder().oidHenkilo("1.2.3.4").build()));
         when(permissionChecker.isAllowedToAccessPerson(any(), anyList(), any()))
                 .thenReturn(false);
 
@@ -156,11 +149,11 @@ public class HenkiloServiceImplTest {
     public void getMasterByOidShouldReturnBySlaveOidWhenSlaveAvailable() {
         String oid = "oid1";
         Henkilo entity = new Henkilo();
-        when(henkiloJpaRepository.findMasterBySlaveOid(any())).thenReturn(Optional.of(entity));
+        when(henkiloRepository.findMasterBySlaveOid(any())).thenReturn(Optional.of(entity));
 
         HenkiloReadDto dto = impl.getMasterByOid(oid);
 
-        verify(henkiloJpaRepository).findMasterBySlaveOid(eq(oid));
+        verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository, never()).findByOidHenkilo(any());
         verify(orikaConfiguration).map(eq(entity), any());
     }
@@ -170,11 +163,11 @@ public class HenkiloServiceImplTest {
         String oid = "oid1";
         Henkilo entity = new Henkilo();
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(entity));
-        when(henkiloJpaRepository.findMasterBySlaveOid(any())).thenReturn(Optional.empty());
+        when(henkiloRepository.findMasterBySlaveOid(any())).thenReturn(Optional.empty());
 
         HenkiloReadDto dto = impl.getMasterByOid(oid);
 
-        verify(henkiloJpaRepository).findMasterBySlaveOid(eq(oid));
+        verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository).findByOidHenkilo(eq(oid));
         verify(orikaConfiguration).map(eq(entity), any());
     }
@@ -183,19 +176,19 @@ public class HenkiloServiceImplTest {
     public void getMasterByOidShouldThrowWhenMasterOrSlaveNotFound() {
         String oid = "oid1";
         when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.empty());
-        when(henkiloJpaRepository.findMasterBySlaveOid(any())).thenReturn(Optional.empty());
+        when(henkiloRepository.findMasterBySlaveOid(any())).thenReturn(Optional.empty());
 
         Throwable throwable = catchThrowable(() -> impl.getMasterByOid(oid));
 
         assertThat(throwable).isInstanceOf(NotFoundException.class);
-        verify(henkiloJpaRepository).findMasterBySlaveOid(eq(oid));
+        verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository).findByOidHenkilo(eq(oid));
         verifyZeroInteractions(orikaConfiguration);
     }
 
     @Test
     public void findHenkiloOidsModifiedSinceTest() {
-        when(henkiloJpaRepository.findOidsModifiedSince(any(), any(), any(), any())).thenReturn(singletonList("1.2.3"));
+        when(henkiloRepository.findOidsModifiedSince(any(), any(), any(), any())).thenReturn(singletonList("1.2.3"));
 
         HenkiloCriteria criteria = HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(asList("1.2.3", "4.5.6"))).build();
@@ -203,9 +196,9 @@ public class HenkiloServiceImplTest {
         List<String> result = impl.findHenkiloOidsModifiedSince(criteria, dt, null, null);
 
         assertThat(result).isEqualTo(singletonList("1.2.3"));
-        verify(henkiloJpaRepository).findOidsModifiedSince(eq(criteria), eq(dt), eq(null), eq(null));
+        verify(henkiloRepository).findOidsModifiedSince(eq(criteria), eq(dt), eq(null), eq(null));
 
-        when(henkiloJpaRepository.findOidsModifiedSince(any(), any(), any(), any())).thenReturn(emptyList());
+        when(henkiloRepository.findOidsModifiedSince(any(), any(), any(), any())).thenReturn(emptyList());
         result = impl.findHenkiloOidsModifiedSince(criteria, dt, null, null);
         assertThat(result).hasSize(0);
     }
@@ -241,12 +234,12 @@ public class HenkiloServiceImplTest {
     public void findOrCreateHenkiloFromPerustietoDtoShouldFindByExternalId() {
         HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().externalIds(singletonList("externalid1")).build();
         Henkilo henkilo = new Henkilo();
-        when(henkiloJpaRepository.findByExternalIds(any())).thenReturn(singleton(henkilo));
+        when(henkiloRepository.findByExternalIds(any())).thenReturn(singleton(henkilo));
         when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
         FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
 
-        verify(henkiloJpaRepository).findByExternalIds(eq(singletonList("externalid1")));
+        verify(henkiloRepository).findByExternalIds(eq(singletonList("externalid1")));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
         verify(henkiloRepository, never()).save(any(Henkilo.class));
     }
@@ -258,12 +251,12 @@ public class HenkiloServiceImplTest {
         identification.setIdentifier("value1");
         HenkiloPerustietoDto input = HenkiloPerustietoDto.builder().identifications(singletonList(identification)).build();
         Henkilo henkilo = new Henkilo();
-        when(henkiloJpaRepository.findByIdentifications(any())).thenReturn(singleton(henkilo));
+        when(henkiloRepository.findByIdentifications(any())).thenReturn(singleton(henkilo));
         when(orikaConfiguration.map(any(), eq(HenkiloPerustietoDto.class))).thenReturn(new HenkiloPerustietoDto());
 
         FindOrCreateWrapper<HenkiloPerustietoDto> output = impl.findOrCreateHenkiloFromPerustietoDto(input);
 
-        verify(henkiloJpaRepository).findByIdentifications(eq(singletonList(identification)));
+        verify(henkiloRepository).findByIdentifications(eq(singletonList(identification)));
         verify(orikaConfiguration).map(eq(henkilo), eq(HenkiloPerustietoDto.class));
         verify(henkiloRepository, never()).save(any(Henkilo.class));
     }
@@ -311,12 +304,12 @@ public class HenkiloServiceImplTest {
         when(henkiloRepository.save(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         Henkilo slave1 = new Henkilo();
         Henkilo slave2 = new Henkilo();
-        when(henkiloJpaRepository.findSlavesByMasterOid(any())).thenReturn(asList(slave1, slave2));
+        when(henkiloRepository.findSlavesByMasterOid(any())).thenReturn(asList(slave1, slave2));
 
         Henkilo output = impl.update(input);
 
         ArgumentCaptor<Henkilo> henkiloCaptor = ArgumentCaptor.forClass(Henkilo.class);
-        verify(henkiloJpaRepository).findSlavesByMasterOid(eq("oid1"));
+        verify(henkiloRepository).findSlavesByMasterOid(eq("oid1"));
         verify(henkiloRepository, times(3)).save(henkiloCaptor.capture());
         List<Henkilo> tallennetut = henkiloCaptor.getAllValues();
         assertThat(tallennetut).extracting(Henkilo::getModified).isNotNull();

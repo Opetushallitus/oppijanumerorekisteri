@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
@@ -54,8 +53,6 @@ public class OppijaServiceImplTest {
     @Mock
     private HenkiloRepository henkiloRepositoryMock;
     @Mock
-    private HenkiloJpaRepository henkiloJpaRepositoryMock;
-    @Mock
     private TuontiRepository tuontiRepositoryMock;
     @Mock
     private OrganisaatioRepository organisaatioRepositoryMock;
@@ -71,7 +68,7 @@ public class OppijaServiceImplTest {
     @Before
     public void setup() {
         OppijaTuontiServiceImpl oppijaTuontiServiceImpl = new OppijaTuontiServiceImpl(henkiloServiceMock, mapperMock,
-                henkiloRepositoryMock, henkiloJpaRepositoryMock,
+                henkiloRepositoryMock,
                 tuontiRepositoryMock, organisaatioRepositoryMock,
                 kayttooikeusClientMock, userDetailsHelperMock,
                 objectMapperMock);
@@ -80,7 +77,7 @@ public class OppijaServiceImplTest {
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,
                 oppijaTuontiServiceAsyncImpl, henkiloServiceMock,
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
-                henkiloJpaRepositoryMock, tuontiRepositoryMock,
+                tuontiRepositoryMock,
                 organisaatioRepositoryMock, userDetailsHelperMock,
                 permissionChecker, kayttooikeusClientMock);
     }
@@ -98,7 +95,7 @@ public class OppijaServiceImplTest {
         Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
-        verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
+        verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
         assertThat(output.getOrganisaatioOids()).containsExactly("oid1");
     }
@@ -114,7 +111,7 @@ public class OppijaServiceImplTest {
         Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
-        verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
+        verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
         assertThat(output.getOrganisaatioOids()).containsExactly("oid1", "oid3");
     }
@@ -130,7 +127,7 @@ public class OppijaServiceImplTest {
         Page<MasterHenkiloDto<OppijaReadDto>> henkilot = oppijaServiceImpl.listMastersBy(input, page, count);
 
         ArgumentCaptor<OppijaTuontiCriteria> argumentCaptor = ArgumentCaptor.forClass(OppijaTuontiCriteria.class);
-        verify(henkiloJpaRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
+        verify(henkiloRepositoryMock).findBy(argumentCaptor.capture(), eq(count), eq(0), any());
         OppijaTuontiCriteria output = argumentCaptor.getValue();
         assertThat(output.getOrganisaatioOids()).containsExactly("oid1", "oid3");
     }
@@ -146,7 +143,7 @@ public class OppijaServiceImplTest {
         Throwable throwable = catchThrowable(() -> oppijaServiceImpl.listMastersBy(input, page, count));
 
         assertThat(throwable).isInstanceOf(ValidationException.class);
-        verifyZeroInteractions(henkiloJpaRepositoryMock);
+        verifyZeroInteractions(henkiloRepositoryMock);
     }
 
     @Test
@@ -156,13 +153,13 @@ public class OppijaServiceImplTest {
         henkilo1slave.setOidHenkilo("oid1");
         Henkilo henkilo2 = new Henkilo();
         henkilo2.setOidHenkilo("oid2");
-        when(henkiloJpaRepositoryMock.findBy(any(OppijaTuontiCriteria.class), anyInt(), anyInt(), any()))
+        when(henkiloRepositoryMock.findBy(any(OppijaTuontiCriteria.class), anyInt(), anyInt(), any()))
                 .thenReturn(asList(henkilo1slave, henkilo2));
         Map<String, Henkilo> masters = new HashMap<>();
         Henkilo henkilo1master = new Henkilo();
         henkilo1master.setOidHenkilo("oid1-master");
         masters.put("oid1", henkilo1master);
-        when(henkiloJpaRepositoryMock.findMastersBySlaveOids(any()))
+        when(henkiloRepositoryMock.findMastersBySlaveOids(any()))
                 .thenReturn(masters);
         when(mapperMock.map(any(Henkilo.class), eq(OppijaReadDto.class)))
                 .thenAnswer((InvocationOnMock invocation) -> {
@@ -179,8 +176,8 @@ public class OppijaServiceImplTest {
 
         assertThat(henkilot).extracting(MasterHenkiloDto::getOid).containsExactly("oid1", "oid2");
         assertThat(henkilot).extracting(t -> t.getMaster().getOid()).containsExactly("oid1-master", "oid2");
-        verify(henkiloJpaRepositoryMock).findBy(eq(criteria), eq(20), eq(0), any());
-        verify(henkiloJpaRepositoryMock).findMastersBySlaveOids(eq(Stream.of("oid1", "oid2").collect(toSet())));
+        verify(henkiloRepositoryMock).findBy(eq(criteria), eq(20), eq(0), any());
+        verify(henkiloRepositoryMock).findMastersBySlaveOids(eq(Stream.of("oid1", "oid2").collect(toSet())));
     }
 
 }

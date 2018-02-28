@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -9,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
@@ -56,9 +56,6 @@ public class DuplicateServiceImplTest {
     private HenkiloViiteRepository HenkiloViiteRepository;
 
     @MockBean
-    private HenkiloJpaRepository henkiloJpaRepository;
-
-    @MockBean
     private KayttooikeusClient kayttooikeusClient;
 
     @Test
@@ -77,9 +74,9 @@ public class DuplicateServiceImplTest {
         HakemusDto hakemusDto2 = new HakemusDto(hakemus2);
 
         HashMap<String, List<HakemusDto>> ataruApplications = new HashMap<String, List<HakemusDto>>() { { put("1.2.3.4.6", Arrays.asList(hakemusDto1)); }; };
-        HashMap<String, List<HakemusDto>> hakuAppApplications = new HashMap<String, List<HakemusDto>>() { { put("1.3.3.4.7", Arrays.asList(hakemusDto2)); put("1.2.3.4.6", Arrays.asList(hakemusDto2)); }; };
+        HashMap<String, List<HakemusDto>> hakuAppApplications = new HashMap<String, List<HakemusDto>>() { { put("1.3.3.4.7", Arrays.asList(hakemusDto2)); put("1.2.3.4.6", Lists.newArrayList(hakemusDto2)); } };
 
-        hakuAppApplications.put("1.3.3.4.7", Arrays.asList(hakemusDto2));
+        hakuAppApplications.put("1.3.3.4.7", Lists.newArrayList(hakemusDto2));
 
         given(this.ataruClient.fetchApplicationsByOid(any())).willReturn(ataruApplications);
         given(this.hakuappClient.fetchApplicationsByOid(any())).willReturn(hakuAppApplications);

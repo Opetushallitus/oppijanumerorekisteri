@@ -8,7 +8,6 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
@@ -32,7 +31,6 @@ import org.springframework.util.StringUtils;
 public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
-    private final HenkiloJpaRepository henkiloJpaRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
 
     private final OrikaConfiguration mapper;
@@ -54,9 +52,9 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     public Iterable<IdentificationDto> create(String oid, IdentificationDto dto) {
-        Henkilo henkilo = henkiloJpaRepository.findByIdentification(dto)
+        Henkilo henkilo = henkiloRepository.findByIdentification(dto)
                 .orElseGet(() -> save(oid, dto));
 
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);

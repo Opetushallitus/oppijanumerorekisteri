@@ -19,7 +19,6 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
@@ -59,7 +58,6 @@ public class OppijaServiceImpl implements OppijaService {
     private final OrganisaatioService organisaatioService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
-    private final HenkiloJpaRepository henkiloJpaRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
     private final UserDetailsHelper userDetailsHelper;
@@ -78,7 +76,7 @@ public class OppijaServiceImpl implements OppijaService {
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
-        organisaatiot.stream().forEach(entity::addOrganisaatio);
+        organisaatiot.forEach(entity::addOrganisaatio);
 
         entity = henkiloService.createHenkilo(entity, kayttajaOid, true);
         return entity.getOidHenkilo();
@@ -136,9 +134,9 @@ public class OppijaServiceImpl implements OppijaService {
         prepare(criteria);
         LOGGER.info("Haetaan oppijoiden tuonnin yhteenveto {}", criteria);
         OppijaTuontiYhteenvetoDto dto = new OppijaTuontiYhteenvetoDto();
-        dto.setOnnistuneet(henkiloJpaRepository.countByYksilointiOnnistuneet(criteria));
-        dto.setVirheet(henkiloJpaRepository.countByYksilointiVirheet(criteria));
-        dto.setKeskeneraiset(henkiloJpaRepository.countByYksilointiKeskeneraiset(criteria));
+        dto.setOnnistuneet(henkiloRepository.countByYksilointiOnnistuneet(criteria));
+        dto.setVirheet(henkiloRepository.countByYksilointiVirheet(criteria));
+        dto.setKeskeneraiset(henkiloRepository.countByYksilointiKeskeneraiset(criteria));
         return dto;
     }
 
@@ -151,8 +149,8 @@ public class OppijaServiceImpl implements OppijaService {
         LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
-        List<Henkilo> henkilot = henkiloJpaRepository.findBy(criteria, limit, offset, sort);
-        long total = henkiloJpaRepository.countBy(criteria);
+        List<Henkilo> henkilot = henkiloRepository.findBy(criteria, limit, offset, sort);
+        long total = henkiloRepository.countBy(criteria);
         return Page.of(page, count, mapper.mapAsList(henkilot, OppijaListDto.class), total);
     }
 
@@ -165,12 +163,12 @@ public class OppijaServiceImpl implements OppijaService {
         LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
-        List<Henkilo> slaves = henkiloJpaRepository.findBy(criteria, limit, offset, sort);
-        long total = henkiloJpaRepository.countBy(criteria);
+        List<Henkilo> slaves = henkiloRepository.findBy(criteria, limit, offset, sort);
+        long total = henkiloRepository.countBy(criteria);
 
         // haetaan henkilöille masterit
         Set<String> slaveOids = slaves.stream().map(Henkilo::getOidHenkilo).collect(toSet());
-        Map<String, Henkilo> mastersBySlaveOid = henkiloJpaRepository.findMastersBySlaveOids(slaveOids);
+        Map<String, Henkilo> mastersBySlaveOid = henkiloRepository.findMastersBySlaveOids(slaveOids);
 
         // palautetaan henkilöiden tiedot mastereista
         HenkiloToMasterDto toMasterDto = new HenkiloToMasterDto(mastersBySlaveOid, mapper);
@@ -205,7 +203,7 @@ public class OppijaServiceImpl implements OppijaService {
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
-        organisaatiot.stream().forEach(henkilo::addOrganisaatio);
+        organisaatiot.forEach(henkilo::addOrganisaatio);
         henkiloService.update(henkilo);
     }
 

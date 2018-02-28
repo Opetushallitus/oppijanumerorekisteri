@@ -6,6 +6,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
@@ -16,8 +17,11 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
+import org.springframework.data.jpa.repository.JpaContext;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +38,19 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QYhteystieto.yhteystieto;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-public class HenkiloRepositoryImpl extends AbstractRepository implements HenkiloJpaRepository {
+@Repository
+public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
+
+    private final EntityManager entityManager;
+
+    public HenkiloRepositoryImpl(JpaContext jpaContext) {
+        this.entityManager = jpaContext.getEntityManagerByManagedType(Henkilo.class);
+    }
+
+    private JPAQueryFactory jpa() {
+        return new JPAQueryFactory(this.entityManager);
+    }
+
 
     @Override
     public List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria) {
@@ -62,7 +78,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public List<Henkilo> findBy(OppijaTuontiCriteria criteria, int limit, int offset, OppijaTuontiSort sort) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        JPAQuery<Henkilo> query = criteria.getQuery(em, qHenkilo)
+        JPAQuery<Henkilo> query = criteria.getQuery(this.entityManager, qHenkilo)
                 .limit(limit)
                 .offset(offset)
                 .select(qHenkilo)
@@ -76,7 +92,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public long countBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
+        return criteria.getQuery(this.entityManager, qHenkilo)
                 .select(qHenkilo.oidHenkilo)
                 .distinct()
                 .fetchCount();
@@ -278,7 +294,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     }
 
     /**
-     * @param henkiloOids
+     * @param henkiloOids OIDs of henkilos to query
      * @return Henkilo objects which are either masters for slave oids or just the henkilo record when the oid was a
      * master oid.
      */
@@ -294,10 +310,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
                 .where(qHenkiloViite.slaveOid.in(henkiloOids))
                 .select(qHenkiloViite.masterOid, qHenkiloViite.slaveOid)
                 .fetch()
-                .forEach(queryResult -> {
-                    slaveToMasterOid
-                            .put(queryResult.get(qHenkiloViite.slaveOid), queryResult.get(qHenkiloViite.masterOid));
-                });
+                .forEach(queryResult -> slaveToMasterOid
+                            .put(queryResult.get(qHenkiloViite.slaveOid), queryResult.get(qHenkiloViite.masterOid)));
 
         Set<String> foundSlaves = slaveToMasterOid.keySet();
 
@@ -422,8 +436,8 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     // NOTE: native postgres query
     @Override
     public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
-        em.createNativeQuery("SELECT set_limit(0.6)").getSingleResult();
-        Query henkiloTypedQuery = this.em.createNativeQuery("" +
+        this.entityManager.createNativeQuery("SELECT set_limit(0.6)").getSingleResult();
+        Query henkiloTypedQuery = this.entityManager.createNativeQuery("" +
                 "SELECT h1.* \n" +
                 "FROM henkilo h1 \n" +
                 "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
@@ -514,7 +528,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public long countByYksilointiOnnistuneet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
+        return criteria.getQuery(entityManager, qHenkilo)
                 .where(anyOf(
                         qHenkilo.yksiloity.isTrue(),
                         qHenkilo.yksiloityVTJ.isTrue()
@@ -524,7 +538,7 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public long countByYksilointiVirheet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
+        return criteria.getQuery(entityManager, qHenkilo)
                 .where(anyOf(
                         allOf(
                                 qHenkilo.hetu.isNull(),
@@ -543,37 +557,13 @@ public class HenkiloRepositoryImpl extends AbstractRepository implements Henkilo
     @Override
     public long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(em, qHenkilo)
+        return criteria.getQuery(entityManager, qHenkilo)
                 .where(allOf(
                         qHenkilo.hetu.isNotNull(),
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
                 )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<String> findHetusMissingFromVTJRegister() {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        return jpa()
-            .from(qHenkilo)
-            .where(allOf(
-                    qHenkilo.hetu.isNotNull(),
-                    qHenkilo.passivoitu.isFalse(),
-                    qHenkilo.vtjRegister.isFalse()
-            )).select(qHenkilo.hetu).fetch();
-    }
-
-    @Override
-    @Transactional
-    public boolean addHetuToVTJRegister(String hetu) {
-        QHenkilo qHenkilo = QHenkilo.henkilo;
-        long affectedRows = jpa().update(qHenkilo)
-                .where(qHenkilo.hetu.equalsIgnoreCase(hetu))
-                .set(qHenkilo.vtjRegister, Boolean.TRUE)
-                .execute();
-        return affectedRows > 0;
     }
 
 }

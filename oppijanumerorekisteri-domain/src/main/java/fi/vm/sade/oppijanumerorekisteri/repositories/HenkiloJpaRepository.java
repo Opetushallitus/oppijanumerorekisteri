@@ -9,12 +9,10 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 // High speed repository for jpa queries with querydsl.
-@Repository
 public interface HenkiloJpaRepository {
 
     /**
@@ -163,16 +161,5 @@ public interface HenkiloJpaRepository {
      * @return keskeneräisten lukumäärä
      */
     long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria);
-
-    /**
-     * Palauttaa kaikki sellaiset henkilöt, jotka eivät vielä olleet rekisterissä.
-     * @return henkilöiden hetut
-     */
-    List<String> findHetusMissingFromVTJRegister();
-
-    /**
-     * Asettaa henkilön VTJ rekisteriin.
-     */
-    boolean addHetuToVTJRegister(String hetu);
 
 }
