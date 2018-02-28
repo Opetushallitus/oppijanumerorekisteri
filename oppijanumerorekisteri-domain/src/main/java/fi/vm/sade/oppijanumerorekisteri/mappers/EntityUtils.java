@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import com.google.common.collect.Sets;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import java.time.LocalDate;
@@ -20,18 +19,18 @@ public class EntityUtils {
     }
 
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
-                                       boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo) {
         LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
         return createHenkilo(etunimet, kutsumanimi, sukunimi, hetu, oidHenkilo,
-                passivoitu, henkiloTyyppi, kielikoodi, kielityyppi,
+                passivoitu, kielikoodi, kielityyppi,
                 kansalaisuuskoodi, luontiMuokkausSyncedPvm, lastVtjSynced,
                 kasittelija, yhteystietoArvo, syntymaAika);
     }
 
     /* NOTE: This function feels a bit pointless. We could just directly call the builder instead of passing 15 parameters to a "utility" function. */
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
-                                       boolean passivoitu, HenkiloTyyppi henkiloTyyppi, String kielikoodi, String kielityyppi,
+                                       boolean passivoitu, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
         Kielisyys aidinkieli = new Kielisyys();
         aidinkieli.setKieliTyyppi(kielityyppi);
@@ -43,7 +42,6 @@ public class EntityUtils {
         return Henkilo.builder()
                 .oidHenkilo(oidHenkilo)
                 .hetu(hetu)
-                .henkiloTyyppi(henkiloTyyppi)
                 .etunimet(etunimet)
                 .kutsumanimi(kutsumanimi)
                 .sukunimi(sukunimi)

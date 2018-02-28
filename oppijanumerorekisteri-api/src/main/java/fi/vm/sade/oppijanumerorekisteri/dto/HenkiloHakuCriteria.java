@@ -17,7 +17,6 @@ public class HenkiloHakuCriteria {
     // henkilocriteria
     private Set<String> henkiloOids;
     private String hetu;
-    private HenkiloTyyppi tyyppi;
     private Boolean passivoitu;
     private Boolean duplikaatti;
 

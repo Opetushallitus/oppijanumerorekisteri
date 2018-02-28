@@ -20,7 +20,7 @@
   "oidHenkilo": "1.2.3.4.5",
   "sukunimi": "kuutio",
   "passivoitu": false,
-  "henkiloTyyppi": "VIRKAILIJA",
+  "henkiloTyyppi": "OPPIJA",
   "kasittelijaOid": "1.2.3.4.1",
   "asiointiKieli": {
     "kieliKoodi": "fi",

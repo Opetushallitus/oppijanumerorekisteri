@@ -238,7 +238,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public List<HenkiloPerustietoDto> findByOidIn(List<String> oidList) {
         List<HenkiloPerustietoDto> henkiloDtoList = jpa().from(henkilo)
                 .select(Projections.bean(HenkiloPerustietoDto.class, henkilo.oidHenkilo, henkilo.hetu, henkilo.etunimet,
-                        henkilo.kutsumanimi,henkilo.sukunimi, henkilo.syntymaaika, henkilo.henkiloTyyppi, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
+                        henkilo.kutsumanimi,henkilo.sukunimi, henkilo.syntymaaika, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
                 .where(henkilo.oidHenkilo.in(oidList)).fetch();
 
         Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)

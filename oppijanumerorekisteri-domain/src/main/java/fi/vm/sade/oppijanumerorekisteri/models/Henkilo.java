@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
 import java.time.LocalDate;
 
@@ -37,10 +36,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @Column(unique = true)
     private String hetu;
-
-    @Column(name = "henkilotyyppi", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private HenkiloTyyppi henkiloTyyppi;
 
     private String etunimet;
 

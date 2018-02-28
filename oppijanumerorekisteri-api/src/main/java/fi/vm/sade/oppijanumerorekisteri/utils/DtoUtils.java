@@ -34,7 +34,7 @@ public class DtoUtils {
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
         return new HenkiloPerustietoDto(henkiloOid, externalIds, identifications, hetu, etunimet, kutsumanimi, sukunimi, syntymaaika, aidinkieli, asiointikieli,
-                Collections.singleton(kansalaisuusDto), HenkiloTyyppi.VIRKAILIJA, "1", modified);
+                Collections.singleton(kansalaisuusDto), "1", modified);
     }
 
     public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
@@ -60,7 +60,7 @@ public class DtoUtils {
         Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
-        return new HenkiloDto(oidHenkilo, hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi,
+        return new HenkiloDto(oidHenkilo, hetu, passivoitu, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
                 syntymaAika, "1", "1.2.3.4.5", null, false, false, false, false, false, createdModified,
                 createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
@@ -78,7 +78,7 @@ public class DtoUtils {
         Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
-        return new HenkiloCreateDto(hetu, passivoitu, HenkiloTyyppi.VIRKAILIJA, etunimet, kutsumanimi, sukunimi, aidinkieli,
+        return new HenkiloCreateDto(hetu, passivoitu, etunimet, kutsumanimi, sukunimi, aidinkieli,
                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
                 "1.2.3.4.5", null, false, false,
                 false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
@@ -103,8 +103,7 @@ public class DtoUtils {
 
         return new HenkiloUpdateDto(oidHenkilo, null, etunimet, kutsumanimi, sukunimi, hetu,
                 syntymaAika, null, "1", asiointikieli, aidinkieli,
-                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)),
-                HenkiloTyyppi.VIRKAILIJA);
+                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
     }
 
     public static YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(String yhteystietoArvo) {

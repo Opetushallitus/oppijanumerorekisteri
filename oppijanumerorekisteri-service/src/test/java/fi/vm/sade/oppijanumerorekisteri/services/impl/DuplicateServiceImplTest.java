@@ -6,7 +6,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -60,9 +59,9 @@ public class DuplicateServiceImplTest {
 
     @Test
     public void getHenkiloDuplicateDtoListShouldReturnApplicationsFromAtaruAndHakuApp() {
-        Henkilo henkilo1 = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "hetu", "1.2.3.4.5", false, HenkiloTyyppi.OPPIJA, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Henkilo henkilo2 = EntityUtils.createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", "hetu2", "1.2.3.4.6", false, HenkiloTyyppi.OPPIJA, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
-        Henkilo henkilo3 = EntityUtils.createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", "hetu3", "1.3.3.4.7", false, HenkiloTyyppi.OPPIJA, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo henkilo1 = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo henkilo2 = EntityUtils.createHenkilo("arpa2 noppa2", "arpa2", "kuutio2", "hetu2", "1.2.3.4.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        Henkilo henkilo3 = EntityUtils.createHenkilo("arpa3 noppa3", "arpa3", "kuutio3", "hetu3", "1.3.3.4.7", false, "fi", "FI", "2.3.34.56", new Date(), new Date(), "2.3.34.5", "arvo");
         List<Henkilo> henkilos = Arrays.asList(henkilo1, henkilo2, henkilo3);
         given(this.userDetailsHelper.getCurrentUserOid()).willReturn("1.2.3.4.5");
         HashMap<String, Object> hakemus1 = new HashMap<>();

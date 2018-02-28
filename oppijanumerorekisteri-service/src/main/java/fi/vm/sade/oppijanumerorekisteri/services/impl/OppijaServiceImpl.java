@@ -3,7 +3,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
@@ -67,7 +66,6 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     public String create(OppijaCreateDto dto) {
         Henkilo entity = mapper.map(dto, Henkilo.class);
-        entity.setHenkiloTyyppi(HenkiloTyyppi.OPPIJA);
 
         // lisätään oppija virkailijan organisaatioihin
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();

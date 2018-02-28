@@ -21,7 +21,6 @@ public class HenkiloReadDto {
     private String sukunimi;
     private String sukupuoli;
     private Boolean turvakielto;
-    private HenkiloTyyppi henkiloTyyppi;
     private Boolean eiSuomalaistaHetua;
     private Boolean passivoitu;
     private Boolean yksiloity;
@@ -37,5 +36,10 @@ public class HenkiloReadDto {
     private HenkiloReadDto huoltaja;
     private Set<KielisyysReadDto> kielisyys;
     private Set<KansalaisuusReadDto> kansalaisuus;
+
+    @Deprecated
+    public HenkiloTyyppi getHenkiloTyyppi() {
+        return HenkiloTyyppi.OPPIJA;
+    }
 
 }
