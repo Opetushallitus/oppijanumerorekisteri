@@ -115,6 +115,23 @@ export const passivoiHenkilo = (oid) => (dispatch => {
     }).catch(e => dispatch(errorPassivoiHenkilo(e)));
 });
 
+export const aktivoiHenkilo = (oid) => async (dispatch, getState) => {
+    try {
+        const url = urls.url('oppijanumerorekisteri-service.henkilo', oid);
+        // henkilö put toimii kuten patch joten ei tarvita kaikkia tietoja
+        const data = { oidHenkilo: oid, passivoitu: false }
+        await http.put(url, data)
+        dispatch(fetchHenkilo(oid));
+    } catch (error) {
+        dispatch(addGlobalNotification({
+            key: 'AKTIVOI_EPAONNISTUI',
+            type: NOTIFICATIONTYPES.ERROR,
+            title: localizeWithState('AKTIVOI_EPAONNISTUI', getState()),
+            autoClose: 10000,
+        }));
+        throw error;
+    }
+};
 
 const requestHenkiloYksilointitieto = (oid) => ({type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST, oid});
 const receiveHenkiloYksilointitieto = (payload) => ({type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS, payload});

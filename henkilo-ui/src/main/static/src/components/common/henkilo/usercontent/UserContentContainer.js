@@ -4,7 +4,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import StaticUtils from "../../StaticUtils";
 import type {L} from "../../../../types/localisation.type";
-import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto} from "../../../../actions/henkilo.actions";
+import {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto, aktivoiHenkilo} from "../../../../actions/henkilo.actions";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import OppijaUserContent from "./OppijaUserContent";
 import AdminUserContent from "./AdminUserContent";
@@ -37,6 +37,7 @@ type Props = {
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
     oidHenkilo: string,
     view: string,
+    aktivoiHenkilo: (oid: string) => void,
 }
 
 type State = {
@@ -81,6 +82,7 @@ class UserContentContainer extends React.Component<Props, State> {
             updateDateAction: this._updateDateField.bind(this),
             henkiloUpdate: this.state.henkiloUpdate,
             edit: this._edit.bind(this),
+            aktivoiHenkilo: this.props.aktivoiHenkilo,
             oidHenkilo: this.props.oidHenkilo,
             isValidForm: this._validForm()
         };
@@ -209,4 +211,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto})(UserContentContainer);
+export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto, aktivoiHenkilo})(UserContentContainer);
