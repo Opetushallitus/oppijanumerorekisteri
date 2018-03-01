@@ -12,7 +12,7 @@ spring:
     banner-mode: "off"
   jpa:
     hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      dialect: org.hibernate.dialect.PostgreSQL94Dialect
       implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
       ddl-auto: validate
     connection:
@@ -20,7 +20,7 @@ spring:
     archive:
       autodetection: class,hbm
     current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver

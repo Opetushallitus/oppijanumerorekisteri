@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <version>1.5.10.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -57,6 +57,11 @@
         <!-- DB. These are updated in spring-boot 2 -->
         <postgresql.version>42.2.1</postgresql.version>
         <hikaricp.version>2.7.6</hikaricp.version>
+
+        <!-- defaults for bamboo -->
+        <buildNumber>Not provided</buildNumber>
+        <branch>Not provided</branch>
+        <revision>Not provided</revision>
     </properties>
 
     <dependencyManagement>
