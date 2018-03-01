@@ -18,7 +18,7 @@ import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttoo
 import * as R from 'ramda';
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli.types";
-import {getOrganisaatios} from '../../kutsuminen/OrganisaatioUtilities';
+import {getOrganisaatios} from '../../../utilities/organisaatio.util';
 import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
 import type {L} from "../../../types/localisation.type";

@@ -4,7 +4,7 @@ import {
     hasAnyPalveluRooli, hasPalveluRooliByOrganisaatioOid, kayttooikeusMatchesAnyPalveluRooli,
     organisaatioContainsAnyPalveluRooli,
     parsePalveluRoolit
-} from "./organisaatio.util";
+} from "./palvelurooli.util";
 import type {
     KayttooikeusOrganisaatiot
 } from "../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";

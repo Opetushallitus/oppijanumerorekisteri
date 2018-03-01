@@ -15,7 +15,7 @@ import {
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
-import {getOrganisaatios} from "./OrganisaatioUtilities";
+import {getOrganisaatios} from "../../utilities/organisaatio.util";
 import type {
     KutsuOrganisaatio, Organisaatio,
     OrganisaatioHenkilo

@@ -7,7 +7,7 @@ const initialState = {
     organisaatiot: []
 };
 
-export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: initialState, cached: {},}, action) => {
+export const organisaatio = (state = {organisaatioLoading: false, organisaatiot: initialState, cached: {}, }, action) => {
     switch(action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
             return Object.assign({}, state, { organisaatioLoading: true, organisaatiot: initialState });

@@ -17,7 +17,7 @@ import Button from "../../common/button/Button";
 import {enabledVtjVertailuView, henkiloViewTabs} from "../../navigation/NavigationTabs";
 import WideGreenNotification from "../../common/notifications/WideGreenNotification";
 import WideRedNotification from "../../common/notifications/WideRedNotification";
-import {hasAnyPalveluRooli} from "../../../utilities/organisaatio.util";
+import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import type {L} from "../../../types/localisation.type";
