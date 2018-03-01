@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
@@ -32,11 +31,6 @@ public class LocalizationController {
             locale -> messageSource.getMessages(locale).entrySet().stream()
                 .collect(toMap(e -> e.getKey().toString().toUpperCase(),
                         e -> e.getValue().toString()))));
-    }
-
-    @PostMapping
-    public void synchronize() {
-        localizationService.synchronize();
     }
 
 }
