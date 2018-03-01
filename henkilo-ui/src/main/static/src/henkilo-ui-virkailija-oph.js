@@ -77,6 +77,7 @@ export default {
     "organisaatio-service.baseUrl": "/",
     "organisaatio-service.organisaatiot": "organisaatio-service/rest/organisaatio/v2/hae",
     "organisaatio-service.organisaatio.ByOid": "organisaatio-service/rest/organisaatio/$1",
+    "organisaatio-service.organisaatiot.hierarkia": "organisaatio-service/rest/organisaatio/v2/hierarkia/hae",
     "organisaatio-service.ryhmat": "organisaatio-service/rest/organisaatio/v2/ryhmat",
 
     "koodisto-service.baseUrl": "/",

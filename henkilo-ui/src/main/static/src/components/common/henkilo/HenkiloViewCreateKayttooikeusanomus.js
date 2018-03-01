@@ -104,6 +104,22 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
                     </div>
 
                     <div className="oph-field oph-field-inline">
+                        <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
+                            {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
+                        </label>
+                        <div className="oph-input-container">
+                            <OphSelect noResultsText={`${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}`}
+                                       placeholder={L['OMATTIEDOT_ORGANISAATIO']}
+                                       onChange={this._changeOrganisaatioSelection.bind(this)}
+                                       onBlurResetsInput={false}
+                                       options={this.state.organisaatioOptions}
+                                       onInputChange={this.inputChange.bind(this)}
+                                       value={this.state.organisaatioSelection}
+                                       disabled={this.state.emailOptions.missingEmail} />
+                        </div>
+                    </div>
+
+                    <div className="oph-field oph-field-inline">
                         <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
                         <div className="oph-input-container">
                             <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
@@ -320,7 +336,6 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         await this.props.createKayttooikeusanomus(anomusData);
         this._resetAnomusFormFields();
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
-
     }
 
 }
