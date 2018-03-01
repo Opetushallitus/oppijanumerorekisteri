@@ -15,6 +15,7 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQL94Dialect
       implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
       ddl-auto: validate
+      use-new-id-generator-mappings: true
     connection:
       charset: utf-8
     archive:
