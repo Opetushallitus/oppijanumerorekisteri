@@ -173,7 +173,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         else {
             String[] etunimet = yksiloityHenkilo.getEtunimi().toLowerCase().split(" ");
             for (String etunimi : etunimet) {
-                if (stringEvaluator.getDistance(henkilo.getKutsumanimi(), etunimi)
+                if (stringEvaluator.getDistance(henkilo.getKutsumanimi().toLowerCase(), etunimi)
                         > oppijanumerorekisteriProperties.getEtunimiThreshold()) {
                     etunimiMatch = true;
                     break;
