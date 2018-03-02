@@ -11,6 +11,7 @@ export type PalvelukayttajaRead = {
 }
 
 export type PalvelukayttajaCriteria = {
+    subOrganisation: boolean,
     passivoitu: boolean,
     nameQuery: string,
 }

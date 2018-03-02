@@ -18,6 +18,7 @@ const initialState: PalvelukayttajatState = {
     dirty: false,
     loading: false,
     criteria: {
+        subOrganisation: true,
         passivoitu: false,
         nameQuery: '',
     },
