@@ -31,3 +31,9 @@ host:
   host-shibboleth: https://{{host_tunnistus}}
 henkiloui:
   uses-ssl-proxy: true
+  lokalisointi_synkronointi:
+    aktiivinen: {{henkiloui_lokalisointi_synkronointi_aktiivinen | default('false')}}
+  palvelukayttajat:
+    lokalisointi:
+      kayttajatunnus: {{henkiloui_lokalisointi_kayttajatunnus | default('henkiloui2lokalisointi')}}
+      salasana: {{henkiloui_lokalisointi_salasana | default('henkiloui2lokalisointi')}}

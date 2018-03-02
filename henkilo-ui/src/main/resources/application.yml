@@ -1,3 +1,10 @@
 server:
   context-path: /henkilo-ui
 management.security.roles: APP_HENKILONHALLINTA_OPHREKISTERI
+henkiloui:
+  lokalisointi_synkronointi:
+    aktiivinen: false
+  palvelukayttajat:
+    lokalisointi:
+      kayttajatunnus: henkiloui2lokalisointi
+      salasana: henkiloui2lokalisointi
