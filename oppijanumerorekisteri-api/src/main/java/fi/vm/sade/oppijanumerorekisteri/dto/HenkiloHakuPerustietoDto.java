@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
 public class HenkiloHakuPerustietoDto {
 
