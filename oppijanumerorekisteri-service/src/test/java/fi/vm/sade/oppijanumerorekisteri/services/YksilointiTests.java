@@ -4,7 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
-import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.ScheduledTasks;
+import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.YksilointiTask;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
@@ -37,7 +37,7 @@ public class YksilointiTests {
     private DatabaseService databaseService;
 
     @Autowired
-    private ScheduledTasks scheduledTasks;
+    private YksilointiTask yksilointiTask;
     @Autowired
     private YksilointiService yksilointiService;
     @Autowired
@@ -66,7 +66,7 @@ public class YksilointiTests {
         when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         DateTime modifiedSince = DateTime.now();
-        scheduledTasks.startYksilointiTask();
+        yksilointiTask.execute(null, null);
 
         assertThat(henkiloService.getByHetu(hetu))
                 .returns("Teppo", from(HenkiloReadDto::getEtunimet))
@@ -99,7 +99,7 @@ public class YksilointiTests {
         when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
 
         DateTime modifiedSince = DateTime.now();
-        scheduledTasks.startYksilointiTask();
+        yksilointiTask.execute(null, null);
 
         assertThat(henkiloService.getByHetu(hetu))
                 .returns("teppo", from(HenkiloReadDto::getEtunimet))
