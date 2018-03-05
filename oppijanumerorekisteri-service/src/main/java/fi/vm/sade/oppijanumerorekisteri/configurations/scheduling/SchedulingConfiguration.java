@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @Configuration
 @ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.enabled")
 public class SchedulingConfiguration {
-    @Bean
+    @Bean(destroyMethod = "stop")
     Scheduler scheduler(@Qualifier("dataSource") DataSource dataSource,
                         YksilointiTask yksilointiTask,
                         HenkilotietomuutosHetuSyncTask henkilotietomuutosHetuSyncTask) {
