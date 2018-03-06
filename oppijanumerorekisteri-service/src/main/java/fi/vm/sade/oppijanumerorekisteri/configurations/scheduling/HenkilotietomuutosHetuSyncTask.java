@@ -7,10 +7,11 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.MuutostietoHetus;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
     private final OppijanumerorekisteriProperties properties;
     private final HenkiloRepository henkiloRepository;
@@ -38,6 +40,7 @@ public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
     }
 
     @Override
+    @Transactional
     public void execute(TaskInstance<Void> taskInstance, ExecutionContext executionContext) {
         if (properties.getScheduling().getVtjsync().getEnabled()) {
             log.info("Started syncing hetus to VTJ...");
