@@ -1,63 +1,47 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.scheduling;
 
+import com.github.kagkarlsson.scheduler.task.*;
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.MuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.MuutostietoHetus;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Ajastusten konfigurointi.
  *
  * @see SchedulingConfiguration ajastuksen aktivointi
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class ScheduledTasks {
-
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
     private final OppijanumerorekisteriProperties properties;
-
-    private final IdentificationService identificationService;
-
     private final HenkiloRepository henkiloRepository;
-
     private final MuutostietoClient muutostietoClient;
 
-    @Scheduled(fixedDelayString = "${oppijanumerorekisteri.scheduling.yksilointi.fixed-delay-in-millis}")
-    public void startYksilointiTask() {
-        if (properties.getScheduling().getYksilointi().getEnabled()) {
-            log.info("Identification started...");
-            long start = System.currentTimeMillis();
-            OppijanumerorekisteriProperties.Scheduling.Yksilointi yksilointiProperties = properties.getScheduling().getYksilointi();
-
-            Long offset = 0L;
-            Collection<Henkilo> unidentifiedHenkilos = henkiloRepository.findUnidentified(yksilointiProperties.getBatchSize(), offset);
-            while (!unidentifiedHenkilos.isEmpty()) {
-                identificationService.identifyHenkilos(unidentifiedHenkilos, yksilointiProperties.getVtjRequestDelayInMillis());
-                offset += yksilointiProperties.getBatchSize();
-                unidentifiedHenkilos = henkiloRepository.findUnidentified(yksilointiProperties.getBatchSize(), offset);
-            }
-
-            long duration = System.currentTimeMillis() - start;
-            log.info("Identification completed, duration: " + duration + "ms");
-        }
-
+    @Autowired
+    public HenkilotietomuutosHetuSyncTask(OppijanumerorekisteriProperties properties,
+                                          HenkiloRepository henkiloRepository,
+                                          MuutostietoClient muutostietoClient) {
+        super("henkilotietomuutos hetu sync task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getVtjsync().getFixedDelayInMillis())));
+        this.properties = properties;
+        this.henkiloRepository = henkiloRepository;
+        this.muutostietoClient = muutostietoClient;
     }
 
-    @Scheduled(fixedDelayString = "${oppijanumerorekisteri.scheduling.vtjsync.fixed-delay-in-millis}")
+    @Override
     @Transactional
-    public void startHetuSync() {
+    public void execute(TaskInstance<Void> taskInstance, ExecutionContext executionContext) {
         if (properties.getScheduling().getVtjsync().getEnabled()) {
             log.info("Started syncing hetus to VTJ...");
             long start = System.currentTimeMillis();
@@ -78,5 +62,6 @@ public class ScheduledTasks {
             long duration = System.currentTimeMillis() - start;
             log.info("Hetu sync completed, duration: " + duration + "ms");
         }
+
     }
 }
