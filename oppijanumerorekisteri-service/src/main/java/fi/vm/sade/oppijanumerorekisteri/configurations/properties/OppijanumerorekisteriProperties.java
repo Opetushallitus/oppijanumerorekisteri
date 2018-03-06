@@ -31,6 +31,7 @@ public class OppijanumerorekisteriProperties {
             private Boolean enabled = true;
             private Long batchSize = 300L;
             private Long vtjRequestDelayInMillis = 200L;
+            private Long fixedDelayInMillis = 900000L;
         }
 
         @Getter

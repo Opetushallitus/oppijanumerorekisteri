@@ -31,7 +31,7 @@ public class YksilointiTask extends RecurringTask {
     public YksilointiTask(OppijanumerorekisteriProperties properties,
                           HenkiloRepository henkiloRepository,
                           IdentificationService identificationService) {
-        super("yksilointi task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getYksilointi().getVtjRequestDelayInMillis())));
+        super("yksilointi task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getYksilointi().getFixedDelayInMillis())));
         this.properties = properties;
         this.henkiloRepository = henkiloRepository;
         this.identificationService = identificationService;
