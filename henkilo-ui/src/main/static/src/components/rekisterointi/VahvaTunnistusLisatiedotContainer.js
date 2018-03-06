@@ -16,7 +16,8 @@ type Props = {
     locale: Locale,
     L: L,
     loginToken: string,
-    onTyosahkopostiosoite: boolean,
+    salasana: boolean,
+    tyosahkopostiosoite: boolean,
 }
 
 type State = {
@@ -30,12 +31,12 @@ const getInitialValues = (): Values => ({
 
 const getInitialMetadata = (props: Props): Metadata => ({
     salasana: {
-        visible: true,
+        visible: props.salasana,
         disabled: false,
         required: true,
     },
     tyosahkopostiosoite: {
-        visible: !props.onTyosahkopostiosoite,
+        visible: props.tyosahkopostiosoite,
         disabled: false,
         required: true,
     },
@@ -120,7 +121,8 @@ const mapStateToProps = (state, ownProps) => ({
     locale: ownProps.params['locale'],
     L: state.l10n.localisations[ownProps.params['locale']],
     loginToken: ownProps.params['loginToken'],
-    onTyosahkopostiosoite: ownProps.params['onTyosahkopostiosoite'] === 'true'
+    salasana: ownProps.params['salasana'] === 'true',
+    tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
 })
 
 export default connect(mapStateToProps, {
