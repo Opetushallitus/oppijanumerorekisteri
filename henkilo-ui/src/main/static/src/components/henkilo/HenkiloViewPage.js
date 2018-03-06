@@ -12,8 +12,6 @@ import HenkiloViewContactContent from "../common/henkilo/HenkiloViewContactConte
 import StaticUtils from '../common/StaticUtils'
 import type {L10n} from "../../types/localisation.type";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
-import PropertySingleton from "../../globals/PropertySingleton";
-import type {ReactSelectOption} from "../../types/react-select.types";
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 
@@ -123,33 +121,12 @@ class HenkiloViewPage extends React.Component<Props> {
                 {this.props.view === 'OMATTIEDOT' && <div className="wrapper">
                     <HenkiloViewCreateKayttooikeusanomus
                         {...this.props}
-                        organisaatioOptions={this._parseOrganisaatioOptions.call(this)}
                         ryhmaOptions={this._parseRyhmaOptions.call(this)}
                         kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
                     />
                 </div>}
             </div>
         )
-    }
-
-    _parseOrganisaatioOptions(): Array<ReactSelectOption> {
-        const locale = this.props.locale;
-        if (this.props.organisaatios && this.props.organisaatios.organisaatiot) {
-            return this.props.organisaatios.organisaatiot.organisaatiot
-                .map(organisaatio => {
-                    const organisaatioName: string = organisaatio.nimi[locale]
-                        ? organisaatio.nimi[locale]
-                        : organisaatio.nimi.fi || organisaatio.nimi.sv || organisaatio.nimi.en || organisaatio.oid || '';
-                    const label = organisaatio.oid !== PropertySingleton.getState().rootOrganisaatioOid
-                        ? `${organisaatioName} (${organisaatio.organisaatiotyypit.join(',')})`
-                        : `${organisaatioName}`;
-                    return {
-                        label,
-                        value: organisaatio.oid
-                    };
-                });
-        }
-        return [];
     }
 
     _parseRyhmaOptions() {
