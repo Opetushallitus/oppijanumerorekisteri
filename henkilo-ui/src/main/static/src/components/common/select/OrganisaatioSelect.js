@@ -112,9 +112,9 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
     }
 
     _sortBySearchWord(organisaatiot: Array<OrganisaatioSelectObject>, searchWord: string): Array<OrganisaatioSelectObject> {
-        const organisaatiotStartingWithSearchword = organisaatiot.filter((organisaatio: OrganisaatioSelectObject) => organisaatio.name.toLowerCase().startsWith(searchWord));
+        const organisaatiotStartingWithSearchword = organisaatiot.filter((organisaatio: OrganisaatioSelectObject) => organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase()));
         const organisaatiotStartingWithSearchwordSortedByParentName = this._sortOrganisaatiotByParentName(organisaatiotStartingWithSearchword);
-        const others = organisaatiot.filter((organisaatio: OrganisaatioSelectObject) => !organisaatio.name.toLowerCase().startsWith(searchWord));
+        const others = organisaatiot.filter((organisaatio: OrganisaatioSelectObject) => !organisaatio.name.toLowerCase().startsWith(searchWord.toLowerCase()));
         return [...organisaatiotStartingWithSearchwordSortedByParentName, ...others];
     }
 
