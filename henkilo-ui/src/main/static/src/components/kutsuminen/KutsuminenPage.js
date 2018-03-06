@@ -1,21 +1,21 @@
 // @flow
 import { connect } from 'react-redux';
-import BasicInfoForm from '../components/kutsuminen/BasicinfoForm';
+import BasicInfoForm from './BasicinfoForm';
 import React from 'react';
-import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
-import { fetchOmattiedotOrganisaatios } from '../actions/omattiedot.actions';
-import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
-import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
-import Loader from '../components/common/icons/Loader';
-import type {KutsuOrganisaatio} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
-import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
-import type {L, L10n} from "../types/localisation.type";
-import ValidationMessageButton from "../components/common/button/ValidationMessageButton";
-import type {ValidationMessage} from "../types/validation.type";
-import type {BasicinfoType} from "../components/kutsuminen/BasicinfoForm";
-import StaticUtils from "../components/common/StaticUtils";
-import { fetchHenkilo } from '../actions/henkilo.actions'
-import { LocalNotification } from '../components/common/Notification/LocalNotification';
+import KutsuOrganisaatios from './KutsuOrganisaatios';
+import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
+import { kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
+import KutsuConfirmation from './KutsuConfirmation';
+import Loader from '../common/icons/Loader';
+import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {L, L10n} from "../../types/localisation.type";
+import ValidationMessageButton from "../common/button/ValidationMessageButton";
+import type {ValidationMessage} from "../../types/validation.type";
+import type {BasicinfoType} from "./BasicinfoForm";
+import StaticUtils from "../common/StaticUtils";
+import { fetchHenkilo } from '../../actions/henkilo.actions'
+import { LocalNotification } from '../common/Notification/LocalNotification';
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
