@@ -13,9 +13,9 @@ import StaticUtils from '../common/StaticUtils'
 import type {L10n} from "../../types/localisation.type";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 import PropertySingleton from "../../globals/PropertySingleton";
-import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {ReactSelectOption} from "../../types/react-select.types";
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
+import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 
 type Props = {
     l10n: L10n,
@@ -31,11 +31,7 @@ type Props = {
     organisaatioKayttooikeusryhmat: {kayttooikeusryhmat: Array<any>},
     oidHenkilo: string,
     view: string,
-    organisaatios: {
-        organisaatiot: {
-            organisaatiot: Array<Organisaatio>,
-        }
-    },
+    organisaatios: OrganisaatioState,
     organisaatioCache: any,
     ryhmas: {
         ryhmas: Array<{nimi: {fi: string, sv: string, en: string,}, oid: string}>,

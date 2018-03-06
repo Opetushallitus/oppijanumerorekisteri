@@ -16,7 +16,11 @@ export type Organisaatio = {
     oppilaitostyyppi: string,
     toimipistekoodi: string,
     match: boolean,
-    nimi: {[string]: string },
+    nimi: {
+        fi?: string,
+        sv?: string,
+        en?: string
+    },
     kieletUris: Array<string>,
     kotipaikkaUri: string,
     children: Array<Organisaatio>,

@@ -5,7 +5,7 @@ import {
 } from '../actions/actiontypes';
 
 import StaticUtils from '../components/common/StaticUtils'
-import type {OrganisaatioHakuTulos} from "../types/domain/organisaatio/organisaatio.type";
+import type {OrganisaatioHakuTulos} from "../types/domain/organisaatio/organisaatio.types";
 
 export type OrganisaatioState = {
     organisaatioLoading: boolean,

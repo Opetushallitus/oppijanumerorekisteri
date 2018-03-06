@@ -57,7 +57,6 @@ export const fetchAllHierarchialOrganisaatios = () => async (dispatch: Dispatch,
         dispatch(requestAllHierarchialOrganisaatios());
         try {
             const organisaatiot = await http.get(url);
-            console.log(organisaatiot);
             const rootOrganisation = await http.get(rootUrl);
             organisaatiot.numHits += 1;
             organisaatiot.organisaatiot.push(rootOrganisation);

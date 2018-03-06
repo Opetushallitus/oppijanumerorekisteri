@@ -5,4 +5,6 @@ export type ReactSelectOption = {
     value: string,
     optionsName?: string,
     optionsPath?: string,
+    style?: boolean,
+    disabled?: boolean
 }

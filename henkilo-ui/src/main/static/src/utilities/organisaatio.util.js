@@ -3,8 +3,39 @@ import React from 'react';
 import * as R from 'ramda';
 import {toLocalizedText} from '../localizabletext';
 import type {Organisaatio, OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Organisaatio as Org} from "../types/domain/organisaatio/organisaatio.types";
 import type {Locale} from "../types/locale.type";
 import createFilterOptions from 'react-select-fast-filter-options';
+import type {OrganisaatioSelectObject} from "../types/organisaatioselectobject.types";
+import {getLocalization} from "./localisation.util";
+
+
+
+export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHierarkia: Array<Org>, locale: Locale): Array<OrganisaatioSelectObject> => {
+    const result = [];
+    mapOrganisaatioLevelsRecursively(organisaatioHierarkia, [], locale, result);
+    return result;
+};
+
+const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames: Array<string>, locale: Locale, result: Array<OrganisaatioSelectObject>): void => {
+    organisaatiot.forEach( (organisaatio: Org) => {
+
+        const organisaatioSelectObject: OrganisaatioSelectObject = {
+            oid: organisaatio.oid,
+            parentNames: parentNames,
+            name: getLocalization(organisaatio.nimi, locale),
+            organisaatiotyypit: organisaatio.organisaatiotyypit || []
+        };
+
+        result.push(organisaatioSelectObject);
+
+        if(organisaatio.children) {
+            mapOrganisaatioLevelsRecursively(organisaatio.children, [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name], locale, result);
+        }
+
+    });
+};
+
 
 export const organisaatioHierarchyRoots = (orgs: Array<OrganisaatioHenkilo>, locale: Locale): Array<Organisaatio> => {
     // First sort by name:
