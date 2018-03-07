@@ -15,7 +15,7 @@ import {
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
-import {getOrganisaatios} from "../../utilities/organisaatio.util";
+import {getOrganisaatios, omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
 import type {
     KutsuOrganisaatio, Organisaatio,
     OrganisaatioHenkilo
@@ -25,6 +25,7 @@ import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSele
 import {myonnettyToKayttooikeusryhma} from '../../utils/KayttooikeusryhmaUtils'
 import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
+import {getLocalization} from "../../utilities/localisation.util";
 
 type Props = {
     changeOrganization: () => void,
@@ -39,10 +40,14 @@ type Props = {
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio: (string, string) => void,
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
-    removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
+    removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void
 }
 
-class AddedOrganisation extends React.Component<Props> {
+type State = {
+    organisaatioSelection: string
+}
+
+class AddedOrganisation extends React.Component<Props, State> {
 
     static propTypes = {
         changeOrganization: PropTypes.func,
@@ -50,8 +55,16 @@ class AddedOrganisation extends React.Component<Props> {
         addedOrg: PropTypes.object,
         omatOrganisaatios: PropTypes.array,
         index: PropTypes.number.isRequired,
-        locale: PropTypes.string
+        locale: PropTypes.string,
     };
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            organisaatioSelection: ''
+        }
+    }
 
     render() {
         const addedOrg = this.props.addedOrg;
@@ -66,11 +79,14 @@ class AddedOrganisation extends React.Component<Props> {
                         {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
                     <div className="organisaatioSelection-container">
-                        <OrganisaatioSelectModal locale={this.props.locale} L={this.props.L} onSelect={this.selectOrganisaatio.bind(this)}></OrganisaatioSelectModal>
+                        <div>{this.state.organisaatioSelection}</div>
+                        <OrganisaatioSelectModal locale={this.props.locale}
+                                                 L={this.props.L}
+                                                 onSelect={this.selectOrganisaatio.bind(this)}
+                                                 organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.omatOrganisaatios, this.props.locale)}
+                                                 disabled={false}
+                        ></OrganisaatioSelectModal>
 
-                        <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
-                                               selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                        />
                         <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
                                                selectOrganisaatio={this.selectOrganisaatio.bind(this)}
                                                isRyhma={true}
@@ -130,9 +146,15 @@ class AddedOrganisation extends React.Component<Props> {
             this.removeOrganisaatio(this.props.addedOrg.oid);
         }
         else {
-            const selectedOrganisaatioOid = selection.value;
+            const isOrganisaatio = selection.hasOwnProperty('oid');
+            const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
             const availableOrganisaatios = getOrganisaatios(this.props.omatOrganisaatios, this.props.locale);
             const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
+            if(isOrganisaatio && organisaatio && organisaatio.nimi) {
+                this.setState({organisaatioSelection: getLocalization(organisaatio.nimi, this.props.locale)});
+            } else {
+                this.setState({organisaatioSelection: ''});
+            }
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
             this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, organisaatio.oid);
         }

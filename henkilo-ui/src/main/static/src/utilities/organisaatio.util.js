@@ -9,6 +9,12 @@ import createFilterOptions from 'react-select-fast-filter-options';
 import type {OrganisaatioSelectObject} from "../types/organisaatioselectobject.types";
 import {getLocalization} from "./localisation.util";
 
+/*
+ * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
+ */
+export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (organisaatiot: Array<any>, locale: Locale): Array<OrganisaatioSelectObject> => {
+    return organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject([organisaatiot[0].organisaatio], locale) : []
+};
 
 /*
  * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a. Käytetään OrganisaatioSelectModal/OrganisaatioSelect:ssa
@@ -19,6 +25,9 @@ export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHier
     return result;
 };
 
+/*
+ * Käy organisaatiohierarkian rekursiivisesti läpi ja palauttaa flatin listan OrganisaatioSelectObjecteja
+ */
 const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames: Array<string>, locale: Locale, result: Array<OrganisaatioSelectObject>): void => {
     organisaatiot.forEach( (organisaatio: Org) => {
         const organisaatioSelectObject: OrganisaatioSelectObject = createOrganisaatioSelectObject(organisaatio, parentNames, locale);
