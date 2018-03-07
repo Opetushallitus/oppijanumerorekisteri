@@ -3,10 +3,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import OrganisaatioSelection from "../../select/OrganisaatioSelection";
 import {OrganisaatioSelectModal} from "../../select/OrganisaatioSelectModal";
-import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../../utilities/organisaatio.util";
+import {
+    organisaatioHierarkiaToOrganisaatioSelectObject
+} from "../../../../utilities/organisaatio.util";
 
-const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale, selection}) =>
-    <tr key="kayttokohdeField">
+const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale, selection}) => {
+    const organisaatioSelectObjects = organisationData.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject([organisationData[0].organisaatio], locale) : [];
+    return <tr key="kayttokohdeField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
         </td>
@@ -14,7 +17,7 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
             <div className="kohdeOrganisaatio">
                 <div>{selection}</div>
                 <OrganisaatioSelectModal L={L}
-                                         organisaatiot={organisationData.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(organisationData[0].organisaatio.children, locale) : []}
+                                         organisaatiot={organisaatioSelectObjects}
                                          locale={locale}
                                          disabled={organisationData.length === 0}
                                          onSelect={organisationAction}>
@@ -35,6 +38,8 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
             <span className="oph-bold">{' ' + L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
         </td>
     </tr>;
+}
+
 
 CKKohde.propTypes = {
     organisationData: PropTypes.array,

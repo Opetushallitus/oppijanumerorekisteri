@@ -22,8 +22,9 @@ import type {
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {L} from "../../types/localisation.type";
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal'
-import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils'
-import type { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
+import {myonnettyToKayttooikeusryhma} from '../../utils/KayttooikeusryhmaUtils'
+import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
+import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 
 type Props = {
     changeOrganization: () => void,
@@ -65,6 +66,8 @@ class AddedOrganisation extends React.Component<Props> {
                         {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
                     <div className="organisaatioSelection-container">
+                        <OrganisaatioSelectModal locale={this.props.locale} L={this.props.L} onSelect={this.selectOrganisaatio.bind(this)}></OrganisaatioSelectModal>
+
                         <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
                                                selectOrganisaatio={this.selectOrganisaatio.bind(this)}
                         />
@@ -87,7 +90,7 @@ class AddedOrganisation extends React.Component<Props> {
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             onSelect={this.addPermission.bind(this, selectablePermissions)}
                             disabled={!addedOrg.oid}
-                            />
+                        />
                     </div>
 
                     <ul className="kutsuminen-selected-permissions">

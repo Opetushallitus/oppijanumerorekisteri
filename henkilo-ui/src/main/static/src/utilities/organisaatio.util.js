@@ -10,7 +10,9 @@ import type {OrganisaatioSelectObject} from "../types/organisaatioselectobject.t
 import {getLocalization} from "./localisation.util";
 
 
-
+/*
+ * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a. Käytetään OrganisaatioSelectModal/OrganisaatioSelect:ssa
+ */
 export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHierarkia: Array<Org>, locale: Locale): Array<OrganisaatioSelectObject> => {
     const result = [];
     mapOrganisaatioLevelsRecursively(organisaatioHierarkia, [], locale, result);
@@ -19,12 +21,7 @@ export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHier
 
 const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames: Array<string>, locale: Locale, result: Array<OrganisaatioSelectObject>): void => {
     organisaatiot.forEach( (organisaatio: Org) => {
-        const organisaatioSelectObject: OrganisaatioSelectObject = {
-            oid: organisaatio.oid,
-            parentNames: parentNames,
-            name: getLocalization(organisaatio.nimi, locale),
-            organisaatiotyypit: organisaatio.organisaatiotyypit || organisaatio.tyypit || [] // organisaatiopalvelusta 'organisaatiotyypit', kayttooikeuspalvelusta 'tyypit'
-        };
+        const organisaatioSelectObject: OrganisaatioSelectObject = createOrganisaatioSelectObject(organisaatio, parentNames, locale);
 
         if(!isRyhma(organisaatioSelectObject)) {
             result.push(organisaatioSelectObject);
@@ -37,6 +34,14 @@ const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames
     });
 };
 
+export const createOrganisaatioSelectObject = (organisaatio: Org, parentNames: Array<string>, locale: Locale): OrganisaatioSelectObject => {
+    return {
+        oid: organisaatio.oid,
+        parentNames: parentNames,
+        name: getLocalization(organisaatio.nimi, locale),
+        organisaatiotyypit: organisaatio.organisaatiotyypit || organisaatio.tyypit || [] // organisaatiopalvelusta suoraan tulevista organisaatioista 'organisaatiotyypit', kayttooikeuspalvelusta tulevista organisaatioista 'tyypit'
+    }
+};
 
 const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean => organisaatio.organisaatiotyypit && organisaatio.organisaatiotyypit.includes('Ryhma');
 
