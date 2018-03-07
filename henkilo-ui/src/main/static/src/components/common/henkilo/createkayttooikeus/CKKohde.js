@@ -2,19 +2,24 @@ import './CKKohde.css'
 import React from 'react'
 import PropTypes from 'prop-types'
 import OrganisaatioSelection from "../../select/OrganisaatioSelection";
+import {OrganisaatioSelectModal} from "../../select/OrganisaatioSelectModal";
+import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../../utilities/organisaatio.util";
 
-const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale}) =>
+const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale, selection}) =>
     <tr key="kayttokohdeField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
         </td>
         <td>
             <div className="kohdeOrganisaatio">
-                <OrganisaatioSelection L={L}
-                                       organisaatios={organisationData}
-                                       selectOrganisaatio={organisationAction}
-                                       selectedOrganisaatioOid={organisationValue}
-                                       locale={locale} />
+                <div>{selection}</div>
+                <OrganisaatioSelectModal L={L}
+                                         organisaatiot={organisationData.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(organisationData[0].organisaatio.children, locale) : []}
+                                         locale={locale}
+                                         disabled={organisationData.length === 0}
+                                         onSelect={organisationAction}>
+
+                </OrganisaatioSelectModal>
             </div>
 
             <div className="kohdeRyhma">
@@ -23,7 +28,7 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
                                        selectOrganisaatio={organisationAction}
                                        selectedOrganisaatioOid={organisationValue}
                                        locale={locale}
-                                       isRyhma={true} />
+                                       isRyhma={true}/>
             </div>
         </td>
         <td>

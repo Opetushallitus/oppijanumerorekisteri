@@ -1,9 +1,7 @@
 // @flow
 import React from 'react';
 import type {Locale} from "../../../types/locale.type";
-import type {Organisaatio} from "../../../types/domain/organisaatio/organisaatio.types";
 import type {L} from "../../../types/localisation.type";
-import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import './OrganisaatioSelect.css';
 import * as R from 'ramda';
@@ -12,7 +10,7 @@ import {List} from 'react-virtualized';
 type Props = {
     locale: Locale,
     L: L,
-    organisaatiot: Array<Organisaatio>,
+    organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
 }
 
@@ -26,7 +24,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        const allOrganisaatiot = this._sortAlphabetically(organisaatioHierarkiaToOrganisaatioSelectObject(props.organisaatiot, props.locale));
+        const allOrganisaatiot = this._sortAlphabetically(this.props.organisaatiot);
         this.state = {
             searchWord: '',
             allOrganisaatiot: allOrganisaatiot,
@@ -68,11 +66,11 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
 
     _renderOrganisaatioNimi = (organisaatio: OrganisaatioSelectObject) => {
         return <div
-            className="organisaatio-nimi">{organisaatio.name} ({this._renderOrganisaatioTyyppi(organisaatio)})</div>;
+            className="organisaatio-nimi">{organisaatio.name} {this._renderOrganisaatioTyypit(organisaatio)}</div>;
     };
 
-    _renderOrganisaatioTyyppi = (organisaatio: OrganisaatioSelectObject) => {
-        return organisaatio.organisaatiotyypit[0];
+    _renderOrganisaatioTyypit = (organisaatio: OrganisaatioSelectObject) => {
+        return organisaatio.organisaatiotyypit && organisaatio.organisaatiotyypit.length > 0 ? `(${organisaatio.organisaatiotyypit.toString()})` : null;
     };
 
     _renderParents = (organisaatio: OrganisaatioSelectObject) => {

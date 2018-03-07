@@ -18,6 +18,8 @@ import {
 } from "../../../actions/kayttooikeusryhma.actions";
 import {OrganisaatioSelectModal} from "../select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
+import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
+import {locale} from "../../../reducers/locale.reducer";
 
 class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -94,14 +96,14 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
                         </label>
 
                         <div className="oph-input-container">
+                            <div>{this.state.organisaatioSelectionName ? <span>{this.state.organisaatioSelectionName}</span> : null }</div>
                             <OrganisaatioSelectModal
                                 locale={this.props.locale}
                                 L={L}
-                                organisaatiot={this.props.organisaatios.organisaatioHierarkia}
+                                organisaatiot={this._parseOrganisaatioSelectOptions.call(this, this.props.organisaatios)}
                                 onSelect={this._changeOrganisaatioSelection.bind(this)}
                                 disabled={this.props.organisaatios.organisaatioHierarkiaLoading}
                             />
-                            {this.state.organisaatioSelectionName ? <span>{this.state.organisaatioSelectionName}</span> : null }
                         </div>
                     </div>
 
@@ -254,6 +256,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
     _validEmailSelection() {
         return this.state.emailSelection !== '' && !this.state.emailOptions.missingEmail;
+    }
+
+    _parseOrganisaatioSelectOptions(organisaatioState) {
+        return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia && organisaatioState.organisaatioHierarkia.organisaatiot.length > 0 ?
+            organisaatioHierarkiaToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia.organisaatiot, locale) : [];
     }
 
     _resetAnomusFormFields() {

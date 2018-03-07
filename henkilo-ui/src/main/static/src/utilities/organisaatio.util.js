@@ -19,15 +19,16 @@ export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHier
 
 const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames: Array<string>, locale: Locale, result: Array<OrganisaatioSelectObject>): void => {
     organisaatiot.forEach( (organisaatio: Org) => {
-
         const organisaatioSelectObject: OrganisaatioSelectObject = {
             oid: organisaatio.oid,
             parentNames: parentNames,
             name: getLocalization(organisaatio.nimi, locale),
-            organisaatiotyypit: organisaatio.organisaatiotyypit || []
+            organisaatiotyypit: organisaatio.organisaatiotyypit || organisaatio.tyypit || [] // organisaatiopalvelusta 'organisaatiotyypit', kayttooikeuspalvelusta 'tyypit'
         };
 
-        result.push(organisaatioSelectObject);
+        if(!isRyhma(organisaatioSelectObject)) {
+            result.push(organisaatioSelectObject);
+        }
 
         if(organisaatio.children) {
             mapOrganisaatioLevelsRecursively(organisaatio.children, [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name], locale, result);
@@ -35,6 +36,9 @@ const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames
 
     });
 };
+
+
+const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean => organisaatio.organisaatiotyypit && organisaatio.organisaatiotyypit.includes('Ryhma');
 
 
 export const organisaatioHierarchyRoots = (orgs: Array<OrganisaatioHenkilo>, locale: Locale): Array<Organisaatio> => {
