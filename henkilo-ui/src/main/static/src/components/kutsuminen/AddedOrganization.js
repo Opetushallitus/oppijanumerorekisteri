@@ -151,7 +151,7 @@ class AddedOrganisation extends React.Component<Props, State> {
             const availableOrganisaatios = getOrganisaatios(this.props.omatOrganisaatios, this.props.locale);
             const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
             if(isOrganisaatio && organisaatio && organisaatio.nimi) {
-                this.setState({organisaatioSelection: getLocalization(organisaatio.nimi, this.props.locale)});
+                this.setState({organisaatioSelection: selection.name});
             } else {
                 this.setState({organisaatioSelection: ''});
             }
