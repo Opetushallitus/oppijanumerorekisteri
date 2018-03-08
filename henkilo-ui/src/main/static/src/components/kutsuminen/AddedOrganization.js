@@ -25,7 +25,6 @@ import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSele
 import {myonnettyToKayttooikeusryhma} from '../../utils/KayttooikeusryhmaUtils'
 import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
-import {getLocalization} from "../../utilities/localisation.util";
 
 type Props = {
     changeOrganization: () => void,
