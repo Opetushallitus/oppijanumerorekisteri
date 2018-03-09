@@ -27,10 +27,6 @@
     border-right-width: 10px;
 }
 
-.organisaatio-select-list .organisaatio:active {
-    border: 1px solid #4A4A4A;
-}
-
 .organisaatio-select-list .organisaatio .parent {
     font-size: 0.8em;
     color: #666666;
