@@ -34,7 +34,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
 
     render() {
         return <div className="organisaatio-select">
-            <h3>{this.props.L['OMATTIEDOT_ORGANISAATIO_VALINTA']}</h3>
+            <p className="oph-h3">{this.props.L['OMATTIEDOT_ORGANISAATIO_VALINTA']}</p>
             <input
                 className="oph-input"
                 placeholder={this.props.L['OMATTIEDOT_RAJAA_LISTAUSTA']}
@@ -45,7 +45,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
             <List className={"organisaatio-select-list"}
                   rowCount={this.state.organisaatiot.length}
                   rowRenderer={this._renderRow}
-                  width={650}
+                  width={630}
                   height={700}
                   rowHeight={70}></List>
         </div>
@@ -124,7 +124,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
         const organisaatiotHavingParents: any = this._organisaatiotFilteredBy(organisaatiot, hasParent);
         const organisaatiotNotHavingParents = this._organisaatiotFilteredBy(organisaatiot, noParent);
 
-        return [...organisaatiotNotHavingParents, ...R.sortBy(R.compose(R.toLower, R.head, R.prop('parentNames')))(organisaatiotHavingParents)];
+        return [...organisaatiotNotHavingParents, ...R.sortBy(R.compose(R.toLower, R.last, R.prop('parentNames')))(organisaatiotHavingParents)];
     }
 
 

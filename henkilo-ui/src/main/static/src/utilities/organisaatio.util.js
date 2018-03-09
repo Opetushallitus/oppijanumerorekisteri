@@ -8,6 +8,7 @@ import type {Locale} from "../types/locale.type";
 import createFilterOptions from 'react-select-fast-filter-options';
 import type {OrganisaatioSelectObject} from "../types/organisaatioselectobject.types";
 import {getLocalization} from "./localisation.util";
+import PropertySingleton from "../globals/PropertySingleton";
 
 /*
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
@@ -37,7 +38,8 @@ const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames
         }
 
         if(organisaatio.children) {
-            mapOrganisaatioLevelsRecursively(organisaatio.children, [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name], locale, result);
+            const parentNames = organisaatio.oid === PropertySingleton.state.rootOrganisaatioOid ? [] : [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name];
+            mapOrganisaatioLevelsRecursively(organisaatio.children, parentNames, locale, result);
         }
 
     });
