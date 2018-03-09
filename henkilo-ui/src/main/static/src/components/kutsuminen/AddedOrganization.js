@@ -125,7 +125,6 @@ class AddedOrganisation extends React.Component<Props, State> {
         )
     }
 
-
     removeOrganisaatio(oid) {
         this.props.kutsuRemoveOrganisaatio(oid);
     }

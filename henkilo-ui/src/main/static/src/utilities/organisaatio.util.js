@@ -14,7 +14,9 @@ import PropertySingleton from "../globals/PropertySingleton";
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
  */
 export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (organisaatiot: Array<any>, locale: Locale): Array<OrganisaatioSelectObject> => {
-    return organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject([organisaatiot[0].organisaatio], locale) : []
+    const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
+    const organisaatioSelectObjects: Array<OrganisaatioSelectObject> = organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
+    return R.uniqBy( R.prop('oid'), (organisaatioSelectObjects));
 };
 
 /*
