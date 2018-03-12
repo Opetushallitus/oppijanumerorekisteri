@@ -8,6 +8,7 @@ import DelayedSearchInput from '../henkilohaku/DelayedSearchInput'
 import PalvelukayttajaHakuTaulukko from './PalvelukayttajaHakuTaulukko';
 import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
 import SubOrganisationCheckbox from '../henkilohaku/criterias/SubOrganisationCheckbox';
+import './PalvelukayttajaHakuPage.css'
 
 type Props = {
     L: L,
@@ -29,7 +30,7 @@ class PalvelukayttajaHakuPage extends React.Component<Props> {
     }
 
     renderCriteria() {
-        return <div>
+        return <div className="PalvelukayttajaHakuPage-criteria">
             <DelayedSearchInput
                 setSearchQueryAction={this.onNameQueryChange}
                 defaultNameQuery={this.props.palvelukayttajat.criteria.nameQuery}
