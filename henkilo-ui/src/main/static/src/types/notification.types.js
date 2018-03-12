@@ -3,10 +3,10 @@
 export type NotificationType = 'success'| 'warning' | 'error' | 'info';
 
 export type NotificationTypes = {
-    SUCCESS: NotificationType,
-    WARNING: NotificationType,
-    INFO: NotificationType,
-    ERROR: NotificationType
+    SUCCESS: 'success',
+    WARNING: 'warning',
+    INFO: 'info',
+    ERROR: 'error'
 }
 
 export type GlobalNotificationConfig = {

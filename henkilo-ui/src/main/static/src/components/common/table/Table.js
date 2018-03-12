@@ -10,32 +10,24 @@ import SortDescIcon from "../icons/SortDescIcon";
 import SortIconNone from "../icons/SortIconNone";
 import classNames from 'classnames/bind';
 import Loader from "../icons/Loader";
-
-type Heading = {
-    key: string,
-    label?: string,
-    maxWidth?: number,
-    minWidth?: number,
-    notSortable?: boolean,
-    hide?: boolean
-}
+import type {TableHeading} from "../../../types/react-table.types";
 
 type Props = {
-    headings: Array<Heading>,
+    headings: Array<TableHeading>,
     data: Array<string | number | boolean>,
-    noDataText: string,
+    noDataText?: string,
     striped?: boolean,
     highlight?: boolean,
     manual?: boolean,
-    onFetchData: (any) => void,
+    onFetchData?: (any) => void,
     getTdProps?: () => void,
     subComponent?: (any) => React.Node,
-    defaultSorted: Array<any>,
-    fetchMoreSettings: {
-        fetchMoreAction: () => void,
-        isActive: boolean
+    defaultSorted?: Array<any>,
+    fetchMoreSettings?: {
+        fetchMoreAction?: () => void,
+        isActive?: boolean
     },
-    isLoading: boolean
+    isLoading?: boolean
 };
 
 class Table extends React.Component<Props> {
@@ -84,8 +76,8 @@ class Table extends React.Component<Props> {
                             getTrProps={(state, rowInfo, column) => ({ className: rowInfo.row.HIGHLIGHT ? "fadeOutBackgroundColor" : null })}
                             getTdProps={this.props.getTdProps}
                             onFetchData={this.props.onFetchData} />
-                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings.fetchMoreAction && this.props.fetchMoreSettings.fetchMoreAction();} }}
-                                  active={this.props.fetchMoreSettings.isActive}
+                <VisibilitySensor onChange={(isVisible) => { if(isVisible) {this.props.fetchMoreSettings && this.props.fetchMoreSettings.fetchMoreAction && this.props.fetchMoreSettings.fetchMoreAction();} }}
+                                  active={this.props.fetchMoreSettings && this.props.fetchMoreSettings.isActive}
                                   resizeDelay={500}
                                   delayedCall
                                   partialVisibility>

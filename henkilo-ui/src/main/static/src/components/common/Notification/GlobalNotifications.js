@@ -2,9 +2,10 @@
 import React from 'react';
 import {TypedNotification} from "./TypedNotification";
 import './GlobalNotifications.css';
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
 
 type Props = {
-    notificationList: Array<string>,
+    notificationList: Array<GlobalNotificationConfig>,
     removeGlobalNotification: (key: string) => void
 }
 
@@ -18,7 +19,7 @@ export class GlobalNotifications extends React.Component<Props> {
 
     render() {
         return <div id="global-notifications">
-            {this.props.notificationList.map((globalNotification: GlobalNotificationConfig) => {
+            {this.props.notificationList.map( (globalNotification: GlobalNotificationConfig) => {
                 if(globalNotification.autoClose) {
                     setTimeout(() => {
                         this.props.removeGlobalNotification(globalNotification.key);

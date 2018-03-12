@@ -10,9 +10,9 @@ export type Kayttooikeusryhma = {
     nimi: TextGroup,
     kuvaus: ?TextGroup,
     organisaatioViite: Array<OrganisaatioViite>,
-    rooliRajoite: string,
-    passivoitu: boolean,
-    ryhmaRestriction: boolean
+    rooliRajoite?: string,
+    passivoitu?: boolean,
+    ryhmaRestriction?: boolean
 }
 
 export type KayttooikeusRyhmaModify = {

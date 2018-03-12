@@ -35,7 +35,7 @@ type Props = {
     readOnly: boolean,
     basicInfo: (boolean, (any) => void, (any) => void, any) => any,
     readOnlyButtons: ((any) => void) => any,
-    updateHenkiloAndRefetch: (any) => void,
+    updateHenkiloAndRefetch: (any, GlobalNotificationConfig) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
     oidHenkilo: string,
     view: string,

@@ -98,7 +98,12 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         return hakemusData.service === 'ataru' ? this._parseAtaruHakemus(hakemusData) : this._parseHakuappHakemus(hakemusData);
     }
 
-    _parseAtaruHakemus(hakemus: Hakemus): DuplikaatitHakemus {
+
+    /*
+     * @return DuplikaatitHakemus
+     * @params Hakemus
+     */
+    _parseAtaruHakemus(hakemus: any): any {
         const href = hakemus.haku ? `/lomake-editori/applications/haku/${hakemus.haku}?application-key=${hakemus.oid}` : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
         const aidinkieliKoodi = (hakemus.aidinkieli || "").toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
@@ -120,7 +125,11 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         }
     };
 
-    _parseHakuappHakemus(hakemus: Hakemus): DuplikaatitHakemus {
+    /*
+     * @return DuplikaatitHakemus
+     * @params Hakemus
+     */
+    _parseHakuappHakemus(hakemus: any): any {
         const henkilotiedot = hakemus.answers.henkilotiedot;
         const aidinkieliKoodi = (henkilotiedot.aidinkieli || "").toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
@@ -141,7 +150,8 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         }
     };
 
-    _koodistoLabel(koodi, koodisto, locale): ?string {
+    _koodistoLabel(koodi: any, koodisto: any, locale: Locale): ?string {
+        console.log(koodi, koodisto);
         const koodistoItem = R.find(koodistoItem => koodistoItem.value === koodi, koodisto);
         return koodistoItem ? koodistoItem[locale] : null;
     };
