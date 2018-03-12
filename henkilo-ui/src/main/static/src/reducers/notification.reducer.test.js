@@ -19,10 +19,6 @@ describe('Tests for notication reducer', () => {
         title: 'This is a test 2'
     };
 
-    it('should return initial state', () => {
-        expect(notificationList(undefined, {})).toEqual([]);
-    });
-
     it('should add notification', () => {
         const testState = notificationList([config1], {
             type: GLOBAL_NOTIFICATION.ADD,

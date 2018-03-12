@@ -5,12 +5,12 @@ import {urls} from 'oph-urls-js';
 import type {Palvelu} from "../types/domain/kayttooikeus/palvelu.types";
 import type {Dispatch} from "../types/dispatch.type";
 
-type PalvelutRequestAction = { type: FETCH_PALVELUT_REQUEST };
-type PalvelutSuccessAction = { type: FETCH_PALVELUT_SUCCESS, payload: Array<Palvelu> };
-type PalvelutFailureAction = { type: FETCH_PALVELUT_FAILURE, error: any };
+type PalvelutRequestAction = { type: string };
+type PalvelutSuccessAction = { type: string, payload: Array<Palvelu> };
+type PalvelutFailureAction = { type: string, error: any };
 
 export type PalvelutAction = {
-    type: FETCH_PALVELUT_REQUEST | FETCH_PALVELUT_SUCCESS | FETCH_PALVELUT_FAILURE;
+    type: string;
     payload?: Array<Palvelu>,
     error?: any
 };

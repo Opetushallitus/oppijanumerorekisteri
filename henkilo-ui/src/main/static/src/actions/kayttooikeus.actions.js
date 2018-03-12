@@ -5,8 +5,10 @@ import {urls} from 'oph-urls-js';
 import type {PalveluKayttooikeus} from "../types/domain/kayttooikeus/palvelukayttooikeus.types";
 import {Dispatch} from "../types/dispatch.type";
 
+
+
 export type PalveluKayttooikeusAction = {
-    type: FETCH_PALVELUKAYTTOOIKEUS_REQUEST | FETCH_PALVELUKAYTTOOIKEUS_SUCCESS | FETCH_PALVELUKAYTTOOIKEUS_FAILURE;
+    type: string;
     payload?: Array<PalveluKayttooikeus>,
     error?: any
 }

@@ -22,15 +22,7 @@ import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeu
 import * as R from 'ramda';
 import {localize, localizeTextGroup} from "../../../utilities/localisation.util";
 import './HenkiloViewOpenKayttooikeusanomus.css';
-
-type Heading = {
-    key: string,
-    label?: string,
-    maxWidth?: number,
-    minWidth?: number,
-    notSortable?: boolean,
-    hide?: boolean
-}
+import type {TableHeading} from "../../../types/react-table.types";
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: any,
@@ -81,8 +73,8 @@ type Props = {
 class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
     L: L;
-    headingList: Array<Heading>;
-    tableHeadings: Array<Heading>;
+    headingList: Array<TableHeading>;
+    tableHeadings: Array<TableHeading>;
     _rows: Array<any>;
 
     constructor(props: Props) {
@@ -334,7 +326,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                                fetchMoreSettings={this.props.fetchMoreSettings}
                                isLoading={this.props.tableLoading}
                                striped={this.props.striped}
-                               subComponent={this.props.isAnomusView ? this.fetchKayttooikeusryhmatByAnoja.bind(this) : null}/>
+                               subComponent={this.props.isAnomusView ? this.fetchKayttooikeusryhmatByAnoja.bind(this) : undefined}/>
                     </div>
                 </div>
             </div>

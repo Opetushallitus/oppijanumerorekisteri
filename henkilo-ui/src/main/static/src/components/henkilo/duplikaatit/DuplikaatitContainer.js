@@ -14,12 +14,14 @@ import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import PropertySingleton from '../../../globals/PropertySingleton';
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
 type Props = {
     l10n: L10n,
     locale: Locale,
     oidHenkilo: string,
     henkilo: HenkiloState,
+    koodisto: KoodistoState,
     henkiloType: string,
     fetchHenkilo: string => void,
     fetchOmattiedot: () => void,

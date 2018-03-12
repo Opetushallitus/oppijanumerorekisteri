@@ -46,13 +46,14 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            notifications: [],
             selectedDuplicates: [],
             yksiloitySelected: this.props.henkilo.henkilo.yksiloity || this.props.henkilo.henkilo.yksiloityVTJ,
         }
     }
 
     render() {
-        const master = this.props.henkilo.henkilo;
+        const master: any = this.props.henkilo.henkilo;
         master.hakemukset = this.props.henkilo.hakemukset;
         const duplicates = this.props.henkilo.duplicates;
         const koodisto = this.props.koodisto;

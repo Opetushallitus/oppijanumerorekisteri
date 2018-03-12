@@ -11,7 +11,7 @@ type Props = {
     L: L,
     locale: string,
     fetchAllKayttooikeusryhma: (boolean) => void,
-    kayttooikeusRyhmas: Array<{id: number, description: {texts: {fi: string, sv: string, en: string,}}}>,
+    kayttooikeusRyhmas: Array<{id: number, description: {texts: Array<{lang: string, text: string}>}}>,
     kayttooikeusSelectionAction: (number) => void,
 };
 

@@ -74,7 +74,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     L: L;
     headingList: Array<TableHeading>;
     tableHeadings: Array<TableHeading>;
-    _rows: Array<{}>;
+    _rows: Array<string | number | boolean>;
     updateKayttooikeusryhma: (number, string, number, string) => void;
 
     static propTypes = {

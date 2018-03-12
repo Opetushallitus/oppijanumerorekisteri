@@ -6,6 +6,7 @@
 [include]
 
 [libs]
+src/flow-type-helper
 
 [lints]
 

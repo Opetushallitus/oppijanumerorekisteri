@@ -5,7 +5,7 @@ import './PopupButton.css';
 import onClickOutside from "react-onclickoutside";
 
 type Props = {
-    popupTitle: any, // Title/header for the popup
+    popupTitle?: any, // Title/header for the popup
     popupContent: Node, // React element as popup content
     children: any, // Button text
 

@@ -1,8 +1,8 @@
 // @flow
 
-import type {TextGroup} from "./textgroup.types";
+import type {Text} from "./text.types";
 
 export type PalveluKayttooikeus = {
     rooli: string,
-    oikeusLangs: TextGroup
+    oikeusLangs: Array<Text>
 }

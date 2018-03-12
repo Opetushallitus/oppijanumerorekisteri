@@ -2,6 +2,6 @@
 
 export type Hakemus = {
     hakemusData: {
-        [string]: any
+        [string]: mixed
     }
 }

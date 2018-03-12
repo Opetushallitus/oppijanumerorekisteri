@@ -30,6 +30,8 @@ export type KoodistoState = {
     sukupuoliKoodisto: Koodisto,
     oppilaitostyypitLoading: boolean,
     oppilaitostyypit: Array<any>,
+    maatjavaltiot1KoodistoLoading: boolean,
+    maatjavaltiot1: any
 }
 
 export const koodisto = (state: KoodistoState = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,

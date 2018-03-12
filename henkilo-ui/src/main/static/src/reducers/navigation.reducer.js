@@ -21,7 +21,8 @@ type Action = {
     naviOptions: NaviOptions,
     payload: any, // redux native
     henkiloUiLocalisations: L10n,
-    lang: Locale
+    lang: Locale,
+    localisations?: L10n
 }
 
 const locationChanges = (state, action) => state.naviTabs.map(naviTab => naviTab.path).indexOf(action.payload.pathname) === -1;
