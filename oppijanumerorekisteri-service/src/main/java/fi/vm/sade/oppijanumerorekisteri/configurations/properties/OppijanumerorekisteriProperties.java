@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "oppijanumerorekisteri")
 public class OppijanumerorekisteriProperties {
-    private int henkiloViiteSplitSize;
+    private int henkiloViiteSplitSize = 5000;
     private float etunimiThreshold = 0.85f;
     private float sukunimiThreshold = 0.85f;
 
@@ -38,7 +38,7 @@ public class OppijanumerorekisteriProperties {
         @Setter
         public static class Vtjsync {
             private Boolean enabled = true;
-            private Long fixedDelayInMillis = 200L;
+            private Long fixedDelayInMillis = 300000L;
         }
     }
 }
