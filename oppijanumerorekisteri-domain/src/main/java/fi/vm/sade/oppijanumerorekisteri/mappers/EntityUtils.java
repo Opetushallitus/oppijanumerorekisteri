@@ -74,7 +74,7 @@ public class EntityUtils {
     }
 
     static public Yksilointitieto createYksilointitieto(String etunimet, String kutsumanimi, String sukunimi, String sukupuoli, Henkilo henkilo) {
-        return new Yksilointitieto(henkilo, etunimet, kutsumanimi, sukunimi, sukupuoli, false, null,
+        return new Yksilointitieto(henkilo, etunimet, kutsumanimi, sukunimi, sukupuoli, null, false, null,
                 Sets.newHashSet(), Sets.newHashSet());
     }
 }
