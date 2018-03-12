@@ -139,7 +139,7 @@ class AddedOrganisation extends React.Component<Props, State> {
         this.props.removeOrganisaatioPermission(this.props.addedOrg.oid, permission);
     }
 
-    selectOrganisaatio(selection) {
+    selectOrganisaatio(selection: any) {
         if (!selection) {
             this.removeOrganisaatio(this.props.addedOrg.oid);
         }
@@ -147,7 +147,7 @@ class AddedOrganisation extends React.Component<Props, State> {
             const isOrganisaatio = selection.hasOwnProperty('oid');
             const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
             const availableOrganisaatios = getOrganisaatios(this.props.omatOrganisaatios, this.props.locale);
-            const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
+            const organisaatio: any = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
             if(isOrganisaatio && organisaatio && organisaatio.nimi) {
                 this.setState({organisaatioSelection: selection.name});
             } else {
