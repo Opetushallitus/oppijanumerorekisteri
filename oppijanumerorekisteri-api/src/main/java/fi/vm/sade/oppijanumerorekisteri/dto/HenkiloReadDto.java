@@ -20,6 +20,7 @@ public class HenkiloReadDto {
     private String oppijanumero;
     private String sukunimi;
     private String sukupuoli;
+    private String kotikunta;
     private Boolean turvakielto;
     private Boolean eiSuomalaistaHetua;
     private Boolean passivoitu;

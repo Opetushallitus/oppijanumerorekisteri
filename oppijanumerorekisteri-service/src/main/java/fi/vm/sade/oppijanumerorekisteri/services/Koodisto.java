@@ -9,6 +9,7 @@ public enum Koodisto {
     MAAT_JA_VALTIOT_2("maatjavaltiot2", 1),
     YHTEYSTIETOTYYPIT("yhteystietotyypit", 1),
     YHTEYSTIETOJEN_ALKUPERA("yhteystietojenalkupera", 1),
+    KUNTA("kunta", 1),
     ;
 
     private final String uri;
