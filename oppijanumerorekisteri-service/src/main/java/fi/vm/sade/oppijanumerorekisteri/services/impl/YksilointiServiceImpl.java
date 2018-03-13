@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.NimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
@@ -494,6 +495,15 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (henkilo.getAsiayhteysPalvelut().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
             henkiloModificationService.update(henkilo);
         }
+    }
+
+    @Override
+    @Transactional
+    public void enableYksilointi(String oid, AsiayhteysHakemusDto dto) {
+        AsiayhteysHakemus entity = mapper.map(dto, AsiayhteysHakemus.class);
+        Henkilo henkilo = getHenkiloByOid(oid);
+        henkilo.getAsiayhteysHakemukset().add(entity);
+        henkiloModificationService.update(henkilo);
     }
 
     private boolean isOppija(String oid) {

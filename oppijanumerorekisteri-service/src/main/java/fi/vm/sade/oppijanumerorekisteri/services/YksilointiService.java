@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
@@ -71,4 +72,13 @@ public interface YksilointiService {
      * @param palvelutunniste palvelutunniste
      */
     void disableYksilointi(String oid, String palvelutunniste);
+
+    /**
+     * Aktivoi yksilöinnin annetulle hakemukselle.
+     *
+     * @param oid henkilö oid
+     * @param dto hakemuksen tiedot
+     */
+    void enableYksilointi(String oid, AsiayhteysHakemusDto dto);
+
 }

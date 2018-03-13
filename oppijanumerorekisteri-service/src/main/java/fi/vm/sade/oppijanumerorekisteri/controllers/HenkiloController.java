@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 
 
 @Api(tags = "Henkilot")
@@ -384,6 +385,13 @@ public class HenkiloController {
     @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
     public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.disableYksilointi(oid, palvelutunniste);
+    }
+
+    @PostMapping("/{oid}/asiayhteys/hakemus")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Aktivoi yksilöinnin annetulle hakemukselle")
+    public void enableYksilointi(@PathVariable String oid, @Valid @RequestBody AsiayhteysHakemusDto dto) {
+        yksilointiService.enableYksilointi(oid, dto);
     }
 
     @GetMapping("/{oid}/slaves")
