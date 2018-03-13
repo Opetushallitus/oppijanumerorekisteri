@@ -32,6 +32,8 @@ import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
+import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
+import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -255,6 +257,9 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     private HenkiloPerustietoDto createHenkilo(HenkiloPerustietoDto dto) {
         Henkilo entity = this.mapper.map(dto, Henkilo.class);
+        if (dto.getPalveluasiayhteys() != null) {
+            entity.setAsiayhteysPalvelut(singleton(new AsiayhteysPalvelu(dto.getPalveluasiayhteys(), new Date())));
+        }
         entity = this.createHenkilo(entity);
         return this.mapper.map(entity, HenkiloPerustietoDto.class);
     }
