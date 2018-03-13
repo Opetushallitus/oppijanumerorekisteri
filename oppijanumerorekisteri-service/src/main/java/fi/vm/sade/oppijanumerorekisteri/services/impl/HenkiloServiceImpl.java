@@ -338,6 +338,7 @@ public class HenkiloServiceImpl implements HenkiloService {
             henkiloUpdateDto.setAidinkieli(null);
             henkiloUpdateDto.setKansalaisuus(null);
             henkiloUpdateDto.setSyntymaaika(null);
+            henkiloUpdateDto.setKotikunta(null);
         }
 
         if (!StringUtils.isEmpty(henkiloUpdateDto.getHetu()) && HetuUtils.hetuIsValid(henkiloUpdateDto.getHetu())) {
