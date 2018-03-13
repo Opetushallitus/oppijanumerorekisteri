@@ -29,7 +29,8 @@ const initialState: PalvelukayttajatState = {
 export const palvelukayttajat = (state: PalvelukayttajatState = initialState, action: any) => {
     switch (action.type) {
         case SET_PALVELUKAYTTAJAT_CRITERIA:
-            return { ...state, criteria: action.criteria, dirty: action.criteria.nameQuery !== '' };
+            const dirty = action.criteria.nameQuery !== '' || !!action.criteria.organisaatioOids
+            return { ...state, criteria: action.criteria, dirty };
         case FETCH_PALVELUKAYTTAJAT_REQUEST:
             return { ...state, loading: true };
         case FETCH_PALVELUKAYTTAJAT_SUCCESS:

@@ -43,7 +43,7 @@ class PalvelukayttajaHakuContainer extends React.Component<Props> {
 
     onCriteriaChange = (criteria: PalvelukayttajaCriteria) => {
         this.props.setPalvelukayttajatCriteria(criteria)
-        if (criteria.nameQuery) {
+        if (criteria.nameQuery || criteria.organisaatioOids) {
             this.props.fetchPalvelukayttajat(criteria)
         }
     }
