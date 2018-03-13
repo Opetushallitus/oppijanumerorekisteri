@@ -35,6 +35,8 @@ public class HenkiloUpdateDto {
 
     private String sukupuoli;
 
+    private String kotikunta;
+
     @ValidateAsiointikieli
     private KielisyysDto asiointiKieli;
 

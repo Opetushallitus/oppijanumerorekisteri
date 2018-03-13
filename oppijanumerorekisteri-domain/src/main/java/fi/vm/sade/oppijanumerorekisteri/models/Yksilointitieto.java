@@ -30,6 +30,8 @@ public class Yksilointitieto extends IdentifiableAndVersionedEntity {
 
     private String sukupuoli;
 
+    private String kotikunta;
+
     private boolean turvakielto;
 
     @ManyToOne

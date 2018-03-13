@@ -54,6 +54,8 @@ public class HenkiloCreatePostValidator implements Validator {
         koodiValidator.validate(Koodisto.SUKUPUOLI, henkilo.getSukupuoli(),
                 "sukupuoli", "invalid.sukupuoli");
 
+        koodiValidator.validate(Koodisto.KUNTA, henkilo.getKotikunta(), "kotikunta", "invalid.kotikunta");
+
         Set<Kansalaisuus> kansalaisuusSet = henkilo.getKansalaisuus();
         if (kansalaisuusSet != null) {
             Set<String> kansalaisuusKoodit = kansalaisuusSet.stream()

@@ -204,6 +204,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointitieto.setKutsumanimi(yksiloityHenkilo.getKutsumanimi());
         yksilointitieto.setSukunimi(yksiloityHenkilo.getSukunimi());
         yksilointitieto.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
+        yksilointitieto.setKotikunta(yksiloityHenkilo.getKotikunta());
         yksilointitieto.setTurvakielto(yksiloityHenkilo.isTurvakielto());
 
         Optional.ofNullable(yksiloityHenkilo.getKansalaisuusKoodit()).filter(collectionNotEmpty)
@@ -320,6 +321,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 });
 
         henkilo.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
+        henkilo.setKotikunta(yksiloityHenkilo.getKotikunta());
     }
 
     private void removeVtjYhteystiedotAndUpdateForOppija(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
@@ -408,6 +410,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setEtunimet(yksilointitieto.getEtunimet());
         henkilo.setSukunimi(yksilointitieto.getSukunimi());
         henkilo.setSukupuoli(yksilointitieto.getSukupuoli());
+        henkilo.setKotikunta(yksilointitieto.getKotikunta());
         henkilo.setYksiloityVTJ(true);
         henkilo.setYksiloity(false);
         henkilo.setTurvakielto(yksilointitieto.isTurvakielto());

@@ -46,6 +46,8 @@ public class HenkiloDto implements Serializable {
 
     private String sukupuoli;
 
+    private String kotikunta;
+
     private String oppijanumero;
 
     private Boolean turvakielto;

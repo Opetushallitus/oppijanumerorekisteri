@@ -62,7 +62,7 @@ public class DtoUtils {
 
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
-                syntymaAika, "1", "1.2.3.4.5", null, false, false, false, false, false, createdModified,
+                syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, createdModified,
                 createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
     }
 
@@ -80,7 +80,7 @@ public class DtoUtils {
 
         return new HenkiloCreateDto(hetu, passivoitu, etunimet, kutsumanimi, sukunimi, aidinkieli,
                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
-                "1.2.3.4.5", null, false, false,
+                null, "1.2.3.4.5", null, false, false,
                 false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
     }
 
@@ -102,7 +102,7 @@ public class DtoUtils {
         LocalDate syntymaAika = LocalDate.of(1970, Month.OCTOBER, 10);
 
         return new HenkiloUpdateDto(oidHenkilo, null, etunimet, kutsumanimi, sukunimi, hetu,
-                syntymaAika, null, "1", asiointikieli, aidinkieli,
+                syntymaAika, null, "1", null, asiointikieli, aidinkieli,
                 Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
     }
 
