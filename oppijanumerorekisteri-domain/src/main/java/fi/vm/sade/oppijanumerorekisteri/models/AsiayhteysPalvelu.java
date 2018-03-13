@@ -24,7 +24,7 @@ import lombok.Setter;
 @Table(name = "yksilointi_synkronointi", uniqueConstraints = {
     @UniqueConstraint(name = "uk_henkilo_palvelutunniste", columnNames = {"henkilo_id", "palvelutunniste"}),
 })
-public class YksilointiSynkronointi extends IdentifiableAndVersionedEntity {
+public class AsiayhteysPalvelu extends IdentifiableAndVersionedEntity {
 
     @Column(nullable = false)
     private String palvelutunniste;

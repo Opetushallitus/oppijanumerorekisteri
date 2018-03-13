@@ -147,7 +147,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_henkilo_yksilointi_synkronointi"))
-    private Set<YksilointiSynkronointi> yksilointiSynkronoinnit;
+    private Set<AsiayhteysPalvelu> asiayhteysPalvelut;
 
     /**
      * Oppijan organisaatiot. Huom! virkailijan organisaatiot ovat
