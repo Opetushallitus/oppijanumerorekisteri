@@ -42,6 +42,8 @@ public class YksilointiTests {
     private YksilointiService yksilointiService;
     @Autowired
     private HenkiloService henkiloService;
+    @Autowired
+    private HenkiloModificationService henkiloModificationService;
 
     @After
     public void cleanup() {
@@ -57,7 +59,7 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        HenkiloDto henkiloReadDto = henkiloService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(hetu);
         yksiloityHenkilo.setKutsumanimi("Teppo");
@@ -90,7 +92,7 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        HenkiloDto henkiloReadDto = henkiloService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(hetu);
         yksiloityHenkilo.setKutsumanimi("Esa");
@@ -124,7 +126,7 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        HenkiloDto henkiloReadDto = henkiloService.createHenkilo(henkiloCreateDto);
+        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
 
         DateTime modifiedSince = DateTime.now();
         yksilointiService.hetuttomanYksilointi(henkiloReadDto.getOidHenkilo());

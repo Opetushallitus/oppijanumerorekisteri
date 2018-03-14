@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,8 +31,6 @@ public interface HenkiloService {
 
     boolean getOidExists(String oid);
 
-    Henkilo disableHenkilo(String oid);
-
     String getOidByHetu(String hetu);
 
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
@@ -41,16 +40,6 @@ public interface HenkiloService {
     List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi);
 
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
-
-    FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
-
-    List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
-
-    HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
-
-    HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
-
-    HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto);
 
     HenkilonYhteystiedotViewDto getHenkiloYhteystiedot(String henkiloOid);
 
@@ -66,17 +55,13 @@ public interface HenkiloService {
 
     Map<String, HenkiloDto> getMastersByOids(Set<String> henkiloOids);
 
+    Henkilo getEntityByOid(String henkiloOid);
+
     HenkiloReadDto getByHetu(String hetu);
 
     List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria);
 
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
-
-    Henkilo createHenkilo(Henkilo henkiloCreate);
-
-    Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate);
-
-    Henkilo update(Henkilo henkilo);
 
     List<HenkiloReadDto> findSlavesByMasterOid(String masterOid);
 

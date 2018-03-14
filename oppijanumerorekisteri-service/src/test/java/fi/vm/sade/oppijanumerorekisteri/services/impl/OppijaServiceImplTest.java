@@ -12,10 +12,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
-import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import java.util.HashMap;
@@ -47,6 +45,8 @@ public class OppijaServiceImplTest {
     @Mock
     private HenkiloService henkiloServiceMock;
     @Mock
+    private HenkiloModificationService henkiloModificationServiceMock;
+    @Mock
     private OrganisaatioService organisaatioServiceMock;
     @Mock
     private OrikaConfiguration mapperMock;
@@ -67,7 +67,9 @@ public class OppijaServiceImplTest {
 
     @Before
     public void setup() {
-        OppijaTuontiServiceImpl oppijaTuontiServiceImpl = new OppijaTuontiServiceImpl(henkiloServiceMock, mapperMock,
+        OppijaTuontiServiceImpl oppijaTuontiServiceImpl = new OppijaTuontiServiceImpl(henkiloServiceMock,
+                henkiloModificationServiceMock,
+                mapperMock,
                 henkiloRepositoryMock,
                 tuontiRepositoryMock, organisaatioRepositoryMock,
                 kayttooikeusClientMock, userDetailsHelperMock,
@@ -75,7 +77,7 @@ public class OppijaServiceImplTest {
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,
-                oppijaTuontiServiceAsyncImpl, henkiloServiceMock,
+                oppijaTuontiServiceAsyncImpl, henkiloServiceMock, henkiloModificationServiceMock,
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
                 organisaatioRepositoryMock, userDetailsHelperMock,

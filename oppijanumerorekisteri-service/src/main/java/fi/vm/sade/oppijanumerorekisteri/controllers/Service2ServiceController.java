@@ -2,8 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import io.swagger.annotations.*;
+import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -19,16 +21,12 @@ import java.util.List;
 @Api(tags = "Service To Service")
 @RestController
 @RequestMapping("/s2s")
+@RequiredArgsConstructor
 public class Service2ServiceController {
-    private HenkiloService henkiloService;
+    private final HenkiloService henkiloService;
+    private final HenkiloModificationService henkiloModificationService;
 
-    private Environment environment;
-
-    @Autowired
-    public Service2ServiceController(HenkiloService henkiloService, Environment environment) {
-        this.henkiloService = henkiloService;
-        this.environment = environment;
-    }
+    private final Environment environment;
 
     @ApiOperation("Hakee annettua henkilötunnusta vastaavan henkilö OID:n")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
@@ -92,7 +90,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/findOrCreateHenkiloPerustieto", method = RequestMethod.POST)
     public ResponseEntity<HenkiloPerustietoDto> createNewHenkilo(@Validated @RequestBody HenkiloPerustietoDto henkiloPerustietoDto) {
-        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = this.henkiloService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
+        FindOrCreateWrapper<HenkiloPerustietoDto> wrapper = this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDto);
         HenkiloPerustietoDto returnDto = wrapper.getDto();
         if (wrapper.isCreated()) {
             return ResponseEntity.created(URI.create(this.environment.getProperty("server.contextPath") + "/henkilo/"
@@ -121,7 +119,7 @@ public class Service2ServiceController {
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> findOrCreate(@Validated @RequestBody List<HenkiloPerustietoDto> henkilot) {
-        return henkiloService.findOrCreateHenkiloFromPerustietoDto(henkilot);
+        return henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(henkilot);
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
@@ -145,6 +143,6 @@ public class Service2ServiceController {
     @PreAuthorize("hasRole('APP_HENKILONHALLINTA_MUUTOSTIETOPALVELU')")
     @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public HenkiloReadDto forceUpdateHenkilo(@Validated @RequestBody HenkiloForceUpdateDto henkiloUpdateDto) {
-        return this.henkiloService.forceUpdateHenkilo(henkiloUpdateDto);
+        return this.henkiloModificationService.forceUpdateHenkilo(henkiloUpdateDto);
     }
 }

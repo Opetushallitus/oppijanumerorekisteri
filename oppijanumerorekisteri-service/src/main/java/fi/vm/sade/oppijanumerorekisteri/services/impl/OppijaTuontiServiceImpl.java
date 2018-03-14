@@ -19,6 +19,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import static java.util.stream.Collectors.toSet;
 public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     private final HenkiloService henkiloService;
+    private final HenkiloModificationService henkiloModificationService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
@@ -171,7 +173,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
             // liitetään henkilö organisaatioihin
             organisaatiot.forEach(henkilo::addOrganisaatio);
-            henkilo = henkiloService.update(henkilo);
+            henkilo = henkiloModificationService.update(henkilo);
 
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
             rivi.setHenkilo(henkilo);
@@ -190,7 +192,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                         .build()).collect(toSet())
                 );
             }
-            return henkiloService.createHenkilo(henkilo, kasittelijaOid, false);
+            return henkiloModificationService.createHenkilo(henkilo, kasittelijaOid, false);
         }
 
     }

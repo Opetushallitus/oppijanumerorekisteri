@@ -21,24 +21,20 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
-import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
-import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiAsyncService;
+
 import java.util.Map;
 import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
@@ -54,6 +50,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final OppijaTuontiService oppijaTuontiService;
     private final OppijaTuontiAsyncService oppijaTuontiAsyncService;
     private final HenkiloService henkiloService;
+    private final HenkiloModificationService henkiloModificationService;
     private final OrganisaatioService organisaatioService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
@@ -76,7 +73,7 @@ public class OppijaServiceImpl implements OppijaService {
         }
         organisaatiot.forEach(entity::addOrganisaatio);
 
-        entity = henkiloService.createHenkilo(entity, kayttajaOid, true);
+        entity = henkiloModificationService.createHenkilo(entity, kayttajaOid, true);
         return entity.getOidHenkilo();
     }
 
@@ -202,7 +199,7 @@ public class OppijaServiceImpl implements OppijaService {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
         organisaatiot.forEach(henkilo::addOrganisaatio);
-        henkiloService.update(henkilo);
+        henkiloModificationService.update(henkilo);
     }
 
     @Override
@@ -211,7 +208,7 @@ public class OppijaServiceImpl implements OppijaService {
         Organisaatio organisaatio = organisaatioRepository.findByOid(organisaatioOid)
                 .orElseGet(() -> organisaatioService.create(organisaatioOid));
         if (henkilo.addOrganisaatio(organisaatio)) {
-            henkiloService.update(henkilo);
+            henkiloModificationService.update(henkilo);
         }
     }
 
@@ -220,7 +217,7 @@ public class OppijaServiceImpl implements OppijaService {
         Henkilo henkilo = getHenkiloEntity(henkiloOid);
         organisaatioRepository.findByOid(organisaatioOid).ifPresent(organisaatio -> {
             if (henkilo.removeOrganisaatio(organisaatio)) {
-                henkiloService.update(henkilo);
+                henkiloModificationService.update(henkilo);
             }
         });
     }

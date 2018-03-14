@@ -10,14 +10,11 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 
 import java.util.Collection;
 import java.util.Optional;
 
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +33,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     private final OrikaConfiguration mapper;
 
     private final YksilointiService yksilointiService;
-    private final HenkiloService henkiloService;
+    private final HenkiloModificationService henkiloModificationService;
     private final DuplicateService duplicateService;
 
     private Henkilo getHenkiloByOid(String oid) {
@@ -64,7 +61,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         Henkilo henkilo = getHenkiloByOid(oid);
         Identification identification = mapper.map(dto, Identification.class);
         henkilo.getIdentifications().add(identification);
-        return henkiloService.update(henkilo);
+        return henkiloModificationService.update(henkilo);
     }
 
     @Override
@@ -115,7 +112,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite());
         }
 
-        henkiloService.update(henkiloToUpdate);
+        henkiloModificationService.update(henkiloToUpdate);
     }
 
     private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {

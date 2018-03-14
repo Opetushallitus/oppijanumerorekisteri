@@ -30,6 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class HenkiloController {
     private final HenkiloService henkiloService;
+    private final HenkiloModificationService henkiloModificationService;
     private final DuplicateService duplicateService;
     private final IdentificationService identificationService;
 
@@ -125,7 +126,7 @@ public class HenkiloController {
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                 @RequestHeader(value = "External-Permission-Service", required = false)
                                         ExternalPermissionService permissionService) throws BindException {
-        return this.henkiloService.updateHenkilo(henkiloUpdateDto).getOidHenkilo();
+        return this.henkiloModificationService.updateHenkilo(henkiloUpdateDto).getOidHenkilo();
     }
 
     @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
@@ -182,7 +183,7 @@ public class HenkiloController {
             notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
             authorizations = @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"))
     public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) throws IOException {
-        this.henkiloService.disableHenkilo(oid);
+        this.henkiloModificationService.disableHenkilo(oid);
     }
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
@@ -214,7 +215,7 @@ public class HenkiloController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createHenkiloFromHenkiloCreateDto(@ApiParam("Henkilön sukupuolen kelvolliset arvot löytyvät sukupuoli koodistosta.")
                                                     @RequestBody @Validated HenkiloCreateDto henkilo) throws BindException {
-        return this.henkiloService.createHenkilo(henkilo).getOidHenkilo();
+        return this.henkiloModificationService.createHenkilo(henkilo).getOidHenkilo();
     }
 
     @ApiOperation(value = "Henkilöiden haku OID:ien perusteella.",
