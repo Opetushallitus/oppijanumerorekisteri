@@ -500,9 +500,16 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Override
     @Transactional
     public void enableYksilointi(String oid, AsiayhteysHakemusDto dto) {
-        AsiayhteysHakemus entity = mapper.map(dto, AsiayhteysHakemus.class);
         Henkilo henkilo = getHenkiloByOid(oid);
-        henkilo.getAsiayhteysHakemukset().add(entity);
+        AsiayhteysHakemus entity = henkilo.getAsiayhteysHakemukset().stream()
+                .filter(t -> t.getHakemusOid().equals(dto.getHakemusOid()))
+                .findFirst()
+                .orElseGet(() -> {
+                    AsiayhteysHakemus hakemus = new AsiayhteysHakemus();
+                    henkilo.getAsiayhteysHakemukset().add(hakemus);
+                    return hakemus;
+                });
+        mapper.map(dto, entity);
         henkiloModificationService.update(henkilo);
     }
 
