@@ -41,6 +41,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Slice<HenkiloHakuDto> list(
@@ -55,6 +56,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
@@ -150,7 +152,7 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Hakee henkilön tiedot annetun OID:n pohjalta, sisältään kaikki henkilön tiedot.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}", method = RequestMethod.GET)
     public HenkiloDto findByOid(@PathVariable String oid,
                                 @RequestHeader(value = "External-Permission-Service", required = false)
@@ -161,7 +163,7 @@ public class HenkiloController {
 
     @ApiOperation(value = "Palauttaa, onko annettu henkilö OID järjestelmässä",
             notes = "Jos henkilö löytyy, palautuu ok (200), muuten not found (404)")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @RequestMapping(value = "/{oid}", method = RequestMethod.HEAD)
     public ResponseEntity oidExists(@PathVariable String oid,
@@ -185,7 +187,7 @@ public class HenkiloController {
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/master", method = RequestMethod.GET)
     public HenkiloReadDto getMasterByOid(@PathVariable String oid,
                                          @RequestHeader(value = "External-Permission-Service", required = false)
@@ -194,7 +196,7 @@ public class HenkiloController {
     }
 
     @ApiOperation("Henkilön haku henkilötunnuksen perusteella.")
-    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}}, #permissionService)")
     @RequestMapping(value = "/hetu={hetu}", method = RequestMethod.GET)
     public HenkiloReadDto getByHetu(@PathVariable String hetu,
                                     @RequestHeader(value = "External-Permission-Service", required = false)
@@ -220,6 +222,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilotByHenkiloOidList", method = RequestMethod.POST)
@@ -254,7 +257,7 @@ public class HenkiloController {
     @ApiOperation(value = "Hakee henkilön tiedot annetun tunnistetiedon avulla.",
             notes = "Hakee henkilön tiedot annetun tunnistetiedon avulla.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'READ', 'READ_UPDATE', 'CRUD'}, null)")
+    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}}, null)")
     @RequestMapping(value = "/identification", method = RequestMethod.GET)
     public HenkiloDto findByIdpAndIdentifier(@ApiParam(value = "Tunnistetiedon tyyppi", required = true) @RequestParam("idp") String idp,
                                              @ApiParam(value = "Varsinainen tunniste", required = true) @RequestParam("id") String identifier) {
@@ -281,6 +284,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkilotypes", method = RequestMethod.GET)
@@ -336,7 +340,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/yksilointitiedot")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}}, #permissionService)")
     @ApiOperation("Hakee henkilön yksilöintitiedot oidin perusteella")
     public YksilointitietoDto getYksilointitiedot(@PathVariable String oid,
                                                   @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
@@ -382,7 +386,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/slaves")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'READ', 'READ_UPDATE', 'CRUD'}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}}, #permissionService)")
     @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")
     public List<HenkiloReadDto> findSlavesByMasterOid(
             @PathVariable String oid,
@@ -434,7 +438,7 @@ public class HenkiloController {
     }
 
     @ApiOperation("Hae käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oidHenkilo, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oidHenkilo, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oidHenkilo}/asiointiKieli", method = RequestMethod.GET)
     public String getAsiointikieli(@PathVariable String oidHenkilo,
                                    @RequestHeader(value = "External-Permission-Service", required = false)
