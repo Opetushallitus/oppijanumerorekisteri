@@ -1,11 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import java.util.Date;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +22,6 @@ public class AsiayhteysHakemus extends IdentifiableAndVersionedEntity {
     private String hakemusOid;
 
     @Column(name = "loppupaivamaara")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date loppupaivamaara;
+    private LocalDate loppupaivamaara;
 
 }
