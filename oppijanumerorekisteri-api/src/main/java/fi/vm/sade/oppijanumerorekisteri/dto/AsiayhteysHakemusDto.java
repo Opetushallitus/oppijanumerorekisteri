@@ -14,10 +14,12 @@ public class AsiayhteysHakemusDto {
     @NotNull
     private String hakemusOid;
 
+    @NotNull
     private LocalDate loppupaivamaara;
 
-    public AsiayhteysHakemusDto(String hakemusOid) {
+    public AsiayhteysHakemusDto(String hakemusOid, LocalDate loppupaivamaara) {
         this.hakemusOid = hakemusOid;
+        this.loppupaivamaara = loppupaivamaara;
     }
 
 }

@@ -13,6 +13,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import java.time.LocalDate;
+import java.time.Month;
 import static java.util.Collections.singletonList;
 import java.util.List;
 import java.util.Optional;
@@ -162,7 +164,7 @@ public class YksilointiTests {
         henkiloCreateDto.setSukunimi("testaaja");
         HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
 
-        yksilointiService.enableYksilointi(henkiloReadDto.getOidHenkilo(), new AsiayhteysHakemusDto("hakemusoid123"));
+        yksilointiService.enableYksilointi(henkiloReadDto.getOidHenkilo(), new AsiayhteysHakemusDto("hakemusoid123", LocalDate.of(2018, Month.MARCH, 14)));
 
         List<AsiayhteysHakemus> asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
         assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getHakemusOid).containsExactly("hakemusoid123");

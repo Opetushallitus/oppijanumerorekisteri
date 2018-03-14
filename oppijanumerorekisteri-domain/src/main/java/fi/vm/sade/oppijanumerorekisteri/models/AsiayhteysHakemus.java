@@ -21,7 +21,7 @@ public class AsiayhteysHakemus extends IdentifiableAndVersionedEntity {
     @Column(name = "hakemus_oid", nullable = false)
     private String hakemusOid;
 
-    @Column(name = "loppupaivamaara")
+    @Column(name = "loppupaivamaara", nullable = false)
     private LocalDate loppupaivamaara;
 
 }
