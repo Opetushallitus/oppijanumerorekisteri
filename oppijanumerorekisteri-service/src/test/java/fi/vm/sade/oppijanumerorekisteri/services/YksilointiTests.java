@@ -6,11 +6,14 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.YksilointiTask;
 import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
+import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
+import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
+import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysKayttooikeusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
-import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
+import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysKayttooikeus;
+import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysKayttooikeusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import java.time.LocalDate;
@@ -52,6 +55,8 @@ public class YksilointiTests {
     private HenkiloModificationService henkiloModificationService;
     @Autowired
     private AsiayhteysHakemusRepository asiayhteysHakemusRepository;
+    @Autowired
+    private AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
 
     @After
     public void cleanup() {
@@ -178,6 +183,21 @@ public class YksilointiTests {
 
         asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
         assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getHakemusOid).containsExactlyInAnyOrder("hakemusoid123", "hakemusoid321");
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void enableYksilointiKayttooikeus() {
+        HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
+        henkiloCreateDto.setKutsumanimi("teppo");
+        henkiloCreateDto.setEtunimet("teppo");
+        henkiloCreateDto.setSukunimi("testaaja");
+        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+
+        yksilointiService.enableYksilointi(henkiloReadDto.getOidHenkilo(), new AsiayhteysKayttooikeusDto(LocalDate.of(2018, Month.MARCH, 14)));
+
+        Optional<AsiayhteysKayttooikeus> asiayhteysKayttooikeus = asiayhteysKayttooikeusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
+        assertThat(asiayhteysKayttooikeus).hasValueSatisfying(t -> assertThat(t.getLoppupaivamaara()).isEqualTo("2018-03-14"));
     }
 
 }
