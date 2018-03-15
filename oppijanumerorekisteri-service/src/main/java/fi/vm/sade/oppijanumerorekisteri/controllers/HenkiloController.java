@@ -394,6 +394,13 @@ public class HenkiloController {
         yksilointiService.enableYksilointi(oid, dto);
     }
 
+    @PutMapping("/{oid}/asiayhteys/kayttooikeus")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation("Aktivoi yksilöinnin käyttöoikeuden perusteella")
+    public void enableYksilointi(@PathVariable String oid, @Valid @RequestBody AsiayhteysKayttooikeusDto dto) {
+        yksilointiService.enableYksilointi(oid, dto);
+    }
+
     @GetMapping("/{oid}/slaves")
     @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'READ'}}, #permissionService)")
     @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")

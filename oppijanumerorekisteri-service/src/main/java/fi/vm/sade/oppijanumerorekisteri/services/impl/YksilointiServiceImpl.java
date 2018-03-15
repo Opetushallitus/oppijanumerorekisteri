@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysKayttooikeusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.NimiDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
@@ -64,6 +65,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
+    private final AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
     private final OrikaConfiguration mapper;
 
     private final VtjClient vtjClient;
@@ -510,6 +512,17 @@ public class YksilointiServiceImpl implements YksilointiService {
                     return hakemus;
                 });
         mapper.map(dto, entity);
+        henkiloModificationService.update(henkilo);
+    }
+
+    @Override
+    @Transactional
+    public void enableYksilointi(String oid, AsiayhteysKayttooikeusDto dto) {
+        Henkilo henkilo = getHenkiloByOid(oid);
+        AsiayhteysKayttooikeus entity = asiayhteysKayttooikeusRepository.findByHenkilo(henkilo)
+                .orElseGet(() -> new AsiayhteysKayttooikeus(henkilo));
+        mapper.map(dto, entity);
+        asiayhteysKayttooikeusRepository.save(entity);
         henkiloModificationService.update(henkilo);
     }
 
