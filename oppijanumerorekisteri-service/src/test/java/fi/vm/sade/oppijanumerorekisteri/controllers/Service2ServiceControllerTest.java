@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -46,6 +47,9 @@ public class Service2ServiceControllerTest  {
 
     @MockBean
     private HenkiloService henkiloService;
+
+    @MockBean
+    private HenkiloModificationService henkiloModificationService;
 
     @Test
     @WithMockUser
@@ -151,7 +155,7 @@ public class Service2ServiceControllerTest  {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
+        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
@@ -164,7 +168,7 @@ public class Service2ServiceControllerTest  {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
+        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -177,7 +181,7 @@ public class Service2ServiceControllerTest  {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
+        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
@@ -193,7 +197,7 @@ public class Service2ServiceControllerTest  {
                 "\"kutsumanimi\": \"arpa\"," +
                 "\"sukunimi\": \"kuutio\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
-        given(this.henkiloService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
+        given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
         this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
@@ -219,6 +223,5 @@ public class Service2ServiceControllerTest  {
         this.mvc.perform(get("/s2s/yhteystiedot/1.2.3.4.6").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("{}"));
     }
-
 
 }

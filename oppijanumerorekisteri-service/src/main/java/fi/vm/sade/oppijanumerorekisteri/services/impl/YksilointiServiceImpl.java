@@ -19,6 +19,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
@@ -56,6 +57,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     private final HenkiloRepository henkiloRepository;
     private final HenkiloService henkiloService;
+    private final HenkiloModificationService henkiloModificationService;
     private final KansalaisuusRepository kansalaisuusRepository;
     private final KielisyysRepository kielisyysRepository;
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
@@ -121,7 +123,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setYksiloity(true);
         henkilo.setDuplicate(false);
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
-        return henkiloService.update(henkilo);
+        return henkiloModificationService.update(henkilo);
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
@@ -158,7 +160,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setYksiloity(false);
         }
 
-        return henkiloService.update(henkilo);
+        return henkiloModificationService.update(henkilo);
     }
 
     private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
@@ -367,7 +369,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         henkilo.setYksiloity(false);
-        return henkiloService.update(henkilo);
+        return henkiloModificationService.update(henkilo);
     }
 
     @Override
@@ -388,7 +390,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
         henkilo.setVtjsynced(new Date());
-        henkiloService.update(henkilo);
+        henkiloModificationService.update(henkilo);
     }
 
     @Override
@@ -435,7 +437,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         yksilointitietoRepository.delete(yksilointitieto);
-        henkiloService.update(henkilo);
+        henkiloModificationService.update(henkilo);
     }
 
     @Override
@@ -481,7 +483,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         Henkilo henkilo = getHenkiloByOid(oid);
         if (henkilo.getYksilointiSynkronoinnit().stream().noneMatch(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
             henkilo.getYksilointiSynkronoinnit().add(new YksilointiSynkronointi(palvelutunniste, new Date()));
-            henkiloService.update(henkilo);
+            henkiloModificationService.update(henkilo);
         }
     }
 
@@ -490,7 +492,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     public void disableYksilointi(String oid, String palvelutunniste) {
         Henkilo henkilo = getHenkiloByOid(oid);
         if (henkilo.getYksilointiSynkronoinnit().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
-            henkiloService.update(henkilo);
+            henkiloModificationService.update(henkilo);
         }
     }
 
