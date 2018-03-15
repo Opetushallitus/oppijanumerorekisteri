@@ -39,10 +39,12 @@ public class AsiayhteysRepositoryImpl implements AsiayhteysRepository {
                 .limit(limit)
                 .select(qHenkilo);
 
-        BooleanBuilder predicate = getAsiayhteysQueries(qHenkilo, criteria).stream()
-                .map(JPQLQuery::exists)
-                .reduce(new BooleanBuilder(), BooleanBuilder::or, BooleanBuilder::or);
-        query.where(predicate);
+        if (Boolean.TRUE.equals(criteria.getAsiayhteysKaytossa())) {
+            BooleanBuilder predicate = getAsiayhteysQueries(qHenkilo, criteria).stream()
+                    .map(JPQLQuery::exists)
+                    .reduce(new BooleanBuilder(), BooleanBuilder::or, BooleanBuilder::or);
+            query.where(predicate);
+        }
 
         return query.fetch();
     }
@@ -58,10 +60,12 @@ public class AsiayhteysRepositoryImpl implements AsiayhteysRepository {
                 .limit(limit)
                 .select(qHenkilo);
 
-        BooleanBuilder predicate = getAsiayhteysQueries(qHenkilo, criteria).stream()
-                .map(JPQLQuery::notExists)
-                .reduce(new BooleanBuilder(), BooleanBuilder::and, BooleanBuilder::and);
-        query.where(predicate);
+        if (Boolean.TRUE.equals(criteria.getAsiayhteysKaytossa())) {
+            BooleanBuilder predicate = getAsiayhteysQueries(qHenkilo, criteria).stream()
+                    .map(JPQLQuery::notExists)
+                    .reduce(new BooleanBuilder(), BooleanBuilder::and, BooleanBuilder::and);
+            query.where(predicate);
+        }
 
         return query.fetch();
     }

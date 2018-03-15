@@ -53,7 +53,11 @@ public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
             long start = System.currentTimeMillis();
 
             AsiayhteysCriteria criteria = new AsiayhteysCriteria(LocalDate.now());
-            List<Henkilo> poistettavat = asiayhteysRepository.findPoistettavat(criteria, MUUTOSTIETOPALVELU_MAKSIMIRIVIMAARA);
+            boolean asiayhteysKaytossa = Boolean.TRUE.equals(properties.getScheduling().getVtjsync().getAsiayhteysKaytossa());
+            criteria.setAsiayhteysKaytossa(asiayhteysKaytossa);
+            List<Henkilo> poistettavat = asiayhteysKaytossa
+                    ? asiayhteysRepository.findPoistettavat(criteria, MUUTOSTIETOPALVELU_MAKSIMIRIVIMAARA)
+                    : Collections.emptyList();
             long lisattavatMax = MUUTOSTIETOPALVELU_MAKSIMIRIVIMAARA - poistettavat.size();
             List<Henkilo> henkilosToAdd = lisattavatMax > 0L
                     ? asiayhteysRepository.findLisattavat(criteria, lisattavatMax)

@@ -69,3 +69,6 @@ authentication:
     password: {{authentication_app_password_to_henkilotietomuutos}}
 oppijanumerorekisteri:
   uses-ssl-proxy: true
+  scheduling:
+    vtjsync:
+      asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}

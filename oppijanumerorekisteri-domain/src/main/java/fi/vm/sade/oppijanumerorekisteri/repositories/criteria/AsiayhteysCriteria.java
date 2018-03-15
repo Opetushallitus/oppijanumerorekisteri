@@ -12,6 +12,7 @@ import lombok.ToString;
 public class AsiayhteysCriteria {
 
     private LocalDate loppupaivamaara;
+    private Boolean asiayhteysKaytossa;
 
     public AsiayhteysCriteria(LocalDate loppupaivamaara) {
         this.loppupaivamaara = requireNonNull(loppupaivamaara);
