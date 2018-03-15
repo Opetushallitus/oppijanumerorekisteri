@@ -146,7 +146,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private Boolean turvakielto = false;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
-    @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_henkilo_yksilointi_synkronointi"))
+    @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_asiayhteys_palvelu_henkilo"))
     private Set<AsiayhteysPalvelu> asiayhteysPalvelut;
 
     /**

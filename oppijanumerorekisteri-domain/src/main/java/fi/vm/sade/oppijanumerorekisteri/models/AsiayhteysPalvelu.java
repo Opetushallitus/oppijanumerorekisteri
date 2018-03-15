@@ -14,14 +14,14 @@ import lombok.Setter;
  * Henkilön yksilöinnin synkronointiflagi. Tämän avulla henkilölle voidaan
  * asettaa yksilöinnin synkronointi päälle/pois päältä palveluittain.
  *
- * @see Henkilo#yksilointiSynkronoinnit henkilön synkronoinnit
+ * @see Henkilo#asiayhteysPalvelut henkilön asiayhteydet
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "yksilointi_synkronointi", uniqueConstraints = {
+@Table(name = "asiayhteys_palvelu", uniqueConstraints = {
     @UniqueConstraint(name = "uk_henkilo_palvelutunniste", columnNames = {"henkilo_id", "palvelutunniste"}),
 })
 public class AsiayhteysPalvelu extends IdentifiableAndVersionedEntity {
