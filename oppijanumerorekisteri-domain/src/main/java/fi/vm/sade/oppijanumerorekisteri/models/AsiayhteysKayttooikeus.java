@@ -8,6 +8,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,11 +20,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "asiayhteys_kayttooikeus")
+@Table(name = "asiayhteys_kayttooikeus", uniqueConstraints = {
+    @UniqueConstraint(name = "uk_henkilo", columnNames = {"henkilo_id"})
+})
 public class AsiayhteysKayttooikeus extends IdentifiableAndVersionedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "henkilo_id", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_asiayhteys_kayttooikeus_henkilo"))
+    @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_asiayhteys_kayttooikeus_henkilo"))
     private Henkilo henkilo;
 
     @Column(name = "loppupaivamaara", nullable = false)
