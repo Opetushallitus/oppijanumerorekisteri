@@ -10,6 +10,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Builder(builderClassName = "builder")
 @Getter @Setter
@@ -17,6 +20,7 @@ import org.hibernate.annotations.BatchSize;
 @AllArgsConstructor
 @Entity
 @Table(name = "henkilo", schema = "public")
+@Audited
 @NamedEntityGraphs({
         @NamedEntityGraph(
                 name = "henkiloDto",
@@ -45,10 +49,12 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aidinkieli_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Kielisyys aidinkieli;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asiointikieli_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Kielisyys asiointiKieli;
 
     @NotNull
@@ -103,6 +109,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "kielisyys_id",
             referencedColumnName = "id"))
     @BatchSize(size = 1000)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<Kielisyys> kielisyys = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -110,11 +117,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(
             name = "kansalaisuus_id", referencedColumnName = "id"))
     @BatchSize(size = 100)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id")
     @BatchSize(size = 1000)
+    @NotAudited
     private Set<YhteystiedotRyhma> yhteystiedotRyhma = new HashSet<>();
 
     @Column(name = "kasittelija")
@@ -133,14 +142,17 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "huoltaja_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Henkilo huoltaja;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "henkilo_id", nullable = false)
+    @NotAudited
     private Set<Identification> identifications = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "henkilo_id", nullable = false)
+    @NotAudited
     private Set<ExternalId> externalIds = new HashSet<>();
 
     private Boolean turvakielto = false;
@@ -155,6 +167,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             foreignKey = @ForeignKey(name = "fk_henkilo_organisaatio_henkilo"),
             inverseJoinColumns = @JoinColumn(name = "organisaatio_id", referencedColumnName = "id"),
             inverseForeignKey = @ForeignKey(name = "fk_henkilo_organisaatio_organisaatio"))
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<Organisaatio> organisaatiot;
 
     @ElementCollection(fetch = FetchType.LAZY)
@@ -163,6 +176,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             foreignKey = @ForeignKey(name = "fk_henkilo_passinumero"),
             uniqueConstraints = @UniqueConstraint(name = "uk_passinumero_01", columnNames = "passinumero"))
     @Column(name = "passinumero", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<String> passinumerot;
 
     public void clearYhteystiedotRyhmas() {
