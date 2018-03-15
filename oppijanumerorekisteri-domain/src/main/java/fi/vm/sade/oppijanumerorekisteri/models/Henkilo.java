@@ -149,6 +149,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_asiayhteys_palvelu_henkilo"))
     private Set<AsiayhteysPalvelu> asiayhteysPalvelut;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, orphanRemoval = true)
+    @JoinColumn(name = "henkilo_id", nullable = false, foreignKey = @ForeignKey(name = "fk_asiayhteys_hakemus_henkilo"))
+    private Set<AsiayhteysHakemus> asiayhteysHakemukset;
+
     /**
      * Oppijan organisaatiot. Huom! virkailijan organisaatiot ovat
      * käyttöoikeuspalvelussa.

@@ -5,12 +5,18 @@ import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.YksilointiTask;
+import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
+import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
+import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import java.time.LocalDate;
+import java.time.Month;
 import static java.util.Collections.singletonList;
+import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.from;
@@ -44,6 +50,8 @@ public class YksilointiTests {
     private HenkiloService henkiloService;
     @Autowired
     private HenkiloModificationService henkiloModificationService;
+    @Autowired
+    private AsiayhteysHakemusRepository asiayhteysHakemusRepository;
 
     @After
     public void cleanup() {
@@ -145,6 +153,31 @@ public class YksilointiTests {
                 .returns(false, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
                 .containsExactly(henkiloReadDto.getOidHenkilo());
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void enableYksilointiHakemus() {
+        HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
+        henkiloCreateDto.setKutsumanimi("teppo");
+        henkiloCreateDto.setEtunimet("teppo");
+        henkiloCreateDto.setSukunimi("testaaja");
+        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+
+        yksilointiService.enableYksilointi(henkiloReadDto.getOidHenkilo(), new AsiayhteysHakemusDto("hakemusoid123", LocalDate.of(2018, Month.MARCH, 14)));
+
+        List<AsiayhteysHakemus> asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
+        assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getHakemusOid).containsExactly("hakemusoid123");
+
+        yksilointiService.enableYksilointi(henkiloReadDto.getOidHenkilo(), new AsiayhteysHakemusDto("hakemusoid123", LocalDate.of(2018, Month.MARCH, 15)));
+
+        asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
+        assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getLoppupaivamaara).containsExactly(LocalDate.of(2018, Month.MARCH, 15));
+
+        yksilointiService.enableYksilointi(henkiloReadDto.getOidHenkilo(), new AsiayhteysHakemusDto("hakemusoid321", LocalDate.of(2018, Month.MARCH, 16)));
+
+        asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
+        assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getHakemusOid).containsExactlyInAnyOrder("hakemusoid123", "hakemusoid321");
     }
 
 }
