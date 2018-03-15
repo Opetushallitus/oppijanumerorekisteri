@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import * as R from 'ramda';
 import './AddedOrganization.css';
@@ -15,7 +14,10 @@ import {
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
 import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
-import {getOrganisaatios, omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
+import {
+    findOmattiedotOrganisatioOrRyhmaByOid,
+    omattiedotOrganisaatiotToOrganisaatioSelectObject
+} from "../../utilities/organisaatio.util";
 import type {
     KutsuOrganisaatio, Organisaatio,
     OrganisaatioHenkilo
@@ -39,7 +41,9 @@ type Props = {
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio: (string, string) => void,
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
-    removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void
+    removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
+    organisaatioCache: any,
+    ryhmatState: any
 }
 
 type State = {
@@ -47,15 +51,6 @@ type State = {
 }
 
 class AddedOrganisation extends React.Component<Props, State> {
-
-    static propTypes = {
-        changeOrganization: PropTypes.func,
-        addedOrgs: PropTypes.array,
-        addedOrg: PropTypes.object,
-        omatOrganisaatios: PropTypes.array,
-        index: PropTypes.number.isRequired,
-        locale: PropTypes.string,
-    };
 
     constructor(props: Props) {
         super(props);
@@ -146,17 +141,15 @@ class AddedOrganisation extends React.Component<Props, State> {
         else {
             const isOrganisaatio = selection.hasOwnProperty('oid');
             const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
-            const availableOrganisaatios = getOrganisaatios(this.props.omatOrganisaatios, this.props.locale);
-            const organisaatio: any = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
-            if(isOrganisaatio && organisaatio && organisaatio.nimi) {
-                this.setState({organisaatioSelection: selection.name});
+            const organisaatio:any = isOrganisaatio ? selection : findOmattiedotOrganisatioOrRyhmaByOid(selectedOrganisaatioOid, this.props.omatOrganisaatios, this.props.locale);
+            if(isOrganisaatio) {
+                this.setState({organisaatioSelection: organisaatio.name});
             } else {
                 this.setState({organisaatioSelection: ''});
             }
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
-            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, organisaatio.oid);
+            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, selectedOrganisaatioOid);
         }
-
     }
 }
 
@@ -165,6 +158,7 @@ const mapStateToProps = (state) => ({
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
     omatOrganisaatios: state.omattiedot.organisaatios,
+    ryhmatState: state.ryhmatState
 });
 
 export default connect(mapStateToProps, {

@@ -15,12 +15,13 @@ import PropertySingleton from "../globals/PropertySingleton";
  */
 export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (organisaatiot: Array<any>, locale: Locale): Array<OrganisaatioSelectObject> => {
     const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
-    const organisaatioSelectObjects: Array<OrganisaatioSelectObject> = organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
-    return R.uniqBy( R.prop('oid'), (organisaatioSelectObjects));
+    const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> = organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
+    const organisaatioSelectObjects = allOrganisaatioSelectObjects.filter((organisaatio: OrganisaatioSelectObject) => !isRyhma(organisaatio));
+    return R.uniqBy(R.prop('oid'), (organisaatioSelectObjects));
 };
 
 /*
- * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a. Käytetään OrganisaatioSelectModal/OrganisaatioSelect:ssa
+ * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a
  */
 export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHierarkia: Array<Org>, locale: Locale): Array<OrganisaatioSelectObject> => {
     const result = [];
@@ -32,14 +33,12 @@ export const organisaatioHierarkiaToOrganisaatioSelectObject = (organisaatioHier
  * Käy organisaatiohierarkian rekursiivisesti läpi ja palauttaa flatin listan OrganisaatioSelectObjecteja
  */
 const mapOrganisaatioLevelsRecursively = (organisaatiot: Array<Org>, parentNames: Array<string>, locale: Locale, result: Array<OrganisaatioSelectObject>): void => {
-    organisaatiot.forEach( (organisaatio: Org) => {
+    organisaatiot.forEach((organisaatio: Org) => {
         const organisaatioSelectObject: OrganisaatioSelectObject = createOrganisaatioSelectObject(organisaatio, parentNames, locale);
 
-        if(!isRyhma(organisaatioSelectObject)) {
-            result.push(organisaatioSelectObject);
-        }
+        result.push(organisaatioSelectObject);
 
-        if(organisaatio.children) {
+        if (organisaatio.children) {
             const parentNames = organisaatio.oid === PropertySingleton.state.rootOrganisaatioOid ? [] : [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name];
             mapOrganisaatioLevelsRecursively(organisaatio.children, parentNames, locale, result);
         }
@@ -57,6 +56,17 @@ export const createOrganisaatioSelectObject = (organisaatio: Org, parentNames: A
 };
 
 const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean => organisaatio.organisaatiotyypit && organisaatio.organisaatiotyypit.includes('Ryhma');
+
+
+/*
+ * Apufunktio kutsumaan findOrganisaatioOrRyhmaByOid:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
+ */
+export const findOmattiedotOrganisatioOrRyhmaByOid = (oid: string, organisaatiot: Array<any>, locale: Locale): OrganisaatioSelectObject => {
+    const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
+    const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> = organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
+    const organisaatio: any = R.find(R.propEq('oid', oid))(allOrganisaatioSelectObjects);
+    return organisaatio;
+};
 
 
 export const organisaatioHierarchyRoots = (orgs: Array<OrganisaatioHenkilo>, locale: Locale): Array<Organisaatio> => {
@@ -133,7 +143,7 @@ export const getOrganisaatios = (organisaatios: Array<OrganisaatioHenkilo>, loca
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };
 
-export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale): {value: string, label: string, level: number} => {
+export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale): { value: string, label: string, level: number } => {
     const organisaatioNimi = org => toLocalizedText(locale, organisaatio.nimi);
     return {
         value: organisaatio.oid,
@@ -141,7 +151,6 @@ export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale): {va
         level: organisaatio.level
     };
 };
-
 
 
 // Filter off organisations or ryhmas depending on isRyhma value.
@@ -157,7 +166,7 @@ export const getOrganisaatioOptionsAndFilter = (newOrganisaatios: Array<Organisa
     // update index
     const index = createFilterOptions({options: newOptions});
     return {
-        options: newOptions.map((option: {value: string, level: number, label: string}): any => ({
+        options: newOptions.map((option: { value: string, level: number, label: string }): any => ({
             value: option.value,
             label: <span className={`organisaatio-level-${option.level}`}>{option.label}</span>
         })),

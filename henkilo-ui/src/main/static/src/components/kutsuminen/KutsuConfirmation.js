@@ -44,7 +44,6 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
 
     render() {
         const L = this.props.l10n[this.props.locale];
-
         return (
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
                 <div className="confirmation-modal">
@@ -76,10 +75,9 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     renderAddedOrg(org: any) {
-        const orgName = toLocalizedText(this.props.locale, org.organisation.nimi);
         return (
             <div key={org.organisation.oid}>
-                <span className="oph-h3 oph-strong">{orgName}</span>
+                <span className="oph-h3 oph-strong">{org.organisation.name}</span>
                 {org.selectedPermissions.map(this.renderAddedOrgPermission.bind(this))}
             </div>
         )
