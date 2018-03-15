@@ -53,6 +53,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     private final PermissionChecker permissionChecker;
     private final HenkiloService henkiloService;
+    private final DuplicateService duplicateService;
 
     private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
@@ -127,12 +128,25 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
+        this.updateHetu(henkiloUpdateDto, henkiloSaved);
+
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
         henkiloSaved = update(henkiloSaved);
 
         return mapper.map(henkiloSaved, HenkiloReadDto.class);
+    }
+
+    private void updateHetu(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+        // Only if hetu has changed
+        if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
+            String newHetu = henkiloUpdateDto.getHetu();
+            this.henkiloDataRepository.findByHetu(newHetu)
+                    .ifPresent(henkiloWithSameHetu -> this.duplicateService.linkHenkilos(henkiloSaved.getOidHenkilo(), Lists.newArrayList(henkiloWithSameHetu.getOidHenkilo())));
+
+            henkiloSaved.setHetu(newHetu);
+        }
     }
 
     private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved, boolean overwriteReadOnly) {
