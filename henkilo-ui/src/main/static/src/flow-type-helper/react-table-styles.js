@@ -5,3 +5,7 @@
 declare module 'react-table/react-table.css' {
     declare module.exports: any
 }
+
+declare module 'prop-types' {
+    declare module.exports: any
+}

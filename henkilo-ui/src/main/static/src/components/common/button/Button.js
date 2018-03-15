@@ -33,7 +33,6 @@ class Button extends React.Component<Props> {
         isButton: PropTypes.bool,
     };
 
-
     render() {
         const classNameProp = this.props.className ? this.props.className : '';
         const className = classNames({

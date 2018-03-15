@@ -12,7 +12,8 @@ type Props = {
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
-    disabled: boolean
+    disabled: boolean,
+    buttonTextKey?: string
 }
 
 type State = {
@@ -38,7 +39,7 @@ export class OrganisaatioSelectModal extends React.Component<Props, State> {
                     className="oph-button oph-button-primary"
                     onClick={this.onOpen}
                     disabled={this.props.disabled}>
-                <SpinnerInButton show={this.props.disabled}></SpinnerInButton> { this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO'] }
+                <SpinnerInButton show={this.props.disabled}></SpinnerInButton> { this.props.buttonTextKey ? this.props.L[this.props.buttonTextKey] : this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO'] }
             </button>
             {this.state.visible &&
             <OphModal onClose={this.onClose}>
