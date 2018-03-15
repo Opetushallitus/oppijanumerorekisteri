@@ -365,44 +365,4 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     }
 
-    @Test
-    public void findNotVtjRegisterHenkilos() {
-        Henkilo henkilo1 = Henkilo.builder()
-                .oidHenkilo("1")
-                .modified(new Date())
-                .created(new Date())
-                .hetu("hetu1")
-                .passivoitu(false)
-                .vtjRegister(false)
-                .yksiloityVTJ(true)
-                .build();
-        this.testEntityManager.persist(henkilo1);
-
-        Henkilo henkilo2 = Henkilo.builder()
-                .oidHenkilo("2")
-                .modified(new Date())
-                .created(new Date())
-                .hetu("hetu2")
-                .passivoitu(false)
-                .vtjRegister(false)
-                .yksiloityVTJ(false)
-                .build();
-        this.testEntityManager.persist(henkilo2);
-
-        Henkilo henkilo3 = Henkilo.builder()
-                .oidHenkilo("3")
-                .modified(new Date())
-                .created(new Date())
-                .hetu(null)
-                .passivoitu(false)
-                .vtjRegister(false)
-                .yksiloityVTJ(true)
-                .build();
-        this.testEntityManager.persist(henkilo3);
-
-        List<Henkilo> henkilos = this.dataRepository
-                .findTop5000ByHetuIsNotNullAndPassivoituIsFalseAndVtjRegisterIsFalseAndYksiloityVTJIsTrue();
-
-        assertThat(henkilos).extracting(Henkilo::getOidHenkilo).containsExactly("1");
-    }
 }
