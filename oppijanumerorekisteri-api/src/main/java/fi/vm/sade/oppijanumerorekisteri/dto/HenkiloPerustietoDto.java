@@ -60,6 +60,8 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private Date modified;
 
+    private String palveluasiayhteys;
+
     private boolean isFind() {
         return !isEmpty(getOidHenkilo());
     }

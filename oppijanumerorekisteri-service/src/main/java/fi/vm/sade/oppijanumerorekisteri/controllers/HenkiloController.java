@@ -365,21 +365,21 @@ public class HenkiloController {
         return yksilointiService.listEpaonnistunutYksilointi(page, count);
     }
 
-    @GetMapping("/{oid}/yksilointi")
+    @GetMapping("/{oid}/asiayhteys/palvelu/")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
     public Iterable<String> listPalvelutunnisteet(@PathVariable String oid) {
         return yksilointiService.listPalvelutunnisteet(oid);
     }
 
-    @PutMapping("/{oid}/yksilointi/{palvelutunniste}")
+    @PutMapping("/{oid}/asiayhteys/palvelu/{palvelutunniste}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Aktivoi yksilöinnin annetulle palvelutunnisteelle")
     public void enableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.enableYksilointi(oid, palvelutunniste);
     }
 
-    @DeleteMapping("/{oid}/yksilointi/{palvelutunniste}")
+    @DeleteMapping("/{oid}/asiayhteys/palvelu/{palvelutunniste}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
     public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {

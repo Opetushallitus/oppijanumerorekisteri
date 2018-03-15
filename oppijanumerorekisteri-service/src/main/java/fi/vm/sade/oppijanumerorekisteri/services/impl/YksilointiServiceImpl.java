@@ -472,8 +472,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional(readOnly = true)
     public Iterable<String> listPalvelutunnisteet(String oid) {
         Henkilo henkilo = getHenkiloByOid(oid);
-        return henkilo.getYksilointiSynkronoinnit().stream()
-                .map(YksilointiSynkronointi::getPalvelutunniste)
+        return henkilo.getAsiayhteysPalvelut().stream()
+                .map(AsiayhteysPalvelu::getPalvelutunniste)
                 .collect(toSet());
     }
 
@@ -481,8 +481,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public void enableYksilointi(String oid, String palvelutunniste) {
         Henkilo henkilo = getHenkiloByOid(oid);
-        if (henkilo.getYksilointiSynkronoinnit().stream().noneMatch(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
-            henkilo.getYksilointiSynkronoinnit().add(new YksilointiSynkronointi(palvelutunniste, new Date()));
+        if (henkilo.getAsiayhteysPalvelut().stream().noneMatch(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
+            henkilo.getAsiayhteysPalvelut().add(new AsiayhteysPalvelu(palvelutunniste, new Date()));
             henkiloModificationService.update(henkilo);
         }
     }
@@ -491,7 +491,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public void disableYksilointi(String oid, String palvelutunniste) {
         Henkilo henkilo = getHenkiloByOid(oid);
-        if (henkilo.getYksilointiSynkronoinnit().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
+        if (henkilo.getAsiayhteysPalvelut().removeIf(t -> t.getPalvelutunniste().equals(palvelutunniste))) {
             henkiloModificationService.update(henkilo);
         }
     }

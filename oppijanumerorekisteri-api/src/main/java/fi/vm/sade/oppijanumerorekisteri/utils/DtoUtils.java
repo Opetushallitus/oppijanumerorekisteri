@@ -34,7 +34,7 @@ public class DtoUtils {
         KielisyysDto asiointikieli = DtoUtils.createKielisyysDto(kielikoodi, kielityyppi);
         KansalaisuusDto kansalaisuusDto = DtoUtils.createKansalaisuusDto(kansalaisuusKoodi);
         return new HenkiloPerustietoDto(henkiloOid, externalIds, identifications, hetu, etunimet, kutsumanimi, sukunimi, syntymaaika, aidinkieli, asiointikieli,
-                Collections.singleton(kansalaisuusDto), "1", modified);
+                Collections.singleton(kansalaisuusDto), "1", modified, null);
     }
 
     public static HenkiloOidHetuNimiDto createHenkiloOidHetuNimiDto(String etunimet, String kutsumanimi, String sukunimi,
