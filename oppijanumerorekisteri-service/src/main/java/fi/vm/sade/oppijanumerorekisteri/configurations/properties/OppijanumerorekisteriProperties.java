@@ -19,7 +19,7 @@ public class OppijanumerorekisteriProperties {
     @Getter
     @Setter
     public static class Scheduling {
-        private Boolean enabled = true;
+        private Boolean enabled; // default on SchedulingConfiguration.java
 
         private final Yksilointi yksilointi = new Yksilointi();
 

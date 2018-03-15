@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  * *Task-luokat sisältävät ajastusten konfiguroinnit
  */
 @Configuration
-@ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.enabled")
+@ConditionalOnProperty(name = "oppijanumerorekisteri.scheduling.enabled", matchIfMissing = true)
 public class SchedulingConfiguration {
     @Bean(destroyMethod = "stop")
     Scheduler scheduler(@Qualifier("dataSource") DataSource dataSource,
