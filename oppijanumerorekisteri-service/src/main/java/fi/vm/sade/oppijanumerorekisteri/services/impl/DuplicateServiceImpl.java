@@ -92,8 +92,6 @@ public class DuplicateServiceImpl implements DuplicateService {
         return henkiloDuplicateDtos;
     }
 
-
-
     @Override
     @Transactional
     public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
@@ -106,7 +104,7 @@ public class DuplicateServiceImpl implements DuplicateService {
         master.setModified(modificationDate);
 
         List<String> slaveOids = similarHenkiloOids;
-        if(!henkiloOid.equals(master.getOidHenkilo())) {
+        if (!henkiloOid.equals(master.getOidHenkilo())) {
             // If person changed, make the original one of the slaves
             // (and if the resolved master was one of the original slaves, remove that):
             slaveOids.remove(master.getOidHenkilo());

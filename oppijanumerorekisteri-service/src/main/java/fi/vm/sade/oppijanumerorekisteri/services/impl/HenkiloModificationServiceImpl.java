@@ -128,7 +128,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
-        this.updateHetu(henkiloUpdateDto, henkiloSaved);
+        this.updateHetuAndLinkDuplicates(henkiloUpdateDto, henkiloSaved);
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
@@ -138,12 +138,17 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return mapper.map(henkiloSaved, HenkiloReadDto.class);
     }
 
-    private void updateHetu(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+    private void updateHetuAndLinkDuplicates(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         // Only if hetu has changed
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
             String newHetu = henkiloUpdateDto.getHetu();
             this.henkiloDataRepository.findByHetu(newHetu)
-                    .ifPresent(henkiloWithSameHetu -> this.duplicateService.linkHenkilos(henkiloSaved.getOidHenkilo(), Lists.newArrayList(henkiloWithSameHetu.getOidHenkilo())));
+                    .ifPresent(henkiloWithSameHetu -> {
+                        henkiloWithSameHetu.setYksiloityVTJ(false);
+                        henkiloWithSameHetu.setYksiloity(false);
+                        henkiloWithSameHetu.setHetu(null);
+                        this.duplicateService.linkHenkilos(henkiloSaved.getOidHenkilo(), Lists.newArrayList(henkiloWithSameHetu.getOidHenkilo()));
+                    });
 
             henkiloSaved.setHetu(newHetu);
         }
