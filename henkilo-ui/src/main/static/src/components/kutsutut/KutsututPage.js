@@ -8,7 +8,6 @@ import KutsututTable from './KutsututTable';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
 import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
-import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import type {L, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
@@ -151,7 +150,7 @@ export default class KutsututPage extends React.Component<Props, State> {
                             L={this.L}
                             locale={this.props.locale}
                             disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.organisaatiot && this.props.organisaatiot.length === 0)}
-                            organisaatiot={this.parseOrganisaatioSelectObjects.call(this, this.props.organisaatiot)}
+                            organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.organisaatiot, this.props.locale)}
                             onSelect={this.onOrganisaatioChange.bind(this)}
                             buttonTextKey={'KUTSUTUT_ORGANISAATIOSUODATUS'}
                         ></OrganisaatioSelectModal>

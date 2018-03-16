@@ -16,6 +16,7 @@ import type {
 import type {L, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {HenkilohakuResult} from "../../types/domain/kayttooikeus/HenkilohakuResult.types";
+import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 
 type Props = {
     l10n: L10n,
@@ -105,6 +106,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
                                 initialValues={this.state.henkilohakuModel}
                                 selectedOrganisation={this.state.henkilohakuModel.organisaatioOids}
                                 organisaatioSelectAction={this.selectOrganisaaOid.bind(this)}
+                                clearOrganisaatioSelection={this.clearOrganisaatio.bind(this)}
                                 selectedRyhma={this.state.ryhmaOid}
                                 ryhmaSelectionAction={this.selectRyhmaOid.bind(this)}
                                 selectedKayttooikeus={this.state.henkilohakuModel.kayttooikeusryhmaId}
@@ -179,14 +181,20 @@ class HenkilohakuPage extends React.Component<Props, State> {
         ];
     }
 
-    selectOrganisaaOid(organisaatioOption: any) {
-        const henkilohakuModel = this.state.henkilohakuModel;
-        henkilohakuModel.organisaatioOids = organisaatioOption.value;
+    clearOrganisaatio = () => {
+        const henkilohakuModel = {...this.state.henkilohakuModel};
+        henkilohakuModel.organisaatioOids = '';
+        this.setState({henkilohakuModel}, this.searchQuery);
+    };
+
+    selectOrganisaaOid(organisaatio: OrganisaatioSelectObject) {
+        const henkilohakuModel = {...this.state.henkilohakuModel};
+        henkilohakuModel.organisaatioOids = organisaatio.oid;
         this.setState({ ryhmaOid: undefined, henkilohakuModel }, this.searchQuery);
     }
 
     selectRyhmaOid(ryhmaOption: any) {
-        const henkilohakuModel = this.state.henkilohakuModel;
+        const henkilohakuModel = {...this.state.henkilohakuModel};
         henkilohakuModel.organisaatioOids = ryhmaOption.value;
         this.setState({ ryhmaOid: ryhmaOption.value, henkilohakuModel }, this.searchQuery);
     }

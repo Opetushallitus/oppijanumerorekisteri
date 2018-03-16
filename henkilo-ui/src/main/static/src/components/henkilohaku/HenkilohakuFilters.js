@@ -9,7 +9,6 @@ import PassiivisetOrganisationCheckbox from "./criterias/PassiivisetOrganisation
 import DuplikaatitOrganisationCheckbox from "./criterias/DuplikaatitOrganisationCheckbox";
 import OphInline from "../common/forms/OphInline";
 import OphSelect from "../common/select/OphSelect";
-import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import {fetchAllRyhmas} from "../../actions/organisaatio.actions";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
@@ -19,6 +18,9 @@ import * as R from 'ramda';
 import type {L} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
+import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
+import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
+import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 
 type Props = {
     L: L,
@@ -31,7 +33,8 @@ type Props = {
     passiivisetAction: () => void,
     suborganisationAction: () => void,
     noOrganisationAction: () => void,
-    organisaatioSelectAction: ({value: ?string}) => void,
+    organisaatioSelectAction: (OrganisaatioSelectObject) => void,
+    clearOrganisaatioSelection: () => void,
     kayttooikeusSelectionAction: ({value: ?string}) => void,
     initialValues: HenkilohakuCriteria,
     kayttooikeusryhmas: Array<{
@@ -40,14 +43,27 @@ type Props = {
             texts: Array<{text: string, lang: string,}>,
         }
     }>,
-    organisaatioList: Array<{}>,
     ryhmas: {ryhmas: Array<{}>},
     fetchOmattiedotOrganisaatios: () => void,
     fetchAllRyhmas: () => void,
     fetchAllKayttooikeusryhma: () => void,
+    omattiedotOrganisaatiosLoading: boolean,
+    omattiedotOrganisaatios: Array<any>
 }
 
-class HenkilohakuFilters extends React.Component<Props> {
+type State = {
+    organisaatioSelection: string
+}
+
+class HenkilohakuFilters extends React.Component<Props, State> {
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            organisaatioSelection: ''
+        }
+    }
 
     componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
@@ -88,16 +104,17 @@ class HenkilohakuFilters extends React.Component<Props> {
 
                         <div className="henkilohaku-select">
                             <span className="flex-item-1">
-                                <OrganisaatioSelection id="organisationFilter"
-                                                       placeholder={this.props.L['HENKILOHAKU_FILTERS_SUODATAORGANISAATIO']}
-                                                       L={this.props.L}
-                                                       locale={this.props.locale}
-                                                       organisaatios={this.props.organisaatioList}
-                                                       selectOrganisaatio={this.props.organisaatioSelectAction}
-                                                       selectedOrganisaatioOid={this.props.selectedOrganisation}/>
+                                <input class="oph-input flex-item-1" type="text" value={this.state.organisaatioSelection} placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
                             </span>
+                            <OrganisaatioSelectModal
+                                L={this.props.L}
+                                locale={this.props.locale}
+                                disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.omattiedotOrganisaatios.length === 0)}
+                                onSelect={this.organisaatioSelectAction.bind(this)}
+                                organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.omattiedotOrganisaatios, this.props.locale)}
+                            ></OrganisaatioSelectModal>
                             <span className="henkilohaku-clear-select"><CloseButton
-                                closeAction={() => this.props.organisaatioSelectAction({value: undefined})}/></span>
+                                closeAction={() => this.clearOrganisaatioSelection()}/></span>
                         </div>
 
                     </div>
@@ -145,6 +162,16 @@ class HenkilohakuFilters extends React.Component<Props> {
         </div>;
     };
 
+    clearOrganisaatioSelection = (): void => {
+        this.setState({organisaatioSelection: ''});
+        this.props.clearOrganisaatioSelection();
+    };
+
+    organisaatioSelectAction = (organisaatio: OrganisaatioSelectObject): void => {
+        this.setState({organisaatioSelection: organisaatio.name});
+        this.props.organisaatioSelectAction(organisaatio);
+    };
+
     _parseRyhmaOptions(ryhmatState) {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat ? ryhmat.map(ryhma => ({
@@ -163,6 +190,8 @@ const mapStateToProps = (state) => {
         ryhmas: state.ryhmatState,
         organisaatioList: state.omattiedot.organisaatios,
         kayttooikeusryhmas: state.kayttooikeus.allKayttooikeusryhmas,
+        omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
+        omattiedotOrganisaatios: state.omattiedot.organisaatios
     };
 }
 

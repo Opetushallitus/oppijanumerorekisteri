@@ -72,7 +72,7 @@ class AddedOrganisation extends React.Component<Props, State> {
                     <label htmlFor="org">
                         {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
-                    <div className="organisaatioSelection-container">
+                    <div className="organisaatioSelection-container flex-horizontal">
                         <div>{this.state.organisaatioSelection}</div>
                         <OrganisaatioSelectModal locale={this.props.locale}
                                                  L={this.props.L}
@@ -80,7 +80,8 @@ class AddedOrganisation extends React.Component<Props, State> {
                                                  organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.omatOrganisaatios, this.props.locale)}
                                                  disabled={false}
                         ></OrganisaatioSelectModal>
-
+                    </div>
+                    <div className="organisaatioSelection-container flex-horizontal">
                         <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
                                                selectOrganisaatio={this.selectOrganisaatio.bind(this)}
                                                isRyhma={true}
