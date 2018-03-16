@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
@@ -10,17 +9,19 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.*;
-
-import java.util.Collection;
-import java.util.Optional;
-
+import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -92,18 +93,8 @@ public class IdentificationServiceImpl implements IdentificationService {
     public void setStrongIdentifiedHetu(String oidHenkilo, HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto) {
         Henkilo henkiloToUpdate = this.henkiloRepository.findByOidHenkilo(oidHenkilo)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
-        Optional<Henkilo> henkilosWithSameHetu = this.henkiloRepository.findByHetu(henkiloVahvaTunnistusDto.getHetu());
 
-        henkilosWithSameHetu
-                .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
-                .ifPresent((oppijaWithSameHetu) -> {
-                    oppijaWithSameHetu.setHetu(null);
-                    oppijaWithSameHetu.setYksiloity(false);
-                    oppijaWithSameHetu.setYksiloityVTJ(false);
-                    // Hetu is unique so we need to flush when moving it
-                    this.henkiloRepository.saveAndFlush(oppijaWithSameHetu);
-                    this.duplicateService.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
-                });
+        this.duplicateService.removeDuplicateHetuAndLink(oidHenkilo, henkiloVahvaTunnistusDto.getHetu());
 
         // No current hetu and hetu not already used => set hetu
         this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);

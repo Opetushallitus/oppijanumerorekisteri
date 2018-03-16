@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.HakuappClient;
@@ -90,6 +91,21 @@ public class DuplicateServiceImpl implements DuplicateService {
         });
 
         return henkiloDuplicateDtos;
+    }
+
+    @Override
+    @Transactional
+    public void removeDuplicateHetuAndLink(String oidHenkilo, String hetu) {
+        this.henkiloDataRepository.findByHetu(hetu)
+                .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
+                .ifPresent((oppijaWithSameHetu) -> {
+                    oppijaWithSameHetu.setHetu(null);
+                    oppijaWithSameHetu.setYksiloity(false);
+                    oppijaWithSameHetu.setYksiloityVTJ(false);
+                    // Hetu is unique so we need to flush when moving it
+                    this.henkiloDataRepository.saveAndFlush(oppijaWithSameHetu);
+                    this.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
+                });
     }
 
     @Override
