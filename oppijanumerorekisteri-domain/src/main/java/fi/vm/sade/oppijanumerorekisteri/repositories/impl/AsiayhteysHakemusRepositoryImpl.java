@@ -23,8 +23,8 @@ public class AsiayhteysHakemusRepositoryImpl implements AsiayhteysHakemusReposit
         QAsiayhteysHakemus qAsiayhteysHakemus = QAsiayhteysHakemus.asiayhteysHakemus;
 
         return new JPAQuery<>(entityManager)
-                .from(qHenkilo)
-                .join(qHenkilo.asiayhteysHakemukset, qAsiayhteysHakemus)
+                .from(qAsiayhteysHakemus)
+                .join(qAsiayhteysHakemus.henkilo, qHenkilo)
                 .where(qHenkilo.oidHenkilo.eq(oid))
                 .select(qAsiayhteysHakemus)
                 .fetch();

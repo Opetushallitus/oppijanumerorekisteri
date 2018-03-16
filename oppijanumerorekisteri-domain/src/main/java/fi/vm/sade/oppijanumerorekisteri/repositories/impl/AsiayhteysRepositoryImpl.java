@@ -72,20 +72,16 @@ public class AsiayhteysRepositoryImpl implements AsiayhteysRepository {
 
     private List<JPQLQuery<Integer>> getAsiayhteysQueries(QHenkilo qHenkilo, AsiayhteysCriteria criteria) {
         // select 1 from asiayhteys_palvelu ap where ap.henkilo_id = h.id
-        QHenkilo qAsiayhteysPalveluHenkilo = new QHenkilo("asiayhteysPalveluHenkilo");
         QAsiayhteysPalvelu qAsiayhteysPalvelu = QAsiayhteysPalvelu.asiayhteysPalvelu;
         JPQLQuery<Integer> palveluQuery = JPAExpressions.selectOne()
-                .from(qAsiayhteysPalveluHenkilo)
-                .join(qAsiayhteysPalveluHenkilo.asiayhteysPalvelut, qAsiayhteysPalvelu)
-                .where(qAsiayhteysPalveluHenkilo.eq(qHenkilo));
+                .from(qAsiayhteysPalvelu)
+                .where(qAsiayhteysPalvelu.henkilo.eq(qHenkilo));
 
         // select 1 from asiayhteys_hakemus ah where ah.henkilo_id = h.id and ah.loppupaivamaara >= ?
-        QHenkilo qAsiayhteysHakemusHenkilo = new QHenkilo("asiayhteysHakemusHenkilo");
         QAsiayhteysHakemus qAsiayhteysHakemus = QAsiayhteysHakemus.asiayhteysHakemus;
         JPQLQuery<Integer> hakemusQuery = JPAExpressions.selectOne()
-                .from(qAsiayhteysHakemusHenkilo)
-                .join(qAsiayhteysHakemusHenkilo.asiayhteysHakemukset, qAsiayhteysHakemus)
-                .where(qAsiayhteysHakemusHenkilo.eq(qHenkilo))
+                .from(qAsiayhteysHakemus)
+                .where(qAsiayhteysHakemus.henkilo.eq(qHenkilo))
                 .where(qAsiayhteysHakemus.loppupaivamaara.goe(criteria.getLoppupaivamaara()));
 
         // select 1 from asiayhteys_kayttooikeus ak where ak.henkilo_id = h.id and ak.loppupaivamaara >= ?
