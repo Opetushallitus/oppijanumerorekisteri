@@ -103,9 +103,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                     <div className="flex-item-1">
 
                         <div className="henkilohaku-select">
-                            <span className="flex-item-1">
-                                <input class="oph-input flex-item-1" type="text" value={this.state.organisaatioSelection} placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
-                            </span>
+                            <input class="oph-input flex-item-1 henkilohaku-organisaatiosuodatus" type="text" value={this.state.organisaatioSelection} placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
                             <OrganisaatioSelectModal
                                 L={this.props.L}
                                 locale={this.props.locale}
