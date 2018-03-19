@@ -17,6 +17,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteri
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         return new JPAQueryFactory(this.entityManager);
     }
 
+    private final static Logger logger = LoggerFactory.getLogger(HenkiloRepositoryImpl.class);
 
     @Override
     public List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria) {
@@ -330,7 +333,11 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
         henkiloOids.forEach(oid -> {
             String masterOid = henkilot.containsKey(oid) ? oid : slaveToMasterOid.get(oid);
-            res.put(oid, henkilot.get(masterOid));
+            if (henkilot.containsKey(masterOid)) {
+                res.put(oid, henkilot.get(masterOid));
+            } else {
+                logger.error(String.format("No master henkilo found for oid %s", oid));
+            }
         });
 
         return res;
