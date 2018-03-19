@@ -1,26 +1,29 @@
 // @flow
 import React from 'react';
-import OrganisaatioSelection from '../../common/select/OrganisaatioSelection';
 import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import type {Locale} from "../../../types/locale.type";
 import type {ReactSelectOption} from "../../../types/react-select.types";
 import type {L} from "../../../types/localisation.type";
+import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
+import {OrganisaatioSelectModal} from "../../common/select/OrganisaatioSelectModal";
+import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 
 type Props = {
     L: L,
-    organisaatios: any,
+    organisaatios: Array<any>,
     koodisto: any,
     locale: Locale,
     ryhmaRestriction: boolean,
     toggleRyhmaRestriction: () => void,
-    organisaatioSelections: Array<ReactSelectOption>,
-    organisaatioSelectAction: (selection: ReactSelectOption) => void,
-    removeOrganisaatioSelectAction: (selection: ReactSelectOption) => void,
+    organisaatioSelections: Array<OrganisaatioSelectObject>,
+    organisaatioSelectAction: (organisaatio: OrganisaatioSelectObject) => void,
+    removeOrganisaatioSelectAction: (selection: OrganisaatioSelectObject) => void,
     oppilaitostyypitSelections: Array<ReactSelectOption>,
     oppilaitostyypitSelectAction: (selection: ReactSelectOption) => void,
     removeOppilaitostyypitSelectionAction: (selection: ReactSelectOption) => void,
+    omattiedotOrganisaatiosLoading: boolean
 }
 
 type State = {
@@ -49,13 +52,16 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
             <div className="flex-horizontal">
 
                 <div className="flex-item-1 ">
+                    <OrganisaatioSelectModal
+                        L={this.props.L}
+                        locale={this.props.locale}
+                        disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.organisaatios.length === 0)}
+                        onSelect={this.props.organisaatioSelectAction}
+                        organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.organisaatios, this.props.locale)}
+                    ></OrganisaatioSelectModal>
 
-                    <OrganisaatioSelection id="organisaatiofilter"
-                                           organisaatios={this.props.organisaatios}
-                                           selectOrganisaatio={this.props.organisaatioSelectAction}>
-                    </OrganisaatioSelection>
                     <ItemList items={this.props.organisaatioSelections}
-                              labelPath={['label']}
+                              labelPath={['name']}
                               removeAction={this.props.removeOrganisaatioSelectAction}/>
 
                 </div>
