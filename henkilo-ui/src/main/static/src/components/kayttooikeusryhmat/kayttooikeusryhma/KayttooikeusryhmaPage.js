@@ -113,7 +113,13 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             const newState = { kayttooikeusryhmaForm, ryhmaRestrictionViite, organisaatios };
             this.setState(newState);
         }
+    }
 
+    componentWillReceiveProps(nextProps: Props): void {
+        if(this.state.organisaatios.length === 0 && Object.keys(nextProps.organisaatioCache).length > 0) {
+            const organisaatioSelections: Array<OrganisaatioSelectObject> = this._parseExistingOrganisaatioData(R.path(['kayttooikeusryhma', 'organisaatioViite'], this.props.kayttooikeus), nextProps.organisaatioCache);
+            this.setState({kayttooikeusryhmaForm: {...this.state.kayttooikeusryhmaForm, organisaatioSelections }})
+        }
     }
 
     _parseExistingRyhmaRestrictionViite = (organisaatioViitteet: any): any => {
@@ -212,7 +218,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         return {
             name: this._parseExistingTextsData(R.path(['kayttooikeusryhma', 'nimi', 'texts'], kayttooikeusryhmaState)),
             description: this._parseExistingTextsData(R.path(['kayttooikeusryhma', 'kuvaus', 'texts'], kayttooikeusryhmaState)),
-            organisaatioSelections: this._parseExistingOrganisaatioData(R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState)),
+            organisaatioSelections: this._parseExistingOrganisaatioData(R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState), this.props.organisaatioCache),
             oppilaitostyypitSelections: this._parseExistingOppilaitostyyppiData(R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState)),
             ryhmaRestriction: this._parseExistingRyhmaRestriction(kayttooikeusryhmaState),
             kayttooikeusryhmaSelections: this._parseExistingKayttooikeusryhmaSelections(kayttooikeusryhmaState.kayttooikeusryhmaSlaves),
@@ -248,16 +254,15 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         return result;
     };
 
-    _parseExistingOrganisaatioData = (organisaatioViitteet: any): Array<OrganisaatioSelectObject> => {
-        if(Object.keys(this.props.organisaatioCache).length === 0) {
+    _parseExistingOrganisaatioData = (organisaatioViitteet: any, organisaatioCache: {[string]: any}): Array<OrganisaatioSelectObject> => {
+        if(Object.keys(organisaatioCache).length === 0) {
             return [];
         }
         const organisaatioViittees = organisaatioViitteet
             .filter((organisaatioViite: any) => this._isOrganisaatioOid(organisaatioViite.organisaatioTyyppi));
         const organisaatioOids = organisaatioViittees
             .map((organisaatioViite: any) => organisaatioViite.organisaatioTyyppi);
-        return organisaatioOids
-            .map( (oid: string) => this.props.organisaatioCache[oid])
+        return organisaatioOids.map( (oid: string) => organisaatioCache[oid])
             .map( (organisaatio: any) => ({
                 oid: organisaatio.oid,
                 name: getLocalization(organisaatio.nimi, this.props.locale),
