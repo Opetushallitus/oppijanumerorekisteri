@@ -64,7 +64,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                                             loading={this.props.haetutKayttooikeusryhmatLoading}/>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline large-kayttooikeus-filter">
-                        <input class="oph-input flex-item-1 anomus-organisaatiosuodatus" type="text" value={this.state.selectedOrganisaatio ? this.state.selectedOrganisaatio.name : ''} placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
+                        <input className="oph-input flex-item-1 anomus-organisaatiosuodatus" type="text" value={this.state.selectedOrganisaatio ? this.state.selectedOrganisaatio.name : ''} placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
                         <OrganisaatioSelectModal
                                 L={this.props.L}
                                 locale={this.props.locale}

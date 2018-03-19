@@ -149,7 +149,7 @@ export default class KutsututPage extends React.Component<Props, State> {
                 </div>
                 <div className="flex-horizontal kutsutut-filters">
                     <div className="flex-item-1 flex-inline">
-                        <input class="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                        <input className="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
                                value={this.state.organisaatioSelection}
                                placeholder={this.L['KUTSUTUT_ORGANISAATIOSUODATUS']} readOnly/>
                         <OrganisaatioSelectModal
