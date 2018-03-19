@@ -24,6 +24,7 @@ type Props = {
     organisaatioFilter: any,
     ryhmaOptions:  Array<Option>,
     ryhmaFilter: any,
+    clearable?: boolean,
 }
 
 type State = {
@@ -54,6 +55,7 @@ class OrganisaatioSelection extends React.Component<Props, State> {
                           placeholder={this.placeholder}
                           onChange={this.props.selectOrganisaatio}
                           value={this.props.selectedOrganisaatioOid}
+                          clearable={this.props.clearable}
                           noResultsText={ this.props.L['EI_TULOKSIA']}
                           optionHeight={45}
                           maxHeight={400}/>;

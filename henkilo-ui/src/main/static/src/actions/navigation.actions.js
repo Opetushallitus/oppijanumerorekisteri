@@ -1,7 +1,7 @@
 // @flow
 import {UPDATE_NAVIGATION} from "./actiontypes";
 import type {NaviOptions, NaviTab} from "../types/navigation.type";
-import {emptyNavi, mainNavigation} from "../components/navigation/navigationconfigurations";
+import {emptyNavi, mainNavigation, palvelukayttajaNavigation} from "../components/navigation/navigationconfigurations";
 import background from '../img/unauthenticated_background.jpg';
 
 export const updateNavigation = (naviTabs: Array<NaviTab>, naviOptions: NaviOptions) => ({
@@ -11,6 +11,12 @@ export const updateNavigation = (naviTabs: Array<NaviTab>, naviOptions: NaviOpti
 });
 
 export const updateDefaultNavigation = () => updateNavigation(mainNavigation, {
+    isUnauthenticatedPage: false,
+    bgColor: '#f6f4f0',
+    backButton: null,
+});
+
+export const updatePalvelukayttajaNavigation = () => updateNavigation(palvelukayttajaNavigation, {
     isUnauthenticatedPage: false,
     bgColor: '#f6f4f0',
     backButton: null,

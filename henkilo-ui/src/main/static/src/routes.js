@@ -18,6 +18,7 @@ import KayttooikeusryhmaPageContainer from "./components/kayttooikeusryhmat/kayt
 import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer";
 import OppijaCreateContainer from "./components/henkilo/OppijaCreateContainer";
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
+import PalvelukayttajaHakuContainer from "./components/palvelukayttaja/PalvelukayttajaHakuContainer";
 import SalansananResetointiPage from "./components/salasananresetointi/SalasananResetointiPage";
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 
@@ -42,5 +43,6 @@ export default <Route path="/" component={App}>
     <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaPageContainer} />
     <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaPageContainer} />
     <Route path="/palvelukayttaja/luonti" component={PalveluCreateContainer} />
+    <Route path="/palvelukayttaja" component={PalvelukayttajaHakuContainer} />
     <Route path="/salasananresetointi/:locale/:poletti" component={SalansananResetointiPage} />
 </Route>
