@@ -151,7 +151,7 @@ export default class KutsututPage extends React.Component<Props, State> {
                     <div className="flex-item-1 flex-inline">
                         <input class="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
                                value={this.state.organisaatioSelection}
-                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
+                               placeholder={this.L['KUTSUTUT_ORGANISAATIOSUODATUS']} readOnly/>
                         <OrganisaatioSelectModal
                             L={this.L}
                             locale={this.props.locale}
