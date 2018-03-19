@@ -15,6 +15,7 @@ import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
+import CloseButton from "../common/button/CloseButton";
 
 type Payload = {
     searchTerm: string,
@@ -137,27 +138,36 @@ export default class KutsututPage extends React.Component<Props, State> {
                                                     setView={this.setView.bind(this)}/>
                     </span>
                 </div>
-                <div className="flex-horizontal flex-align-center">
+                <div className="flex-horizontal flex-align-center kutsutut-filters">
                     <div className="flex-item-1">
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                             defaultNameQuery={this.state.payload.searchTerm}
                                             placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
                                             loading={this.props.kutsuListLoading}/>
                     </div>
-                    <div className="flex-item-1">
-                        <span>{this.state.organisaatioSelection}</span>
+
+                </div>
+                <div className="flex-horizontal kutsutut-filters">
+                    <div className="flex-item-1 flex-inline">
+                        <input class="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                               value={this.state.organisaatioSelection}
+                               placeholder={this.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
                         <OrganisaatioSelectModal
                             L={this.L}
                             locale={this.props.locale}
                             disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.organisaatiot && this.props.organisaatiot.length === 0)}
                             organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.organisaatiot, this.props.locale)}
                             onSelect={this.onOrganisaatioChange.bind(this)}
-                            buttonTextKey={'KUTSUTUT_ORGANISAATIOSUODATUS'}
                         ></OrganisaatioSelectModal>
+                        <CloseButton closeAction={() => this.clearOrganisaatioSelection()}></CloseButton>
                     </div>
-                    <div className="flex-item-1" id="radiator">
-                        <KayttooikeusryhmaSingleSelect
-                            kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)}/>
+                    <div className="flex-item-1 flex-inline" id="radiator">
+                        <div className="flex-item-1">
+                            <KayttooikeusryhmaSingleSelect
+                                kayttooikeusSelection={this.state.payload.kayttooikeusryhmaIds}
+                                kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)}/>
+                        </div>
+                        <CloseButton closeAction={() => this.clearKayttooikeusryhmaSelection()}></CloseButton>
                     </div>
                 </div>
                 <KutsututTable
@@ -246,6 +256,10 @@ export default class KutsututPage extends React.Component<Props, State> {
         return omattiedotOrganisaatiotToOrganisaatioSelectObject(organisaatiot, this.props.locale);
     };
 
+    clearOrganisaatioSelection(): void {
+        this.setState({payload: {...this.state.payload, organisaatioOids: ''}, organisaatioSelection: ''});
+    }
+
     onOrganisaatioChange(organisaatio: OrganisaatioSelectObject) {
         const organisaatioOids = organisaatio.oid;
         this.setState({payload: {...this.state.payload, organisaatioOids}, organisaatioSelection: organisaatio.name});
@@ -253,6 +267,10 @@ export default class KutsututPage extends React.Component<Props, State> {
 
     onKayttooikeusryhmaChange(newKayttooikeusId: number) {
         this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: newKayttooikeusId,}});
+    }
+
+    clearKayttooikeusryhmaSelection(): void {
+        this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: undefined}})
     }
 
     fetchKutsus(sort: ?Sort, shouldNotClear: ?boolean) {

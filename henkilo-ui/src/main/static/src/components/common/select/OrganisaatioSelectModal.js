@@ -12,8 +12,7 @@ type Props = {
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
-    disabled: boolean,
-    buttonTextKey?: string
+    disabled: boolean
 }
 
 type State = {
