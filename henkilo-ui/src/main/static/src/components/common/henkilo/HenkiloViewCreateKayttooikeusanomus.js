@@ -95,8 +95,10 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
                             {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
                         </label>
 
-                        <div className="oph-input-container">
-                            <div>{this.state.organisaatioSelectionName ? <span>{this.state.organisaatioSelectionName}</span> : null }</div>
+                        <div className="oph-input-container flex-horizontal">
+                            <input className="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                                   value={this.state.organisaatioSelectionName}
+                                   placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']} readOnly/>
                             <OrganisaatioSelectModal
                                 locale={this.props.locale}
                                 L={L}

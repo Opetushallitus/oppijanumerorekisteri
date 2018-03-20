@@ -13,8 +13,10 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
         </td>
         <td>
-            <div className="kohdeOrganisaatio">
-                <div>{selection}</div>
+            <div className="kohdeOrganisaatio flex-horizontal">
+                <input className="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                       value={selection}
+                       placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']} readOnly/>
                 <OrganisaatioSelectModal L={L}
                                          organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(organisationData, locale)}
                                          locale={locale}
