@@ -96,7 +96,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloUpdateDto.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloUpdateDto.getHetu()));
         }
 
-        this.henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
+        this.henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, false);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
         // varmistetaan että tyhjä hetu tallentuu nullina
@@ -126,7 +126,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
-        henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved);
+        henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
         henkiloSaved = update(henkiloSaved);
@@ -134,13 +134,18 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return mapper.map(henkiloSaved, HenkiloReadDto.class);
     }
 
-    private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+    private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved, boolean overwriteReadOnly) {
         if (henkiloUpdateDto.getYhteystiedotRyhma() != null) {
-            // poistetaan käyttäjän antamista ryhmistä read-only merkityt
-            List<YhteystiedotRyhma> readOnlyRyhmat = henkiloSaved.getYhteystiedotRyhma().stream()
-                    .filter(YhteystiedotRyhma::isReadOnly).collect(toList());
-            henkiloUpdateDto.getYhteystiedotRyhma().removeIf(dto
-                    -> readOnlyRyhmat.stream().anyMatch(entity -> entity.isEquivalentTo(dto)));
+            final Collection<YhteystiedotRyhma> readOnlyRyhmat;
+            if (!overwriteReadOnly) {
+                // poistetaan käyttäjän antamista ryhmistä read-only merkityt
+                readOnlyRyhmat = henkiloSaved.getYhteystiedotRyhma().stream()
+                        .filter(YhteystiedotRyhma::isReadOnly).collect(toList());
+                henkiloUpdateDto.getYhteystiedotRyhma().removeIf(dto
+                        -> readOnlyRyhmat.stream().anyMatch(entity -> entity.isEquivalentTo(dto)));
+            } else {
+                readOnlyRyhmat = Collections.emptyList();
+            }
             // rakennetaan ryhmälista uudelleen
             henkiloSaved.getYhteystiedotRyhma().clear();
             // käyttäjän muokkaukset
