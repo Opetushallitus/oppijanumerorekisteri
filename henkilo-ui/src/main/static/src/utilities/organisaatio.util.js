@@ -55,6 +55,10 @@ export const createOrganisaatioSelectObject = (organisaatio: Org, parentNames: A
     }
 };
 
+export const findOrganisaatioSelectObjectByOid = (oid: string, organisaatiot: Array<OrganisaatioSelectObject>): ?OrganisaatioSelectObject => {
+    return R.find(R.propEq('oid', oid))(organisaatiot);
+};
+
 const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean => organisaatio.organisaatiotyypit && organisaatio.organisaatiotyypit.includes('Ryhma');
 
 
