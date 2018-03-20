@@ -46,7 +46,7 @@ class LinkitetytHenkilot extends React.Component<Props> {
     }
 
     valueGroup() {
-        const hasPermission = hasAnyPalveluRooli(this.props.kayttooikeudet, ['HENKILONHALLINTA_OPHREKISTERI'])
+        const hasPermission = hasAnyPalveluRooli(this.props.kayttooikeudet, ['HENKILONHALLINTA_OPHREKISTERI', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
         return R.path(['henkilo', 'slaves'], this.props)
             ? <div>
                 {this.props.henkilo.slaves.map((slave, index) =>
