@@ -13,7 +13,7 @@ import {
     removeOrganisaatioPermission
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
-import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
+import RyhmaSelection from '../common/select/RyhmaSelection';
 import {
     findOmattiedotOrganisatioOrRyhmaByOid,
     omattiedotOrganisaatiotToOrganisaatioSelectObject
@@ -82,9 +82,9 @@ class AddedOrganisation extends React.Component<Props, State> {
                         ></OrganisaatioSelectModal>
                     </div>
                     <div className="organisaatioSelection-container flex-horizontal">
-                        <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
-                                               selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                               isRyhma={true}
+                        <RyhmaSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
+                                        selectOrganisaatio={this.selectOrganisaatio.bind(this)}
+                                        isRyhma={true}
                         />
                     </div>
                 </div>

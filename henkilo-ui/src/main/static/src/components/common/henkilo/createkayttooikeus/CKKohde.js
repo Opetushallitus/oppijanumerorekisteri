@@ -1,7 +1,7 @@
 import './CKKohde.css'
 import React from 'react'
 import PropTypes from 'prop-types'
-import OrganisaatioSelection from "../../select/OrganisaatioSelection";
+import RyhmaSelection from "../../select/RyhmaSelection";
 import {OrganisaatioSelectModal} from "../../select/OrganisaatioSelectModal";
 import {
     omattiedotOrganisaatiotToOrganisaatioSelectObject,
@@ -22,17 +22,16 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
                                          locale={locale}
                                          disabled={organisationData.length === 0}
                                          onSelect={organisationAction}>
-
                 </OrganisaatioSelectModal>
             </div>
 
             <div className="kohdeRyhma">
-                <OrganisaatioSelection L={L}
-                                       organisaatios={organisationData}
-                                       selectOrganisaatio={organisationAction}
-                                       selectedOrganisaatioOid={organisationValue}
-                                       locale={locale}
-                                       isRyhma={true}/>
+                <RyhmaSelection L={L}
+                                organisaatios={organisationData}
+                                selectOrganisaatio={organisationAction}
+                                selectedOrganisaatioOid={organisationValue}
+                                locale={locale}
+                                isRyhma={true}/>
             </div>
         </td>
         <td>

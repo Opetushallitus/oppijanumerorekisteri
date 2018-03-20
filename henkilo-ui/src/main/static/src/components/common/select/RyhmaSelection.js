@@ -1,5 +1,5 @@
 // @flow
-import './OrganisaatioSelection.css';
+import './RyhmaSelection.css';
 import React from 'react';
 import OphSelect from './OphSelect';
 import {connect} from 'react-redux';
@@ -32,20 +32,12 @@ type State = {
     filterOptions: any,
 }
 
-class OrganisaatioSelection extends React.Component<Props, State> {
+class RyhmaSelection extends React.Component<Props, State> {
     placeholder: string;
 
     constructor(props: Props) {
         super(props);
-        if (this.props.placeholder) {
-            this.placeholder = this.props.placeholder;
-        }
-        else if (this.props.isRyhma) {
-            this.placeholder = this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA'];
-        }
-        else {
-            this.placeholder = this.props.L['VIRKAILIJAN_LISAYS_VALITSE_ORGANISAATIO'];
-        }
+        this.placeholder = this.props.placeholder ? this.props.placeholder : this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_RYHMA'];
     }
 
     render() {
@@ -71,4 +63,4 @@ const mapStateToProps = (state) => ({
     ryhmaFilter: state.omattiedot.organisaatioRyhmaFilter,
 });
 
-export default connect(mapStateToProps, {})(OrganisaatioSelection);
+export default connect(mapStateToProps, {})(RyhmaSelection);
