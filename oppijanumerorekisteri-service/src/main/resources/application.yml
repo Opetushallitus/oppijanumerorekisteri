@@ -1,6 +1,11 @@
 spring:
   cache:
     type: EHCACHE
+  session:
+    store-type: jdbc
+    jdbc:
+      initializer:
+        enabled: true
 server:
   contextPath: /oppijanumerorekisteri-service
 flyway:
