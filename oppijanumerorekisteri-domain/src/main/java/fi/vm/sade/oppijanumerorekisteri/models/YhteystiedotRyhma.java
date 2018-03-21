@@ -57,6 +57,13 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
         this.yhteystieto.clear();
     }
 
+    /**
+     * @return sisältääkö yhteystietoryhmä yhteystietoja
+     */
+    public boolean isNotEmpty() {
+        return yhteystieto.stream().map(Yhteystieto::getYhteystietoArvo).anyMatch(str -> str != null && !str.isEmpty());
+    }
+
     public static RyhmaKuvausBuilder builder() {
         return new Builder();
     }

@@ -270,7 +270,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             newYhteystiedot.add(sahkYhtTieto);
         }
 
-        return newYhteystiedot;
+        return newYhteystiedot.stream().filter(YhteystiedotRyhma::isNotEmpty).collect(toSet());
     }
 
     private Set<Yhteystieto> getYhteystietos(Kielisyys asiointiKieli, YksiloityHenkilo.OsoiteTieto ot) {
