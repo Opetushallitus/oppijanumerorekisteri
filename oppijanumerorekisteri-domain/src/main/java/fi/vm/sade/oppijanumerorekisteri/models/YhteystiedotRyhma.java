@@ -61,7 +61,7 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
      * @return sisältääkö yhteystietoryhmä yhteystietoja
      */
     public boolean isNotEmpty() {
-        return yhteystieto.stream().map(Yhteystieto::getYhteystietoArvo).anyMatch(str -> str != null && !str.isEmpty());
+        return yhteystieto != null && yhteystieto.stream().map(Yhteystieto::getYhteystietoArvo).anyMatch(str -> str != null && !str.isEmpty());
     }
 
     public static RyhmaKuvausBuilder builder() {
