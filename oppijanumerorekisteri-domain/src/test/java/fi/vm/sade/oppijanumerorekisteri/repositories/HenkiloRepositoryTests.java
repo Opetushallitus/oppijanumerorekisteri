@@ -20,7 +20,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import javax.persistence.PersistenceException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.Month;
@@ -34,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@Transactional(readOnly = true)
+@Transactional
 public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Autowired
@@ -65,7 +67,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findHetuByOid() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persist(henkilo);
+        this.persistHenkilo(henkilo);
         Optional<String> hetu = this.dataRepository.findHetuByOid("1.2.3.4.5");
         assertThat(hetu).hasValue("123456-9999");
     }
@@ -74,7 +76,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findHetuByOidNoHetu() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "", "1.2.3.4.5", false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persist(henkilo);
+        this.persistHenkilo(henkilo);
         Optional<String> hetu = this.dataRepository.findHetuByOid("1.2.3.4.5");
         assertThat(hetu).hasValue("");
     }
@@ -83,7 +85,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findOidByHetu() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persist(henkilo);
+        this.persistHenkilo(henkilo);
         Optional<String> oid = this.dataRepository.findOidByHetu("123456-9999");
         assertThat(oid).hasValue("1.2.3.4.5");
     }
@@ -94,11 +96,11 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(hetu).isEmpty();
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test(expected = PersistenceException.class)
     public void createUserWithNullOid() {
         Henkilo henkiloWithNullOid = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", null, false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.dataRepository.save(henkiloWithNullOid);
+        this.persistHenkilo(henkiloWithNullOid);
     }
 
     @Test
@@ -108,7 +110,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persist(persistedHenkilo);
+        this.persistHenkilo(persistedHenkilo);
         List<Henkilo> resultHenkiloList = this.dataRepository.findByOidHenkiloIsIn(Collections.singletonList("1.2.3.4.5"));
         persistedHenkilo = resultHenkiloList.get(0);
         assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(assertHenkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
@@ -145,7 +147,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persist(persistedHenkilo);
+        this.persistHenkilo(persistedHenkilo);
         persistedHenkilo = this.dataRepository.findByHetu("123456-9999").orElse(null);
         assertThat(persistedHenkilo).isEqualToIgnoringGivenFields(henkilo, "id", "version", "yhteystiedotRyhma", "vtjsynced");
         assertThat(persistedHenkilo.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
@@ -164,7 +166,9 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persist(persistedHenkilo);
+        this.testEntityManager.persistAndFlush(persistedHenkilo.getAidinkieli());
+        persistedHenkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persistAndFlush(kansalaisuus));
+        this.testEntityManager.persistAndFlush(persistedHenkilo);
         List<Henkilo> persistedHenkiloList = this.dataRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(Collections.singletonList("arpa"), "kuutio");
         persistedHenkilo = persistedHenkiloList.get(0);
         assertThat(persistedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "etunimet", "kutsumanimi", "sukunimi",
@@ -289,7 +293,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         );
 
         for (Henkilo persistentHenkilo : persistentHenkilos) {
-            this.testEntityManager.persist(persistentHenkilo);
+            this.testEntityManager.persistAndFlush(persistentHenkilo);
         }
 
         List<Henkilo> retrievedHenkilos = this.dataRepository.findHetusAndOids(null, 0, 100);
@@ -365,4 +369,11 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     }
 
+    private void persistHenkilo(Henkilo henkilo) {
+        this.testEntityManager.persistAndFlush(henkilo.getAidinkieli());
+        if (!CollectionUtils.isEmpty(henkilo.getKansalaisuus())) {
+            henkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persistAndFlush(kansalaisuus));
+        }
+        this.testEntityManager.persistAndFlush(henkilo);
+    }
 }

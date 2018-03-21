@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
@@ -50,6 +51,8 @@ public class OppijaServiceTest {
     private IdentificationRepository identificationRepository;
     @Autowired
     private TuontiRepository tuontiRepository;
+    @Autowired
+    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     @Before
     public void setup() {

@@ -32,6 +32,11 @@ spring:
       maximum-pool-size: 20
       connection-timeout: 10000
       max-lifetime: 900000
+servlet:
+  contextPath: /oppijanumerorekisteri-service
+  session:
+    cookie:
+      name: JSESSIONID
 dev:
   username: user
   password: password

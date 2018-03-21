@@ -1,6 +1,7 @@
-flyway:
-  enabled: false
 spring:
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
   datasource:
     driverClassName: org.h2.Driver
     url: jdbc:h2:mem:bootexample;MODE=PostgreSQL
@@ -14,12 +15,10 @@ host:
 oppijanumerorekisteri:
   swagger:
     enabled: false
+  scheduling:
+    enabled: false
 mock:
   ldap: true
 cas:
   send-renew: false
   key: oppijanumerorekisteri-service
-# for debugging hibernate
-#logging:
-#  level:
-#    org.hibernate: DEBUG

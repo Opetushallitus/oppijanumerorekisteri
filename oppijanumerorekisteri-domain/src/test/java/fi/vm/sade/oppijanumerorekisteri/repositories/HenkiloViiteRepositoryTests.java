@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@Transactional(readOnly = true)
+@Transactional
 public class HenkiloViiteRepositoryTests extends AbstractRepositoryTest {
 
     @Autowired

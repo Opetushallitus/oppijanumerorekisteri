@@ -15,18 +15,6 @@ import org.springframework.validation.beanvalidation.MethodValidationPostProcess
 
 @Configuration
 public class WebConfiguration extends WebMvcConfigurerAdapter{
-    private final Environment environment;
-
-    @Autowired
-    public WebConfiguration(Environment environment) {
-        this.environment = environment;
-    }
-
-    // Tämän voinee poistaa spring boot 1.5+ (https://github.com/spring-projects/spring-boot/issues/6228)
-    @Bean
-    public MethodValidationPostProcessor methodValidationPostProcessor() {
-        return new MethodValidationPostProcessor();
-    }
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

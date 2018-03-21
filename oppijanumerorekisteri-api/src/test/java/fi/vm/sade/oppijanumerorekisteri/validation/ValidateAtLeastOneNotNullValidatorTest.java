@@ -10,8 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor;
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory;
+import org.hibernate.validator.internal.util.annotation.AnnotationDescriptor;
+import org.hibernate.validator.internal.util.annotation.AnnotationFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,8 +49,10 @@ public class ValidateAtLeastOneNotNullValidatorTest {
     }
 
     private ValidateAtLeastOneNotNull createAnnotation(Collection<String> value) {
-        AnnotationDescriptor<ValidateAtLeastOneNotNull> descriptor = new AnnotationDescriptor<>(ValidateAtLeastOneNotNull.class);
-        descriptor.setValue("value", value.toArray(new String[value.size()]));
+        AnnotationDescriptor.Builder<ValidateAtLeastOneNotNull> builder = new AnnotationDescriptor.Builder(ValidateAtLeastOneNotNull.class);
+        builder.setAttribute("value", value.toArray(new String[value.size()]));
+        AnnotationDescriptor<ValidateAtLeastOneNotNull> descriptor = builder.build();
+//        descriptor.setValue("value", value.toArray(new String[value.size()]));
         return AnnotationFactory.create(descriptor);
     }
 

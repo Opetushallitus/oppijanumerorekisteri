@@ -31,6 +31,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -64,9 +65,10 @@ public class Service2ServiceControllerTest  {
     public void getHetusAndOidsTest() throws Exception{
         given(this.henkiloService.getHetusAndOids(null, 0, 100)).willReturn(Arrays.asList(
                 new HenkiloHetuAndOidDto("0.0.0.0.1", "111111-111", new Date(1420063200000L)),
-                new HenkiloHetuAndOidDto("0.0.0.0.2", "111111-112", new Date(0L)),
-                new HenkiloHetuAndOidDto("0.0.0.0.3", "111111-113", new Date(0L))));
-        this.mvc.perform(get("/s2s/hetusAndOids?sinceVtjUpdated=-1").accept(MediaType.APPLICATION_JSON_UTF8))
+                new HenkiloHetuAndOidDto("0.0.0.0.2", "111111-112", new Date(100L)),
+                new HenkiloHetuAndOidDto("0.0.0.0.3", "111111-113", new Date(100L))));
+        this.mvc.perform(get("/s2s/hetusAndOids?sinceVtjUpdated=-1")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[\n" +
                         "  {\n" +
@@ -77,12 +79,12 @@ public class Service2ServiceControllerTest  {
                         "  {\n" +
                         "    \"oidHenkilo\": \"0.0.0.0.2\",\n" +
                         "    \"hetu\": \"111111-112\",\n" +
-                        "    \"vtjsynced\": 0\n" +
+                        "    \"vtjsynced\": 100\n" +
                         "  },\n" +
                         "  {\n" +
                         "    \"oidHenkilo\": \"0.0.0.0.3\",\n" +
                         "    \"hetu\": \"111111-113\",\n" +
-                        "    \"vtjsynced\": 0\n" +
+                        "    \"vtjsynced\": 100\n" +
                         "  }\n" +
                         "]"));
     }
@@ -91,12 +93,15 @@ public class Service2ServiceControllerTest  {
     @WithMockUser
     public void findDuplicateHenkilosTest() throws Exception {
         given(this.henkiloService.findHenkiloViittees(any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
-        this.mvc.perform(post("/s2s/duplicateHenkilos").content("{}")
+        this.mvc.perform(post("/s2s/duplicateHenkilos")
+                .with(csrf())
+                .content("{}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
                 .json("[{\"henkiloOid\": \"CHILD\", \"masterOid\": \"MASTER\"}]"));
         this.mvc.perform(post("/s2s/duplicateHenkilos").content("{\"henkiloOids\": [\"CHILD\"]}")
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
@@ -137,6 +142,7 @@ public class Service2ServiceControllerTest  {
         HenkiloCriteria criteria = HenkiloCriteria.builder().henkiloOids(new HashSet<>(singletonList("1.2.3"))).build();
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
         this.mvc.perform(post("/s2s/changedSince/2015-10-12T10:10:10").content("{\"henkiloOids\": [\"1.2.3\"]}")
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content()
@@ -156,7 +162,11 @@ public class Service2ServiceControllerTest  {
                 "\"hetu\": \"081296-967T\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
@@ -169,7 +179,11 @@ public class Service2ServiceControllerTest  {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"hetu\": \"081296-967T\"}";
         given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new ConstraintViolationException("message", null));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
+                .with(csrf())
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -182,7 +196,11 @@ public class Service2ServiceControllerTest  {
                 "\"hetu\": \"081296-967T\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willThrow(new DataIntegrityViolationException("message"));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(content).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
+                .with(csrf())
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -198,7 +216,11 @@ public class Service2ServiceControllerTest  {
                 "\"sukunimi\": \"kuutio\"," +
                 "\"henkiloTyyppi\": \"VIRKAILIJA\"}";
         given(this.henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(any(HenkiloPerustietoDto.class))).willReturn(created(henkiloPerustietoDto));
-        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(post("/s2s/findOrCreateHenkiloPerustieto")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
     }
