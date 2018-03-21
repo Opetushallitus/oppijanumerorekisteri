@@ -148,14 +148,15 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             }
             // rakennetaan ryhmälista uudelleen
             henkiloSaved.getYhteystiedotRyhma().clear();
-            // käyttäjän muokkaukset
-            henkiloUpdateDto.getYhteystiedotRyhma().forEach(yhteystiedotRyhmaDto -> {
-                YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
-                yhteystiedotRyhma.setId(null);
-                henkiloSaved.addYhteystiedotRyhma(yhteystiedotRyhma);
-            });
-            // lisätään read-only ryhmät takaisin
-            henkiloSaved.getYhteystiedotRyhma().addAll(readOnlyRyhmat);
+            henkiloSaved.getYhteystiedotRyhma().addAll(Stream.concat(
+                    // käyttäjän muokkaukset
+                    henkiloUpdateDto.getYhteystiedotRyhma().stream().map(yhteystiedotRyhmaDto -> {
+                        YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
+                        yhteystiedotRyhma.setId(null);
+                        return yhteystiedotRyhma;
+                    }), readOnlyRyhmat.stream()) // lisätään read-only ryhmät takaisin
+                    .filter(YhteystiedotRyhma::isNotEmpty) // poistetaan tyhjät yhteystietoryhmät (myös read-only)
+                    .collect(toSet()));
 
             henkiloUpdateDto.setYhteystiedotRyhma(null);
         }

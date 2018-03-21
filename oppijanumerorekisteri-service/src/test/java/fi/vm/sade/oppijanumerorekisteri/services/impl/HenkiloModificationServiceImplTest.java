@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
+import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
@@ -105,6 +106,7 @@ public class HenkiloModificationServiceImplTest {
         henkilo.getYhteystiedotRyhma().add(YhteystiedotRyhma.builder()
                 .ryhmaKuvaus("yhteystietotyyppi5").ryhmaAlkuperaTieto("alkupera1")
                 .id(yhteystiedotRyhmaId).readOnly(true)
+                .yhteystieto(Yhteystieto.builder(YhteystietoTyyppi.YHTEYSTIETO_MAA, "suomi").build())
                 .build());
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "123456-9999", "1.2.3.4.5", "sv", "svenska", "246",
@@ -112,6 +114,7 @@ public class HenkiloModificationServiceImplTest {
         henkiloUpdateDto.getYhteystiedotRyhma().add(YhteystiedotRyhmaDto.builder()
                 .id(yhteystiedotRyhmaId).readOnly(false)
                 .ryhmaKuvaus("readonly").ryhmaAlkuperaTieto("readonly")
+                .yhteystieto(YhteystietoDto.builder().yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_MAA).yhteystietoArvo("ruotsi").build())
                 .build());
         ArgumentCaptor<Henkilo> argument = ArgumentCaptor.forClass(Henkilo.class);
         given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
@@ -148,7 +151,9 @@ public class HenkiloModificationServiceImplTest {
 
         assertThat(argument.getValue().getYhteystiedotRyhma())
                 .flatExtracting("yhteystieto").extracting("yhteystietoTyyppi", "yhteystietoArvo")
-                .containsExactly(tuple(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, "arpa@kuutio.fi"));
+                .containsExactlyInAnyOrder(
+                        tuple(YhteystietoTyyppi.YHTEYSTIETO_MATKAPUHELINNUMERO, "arpa@kuutio.fi"),
+                        tuple(YhteystietoTyyppi.YHTEYSTIETO_MAA, "suomi"));
     }
 
     @Test
