@@ -1,16 +1,20 @@
+server:
+  servlet:
+    context-path: /oppijanumerorekisteri-service
+    session:
+      cookie:
+        name: JSESSIONID
 spring:
+  session:
+    store-type: jdbc
+    jdbc:
+      schema: classpath:org/springframework/session/jdbc/schema-postgresql.sql
+      initialize-schema: always
   jackson:
     serialization:
       write-dates-as-timestamps: true
   cache:
     type: EHCACHE
-  session:
-    store-type: jdbc
-    jdbc:
-      initializer:
-        enabled: true
-      schema: classpath:org/springframework/session/jdbc/schema-postgresql.sql
-      initialize-schema: always
 logging:
   level:
     root: info

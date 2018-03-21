@@ -12,16 +12,12 @@ spring:
     banner-mode: "off"
   jpa:
     hibernate:
-      dialect: org.hibernate.dialect.PostgreSQL94Dialect
-      implicit-naming-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
       ddl-auto: validate
       use-new-id-generator-mappings: true
-    connection:
-      charset: utf-8
-    archive:
-      autodetection: class,hbm
-    current-session-context-class: org.springframework.orm.hibernate5.SpringSessionContext
-    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
@@ -32,11 +28,6 @@ spring:
       maximum-pool-size: 20
       connection-timeout: 10000
       max-lifetime: 900000
-servlet:
-  contextPath: /oppijanumerorekisteri-service
-  session:
-    cookie:
-      name: JSESSIONID
 dev:
   username: user
   password: password
