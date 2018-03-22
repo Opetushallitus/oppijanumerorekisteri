@@ -39,6 +39,7 @@ public class OppijanumerorekisteriProperties {
         public static class Vtjsync {
             private Boolean enabled = true;
             private Long fixedDelayInMillis = 300000L;
+            private Boolean asiayhteysKaytossa = false;
         }
     }
 }

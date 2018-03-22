@@ -26,10 +26,4 @@ public interface HenkiloRepository extends QueryDslPredicateExecutor, JpaReposit
 
     List<Henkilo> findByHetuIn(Set<String> hetut);
 
-    /**
-     * Palauttaa kaikki sellaiset henkilöt, jotka eivät vielä olleet rekisterissä. Rajoitettu 5000 kerralla.
-     * @return halutut henkilöt
-     */
-    List<Henkilo> findTop5000ByHetuIsNotNullAndPassivoituIsFalseAndVtjRegisterIsFalseAndYksiloityVTJIsTrue();
-
 }

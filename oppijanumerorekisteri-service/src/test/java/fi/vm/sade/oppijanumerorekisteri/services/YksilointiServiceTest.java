@@ -66,6 +66,8 @@ public class YksilointiServiceTest {
         OrikaConfiguration orikaConfiguration = mock(OrikaConfiguration.class);
         YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
         YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
+        AsiayhteysPalveluRepository asiayhteysPalveluRepository = mock(AsiayhteysPalveluRepository.class);
+        AsiayhteysHakemusRepository asiayhteysHakemusRepository = mock(AsiayhteysHakemusRepository.class);
         AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository = mock(AsiayhteysKayttooikeusRepository.class);
         this.yksilointiService = new YksilointiServiceImpl(henkiloRepository,
                 henkiloService,
@@ -75,6 +77,8 @@ public class YksilointiServiceTest {
                 yhteystiedotRyhmaRepository,
                 yhteystietoRepository,
                 yksilointitietoRepository,
+                asiayhteysPalveluRepository,
+                asiayhteysHakemusRepository,
                 asiayhteysKayttooikeusRepository,
                 orikaConfiguration,
                 this.vtjClient,
