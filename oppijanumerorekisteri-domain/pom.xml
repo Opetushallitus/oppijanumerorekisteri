@@ -103,7 +103,7 @@
                     <!-- https://juplo.de/hibernate-maven-plugin/create-mojo.html -->
                     <execute>false</execute>
                     <format>true</format>
-                    <dialect>org.hibernate.dialect.PostgreSQL94Dialect</dialect>
+                    <dialect>org.hibernate.dialect.PostgreSQL95Dialect</dialect>
                     <implicitNamingStrategy>org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl</implicitNamingStrategy>
                     <physicalNamingStrategy>org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy</physicalNamingStrategy>
                 </configuration>
