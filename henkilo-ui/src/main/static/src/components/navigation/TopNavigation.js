@@ -12,7 +12,7 @@ import Script from 'react-load-script';
 import {urls} from 'oph-urls-js';
 
 import './TopNavigation.css';
-import {parsePalveluRoolit} from "../../utilities/organisaatio.util";
+import {parsePalveluRoolit} from "../../utilities/palvelurooli.util";
 
 type Props = {
     naviTabs: Array<NaviTab>,

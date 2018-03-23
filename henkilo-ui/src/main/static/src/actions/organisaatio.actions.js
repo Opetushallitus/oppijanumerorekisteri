@@ -2,24 +2,23 @@
 import * as R from 'ramda';
 import { http } from '../http';
 import {urls} from 'oph-urls-js';
-import { FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS, FETCH_ALL_ORGANISAATIOS_FAILURE,
-    FETCH_ALL_RYHMAT_REQUEST, FETCH_ALL_RYHMAT_SUCCESS, FETCH_ALL_RYHMAT_FAILURE
+import {
+    FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS, FETCH_ALL_ORGANISAATIOS_FAILURE,
+    FETCH_ALL_RYHMAT_REQUEST, FETCH_ALL_RYHMAT_SUCCESS, FETCH_ALL_RYHMAT_FAILURE,
+    FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST, FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS,
+    FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE
 } from './actiontypes';
 import {FETCH_ORGANISATIONS_REQUEST, FETCH_ORGANISATIONS_SUCCESS} from "./actiontypes";
 import PropertySingleton from "../globals/PropertySingleton";
 import type {Dispatch} from "../types/dispatch.type";
+import type {OrganisaatioState} from "../reducers/organisaatio.reducer";
 
 type GetState = () => {
     ryhmatState: {
         ryhmas: Array<{}>,
         ryhmasLoading: boolean,
     },
-    organisaatio: {
-        cached: {},
-        organisaatiot: {
-            numHits: number,
-        },
-    },
+    organisaatio: OrganisaatioState,
     locale: string,
 };
 
@@ -46,6 +45,29 @@ export const fetchAllOrganisaatios = () => async (dispatch: Dispatch, getState: 
         }
     }
 };
+
+const requestAllHierarchialOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST});
+const requestAllHierarchialOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS, organisaatios});
+const requestAllHierarchialOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE, error});
+
+export const fetchAllHierarchialOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+    if (getState().organisaatio.organisaatioHierarkia.numHits === 0 && !getState().organisaatio.organisaatioHierarkiaLoading) {
+        const url = urls.url('organisaatio-service.organisaatiot.hierarkia', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
+        const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid);
+        dispatch(requestAllHierarchialOrganisaatios());
+        try {
+            const organisaatiot = await http.get(url);
+            const rootOrganisation = await http.get(rootUrl);
+            organisaatiot.numHits += 1;
+            organisaatiot.organisaatiot.push(rootOrganisation);
+            dispatch(requestAllHierarchialOrganisaatiosSuccess(organisaatiot));
+        } catch (error) {
+            dispatch(requestAllHierarchialOrganisaatiosFailure(error));
+            throw error;
+        }
+    }
+};
+
 
 // ALL ORGANISAATIORYHMAT
 const requestRyhmas = () => ({type: FETCH_ALL_RYHMAT_REQUEST});

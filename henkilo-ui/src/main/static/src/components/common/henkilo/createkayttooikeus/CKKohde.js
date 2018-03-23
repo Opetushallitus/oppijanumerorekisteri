@@ -1,35 +1,45 @@
 import './CKKohde.css'
 import React from 'react'
 import PropTypes from 'prop-types'
-import OrganisaatioSelection from "../../select/OrganisaatioSelection";
+import RyhmaSelection from "../../select/RyhmaSelection";
+import {OrganisaatioSelectModal} from "../../select/OrganisaatioSelectModal";
+import {
+    omattiedotOrganisaatiotToOrganisaatioSelectObject,
+} from "../../../../utilities/organisaatio.util";
 
-const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale}) =>
-    <tr key="kayttokohdeField">
+const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale, selection}) =>
+     <tr key="kayttokohdeField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
         </td>
         <td>
-            <div className="kohdeOrganisaatio">
-                <OrganisaatioSelection L={L}
-                                       organisaatios={organisationData}
-                                       selectOrganisaatio={organisationAction}
-                                       selectedOrganisaatioOid={organisationValue}
-                                       locale={locale} />
+            <div className="kohdeOrganisaatio flex-horizontal">
+                <input className="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                       value={selection}
+                       placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']} readOnly/>
+                <OrganisaatioSelectModal L={L}
+                                         organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(organisationData, locale)}
+                                         locale={locale}
+                                         disabled={organisationData.length === 0}
+                                         onSelect={organisationAction}>
+                </OrganisaatioSelectModal>
             </div>
 
             <div className="kohdeRyhma">
-                <OrganisaatioSelection L={L}
-                                       organisaatios={organisationData}
-                                       selectOrganisaatio={organisationAction}
-                                       selectedOrganisaatioOid={organisationValue}
-                                       locale={locale}
-                                       isRyhma={true} />
+                <RyhmaSelection L={L}
+                                organisaatios={organisationData}
+                                selectOrganisaatio={organisationAction}
+                                selectedOrganisaatioOid={organisationValue}
+                                locale={locale}
+                                isRyhma={true}/>
             </div>
         </td>
         <td>
             <span className="oph-bold">{' ' + L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
         </td>
     </tr>;
+
+
 
 CKKohde.propTypes = {
     organisationData: PropTypes.array,

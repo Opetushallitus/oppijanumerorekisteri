@@ -22,3 +22,7 @@ export const localizeTextGroup = (texts: Array<Text>, locale: Locale): ?string =
     const localizedText: ?Text = texts.find(text => text.lang.toUpperCase() === lang);
     return localizedText ? localizedText.text : ''
 };
+
+export const getLocalization = (localization: {fi?: string, sv?: string, en?: string}, locale: Locale): string => {
+    return localization[locale] || localization.fi || localization.sv || localization.en || '';
+};

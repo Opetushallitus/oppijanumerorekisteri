@@ -6,7 +6,10 @@ import {
 } from "../../actions/henkilo.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo, updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
-import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
+import {
+    fetchAllHierarchialOrganisaatios, fetchAllOrganisaatios,
+    fetchAllRyhmas
+} from '../../actions/organisaatio.actions';
 import {updateEmptyNavigation} from "../../actions/navigation.actions";
 import HenkiloViewPage from "../henkilo/HenkiloViewPage";
 
@@ -23,6 +26,7 @@ class OmattiedotPageContainer extends React.Component {
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchAllOrganisaatios();
         this.props.fetchAllRyhmas();
+        this.props.fetchAllHierarchialOrganisaatios();
         await this.props.fetchOmattiedot();
         const userOid = this.props.omattiedot.data.oid;
         this.props.fetchHenkilo(userOid);
@@ -68,5 +72,6 @@ export default connect(mapStateToProps, {fetchOmattiedot,
     updateHaettuKayttooikeusryhma,
     fetchAllOrganisaatios,
     fetchAllRyhmas,
+    fetchAllHierarchialOrganisaatios,
     clearHenkilo,
     updateEmptyNavigation})(OmattiedotPageContainer)

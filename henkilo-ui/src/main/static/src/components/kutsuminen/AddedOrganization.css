@@ -46,3 +46,8 @@ ul.kutsuminen-selected-permissions li {
     width: 500px;
     float: left;
 }
+
+.kutsuminen-organisaatiosuodatus {
+    margin-right: 10px;
+    margin-top: 0;
+}

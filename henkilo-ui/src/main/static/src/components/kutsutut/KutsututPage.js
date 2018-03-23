@@ -8,11 +8,14 @@ import KutsututTable from './KutsututTable';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
 import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
-import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import type {L, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
+import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
+import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
+import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
+import CloseButton from "../common/button/CloseButton";
 
 type Payload = {
     searchTerm: string,
@@ -28,13 +31,14 @@ type Payload = {
 type Props = {
     l10n: L10n,
     locale: Locale,
-    kutsus: {result: Array<KutsuRead>},
+    kutsus: { result: Array<KutsuRead> },
     deleteKutsu: (number) => void,
     fetchKutsus: (Payload, number, number) => void,
     kutsuListLoading: boolean,
     organisaatiot: Array<Organisaatio>,
     clearKutsuList: () => void,
     fetchOmattiedotOrganisaatios: () => void,
+    omattiedotOrganisaatiosLoading: boolean,
     isAdmin: boolean,
     isOphVirkailija: boolean,
 }
@@ -57,6 +61,7 @@ type State = {
     allFetched: boolean,
     confirmDeleteFor: ?Kutsu,
     payload: Payload,
+    organisaatioSelection: string
 
 }
 
@@ -65,7 +70,7 @@ export default class KutsututPage extends React.Component<Props, State> {
     defaultLimit: number;
     defaultOffset: number;
     offset: number;
-    kutsuTableHeaderToSort: {[key: string]: string};
+    kutsuTableHeaderToSort: { [key: string]: string };
 
     constructor(props: Props) {
         super(props);
@@ -98,11 +103,12 @@ export default class KutsututPage extends React.Component<Props, State> {
                 kayttooikeusryhmaIds: null,
                 subOrganisations: true
             },
+            organisaatioSelection: ''
         };
     }
 
     async componentDidMount() {
-        this.props.fetchOmattiedotOrganisaatios();
+        await this.props.fetchOmattiedotOrganisaatios();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
@@ -129,23 +135,39 @@ export default class KutsututPage extends React.Component<Props, State> {
                     <span className="oph-h2 oph-bold">{this.L['KUTSUTUT_VIRKAILIJAT_OTSIKKO']}</span>
                     <span className="right">
                         <KutsututBooleanRadioButton view={this.state.payload.view}
-                                                    setView={this.setView.bind(this)} />
+                                                    setView={this.setView.bind(this)}/>
                     </span>
                 </div>
-                <div className="flex-horizontal flex-align-center">
+                <div className="flex-horizontal flex-align-center kutsutut-filters">
                     <div className="flex-item-1">
                         <DelayedSearchInput setSearchQueryAction={this.onHakutermiChange.bind(this)}
                                             defaultNameQuery={this.state.payload.searchTerm}
                                             placeholder={this.L['KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO']}
-                                            loading={this.props.kutsuListLoading} />
+                                            loading={this.props.kutsuListLoading}/>
                     </div>
-                    <div className="flex-item-1">
-                        <OrganisaatioSelection organisaatios={this.props.organisaatiot}
-                                               selectOrganisaatio={this.onOrganisaatioChange.bind(this)}
-                                               selectedOrganisaatioOid={this.state.payload.organisaatioOids} />
+
+                </div>
+                <div className="flex-horizontal kutsutut-filters">
+                    <div className="flex-item-1 flex-inline">
+                        <input className="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                               value={this.state.organisaatioSelection}
+                               placeholder={this.L['KUTSUTUT_ORGANISAATIOSUODATUS']} readOnly/>
+                        <OrganisaatioSelectModal
+                            L={this.L}
+                            locale={this.props.locale}
+                            disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.organisaatiot && this.props.organisaatiot.length === 0)}
+                            organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.organisaatiot, this.props.locale)}
+                            onSelect={this.onOrganisaatioChange.bind(this)}
+                        ></OrganisaatioSelectModal>
+                        <CloseButton closeAction={() => this.clearOrganisaatioSelection()}></CloseButton>
                     </div>
-                    <div className="flex-item-1" id="radiator">
-                        <KayttooikeusryhmaSingleSelect kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)} />
+                    <div className="flex-item-1 flex-inline" id="radiator">
+                        <div className="flex-item-1">
+                            <KayttooikeusryhmaSingleSelect
+                                kayttooikeusSelection={this.state.payload.kayttooikeusryhmaIds}
+                                kayttooikeusSelectionAction={this.onKayttooikeusryhmaChange.bind(this)}/>
+                        </div>
+                        <CloseButton closeAction={() => this.clearKayttooikeusryhmaSelection()}></CloseButton>
                     </div>
                 </div>
                 <KutsututTable
@@ -158,8 +180,9 @@ export default class KutsututPage extends React.Component<Props, State> {
                     isLoading={this.props.kutsuListLoading}
                 />
 
-                {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null} onClose={this.cancelInvitationCancellation.bind(this)}
-                                                               closeOnOuterClick={true}>
+                {this.state.confirmDeleteFor !== null && <Modal show={this.state.confirmDeleteFor !== null}
+                                                                onClose={this.cancelInvitationCancellation.bind(this)}
+                                                                closeOnOuterClick={true}>
                     <div className="confirmation-modal">
                         <span className="oph-h2 oph-strong">{this.L['PERUUTA_KUTSU_VAHVISTUS']}</span>
                         <table>
@@ -175,7 +198,8 @@ export default class KutsututPage extends React.Component<Props, State> {
                             <tr>
                                 <th>{this.L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
                                 <td>{this.state.confirmDeleteFor && this.state.confirmDeleteFor.organisaatiot.map(org =>
-                                    <div className="kutsuOrganisaatio" key={org.oid}>{org.nimi[this.props.locale]}</div>)}</td>
+                                    <div className="kutsuOrganisaatio"
+                                         key={org.oid}>{org.nimi[this.props.locale]}</div>)}</td>
                             </tr>
                             <tr>
                                 <th>{this.L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
@@ -221,20 +245,32 @@ export default class KutsututPage extends React.Component<Props, State> {
         });
     }
 
-    onHakutermiChange(target: {value: string}) {
+    onHakutermiChange(target: { value: string }) {
         const hakutermi = target.value;
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
             this.setState({payload: {...this.state.payload, searchTerm: hakutermi}});
         }
     }
 
-    onOrganisaatioChange(organisaatioTarget: {value: string}) {
-        const organisaatioOids = organisaatioTarget.value;
-        this.setState({payload: {...this.state.payload, organisaatioOids},});
+    parseOrganisaatioSelectObjects(organisaatiot: Array<any>): Array<OrganisaatioSelectObject> {
+        return omattiedotOrganisaatiotToOrganisaatioSelectObject(organisaatiot, this.props.locale);
+    };
+
+    clearOrganisaatioSelection(): void {
+        this.setState({payload: {...this.state.payload, organisaatioOids: ''}, organisaatioSelection: ''});
+    }
+
+    onOrganisaatioChange(organisaatio: OrganisaatioSelectObject) {
+        const organisaatioOids = organisaatio.oid;
+        this.setState({payload: {...this.state.payload, organisaatioOids}, organisaatioSelection: organisaatio.name});
     }
 
     onKayttooikeusryhmaChange(newKayttooikeusId: number) {
         this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: newKayttooikeusId,}});
+    }
+
+    clearKayttooikeusryhmaSelection(): void {
+        this.setState({payload: {...this.state.payload, kayttooikeusryhmaIds: undefined}})
     }
 
     fetchKutsus(sort: ?Sort, shouldNotClear: ?boolean) {

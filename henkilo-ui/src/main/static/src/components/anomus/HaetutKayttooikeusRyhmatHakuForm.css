@@ -26,7 +26,6 @@
     max-width: 300px;
 }
 
-#kayttooikeusryhmaRadioButtonWrapper {
-    width: 250px;
-    margin-left: 23px;
+.anomus-organisaatiosuodatus {
+    margin-right: 10px;
 }

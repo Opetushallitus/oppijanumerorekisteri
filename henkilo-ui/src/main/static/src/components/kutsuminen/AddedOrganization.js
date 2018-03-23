@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import * as R from 'ramda';
 import './AddedOrganization.css';
@@ -14,16 +13,20 @@ import {
     removeOrganisaatioPermission
 } from '../../actions/kutsuminen.actions';
 import {toLocalizedText} from '../../localizabletext'
-import OrganisaatioSelection from '../common/select/OrganisaatioSelection';
-import {getOrganisaatios} from "./OrganisaatioUtilities";
+import RyhmaSelection from '../common/select/RyhmaSelection';
+import {
+    findOmattiedotOrganisatioOrRyhmaByOid,
+    omattiedotOrganisaatiotToOrganisaatioSelectObject
+} from "../../utilities/organisaatio.util";
 import type {
     KutsuOrganisaatio, Organisaatio,
     OrganisaatioHenkilo
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {L} from "../../types/localisation.type";
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal'
-import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils'
-import type { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
+import {myonnettyToKayttooikeusryhma} from '../../utils/KayttooikeusryhmaUtils'
+import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
+import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 
 type Props = {
     changeOrganization: () => void,
@@ -39,18 +42,23 @@ type Props = {
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
     removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
+    organisaatioCache: any,
+    ryhmatState: any
 }
 
-class AddedOrganisation extends React.Component<Props> {
+type State = {
+    organisaatioSelection: string
+}
 
-    static propTypes = {
-        changeOrganization: PropTypes.func,
-        addedOrgs: PropTypes.array,
-        addedOrg: PropTypes.object,
-        omatOrganisaatios: PropTypes.array,
-        index: PropTypes.number.isRequired,
-        locale: PropTypes.string
-    };
+class AddedOrganisation extends React.Component<Props, State> {
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            organisaatioSelection: ''
+        }
+    }
 
     render() {
         const addedOrg = this.props.addedOrg;
@@ -64,13 +72,19 @@ class AddedOrganisation extends React.Component<Props> {
                     <label htmlFor="org">
                         {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
-                    <div className="organisaatioSelection-container">
-                        <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
-                                               selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                        />
-                        <OrganisaatioSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
-                                               selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                               isRyhma={true}
+                    <div className="organisaatioSelection-container flex-horizontal">
+                        <input className="oph-input flex-item-1 kutsuminen-organisaatiosuodatus" type="text" value={this.state.organisaatioSelection} placeholder={this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIO']} readOnly/>
+                        <OrganisaatioSelectModal locale={this.props.locale}
+                                                 L={this.props.L}
+                                                 onSelect={this.selectOrganisaatio.bind(this)}
+                                                 organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.omatOrganisaatios, this.props.locale)}
+                                                 disabled={false}
+                        ></OrganisaatioSelectModal>
+                    </div>
+                    <div className="organisaatioSelection-container flex-horizontal">
+                        <RyhmaSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
+                                        selectOrganisaatio={this.selectOrganisaatio.bind(this)}
+                                        isRyhma={true}
                         />
                     </div>
                 </div>
@@ -87,7 +101,7 @@ class AddedOrganisation extends React.Component<Props> {
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             onSelect={this.addPermission.bind(this, selectablePermissions)}
                             disabled={!addedOrg.oid}
-                            />
+                        />
                     </div>
 
                     <ul className="kutsuminen-selected-permissions">
@@ -107,7 +121,6 @@ class AddedOrganisation extends React.Component<Props> {
         )
     }
 
-
     removeOrganisaatio(oid) {
         this.props.kutsuRemoveOrganisaatio(oid);
     }
@@ -122,18 +135,22 @@ class AddedOrganisation extends React.Component<Props> {
         this.props.removeOrganisaatioPermission(this.props.addedOrg.oid, permission);
     }
 
-    selectOrganisaatio(selection) {
+    selectOrganisaatio(selection: any) {
         if (!selection) {
             this.removeOrganisaatio(this.props.addedOrg.oid);
         }
         else {
-            const selectedOrganisaatioOid = selection.value;
-            const availableOrganisaatios = getOrganisaatios(this.props.omatOrganisaatios, this.props.locale);
-            const organisaatio = R.find(R.propEq('oid', selectedOrganisaatioOid))(availableOrganisaatios);
+            const isOrganisaatio = selection.hasOwnProperty('oid');
+            const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
+            const organisaatio:any = isOrganisaatio ? selection : findOmattiedotOrganisatioOrRyhmaByOid(selectedOrganisaatioOid, this.props.omatOrganisaatios, this.props.locale);
+            if(isOrganisaatio) {
+                this.setState({organisaatioSelection: organisaatio.name});
+            } else {
+                this.setState({organisaatioSelection: ''});
+            }
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
-            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, organisaatio.oid);
+            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, selectedOrganisaatioOid);
         }
-
     }
 }
 
@@ -142,6 +159,7 @@ const mapStateToProps = (state) => ({
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
     omatOrganisaatios: state.omattiedot.organisaatios,
+    ryhmatState: state.ryhmatState
 });
 
 export default connect(mapStateToProps, {

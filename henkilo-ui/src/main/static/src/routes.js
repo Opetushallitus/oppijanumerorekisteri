@@ -1,8 +1,8 @@
 import React from 'react'
 import { Route } from 'react-router'
 import App from './containers/App'
-import KutsututPageContainer from './containers/KutsututPageContainer';
-import KutsuminenPage from './containers/KutsuminenPage';
+import KutsututPageContainer from './components/kutsutut/KutsututPageContainer';
+import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomustListPageContainer from './components/anomus/AnomusPageContainer';
 import OppijaViewContainer from './components/henkilo/OppijaViewContainer';
 import VirkailijaViewContainer from "./components/henkilo/VirkailijaViewContainer";

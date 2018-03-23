@@ -16,6 +16,10 @@ import {
     createKayttooikeusanomus,
     fetchOrganisaatioKayttooikeusryhmat
 } from "../../../actions/kayttooikeusryhma.actions";
+import {OrganisaatioSelectModal} from "../select/OrganisaatioSelectModal";
+import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
+import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
+import {locale} from "../../../reducers/locale.reducer";
 
 class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
@@ -26,7 +30,6 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         organisaatios: PropTypes.object.isRequired,
         ryhmas: PropTypes.object.isRequired,
         henkilo: PropTypes.object.isRequired,
-        organisaatioOptions: PropTypes.array.isRequired,
         ryhmaOptions: PropTypes.array.isRequired,
         kayttooikeusryhmat: PropTypes.array.isRequired,
         fetchOrganisaatioKayttooikeusryhmat: PropTypes.func.isRequired
@@ -37,10 +40,10 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
         this.state = {
             organisaatioSelection: '',
+            organisaatioSelectionName: '',
             ryhmaSelection: '',
             kayttooikeusryhmaSelections: [],
             perustelut: '',
-            organisaatioOptions: [],
             emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(props.henkilo),
         };
     }
@@ -91,15 +94,18 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
                         <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                             {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
                         </label>
-                        <div className="oph-input-container">
-                            <OphSelect noResultsText={`${L['SYOTA_VAHINTAAN']} 3 ${L['MERKKIA']}`}
-                                       placeholder={L['OMATTIEDOT_ORGANISAATIO']}
-                                       onChange={this._changeOrganisaatioSelection.bind(this)}
-                                       onBlurResetsInput={false}
-                                       options={this.state.organisaatioOptions}
-                                       onInputChange={this.inputChange.bind(this)}
-                                       value={this.state.organisaatioSelection}
-                                       disabled={this.state.emailOptions.missingEmail} />
+
+                        <div className="oph-input-container flex-horizontal">
+                            <input className="oph-input flex-item-1 kutsutut-organisaatiosuodatus" type="text"
+                                   value={this.state.organisaatioSelectionName}
+                                   placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']} readOnly/>
+                            <OrganisaatioSelectModal
+                                locale={this.props.locale}
+                                L={L}
+                                organisaatiot={this._parseOrganisaatioSelectOptions.call(this, this.props.organisaatios)}
+                                onSelect={this._changeOrganisaatioSelection.bind(this)}
+                                disabled={this.props.organisaatios.organisaatioHierarkiaLoading}
+                            />
                         </div>
                     </div>
 
@@ -226,24 +232,14 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         this.setState({perustelut: event.target.value});
     }
 
-    _changeOrganisaatioSelection(selection) {
-        this.setState({organisaatioSelection: selection.value, ryhmaSelection: '', kayttooikeusryhmaSelections: [], organisaatioOptions: [selection]});
-        this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
+    _changeOrganisaatioSelection(organisaatio: OrganisaatioSelectObject) {
+        this.setState({organisaatioSelection: organisaatio.oid, ryhmaSelection: '', kayttooikeusryhmaSelections: [], organisaatioSelectionName: organisaatio.name});
+        this.props.fetchOrganisaatioKayttooikeusryhmat(organisaatio.oid);
     }
 
     _changeRyhmaSelection(selection) {
-        this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelections: []});
+        this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelections: [], organisaatioSelectionName: ''});
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
-    }
-
-    inputChange(value) {
-        if (value.length >= 3) {
-            this.setState({
-                organisaatioOptions: this.props.organisaatioOptions.filter(organisaatioOption => organisaatioOption.label.toLowerCase().indexOf(value.toLowerCase()) >= 0)
-            });
-        } else {
-            this.setState({organisaatioOptions: []});
-        }
     }
 
     _isAnomusButtonDisabled() {
@@ -264,9 +260,15 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         return this.state.emailSelection !== '' && !this.state.emailOptions.missingEmail;
     }
 
+    _parseOrganisaatioSelectOptions(organisaatioState) {
+        return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia && organisaatioState.organisaatioHierarkia.organisaatiot.length > 0 ?
+            organisaatioHierarkiaToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia.organisaatiot, locale) : [];
+    }
+
     _resetAnomusFormFields() {
         this.setState({
             organisaatioSelection: '',
+            organisaatioSelectionName: '',
             ryhmaSelection: '',
             kayttooikeusryhmaSelections: [],
             tehtavanimike: '',
@@ -320,7 +322,6 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         await this.props.createKayttooikeusanomus(anomusData);
         this._resetAnomusFormFields();
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
-
     }
 
 }

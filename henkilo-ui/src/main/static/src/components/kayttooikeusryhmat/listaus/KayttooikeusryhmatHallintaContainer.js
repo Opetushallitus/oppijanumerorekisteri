@@ -7,7 +7,7 @@ import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
 import type {L} from "../../../types/localisation.type";
 import {updateEmptyNavigation} from "../../../actions/navigation.actions";
-import { hasAnyPalveluRooli } from '../../../utilities/organisaatio.util'
+import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util'
 
 
 type Props = {

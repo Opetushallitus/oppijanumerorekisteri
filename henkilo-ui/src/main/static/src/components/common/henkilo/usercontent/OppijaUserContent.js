@@ -19,7 +19,7 @@ import type {L} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
 import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
-import {hasAnyPalveluRooli} from "../../../../utilities/organisaatio.util";
+import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';

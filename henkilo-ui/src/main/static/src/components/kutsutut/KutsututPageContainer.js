@@ -2,12 +2,12 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-import {clearKutsuList, deleteKutsu, fetchKutsus} from '../actions/kutsu.actions';
-import KutsututPage from '../components/kutsutut/KutsututPage';
-import {fetchOmattiedotOrganisaatios} from '../actions/omattiedot.actions';
-import type {KutsuRead} from "../types/domain/kayttooikeus/Kutsu.types";
-import type {L10n} from "../types/localisation.type";
-import type {Locale} from "../types/locale.type";
+import {clearKutsuList, deleteKutsu, fetchKutsus} from '../../actions/kutsu.actions';
+import KutsututPage from './KutsututPage';
+import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions';
+import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
+import type {L10n} from "../../types/localisation.type";
+import type {Locale} from "../../types/locale.type";
 
 type Props = {
     path: string,
@@ -21,7 +21,8 @@ type Props = {
     fetchKutsus: (any) => void,
     deleteKutsu: (number) => void,
     fetchOmattiedotOrganisaatios: () => void,
-    clearKutsuList: () => void
+    omattiedotOrganisaatiosLoading: boolean,
+    clearKutsuList: () => void,
 }
 
 class KutsututPageContainer extends React.Component<Props> {
@@ -38,6 +39,7 @@ const mapStateToProps = (state, ownProps) => {
         locale: state.locale,
         kutsuListLoading: !state.kutsuList.loaded,
         organisaatiot: state.omattiedot.organisaatios,
+        omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
         isAdmin: state.omattiedot.isAdmin,
         isOphVirkailija: state.omattiedot.isOphVirkailija,
     };

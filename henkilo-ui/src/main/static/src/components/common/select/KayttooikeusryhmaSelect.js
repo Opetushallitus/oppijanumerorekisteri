@@ -49,7 +49,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
     getKielistetyt = (kayttooikeusryhmat: Array<Kayttooikeusryhma>): Array<KielistettyKayttooikeusryhma> => {
         return kayttooikeusryhmat
             .map(this.getKielistetty)
-            .sort((a, b) => a.nimi.localeCompare(b.nimi))
+            .sort((a, b ) => a.nimi.localeCompare(b.nimi))
     };
 
     getKielistetty = (kayttooikeusryhma: Kayttooikeusryhma): KielistettyKayttooikeusryhma => {

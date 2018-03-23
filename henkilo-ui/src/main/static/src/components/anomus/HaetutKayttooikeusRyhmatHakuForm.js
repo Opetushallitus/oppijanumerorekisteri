@@ -3,18 +3,19 @@
  * Haettujen käyttöoikeusryhmien hakulomake.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux'
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup'
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import CloseButton from "../common/button/CloseButton";
-import OrganisaatioSelection from "../common/select/OrganisaatioSelection";
 import OphSelect from "../common/select/OphSelect";
 import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions';
 import * as R from 'ramda';
 import type {L} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
+import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
+import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
+import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 
 type Props = {
     L: L,
@@ -26,12 +27,13 @@ type Props = {
     haetutKayttooikeusryhmatLoading: boolean,
     ryhmat: {ryhmas: Array<{}>},
     fetchOmattiedotOrganisaatios: () => void,
+    omattiedotOrganisaatiosLoading: boolean
 }
 
 type State = {
     searchTerm: string,
     naytaKaikki: boolean,
-    selectedOrganisaatio: ?string,
+    selectedOrganisaatio: ?OrganisaatioSelectObject,
     selectedRyhma: ?number,
 }
 
@@ -42,7 +44,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         this.state = {
             searchTerm: '',
             naytaKaikki: false,
-            selectedOrganisaatio: undefined,
+            selectedOrganisaatio: null,
             selectedRyhma: undefined
         };
     };
@@ -50,18 +52,6 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
     }
-
-    static propTypes = {
-        onSubmit: PropTypes.func.isRequired,
-        locale: PropTypes.string.isRequired,
-        haetutKayttooikeusryhmatLoading: PropTypes.bool.isRequired,
-        isAdmin: PropTypes.bool,
-        isOphVirkailija: PropTypes.bool,
-        organisaatios: PropTypes.array,
-        ryhmat: PropTypes.shape({
-            ryhmas: PropTypes.array,
-        })
-    };
 
     render() {
         return (
@@ -74,17 +64,16 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                                             loading={this.props.haetutKayttooikeusryhmatLoading}/>
                     </div>
                     <div className="flex-item-1 haetut-kayttooikeusryhmat-form-item flex-inline large-kayttooikeus-filter">
-                        <span className="flex-item-1">
-                            <OrganisaatioSelection id="organisaatiofilter"
-                                                   L={this.props.L}
-                                                   locale={this.props.locale}
-                                                   organisaatios={this.props.organisaatios}
-                                                   selectOrganisaatio={this.onOrganisaatioChange.bind(this)}
-                                                   selectedOrganisaatioOid={this.state.selectedOrganisaatio}>
-                            </OrganisaatioSelection>
-                        </span>
+                        <input className="oph-input flex-item-1 anomus-organisaatiosuodatus" type="text" value={this.state.selectedOrganisaatio ? this.state.selectedOrganisaatio.name : ''} placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_ORGANISAATIO']} readOnly/>
+                        <OrganisaatioSelectModal
+                                L={this.props.L}
+                                locale={this.props.locale}
+                                disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.organisaatios.length === 0)}
+                                onSelect={this.onOrganisaatioChange.bind(this)}
+                                organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.organisaatios, this.props.locale)}
+                        ></OrganisaatioSelectModal>
                         <span className="haetut-kayttooikeusryhmat-close-button">
-                            <CloseButton closeAction={() => this.onOrganisaatioChange(undefined)}/>
+                            <CloseButton closeAction={() => this.onClearOrganisaatio()}/>
                         </span>
                     </div>
                 </div>
@@ -123,13 +112,6 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         );
     }
 
-    parseChild(organisaatio, organisaatioOids) {
-        organisaatioOids.push(organisaatio.oid);
-        if (organisaatio.children.length > 0) {
-            organisaatio.children.forEach(organisaatio => this.parseChild(organisaatio, organisaatioOids));
-        }
-    }
-
     _parseRyhmas(ryhmatState) {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat ? ryhmat.map(ryhma => ({
@@ -146,15 +128,19 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         }
     };
 
-    onOrganisaatioChange = (organisaatioSelection) => {
-        const organisaatioOid = organisaatioSelection ? organisaatioSelection.value : undefined;
-        this.setState({selectedOrganisaatio: organisaatioOid, selectedRyhma: undefined});
-        this.props.onSubmit({organisaatioOids: organisaatioOid});
+    onClearOrganisaatio = (): void => {
+        this.setState({ selectedOrganisaatio: null });
+        this.props.onSubmit({organisaatioOids: ''});
+    };
+
+    onOrganisaatioChange = (organisaatio: OrganisaatioSelectObject) => {
+        this.setState({selectedOrganisaatio: organisaatio, selectedRyhma: undefined});
+        this.props.onSubmit({organisaatioOids: organisaatio.oid});
     };
 
     onRyhmaChange = (ryhma) => {
         const ryhmaOid = ryhma ? ryhma.value : undefined;
-        this.setState({selectedRyhma: ryhmaOid, selectedOrganisaatio: undefined});
+        this.setState({selectedRyhma: ryhmaOid, selectedOrganisaatio: null});
         this.props.onSubmit({organisaatioOids: ryhmaOid});
     };
 
@@ -168,6 +154,7 @@ const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     organisaatios: state.omattiedot.organisaatios,
+    omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
     isAdmin: state.omattiedot.isAdmin,
     isOphVirkailija: state.omattiedot.isOphVirkailija,
     haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.isLoading,

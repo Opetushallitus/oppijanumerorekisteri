@@ -13,6 +13,7 @@ type Props = {
     fetchAllKayttooikeusryhma: (boolean) => void,
     kayttooikeusRyhmas: Array<{id: number, description: {texts: Array<{lang: string, text: string}>}}>,
     kayttooikeusSelectionAction: (number) => void,
+    kayttooikeusSelection: ?number
 };
 
 type State = {
@@ -44,11 +45,12 @@ class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
                              value: kayttooikeusryhma.id,
                              label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
                          }))}
-                         value={this.state.selectedKayttooikeus}
+                         value={this.props.kayttooikeusSelection}
                          placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                          onChange={(event) => this.props.kayttooikeusSelectionAction(event.value)}/>
             : null;
     }
+
 }
 
 const mapStateToProps = (state, ownProps) => ({

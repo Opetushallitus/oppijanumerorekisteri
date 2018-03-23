@@ -9,15 +9,18 @@ import PalvelukayttajaHakuPage from './PalvelukayttajaHakuPage'
 import type { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import type { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer'
 import type { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types'
+import type {Locale} from "../../types/locale.type";
 
 type Props = {
     L: L,
+    locale: Locale,
     palvelukayttajat: PalvelukayttajatState,
     omatOrganisaatiot: Array<OrganisaatioHenkilo>,
     fetchOmattiedotOrganisaatios: () => void,
     setPalvelukayttajatCriteria: (criteria: PalvelukayttajaCriteria) => void,
     fetchPalvelukayttajat: (criteria: PalvelukayttajaCriteria) => void,
     updatePalvelukayttajaNavigation: () => void,
+    omatOrganisaatiosLoading: boolean
 }
 
 class PalvelukayttajaHakuContainer extends React.Component<Props> {
@@ -35,9 +38,11 @@ class PalvelukayttajaHakuContainer extends React.Component<Props> {
     render() {
         return <PalvelukayttajaHakuPage
             L={this.props.L}
+            locale={this.props.locale}
             organisaatiot={this.props.omatOrganisaatiot}
             onCriteriaChange={this.onCriteriaChange}
             palvelukayttajat={this.props.palvelukayttajat}
+            organisaatiotLoading={this.props.omatOrganisaatiosLoading}
         />
     }
 
@@ -52,9 +57,11 @@ class PalvelukayttajaHakuContainer extends React.Component<Props> {
 
 const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
+    locale: state.locale,
     palvelukayttajat: state.palvelukayttajat,
     omatOrganisaatiot: state.omattiedot.organisaatios,
-})
+    omatOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading
+});
 
 export default connect(mapStateToProps, {
     updatePalvelukayttajaNavigation,

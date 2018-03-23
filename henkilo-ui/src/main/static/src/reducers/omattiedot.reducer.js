@@ -4,7 +4,7 @@ import {
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST, FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
     FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_CASME_SUCCESS
 } from '../actions/actiontypes';
-import {getOrganisaatioOptionsAndFilter} from "../components/kutsuminen/OrganisaatioUtilities";
+import {getOrganisaatioOptionsAndFilter} from "../utilities/organisaatio.util";
 import type {KayttooikeusOrganisaatiot} from "../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
 
 

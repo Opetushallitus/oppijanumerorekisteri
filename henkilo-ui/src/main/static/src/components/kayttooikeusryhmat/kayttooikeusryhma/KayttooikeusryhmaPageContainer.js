@@ -5,6 +5,7 @@ import {updateKayttooikeusryhmaNavigation} from '../../../actions/navigation.act
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import {fetchOmattiedotOrganisaatios} from '../../../actions/omattiedot.actions';
 import {fetchOppilaitostyypit} from '../../../actions/koodisto.actions';
+import {fetchAllOrganisaatios} from '../../../actions/organisaatio.actions';
 import {
     fetchAllKayttooikeusryhma, fetchKayttooikeusryhmaById,
     fetchPalveluRooliByKayttooikeusryhmaId, fetchKayttooikeusryhmaSlaves
@@ -26,15 +27,18 @@ type Props = {
     fetchOppilaitostyypit: () => void,
     fetchAllKayttooikeusryhma: () => void,
     fetchAllPalvelut: () => void,
+    fetchAllOrganisaatios: () => void,
     fetchKayttooikeusryhmaSlaves: (id: string) => Promise<any>,
     fetchPalveluKayttooikeus: (palveluName: string) => void,
     organisaatios: any,
+    organisaatioCache: {[string]: any},
     koodisto: any,
     locale: Locale,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
     palvelutState: PalvelutState,
     router: any,
+    omattiedotOrganisaatiosLoading: boolean,
     kayttooikeusryhmaId?: string
 }
 
@@ -47,6 +51,7 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
         this.props.fetchAllPalvelut();
+        this.props.fetchAllOrganisaatios();
         if (kayttooikeusryhmaId) {
             this.props.fetchKayttooikeusryhmaById(kayttooikeusryhmaId);
             this.props.fetchPalveluRooliByKayttooikeusryhmaId(kayttooikeusryhmaId);
@@ -71,15 +76,18 @@ const mapStateToProps = (state, ownProps) => {
         kayttooikeusryhmaId: ownProps.routeParams['id'],
         L: state.l10n.localisations[state.locale],
         organisaatios: state.omattiedot.organisaatios,
+        organisaatioCache: state.organisaatio.cached,
+        organisaatioLoading: state.organisaatio.organisaatioLoading,
         koodisto: state.koodisto,
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         palvelutState: state.palvelutState,
-        kayttooikeusState: state.kayttooikeusState
+        kayttooikeusState: state.kayttooikeusState,
+        omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading
     }
 };
 
 export default connect(mapStateToProps, {
     updateKayttooikeusryhmaNavigation, fetchOmattiedotOrganisaatios, fetchKayttooikeusryhmaById, fetchPalveluRooliByKayttooikeusryhmaId,
-    fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus, fetchKayttooikeusryhmaSlaves
+    fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus, fetchKayttooikeusryhmaSlaves, fetchAllOrganisaatios
 })(KayttooikeusryhmaPageContainer)

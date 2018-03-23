@@ -9,7 +9,7 @@ import TextButton from "../../button/TextButton";
 import type {L} from "../../../../types/localisation.type";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
-import { hasAnyPalveluRooli } from '../../../../utilities/organisaatio.util'
+import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util'
 
 type Props = {
     kayttooikeudet: Array<KayttooikeusOrganisaatiot>,

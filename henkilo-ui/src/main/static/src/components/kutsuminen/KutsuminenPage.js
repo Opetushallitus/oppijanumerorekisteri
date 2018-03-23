@@ -1,24 +1,27 @@
 // @flow
 import { connect } from 'react-redux';
-import BasicInfoForm from '../components/kutsuminen/BasicinfoForm';
+import BasicInfoForm from './BasicinfoForm';
 import React from 'react';
-import KutsuOrganisaatios from '../components/kutsuminen/KutsuOrganisaatios';
-import { fetchOmattiedotOrganisaatios } from '../actions/omattiedot.actions';
-import { kutsuAddOrganisaatio } from '../actions/kutsuminen.actions';
-import KutsuConfirmation from '../components/kutsuminen/KutsuConfirmation';
-import Loader from '../components/common/icons/Loader';
-import type {KutsuOrganisaatio} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
-import type {Henkilo} from "../types/domain/oppijanumerorekisteri/henkilo.types";
-import type {L, L10n} from "../types/localisation.type";
-import ValidationMessageButton from "../components/common/button/ValidationMessageButton";
-import type {ValidationMessage} from "../types/validation.type";
-import type {BasicinfoType} from "../components/kutsuminen/BasicinfoForm";
-import StaticUtils from "../components/common/StaticUtils";
-import { fetchHenkilo } from '../actions/henkilo.actions'
-import { LocalNotification } from '../components/common/Notification/LocalNotification';
+import KutsuOrganisaatios from './KutsuOrganisaatios';
+import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
+import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
+import { kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
+import KutsuConfirmation from './KutsuConfirmation';
+import Loader from '../common/icons/Loader';
+import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {L, L10n} from "../../types/localisation.type";
+import ValidationMessageButton from "../common/button/ValidationMessageButton";
+import type {ValidationMessage} from "../../types/validation.type";
+import type {BasicinfoType} from "./BasicinfoForm";
+import StaticUtils from "../common/StaticUtils";
+import { fetchHenkilo } from '../../actions/henkilo.actions'
+import { LocalNotification } from '../common/Notification/LocalNotification';
+import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
+    fetchAllRyhmas: () => void,
     L: L,
     l10n: L10n,
     locale: string,
@@ -27,6 +30,8 @@ type Props = {
     kayttajaOid: string,
     fetchHenkilo: (oid: string) => Promise<*>,
     henkilo: Henkilo,
+    organisaatioState: OrganisaatioState,
+    ryhmaState: any
 }
 
 type State = {
@@ -81,6 +86,7 @@ class KutsuFormPage extends React.Component<Props, State>  {
 
     async componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios();
+        this.props.fetchAllRyhmas();
         await this.fetchKayttaja(this.props.kayttajaOid)
     }
 
@@ -107,7 +113,7 @@ class KutsuFormPage extends React.Component<Props, State>  {
         };
         const {basicInfo} = this.state;
 
-        if (this.props.omattiedotLoading || this.props.henkiloLoading) {
+        if (this.props.omattiedotLoading || this.props.henkiloLoading || this.props.ryhmasLoading) {
             return (<div className="wrapper"><Loader /></div>);
         }
         else {
@@ -218,8 +224,10 @@ const mapStateToProps = (state, ownProps) => {
         henkiloLoading: state.henkilo.henkiloLoading,
         henkilo: state.henkilo.henkilo,
         addedOrgs: state.kutsuminenOrganisaatios,
-        locale: state.locale
+        locale: state.locale,
+        organisaatioState: state.organisaatio,
+        ryhmasLoading: state.ryhmatState.ryhmasLoading
     };
 };
 
-export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo})(KutsuFormPage);
+export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo, fetchAllRyhmas})(KutsuFormPage);
