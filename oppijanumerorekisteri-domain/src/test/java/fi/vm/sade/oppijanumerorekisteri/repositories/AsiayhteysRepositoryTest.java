@@ -39,7 +39,7 @@ public class AsiayhteysRepositoryTest {
                 .vtjRegister(false)
                 .yksiloityVTJ(true)
                 .build();
-        this.testEntityManager.persist(henkilo1);
+        this.testEntityManager.persistAndFlush(henkilo1);
 
         Henkilo henkilo2 = Henkilo.builder()
                 .oidHenkilo("2")
@@ -50,7 +50,7 @@ public class AsiayhteysRepositoryTest {
                 .vtjRegister(false)
                 .yksiloityVTJ(false)
                 .build();
-        this.testEntityManager.persist(henkilo2);
+        this.testEntityManager.persistAndFlush(henkilo2);
 
         Henkilo henkilo3 = Henkilo.builder()
                 .oidHenkilo("3")
@@ -61,7 +61,7 @@ public class AsiayhteysRepositoryTest {
                 .vtjRegister(false)
                 .yksiloityVTJ(true)
                 .build();
-        this.testEntityManager.persist(henkilo3);
+        this.testEntityManager.persistAndFlush(henkilo3);
 
         AsiayhteysCriteria criteria = new AsiayhteysCriteria(LocalDate.now());
         List<Henkilo> henkilos = asiayhteysRepository.findLisattavat(criteria, 5000L);
