@@ -3,6 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
+import org.springframework.util.StringUtils;
+
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -32,12 +34,17 @@ public class EntityUtils {
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
                                        boolean passivoitu, String kielikoodi, String kielityyppi,
                                        String kansalaisuuskoodi, Date luontiMuokkausSyncedPvm, Date lastVtjSynced, String kasittelija, String yhteystietoArvo, LocalDate syntymaAika) {
-        Kielisyys aidinkieli = new Kielisyys();
-        aidinkieli.setKieliTyyppi(kielityyppi);
-        aidinkieli.setKieliKoodi(kielikoodi);
-
-        Kansalaisuus kansalaisuus = new Kansalaisuus();
-        kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
+        Kielisyys aidinkieli = null;
+        if (StringUtils.hasLength(kielikoodi)) {
+            aidinkieli = new Kielisyys();
+            aidinkieli.setKieliTyyppi(kielityyppi);
+            aidinkieli.setKieliKoodi(kielikoodi);
+        }
+        Kansalaisuus kansalaisuus = null;
+        if (StringUtils.hasLength(kansalaisuuskoodi)) {
+            kansalaisuus = new Kansalaisuus();
+            kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
+        }
 
         return Henkilo.builder()
                 .oidHenkilo(oidHenkilo)

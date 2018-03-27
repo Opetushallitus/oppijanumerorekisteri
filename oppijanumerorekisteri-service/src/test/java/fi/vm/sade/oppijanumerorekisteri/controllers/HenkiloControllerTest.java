@@ -33,12 +33,13 @@ import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(HenkiloController.class)
+@WebMvcTest(value = HenkiloController.class)
 @ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
 public class HenkiloControllerTest {
     @Autowired
@@ -108,7 +109,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void findHenkilotByOidList() throws Exception {
         HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
                 "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
@@ -133,6 +134,7 @@ public class HenkiloControllerTest {
         given(this.henkiloService.getHenkiloPerustietoByOids(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(Collections.singletonList(henkiloPerustietoDto));
         this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloOidList").content(inputOidList)
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(returnContent));
     }
@@ -178,10 +180,10 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = {"INAPPROPRIATE_ROLE"})
     public void unauthorized() throws Exception {
-        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isForbidden());
+        this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -210,6 +212,7 @@ public class HenkiloControllerTest {
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isOk()).andExpect(content().string("1.2.3.4.5"));
     }
 
@@ -224,7 +227,7 @@ public class HenkiloControllerTest {
         errors.rejectValue("hetu", henkiloUpdateDto.getHetu());
         given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class)))
                 .willThrow(new fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException(errors));
-        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8).with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Field error in object 'henkiloUpdateDTo' on field 'hetu': rejected value [081296-967T];")));
     }
@@ -237,8 +240,12 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class))).willThrow(new NotFoundException());
-        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
+        this.mvc.perform(put("/henkilo")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -249,7 +256,11 @@ public class HenkiloControllerTest {
                 "arpa@kuutio.fi");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class))).willThrow(new ValidationException());
-        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+        this.mvc.perform(put("/henkilo")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
@@ -283,6 +294,7 @@ public class HenkiloControllerTest {
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         given(this.henkiloModificationService.createHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated()).andExpect(content().string("1.2.3.4.5"));
     }
@@ -293,6 +305,7 @@ public class HenkiloControllerTest {
         HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "bad_hetu", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }

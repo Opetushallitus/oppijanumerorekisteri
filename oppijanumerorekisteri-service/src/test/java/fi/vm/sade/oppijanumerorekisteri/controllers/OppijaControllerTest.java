@@ -21,6 +21,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,6 +70,7 @@ public class OppijaControllerTest {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
@@ -83,6 +86,7 @@ public class OppijaControllerTest {
         dto.setSahkoposti(null);
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
@@ -98,6 +102,7 @@ public class OppijaControllerTest {
         dto.setSahkoposti("lsdkjd");
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
@@ -113,6 +118,7 @@ public class OppijaControllerTest {
         dto.setHenkilot(null);
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
@@ -128,6 +134,7 @@ public class OppijaControllerTest {
         dto.setHenkilot(emptyList());
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
@@ -145,6 +152,7 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
@@ -165,6 +173,7 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
+                .with(csrf())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
