@@ -49,6 +49,8 @@ public class HenkiloPerustietoDto implements Serializable {
 
     private LocalDate syntymaaika;
 
+    private boolean turvakielto;
+
     private KielisyysDto aidinkieli;
 
     @ValidateAsiointikieli
