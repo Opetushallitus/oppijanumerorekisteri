@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 // Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
-// See IdentificationServiceIntegrationTest2 if you want to add more tests.
+// See IdentificationServiceIntegrationTests if you want to add more tests.
 @RunWith(SpringRunner.class)
 @IntegrationTest
 @Sql("/sql/yksilointi-test.sql")

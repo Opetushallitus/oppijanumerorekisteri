@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.tuple;
 @Transactional
 @IntegrationTest
 @Sql("/sql/yksilointi-test2.sql")
-public class IdentificationServiceIntegrationTest2 {
+public class IdentificationServiceIntegrationTests {
 
     private static final Function<YhteystiedotRyhma, List<String>> YHTEYSTIETOARVOT = yhteystietoryhma
             -> yhteystietoryhma.getYhteystieto().stream().map(Yhteystieto::getYhteystietoArvo).collect(toList());
