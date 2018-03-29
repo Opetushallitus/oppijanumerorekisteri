@@ -97,15 +97,6 @@ public class IdentificationServiceIntegrationTests {
         assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("010101-123N");
     }
 
-    // Hetu matches to virkailija and names do not match.
-    @Test(expected = DataInconsistencyException.class)
-    public void setStrongIdentifiedHetuHetuAndNimetNoMatch() {
-        HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("010101-123N", "Wrong first name", "Testaaja");
-
-        this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto);
-    }
-
     // Hetu already used by other virkailija
     @Test(expected = RuntimeException.class)
     public void setStrongIdentifiedHetu() {
