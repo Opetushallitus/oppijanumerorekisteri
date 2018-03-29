@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.tuple;
 @Transactional
 @IntegrationTest
 @Sql("/sql/yksilointi-test2.sql")
-public class IdentificationServiceIntegrationTest2 {
+public class IdentificationServiceIntegrationTests {
 
     private static final Function<YhteystiedotRyhma, List<String>> YHTEYSTIETOARVOT = yhteystietoryhma
             -> yhteystietoryhma.getYhteystieto().stream().map(Yhteystieto::getYhteystietoArvo).collect(toList());
@@ -95,15 +95,6 @@ public class IdentificationServiceIntegrationTest2 {
         Henkilo henkiloHetuUpdated = (Henkilo)this.entityManager
                 .createNativeQuery("SELECT * FROM henkilo WHERE oidhenkilo = 'EverythingOK'", Henkilo.class).getSingleResult();
         assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("010101-123N");
-    }
-
-    // Hetu matches to virkailija and names do not match.
-    @Test(expected = DataInconsistencyException.class)
-    public void setStrongIdentifiedHetuHetuAndNimetNoMatch() {
-        HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("010101-123N", "Wrong first name", "Testaaja");
-
-        this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto);
     }
 
     // Hetu already used by other virkailija
