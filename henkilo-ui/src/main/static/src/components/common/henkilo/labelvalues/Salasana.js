@@ -1,9 +1,17 @@
+// @flow
 import React from 'react'
 import {connect} from 'react-redux'
-import PropTypes from 'prop-types'
 import LabelValue from "./LabelValue";
+import type {L} from "../../../../types/localisation.type";
 
-const Salasana = (props) => <div>
+type Props = {
+    disabled: boolean,
+    isError: boolean,
+    L: L,
+    updateModelFieldAction: (SyntheticInputEvent<HTMLInputElement>) => void,
+}
+
+const Salasana = (props: Props) => <div>
     <LabelValue {...props} values={{
         label: 'HENKILO_PASSWORD',
         value: '',
@@ -32,13 +40,8 @@ const Salasana = (props) => <div>
     />
 </div>;
 
-Salasana.propTypes = {
-    disabled: PropTypes.bool,
-    isError: PropTypes.bool,
-};
-
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps)(Salasana);
+export default connect(mapStateToProps, {})(Salasana);

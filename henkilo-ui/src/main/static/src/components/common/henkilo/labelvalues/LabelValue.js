@@ -1,10 +1,31 @@
+// @flow
 import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import Columns from 'react-columns';
 import Field from "../../field/Field";
+import type {L} from "../../../../types/localisation.type";
 
-const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}) => !values.showOnlyOnWrite || !readOnly
+type Props = {
+    values: {
+        value: string,
+        label: string,
+        inputValue: string,
+        disabled: boolean,
+        password: boolean,
+        isError: boolean,
+        date: string,
+    },
+    readOnly: boolean,
+    updateModelFieldAction: (SyntheticInputEvent<HTMLInputElement>) => void,
+    updateDateFieldAction: (SyntheticInputEvent<HTMLInputElement>) => void,
+    L: L,
+    autofocus: boolean,
+    required: boolean,
+    hideLabel: boolean,
+}
+
+const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}: Props) => !values.showOnlyOnWrite || !readOnly
     ? <div id={values.label}>
         <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
             {!hideLabel ? <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span> : <span>&nbsp;</span>}
@@ -37,8 +58,8 @@ LabelValue.propTypes = {
     disabled: PropTypes.bool
 };
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 }) ;
 
-export default connect(mapStateToProps)(LabelValue);
+export default connect(mapStateToProps, {})(LabelValue);

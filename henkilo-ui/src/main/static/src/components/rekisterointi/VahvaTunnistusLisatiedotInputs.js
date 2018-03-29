@@ -5,9 +5,11 @@ import OphLabel from '../common/forms/OphLabel'
 import OphInput from '../common/forms/OphInput'
 import { LocalNotification } from '../common/Notification/LocalNotification'
 import type { L } from '../../types/localisation.type'
+import Salasana from "../common/henkilo/labelvalues/Salasana";
 
 export type Values = {
-    salasana: string,
+    password: string,
+    passwordAgain: string,
     tyosahkopostiosoite: string,
 }
 export type Field = {
@@ -47,13 +49,10 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<Props> {
                         <OphLabel for="salasana" inline={true}>
                             {this.props.L['UUDELLEENREKISTEROINTI_UUSI_SALASANA']}
                         </OphLabel>
-                        <OphInput
-                            type="password"
-                            name="salasana"
-                            value={this.props.form.values.salasana}
-                            onChange={this.onInputChange}
-                            hasError={this.hasError('salasana')}
-                            disabled={this.props.form.metadata.salasana.disabled}
+                        <Salasana disabled={this.props.form.metadata.salasana.disabled}
+                                  isError={this.hasError('salasana')}
+                                  L={this.props.L}
+                                  updateModelFieldAction={this.onInputChange.bind(this)}
                         />
                         <LocalNotification type="error" title={this.props.L['LOMAKE_KENTTA_SISALTAA_VIRHEITA']} toggle={this.hasError('salasana')}>
                             <ul>
