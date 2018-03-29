@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
@@ -8,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +49,9 @@ public class IdentificationServiceIntegrationTest {
     @Autowired
     private IdentificationService identificationService;
 
+    @Autowired
+    private DatabaseService databaseService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -58,6 +63,11 @@ public class IdentificationServiceIntegrationTest {
 
         given(this.koodistoClient.getKoodiValuesForKoodisto(anyString(), anyInt(), anyBoolean()))
                 .willReturn(mockKoodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 0, true));
+    }
+
+    @After
+    public void cleanup() {
+        databaseService.truncate();
     }
 
     @Test
