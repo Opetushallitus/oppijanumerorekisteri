@@ -37,6 +37,7 @@ public class HenkiloReadDto {
     private HenkiloReadDto huoltaja;
     private Set<KielisyysReadDto> kielisyys;
     private Set<KansalaisuusReadDto> kansalaisuus;
+    private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {
