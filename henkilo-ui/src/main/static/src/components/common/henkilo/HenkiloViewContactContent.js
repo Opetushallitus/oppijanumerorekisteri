@@ -137,7 +137,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                     </div>
                     {
                         this.props.henkilo.henkilo.turvakielto ?
-                            <div className="oph-h3 oph-bold midHeader">Henkilöllä on turvakielto</div> : null
+                            <div className="oph-h3 oph-bold midHeader">{this.props.L['YHTEYSTIETO_TURVAKIELTO']}</div> : null
                     }
 
                     <div className="henkiloViewContent">
