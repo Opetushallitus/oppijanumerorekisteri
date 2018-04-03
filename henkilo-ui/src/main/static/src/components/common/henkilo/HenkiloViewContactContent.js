@@ -135,6 +135,11 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                     <div className="header">
                         <p className="oph-h2 oph-bold">{this.props.L['HENKILO_YHTEYSTIEDOT_OTSIKKO']}</p>
                     </div>
+                    {
+                        this.props.henkilo.henkilo.turvakielto ?
+                            <div className="oph-h3 oph-bold midHeader">{this.props.L['YHTEYSTIETO_TURVAKIELTO']}</div> : null
+                    }
+
                     <div className="henkiloViewContent">
                         <Columns columns={2} gap="25px" >
                             {this.createContent()}
