@@ -25,7 +25,8 @@ type State = {
 }
 
 const getInitialValues = (): Values => ({
-    salasana: '',
+    password: '',
+    passwordAgain: '',
     tyosahkopostiosoite: '',
 })
 
@@ -91,9 +92,12 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                 errors.push({ name: name, text: L['LOMAKE_PAKOLLINEN_TIETO'] })
             }
         })
-        if (values.salasana) {
-            if (!isValidPassword(values.salasana)) {
+        if (values.password) {
+            if (!isValidPassword(values.password)) {
                 errors.push({ name: 'salasana', text: L['SALASANA_OHJE'] })
+            }
+            if (values.password !== values.passwordAgain) {
+                errors.push({name: 'salasana', text: L['REKISTEROIDY_ERROR_PASSWORD_MATCH']})
             }
         }
         return errors
@@ -106,7 +110,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
             if (this.state.form.errors.length === 0) {
                 const tunnistusParameters = { kielisyys: this.props.locale, loginToken: this.props.loginToken }
                 const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters)
-                const loginParameters = await http.post(tunnistusUrl, form.values)
+                const loginParameters = await http.post(tunnistusUrl, {...form.values, salasana: form.values.password})
                 const loginUrl = urls.url('cas.login', loginParameters)
                 window.location.replace(loginUrl)
             }
