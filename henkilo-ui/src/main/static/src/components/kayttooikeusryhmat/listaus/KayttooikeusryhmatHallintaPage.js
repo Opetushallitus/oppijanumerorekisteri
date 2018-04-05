@@ -27,6 +27,7 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
 
     render() {
         return <div className="kayttooikeusryhmat-hallinta">
+            <h2 className="oph-h2 oph-bold">{this.props.L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']}</h2>
             <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}/>
             <KayttooikeusryhmaLista {...this.props}
                                     items={this.props.kayttooikeusryhmat}
