@@ -10,6 +10,7 @@ import VirkailijaCreateForm from './VirkailijaCreateForm';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator'
 import { isValidPassword } from '../../validation/PasswordValidator'
 import { LocalNotification } from '../common/Notification/LocalNotification';
+import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 
 type Props = {
     router: any,
@@ -86,6 +87,11 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
         if (virkailija.kutsumanimi) {
             if (!isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)) {
                 virheet.push(this.props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'])
+            }
+        }
+        if (virkailija.kayttajatunnus) {
+            if (!isValidKayttajatunnus(virkailija.kayttajatunnus)) {
+                virheet.push(this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE'])
             }
         }
         if (virkailija.salasana) {
