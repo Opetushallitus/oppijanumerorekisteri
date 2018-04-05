@@ -17,6 +17,8 @@ import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import {fetchPalveluKayttooikeus} from "../../../actions/kayttooikeus.actions";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {L} from "../../../types/localisation.type";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
+import {addGlobalNotification} from '../../../actions/notification.actions';
 
 type Props = {
     L: L,
@@ -39,7 +41,8 @@ type Props = {
     palvelutState: PalvelutState,
     router: any,
     omattiedotOrganisaatiosLoading: boolean,
-    kayttooikeusryhmaId?: string
+    kayttooikeusryhmaId?: string,
+    addGlobalNotification: (payload: GlobalNotificationConfig) => void
 }
 
 class KayttooikeusryhmaPageContainer extends React.Component<Props> {
@@ -89,5 +92,6 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {
     updateKayttooikeusryhmaNavigation, fetchOmattiedotOrganisaatios, fetchKayttooikeusryhmaById, fetchPalveluRooliByKayttooikeusryhmaId,
-    fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus, fetchKayttooikeusryhmaSlaves, fetchAllOrganisaatios
+    fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus, fetchKayttooikeusryhmaSlaves, fetchAllOrganisaatios,
+    addGlobalNotification
 })(KayttooikeusryhmaPageContainer)
