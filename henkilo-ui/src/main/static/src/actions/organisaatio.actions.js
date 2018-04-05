@@ -26,10 +26,10 @@ const requestAllOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_REQUEST});
 const requestAllOrganisaatiosSuccess = (organisaatios) => ({type: FETCH_ALL_ORGANISAATIOS_SUCCESS, organisaatios,});
 const requestAllOrganisaatiosFailure = (error) => ({type: FETCH_ALL_ORGANISAATIOS_FAILURE, error});
 
-export const fetchAllOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+export const fetchAllOrganisaatios = (params: any = {aktiiviset: true, suunnitellut: false, lakkautetut: false}) => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only with the first call
     if (getState().organisaatio.organisaatiot.numHits === 0 && !getState().organisaatio.organisaatioLoading) {
-        const url = urls.url('organisaatio-service.organisaatiot', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
+        const url = urls.url('organisaatio-service.organisaatiot', params);
         const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid);
         dispatch(requestAllOrganisaatios());
         try {

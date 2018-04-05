@@ -27,7 +27,7 @@ type Props = {
     fetchOppilaitostyypit: () => void,
     fetchAllKayttooikeusryhma: () => void,
     fetchAllPalvelut: () => void,
-    fetchAllOrganisaatios: () => void,
+    fetchAllOrganisaatios: (any) => void,
     fetchKayttooikeusryhmaSlaves: (id: string) => Promise<any>,
     fetchPalveluKayttooikeus: (palveluName: string) => void,
     organisaatios: any,
@@ -51,7 +51,7 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
         this.props.fetchAllPalvelut();
-        this.props.fetchAllOrganisaatios();
+        this.props.fetchAllOrganisaatios({aktiiviset: true, lakkautetut: true, suunnitellut: false});
         if (kayttooikeusryhmaId) {
             this.props.fetchKayttooikeusryhmaById(kayttooikeusryhmaId);
             this.props.fetchPalveluRooliByKayttooikeusryhmaId(kayttooikeusryhmaId);
