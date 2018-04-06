@@ -26,9 +26,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -119,7 +123,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(t -> t.getHenkilo().getOid())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotByOid = henkiloRepository
+        Map<String, Henkilo> henkilotByOid = oids.isEmpty() ? emptyMap() : henkiloRepository
                 .findByOidHenkiloIsIn(oids).stream()
                 .collect(toMap(Henkilo::getOidHenkilo, identity()));
         // hetu
@@ -127,7 +131,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(t -> t.getHenkilo().getHetu())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotByHetu = henkiloRepository
+        Map<String, Henkilo> henkilotByHetu = hetut.isEmpty() ? emptyMap() : henkiloRepository
                 .findByHetuIn(hetut).stream()
                 .collect(toMap(Henkilo::getHetu, identity()));
         // passinumerot
@@ -135,14 +139,14 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(t -> t.getHenkilo().getPassinumero())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotByPassinumero = henkiloRepository
+        Map<String, Henkilo> henkilotByPassinumero = passinumerot.isEmpty() ? emptyMap() : henkiloRepository
                 .findAndMapByPassinumerot(passinumerot);
         // sähköpostit
         Set<String> sahkopostit = henkilot.stream()
                 .map(t -> t.getHenkilo().getSahkoposti())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotBySahkoposti = henkiloRepository
+        Map<String, Henkilo> henkilotBySahkoposti = sahkopostit.isEmpty() ? emptyMap() : henkiloRepository
                 .findAndMapByIdentifiers(SAHKOPOSTI_IDP_ENTITY_ID, sahkopostit);
 
         TuontiRiviMapper tuontiRiviMapper = new TuontiRiviMapper(kasittelijaOid, organisaatiot, henkilotByOid, henkilotByHetu, henkilotByPassinumero, henkilotBySahkoposti);
@@ -162,26 +166,30 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         private final Map<String, Henkilo> henkilotBySahkoposti;
 
         public TuontiRivi map(OppijaTuontiRiviCreateDto oppija) {
-            Henkilo henkiloByOid = henkilotByOid.get(oppija.getHenkilo().getOid());
-            Henkilo henkiloByHetu = henkilotByHetu.get(oppija.getHenkilo().getHetu());
-            Henkilo henkiloByPassinumero = henkilotByPassinumero.get(oppija.getHenkilo().getPassinumero());
-            Henkilo henkiloBySahkoposti = henkilotBySahkoposti.get(oppija.getHenkilo().getSahkoposti());
+            Optional<Henkilo> henkiloByOid = Optional.ofNullable(oppija.getHenkilo().getOid())
+                    .flatMap(oid -> Optional.ofNullable(henkilotByOid.get(oid)));
+            Optional<Henkilo> henkiloByHetu = Optional.ofNullable(oppija.getHenkilo().getHetu())
+                    .flatMap(hetu -> Optional.ofNullable(henkilotByHetu.get(hetu)));
+            Optional<Henkilo> henkiloByPassinumero = Optional.ofNullable(oppija.getHenkilo().getPassinumero())
+                    .flatMap(passinumero -> Optional.ofNullable(henkilotByPassinumero.get(passinumero)));
+            Optional<Henkilo> henkiloBySahkoposti = Optional.ofNullable(oppija.getHenkilo().getSahkoposti())
+                    .flatMap(sahkoposti -> Optional.ofNullable(henkilotBySahkoposti.get(sahkoposti)));
 
             Henkilo henkilo = Stream.of(henkiloByOid, henkiloByHetu, henkiloByPassinumero, henkiloBySahkoposti)
-                    .filter(Objects::nonNull)
-                    .findFirst().orElseGet(() -> newHenkilo(oppija));
-
-            // liitetään henkilö organisaatioihin
-            organisaatiot.forEach(henkilo::addOrganisaatio);
-            henkilo = henkiloModificationService.update(henkilo);
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .findFirst()
+                    .map(this::updateHenkilo)
+                    .orElseGet(() -> createHenkilo(oppija));
 
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
             rivi.setHenkilo(henkilo);
             return rivi;
         }
 
-        private Henkilo newHenkilo(OppijaTuontiRiviCreateDto oppija) {
+        private Henkilo createHenkilo(OppijaTuontiRiviCreateDto oppija) {
             Henkilo henkilo = mapper.map(oppija.getHenkilo(), Henkilo.class);
+            organisaatiot.forEach(henkilo::addOrganisaatio);
             if (oppija.getHenkilo().getPassinumero() != null) {
                 henkilo.setPassinumerot(Stream.of(oppija.getHenkilo().getPassinumero()).collect(toSet()));
             }
@@ -193,6 +201,12 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 );
             }
             return henkiloModificationService.createHenkilo(henkilo, kasittelijaOid, false);
+        }
+
+        private Henkilo updateHenkilo(Henkilo henkilo) {
+            // liitetään henkilö vain organisaatioihin jos henkilö löytyi jo ennestään
+            organisaatiot.forEach(henkilo::addOrganisaatio);
+            return henkiloModificationService.update(henkilo);
         }
 
     }
