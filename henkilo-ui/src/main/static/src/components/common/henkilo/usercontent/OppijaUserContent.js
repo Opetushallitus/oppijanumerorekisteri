@@ -95,14 +95,17 @@ class OppijaUserContent extends React.Component<Props> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const readOnlyButtons = [];
-        if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU'])) {
-            readOnlyButtons.push(<EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/>);
-        }
-        if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI'])) {
-            readOnlyButtons.push(<YksiloiHetutonButton disabled={duplicate || passivoitu} />);
-        }
-        return readOnlyButtons;
+
+        const hasHenkiloReadUpdateRights = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+        const hasYksilointiRights = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI']);
+
+        const editButton = hasHenkiloReadUpdateRights ? <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/> : null;
+        const yksiloiHetutonButton = hasYksilointiRights ? <YksiloiHetutonButton disabled={duplicate || passivoitu} /> : null;
+
+        return [
+            editButton,
+            yksiloiHetutonButton
+        ];
     };
 
 }

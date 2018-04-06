@@ -96,30 +96,16 @@ class VirkailijaUserContent extends React.Component<Props> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        const hasHenkiloReadUpdateRights = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
 
-        const readOnlyButtons = [
-            <HakaButton
-                oidHenkilo={this.props.oidHenkilo}
-                styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
-                disabled={duplicate || passivoitu}
-            />,
-            <PasswordButton
-                oidHenkilo={this.props.oidHenkilo}
-                styles={{top: '3rem', left: '0', width: '18rem'}}
-                disabled={duplicate || passivoitu}
-            />,
-        ];
-
-        if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU'])) {
-            readOnlyButtons.unshift(<EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/>);
-        }
+        const editButton = hasHenkiloReadUpdateRights ? <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/> : null;
+        const hakaButton = <HakaButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} disabled={duplicate || passivoitu} />;
+        const passwordButton = <PasswordButton oidHenkilo={this.props.oidHenkilo} styles={{top: '3rem', left: '0', width: '18rem'}} disabled={duplicate || passivoitu} />;
 
         return [
-            <EditButton
-                editAction={this.props.edit}
-                disabled={duplicate || passivoitu}
-            />,
-
+            editButton,
+            hakaButton,
+            passwordButton
         ];
     };
 
