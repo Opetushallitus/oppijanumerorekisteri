@@ -19,6 +19,8 @@ import LinkitetytHenkilot from "../labelvalues/LinkitetytHenkilot";
 import MasterHenkilo from "../labelvalues/MasterHenkilo";
 import HakaButton from "../buttons/HakaButton";
 import PasswordButton from "../buttons/PasswordButton";
+import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
+import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 
 type Props = {
     readOnly: boolean,
@@ -35,14 +37,11 @@ type Props = {
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
     oidHenkilo: string,
-    isValidForm: boolean
+    isValidForm: boolean,
+    omattiedot: OmattiedotState
 }
 
-type State = {
-
-}
-
-class VirkailijaUserContent extends React.Component<Props, State> {
+class VirkailijaUserContent extends React.Component<Props> {
     render() {
         return this.props.henkilo.henkiloLoading
         || this.props.koodisto.kieliKoodistoLoading
@@ -97,11 +96,8 @@ class VirkailijaUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        return [
-            <EditButton
-                editAction={this.props.edit}
-                disabled={duplicate || passivoitu}
-            />,
+
+        const readOnlyButtons = [
             <HakaButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
@@ -113,6 +109,18 @@ class VirkailijaUserContent extends React.Component<Props, State> {
                 disabled={duplicate || passivoitu}
             />,
         ];
+
+        if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU'])) {
+            readOnlyButtons.unshift(<EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/>);
+        }
+
+        return [
+            <EditButton
+                editAction={this.props.edit}
+                disabled={duplicate || passivoitu}
+            />,
+
+        ];
     };
 
 }
@@ -123,6 +131,7 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
+    omattiedot: state.omattiedot
 });
 
 export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(VirkailijaUserContent);

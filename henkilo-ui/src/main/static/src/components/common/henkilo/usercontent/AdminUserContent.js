@@ -28,6 +28,8 @@ import HakaButton from "../buttons/HakaButton";
 import VtjOverrideButton from "../buttons/VtjOverrideButton";
 import PasswordButton from "../buttons/PasswordButton";
 import AktivoiButton from '../buttons/AktivoiButton';
+import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
+import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 
 type Props = {
     readOnly: boolean,
@@ -45,7 +47,8 @@ type Props = {
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
     oidHenkilo: string,
-    isValidForm: boolean
+    isValidForm: boolean,
+    omattiedot: OmattiedotState
 }
 
 type State = {
@@ -108,30 +111,26 @@ class AdminUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+
+        const editButton = hasHenkiloReadUpdateRights ? <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/> : null;
+        const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
+        const puraHetuttomanYksilointiButton = <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />;
+        const passivoiButton = !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
+        const aktivoiButton = passivoitu && hasHenkiloReadUpdateRights ? <AktivoiButton L={this.props.L} oid={this.props.henkilo.henkilo.oidHenkilo} onClick={this.props.aktivoiHenkilo} /> : null;
+        const hakaButton = <HakaButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} disabled={duplicate || passivoitu} />;
+        const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
+        const passwordButton = <PasswordButton oidHenkilo={this.props.oidHenkilo} styles={{top: '3rem', left: '0', width: '18rem'}} disabled={duplicate || passivoitu} />;
+
         return [
-            <EditButton
-                editAction={this.props.edit}
-                disabled={duplicate || passivoitu}
-            />,
-            <YksiloiHetutonButton disabled={duplicate || passivoitu} />,
-            <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />,
-            <PassivoiButton disabled={duplicate || passivoitu} />,
-            this.props.henkilo.henkilo.passivoitu ? <AktivoiButton
-                L={this.props.L}
-                oid={this.props.henkilo.henkilo.oidHenkilo}
-                onClick={this.props.aktivoiHenkilo}
-                /> : null,
-            <HakaButton
-                oidHenkilo={this.props.oidHenkilo}
-                styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}
-                disabled={duplicate || passivoitu}
-            />,
-            <VtjOverrideButton disabled={duplicate || passivoitu} />,
-            <PasswordButton
-                oidHenkilo={this.props.oidHenkilo}
-                styles={{top: '3rem', left: '0', width: '18rem'}}
-                disabled={duplicate || passivoitu}
-            />,
+            editButton,
+            yksiloiHetutonButton,
+            puraHetuttomanYksilointiButton,
+            passivoiButton,
+            aktivoiButton,
+            hakaButton,
+            vtjOverrideButton,
+            passwordButton
         ];
     };
 
@@ -143,6 +142,7 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
+    omattiedot: state.omattiedot
 });
 
 export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(AdminUserContent);

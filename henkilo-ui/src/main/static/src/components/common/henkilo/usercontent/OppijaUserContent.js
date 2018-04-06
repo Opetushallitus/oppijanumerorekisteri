@@ -42,11 +42,7 @@ type Props = {
     omattiedot: OmattiedotState
 }
 
-type State = {
-
-}
-
-class OppijaUserContent extends React.Component<Props, State> {
+class OppijaUserContent extends React.Component<Props> {
 
     render() {
         return this.props.henkilo.henkiloLoading
@@ -99,7 +95,10 @@ class OppijaUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const readOnlyButtons = [<EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/>];
+        const readOnlyButtons = [];
+        if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU'])) {
+            readOnlyButtons.push(<EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/>);
+        }
         if(hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI'])) {
             readOnlyButtons.push(<YksiloiHetutonButton disabled={duplicate || passivoitu} />);
         }
