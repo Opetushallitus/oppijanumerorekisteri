@@ -2,7 +2,6 @@
 import './HenkiloViewContactContent.css';
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import Columns from 'react-columns';
 import Field from '../field/Field';
 import Button from '../button/Button';
@@ -19,6 +18,8 @@ import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {Henkilo} from "../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
+import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 type Props = {
     L: L,
@@ -27,6 +28,7 @@ type Props = {
     readOnly: boolean,
     koodisto: KoodistoState,
     updateHenkiloAndRefetch: (Henkilo, ?GlobalNotificationConfig) => void,
+    omattiedot: OmattiedotState
 }
 
 type ContactInfo = {
@@ -46,13 +48,6 @@ type State = {
 }
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
-    static propTypes = {
-        henkilo: PropTypes.shape({henkilo: PropTypes.object.isRequired,}).isRequired,
-        readOnly: PropTypes.bool.isRequired,
-        locale: PropTypes.string.isRequired,
-        koodisto: PropTypes.shape({yhteystietotyypit: PropTypes.array}).isRequired,
-        updateHenkiloAndRefetch: PropTypes.func.isRequired,
-    };
 
     henkiloUpdate: Henkilo;
     contactInfoTemplate: Array<{label: string, value: ?string, inputValue: ?string}>;
@@ -128,7 +123,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const duplicate = this.props.henkilo.henkilo.duplicate;
-
+        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+        const editButton = hasHenkiloReadUpdateRights ? <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.props.L['MUOKKAA_LINKKI']}</Button> : null;
         return (
             <div className="henkiloViewUserContentWrapper contact-content">
                 <div>
@@ -148,7 +144,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 </div>
                 {this.state.readOnly
                     ? <div className="henkiloViewButtons">
-                        <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.props.L['MUOKKAA_LINKKI']}</Button>
+                        {editButton}
                     </div>
                     : <div className="henkiloViewEditButtons">
                         <EditButtons discardAction={this._discard.bind(this)}
@@ -257,6 +253,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
+    omattiedot: state.omattiedot
 });
 
 export default connect(mapStateToProps, {updateHenkiloAndRefetch})(HenkiloViewContactContent);
