@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import Columns from 'react-columns';
 import Field from "../../field/Field";
 import type {L} from "../../../../types/localisation.type";

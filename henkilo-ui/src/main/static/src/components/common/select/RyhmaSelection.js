@@ -5,7 +5,6 @@ import OphSelect from './OphSelect';
 import {connect} from 'react-redux';
 import type {L} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
-import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
 type Option = {
     value: string,
