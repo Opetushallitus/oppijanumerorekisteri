@@ -259,7 +259,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _parseExistingOrganisaatioData = (organisaatioViitteet: any, organisaatioCache: {[string]: any}): Array<OrganisaatioSelectObject> => {
-        if(Object.keys(organisaatioCache).length === 0) {
+        if(Object.keys(organisaatioCache).length === 0 || !organisaatioViitteet) {
             return [];
         }
         const organisaatioViittees = organisaatioViitteet
