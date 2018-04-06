@@ -23,6 +23,7 @@ type Props = {
     locale: Locale,
     fetchOmattiedotOrganisaatios: () => void,
     fetchAllKayttooikeusryhma: () => void,
+    allKayttooikeusryhmasLoading: boolean,
     fetchAllRyhmas: () => void,
     henkilohaku: (HenkilohakuCriteria, HenkilohakuQueryparameters) => void,
     henkilohakuCount: (HenkilohakuCriteria) => void,

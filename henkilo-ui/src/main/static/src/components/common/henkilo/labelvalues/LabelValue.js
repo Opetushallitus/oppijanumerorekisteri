@@ -8,27 +8,29 @@ import type {L} from "../../../../types/localisation.type";
 
 type Props = {
     values: {
-        value: string,
-        label: string,
-        inputValue: string,
-        disabled: boolean,
-        password: boolean,
-        isError: boolean,
-        date: string,
+        value?: any,
+        label?: string,
+        inputValue?: string,
+        disabled?: boolean,
+        password?: boolean,
+        isError?: boolean,
+        date?: string | boolean,
+        showOnlyOnWrite?: boolean,
+        readOnly?: boolean
     },
-    readOnly: boolean,
-    updateModelFieldAction: (SyntheticInputEvent<HTMLInputElement>) => void,
-    updateDateFieldAction: (SyntheticInputEvent<HTMLInputElement>) => void,
+    readOnly?: boolean,
+    updateModelFieldAction?: (any) => void,
+    updateDateFieldAction?: (SyntheticInputEvent<HTMLInputElement>) => void,
     L: L,
-    autofocus: boolean,
-    required: boolean,
-    hideLabel: boolean,
+    autofocus?: boolean,
+    required?: boolean,
+    hideLabel?: boolean,
 }
 
 const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}: Props) => !values.showOnlyOnWrite || !readOnly
     ? <div id={values.label}>
         <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
-            {!hideLabel ? <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span> : <span>&nbsp;</span>}
+            {!hideLabel && values.label ? <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span> : <span>&nbsp;</span>}
             <Field {...values}
                    autofocus={autofocus}
                    disabled={values.disabled}
@@ -42,21 +44,6 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
         </Columns>
     </div>
     : null;
-
-LabelValue.propTypes = {
-    values: PropTypes.shape({
-        readOnly: PropTypes.bool,
-        value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-        label: PropTypes.string,
-        showOnlyOnWrite: PropTypes.bool,
-    }),
-    readOnly: PropTypes.bool,
-    updateModelFieldAction: PropTypes.func,
-    updateDateFieldAction: PropTypes.func,
-    autofocus: PropTypes.bool,
-    hideLabel: PropTypes.bool,
-    disabled: PropTypes.bool
-};
 
 const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],

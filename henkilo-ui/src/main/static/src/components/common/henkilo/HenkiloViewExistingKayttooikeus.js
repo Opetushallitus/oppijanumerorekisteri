@@ -22,13 +22,14 @@ import type {TableHeading} from "../../../types/react-table.types";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import {createKayttooikeusanomus} from "../../../actions/kayttooikeusryhma.actions";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
-import {removeNotification} from '../../../actions/notifications.actions'
+import {removeNotification} from '../../../actions/notifications.actions';
+import * as R from 'ramda';
 
 type Props = {
     l10n: L10n,
     locale: Locale,
     oidHenkilo: string,
-    omattiedot: {data: {oid: string}},
+    omattiedot?: {data: {oid: string}},
     henkilo: HenkiloState,
     kayttooikeus: KayttooikeusRyhmaState,
     organisaatioCache: {[string]: {
@@ -311,7 +312,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             anojaOid: this.props.oidHenkilo
         };
         await this.props.createKayttooikeusanomus(anomusData);
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
+        const oid: any = R.path(['omattiedot','data','oid'], this.props);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
     }
 
 }

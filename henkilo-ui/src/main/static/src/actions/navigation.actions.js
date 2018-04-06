@@ -4,6 +4,12 @@ import type {NaviOptions, NaviTab} from "../types/navigation.type";
 import {emptyNavi, mainNavigation, palvelukayttajaNavigation} from "../components/navigation/navigationconfigurations";
 import background from '../img/unauthenticated_background.jpg';
 
+export type Navigation = {
+    type: string,
+    naviTabs: Array<NaviTab>,
+    naviOptions: NaviOptions
+}
+
 export const updateNavigation = (naviTabs: Array<NaviTab>, naviOptions: NaviOptions) => ({
     type: UPDATE_NAVIGATION,
     naviTabs,
@@ -39,7 +45,7 @@ export const updateEmptyNavigation = () => updateNavigation(emptyNavi, {
     isUnauthenticatedPage: false,
 });
 
-export const updateUnauthenticatedNavigation = () => updateNavigation(emptyNavi, {
+export const updateUnauthenticatedNavigation: any = () => updateNavigation(emptyNavi, {
     bgColor: background,
     isUnauthenticatedPage: true,
 });

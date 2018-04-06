@@ -1,16 +1,15 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import LabelValue from "./LabelValue";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
 type Props = {
     henkilo: HenkiloState,
-    isError: boolean,
+    isError?: boolean,
     readOnly: boolean,
-    updateModelFieldAction: () => void,
-    defaultValue: string,
+    updateModelFieldAction: (string) => void,
+    defaultValue?: string,
 }
 
 const Kutsumanimi = (props: Props) => <LabelValue
@@ -23,12 +22,6 @@ const Kutsumanimi = (props: Props) => <LabelValue
         isError: props.isError,
     }}
 />;
-
-Kutsumanimi.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        kutsumanimi: PropTypes.string,
-    })}),
-};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,

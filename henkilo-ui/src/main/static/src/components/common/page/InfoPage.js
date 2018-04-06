@@ -24,8 +24,4 @@ class InfoPage extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-
-});
-
-export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(InfoPage);
+export default connect( () => ({}), {updateUnauthenticatedNavigation})(InfoPage);

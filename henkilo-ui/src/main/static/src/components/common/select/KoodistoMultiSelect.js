@@ -13,7 +13,7 @@ type Props = {
     locale: Locale,
     placeholder: string,
     koodisto: Koodisto,
-    value: ?Array<string>,
+    value: any,
     onChange: (?Array<string>) => void,
 }
 

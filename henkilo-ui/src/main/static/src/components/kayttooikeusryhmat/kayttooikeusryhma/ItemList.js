@@ -7,7 +7,7 @@ import type {L} from "../../../types/localisation.type";
 
 type Props = {
     items: Array<any>,
-    removeAction: (string) => void,
+    removeAction: (any) => void,
     labelPath: Array<string>,
     L: L
 }

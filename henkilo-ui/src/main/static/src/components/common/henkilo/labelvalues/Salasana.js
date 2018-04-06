@@ -8,7 +8,7 @@ type Props = {
     disabled: boolean,
     isError: boolean,
     L: L,
-    updateModelFieldAction: (SyntheticInputEvent<HTMLInputElement>) => void,
+    updateModelFieldAction: (any) => void,
 }
 
 const Salasana = (props: Props) => <div>

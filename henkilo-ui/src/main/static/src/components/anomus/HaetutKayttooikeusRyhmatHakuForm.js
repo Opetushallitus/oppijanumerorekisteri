@@ -26,7 +26,7 @@ type Props = {
     isOphVirkailija: boolean,
     haetutKayttooikeusryhmatLoading: boolean,
     ryhmat: {ryhmas: Array<{}>},
-    fetchOmattiedotOrganisaatios: () => void,
+    fetchOmattiedotOrganisaatios: () => any,
     omattiedotOrganisaatiosLoading: boolean
 }
 

@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import PropTypes from 'prop-types'
 import { AddedOrganizations } from './AddedOrganizations';
 import Button from "../common/button/Button";
 import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
@@ -17,20 +16,11 @@ type Props = {
 
 export default class KutsuOrganisaatios extends React.Component<Props> {
 
-    static propTypes = {
-        addedOrgs: PropTypes.array,
-        L: PropTypes.object,
-        henkilo: PropTypes.object,
-        addOrganisaatio: PropTypes.func,
-        locale: PropTypes.string
-    };
-
     render() {
         return (
             <fieldset className="add-to-organisation">
                 <span className="oph-h2 oph-strong">{this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_OTSIKKO']}</span>
-                <AddedOrganizations addedOrgs={this.props.addedOrgs}
-                                    locale={this.props.locale}/>
+                <AddedOrganizations addedOrgs={this.props.addedOrgs}/>
                 <div className="row">
                     <Button href="#" action={this.addEmptyOrganization.bind(this)}>{this.props.L['VIRKAILIJAN_KUTSU_LISAA_ORGANISAATIO_LINKKI']}</Button>
                 </div>

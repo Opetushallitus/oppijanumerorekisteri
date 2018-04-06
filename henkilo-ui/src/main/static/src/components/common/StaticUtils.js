@@ -129,7 +129,7 @@ class StaticUtils {
         return entity && entity !== '';
     }
 
-    static getKayttooikeusKestoVuosissa(kayttaja: Kayttaja) {
+    static getKayttooikeusKestoVuosissa(kayttaja: Kayttaja): any {
         return kayttaja.kayttajaTyyppi === 'PALVELU' ? null : 1;
     }
 }

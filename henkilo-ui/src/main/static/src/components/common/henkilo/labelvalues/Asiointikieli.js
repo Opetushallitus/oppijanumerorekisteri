@@ -13,10 +13,10 @@ type Props = {
     koodisto: {
         kieli: Array<ReactSelectOption>,
     },
-    henkiloUpdate: Henkilo,
-    readOnly: boolean,
+    henkiloUpdate: any,
+    readOnly?: boolean,
     locale: Locale,
-    updateModelFieldAction: () => void,
+    updateModelFieldAction: (string) => void,
 }
 
 const Asiointikieli = (props: Props) => <LabelValue
@@ -39,22 +39,6 @@ const Asiointikieli = (props: Props) => <LabelValue
         selectValue: props.henkiloUpdate.asiointiKieli && props.henkiloUpdate.asiointiKieli.kieliKoodi,
     }}
 />;
-
-Asiointikieli.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-            asiointikieli: PropTypes.shape({
-                kieliKoodi: PropTypes.string,
-            }),
-        })}),
-    koodisto: PropTypes.shape({
-        kieli: PropTypes.array,
-    }),
-    henkiloUpdate: PropTypes.shape({
-        asiointiKieli: PropTypes.shape({
-            kieliKoodi: PropTypes.string,
-        }),
-    }),
-};
 
 const mapStateToProps = (state) => ({
     locale: state.locale,

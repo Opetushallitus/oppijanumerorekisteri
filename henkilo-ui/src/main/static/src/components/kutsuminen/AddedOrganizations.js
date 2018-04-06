@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 
 import AddedOrganization from './AddedOrganization';
 import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
@@ -18,12 +17,3 @@ export const AddedOrganizations = (props: Props) =>
             addedOrg={organization}
         />)}
     </div>;
-
-
-AddedOrganizations.propTypes = {
-    key: PropTypes.string,
-    orgs: PropTypes.array,
-    addedOrgs: PropTypes.array,
-    addedOrg: PropTypes.object,
-    changeOrganization: PropTypes.func,
-};

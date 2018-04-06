@@ -37,7 +37,7 @@
     "shallow-equal-fuzzy": "0.0.2"
   },
   "devDependencies": {
-    "flow-bin": "0.61.0",
+    "flow-bin": "0.69.0",
     "flow-typed": "2.4.0",
     "jest": "21.2.1",
     "react-scripts": "1.0.17",

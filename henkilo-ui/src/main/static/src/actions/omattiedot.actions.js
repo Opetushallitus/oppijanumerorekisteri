@@ -12,21 +12,16 @@ import {
     FETCH_HENKILO_ASIOINTIKIELI_FAILURE, FETCH_CASME_REQUEST, FETCH_CASME_FAILURE, FETCH_CASME_SUCCESS, LOCATION_CHANGE
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
-import type {OrganisaatioHenkilo} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Omattiedot} from "../types/domain/kayttooikeus/Omattiedot.types";
+import type {OmattiedotState} from "../reducers/omattiedot.reducer";
 
 type GetState = () => {
-    omattiedot: {
-        data: any,
-        omattiedotLoaded: boolean,
-        locale: string,
-        organisaatios: Array<OrganisaatioHenkilo>,
-    },
+    omattiedot: OmattiedotState,
     locale: string,
 }
 
 export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) => {
-    if (!getState().omattiedot.locale) {
+    if (!getState().locale) {
         const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
         dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST});
         try {
@@ -69,7 +64,6 @@ export const fetchCasMe = () => async (dispatch: Dispatch) => {
         dispatch({type: FETCH_CASME_SUCCESS});
     } catch (error) {
         dispatch({type: FETCH_CASME_FAILURE});
-        console.error('Fetching cas me failed');
         throw error;
     }
 };
@@ -83,7 +77,7 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, get
         && !getState().omattiedot.organisaatios.length
         && !getState().omattiedot.omattiedotOrganisaatiosLoading) {
         const oid = R.path(['omattiedot', 'data', 'oid'], getState());
-        const omattiedotLoading = getState().omattiedot.omattiedotLoaded;
+        const omattiedotLoading = getState().omattiedot.omattiedotLoading;
         if (!oid && !omattiedotLoading) {
             try {
                 await dispatch(fetchOmattiedot());
@@ -98,7 +92,6 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, get
             const omattiedotOrganisaatios = await http.get(url);
             dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios, getState().locale));
         } catch (error) {
-            console.error(`Failed fetching organisaatios for current user: ${userOid} - ${error}`);
             dispatch(receiveOmattiedotOrganisaatiosFailure(error));
             throw error;
         }

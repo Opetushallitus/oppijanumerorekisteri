@@ -9,8 +9,9 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 type Props = {
     henkilo: HenkiloState,
     readOnly: boolean,
-    autofocus: boolean,
-    updateModelFieldAction: () => void,
+    autofocus?: boolean,
+    updateModelFieldAction?: () => void,
+    label?: string
 }
 
 const Sukunimi = (props: Props) => <LabelValue

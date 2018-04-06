@@ -14,12 +14,11 @@ type Option = {
 
 type Props = {
     L: L,
-    organisaatios: Array<OrganisaatioHenkilo>,
     selectOrganisaatio: () => any,
     locale: Locale,
     selectedOrganisaatioOid: string,
     isRyhma: boolean,
-    placeholder: string,
+    placeholder?: string,
     organisaatioOptions: Array<Option>,
     organisaatioFilter: any,
     ryhmaOptions:  Array<Option>,

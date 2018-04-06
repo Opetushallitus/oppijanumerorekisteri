@@ -19,6 +19,7 @@ type Props = {
     fetchHenkilo: (string) => void,
     unlinkHenkilo: (string, string) => void,
     oppija?: boolean,
+    isLoading: boolean
 }
 
 class MasterHenkilo extends React.Component<Props> {

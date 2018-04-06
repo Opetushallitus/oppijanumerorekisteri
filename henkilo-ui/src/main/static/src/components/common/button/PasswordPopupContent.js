@@ -16,7 +16,7 @@ import PropertySingleton from "../../../globals/PropertySingleton";
 type Props = {
     oidHenkilo: string,
     L: L,
-    addGlobalNotification: (GlobalNotificationConfig) => void
+    addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
 type State = {

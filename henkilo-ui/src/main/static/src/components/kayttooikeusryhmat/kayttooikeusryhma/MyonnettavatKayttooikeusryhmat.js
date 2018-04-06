@@ -28,6 +28,7 @@ export default class MyonnettavatKayttooikeusryhmat extends React.Component<Prop
     };
 
     componentWillMount() {
+
         const lang = this.props.locale.toUpperCase();
         const kayttooikeusryhmaOptions: Array<ReactSelectOption> = this.props.kayttooikeus.allKayttooikeusryhmas.map(
             kayttooikeusryhma => {

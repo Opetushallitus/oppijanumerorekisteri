@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import Etunimet from "../../common/henkilo/labelvalues/Etunimet";
 import Sukunimi from "../../common/henkilo/labelvalues/Sukunimi";
@@ -37,31 +36,7 @@ type Props = {
 }
 
 class RekisteroidyPerustiedot extends React.Component<Props> {
-    static propTypes = {
-        henkilo: PropTypes.shape({
-            henkilo: PropTypes.shape({
-                etunimet: PropTypes.string,
-                sukunimi: PropTypes.string,
-                kutsumanimi: PropTypes.string,
-            }),
-            username: PropTypes.string,
-            password: PropTypes.string,
-            passwordAgain: PropTypes.string,
-        }).isRequired,
-        updatePayloadModel: PropTypes.func.isRequired,
-        koodisto: PropTypes.shape({
-            kieli: PropTypes.array.isRequired,
-        }).isRequired,
-        notifications: PropTypes.arrayOf(PropTypes.shape({
-            type: PropTypes.string,
-            id: PropTypes.string,
-            errorType: PropTypes.string,
-        })),
-        isUsernameError: PropTypes.bool.isRequired,
-        isPasswordError: PropTypes.bool.isRequired,
-        isLanguageError: PropTypes.bool.isRequired,
-        isKutsumanimiError: PropTypes.bool.isRequired,
-    };
+
 
     render() {
         return <div>

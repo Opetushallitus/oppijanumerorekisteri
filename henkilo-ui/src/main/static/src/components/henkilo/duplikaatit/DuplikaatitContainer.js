@@ -32,6 +32,7 @@ type Props = {
     fetchKansalaisuusKoodisto: () => void,
     fetchKieliKoodisto: () => void,
     updateHenkiloNavigation: (Array<{}>) => void,
+    externalPermissionService: string
 }
 
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {

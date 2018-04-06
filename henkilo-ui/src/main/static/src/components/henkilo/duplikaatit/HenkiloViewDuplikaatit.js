@@ -11,27 +11,24 @@ import {FloatingBar} from "./FloatingBar";
 import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 import type {Locale} from '../../../types/locale.type'
 import type {L} from '../../../types/localisation.type'
-import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import {LocalNotification} from "../../common/Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import { linkHenkilos } from "../../../actions/henkilo.actions";
 
 type Props = {
-    router: any,
+    router?: any,
     locale: Locale,
     L: L,
-    oidHenkilo: string,
-    henkilo: HenkiloState,
+    oidHenkilo?: string,
+    henkilo: any, // HenkiloState | HenkiloCreate
     henkiloType: string,
     koodisto: KoodistoState,
-    notifications: Array<Notification>,
-    removeNotification: (string, string, ?string) => void,
+    notifications?: Array<Notification>,
+    removeNotification?: (string, string, ?string) => void,
     linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void,
-    fetchHenkilo: (oid: string) => void,
-    fetchHenkiloDuplicates: (oid: string) => void,
     ownOid: string,
-    vainLuku?: boolean,
+    vainLuku: boolean,
 }
 
 type State = {
@@ -125,10 +122,11 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
     async _link() {
         const successMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'];
         const failMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'];
-        await this.props.linkHenkilos(this.props.oidHenkilo, this.state.selectedDuplicates, successMessage, failMessage);
-        this.props.fetchHenkilo(this.props.oidHenkilo);
-        this.props.fetchHenkiloDuplicates(this.props.oidHenkilo);
-        this.props.router.push(`/${this.props.henkiloType}/${this.props.oidHenkilo}`);
+        const oid = this.props.oidHenkilo ? this.props.oidHenkilo : '';
+        await this.props.linkHenkilos(oid, this.state.selectedDuplicates, successMessage, failMessage);
+        if(this.props.router) {
+            this.props.router.push(`/${this.props.henkiloType}/${oid}`);
+        }
     }
 
     setSelection(oid) {

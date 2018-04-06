@@ -7,7 +7,7 @@ import Loader from "../icons/Loader";
 
 type Props = {
     L: L,
-    label: ?string,
+    label?: string,
     labelkey: ?string,
 }
 

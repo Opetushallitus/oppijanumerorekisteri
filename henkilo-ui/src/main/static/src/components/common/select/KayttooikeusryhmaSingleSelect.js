@@ -13,7 +13,8 @@ type Props = {
     fetchAllKayttooikeusryhma: (boolean) => void,
     kayttooikeusRyhmas: Array<{id: number, description: {texts: Array<{lang: string, text: string}>}}>,
     kayttooikeusSelectionAction: (number) => void,
-    kayttooikeusSelection: ?number
+    kayttooikeusSelection: ?number,
+    kayttooikeusLoading: boolean
 };
 
 type State = {

@@ -151,7 +151,6 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
     };
 
     _koodistoLabel(koodi: any, koodisto: any, locale: Locale): ?string {
-        console.log(koodi, koodisto);
         const koodistoItem = R.find(koodistoItem => koodistoItem.value === koodi, koodisto);
         return koodistoItem ? koodistoItem[locale] : null;
     };

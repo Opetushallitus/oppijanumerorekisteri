@@ -7,11 +7,11 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
 type Props = {
     henkilo: HenkiloState,
-    readOnly: boolean,
-    updateModelFieldAction: () => void,
+    readOnly?: boolean,
+    updateModelFieldAction: (string) => void,
     disabled: boolean,
-    isError: boolean,
-    defaultValue: string,
+    isError?: boolean,
+    defaultValue?: string,
 }
 
 const Kayttajanimi = (props: Props) => {

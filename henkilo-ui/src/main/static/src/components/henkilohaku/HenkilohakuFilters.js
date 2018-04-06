@@ -26,9 +26,9 @@ type Props = {
     L: L,
     locale: Locale,
     ryhmaSelectionAction: ({value: ?number}) => void,
-    selectedRyhma: number,
-    selectedOrganisation: string,
-    selectedKayttooikeus: number,
+    selectedRyhma: ?string,
+    selectedOrganisation?: Array<string> | string,
+    selectedKayttooikeus: ?string,
     duplikaatitAction: () => void,
     passiivisetAction: () => void,
     suborganisationAction: () => void,
@@ -44,11 +44,13 @@ type Props = {
         }
     }>,
     ryhmas: {ryhmas: Array<{}>},
-    fetchOmattiedotOrganisaatios: () => void,
-    fetchAllRyhmas: () => void,
+    fetchOmattiedotOrganisaatios: () => any,
+    fetchAllRyhmas: () => any,
     fetchAllKayttooikeusryhma: () => void,
     omattiedotOrganisaatiosLoading: boolean,
-    omattiedotOrganisaatios: Array<any>
+    omattiedotOrganisaatios: Array<any>,
+    isAdmin: boolean,
+    isOphVirkailija: boolean
 }
 
 type State = {

@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
@@ -17,7 +16,7 @@ type Props = {
     locale: Locale,
     henkiloUpdate: Henkilo,
     readOnly: boolean,
-    updateModelFieldAction: ({}) => void,
+    updateModelFieldAction: (any) => void,
 }
 
 const Kansalaisuus = (props: Props) => {
@@ -28,7 +27,7 @@ const Kansalaisuus = (props: Props) => {
             <LabelValue
                 key={idx}
                 readOnly={props.readOnly}
-                updateModelFieldAction={(newOption) => {
+                updateModelFieldAction={(newOption: any) => {
                     if (newOption === null) {
                         props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))});
                     }
@@ -69,24 +68,6 @@ const Kansalaisuus = (props: Props) => {
             }}
         />}
     </div>;
-};
-
-Kansalaisuus.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-            kansalaisuus: PropTypes.array,
-            yksiloityVTJ: PropTypes.bool,
-        })}),
-    koodisto: PropTypes.shape({
-        kansalaisuus: PropTypes.array,
-    }),
-    locale: PropTypes.string,
-    henkiloUpdate: PropTypes.shape({
-        kansalaisuus: PropTypes.arrayOf(
-            PropTypes.shape({
-                kansalalaisuusKoodi: PropTypes.string,
-            })
-        )
-    }),
 };
 
 const mapStateToProps = state => ({

@@ -67,7 +67,8 @@ type Props = {
     fetchMoreSettings?: any,
     tableLoading?: boolean,
     striped?: boolean,
-    fetchAllKayttooikeusAnomusForHenkilo?: (string) => void
+    fetchAllKayttooikeusAnomusForHenkilo?: (string) => void,
+    piilotaOtsikko?: boolean
 }
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {

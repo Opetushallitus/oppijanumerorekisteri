@@ -6,7 +6,7 @@ import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButt
 import KutsuViews from "./KutsuViews";
 
 type Props = {
-    view: string,
+    view: string | null | void,
     L: {[key: string]: string},
     setView: (newView: string) => void,
     isAdmin: boolean,

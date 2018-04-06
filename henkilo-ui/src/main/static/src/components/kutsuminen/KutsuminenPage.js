@@ -31,7 +31,10 @@ type Props = {
     fetchHenkilo: (oid: string) => Promise<*>,
     henkilo: Henkilo,
     organisaatioState: OrganisaatioState,
-    ryhmaState: any
+    ryhmaState: any,
+    omattiedotLoading: boolean,
+    henkiloLoading: boolean,
+    ryhmasLoading: boolean
 }
 
 type State = {

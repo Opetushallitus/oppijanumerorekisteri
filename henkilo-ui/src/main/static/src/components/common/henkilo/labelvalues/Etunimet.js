@@ -9,7 +9,7 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 type Props = {
     henkilo: HenkiloState,
     readOnly: boolean,
-    updateModelFieldAction: () => void,
+    updateModelFieldAction?: () => void,
 }
 
 const Etunimet = (props: Props) => <LabelValue

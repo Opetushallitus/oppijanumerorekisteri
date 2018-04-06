@@ -29,7 +29,6 @@ import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/k
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 
 type Props = {
-    changeOrganization: () => void,
     addedOrgs: Array<KutsuOrganisaatio>,
     addedOrg: KutsuOrganisaatio,
     locale: string,
@@ -42,7 +41,6 @@ type Props = {
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
     removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
-    organisaatioCache: any,
     ryhmatState: any
 }
 
