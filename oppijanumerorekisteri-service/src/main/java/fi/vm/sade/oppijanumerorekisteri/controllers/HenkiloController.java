@@ -311,14 +311,14 @@ public class HenkiloController {
                     @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
                     @Authorization("ROLE_APP_HENKILONHALLINTA_KKVASTUU"),
                     @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"),
-                    @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU")})
+                    @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiManuaalisesti(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
                                      @RequestHeader(value = "External-Permission-Service", required = false)
                                              ExternalPermissionService permissionService) {
         this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
     }
 
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}} , #permissionService )")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}} , #permissionService )")
     @RequestMapping(value = "/{oid}/yksiloihetuton", method = RequestMethod.POST)
     @ApiOperation(value = "Yksilöi hetuttoman henkilön.",
     notes = "Yksilöi hetuttoman henkilön.",
@@ -326,7 +326,7 @@ public class HenkiloController {
             @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
             @Authorization("ROLE_APP_HENKILONHALLINTA_KKVASTUU"),
             @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"),
-            @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU")})
+            @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiHetuton(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
     @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         this.yksilointiService.hetuttomanYksilointi(henkiloOid);
