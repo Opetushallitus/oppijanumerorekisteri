@@ -123,7 +123,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const duplicate = this.props.henkilo.henkilo.duplicate;
-        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILON_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
         const editButton = hasHenkiloReadUpdateRights ? <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.props.L['MUOKKAA_LINKKI']}</Button> : null;
         return (
             <div className="henkiloViewUserContentWrapper contact-content">

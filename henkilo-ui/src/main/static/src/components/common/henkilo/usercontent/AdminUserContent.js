@@ -111,7 +111,7 @@ class AdminUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILO_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILON_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
 
         const editButton = hasHenkiloReadUpdateRights ? <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/> : null;
         const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
