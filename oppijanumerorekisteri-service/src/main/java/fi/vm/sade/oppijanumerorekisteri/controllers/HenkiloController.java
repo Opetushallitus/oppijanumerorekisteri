@@ -250,6 +250,8 @@ public class HenkiloController {
             notes = "Hakee henkilöiden master tiedot annetun OID:ien pohjalta max 5000 kerrallaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/masterHenkilosByOidList", method = RequestMethod.POST)
@@ -333,7 +335,7 @@ public class HenkiloController {
     }
 
 
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/purayksilointi", method = RequestMethod.POST)
     @ApiOperation(value = "Henkilön yksilöinnin purku.",
             notes = "Purkaa hetuttoman henkilön yksilöinnin",
@@ -458,7 +460,7 @@ public class HenkiloController {
     }
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
-    @PreAuthorize("hasRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole({'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI', 'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'})")
     @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
     public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
         this.duplicateService.unlinkHenkilo(oid, slaveOid);
