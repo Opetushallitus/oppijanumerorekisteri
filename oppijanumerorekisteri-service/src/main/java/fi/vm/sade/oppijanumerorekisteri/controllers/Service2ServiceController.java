@@ -140,7 +140,7 @@ public class Service2ServiceController {
 
     @ApiOperation(value = "Päivittää henkilön tietoja muutostietopalvelun antamilla muutoksilla.",
             notes = "Päivittää kutsussa annettuun OID:n täsmäävän henkilön tiedot")
-    @PreAuthorize("hasRole('APP_HENKILONHALLINTA_MUUTOSTIETOPALVELU')")
+    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_MUUTOSTIETOPALVELU', 'APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
     @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public HenkiloReadDto forceUpdateHenkilo(@Validated @RequestBody HenkiloForceUpdateDto henkiloUpdateDto) {
         return this.henkiloModificationService.forceUpdateHenkilo(henkiloUpdateDto);
