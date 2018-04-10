@@ -15,7 +15,7 @@ import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import {LocalNotification} from "../../common/Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import { linkHenkilos } from "../../../actions/henkilo.actions";
-
+  
 type Props = {
     router?: any,
     locale: Locale,
