@@ -8,6 +8,7 @@ import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttoo
 import LocalizedTextGroup from "../../common/LocalizedTextGroup";
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 import type {L} from "../../../types/localisation.type";
+import {localizeTextGroup} from "../../../utilities/localisation.util";
 
 type Props = {
     muokkausoikeus: boolean,
@@ -39,6 +40,7 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
         return <div className="kayttooikeuryhma-lista">
             {
                 this.props.items
+                    // filter by given string
                     .filter( (item: Kayttooikeusryhma) => {
                         if(this.props.filter.length === 0) {
                             return true;
@@ -47,6 +49,19 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
                         const text: string = nimi ? nimi.text : '';
                         return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0 ? true : false;
                     })
+                    // sort alphabetically
+                    .sort( (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
+                        const nameA = (localizeTextGroup(a.nimi.texts, this.props.locale) || '').toLowerCase();
+                        const nameB = (localizeTextGroup(b.nimi.texts, this.props.locale) || '').toLowerCase();
+                        if(nameA < nameB) {
+                            return -1;
+                        }
+                        if(nameB < nameA) { 
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    // map käyttöoikeus to html
                     .map( (item: Kayttooikeusryhma, index: number) => {
                         const texts: any = R.path(['nimi', 'texts'], item);
                         return <div key={item.id} className="kayttooikeuryhma-lista-item">

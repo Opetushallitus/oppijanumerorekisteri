@@ -28,6 +28,8 @@ import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/Organ
 import {LocalNotification} from "../../common/Notification/LocalNotification";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import {getLocalization} from "../../../utilities/localisation.util";
+import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -68,7 +70,8 @@ type Props = {
     fetchPalveluKayttooikeus: (palveluName: string) => void,
     omattiedotOrganisaatiosLoading: boolean,
     kayttooikeusryhmaId?: string,
-    organisaatioCache: any
+    organisaatioCache: any,
+    addGlobalNotification: (payload: GlobalNotificationConfig) => void
 }
 
 type State = {
@@ -79,7 +82,6 @@ type State = {
     ryhmaRestrictionViite: any,
     toggleTallenna: boolean,
     togglePassivoi: boolean,
-    toggleErrorOnSave: boolean,
     organisaatios: Array<OrganisaatioSelectObject>
 };
 
@@ -101,7 +103,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         ryhmaRestrictionViite: undefined,
         toggleTallenna: false,
         togglePassivoi: false,
-        toggleErrorOnSave: false,
         organisaatios: []
     };
 
@@ -128,7 +129,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     render() {
         return <div className="wrapper">
-
+            <h2 className="oph-h2 oph-bold kayttooikeusryhma-header">{this.props.L['KAYTTOOIKEUSRYHMAT_OTSIKKO']}</h2>
             <KayttooikeusryhmatNimi {...this.props}
                                     name={this.state.kayttooikeusryhmaForm.name}
                                     setName={this._setName}
@@ -195,7 +196,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 </ul>
             </LocalNotification>
 
-            <LocalNotification toggle={this.state.toggleErrorOnSave} type={'error'} title={this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE']}></LocalNotification>
+
+            <LocalNotification toggle={this._hasPassiveOrganisaatioRajoite.call(this)} type={NOTIFICATIONTYPES.WARNING} title={this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS']}></LocalNotification>
             {this.state.showPassivoiModal ?
                 <OphModal title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']} onClose={() => {this.setState({showPassivoiModal: false})}}>
                     <div className="passivoi-modal">
@@ -205,6 +207,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                     </div>
                 </OphModal> :
                 null }
+
+
         </div>
     }
 
@@ -255,7 +259,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _parseExistingOrganisaatioData = (organisaatioViitteet: any, organisaatioCache: {[string]: any}): Array<OrganisaatioSelectObject> => {
-        if(Object.keys(organisaatioCache).length === 0) {
+        if(Object.keys(organisaatioCache).length === 0 || !organisaatioViitteet) {
             return [];
         }
         const organisaatioViittees = organisaatioViitteet
@@ -263,12 +267,16 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         const organisaatioOids = organisaatioViittees
             .map((organisaatioViite: any) => organisaatioViite.organisaatioTyyppi);
         return organisaatioOids.map( (oid: string) => organisaatioCache[oid])
-            .map( (organisaatio: any) => ({
-                oid: organisaatio.oid,
-                name: getLocalization(organisaatio.nimi, this.props.locale),
-                parentNames: [],
-                organisaatioTyypit: []
-            }));
+            .map( (organisaatio: any) => {
+                const localizedName = getLocalization(organisaatio.nimi, this.props.locale);
+                const name = organisaatio.status === 'AKTIIVINEN' ? localizedName : `${localizedName} (${this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})`;
+                return {
+                    oid: organisaatio.oid,
+                    name ,
+                    parentNames: [],
+                    organisaatioTyypit: []
+                }
+            });
     };
 
     _isOrganisaatioOid = (input: string): boolean => {
@@ -499,6 +507,11 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         return this.state.ryhmaRestrictionViite ? organisaatioTyypit.concat(organisaatiot).concat(ryhmaRestrictionviite) : organisaatioTyypit.concat(organisaatiot);
     };
 
+    _hasPassiveOrganisaatioRajoite = (): boolean => {
+        const passivoitu = this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU'];
+        return this.state.kayttooikeusryhmaForm.organisaatioSelections.some( (selection: OrganisaatioSelectObject) => selection.name.includes(passivoitu));
+    };
+
     cancel = (): void => {
         this.props.router.push('/kayttooikeusryhmat');
     };
@@ -522,7 +535,12 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
-            this.setState({toggleErrorOnSave: true});
+            this.props.addGlobalNotification({
+                key: 'PASSIVOINTIVIRHE',
+                title: this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000
+            });
             throw error;
         }
     }
@@ -536,7 +554,12 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
               this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
-            this.setState({toggleErrorOnSave: true});
+            this.props.addGlobalNotification({
+                key: 'UUDENKAYTTOIKEUSRYHMANLUONTIVIRHE',
+                title: this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000
+            });
             throw error;
         }
     }
@@ -550,7 +573,12 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
-            this.setState({toggleErrorOnSave: true});
+            this.props.addGlobalNotification({
+                key: 'KAYTTOOIKEUSRYHMANPAIVITYSVIRHE',
+                title: this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000
+            });
             throw error;
         }
     }
