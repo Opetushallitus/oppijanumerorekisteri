@@ -41,8 +41,12 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -171,8 +175,16 @@ public class YksilointiServiceImpl implements YksilointiService {
     private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
         boolean etunimiMatch = false;
         JaroWinklerDistance stringEvaluator = new JaroWinklerDistance();
-        float sukunimiMatch = stringEvaluator.getDistance(henkilo.getSukunimi().toLowerCase(),
-                yksiloityHenkilo.getSukunimi().toLowerCase());
+
+        Stream<String> sukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
+                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(() -> emptyList())
+                        .stream()
+                        .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
+                        .map(YksiloityHenkilo.EntinenNimi::getArvo));
+        boolean sukunimiMatch = sukunimet
+                .filter(Objects::nonNull)
+                .map(sukunimi -> stringEvaluator.getDistance(henkilo.getSukunimi().toLowerCase(), sukunimi.toLowerCase()))
+                .anyMatch(distance -> distance >= oppijanumerorekisteriProperties.getSukunimiThreshold());
 
         if (yksiloityHenkilo.getEtunimi().toLowerCase().contains(henkilo.getKutsumanimi().toLowerCase())) {
             etunimiMatch = true;
@@ -188,8 +200,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             }
         }
 
-        return new NimienYhtenevyys(etunimiMatch, sukunimiMatch
-                >= oppijanumerorekisteriProperties.getSukunimiThreshold());
+        return new NimienYhtenevyys(etunimiMatch, sukunimiMatch);
     }
 
     private static class NimienYhtenevyys {
