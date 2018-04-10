@@ -521,14 +521,11 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QIdentification qIdentification = QIdentification.identification;
 
-        List<Predicate> predicates = identifiers.stream().map(identifier ->
-                qIdentification.idpEntityId.eq(idpEntityId)
-                .and(qIdentification.identifier.eq(identifier))).collect(toList());
-
         return jpa()
                 .from(qHenkilo)
                 .join(qHenkilo.identifications, qIdentification)
-                .where(anyOf(predicates))
+                .where(qIdentification.idpEntityId.eq(idpEntityId))
+                .where(qIdentification.identifier.in(identifiers))
                 .transform(groupBy(qIdentification.identifier).as(qHenkilo));
     }
 
