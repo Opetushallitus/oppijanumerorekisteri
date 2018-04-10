@@ -17,6 +17,7 @@ public class OppijaReadDto {
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;
+    private KoodiNimiReadDto kotikunta;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
 }
