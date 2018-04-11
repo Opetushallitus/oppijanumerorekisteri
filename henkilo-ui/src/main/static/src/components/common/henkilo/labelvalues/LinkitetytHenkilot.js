@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import {Link} from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
@@ -22,21 +21,6 @@ type Props = {
 }
 
 class LinkitetytHenkilot extends React.Component<Props> {
-    static propTypes = {
-        henkilo: PropTypes.shape({
-            henkilo: PropTypes.shape({
-                oidHenkilo: PropTypes.string.isRequired,
-            }).isRequired,
-            slaves: PropTypes.arrayOf(PropTypes.shape({
-                kutsumanimi: PropTypes.string.isRequired,
-                sukunimi: PropTypes.string.isRequired,
-                oidHenkilo: PropTypes.string.isRequired,
-            })).isRequired,
-        }).isRequired,
-        L: PropTypes.object.isRequired,
-        unlinkHenkilo: PropTypes.func.isRequired,
-        fetchHenkiloSlaves: PropTypes.func.isRequired,
-    };
 
     render() {
         return <div>{this.props.henkilo.slaves.length

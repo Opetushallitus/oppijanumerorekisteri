@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import LabelValue from "./LabelValue";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
@@ -26,17 +25,6 @@ const Kayttajanimi = (props: Props) => {
             isError: props.isError,
         }}
     />;
-};
-
-Kayttajanimi.propTypes = {
-    henkilo: PropTypes.shape({
-        kayttajatieto: PropTypes.shape({
-            username: PropTypes.string,
-        }).isRequired,
-    }).isRequired,
-    disabled: PropTypes.bool.isRequired,
-    isError: PropTypes.bool,
-    readOnly: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({

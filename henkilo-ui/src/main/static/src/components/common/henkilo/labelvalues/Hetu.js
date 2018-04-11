@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import LabelValue from './LabelValue';
 import StaticUtils from "../../StaticUtils";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
@@ -22,13 +21,6 @@ const Hetu = (props: Props) => <LabelValue
         disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
     }}
 />;
-
-Hetu.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        hetu: PropTypes.string,
-        yksiloityVTJ: PropTypes.bool,
-    })}),
-};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,

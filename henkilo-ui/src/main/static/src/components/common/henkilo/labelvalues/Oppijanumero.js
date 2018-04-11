@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import LabelValue from "./LabelValue";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
@@ -21,14 +20,6 @@ const Oppijanumero = (props: Props) => <LabelValue
         readOnly: true,
     }}
 />;
-
-Oppijanumero.propTypes = {
-    henkilo: PropTypes.shape({
-        henkilo: PropTypes.shape({
-            oidHenkilo: PropTypes.string,
-        })
-    }),
-};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,

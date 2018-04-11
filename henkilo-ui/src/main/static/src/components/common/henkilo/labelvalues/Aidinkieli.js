@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types'
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
@@ -33,21 +32,6 @@ const Aidinkieli = (props: Props) => <LabelValue
         disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
     }}
 />;
-
-Aidinkieli.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-            aidinkieli: PropTypes.object,
-        })}),
-    koodisto: PropTypes.shape({
-        kieli: PropTypes.array,
-    }),
-    locale: PropTypes.string,
-    henkiloUpdate: PropTypes.shape({
-        aidinkieli: PropTypes.shape({
-            kieliKoodi: PropTypes.string,
-        }),
-    }),
-};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,

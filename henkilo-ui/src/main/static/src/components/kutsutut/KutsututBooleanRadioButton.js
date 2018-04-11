@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 import KutsuViews from "./KutsuViews";
@@ -20,11 +19,6 @@ type State = {
 class KutsututBooleanRadioButton extends React.Component<Props, State> {
     trueLabel: string;
     falseLabel: string;
-
-    static propTypes = {
-        view: PropTypes.string.isRequired,
-        setView: PropTypes.func.isRequired,
-    };
 
     constructor(props: Props) {
         super(props);

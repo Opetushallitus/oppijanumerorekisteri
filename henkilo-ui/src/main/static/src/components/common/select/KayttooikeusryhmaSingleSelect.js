@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import OphSelect from "./OphSelect";
 import StaticUtils from "../StaticUtils";
@@ -22,9 +21,6 @@ type State = {
 };
 
 class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
-    static propTypes = {
-        kayttooikeusSelectionAction: PropTypes.func.isRequired,
-    };
 
     componentDidMount() {
         // Fetches only if not already fetched

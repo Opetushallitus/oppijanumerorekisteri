@@ -1,6 +1,5 @@
 // @flow
 import React from 'react'
-import PropTypes from 'prop-types'
 import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
 import type {L} from "../../types/localisation.type";
@@ -23,13 +22,6 @@ type Props = {
 }
 
 export default class BasicInfo extends React.Component<Props> {
-
-    static propTypes = {
-        basicInfo: PropTypes.object,
-        L: PropTypes.object,
-        setBasicInfo: PropTypes.func,
-        locale: PropTypes.string
-    };
 
     languages = [
         {code: 'fi', name: {fi: 'Suomi', en: 'Finnish', sv: 'Finska'}},

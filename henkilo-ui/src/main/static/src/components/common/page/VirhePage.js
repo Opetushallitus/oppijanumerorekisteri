@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import './VirhePage.css';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import Button from "../button/Button";
 import type {L} from "../../../types/localisation.type";
@@ -34,13 +33,6 @@ class VirhePage extends React.Component<Props> {
         </div>;
     }
 }
-
-VirhePage.propTypes = {
-    topic: PropTypes.string,
-    text: PropTypes.string,
-    buttonText: PropTypes.string,
-    theme: PropTypes.string,
-};
 
 const mapStateToProps = (state, ownProps) => ({
     L: state.l10n.localisations['fi'],

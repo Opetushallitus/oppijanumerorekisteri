@@ -1,7 +1,6 @@
 // @flow
 import './HenkiloViewCreateKayttooikeus.css';
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component';
@@ -57,13 +56,6 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
     createKayttooikeusAction: () => void;
     kestoAlkaaAction: (moment) => void;
     kestoPaattyyAction: (moment) => void;
-
-    static propTypes = {
-        kayttooikeus: PropTypes.shape({allowedKayttooikeus: PropTypes.object,}),
-        existingKayttooikeusRef: PropTypes.object.isRequired,
-        organisaatios: PropTypes.array,
-        vuosia: PropTypes.number.isRequired,
-    };
 
     constructor(props: Props) {
         super(props);

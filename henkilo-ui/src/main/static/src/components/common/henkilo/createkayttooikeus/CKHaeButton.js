@@ -1,7 +1,6 @@
 // @flow
 import './CKHaeButton.css'
 import React from 'react'
-import PropTypes from 'prop-types'
 import type {L} from "../../../../types/localisation.type";
 import ValidationMessageButton from "../../button/ValidationMessageButton";
 import type {ValidationMessage} from "../../../../types/validation.type";
@@ -23,11 +22,5 @@ const CKHaeButton = ({haeButtonAction, validationMessages, L}: Props ) =>
         </td>
         <td/>
     </tr>;
-
-CKHaeButton.propTypes = {
-    L: PropTypes.object,
-    haeButtonAction: PropTypes.func,
-    validationMessages: PropTypes.array,
-};
 
 export default CKHaeButton;

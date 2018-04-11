@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import LabelValue from './LabelValue';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
@@ -21,13 +20,6 @@ const Sukupuoli = (props: Props) => <LabelValue
         disabled: !!props.henkilo.henkilo.hetu,
     }}
 />;
-
-Sukupuoli.propTypes = {
-    henkilo: PropTypes.shape({henkilo: PropTypes.shape({
-        sukupuoli: PropTypes.string,
-        hetu: PropTypes.string,
-    })}),
-};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,

@@ -2,7 +2,6 @@
 import './HenkiloViewExpiredKayttooikeus.css';
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import update from 'react-addons-update';
 import Table from '../table/Table';
 import moment from 'moment';
@@ -77,25 +76,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     tableHeadings: Array<TableHeading>;
     _rows: Array<string | number | boolean>;
     updateKayttooikeusryhma: (number, string, number, string) => void;
-
-    static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
-        oidHenkilo: PropTypes.string.isRequired,
-        kayttooikeus: PropTypes.shape({
-            kayttooikeusAnomus: PropTypes.array,
-            kayttooikeus: PropTypes.array.isRequired,
-            grantableKayttooikeus: PropTypes.object.isRequired,
-        }).isRequired,
-        organisaatioCache: PropTypes.objectOf(PropTypes.shape({nimi: PropTypes.object.isRequired,})),
-        notifications: PropTypes.shape({
-            existingKayttooikeus: PropTypes.array.isRequired,
-        }),
-        removeNotification: PropTypes.func,
-        removePrivilege: PropTypes.func,
-        isOmattiedot: PropTypes.bool,
-        vuosia: PropTypes.number,
-    };
 
     constructor(props: Props) {
         super(props);

@@ -1,7 +1,6 @@
 // @flow
 import './Button.css'
 import React from 'react'
-import PropTypes from 'prop-types'
 import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 
@@ -21,17 +20,6 @@ type Props = {
 }
 
 class Button extends React.Component<Props> {
-
-    static propTypes = {
-        action: PropTypes.func,
-        disabled: PropTypes.bool,
-        href: PropTypes.string,
-        confirm: PropTypes.bool,
-        big: PropTypes.bool,
-        cancel: PropTypes.bool,
-        inputRef: PropTypes.func,
-        isButton: PropTypes.bool,
-    };
 
     render() {
         const classNameProp = this.props.className ? this.props.className : '';

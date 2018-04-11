@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Link} from 'react-router';
 import classNames from 'classnames/bind';
@@ -59,10 +58,6 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
             { isNoAuthenticationPage && <div><img src={ophLogo} alt="oph logo" id="ophlogo"/> <img src={okmLogo} alt="okm logo" id="okmlogo"/></div>}
         </div>
     );
-};
-
-TopNavigation.propTypes = {
-    pathName: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state) => ({

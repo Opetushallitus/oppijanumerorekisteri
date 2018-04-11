@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import './PasswordPopupContent.css';
 import type {L} from "../../../types/localisation.type";
@@ -28,11 +27,6 @@ type State = {
 
 class PasswordPopupContent extends React.Component<Props, State> {
     passwordInput: any;
-
-    static propTypes = {
-        oidHenkilo: PropTypes.string.isRequired,
-        L: PropTypes.object.isRequired,
-    };
 
     constructor(props: Props) {
         super(props);
