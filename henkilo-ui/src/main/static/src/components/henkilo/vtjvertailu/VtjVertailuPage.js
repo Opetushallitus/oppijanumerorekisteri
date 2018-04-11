@@ -74,7 +74,7 @@ class VtjVertailuPage extends React.Component<Props> {
 
     async overrideHenkiloInformation(): Promise<any> {
         try {
-            // await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
+            await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
             this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.addGlobalNotification({
                 key: 'HENKILOVTJYLIAJOISUCCESS',
