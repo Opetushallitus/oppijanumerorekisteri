@@ -15,12 +15,13 @@ import Loader from "../../common/icons/Loader";
 import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import Button from "../../common/button/Button";
 import {enabledVtjVertailuView, henkiloViewTabs} from "../../navigation/NavigationTabs";
-import WideGreenNotification from "../../common/notifications/WideGreenNotification";
-import WideRedNotification from "../../common/notifications/WideRedNotification";
 import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import type {L} from "../../../types/localisation.type";
+import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
+import {addGlobalNotification} from "../../../actions/notification.actions";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
 
 type Props = {
     oidHenkilo: string,
@@ -35,23 +36,15 @@ type Props = {
     fetchOmattiedot: () => void,
     updateHenkiloNavigation: (any) => void,
     overrideYksiloimatonHenkiloVtjData: (string) => void,
-    fetchHenkiloSlaves: (string) => void
+    fetchHenkiloSlaves: (string) => void,
+    addGlobalNotification: (payload: GlobalNotificationConfig) => void
 
 }
 
-type State = {
-    showSuccess: boolean,
-    showError: boolean
-}
-
-class VtjVertailuPage extends React.Component<Props, State> {
+class VtjVertailuPage extends React.Component<Props> {
 
     constructor() {
         super();
-        this.state = {
-            showSuccess: false,
-            showError: false
-        }
     }
 
     async componentDidMount() {
@@ -70,9 +63,7 @@ class VtjVertailuPage extends React.Component<Props, State> {
     render() {
         return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading || this.props.omattiedot.omattiedotLoading ? <Loader/> :
             <div className="wrapper">
-                <h1>{this.props.L['HENKILO_VTJ_VERTAILU']}</h1>
-                {this.state.showSuccess ? <WideGreenNotification message={this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS']} closeAction={this.hideSuccess.bind(this)}/> : null }
-                {this.state.showError ? <WideRedNotification message={this.props.L['HENKILO_VTJ_YLIAJA_FAILURE']} closeAction={this.hideError.bind(this)}/> : null}
+                <p class="oph-h2 oph-bold">{this.props.L['HENKILO_VTJ_VERTAILU']}</p>
                 <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L}/>
                 <Button action={this.overrideHenkiloInformation.bind(this)}
                         disabled={this.isDisabled()}>
@@ -83,10 +74,21 @@ class VtjVertailuPage extends React.Component<Props, State> {
 
     async overrideHenkiloInformation(): Promise<any> {
         try {
-            await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
-            this.showSuccess();
+            // await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
+            this.props.fetchHenkilo(this.props.oidHenkilo);
+            this.props.addGlobalNotification({
+                key: 'HENKILOVTJYLIAJOISUCCESS',
+                title: this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS'],
+                type: NOTIFICATIONTYPES.SUCCESS,
+                autoClose: 10000
+            });
         } catch (error) {
-            this.showError();
+            this.props.addGlobalNotification({
+                key: 'HENKILOVTJYLIAJOIFAILURE',
+                title: this.props.L['HENKILO_VTJ_YLIAJA_FAILURE'],
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000
+            });
             throw error;
         }
     }
@@ -97,23 +99,6 @@ class VtjVertailuPage extends React.Component<Props, State> {
         const isEnabledVtjVertailuView = enabledVtjVertailuView(this.props.henkilo.henkilo);
         return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
     }
-
-    showError(): void{
-        this.setState({showError: true});
-    }
-    
-    hideError(): void {
-        this.setState({showError: false});
-    }
-
-    showSuccess(): void {
-        this.setState({showSuccess: true});
-    }
-
-    hideSuccess(): void {
-        this.setState({showSuccess: false});
-    }
-
 }
 
 
@@ -137,5 +122,6 @@ export default connect(mapStateToProps, {
     fetchOmattiedot,
     updateHenkiloNavigation,
     overrideYksiloimatonHenkiloVtjData,
-    fetchHenkiloSlaves
+    fetchHenkiloSlaves,
+    addGlobalNotification
 })(VtjVertailuPage);
