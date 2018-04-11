@@ -43,10 +43,6 @@ type Props = {
 
 class VtjVertailuPage extends React.Component<Props> {
 
-    constructor() {
-        super();
-    }
-
     async componentDidMount() {
         this.props.fetchOmattiedot();
         this.props.fetchHenkilo(this.props.oidHenkilo);
