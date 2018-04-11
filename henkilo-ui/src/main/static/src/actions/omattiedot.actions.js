@@ -21,20 +21,18 @@ type GetState = () => {
 }
 
 export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) => {
-    if (!getState().locale) {
-        const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
-        dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST});
-        try {
-            const lang = await http.get(url);
-            if (lang.length === 2) {
-                dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang});
-                dispatch({type: LOCATION_CHANGE}); // Dispatch to trigger title change
-            }
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
+    dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST});
+    try {
+        const lang = await http.get(url);
+        if (lang.length === 2) {
+            dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang});
+            dispatch({type: LOCATION_CHANGE}); // Dispatch to trigger title change
         }
-        catch (error) {
-            dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE});
-            throw error;
-        }
+    }
+    catch (error) {
+        dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE});
+        throw error;
     }
 };
 
