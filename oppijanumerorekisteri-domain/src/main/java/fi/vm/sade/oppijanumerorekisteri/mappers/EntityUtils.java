@@ -11,6 +11,9 @@ import java.time.Month;
 import java.util.Collections;
 import java.util.Date;
 
+/**
+ * For creating test entitys
+ */
 public class EntityUtils {
     static public Kansalaisuus createKansalaisuus(String kansalaisuuskoodi) {
         return new Kansalaisuus(kansalaisuuskoodi);

@@ -73,7 +73,7 @@ public class DuplicateServiceImplTest {
         HakemusDto hakemusDto1 = new HakemusDto(hakemus1);
         HakemusDto hakemusDto2 = new HakemusDto(hakemus2);
 
-        HashMap<String, List<HakemusDto>> ataruApplications = new HashMap<String, List<HakemusDto>>() { { put("1.2.3.4.6", Arrays.asList(hakemusDto1)); }; };
+        HashMap<String, List<HakemusDto>> ataruApplications = new HashMap<String, List<HakemusDto>>() { { put("1.2.3.4.6", Arrays.asList(hakemusDto1)); } };
         HashMap<String, List<HakemusDto>> hakuAppApplications = new HashMap<String, List<HakemusDto>>() { { put("1.3.3.4.7", Arrays.asList(hakemusDto2)); put("1.2.3.4.6", Lists.newArrayList(hakemusDto2)); } };
 
         hakuAppApplications.put("1.3.3.4.7", Lists.newArrayList(hakemusDto2));
