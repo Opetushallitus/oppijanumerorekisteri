@@ -41,8 +41,14 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -142,13 +148,20 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         henkilo.setYksilointiYritetty(true);
 
-        NimienYhtenevyys nimienYhtenevyys = tarkistaNimet(henkilo, yksiloityHenkilo);
+        Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
+                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(() -> emptyList())
+                        .stream()
+                        .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
+                        .map(YksiloityHenkilo.EntinenNimi::getArvo))
+                .filter(Objects::nonNull)
+                .collect(toCollection(LinkedHashSet::new));
+        NimienYhtenevyys nimienYhtenevyys = tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
 
         if (!nimienYhtenevyys.etunimimatch || !nimienYhtenevyys.sukunimimatch) {
             logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
                     + "--Annetut etunimet: " + henkilo.getEtunimet() + ", VTJ: " + yksiloityHenkilo.getEtunimi() + "\n"
                     + "--Annettu kutsumanimi: " + henkilo.getKutsumanimi() + ", VTJ: " + yksiloityHenkilo.getKutsumanimi() + "\n"
-                    + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ: " + yksiloityHenkilo.getSukunimi());
+                    + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ (ml. entiset): " + kaikkiSukunimet.stream().collect(joining(", ")));
 
             addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
         }
@@ -168,11 +181,13 @@ public class YksilointiServiceImpl implements YksilointiService {
         return henkiloModificationService.update(henkilo);
     }
 
-    private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+    private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo, Set<String> kaikkiSukunimet) {
         boolean etunimiMatch = false;
         JaroWinklerDistance stringEvaluator = new JaroWinklerDistance();
-        float sukunimiMatch = stringEvaluator.getDistance(henkilo.getSukunimi().toLowerCase(),
-                yksiloityHenkilo.getSukunimi().toLowerCase());
+
+        boolean sukunimiMatch = kaikkiSukunimet.stream()
+                .map(sukunimi -> stringEvaluator.getDistance(henkilo.getSukunimi().toLowerCase(), sukunimi.toLowerCase()))
+                .anyMatch(distance -> distance >= oppijanumerorekisteriProperties.getSukunimiThreshold());
 
         if (yksiloityHenkilo.getEtunimi().toLowerCase().contains(henkilo.getKutsumanimi().toLowerCase())) {
             etunimiMatch = true;
@@ -188,8 +203,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             }
         }
 
-        return new NimienYhtenevyys(etunimiMatch, sukunimiMatch
-                >= oppijanumerorekisteriProperties.getSukunimiThreshold());
+        return new NimienYhtenevyys(etunimiMatch, sukunimiMatch);
     }
 
     private static class NimienYhtenevyys {
