@@ -2,7 +2,6 @@
 import './HenkiloViewExpiredKayttooikeus.css';
 import React from 'react';
 import {connect} from 'react-redux';
-import update from 'react-addons-update';
 import Table from '../table/Table';
 import moment from 'moment';
 import DatePicker from "react-datepicker";
@@ -224,7 +223,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             ? this.state.emailOptions.map((email, idx2) => <div key={idx2}>
                 <input type="radio"
                        checked={this.state.emailSelection[idx].value === email.value}
-                       onChange={() => {this.setState({emailSelection: update(this.state.emailSelection, {[idx]: {$set: email}}),});}}
+                       onChange={() => this.setState( { emailSelection: R.update(idx, email, this.state.emailSelection)} )}
                 />
                 <span>{email.value}</span>
             </div>)
@@ -262,6 +261,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                            noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']}
                     />
                 </div>
+
             </div>
         );
     }
