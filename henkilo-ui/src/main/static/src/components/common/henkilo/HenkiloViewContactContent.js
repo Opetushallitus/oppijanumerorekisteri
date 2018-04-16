@@ -28,7 +28,8 @@ type Props = {
     readOnly: boolean,
     koodisto: KoodistoState,
     updateHenkiloAndRefetch: (Henkilo, ?GlobalNotificationConfig) => void,
-    omattiedot: OmattiedotState
+    omattiedot: OmattiedotState,
+    view: string
 }
 
 type ContactInfo = {
@@ -120,10 +121,11 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     };
 
     render() {
-
+        
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const duplicate = this.props.henkilo.henkilo.duplicate;
-        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILON_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+        const hasHenkiloReadUpdateRights: boolean = this.props.view === 'OMATTIEDOT' ? true : hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILON_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
+        
         const editButton = hasHenkiloReadUpdateRights ? <Button disabled={passivoitu || duplicate} key="contactEdit" action={this._edit.bind(this)}>{this.props.L['MUOKKAA_LINKKI']}</Button> : null;
         return (
             <div className="henkiloViewUserContentWrapper contact-content">
