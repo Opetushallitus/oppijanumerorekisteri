@@ -320,7 +320,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
 
         // Hetu has changed. If someone already has the new hetu remove it and link henkilos.
-        if (!henkilo.getHetu().equals(yksiloityHenkilo.getHetu())) {
+        if (StringUtils.hasLength(yksiloityHenkilo.getHetu()) && !yksiloityHenkilo.getHetu().equals(henkilo.getHetu())) {
             this.duplicateService.removeDuplicateHetuAndLink(henkilo.getOidHenkilo(), yksiloityHenkilo.getHetu());
             henkilo.setHetu(yksiloityHenkilo.getHetu());
         }
