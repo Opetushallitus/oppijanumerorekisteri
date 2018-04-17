@@ -17,6 +17,7 @@ import VtjVertailuPage from "./components/henkilo/vtjvertailu/VtjVertailuPage";
 import KayttooikeusryhmaPageContainer from "./components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer";
 import KayttooikeusryhmatHallintaContainer from "./components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer";
 import OppijaCreateContainer from "./components/henkilo/OppijaCreateContainer";
+import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
 import PalvelukayttajaHakuContainer from "./components/palvelukayttaja/PalvelukayttajaHakuContainer";
 import SalansananResetointiPage from "./components/salasananresetointi/SalasananResetointiPage";
@@ -27,6 +28,7 @@ export default <Route path="/" component={App}>
     <Route path="/kutsutut" component={KutsututPageContainer} />
     <Route path="/kutsulomake" component={KutsuminenPage} />
     <Route path="/henkilohaku" component={HenkilohakuContainer} />
+    <Route path="/virkailija/luonti" component={VirkailijaCreateContainer} />
     <Route path="/oppija/luonti" component={OppijaCreateContainer} />
     <Route path="/oppija/:oid" component={OppijaViewContainer} />
     <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
