@@ -21,6 +21,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
+import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
@@ -62,6 +63,8 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     private static final Predicate<String> stringNotEmpty = it -> !StringUtils.isEmpty(it);
     private static final Predicate<Collection> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
+
+    private final DuplicateService duplicateService;
 
     private final HenkiloRepository henkiloRepository;
     private final HenkiloService henkiloService;
@@ -113,10 +116,8 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         // Remove yksilointitieto if henkilo was yksiloity succesfully.
         if (henkilo != null && henkilo.isYksiloityVTJ()) {
-            Optional<Yksilointitieto> yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo);
-            if (yksilointitieto.isPresent()) {
-                yksilointitietoRepository.delete(yksilointitieto.get());
-            }
+            this.yksilointitietoRepository.findByHenkilo(henkilo)
+                    .ifPresent(this.yksilointitietoRepository::delete);
         }
 
         return henkilo;
@@ -149,7 +150,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setYksilointiYritetty(true);
 
         Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
-                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(() -> emptyList())
+                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(Collections::emptyList)
                         .stream()
                         .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
                         .map(YksiloityHenkilo.EntinenNimi::getArvo))
@@ -171,7 +172,7 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setOppijanumero(henkilo.getOidHenkilo());
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
-            paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+            this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
 
             henkilo.setYksiloityVTJ(true);
             //OPHASPA-1820 kumotaan pärstäyksilöinti
@@ -318,8 +319,11 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
 
-        // person's existing ssn has changed
-        updateIfYksiloityValueNotNull(henkilo.getHetu(), yksiloityHenkilo.getHetu(), henkilo::setHetu);
+        // Hetu has changed. If someone already has the new hetu remove it and link henkilos.
+        if (!henkilo.getHetu().equals(yksiloityHenkilo.getHetu())) {
+            this.duplicateService.removeDuplicateHetuAndLink(henkilo.getOidHenkilo(), yksiloityHenkilo.getHetu());
+            henkilo.setHetu(yksiloityHenkilo.getHetu());
+        }
 
         updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
         updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
@@ -407,7 +411,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + hetu));
 
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
-        paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+        this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
         henkilo.setVtjsynced(new Date());
         henkiloModificationService.update(henkilo);
     }

@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.YksilointiTask;
 import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
 import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysKayttooikeusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
@@ -27,7 +28,10 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -200,4 +204,63 @@ public class YksilointiTests {
         assertThat(asiayhteysKayttooikeus).hasValueSatisfying(t -> assertThat(t.getLoppupaivamaara()).isEqualTo("2018-03-14"));
     }
 
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void hetuUpdates() {
+        HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
+        henkiloCreateDto.setKutsumanimi("teppo");
+        henkiloCreateDto.setEtunimet("teppo");
+        henkiloCreateDto.setSukunimi("testaaja");
+        henkiloCreateDto.setHetu("hetu1");
+        String yksiloitavaOid = this.henkiloModificationService.createHenkilo(henkiloCreateDto).getOidHenkilo();
+
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        yksiloityHenkilo.setEtunimi("teppo");
+        yksiloityHenkilo.setKutsumanimi("teppo");
+        yksiloityHenkilo.setSukunimi("testaaja");
+        yksiloityHenkilo.setHetu("170498-993H");
+        when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
+
+        Optional<Henkilo> henkilo = this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+        assertThat(henkilo)
+                .map(Henkilo::getHetu)
+                .contains("170498-993H");
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void henkiloAlreadyExistsWithSameHetu() {
+        HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
+        henkiloCreateDto.setKutsumanimi("teppo");
+        henkiloCreateDto.setEtunimet("teppo");
+        henkiloCreateDto.setSukunimi("testaaja");
+        henkiloCreateDto.setHetu("hetu1");
+        henkiloCreateDto.setYksiloityVTJ(false);
+        String yksiloitavaOid = this.henkiloModificationService.createHenkilo(henkiloCreateDto).getOidHenkilo();
+
+        HenkiloCreateDto henkiloCreateDtoDuplicate = new HenkiloCreateDto();
+        henkiloCreateDtoDuplicate.setKutsumanimi("duplikaatti");
+        henkiloCreateDtoDuplicate.setEtunimet("duplikaatti");
+        henkiloCreateDtoDuplicate.setSukunimi("henkilo");
+        henkiloCreateDtoDuplicate.setHetu("170498-993H");
+        henkiloCreateDtoDuplicate.setYksiloityVTJ(true);
+        this.henkiloModificationService.createHenkilo(henkiloCreateDtoDuplicate);
+
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        yksiloityHenkilo.setEtunimi("teppo");
+        yksiloityHenkilo.setKutsumanimi("teppo");
+        yksiloityHenkilo.setSukunimi("testaaja");
+        yksiloityHenkilo.setHetu("170498-993H");
+        when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
+
+        Optional<Henkilo> henkilo = this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+        assertThat(henkilo)
+                .map(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
+                .contains(tuple("170498-993H", true));
+        List<HenkiloReadDto> slaves = this.henkiloService.findSlavesByMasterOid(yksiloitavaOid);
+        assertThat(slaves)
+                .hasSize(1)
+                .extracting(HenkiloReadDto::getHetu)
+                .containsNull();
+    }
 }
