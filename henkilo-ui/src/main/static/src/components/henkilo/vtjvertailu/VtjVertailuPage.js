@@ -43,10 +43,6 @@ type Props = {
 
 class VtjVertailuPage extends React.Component<Props> {
 
-    constructor() {
-        super();
-    }
-
     async componentDidMount() {
         this.props.fetchOmattiedot();
         this.props.fetchHenkilo(this.props.oidHenkilo);
@@ -75,7 +71,7 @@ class VtjVertailuPage extends React.Component<Props> {
     async overrideHenkiloInformation(): Promise<any> {
         try {
             await this.props.overrideYksiloimatonHenkiloVtjData(this.props.oidHenkilo);
-            this.props.fetchHenkilo(this.props.oidHenkilo);
+            await this.props.fetchHenkilo(this.props.oidHenkilo);
             this.props.addGlobalNotification({
                 key: 'HENKILOVTJYLIAJOISUCCESS',
                 title: this.props.L['HENKILO_VTJ_YLIAJA_SUCCESS'],
