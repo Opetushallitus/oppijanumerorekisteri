@@ -93,21 +93,12 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         ];
         this.tableHeadings = this.headingList.map(heading => Object.assign({}, heading, {label: (this.L[heading.key] || '')}));
 
-        this.updateKayttooikeusryhma = (id, kayttooikeudenTila, idx, organisaatioOid) => {
-            this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
-                id,
-                kayttooikeudenTila,
-                alkupvm: moment(this.state.dates[idx].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-                loppupvm: moment(this.state.dates[idx].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
-            }]);
-        };
-
         this.state = {
             dates: this.props.kayttooikeus.kayttooikeus
                 .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
                 .map(kayttooikeusAnomus => ({
                     alkupvm: moment(),
-                    loppupvm: moment().add(1, 'years')
+                    loppupvm: this.props.vuosia ? moment().add(this.props.vuosia, 'years') : moment(kayttooikeusAnomus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(1, 'years')
                 })),
             ...this.createEmailOptions(this.props.henkilo),
         };
@@ -171,8 +162,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                     + StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L),
                     [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                         .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                    [headingList[2]]: moment(new Date(uusittavaKayttooikeusRyhma.alkuPvm)).format(),
-                    [headingList[3]]: moment(new Date(uusittavaKayttooikeusRyhma.voimassaPvm)).format(),
+                    [headingList[2]]: moment(uusittavaKayttooikeusRyhma.alkuPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
+                    [headingList[3]]: moment(uusittavaKayttooikeusRyhma.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
                     [headingList[4]]: moment(uusittavaKayttooikeusRyhma.kasitelty).format() + ' / '
                     + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
                     [headingList[5]]: <div>
@@ -209,6 +200,15 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                     </div>,
                 }
             });
+    }
+
+    updateKayttooikeusryhma(id, kayttooikeudenTila, idx, organisaatioOid) {
+        this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
+            id,
+            kayttooikeudenTila,
+            alkupvm: moment(this.state.dates[idx].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+            loppupvm: moment(this.state.dates[idx].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
+        }]);
     }
 
     isHaeJatkoaikaaButtonDisabled(idx, uusittavaKayttooikeusRyhma) {
