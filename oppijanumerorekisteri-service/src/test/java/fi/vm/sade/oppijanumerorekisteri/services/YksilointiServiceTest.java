@@ -60,27 +60,21 @@ public class YksilointiServiceTest {
         henkiloService = mock(HenkiloService.class);
         henkiloModificationService = mock(HenkiloModificationService.class);
         yksilointitietoRepository = mock(YksilointitietoRepository.class);
-        UserDetailsHelper userDetailsHelper = mock(UserDetailsHelper.class);
-        KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
-        OrikaConfiguration orikaConfiguration = mock(OrikaConfiguration.class);
-        YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository = mock(YhteystiedotRyhmaRepository.class);
-        YhteystietoRepository yhteystietoRepository = mock(YhteystietoRepository.class);
-        AsiayhteysPalveluRepository asiayhteysPalveluRepository = mock(AsiayhteysPalveluRepository.class);
-        AsiayhteysHakemusRepository asiayhteysHakemusRepository = mock(AsiayhteysHakemusRepository.class);
-        AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository = mock(AsiayhteysKayttooikeusRepository.class);
-        this.yksilointiService = new YksilointiServiceImpl(henkiloRepository,
+        KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
+        this.yksilointiService = new YksilointiServiceImpl(mock(DuplicateService.class),
+                henkiloRepository,
                 henkiloService,
                 henkiloModificationService,
                 kansalaisuusRepository,
                 kielisyysRepository,
-                yhteystiedotRyhmaRepository,
-                yhteystietoRepository,
+                mock(YhteystiedotRyhmaRepository.class),
+                mock(YhteystietoRepository.class),
                 yksilointitietoRepository,
-                asiayhteysPalveluRepository,
-                asiayhteysHakemusRepository,
-                asiayhteysKayttooikeusRepository,
-                orikaConfiguration,
+                mock(AsiayhteysPalveluRepository.class),
+                mock(AsiayhteysHakemusRepository.class),
+                mock(AsiayhteysKayttooikeusRepository.class),
+                mock(OrikaConfiguration.class),
                 this.vtjClient,
                 mockKoodistoClient,
                 kayttooikeusClientMock,
