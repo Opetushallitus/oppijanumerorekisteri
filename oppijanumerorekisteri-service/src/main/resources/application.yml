@@ -15,6 +15,14 @@ spring:
       write-dates-as-timestamps: true
   cache:
     type: EHCACHE
+  flyway:
+    enabled: true
+    table: schema_table_onr
+    # Only for initial production release, set false afterwards
+    baseline-on-migrate: true
+    # If DB is not empty will not run migrations until this version
+    baseline-version: 20180418112325837
+    out-of-order: true
 logging:
   level:
     root: info
