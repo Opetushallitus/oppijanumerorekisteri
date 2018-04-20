@@ -42,108 +42,6 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
 COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
 
 
---
--- Name: arkistoi_arvosana_deltat(integer); Type: FUNCTION; Schema: public; Owner: oph
---
-
-CREATE FUNCTION public.arkistoi_arvosana_deltat(amount integer) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  _resource_id varchar(200);
-  _inserted bigint;
-  _count int := 0;
-  delta record;
-BEGIN
-  FOR delta IN
-    SELECT resource_id, inserted FROM arvosana
-    EXCEPT
-    SELECT resource_id, inserted FROM v_arvosana
-    LIMIT amount
-  LOOP
-    INSERT INTO a_arvosana SELECT * FROM arvosana WHERE resource_id = delta.resource_id AND inserted = delta.inserted;
-    DELETE FROM arvosana WHERE resource_id = delta.resource_id AND inserted = delta.inserted;
-    _count := _count + 1;
-    RAISE NOTICE '%: archived delta: %, %', _count, delta.resource_id, delta.inserted;
-  END LOOP;
-
-  RETURN _count;
-END;
-$$;
-
-
-ALTER FUNCTION public.arkistoi_arvosana_deltat(amount integer) OWNER TO oph;
-
---
--- Name: insertpalvelu(character varying, character varying); Type: FUNCTION; Schema: public; Owner: oph
---
-
-CREATE FUNCTION public.insertpalvelu(character varying, character varying) RETURNS integer
-    LANGUAGE plpgsql
-    AS $_$
-DECLARE
-    role_name ALIAS FOR $1;
-    role_text_fi ALIAS FOR $2;
-    _role_exists bigint;
-    _textgroup_id bigint;
-    _palvelu_id bigint;
-    _kayttooikeus_id bigint;
-    r rooli%ROWTYPE;
-    o organisaatiohenkilo%ROWTYPE;
-
-BEGIN
-
-    SELECT count(1) INTO _role_exists FROM palvelu WHERE name = role_name;
-
-    IF _role_exists = 0 THEN
-        SELECT nextval('public.hibernate_sequence') INTO _textgroup_id;
-        SELECT nextval('public.hibernate_sequence') INTO _palvelu_id;
-
-        INSERT INTO text_group (id, version) VALUES (_textgroup_id, 1);
-
-        INSERT INTO text (id, version, lang, text, textgroup_id)
-            SELECT nextval('public.hibernate_sequence'), 1, 'FI', role_text_fi, _textgroup_id;
-
-        INSERT INTO text (id, version, lang, text, textgroup_id)
-            SELECT nextval('public.hibernate_sequence'), 1, 'SV', role_text_fi, _textgroup_id;
-
-        INSERT INTO text (id, version, lang, text, textgroup_id)
-            SELECT nextval('public.hibernate_sequence'), 1, 'EN', role_text_fi, _textgroup_id;
-
-        INSERT INTO palvelu (id, version, name, palvelutyyppi, textgroup_id, kokoelma_id)
-            SELECT _palvelu_id, 1, role_name, 'YKSITTAINEN', _textgroup_id, NULL;
-
-        FOR r IN
-            SELECT *
-                FROM rooli
-        LOOP
-            SELECT nextval('public.hibernate_sequence') INTO _kayttooikeus_id;
-            INSERT INTO kayttooikeus (id, version, palvelu_id, rooli_id) SELECT _kayttooikeus_id, 0, _palvelu_id, r.id;
-
-            FOR o IN
-            SELECT *
-                FROM organisaatiohenkilo WHERE henkilo_id IN (SELECT id FROM henkilo WHERE lower(kayttajatunnus) IN ('ophadmin', 'portaladmin'))
-            LOOP
-                INSERT INTO myonnetty_kayttooikeus (id, version, voimassaalkupvm, voimassaloppupvm, kayttooikeus_id, organisaatiohenkilo_id)
-                SELECT nextval('public.hibernate_sequence'), 0, '2000-01-01', '2999-01-01', _kayttooikeus_id, o.id;
-            END LOOP;
-
-            INSERT INTO kayttooikeusryhma_kayttooikeus (kayttooikeusryhma_id, kayttooikeus_id)
-                SELECT kr.id, _kayttooikeus_id FROM kayttooikeusryhma kr WHERE kr.name LIKE 'Rekisterinpitäjä%' AND r.name = 'CRUD';
-
-        END LOOP;
-
-    END IF;
-
-    RETURN 1;
-
-END;
-
-$_$;
-
-
-ALTER FUNCTION public.insertpalvelu(character varying, character varying) OWNER TO oph;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -517,37 +415,6 @@ ALTER TABLE public.scheduled_tasks OWNER TO oph;
 
 
 --
--- Name: spring_session; Type: TABLE; Schema: public; Owner: oph
---
-
-CREATE TABLE public.spring_session (
-    primary_id character(36) NOT NULL,
-    session_id character(36) NOT NULL,
-    creation_time bigint NOT NULL,
-    last_access_time bigint NOT NULL,
-    max_inactive_interval integer NOT NULL,
-    expiry_time bigint NOT NULL,
-    principal_name character varying(100)
-);
-
-
-ALTER TABLE public.spring_session OWNER TO oph;
-
---
--- Name: spring_session_attributes; Type: TABLE; Schema: public; Owner: oph
---
-
-CREATE TABLE public.spring_session_attributes (
-    session_primary_id character(36) NOT NULL,
-    attribute_name character varying(200) NOT NULL,
-    attribute_bytes bytea NOT NULL
-);
-
-
-ALTER TABLE public.spring_session_attributes OWNER TO oph;
-
-
---
 -- Name: tuonti; Type: TABLE; Schema: public; Owner: oph
 --
 
@@ -851,22 +718,6 @@ ALTER TABLE ONLY public.scheduled_tasks
 
 
 --
--- Name: spring_session_attributes_pk; Type: CONSTRAINT; Schema: public; Owner: oph
---
-
-ALTER TABLE ONLY public.spring_session_attributes
-    ADD CONSTRAINT spring_session_attributes_pk PRIMARY KEY (session_primary_id, attribute_name);
-
-
---
--- Name: spring_session_pk; Type: CONSTRAINT; Schema: public; Owner: oph
---
-
-ALTER TABLE ONLY public.spring_session
-    ADD CONSTRAINT spring_session_pk PRIMARY KEY (primary_id);
-
-
---
 -- Name: tuonti_data_pkey; Type: CONSTRAINT; Schema: public; Owner: oph
 --
 
@@ -1083,34 +934,6 @@ CREATE INDEX identification_henkilo_id_idx ON public.identification USING btree 
 --
 
 CREATE INDEX identifier_idx ON public.identification USING btree (identifier);
-
-
---
--- Name: spring_session_attributes_ix1; Type: INDEX; Schema: public; Owner: oph
---
-
-CREATE INDEX spring_session_attributes_ix1 ON public.spring_session_attributes USING btree (session_primary_id);
-
-
---
--- Name: spring_session_ix1; Type: INDEX; Schema: public; Owner: oph
---
-
-CREATE UNIQUE INDEX spring_session_ix1 ON public.spring_session USING btree (session_id);
-
-
---
--- Name: spring_session_ix2; Type: INDEX; Schema: public; Owner: oph
---
-
-CREATE INDEX spring_session_ix2 ON public.spring_session USING btree (expiry_time);
-
-
---
--- Name: spring_session_ix3; Type: INDEX; Schema: public; Owner: oph
---
-
-CREATE INDEX spring_session_ix3 ON public.spring_session USING btree (principal_name);
 
 
 --
@@ -1379,14 +1202,6 @@ ALTER TABLE ONLY public.henkilo_kielisyys_aud
 
 ALTER TABLE ONLY public.henkilo_kansalaisuus_aud
     ADD CONSTRAINT fkqxc9bei86pmc2oduhmsfn1h4t FOREIGN KEY (rev) REFERENCES public.revinfo(rev);
-
-
---
--- Name: spring_session_attributes_fk; Type: FK CONSTRAINT; Schema: public; Owner: oph
---
-
-ALTER TABLE ONLY public.spring_session_attributes
-    ADD CONSTRAINT spring_session_attributes_fk FOREIGN KEY (session_primary_id) REFERENCES public.spring_session(primary_id) ON DELETE CASCADE;
 
 
 --
