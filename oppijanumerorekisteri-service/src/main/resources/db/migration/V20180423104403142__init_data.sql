@@ -1,4 +1,4 @@
---
+-- Initial user
 INSERT INTO kielisyys VALUES (nextval('public.hibernate_sequence'), 0, 'fi', 'suomi');
 
 INSERT INTO henkilo (id, version, etunimet, hetu, kutsumanimi, oidhenkilo, sukunimi, sukupuoli, turvakielto, eisuomalaistahetua, asiointikieli_id, passivoitu, yksiloityvtj)
