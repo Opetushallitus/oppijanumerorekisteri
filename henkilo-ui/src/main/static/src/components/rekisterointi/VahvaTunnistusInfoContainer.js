@@ -18,6 +18,12 @@ class VahvaTunnistusInfoContainer extends React.Component {
                               buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
                               />;
         }
+        else if (this.props.loginToken === 'palvelukayttaja') {
+            return <VirhePage theme="gray"
+                                topic="VAHVATUNNISTUSINFO_VIRHE_PALVELUKAYTTAJA_OTSIKKO"
+                                text="VAHVATUNNISTUSINFO_VIRHE_PALVELUKAYTTAJA_TEKSTI"
+                                buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"/>
+        }
         else if(this.props.virhe) {
             return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO"
                               text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
