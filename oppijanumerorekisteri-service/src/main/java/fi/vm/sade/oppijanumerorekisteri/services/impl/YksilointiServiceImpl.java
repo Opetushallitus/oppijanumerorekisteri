@@ -352,7 +352,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private void removeVtjYhteystiedotAndUpdateForOppija(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
         Iterator<YhteystiedotRyhma> iterator = henkilo.getYhteystiedotRyhma().iterator();
         iterator.forEachRemaining(yhteystiedotRyhmaI -> Optional.ofNullable(yhteystiedotRyhmaI)
-                .filter(yhteystiedotRyhma -> yhteystiedotRyhma.getRyhmaAlkuperaTieto().equals(RYHMAALKUPERA_VTJ))
+                .filter(yhteystiedotRyhma -> RYHMAALKUPERA_VTJ.equals(yhteystiedotRyhma.getRyhmaAlkuperaTieto()))
                 .ifPresent(yhteystiedotRyhma -> {
                     yhteystiedotRyhma.getYhteystieto().forEach(yhteystietoRepository::delete);
                     yhteystiedotRyhma.clearYhteystieto();
