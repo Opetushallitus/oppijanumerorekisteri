@@ -9,6 +9,8 @@ spring:
     exclude: org.spring
   cache:
     type: NONE
+  flyway:
+    enabled: false
 host:
   host-cas: localhost
   host-virkailija: localhost
