@@ -115,8 +115,9 @@ public class IdentificationServiceIntegrationTests {
 
         Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloRepository.findByOidHenkilo("Tyoosoite").get().getYhteystiedotRyhma();
         assertThat(yhteystietoryhmat)
-                .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT)
-                .containsExactly(tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com")));
+                .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
+                .containsExactly(tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera6"));
+
     }
 
     @Test
@@ -128,10 +129,10 @@ public class IdentificationServiceIntegrationTests {
 
         Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloRepository.findByOidHenkilo("TyoosoiteVainLuku").get().getYhteystiedotRyhma();
         assertThat(yhteystietoryhmat)
-                .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT)
+                .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactlyInAnyOrder(
-                        tuple("yhteystietotyyppi2", singletonList("tyoosoite@example.com")),
-                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"))
+                        tuple("yhteystietotyyppi2", singletonList("tyoosoite@example.com"), "alkupera6"),
+                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera6")
                 );
     }
 
@@ -144,10 +145,10 @@ public class IdentificationServiceIntegrationTests {
 
         Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloRepository.findByOidHenkilo("Kotiosoite").get().getYhteystiedotRyhma();
         assertThat(yhteystietoryhmat)
-                .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT)
+                .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactlyInAnyOrder(
-                        tuple("yhteystietotyyppi1", singletonList("kotiosoite@example.com")),
-                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"))
+                        tuple("yhteystietotyyppi1", singletonList("kotiosoite@example.com"), "alkupera6"),
+                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera6")
                 );
     }
 
