@@ -20,7 +20,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
         const headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO'},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'},
             {key: 'HENKILO_KAYTTOOIKEUS_TILA'},
-            {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 150},
+            {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 150, notSortable: true},
         ];
         this.tableHeadings = headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 

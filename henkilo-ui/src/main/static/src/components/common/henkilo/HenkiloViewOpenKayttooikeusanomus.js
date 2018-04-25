@@ -81,18 +81,19 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.L = this.props.l10n[this.props.locale];
-        this.headingList = [{key: 'ANOTTU_PVM'},
+        this.headingList = [{key: 'ANOTTU_PVM', Cell: cellProps => cellProps.value.format()},
             {key: 'HENKILO_KAYTTOOIKEUS_NIMI', hide: !this.props.isAnomusView, notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO', minWidth: 220, notSortable: this.props.isAnomusView},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA', minWidth: 220, notSortable: this.props.isAnomusView,},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU', minWidth: 70, notSortable: true,},
-            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', notSortable: this.props.isAnomusView},
-            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', notSortable: this.props.isAnomusView},
+            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', notSortable: this.props.isAnomusView, Cell: cellProps => cellProps.value.format()},
+            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', localizationKey: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', hide: !this.props.isOmattiedot, notSortable: this.props.isAnomusView, Cell: cellProps => cellProps.value.format()},
+            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM_MYONTO', localizationKey: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', hide: this.props.isOmattiedot, notSortable: true},
             {key: 'HENKILO_KAYTTOOIKEUSANOMUS_TYYPPI', minWidth: 50, notSortable: this.props.isAnomusView},
             {key: 'EMPTY_PLACEHOLDER', minWidth: 165, notSortable: true,},
         ];
 
-        this.tableHeadings = this.headingList.map(heading => ({ ...heading, label: this.L[heading.key]}));
+        this.tableHeadings = this.headingList.map(heading => ({ ...heading, label: this.L[heading.localizationKey ? heading.localizationKey : heading.key]}));
 
         this.state = {
             dates: this._getKayttooikeusAnomukset(this.props).map(kayttooikeusAnomus => ({
@@ -131,25 +132,24 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const headingList = this.headingList.map(heading => heading.key);
         this._rows = this._getKayttooikeusAnomukset(this.props)
             .map((haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
-                [headingList[0]]: moment(new Date(haettuKayttooikeusRyhma.anomus.anottuPvm)).format(),
+                [headingList[0]]: moment(haettuKayttooikeusRyhma.anomus.anottuPvm),
                 [headingList[1]]: haettuKayttooikeusRyhma.anomus.henkilo.etunimet + ' ' + haettuKayttooikeusRyhma.anomus.henkilo.sukunimi,
                 [headingList[2]]: toLocalizedText(this.props.locale, this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].nimi)
                 + ' ' + StaticUtils.getOrganisaatiotyypitFlat(this.props.organisaatioCache[haettuKayttooikeusRyhma.anomus.organisaatioOid].tyypit, this.L),
                 [headingList[3]]: toLocalizedText(this.props.locale, haettuKayttooikeusRyhma.kayttoOikeusRyhma.nimi,
                     haettuKayttooikeusRyhma.kayttoOikeusRyhma.tunniste),
                 [headingList[4]]: this.createSelitePopupButton(haettuKayttooikeusRyhma.anomus.perustelut),
-                [headingList[5]]: <span>{this.state.dates[idx].alkupvm.format()}</span>,
-                [headingList[6]]: !this.props.isOmattiedot
-                    ? <DatePicker className="oph-input"
+                [headingList[5]]: this.state.dates[idx].alkupvm,
+                [headingList[6]]: this.state.dates[idx].loppupvm,
+                [headingList[7]]: <DatePicker className="oph-input"
                                   onChange={(value) => this.loppupvmAction(value, idx)}
                                   selected={this.state.dates[idx].loppupvm}
                                   showYearDropdown
                                   showWeekNumbers
                                   disabled={this.hasNoPermission(haettuKayttooikeusRyhma.anomus.organisaatioOid, haettuKayttooikeusRyhma.kayttoOikeusRyhma.id)}
-                                  filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />
-                    : this.state.dates[idx].loppupvm.format(),
-                [headingList[7]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
-                [headingList[8]]: this.props.isOmattiedot
+                                  filterDate={(date) => date.isBefore(moment().add(1, 'years'))} />,
+                [headingList[8]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
+                [headingList[9]]: this.props.isOmattiedot
                     ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx)
                     : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             }));

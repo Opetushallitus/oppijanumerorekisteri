@@ -66,6 +66,7 @@ class Table extends React.Component<Props> {
                                             : null}
                                         </span>)
                                     },
+                                    Cell: heading.Cell,
                                     accessor: heading.key,
                                     sortable: !heading.notSortable,
                                     maxWidth: heading.maxWidth || undefined,
