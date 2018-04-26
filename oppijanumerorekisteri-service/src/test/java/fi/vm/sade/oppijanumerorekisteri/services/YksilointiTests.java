@@ -31,10 +31,15 @@ import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -262,5 +267,47 @@ public class YksilointiTests {
                 .hasSize(1)
                 .extracting(HenkiloReadDto::getHetu)
                 .containsNull();
+        verify(kayttooikeusClientMock).passivoiHenkilo(anyString(), eq("1.2.3.4.5"));
+    }
+
+    @Test
+    public void henkiloAlreadyExistsWithSameHetuAnonymous() {
+        SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken("1.2.3.4.5", null, "APP_HENKILONHALLINTA_OPHREKISTERI"));
+
+        HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
+        henkiloCreateDto.setKutsumanimi("teppo");
+        henkiloCreateDto.setEtunimet("teppo");
+        henkiloCreateDto.setSukunimi("testaaja");
+        henkiloCreateDto.setHetu("hetu1");
+        henkiloCreateDto.setYksiloityVTJ(false);
+        String yksiloitavaOid = this.henkiloModificationService.createHenkilo(henkiloCreateDto).getOidHenkilo();
+
+        HenkiloCreateDto henkiloCreateDtoDuplicate = new HenkiloCreateDto();
+        henkiloCreateDtoDuplicate.setKutsumanimi("duplikaatti");
+        henkiloCreateDtoDuplicate.setEtunimet("duplikaatti");
+        henkiloCreateDtoDuplicate.setSukunimi("henkilo");
+        henkiloCreateDtoDuplicate.setHetu("170498-993H");
+        henkiloCreateDtoDuplicate.setYksiloityVTJ(true);
+        this.henkiloModificationService.createHenkilo(henkiloCreateDtoDuplicate);
+
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        yksiloityHenkilo.setEtunimi("teppo");
+        yksiloityHenkilo.setKutsumanimi("teppo");
+        yksiloityHenkilo.setSukunimi("testaaja");
+        yksiloityHenkilo.setHetu("170498-993H");
+        when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
+
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+        Optional<Henkilo> henkilo = this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+        assertThat(henkilo)
+                .map(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
+                .contains(tuple("170498-993H", true));
+        List<HenkiloReadDto> slaves = this.henkiloService.findSlavesByMasterOid(yksiloitavaOid);
+        assertThat(slaves)
+                .hasSize(1)
+                .extracting(HenkiloReadDto::getHetu)
+                .containsNull();
+        verify(kayttooikeusClientMock).passivoiHenkilo(anyString(), isNull());
     }
 }
