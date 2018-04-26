@@ -132,7 +132,7 @@ public class IdentificationServiceIntegrationTests {
                 .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactlyInAnyOrder(
                         tuple("yhteystietotyyppi2", singletonList("tyoosoite@example.com"), "alkupera6"),
-                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera6")
+                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera2")
                 );
     }
 
@@ -148,7 +148,7 @@ public class IdentificationServiceIntegrationTests {
                 .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactlyInAnyOrder(
                         tuple("yhteystietotyyppi1", singletonList("kotiosoite@example.com"), "alkupera6"),
-                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera6")
+                        tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera2")
                 );
     }
 

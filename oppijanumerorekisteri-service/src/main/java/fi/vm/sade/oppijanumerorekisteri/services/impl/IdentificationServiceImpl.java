@@ -100,7 +100,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
 
         if (StringUtils.hasLength(henkiloVahvaTunnistusDto.getTyosahkopostiosoite())) {
-            String alkupera = "alkupera6";
+            String alkupera = "alkupera2";
             YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite(), alkupera);
         }
 
