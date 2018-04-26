@@ -71,6 +71,7 @@ class Table extends React.Component<Props> {
                                     sortable: !heading.notSortable,
                                     maxWidth: heading.maxWidth || undefined,
                                     minWidth: heading.minWidth || 100,
+                                    sortMethod: heading.sortMethod,
                                     show: !heading.hide,
                                 }))
                             }
