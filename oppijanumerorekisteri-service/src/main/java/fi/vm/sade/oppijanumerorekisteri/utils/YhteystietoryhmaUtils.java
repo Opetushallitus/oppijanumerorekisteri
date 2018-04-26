@@ -13,11 +13,11 @@ public final class YhteystietoryhmaUtils {
 
     public static final String TYYPPI_TYOOSOITE = "yhteystietotyyppi2";
 
-    public static void setTyosahkopostiosoite(Set<YhteystiedotRyhma> yhteystietoryhmat, String arvo) {
-        setYhteystieto(yhteystietoryhmat, TYYPPI_TYOOSOITE, YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, arvo);
+    public static void setTyosahkopostiosoite(Set<YhteystiedotRyhma> yhteystietoryhmat, String arvo, String alkupera) {
+        setYhteystieto(yhteystietoryhmat, TYYPPI_TYOOSOITE, YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, arvo, alkupera);
     }
 
-    public static void setYhteystieto(Set<YhteystiedotRyhma> yhteystietoryhmat, String ryhmaKuvaus, YhteystietoTyyppi yhteystietoTyyppi, String arvo) {
+    public static void setYhteystieto(Set<YhteystiedotRyhma> yhteystietoryhmat, String ryhmaKuvaus, YhteystietoTyyppi yhteystietoTyyppi, String arvo, String alkupera) {
         YhteystiedotRyhma yhteystietoryhma = yhteystietoryhmat.stream()
                 .filter(ytr -> ryhmaKuvaus.equals(ytr.getRyhmaKuvaus()))
                 .filter(ytr -> !ytr.isReadOnly())
@@ -25,6 +25,7 @@ public final class YhteystietoryhmaUtils {
                     YhteystiedotRyhma ytr = new YhteystiedotRyhma();
                     ytr.setRyhmaKuvaus(ryhmaKuvaus);
                     ytr.setYhteystieto(new HashSet<>());
+                    ytr.setRyhmaAlkuperaTieto(alkupera);
                     yhteystietoryhmat.add(ytr);
                     return ytr;
                 });
