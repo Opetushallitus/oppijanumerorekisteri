@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -109,12 +110,18 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
 
     @Override
     public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) {
-        String url = this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, kasittelijaOid);
+        String url = getPassivoiHenkiloUrl(oidHenkilo, kasittelijaOid);
         try {
             cachingRestClient.delete(url);
         } catch (IOException e) {
             throw new RestClientException(e.getMessage(), e);
         }
+    }
+
+    protected String getPassivoiHenkiloUrl(String oidHenkilo, String kasittelijaOid) {
+        Map<String, Object> queryParameters = new LinkedHashMap<>();
+        queryParameters.put("kasittelijaOid", kasittelijaOid);
+        return this.urlConfiguration.url("kayttooikeus-service.henkilo-passivoi", oidHenkilo, queryParameters);
     }
 
     @Override
