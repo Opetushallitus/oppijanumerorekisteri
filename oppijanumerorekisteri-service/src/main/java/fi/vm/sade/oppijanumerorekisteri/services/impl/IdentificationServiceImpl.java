@@ -18,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -68,7 +69,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.NEVER) // metodissa tehtyä selectejä ei ole tarpeen roikuttaa transaktiossa
     public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
         unidentified.stream()
                 .peek(this::logFaults)
