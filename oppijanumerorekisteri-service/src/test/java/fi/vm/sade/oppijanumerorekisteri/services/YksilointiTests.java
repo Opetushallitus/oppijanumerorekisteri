@@ -226,9 +226,11 @@ public class YksilointiTests {
         yksiloityHenkilo.setHetu("170498-993H");
         when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
 
-        Optional<Henkilo> henkilo = this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+        this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+
+        Henkilo henkilo = henkiloService.getEntityByOid(yksiloitavaOid);
         assertThat(henkilo)
-                .map(Henkilo::getHetu)
+                .extracting(Henkilo::getHetu)
                 .contains("170498-993H");
     }
 
@@ -258,9 +260,11 @@ public class YksilointiTests {
         yksiloityHenkilo.setHetu("170498-993H");
         when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
 
-        Optional<Henkilo> henkilo = this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+        this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+
+        Henkilo henkilo = henkiloService.getEntityByOid(yksiloitavaOid);
         assertThat(henkilo)
-                .map(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
+                .extracting(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
                 .contains(tuple("170498-993H", true));
         List<HenkiloReadDto> slaves = this.henkiloService.findSlavesByMasterOid(yksiloitavaOid);
         assertThat(slaves)
@@ -299,9 +303,11 @@ public class YksilointiTests {
 
         SecurityContextHolder.getContext().setAuthentication(null);
 
-        Optional<Henkilo> henkilo = this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+        this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
+
+        Henkilo henkilo = henkiloService.getEntityByOid(yksiloitavaOid);
         assertThat(henkilo)
-                .map(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
+                .extracting(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
                 .contains(tuple("170498-993H", true));
         List<HenkiloReadDto> slaves = this.henkiloService.findSlavesByMasterOid(yksiloitavaOid);
         assertThat(slaves)

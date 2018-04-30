@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
@@ -30,6 +31,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
     private final HenkiloRepository henkiloRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
+    private final YksilointivirheRepository yksilointivirheRepository;
 
     private final OrikaConfiguration mapper;
 
@@ -70,14 +72,18 @@ public class IdentificationServiceImpl implements IdentificationService {
     public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
         unidentified.stream()
                 .peek(this::logFaults)
-                .filter(Henkilo::isNotBlackListed)
+                .filter(this::isNotBlackListed)
                 .filter(this::hasNoDataInconsistency)
                 .filter(Henkilo::hasNoFakeHetu)
                 .forEach(henkilo -> {
                     this.waitBetweenRequests(vtjRequestDelayInMillis);
                     log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
-                    this.identifyHenkilo(henkilo);
+                    this.identifyHenkilo(henkilo.getOidHenkilo());
                 });
+    }
+
+    private boolean isNotBlackListed(Henkilo henkilo) {
+        return henkilo.isNotBlackListed() && !yksilointivirheRepository.findByHenkilo(henkilo).isPresent();
     }
 
     /**
@@ -119,7 +125,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private void logFaults(Henkilo henkilo) {
-        if (!henkilo.isNotBlackListed()) {
+        if (!isNotBlackListed(henkilo)) {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
         }
         if (!hasNoDataInconsistency(henkilo)) {
@@ -146,19 +152,12 @@ public class IdentificationServiceImpl implements IdentificationService {
         }
     }
 
-    private void identifyHenkilo(Henkilo henkilo) {
-        Optional<Henkilo> yksiloityHenkilo = this.yksilointiService.yksiloiAutomaattisesti(henkilo.getOidHenkilo());
-        log.debug("Henkilo {} successfully identified.", henkilo.getOidHenkilo());
-        if(!yksiloityHenkilo.isPresent()) {
-            // No guarantee that henkilo parameter is persisted
-            Henkilo changableHenkilo = this.henkiloRepository.findByOidHenkilo(henkilo.getOidHenkilo())
-                    .orElseThrow(NotFoundException::new);
-            if (changableHenkilo.isYksilointiYritetty()) {
-                changableHenkilo.setEiYksiloida(true);
-            }
-            else {
-                changableHenkilo.setYksilointiYritetty(true);
-            }
+    private void identifyHenkilo(String oid) {
+        try {
+            this.yksilointiService.yksiloiAutomaattisesti(oid);
+            log.debug("Henkilo {} successfully identified.", oid);
+        } catch (Exception e) {
+            yksilointiService.tallennaYksilointivirhe(oid, e);
         }
     }
 

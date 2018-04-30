@@ -96,6 +96,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private boolean yksilointiYritetty;
 
     @Column(name = "ei_yksiloida", nullable = false)
+    @Deprecated // kts. Yksilointivirhe-entiteetti
     private boolean eiYksiloida;
 
     @Column(nullable = false)
@@ -222,6 +223,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         return !(hetu.charAt(7) == '9');
     }
 
+    @Deprecated // kts. Yksilointivirhe-entiteetti
     public Boolean isNotBlackListed() {
         return !isEiYksiloida();
     }

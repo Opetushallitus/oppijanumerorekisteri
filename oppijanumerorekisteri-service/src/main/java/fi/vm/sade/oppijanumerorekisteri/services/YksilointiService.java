@@ -7,11 +7,11 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
-import java.util.Optional;
-
 public interface YksilointiService {
 
-    Optional<Henkilo> yksiloiAutomaattisesti(String henkiloOid);
+    void yksiloiAutomaattisesti(String henkiloOid);
+
+    void tallennaYksilointivirhe(String henkiloOid, Exception exception);
 
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 
