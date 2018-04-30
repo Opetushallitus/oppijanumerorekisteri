@@ -125,6 +125,9 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private void logFaults(Henkilo henkilo) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
         if (!isNotBlackListed(henkilo)) {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
         }
