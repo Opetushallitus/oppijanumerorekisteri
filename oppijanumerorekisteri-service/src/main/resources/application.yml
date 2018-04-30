@@ -19,7 +19,7 @@ spring:
     enabled: true
     table: schema_table_onr
     # Only for initial production release, set false afterwards
-    baseline-on-migrate: true
+    baseline-on-migrate: false
     # If DB is not empty will not run migrations until this version
     baseline-version: 20180423104403142
     out-of-order: true
