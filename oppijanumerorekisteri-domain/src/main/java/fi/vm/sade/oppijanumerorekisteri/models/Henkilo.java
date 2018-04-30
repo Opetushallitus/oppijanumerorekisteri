@@ -223,11 +223,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         return !(hetu.charAt(7) == '9');
     }
 
-    @Deprecated // kts. Yksilointivirhe-entiteetti
-    public Boolean isNotBlackListed() {
-        return !isEiYksiloida();
-    }
-
     public boolean addOrganisaatio(Organisaatio organisaatio) {
         if (organisaatiot == null) {
             organisaatiot = new HashSet<>();

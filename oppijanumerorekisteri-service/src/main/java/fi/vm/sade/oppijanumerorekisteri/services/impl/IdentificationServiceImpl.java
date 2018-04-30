@@ -84,7 +84,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     private boolean isNotBlackListed(Henkilo henkilo) {
-        return henkilo.isNotBlackListed() && !yksilointivirheRepository.findByHenkilo(henkilo).isPresent();
+        return !henkilo.isEiYksiloida() && !yksilointivirheRepository.findByHenkilo(henkilo).isPresent();
     }
 
     /**
