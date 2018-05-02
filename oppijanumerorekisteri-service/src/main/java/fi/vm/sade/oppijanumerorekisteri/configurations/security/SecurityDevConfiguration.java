@@ -43,11 +43,5 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication().withUser(devProperties.getUsername()).password(devProperties.getPassword())
                 .roles("APP_HENKILONHALLINTA_OPHREKISTERI");
     }
-
-
-    @SuppressWarnings("deprecation")
-    @Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
-    }
+    
 }
