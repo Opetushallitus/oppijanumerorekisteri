@@ -262,6 +262,57 @@ public class Service2ServiceControllerTest  {
 
     @Test
     @WithMockUser
+    public void findOrCreateMultipleExternalIdsInvalid() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"externalIds\": [\" \"]," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleIdenfiticationNull() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"identifications\": [null]," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleIdenfiticationEmpty() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"identifications\": [{}]," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
+    }
+
+    @Test
+    @WithMockUser
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{\"yhteystietotyyppi2\":" +
                 "{\"sahkoposti\":\"testi@tyo.com\"}," +
