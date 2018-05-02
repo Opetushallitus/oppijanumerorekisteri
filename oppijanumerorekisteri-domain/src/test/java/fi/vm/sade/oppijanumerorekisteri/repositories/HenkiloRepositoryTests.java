@@ -179,6 +179,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     public void findYhteystiedot() {
         populate(henkilo("1.2.3.4.5")
             .withYhteystieto(ryhma("yhteystietotyyppi1")
+                    .alkupera("alkuperä")
                 .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
                 .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
                 .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
