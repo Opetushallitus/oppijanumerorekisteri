@@ -14,7 +14,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -43,7 +42,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -74,6 +72,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final YhteystiedotRyhmaRepository yhteystiedotRyhmaRepository;
     private final YhteystietoRepository yhteystietoRepository;
     private final YksilointitietoRepository yksilointitietoRepository;
+    private final YksilointivirheRepository yksilointivirheRepository;
     private final AsiayhteysPalveluRepository asiayhteysPalveluRepository;
     private final AsiayhteysHakemusRepository asiayhteysHakemusRepository;
     private final AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
@@ -92,36 +91,33 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Optional<Henkilo> yksiloiAutomaattisesti(final String henkiloOid) {
-        try {
-            Henkilo henkilo = this.yksiloiManuaalisesti(henkiloOid);
-            if (!henkilo.isYksiloityVTJ()) {
-                logger.warn("Henkilo {} not identified, data mismatch.", henkilo.getOidHenkilo());
-            }
-            return Optional.of(henkilo);
-        } catch (NotFoundException | HttpConnectionException e) {
-            return Optional.empty();
-        }
+    public void yksiloiAutomaattisesti(final String henkiloOid) {
+        henkiloRepository.findByOidHenkilo(henkiloOid).ifPresent(this::yksiloiHenkilo);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void tallennaYksilointivirhe(String henkiloOid, Exception exception) {
+        henkiloRepository.findByOidHenkilo(henkiloOid).ifPresent(henkilo -> tallennaYksilointivirhe(henkilo, exception));
+
+    }
+
+    private void tallennaYksilointivirhe(Henkilo henkilo, Exception exception) {
+        henkilo.setYksilointiYritetty(true);
+
+        Yksilointivirhe yksilointivirhe = yksilointivirheRepository.findByHenkilo(henkilo)
+                .orElseGet(() -> new Yksilointivirhe(henkilo));
+        yksilointivirhe.setAikaleima(new Date());
+        yksilointivirhe.setPoikkeus(exception.getClass().getCanonicalName());
+        yksilointivirhe.setViesti(exception.getMessage());
+        yksilointivirheRepository.save(yksilointivirhe);
     }
 
     @Override
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
-
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
-
-        if (!StringUtils.isEmpty(henkilo.getHetu())) {
-            henkilo = yksiloiHenkilo(henkilo);
-        }
-
-        // Remove yksilointitieto if henkilo was yksiloity succesfully.
-        if (henkilo != null && henkilo.isYksiloityVTJ()) {
-            this.yksilointitietoRepository.findByHenkilo(henkilo)
-                    .ifPresent(this.yksilointitietoRepository::delete);
-        }
-
-        return henkilo;
-
+        return yksiloiHenkilo(henkilo);
     }
 
     @Override
@@ -139,13 +135,17 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
+        if (StringUtils.isEmpty(henkilo.getHetu())) {
+            throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
+        }
+
         /* VTJ data for Henkilo contains a huge data set and parsing this data
          * might change in the future, if Henkilo's data must contain all what
          * VTJ has to offer but that's still uncertain
          */
         YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
                 .orElseThrow(() ->
-                        new NotFoundException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
+                        new DataInconsistencyException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
         henkilo.setYksilointiYritetty(true);
 
@@ -177,6 +177,9 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setYksiloityVTJ(true);
             //OPHASPA-1820 kumotaan pärstäyksilöinti
             henkilo.setYksiloity(false);
+
+            yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
+            yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
         }
 
         return henkiloModificationService.update(henkilo);

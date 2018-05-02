@@ -44,6 +44,8 @@ public class YksilointiServiceTest {
 
     private YksilointitietoRepository yksilointitietoRepository;
 
+    private YksilointivirheRepository yksilointivirheRepository;
+
     private KayttooikeusClient kayttooikeusClientMock;
 
     private final String henkiloOid = "1.2.246.562.24.27470134096";
@@ -60,6 +62,7 @@ public class YksilointiServiceTest {
         henkiloService = mock(HenkiloService.class);
         henkiloModificationService = mock(HenkiloModificationService.class);
         yksilointitietoRepository = mock(YksilointitietoRepository.class);
+        yksilointivirheRepository = mock(YksilointivirheRepository.class);
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         this.yksilointiService = new YksilointiServiceImpl(mock(DuplicateService.class),
@@ -71,6 +74,7 @@ public class YksilointiServiceTest {
                 mock(YhteystiedotRyhmaRepository.class),
                 mock(YhteystietoRepository.class),
                 yksilointitietoRepository,
+                yksilointivirheRepository,
                 mock(AsiayhteysPalveluRepository.class),
                 mock(AsiayhteysHakemusRepository.class),
                 mock(AsiayhteysKayttooikeusRepository.class),
