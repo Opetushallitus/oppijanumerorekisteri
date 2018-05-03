@@ -34,7 +34,6 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
     /**
      * Koodisto "yhteystietojenalkupera".
      */
-    @NotNull
     @Column(name = "ryhma_alkuperatieto", nullable = false)
     private String ryhmaAlkuperaTieto;
 
