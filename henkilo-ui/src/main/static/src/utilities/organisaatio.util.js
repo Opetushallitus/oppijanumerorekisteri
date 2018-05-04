@@ -166,7 +166,7 @@ export const getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>, isR
         : organisaatios.filter(organisaatio => organisaatio.tyypit.indexOf('Ryhma') === -1);
 };
 
-export const getOrganisaatioOptionsAndFilter = (newOrganisaatios: Array<OrganisaatioHenkilo>, locale: Locale, isRyhma: boolean) => {
+export const getOrganisaatioOptionsAndFilter = (newOrganisaatios: Array<OrganisaatioHenkilo>, locale: Locale, isRyhma: boolean): {options: any, filterOptions: any,} => {
     const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma)
         .map((organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma));
     // update index
