@@ -7,6 +7,7 @@ import OphModal from "./OphModal";
 type Props = {
     disabled: boolean,
     buttonText: string,
+    children: React.Node,
 }
 
 type State = {
