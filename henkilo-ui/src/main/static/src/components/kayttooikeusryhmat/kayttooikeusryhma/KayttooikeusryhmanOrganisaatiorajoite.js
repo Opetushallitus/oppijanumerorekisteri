@@ -69,7 +69,8 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                     <OphSelect id="oppilaitostyyppi"
                                options={this.state.oppilaitostyypitOptions}
                                placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}
-                               onChange={this.props.oppilaitostyypitSelectAction}>
+                               onChange={this.props.oppilaitostyypitSelectAction}
+                               closeOnSelect={false}>
                     </OphSelect>
                     <ItemList items={this.props.oppilaitostyypitSelections}
                               labelPath={['label']}
