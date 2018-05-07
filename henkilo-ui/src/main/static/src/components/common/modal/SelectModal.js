@@ -1,5 +1,6 @@
 // @flow
 import React, {Fragment} from 'react';
+import type {Node} from 'react';
 import Button from "../button/Button";
 import {SpinnerInButton} from "../icons/SpinnerInButton";
 import OphModal from "./OphModal";
@@ -7,7 +8,7 @@ import OphModal from "./OphModal";
 type Props = {
     disabled: boolean,
     buttonText: string,
-    children: React.Node,
+    children: Node,
 }
 
 type State = {

@@ -12,7 +12,7 @@ type Props = {
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
-    onClose: () => ?SyntheticEvent<HTMLButtonElement> => void,
+    onClose: ?SyntheticEvent<HTMLButtonElement> => void,
 }
 
 type State = {
