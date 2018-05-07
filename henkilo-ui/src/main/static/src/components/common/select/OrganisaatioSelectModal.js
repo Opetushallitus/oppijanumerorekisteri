@@ -1,6 +1,5 @@
 // @flow
-import React, {Fragment} from 'react';
-import type {Node} from 'react';
+import React from 'react';
 import type {Locale} from "../../../types/locale.type";
 import type {L} from "../../../types/localisation.type";
 import {OrganisaatioSelect} from "./OrganisaatioSelect";
@@ -34,19 +33,15 @@ export class OrganisaatioSelectModal extends React.Component<Props, State> {
 
     render() {
         return <SelectModal disabled={this.props.disabled}
-                            buttonText={this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
-                            content={this.getContent}
-        />;
+                            buttonText={this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO']} >
+            <OrganisaatioSelect
+                locale={this.props.locale}
+                L={this.props.L}
+                organisaatiot={this.props.organisaatiot}
+                onClose={() => {/*override*/}}
+                onSelect={(organisaatio) => {this.props.onSelect(organisaatio)}}
+            />
+        </SelectModal>;
     }
-
-    getContent(onClose: () => void): Node {
-        return <OrganisaatioSelect
-            locale={this.props.locale}
-            L={this.props.L}
-            organisaatiot={this.props.organisaatiot}
-            onSelect={(organisaatio) => {this.props.onSelect(organisaatio); onClose();}}
-        />;
-    }
-
 
 }

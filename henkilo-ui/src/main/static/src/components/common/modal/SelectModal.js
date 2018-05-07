@@ -1,6 +1,5 @@
 // @flow
-import React, {Fragment, cloneElement} from 'react';
-import type {Node} from 'react';
+import React, {Fragment} from 'react';
 import Button from "../button/Button";
 import {SpinnerInButton} from "../icons/SpinnerInButton";
 import OphModal from "./OphModal";
@@ -8,7 +7,6 @@ import OphModal from "./OphModal";
 type Props = {
     disabled: boolean,
     buttonText: string,
-    content: (onClose: () => void) => Node,
 }
 
 type State = {
@@ -32,7 +30,7 @@ class SelectModal extends React.Component<Props, State> {
             </Button>
             { this.state.visible
                 ? <OphModal onClose={this._onClose}>
-                    {this.props.content(this._onClose)}
+                    {React.cloneElement(this.props.children, { onClose: this._onClose.bind(this) })}
                 </OphModal>
                 : null }
         </Fragment>
@@ -44,7 +42,7 @@ class SelectModal extends React.Component<Props, State> {
     };
 
     _onClose = (event?: SyntheticEvent<HTMLButtonElement>): void => {
-        if(event) {
+        if (event) {
             event.preventDefault();
         }
         this.setState({visible: false});
