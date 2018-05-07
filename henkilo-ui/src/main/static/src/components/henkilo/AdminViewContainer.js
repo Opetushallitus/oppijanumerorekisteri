@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import {connect} from 'react-redux';
 import {
@@ -16,8 +18,43 @@ import {
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 import HenkiloViewPage from "./HenkiloViewPage";
+import type {Tab} from "../../types/tab.types";
+import type {L10n} from "../../types/localisation.type";
+import type {Locale} from "../../types/locale.type";
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
+import type {Navigation} from "../../actions/navigation.actions";
+import type {KayttooikeusState} from "../../reducers/kayttooikeus.reducer";
+import type {KoodistoState} from "../../reducers/koodisto.reducer";
+import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 
-class AdminViewContainer extends React.Component {
+type Props = {
+    oidHenkilo: string, // tarkasteltava
+    ownOid: string, // tarkastelija
+    henkiloType: string,
+    clearHenkilo: () => void,
+    router: any,
+    fetchHenkilo: (string) => void,
+    fetchHenkiloOrgs: (string) => void,
+    fetchHenkiloSlaves: (string) => void,
+    fetchKieliKoodisto: () => void,
+    fetchKansalaisuusKoodisto: () => void,
+    fetchSukupuoliKoodisto: () => void,
+    fetchKayttaja: (string) => void,
+    fetchKayttajatieto: (string) => void,
+    fetchYhteystietotyypitKoodisto: () => void,
+    fetchAllKayttooikeusryhmasForHenkilo: (string) => void,
+    fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
+    fetchOmattiedotOrganisaatios: () => any,
+    updateHenkiloNavigation: (Array<Tab>) => Navigation,
+    l10n: L10n,
+    locale: Locale,
+    henkilo: HenkiloState,
+    kayttooikeus: KayttooikeusState,
+    koodisto: KoodistoState,
+    organisaatioCache: OrganisaatioState
+}
+
+class AdminViewContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.clearHenkilo();
         if (this.props.oidHenkilo === this.props.ownOid) {
@@ -30,7 +67,7 @@ class AdminViewContainer extends React.Component {
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttaja(this.props.oidHenkilo)
+        this.props.fetchKayttaja(this.props.oidHenkilo);
         this.props.fetchKayttajatieto(this.props.oidHenkilo);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
@@ -38,7 +75,7 @@ class AdminViewContainer extends React.Component {
         this.props.fetchOmattiedotOrganisaatios();
     };
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'admin');
         this.props.updateHenkiloNavigation(tabs);
     }
@@ -47,18 +84,10 @@ class AdminViewContainer extends React.Component {
         return <HenkiloViewPage {...this.props} view="ADMIN" />;
     }
 
-    constructor(props) {
-        super(props);
-
-        this.L = this.props.l10n[this.props.locale];
-    }
 }
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        path: ownProps.location.pathname,
-        oidHenkilo: ownProps.params['oid'],
-        henkiloType: ownProps.params['henkiloType'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,

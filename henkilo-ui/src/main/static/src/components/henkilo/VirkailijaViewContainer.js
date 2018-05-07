@@ -23,9 +23,6 @@ class VirkailijaViewContainer extends React.Component {
         if (this.props.oidHenkilo === this.props.ownOid) {
             this.props.router.replace('/omattiedot');
         }
-        else if (this.props.isAdmin) {
-            this.props.router.replace(`/admin/${this.props.oidHenkilo}`);
-        }
         else {
             const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
             this.props.updateHenkiloNavigation(tabs);
@@ -36,7 +33,7 @@ class VirkailijaViewContainer extends React.Component {
             this.props.fetchKieliKoodisto();
             this.props.fetchKansalaisuusKoodisto();
             this.props.fetchSukupuoliKoodisto();
-            this.props.fetchKayttaja(this.props.oidHenkilo)
+            this.props.fetchKayttaja(this.props.oidHenkilo);
             this.props.fetchKayttajatieto(this.props.oidHenkilo);
             this.props.fetchYhteystietotyypitKoodisto();
             this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);

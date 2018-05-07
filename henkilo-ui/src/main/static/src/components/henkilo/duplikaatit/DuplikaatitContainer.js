@@ -15,6 +15,7 @@ import type {L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import PropertySingleton from '../../../globals/PropertySingleton';
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
+import type {Tab} from "../../../types/tab.types";
 
 type Props = {
     l10n: L10n,
@@ -31,7 +32,7 @@ type Props = {
     fetchMaatJaValtiotKoodisto: () => void,
     fetchKansalaisuusKoodisto: () => void,
     fetchKieliKoodisto: () => void,
-    updateHenkiloNavigation: (Array<{}>) => void,
+    updateHenkiloNavigation: (Array<Tab>) => void,
     externalPermissionService: string
 }
 

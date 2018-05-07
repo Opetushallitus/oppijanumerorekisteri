@@ -1,5 +1,8 @@
+// @flow
 
-export const mainNavigation = [
+import type {Tab} from "../../types/tab.types";
+
+export const mainNavigation: Array<Tab> = [
     {path: '/anomukset', label: 'NAVI_KAYTTOOIKEUSANOMUKSET'},
     {path: '/kutsutut', label: 'NAVI_KUTSUTUT'},
     {path: '/kutsulomake', label: 'NAVI_VIRKAILIJAN_KUTSUMINEN'},
@@ -7,27 +10,27 @@ export const mainNavigation = [
     {path: '/oppija/luonti', label: 'NAVI_OPPIJAN_LUONTI', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
 ];
 
-export const palvelukayttajaNavigation = [
+export const palvelukayttajaNavigation: Array<Tab> = [
     {path: '/palvelukayttaja', label: 'NAVI_PALVELUKAYTTAJA_HAKU'},
     {path: '/palvelukayttaja/luonti', label: 'NAVI_PALVELUKAYTTAJA_LUONTI'},
 ];
 
-export const oppijaNavi = oid => [
+export const oppijaNavi = (oid: string): Array<Tab> => [
     {path: '/oppija/' + oid, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/oppija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
     {path: `/oppija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'] }
 ];
 
-export const virkailijaNavi = (oid) => [
+export const virkailijaNavi = (oid: string): Array<Tab> => [
     {path: `/virkailija/${oid}`, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/virkailija/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_DUPLIKAATTINAKYMA'] },
     {path: `/virkailija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'] }
 ];
 
-export const adminNavi = (oid) => [
+export const adminNavi = (oid: string): Array<Tab> => [
     {path: `/admin/${oid}`, label: 'NAVI_HENKILON_TIEDOT'},
     {path: `/admin/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true},
     {path: `/admin/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true}
 ];
 
-export const emptyNavi = [];
+export const emptyNavi: Array<Tab> = [];

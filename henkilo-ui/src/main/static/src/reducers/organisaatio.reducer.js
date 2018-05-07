@@ -10,9 +10,13 @@ import type {OrganisaatioHakuTulos} from "../types/domain/organisaatio/organisaa
 export type OrganisaatioState = {
     organisaatioLoading: boolean,
     organisaatiot: OrganisaatioHakuTulos,
-    cached: any,
+    cached: OrganisaatioCache,
     organisaatioHierarkiaLoading: boolean,
     organisaatioHierarkia: OrganisaatioHakuTulos
+}
+
+export type OrganisaatioCache = {
+    [string]: Organisaatio
 }
 
 const initialState = {

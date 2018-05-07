@@ -1,17 +1,22 @@
+// @flow
+
 import * as R from 'ramda';
 import {adminNavi, oppijaNavi, virkailijaNavi} from "./navigationconfigurations";
+import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
+import type {Tab} from "../../types/tab.types";
 
 
-export const enabledDuplikaattiView = (oidHenkilo, masterLoading, masterHenkiloOid) => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
-export const enabledVtjVertailuView = (henkilo) => henkilo.yksilointiYritetty && !henkilo.yksiloityVTJ && !henkilo.duplicate;
+export const enabledDuplikaattiView = (oidHenkilo: string, masterLoading: boolean, masterHenkiloOid: string): boolean => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
+export const enabledVtjVertailuView = (henkilo: Henkilo): boolean => henkilo.yksilointiYritetty && !henkilo.yksiloityVTJ && !henkilo.duplicate;
 
 /*
  * Get tabs for a view in henkilo-component
  *
  * @Params (String oidHenkilo, Object Henkilo, String viewType [admin/virkailija])
  */
-export const henkiloViewTabs = (oidHenkilo, henkilo, henkiloType) => {
-    const currentHenkilo = R.path(['henkilo'], henkilo);
+export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henkiloType: string): Array<Tab>  => {
+    const currentHenkilo: any = R.path(['henkilo'], henkilo);
     let tabs;
     if (henkiloType === 'admin') {
         tabs = adminNavi(oidHenkilo);
@@ -23,7 +28,7 @@ export const henkiloViewTabs = (oidHenkilo, henkilo, henkiloType) => {
         tabs = oppijaNavi(oidHenkilo);
     }
 
-    const masterHenkiloOid = R.path(['master', 'oidHenkilo'], henkilo);
+    const masterHenkiloOid: any = R.path(['master', 'oidHenkilo'], henkilo);
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
     if( (henkilo.masterLoading && henkilo.master.oidHenkilo !== oidHenkilo) || (henkilo.henkiloLoading && henkilo.henkilo.oidHenkilo !== oidHenkilo)) {
