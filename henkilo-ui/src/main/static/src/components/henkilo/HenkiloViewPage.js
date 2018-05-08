@@ -56,7 +56,6 @@ class HenkiloViewPage extends React.Component<Props> {
 
         return (
             <div>
-                {this.props.view === 'ADMIN' && <h3>admin</h3>}
                 <div className="wrapper">
                     {
                         <UserContentContainer
