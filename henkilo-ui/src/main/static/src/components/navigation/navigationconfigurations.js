@@ -27,10 +27,4 @@ export const virkailijaNavi = (oid: string): Array<Tab> => [
     {path: `/virkailija/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true, sallitutRoolit: ['OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA'] }
 ];
 
-export const adminNavi = (oid: string): Array<Tab> => [
-    {path: `/admin/${oid}`, label: 'NAVI_HENKILON_TIEDOT'},
-    {path: `/admin/${oid}/duplikaatit`, label: 'NAVI_HAE_DUPLIKAATIT', disabled: true},
-    {path: `/admin/${oid}/vtjvertailu`, label: 'NAVI_VTJ_VERTAILU', disabled: true}
-];
-
 export const emptyNavi: Array<Tab> = [];

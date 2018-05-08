@@ -1,7 +1,7 @@
 // @flow
 
 import * as R from 'ramda';
-import {adminNavi, oppijaNavi, virkailijaNavi} from "./navigationconfigurations";
+import {oppijaNavi, virkailijaNavi} from "./navigationconfigurations";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {Tab} from "../../types/tab.types";
@@ -18,10 +18,7 @@ export const enabledVtjVertailuView = (henkilo: Henkilo): boolean => henkilo.yks
 export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henkiloType: string): Array<Tab>  => {
     const currentHenkilo: any = R.path(['henkilo'], henkilo);
     let tabs;
-    if (henkiloType === 'admin') {
-        tabs = adminNavi(oidHenkilo);
-    }
-    else if (henkiloType === 'virkailija') {
+    if (henkiloType === 'virkailija') {
         tabs = virkailijaNavi(oidHenkilo);
     }
     else {
