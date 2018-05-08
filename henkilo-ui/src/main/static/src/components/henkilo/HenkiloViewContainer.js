@@ -25,7 +25,7 @@ type Props = {
     router: any,
     l10n: L10n,
     locale: Locale,
-    externalPermissionService: string,
+    externalPermissionService?: string,
     fetchHenkilo: (string) => Promise<any>,
     fetchOmattiedot: () => Promise<any>,
     henkilo: HenkiloState
@@ -46,7 +46,7 @@ class HenkiloViewContainer extends React.Component<Props> {
 
     render() {
         const view = this.props.path.split('/')[1];
-        if(this.props.omattiedot.omattiedotLoading) {
+        if(!this.props.omattiedot.data || this.props.omattiedot.omattiedotLoading) {
             return <Loader />
         } else if(this.props.omattiedot.isAdmin) {
             return <AdminViewContainer {...this.props}></AdminViewContainer>
