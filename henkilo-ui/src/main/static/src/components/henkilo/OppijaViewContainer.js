@@ -16,7 +16,6 @@ import type {Tab} from "../../types/tab.types";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
-import type {OrganisaatioCache} from "../../reducers/organisaatio.reducer";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
 
 type Props = {

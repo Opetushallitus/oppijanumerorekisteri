@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import {connect} from 'react-redux';
 import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
@@ -16,8 +18,41 @@ import {
     updateHaettuKayttooikeusryhma,
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
+import type {Navigation} from "../../actions/navigation.actions";
+import type {Tab} from "../../types/tab.types";
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
+import type {OrganisaatioCache} from "../../reducers/organisaatio.reducer";
+import type {KoodistoState} from "../../reducers/koodisto.reducer";
+import type {L10n} from "../../types/localisation.type";
+import type {Locale} from "../../types/locale.type";
+import type {KayttooikeusState} from "../../reducers/kayttooikeus.reducer";
 
-class VirkailijaViewContainer extends React.Component {
+type Props = {
+    oidHenkilo: string,
+    clearHenkilo: () => void,
+    updateHenkiloNavigation: (Array<Tab>) => Navigation,
+    henkilo: HenkiloState,
+    organisaatioCache: OrganisaatioCache,
+    koodisto: KoodistoState,
+    l10n: L10n,
+    locale: Locale,
+    fetchHenkilo: (string) => void,
+    fetchHenkiloOrgs: (string) => void,
+    fetchHenkiloSlaves: (string) => void,
+    fetchKieliKoodisto: () => void,
+    fetchKansalaisuusKoodisto: () => void,
+    fetchSukupuoliKoodisto: () => void,
+    fetchKayttaja: (string) => void,
+    fetchKayttajatieto: (string) => void,
+    fetchYhteystietotyypitKoodisto: ()  => void,
+    fetchAllKayttooikeusryhmasForHenkilo: (string) => void,
+    fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
+    fetchOmattiedotOrganisaatios: () => any,
+    getGrantablePrivileges: (string) => void,
+    kayttooikeus: KayttooikeusState
+}
+
+class VirkailijaViewContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.clearHenkilo();
         const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
@@ -40,7 +75,7 @@ class VirkailijaViewContainer extends React.Component {
     };
 
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'virkailija');
         this.props.updateHenkiloNavigation(tabs);
     }
