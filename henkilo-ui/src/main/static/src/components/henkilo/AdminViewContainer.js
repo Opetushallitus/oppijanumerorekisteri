@@ -51,16 +51,12 @@ type Props = {
     henkilo: HenkiloState,
     kayttooikeus: KayttooikeusState,
     koodisto: KoodistoState,
-    organisaatioCache: OrganisaatioState
+    organisaatioCache: OrganisaatioState,
 }
 
 class AdminViewContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.clearHenkilo();
-        if (this.props.oidHenkilo === this.props.ownOid) {
-            this.props.router.replace('/omattiedot');
-        }
-
         await this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
         this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
@@ -86,17 +82,13 @@ class AdminViewContainer extends React.Component<Props> {
 
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         henkilo: state.henkilo,
-        l10n: state.l10n.localisations,
         koodisto: state.koodisto,
-        locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
-        notifications: state.notifications,
-        ownOid: state.omattiedot.data.oid,
-        isAdmin: state.omattiedot.isAdmin,
+        notifications: state.notifications
     };
 };
 

@@ -6,33 +6,57 @@ import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
 import AdminViewContainer from "./AdminViewContainer";
 import VirkailijaViewContainer from "./VirkailijaViewContainer";
 import OppijaViewContainer from "./OppijaViewContainer";
+import {LocalNotification} from "../common/Notification/LocalNotification";
+import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
+import type {L10n} from "../../types/localisation.type";
+import type {Locale} from "../../types/locale.type";
+import Loader from "../common/icons/Loader";
+import {path} from 'ramda';
+import {fetchHenkilo} from "../../actions/henkilo.actions";
+import {fetchOmattiedot} from "../../actions/omattiedot.actions";
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
 
 type Props = {
     path: string,
     omattiedot: OmattiedotState,
     oidHenkilo: string,
+    ownOid: string,
     henkiloType: string,
-    router: any
+    router: any,
+    l10n: L10n,
+    locale: Locale,
+    externalPermissionService: string,
+    fetchHenkilo: (string) => Promise<any>,
+    fetchOmattiedot: () => Promise<any>,
+    henkilo: HenkiloState
 }
 
 
 /*
- * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä
+ * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
 class HenkiloViewContainer extends React.Component<Props> {
 
+    async componentDidMount() {
+        await this.props.fetchOmattiedot();
+        if (this.props.oidHenkilo && this.props.ownOid && this.props.ownOid === this.props.oidHenkilo) {
+            this.props.router.replace('/omattiedot');
+        }
+    }
+
     render() {
         const view = this.props.path.split('/')[1];
-
-        if(this.props.omattiedot.isAdmin) {
+        if(this.props.omattiedot.omattiedotLoading) {
+            return <Loader />
+        } else if(this.props.omattiedot.isAdmin) {
             return <AdminViewContainer {...this.props}></AdminViewContainer>
         } else if(view === 'virkailija') {
-            return <VirkailijaViewContainer></VirkailijaViewContainer>
+            return <VirkailijaViewContainer {...this.props}></VirkailijaViewContainer>
         } else if(view === 'oppija') {
-            return <OppijaViewContainer></OppijaViewContainer>
+            return <OppijaViewContainer {...this.props}></OppijaViewContainer>
         }
 
-        return <h3>henkilo</h3>
+        return <LocalNotification type={NOTIFICATIONTYPES.WARNING} title={this.props.l10n[this.props.locale]['HENKILO_SIVU_VIRHE']} toggle={true}/>
     }
 
 }
@@ -41,8 +65,13 @@ const mapStateToProps = (state, ownProps) => ({
     path: ownProps.location.pathname,
     oidHenkilo: ownProps.params['oid'],
     henkiloType: ownProps.params['henkiloType'],
-    omattiedot: state.omattiedot
+    omattiedot: state.omattiedot,
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    isAdmin: state.omattiedot.isAdmin,
+    ownOid: path(['data', 'oid'], state.omattiedot),
+    externalPermissionService: path(['location', 'query', 'permissionCheckService'], ownProps)
 });
 
-export default connect(mapStateToProps, {})(HenkiloViewContainer)
+export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot})(HenkiloViewContainer)
 

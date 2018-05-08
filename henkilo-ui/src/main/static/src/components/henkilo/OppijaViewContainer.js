@@ -15,7 +15,12 @@ class OppijaViewContainer extends React.Component {
         if (this.props.externalPermissionService) {
             PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
         }
-        this.fetch(this.props.oidHenkilo)
+        this.props.updateHenkiloNavigation(oppijaNavi(this.props.oidHenkilo));
+        await this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
+        this.props.fetchYhteystietotyypitKoodisto();
+        this.props.fetchKieliKoodisto();
+        this.props.fetchKansalaisuusKoodisto();
     }
 
     async componentWillReceiveProps(nextProps) {
@@ -24,31 +29,15 @@ class OppijaViewContainer extends React.Component {
         }
     }
 
-    async fetch(oid) {
-        this.props.updateHenkiloNavigation(oppijaNavi(oid));
-
-        await this.props.fetchHenkilo(oid);
-        this.props.fetchHenkiloSlaves(oid);
-        this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
-    }
-
     render() {
         return <HenkiloViewPage {...this.props} view={'OPPIJA'}/>;
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
-        path: ownProps.location.pathname,
-        oidHenkilo: ownProps.params['oid'],
-        externalPermissionService: ownProps.location.query.permissionCheckService,
         henkilo: state.henkilo,
-        l10n: state.l10n.localisations,
         koodisto: state.koodisto,
-        locale: state.locale,
-        isAdmin: state.omattiedot.isAdmin,
     };
 };
 

@@ -14,6 +14,7 @@ import type {L10n} from "../../types/localisation.type";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import type {OrganisaatioCache, OrganisaatioState} from "../../reducers/organisaatio.reducer";
+import { path } from 'ramda';
 
 type Props = {
     l10n: L10n,
@@ -50,8 +51,12 @@ class HenkiloViewPage extends React.Component<Props> {
         if (this.props.henkilo.henkiloKayttoEstetty) {
             return <VirheKayttoEstetty L={this.props.l10n[this.props.locale]} />
         }
+
+        const kayttooikeusryhmat = path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) ? path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) : [];
+
         return (
             <div>
+                {this.props.view === 'ADMIN' && <h3>admin</h3>}
                 <div className="wrapper">
                     {
                         <UserContentContainer
@@ -122,7 +127,7 @@ class HenkiloViewPage extends React.Component<Props> {
                     <HenkiloViewCreateKayttooikeusanomus
                         {...this.props}
                         ryhmaOptions={this._parseRyhmaOptions.call(this)}
-                        kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat && this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat || []}
+                        kayttooikeusryhmat={kayttooikeusryhmat}
                     />
                 </div>}
             </div>

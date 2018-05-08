@@ -59,7 +59,8 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchOmattiedot,
+export default connect(mapStateToProps, {
+    fetchOmattiedot,
     fetchHenkilo,
     fetchHenkiloOrgs,
     fetchYhteystietotyypitKoodisto,

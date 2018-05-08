@@ -20,28 +20,23 @@ import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
 class VirkailijaViewContainer extends React.Component {
     async componentDidMount() {
         this.props.clearHenkilo();
-        if (this.props.oidHenkilo === this.props.ownOid) {
-            this.props.router.replace('/omattiedot');
-        }
-        else {
-            const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
-            this.props.updateHenkiloNavigation(tabs);
+        const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
+        this.props.updateHenkiloNavigation(tabs);
 
-            await this.props.fetchHenkilo(this.props.oidHenkilo);
-            this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
-            this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
-            this.props.fetchKieliKoodisto();
-            this.props.fetchKansalaisuusKoodisto();
-            this.props.fetchSukupuoliKoodisto();
-            this.props.fetchKayttaja(this.props.oidHenkilo);
-            this.props.fetchKayttajatieto(this.props.oidHenkilo);
-            this.props.fetchYhteystietotyypitKoodisto();
-            this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
-            this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
-            this.props.fetchOmattiedotOrganisaatios();
+        await this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
+        this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
+        this.props.fetchKieliKoodisto();
+        this.props.fetchKansalaisuusKoodisto();
+        this.props.fetchSukupuoliKoodisto();
+        this.props.fetchKayttaja(this.props.oidHenkilo);
+        this.props.fetchKayttajatieto(this.props.oidHenkilo);
+        this.props.fetchYhteystietotyypitKoodisto();
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
+        this.props.fetchOmattiedotOrganisaatios();
 
-            this.props.getGrantablePrivileges(this.props.oidHenkilo);
-        }
+        this.props.getGrantablePrivileges(this.props.oidHenkilo);
     };
 
 
@@ -56,20 +51,15 @@ class VirkailijaViewContainer extends React.Component {
 
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
-        path: ownProps.location.pathname,
-        oidHenkilo: ownProps.params['oid'],
-        henkiloType: ownProps.params['henkiloType'],
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
         koodisto: state.koodisto,
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
-        notifications: state.notifications,
-        isAdmin: state.omattiedot.isAdmin,
-        ownOid: state.omattiedot.data.oid,
+        notifications: state.notifications
     };
 };
 
