@@ -41,7 +41,6 @@ const receiveOmattiedotSuccess = (json: Omattiedot) => ({type: FETCH_OMATTIEDOT_
 const receiveOmattiedotFailure = (error) => ({type: FETCH_OMATTIEDOT_FAILURE, error});
 export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetState) => {
     if (!getState().omattiedot.data) {
-        console.log('get omattiedot');
         dispatch(requestOmattiedot());
         const url = urls.url('kayttooikeus-service.henkilo.current.omattiedot');
         try {
