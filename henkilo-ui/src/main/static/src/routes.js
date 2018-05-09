@@ -20,6 +20,7 @@ import PalvelukayttajaHakuContainer from "./components/palvelukayttaja/Palveluka
 import SalansananResetointiPage from "./components/salasananresetointi/SalasananResetointiPage";
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 import HenkiloViewContainer from "./components/henkilo/HenkiloViewContainer";
+import AdminRedirect from "./components/henkilo/AdminRedirect";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -30,6 +31,7 @@ export default <Route path="/" component={App}>
     <Route path="/oppija/luonti" component={OppijaCreateContainer} />
     <Route path="/oppija/:oid" component={HenkiloViewContainer} />
     <Route path="/virkailija/:oid" component={HenkiloViewContainer} />
+    <Route path="/admin/:oid" component={AdminRedirect} />
     <Route path="/:henkiloType/:oid/vtjvertailu" component={VtjVertailuPage}/>
     <Route path="/:henkiloType/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
