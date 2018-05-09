@@ -51,4 +51,5 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .password(passwordEncoder().encode(devProperties.getPassword()))
                 .roles("APP_HENKILONHALLINTA_OPHREKISTERI");
     }
+    
 }

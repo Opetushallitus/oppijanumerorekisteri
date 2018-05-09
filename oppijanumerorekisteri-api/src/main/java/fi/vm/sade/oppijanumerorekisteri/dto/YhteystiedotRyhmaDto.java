@@ -12,6 +12,8 @@ import java.util.Set;
 import lombok.Builder;
 import lombok.Singular;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 @Builder
@@ -31,6 +33,7 @@ public class YhteystiedotRyhmaDto implements Serializable {
     /**
      * Koodisto "yhteystietojenalkupera".
      */
+    @NotNull
     @ApiModelProperty("Koodisto 'yhteystietojenalkupera'")
     private String ryhmaAlkuperaTieto;
 

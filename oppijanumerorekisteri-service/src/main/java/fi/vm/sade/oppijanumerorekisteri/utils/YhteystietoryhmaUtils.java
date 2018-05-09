@@ -12,6 +12,7 @@ public final class YhteystietoryhmaUtils {
     }
 
     public static final String TYYPPI_TYOOSOITE = "yhteystietotyyppi2";
+    public static final String ALKUPERA = "alkupera6";
 
     public static void setTyosahkopostiosoite(Set<YhteystiedotRyhma> yhteystietoryhmat, String arvo, String alkupera) {
         setYhteystieto(yhteystietoryhmat, TYYPPI_TYOOSOITE, YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI, arvo, alkupera);

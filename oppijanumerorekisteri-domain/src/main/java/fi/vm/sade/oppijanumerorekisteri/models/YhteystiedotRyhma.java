@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import static java.util.Objects.requireNonNull;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class YhteystiedotRyhma extends IdentifiableAndVersionedEntity {
     /**
      * Koodisto "yhteystietojenalkupera".
      */
-    @Column(name = "ryhma_alkuperatieto")
+    @Column(name = "ryhma_alkuperatieto", nullable = false)
     private String ryhmaAlkuperaTieto;
 
     @Column(name = "read_only", nullable = false)
