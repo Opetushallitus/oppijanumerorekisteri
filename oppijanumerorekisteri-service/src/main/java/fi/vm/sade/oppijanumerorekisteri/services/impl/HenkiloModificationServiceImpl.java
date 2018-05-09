@@ -254,8 +254,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private Optional<Henkilo> findHenkilo(HenkiloPerustietoDto henkiloPerustietoDto) {
         return Stream.<Function<HenkiloPerustietoDto, Optional<Henkilo>>>of(
                 dto -> Optional.ofNullable(dto.getOidHenkilo()).flatMap(oid -> Optional.of(this.henkiloService.getEntityByOid(oid))),
-                dto -> Optional.ofNullable(dto.getExternalIds()).flatMap(externalIds -> findUnique(henkiloDataRepository.findByExternalIds(externalIds))),
-                dto -> Optional.ofNullable(dto.getIdentifications()).flatMap(identifications -> findUnique(henkiloDataRepository.findByIdentifications(identifications))),
+                dto -> Optional.ofNullable(dto.getExternalIds())
+                        .filter(externalIds -> !externalIds.isEmpty())
+                        .flatMap(externalIds -> findUnique(henkiloDataRepository.findByExternalIds(externalIds))),
+                dto -> Optional.ofNullable(dto.getIdentifications())
+                        .filter(identifications -> !identifications.isEmpty())
+                        .flatMap(identifications -> findUnique(henkiloDataRepository.findByIdentifications(identifications))),
                 dto -> Optional.ofNullable(dto.getHetu()).flatMap(henkiloDataRepository::findByHetu)
         ).map(transformer -> transformer.apply(henkiloPerustietoDto))
                 .filter(Optional::isPresent)

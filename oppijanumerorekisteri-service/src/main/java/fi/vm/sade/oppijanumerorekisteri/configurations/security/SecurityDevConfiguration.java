@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Profile("dev")
 @Configuration
@@ -38,9 +38,17 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
             .anyRequest().authenticated();
     }
 
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser(devProperties.getUsername()).password(devProperties.getPassword())
+        auth.inMemoryAuthentication()
+                .passwordEncoder(passwordEncoder())
+                .withUser(devProperties.getUsername())
+                .password(passwordEncoder().encode(devProperties.getPassword()))
                 .roles("APP_HENKILONHALLINTA_OPHREKISTERI");
     }
     
