@@ -45,6 +45,8 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/uudelleenrekisterointi/**").permitAll()
                 .antMatchers("/rekisteroidy").permitAll()
                 .antMatchers("/salasananresetointi/*/*").permitAll()
+                // Admin domain
+                .antMatchers("/admin/**").hasAuthority("APP_HENKILONHALLINTA_OPHREKISTERI")
                 .anyRequest().authenticated();
     }
 
