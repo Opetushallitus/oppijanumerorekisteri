@@ -7,6 +7,8 @@ import lombok.*;
 import lombok.Setter;
 
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -28,12 +30,9 @@ public class HenkiloPerustietoDto implements Serializable {
     @Size(min = 1)
     private String oidHenkilo;
 
-    @Size(min = 1)
-    private List<String> externalIds;
+    private List<@NotBlank String> externalIds;
 
-    @Valid
-    @Size(min = 1)
-    private List<IdentificationDto> identifications;
+    private List<@NotNull @Valid IdentificationDto> identifications;
 
     @ValidateHetu
     private String hetu;

@@ -25,12 +25,15 @@ import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -223,6 +226,89 @@ public class Service2ServiceControllerTest  {
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(this.objectMapper.writeValueAsString(henkiloPerustietoDto)));
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleValid() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+        verify(henkiloModificationService).findOrCreateHenkiloFromPerustietoDto(anyList());
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleInvalid() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"hetu\": \"olematon_hetu\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleExternalIdsInvalid() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"externalIds\": [\" \"]," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleIdenfiticationNull() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"identifications\": [null]," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
+    }
+
+    @Test
+    @WithMockUser
+    public void findOrCreateMultipleIdenfiticationEmpty() throws Exception {
+        String inputContent = "[{\"etunimet\": \"arpa\"," +
+                "\"kutsumanimi\": \"arpa\"," +
+                "\"sukunimi\": \"kuutio\"," +
+                "\"identifications\": [{}]," +
+                "\"hetu\": \"081296-967T\"}]";
+        this.mvc.perform(post("/s2s/henkilo/findOrCreateMultiple")
+                .with(csrf())
+                .content(inputContent)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyZeroInteractions(henkiloModificationService);
     }
 
     @Test
