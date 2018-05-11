@@ -271,7 +271,6 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
             organisaatioSelectionName: '',
             ryhmaSelection: '',
             kayttooikeusryhmaSelections: [],
-            tehtavanimike: '',
             perustelut: '',
             emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(this.props.henkilo),
         });
