@@ -83,9 +83,17 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         this.headingList = [
             {key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA', minWidth: 200,},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS', minWidth: 150,},
-            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM'},
-            {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125,},
+            {key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM', Cell: cellProps => cellProps.value.format()},
+            {key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM', Cell: cellProps => cellProps.value.format()},
+            {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 125,
+                Cell: cellProps => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
+                sortMethod: (a, b) => {
+                    const kasiteltyCompare = a.kasitelty.valueOf() - b.kasitelty.valueOf()
+                    if (kasiteltyCompare !== 0) {
+                        return kasiteltyCompare
+                    }
+                    return a.kasittelija.localeCompare(b.kasittelija)
+                }},
             {key: 'HENKILO_KAYTTOOIKEUS_JATKOAIKA', minWidth: 150, notSortable: true, hide: this.props.isOmattiedot},
             {key: 'HENKILO_KAYTTOOIKEUS_SULJE', notSortable: true, hide: this.props.isOmattiedot},
             {key: 'HIGHLIGHT', hide: true},
@@ -162,10 +170,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                     + StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L),
                     [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts
                         .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                    [headingList[2]]: moment(uusittavaKayttooikeusRyhma.alkuPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
-                    [headingList[3]]: moment(uusittavaKayttooikeusRyhma.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).format(),
-                    [headingList[4]]: moment(uusittavaKayttooikeusRyhma.kasitelty).format() + ' / '
-                    + uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid,
+                    [headingList[2]]: moment(uusittavaKayttooikeusRyhma.alkuPvm, PropertySingleton.state.PVM_DBFORMAATTI),
+                    [headingList[3]]: moment(uusittavaKayttooikeusRyhma.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI),
+                    [headingList[4]]: {kasitelty: moment(uusittavaKayttooikeusRyhma.kasitelty),
+                        kasittelija: uusittavaKayttooikeusRyhma.kasittelijaNimi || uusittavaKayttooikeusRyhma.kasittelijaOid},
                     [headingList[5]]: <div>
                         <div style={{display: 'table-cell', paddingRight: '10px'}}>
                             <DatePicker className="oph-input"

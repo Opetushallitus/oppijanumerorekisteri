@@ -20,7 +20,15 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
         const headingList = [{key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO'},
             {key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS'},
             {key: 'HENKILO_KAYTTOOIKEUS_TILA'},
-            {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 150},
+            {key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA', minWidth: 150,
+                Cell: cellProps => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
+                sortMethod: (a, b) => {
+                    const kasiteltyCompare = a.kasitelty.valueOf() - b.kasitelty.valueOf()
+                    if (kasiteltyCompare !== 0) {
+                        return kasiteltyCompare
+                    }
+                    return a.kasittelija.localeCompare(b.kasittelija)
+                }},
         ];
         this.tableHeadings = headingList.map(heading => Object.assign(heading, {label: this.L[heading.key]}));
 
@@ -35,7 +43,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component {
                 [headingList[1]]: kayttooikeus.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: this.L[kayttooikeus.tila],
-                [headingList[3]]: moment(kayttooikeus.kasitelty).format() + ' / ' + kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid,
+                [headingList[3]]: {kasitelty: moment(kayttooikeus.kasitelty), kasittelija: kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid},
             }));
     };
 
