@@ -21,6 +21,8 @@ import Hetu from "../labelvalues/Hetu";
 import Kansalaisuus from "../labelvalues/Kansalaisuus";
 import Aidinkieli from "../labelvalues/Aidinkieli";
 import Sukupuoli from "../labelvalues/Sukupuoli";
+import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
+import AnomusIlmoitus from "../labelvalues/AnomusIlmoitus";
 
 type Props = {
     readOnly: boolean,
@@ -38,14 +40,15 @@ type Props = {
     isAdmin: boolean,
     oidHenkilo: string,
     ownOid: string,
-    isValidForm: boolean
+    isValidForm: boolean,
+    omatOrganisaatiot: Array<any>
 }
 
 type State = {
 
 }
 
-class VirkailijaUserContent extends React.Component<Props, State> {
+class OmattiedotUserContent extends React.Component<Props, State> {
     render() {
         return this.props.henkilo.henkiloLoading
         || this.props.henkilo.kayttajatietoLoading
@@ -69,6 +72,7 @@ class VirkailijaUserContent extends React.Component<Props, State> {
             updateModelFieldAction: this.props.updateModelAction,
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
+            henkilo: this.props.henkilo
         };
 
         // Basic info box content
@@ -91,10 +95,9 @@ class VirkailijaUserContent extends React.Component<Props, State> {
                 <Asiointikieli {...props} />,
             ],
             [
-                <Kayttajanimi
-                    {...props}
-                    disabled={true}
-                />,
+                <Kayttajanimi {...props} disabled={true} />,
+                <AnomusIlmoitus {...props}/>,
+                hasAnyPalveluRooli(this.props.omatOrganisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'KAYTTOOIKEUS_REKISTERINPITAJA']) ? <AnomusIlmoitus {...props} /> : null
             ],
         ];
     };
@@ -127,7 +130,8 @@ const mapStateToProps = state => ({
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
     ownOid: state.omattiedot.data.oid,
+    omatOrganisaatiot: state.omattiedot.organisaatios
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(VirkailijaUserContent);
+export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(OmattiedotUserContent);
 

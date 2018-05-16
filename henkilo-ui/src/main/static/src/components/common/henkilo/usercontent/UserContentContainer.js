@@ -60,6 +60,8 @@ class UserContentContainer extends React.Component<Props, State> {
             showPassive: false,
             isLoading: true,
         };
+
+
     };
 
     componentWillReceiveProps(nextProps: Props) {
@@ -170,6 +172,7 @@ class UserContentContainer extends React.Component<Props, State> {
             type: NOTIFICATIONTYPES.ERROR,
             key: 'HENKILOUPDATEFAILED'
         };
+        console.log('updateing', henkiloUpdate);
         this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
@@ -178,6 +181,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _updateModelField(event: any) {
+        console.log(event);
         this.setState({
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event),
         });

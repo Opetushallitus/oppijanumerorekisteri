@@ -48,7 +48,8 @@ export type HenkiloState = {
     +yksilointitiedotLoading: boolean,
     +yksilointitiedot: Array<any>,
     +hakemuksetLoading: boolean,
-    +hakemukset: Array<Hakemus>
+    +hakemukset: Array<Hakemus>,
+    +anomusIlmoitus?: boolean
 }
 
 const initialState: HenkiloState = {
@@ -76,7 +77,8 @@ const initialState: HenkiloState = {
     yksilointitiedot: [],
     hakemuksetLoading: false,
     hakemukset: [],
-    ataruApplications: []
+    ataruApplications: [],
+    anomusIlmoitus: undefined
 };
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {

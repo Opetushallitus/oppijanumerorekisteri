@@ -28,6 +28,7 @@ const OphSelect = (props: Props) => {
             <CrossIcon/>
         </IconButton>}
         : undefined;
+
     return <Select
         deleteRemoves={false}
         maxHeight={200}

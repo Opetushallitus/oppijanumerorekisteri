@@ -29,7 +29,8 @@ export type Henkilo = {
     modified: number,
     vtjsynced: number,
     huoltaja: Henkilo,
-    yhteystiedotRyhma: Array<YhteystietoRyhma>
+    yhteystiedotRyhma: Array<YhteystietoRyhma>,
+    anomusIlmoitus: ?boolean
 }
 
 export type HenkiloCreate = {
