@@ -230,14 +230,13 @@ public class DuplicateServiceImpl implements DuplicateService {
 
         // Move slaves email identification to master
         slaveIdentifications.forEach(slaveIdentification -> {
-            if(slaveIdentification.getIdpEntityId() == "email") {
+            if("email".equals(slaveIdentification.getIdpEntityId())) {
                 masterIdentifications.add(slaveIdentification);
             }
         });
 
         // Remove email identification from slave
-        slaveIdentifications = slaveIdentifications.stream().filter(identification -> identification.getIdpEntityId() != "email").collect(toSet());
-
+        slaveIdentifications.removeIf(identification -> "email".equals(identification.getIdpEntityId()));
         master.setIdentifications(masterIdentifications);
         slave.setIdentifications(slaveIdentifications);
     }
