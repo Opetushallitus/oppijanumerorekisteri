@@ -3,8 +3,9 @@ const SALLITUT_VALIMERKIT = [' ', '-']
 
 export function isValidKutsumanimi(etunimet: ?string, kutsumanimi: ?string): boolean {
     if (!etunimet || !kutsumanimi) {
-        return true
+        return false;
     }
+
     return isValidKutsumanimiCaseSensitive(etunimet.toLowerCase(), kutsumanimi.toLowerCase())
 }
 
