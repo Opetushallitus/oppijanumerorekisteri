@@ -29,7 +29,6 @@ type State = {
 type OrganisaatioFlat = {|
     name: string,
     typesFlat: string,
-    role: string,
     passive: boolean,
     id: string,
 |}
@@ -69,11 +68,6 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                                             <span>{values.id}</span>
                                         </div>
                                         <div className="labelValue">
-                                            <span className="oph-bold">{this.props.L['HENKILO_TEHTAVANIMIKE']}:</span>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <span>{values.role}</span>
-                                        </div>
-                                        <div className="labelValue">
                                             <PassivoiOrganisaatioButton passive={values.passive}
                                                                         id={values.id}
                                                                         L={this.props.L}
@@ -108,7 +102,6 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
             return {
                 name: toLocalizedText(this.props.locale, organisation.nimi),
                 typesFlat: typesFlat,
-                role: organisation.tehtavanimike,
                 passive: organisation.passivoitu,
                 id: organisation.oid,
             }

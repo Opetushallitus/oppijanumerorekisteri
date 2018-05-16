@@ -51,7 +51,6 @@ type Props = {
     createKayttooikeusanomus: ({
         organisaatioOrRyhmaOid: string,
         email: ?string,
-        tehtavaNimike: string,
         perustelut: string,
         kayttooikeusRyhmaIds: Array<number>,
         anojaOid: string,
@@ -294,7 +293,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         const anomusData = {
             organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
             email: this.state.emailSelection[idx].value,
-            tehtavaNimike: '',
             perustelut: 'Uusiminen',
             kayttooikeusRyhmaIds,
             anojaOid: this.props.oidHenkilo
