@@ -4,11 +4,8 @@ import App from './containers/App'
 import KutsututPageContainer from './components/kutsutut/KutsututPageContainer';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomustListPageContainer from './components/anomus/AnomusPageContainer';
-import OppijaViewContainer from './components/henkilo/OppijaViewContainer';
-import VirkailijaViewContainer from "./components/henkilo/VirkailijaViewContainer";
 import OmattiedotContainer from "./components/omattiedot/OmattiedotPageContainer";
 import DuplikaatitContainer from "./components/henkilo/duplikaatit/DuplikaatitContainer";
-import AdminViewContainer from "./components/henkilo/AdminViewContainer";
 import HenkilohakuContainer from "./components/henkilohaku/HenkilohakuContainer";
 import VahvaTunnistusInfoContainer from "./components/rekisterointi/VahvaTunnistusInfoContainer";
 import RekisteroidyContainer from "./components/rekisterointi/RekisteroidyContainer";
@@ -22,6 +19,8 @@ import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer"
 import PalvelukayttajaHakuContainer from "./components/palvelukayttaja/PalvelukayttajaHakuContainer";
 import SalansananResetointiPage from "./components/salasananresetointi/SalasananResetointiPage";
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
+import HenkiloViewContainer from "./components/henkilo/HenkiloViewContainer";
+import AdminRedirect from "./components/henkilo/AdminRedirect";
 
 export default <Route path="/" component={App}>
     <Route path="/anomukset" component={AnomustListPageContainer} />
@@ -30,12 +29,12 @@ export default <Route path="/" component={App}>
     <Route path="/henkilohaku" component={HenkilohakuContainer} />
     <Route path="/virkailija/luonti" component={VirkailijaCreateContainer} />
     <Route path="/oppija/luonti" component={OppijaCreateContainer} />
-    <Route path="/oppija/:oid" component={OppijaViewContainer} />
-    <Route path="/virkailija/:oid" component={VirkailijaViewContainer} />
+    <Route path="/oppija/:oid" component={HenkiloViewContainer} />
+    <Route path="/virkailija/:oid" component={HenkiloViewContainer} />
+    <Route path="/admin/:oid" component={AdminRedirect} />
     <Route path="/:henkiloType/:oid/vtjvertailu" component={VtjVertailuPage}/>
     <Route path="/:henkiloType/:oid/duplikaatit" component={DuplikaatitContainer} />
     <Route path="/omattiedot" component={OmattiedotContainer} />
-    <Route path="/admin/:oid" component={AdminViewContainer} />
     <Route path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana" component={VahvaTunnistusLisatiedotContainer} />
     <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
     <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />

@@ -13,25 +13,26 @@ import StaticUtils from '../common/StaticUtils'
 import type {L10n} from "../../types/localisation.type";
 import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCreateKayttooikeusanomus";
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
-import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
+import type {OrganisaatioCache, OrganisaatioState} from "../../reducers/organisaatio.reducer";
+import { path } from 'ramda';
 
 type Props = {
     l10n: L10n,
     locale: Locale,
-    updateHenkiloAndRefetch: (any) => void,
-    updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
+    updateHenkiloAndRefetch?: (any) => void,
+    updateAndRefetchKayttajatieto?: (henkiloOid: string, kayttajatunnus: string) => void,
     henkilo: any,
     kayttooikeus: any,
     koodisto: any,
-    createBasicInfo: (boolean, (any) => void, (any) => void, any) => any,
-    readOnlyButtons: ((any) => void) => any,
-    passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
-    organisaatioKayttooikeusryhmat: {kayttooikeusryhmat: Array<any>},
+    createBasicInfo?: (boolean, (any) => void, (any) => void, any) => any,
+    readOnlyButtons?: ((any) => void) => any,
+    passivoiHenkiloOrg?: (henkiloOid: string, organisaatioOid: string) => void,
+    organisaatioKayttooikeusryhmat?: {kayttooikeusryhmat: Array<any>},
     oidHenkilo: string,
     view: string,
-    organisaatios: OrganisaatioState,
-    organisaatioCache: any,
-    ryhmas: {
+    organisaatios?: OrganisaatioState,
+    organisaatioCache: OrganisaatioCache,
+    ryhmas?: {
         ryhmas: Array<{nimi: {fi: string, sv: string, en: string,}, oid: string}>,
     },
 }
@@ -50,6 +51,9 @@ class HenkiloViewPage extends React.Component<Props> {
         if (this.props.henkilo.henkiloKayttoEstetty) {
             return <VirheKayttoEstetty L={this.props.l10n[this.props.locale]} />
         }
+
+        const kayttooikeusryhmat = path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) ? path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) : [];
+
         return (
             <div>
                 <div className="wrapper">
@@ -122,7 +126,7 @@ class HenkiloViewPage extends React.Component<Props> {
                     <HenkiloViewCreateKayttooikeusanomus
                         {...this.props}
                         ryhmaOptions={this._parseRyhmaOptions.call(this)}
-                        kayttooikeusryhmat={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmat}
+                        kayttooikeusryhmat={kayttooikeusryhmat}
                     />
                 </div>}
             </div>

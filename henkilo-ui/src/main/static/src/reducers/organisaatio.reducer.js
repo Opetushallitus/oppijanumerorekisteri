@@ -7,10 +7,14 @@ import {
 import StaticUtils from '../components/common/StaticUtils'
 import type {OrganisaatioHakuTulos} from "../types/domain/organisaatio/organisaatio.types";
 
+export type OrganisaatioCache = {
+    [string]: Organisaatio
+}
+
 export type OrganisaatioState = {
     organisaatioLoading: boolean,
     organisaatiot: OrganisaatioHakuTulos,
-    cached: any,
+    cached: OrganisaatioCache,
     organisaatioHierarkiaLoading: boolean,
     organisaatioHierarkia: OrganisaatioHakuTulos
 }
