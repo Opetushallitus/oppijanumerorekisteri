@@ -4,6 +4,4 @@ from henkiloviite hv
   join henkilo h1 on h1.oidhenkilo = hv.master_oid
   join henkilo h2 on h2.oidhenkilo = hv.slave_oid
 where i.henkilo_id = h2.id
-  and i.idpentityid = 'email'
-  and h1.hetu is null
-  and h2.hetu is null;
+  and i.idpentityid = 'email';
