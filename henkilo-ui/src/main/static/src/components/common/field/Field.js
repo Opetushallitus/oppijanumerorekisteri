@@ -12,7 +12,7 @@ type Props = {
     readOnly: boolean,
     changeAction: (any) => any,
     inputValue: string,
-    selectValue?: string,
+    selectValue?: string | boolean,
     password?: boolean,
     className?: string,
     disabled?: boolean,

@@ -8,8 +8,15 @@ import {
     FETCH_OMATTIEDOT_FAILURE,
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST,
     FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_HENKILO_ASIOINTIKIELI_REQUEST, FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
-    FETCH_HENKILO_ASIOINTIKIELI_FAILURE, FETCH_CASME_REQUEST, FETCH_CASME_FAILURE, FETCH_CASME_SUCCESS, LOCATION_CHANGE
+    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
+    FETCH_HENKILO_ASIOINTIKIELI_REQUEST,
+    FETCH_HENKILO_ASIOINTIKIELI_SUCCESS,
+    FETCH_HENKILO_ASIOINTIKIELI_FAILURE,
+    FETCH_CASME_REQUEST,
+    FETCH_CASME_FAILURE,
+    FETCH_CASME_SUCCESS,
+    LOCATION_CHANGE,
+    UPDATE_ANOMUSILMOITUS
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
 import type {Omattiedot} from "../types/domain/kayttooikeus/Omattiedot.types";
@@ -34,6 +41,11 @@ export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) 
         dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE});
         throw error;
     }
+};
+
+const updateAnomusilmoitusState = (value: boolean) => ({type: UPDATE_ANOMUSILMOITUS, value});
+export const updateAnomusilmoitus = (value: boolean) => (dispatch: Dispatch) => {
+    dispatch(updateAnomusilmoitusState(value));
 };
 
 const requestOmattiedot = () : {type: string} => ({type: FETCH_OMATTIEDOT_REQUEST});

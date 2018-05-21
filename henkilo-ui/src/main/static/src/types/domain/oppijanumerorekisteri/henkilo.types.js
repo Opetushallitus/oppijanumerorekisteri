@@ -30,7 +30,6 @@ export type Henkilo = {
     vtjsynced: number,
     huoltaja: Henkilo,
     yhteystiedotRyhma: Array<YhteystietoRyhma>,
-    anomusIlmoitus: ?boolean
 }
 
 export type HenkiloCreate = {

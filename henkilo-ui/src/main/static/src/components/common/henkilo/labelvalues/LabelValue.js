@@ -16,7 +16,7 @@ type Props = {
         date?: string | boolean,
         showOnlyOnWrite?: boolean,
         readOnly?: boolean,
-        selectValue?: string
+        selectValue?: string | boolean
     },
     readOnly?: boolean,
     updateModelFieldAction?: (any) => void,
