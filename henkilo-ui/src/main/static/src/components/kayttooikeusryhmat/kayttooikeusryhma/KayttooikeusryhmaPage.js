@@ -30,6 +30,7 @@ import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectob
 import {getLocalization} from "../../../utilities/localisation.util";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
+import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -53,7 +54,7 @@ export type KayttooikeusryhmaForm = {
     description: KayttooikeusryhmaKuvaus,
     ryhmaRestriction: boolean,
     organisaatioSelections: Array<OrganisaatioSelectObject>,
-    oppilaitostyypitSelections: Array<ReactSelectOption>,
+    oppilaitostyypitSelections: Array<string>,
     kayttooikeusryhmaSelections: Array<ReactSelectOption>,
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>,
 }
@@ -62,7 +63,7 @@ type Props = {
     L: L,
     router: any,
     organisaatios: Array<OrganisaatioHenkilo>,
-    koodisto: any,
+    koodisto: KoodistoState,
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
     palvelutState: PalvelutState,
@@ -148,7 +149,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                                                    removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
                                                    oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                                    oppilaitostyypitSelections={this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections}
-                                                   removeOppilaitostyypitSelectionAction={this._onRemoveOppilaitostyypitSelect}
             />
 
             <MyonnettavatKayttooikeusryhmat {...this.props}
@@ -202,7 +202,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 <OphModal title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']} onClose={() => {this.setState({showPassivoiModal: false})}}>
                     <div className="passivoi-modal">
                         <button className="oph-button oph-button-primary"
-                            onClick={() => {this._passivoiKayttooikeusryhma()}}><SpinnerInButton show={this.state.togglePassivoi}></SpinnerInButton>  {this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}</button>
+                                onClick={() => {this._passivoiKayttooikeusryhma()}}><SpinnerInButton show={this.state.togglePassivoi}></SpinnerInButton>  {this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}</button>
                         <button className="oph-button oph-button-cancel" onClick={() => { this.setState({ showPassivoiModal: false }) }}>{this.props.L['PERUUTA']}</button>
                     </div>
                 </OphModal> :
@@ -291,13 +291,13 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         return input.split('.')[4] !== undefined && input.split('.')[4] !== '10';
     };
 
-    _parseExistingOppilaitostyyppiData = (organisaatioViitteet: any): Array<ReactSelectOption> => {
-        const oppilaitostyypit: any = this.props.koodisto.oppilaitostyypit
-            .map(oppilaitostyyppi => ({label: oppilaitostyyppi[this.props.locale], value: oppilaitostyyppi.value}));
+    _parseExistingOppilaitostyyppiData = (organisaatioViitteet: any): Array<string> => {
+        const oppilaitostyypit: Array<string> = this.props.koodisto.oppilaitostyypit
+            .map(oppilaitostyyppiKoodi => (oppilaitostyyppiKoodi.value));
         const oppilaitosOrganisaatioViiteet = organisaatioViitteet
             .filter((organisaatioViite: any) => this._isOppilaitosId(organisaatioViite.organisaatioTyyppi));
         const ids = oppilaitosOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
-        return oppilaitostyypit.filter((oppilaitostyyppi: any) => R.contains(oppilaitostyyppi.value.toString(), ids));
+        return oppilaitostyypit.filter((oppilaitostyyppi: string) => R.contains(oppilaitostyyppi, ids));
     };
 
     _parseExistingPalvelutRoolitData = (palvelutRoolit: Array<PalveluRooli>): Array<any> => {
@@ -344,27 +344,28 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         });
     };
 
-    _onOppilaitostyypitSelection = (selection: ReactSelectOption): void => {
-        const currentOppilaitostyypitSelections: Array<ReactSelectOption> = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
-        if (!currentOppilaitostyypitSelections.some((oppilaitostyyppi: ReactSelectOption) => oppilaitostyyppi.value === selection.value)) {
+    _onOppilaitostyypitSelection = (selection: SyntheticInputEvent<HTMLInputElement>): void => {
+        if (selection.target.checked) {
+            const currentOppilaitostyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
+            if (!currentOppilaitostyypitSelections.some((oppilaitostyyppi: string) => oppilaitostyyppi === selection.target.value)) {
+                this.setState({
+                    kayttooikeusryhmaForm: {
+                        ...this.state.kayttooikeusryhmaForm,
+                        oppilaitostyypitSelections: [...currentOppilaitostyypitSelections, selection.target.value]
+                    }
+                });
+            }
+        }
+        else {
+            const newOppilaitostyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections
+                .filter((oppilaitostyyppi: string) => selection.target.value !== oppilaitostyyppi);
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
-                    oppilaitostyypitSelections: [...currentOppilaitostyypitSelections, selection]
+                    oppilaitostyypitSelections: newOppilaitostyypitSelections
                 }
             });
         }
-    };
-
-    _onRemoveOppilaitostyypitSelect = (selection: ReactSelectOption): void => {
-        const newOppilaitostyypitSelections: Array<ReactSelectOption> = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections
-            .filter((oppilaitostyyppi: ReactSelectOption) => selection.value !== oppilaitostyyppi.value);
-        this.setState({
-            kayttooikeusryhmaForm: {
-                ...this.state.kayttooikeusryhmaForm,
-                oppilaitostyypitSelections: newOppilaitostyypitSelections
-            }
-        });
     };
 
     _setName = (languageCode: string, value: string): void => {
@@ -427,8 +428,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         };
         const currentKayttooikeusSelections = this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections;
         if (!currentKayttooikeusSelections.some((kayttooikeusSelection: PalveluJaKayttooikeusSelection) =>
-                (kayttooikeusSelection.palvelu.value === newKayttoikeusSelection.palvelu.value &&
-                    kayttooikeusSelection.kayttooikeus.value === newKayttoikeusSelection.kayttooikeus.value))) {
+            (kayttooikeusSelection.palvelu.value === newKayttoikeusSelection.palvelu.value &&
+                kayttooikeusSelection.kayttooikeus.value === newKayttoikeusSelection.kayttooikeus.value))) {
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
@@ -499,8 +500,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _parseOrganisaatioTyypit = (): Array<string> => {
-        const organisaatioTyypit = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections
-            .map((item: ReactSelectOption) => item.value);
+        const organisaatioTyypit = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
         const organisaatiot = this.state.kayttooikeusryhmaForm.organisaatioSelections
             .map((item: OrganisaatioSelectObject) => item.oid);
         const ryhmaRestrictionviite = this.state.ryhmaRestrictionViite ? [this.state.ryhmaRestrictionViite.organisaatioTyyppi] : [];
@@ -551,7 +551,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             this.setState({toggleTallenna: true});
             await http.post(url, this.parsePayload());
             this.setState({toggleTallenna: false}, () => {
-              this.props.router.push('/kayttooikeusryhmat');
+                this.props.router.push('/kayttooikeusryhmat');
             });
         } catch (error) {
             this.props.addGlobalNotification({
