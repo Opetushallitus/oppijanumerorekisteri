@@ -4,6 +4,8 @@ import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -18,8 +20,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -28,6 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HenkiloModificationServiceIntegrationTest {
     @Autowired
     private HenkiloModificationService henkiloModificationService;
+
+    @Autowired
+    private HenkiloService henkiloService;
 
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
@@ -62,4 +69,56 @@ public class HenkiloModificationServiceIntegrationTest {
                 .flatExtracting(HenkiloViite::getMasterOid, HenkiloViite::getSlaveOid)
                 .containsExactly("VTJYKSILOITY1", "VTJYKSILOITY2");
     }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void updateHenkiloTallentaaKutsumanimimuutoksen() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setKutsumanimi("Taneli");
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        HenkiloReadDto readDto = henkiloService.getMasterByOid("VTJYKSILOITY1");
+
+        assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
+        assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void updateHenkiloValidoiKutsumanimimuutoksen() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setKutsumanimi("Seppo");
+
+        Throwable throwable = catchThrowable(() -> henkiloModificationService.updateHenkilo(updateDto));
+
+        assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void forceUpdateHenkiloTallentaaKutsumanimimuutoksen() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setKutsumanimi("Taneli");
+
+        HenkiloReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
+
+        assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
+        assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void forceUpdateHenkiloValidoiKutsumanimimuutoksen() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setKutsumanimi("Seppo");
+
+        Throwable throwable = catchThrowable(() -> henkiloModificationService.forceUpdateHenkilo(updateDto));
+
+        assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
+    }
+
 }

@@ -65,15 +65,21 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto) {
+        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
+                Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
+                .stream().findFirst().orElseThrow(NotFoundException::new);
+
+        if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
+            // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
+            henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
+            henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
+        }
+
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validate(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
             throw new UnprocessableEntityException(errors);
         }
-
-        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkiloIsIn(
-                Lists.newArrayList(henkiloUpdateDto.getOidHenkilo()))
-                .stream().findFirst().orElseThrow(NotFoundException::new);
 
         if (henkiloSaved.isPassivoitu() && Boolean.FALSE.equals(henkiloUpdateDto.getPassivoitu())) {
             if (!permissionChecker.isSuperUser()) {
@@ -119,14 +125,20 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
+        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
+                .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
+
+        if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
+            // etunimet ja/tai kutsumanimi muuttuu -> asetetaan molemmat jotta voidaan tehdä validointi
+            henkiloUpdateDto.setEtunimet(Optional.ofNullable(henkiloUpdateDto.getEtunimet()).orElse(henkiloSaved.getEtunimet()));
+            henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
+        }
+
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
         this.henkiloUpdatePostValidator.validateWithoutHetu(henkiloUpdateDto, errors);
         if (errors.hasErrors()) {
             throw new UnprocessableEntityException(errors);
         }
-
-        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
-                .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
         this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
 
