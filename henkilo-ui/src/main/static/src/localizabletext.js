@@ -31,7 +31,7 @@ const FORMATS = [
 ];
 
 const hasValue = (value) => {
-    return typeof value !== 'undefined'
+    return !!value
 };
 
 const isValid = (format, localizableText) => {
