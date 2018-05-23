@@ -82,7 +82,6 @@ class AddedOrganisation extends React.Component<Props, State> {
                     <div>
                         <RyhmaSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
                                         selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                        isRyhma={true}
                         />
                     </div>
                 </div>
