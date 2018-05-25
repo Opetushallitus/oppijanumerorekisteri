@@ -1,11 +1,10 @@
 // @flow
-import React, {Fragment} from 'react';
+import React from 'react';
 import type {Locale} from "../../../types/locale.type";
 import type {L} from "../../../types/localisation.type";
 import {OrganisaatioSelect} from "./OrganisaatioSelect";
-import OphModal from "../modal/OphModal";
-import {SpinnerInButton} from "../icons/SpinnerInButton";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
+import SelectModal from "../modal/SelectModal";
 
 type Props = {
     locale: Locale,
@@ -33,34 +32,16 @@ export class OrganisaatioSelectModal extends React.Component<Props, State> {
     }
 
     render() {
-        return <Fragment>
-            <button type="button"
-                    className="oph-button oph-button-primary organisaatio-select-button"
-                    onClick={this.onOpen}
-                    disabled={this.props.disabled}>
-                <SpinnerInButton show={this.props.disabled}></SpinnerInButton> { this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO'] }
-            </button>
-            {this.state.visible ? <OphModal onClose={this.onClose}>
+        return <SelectModal disabled={this.props.disabled}
+                            buttonText={this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO']} >
             <OrganisaatioSelect
                 locale={this.props.locale}
                 L={this.props.L}
                 organisaatiot={this.props.organisaatiot}
-                onSelect={(organisaatio) => {this.props.onSelect(organisaatio); this.onClose.call(this)}}
+                onClose={() => {/*override*/}}
+                onSelect={(organisaatio) => {this.props.onSelect(organisaatio)}}
             />
-        </OphModal> : null}
-        </Fragment>
+        </SelectModal>;
     }
-
-    onOpen = (event: SyntheticEvent<HTMLButtonElement>): void => {
-        event.preventDefault();
-        this.setState({visible: true});
-    };
-
-    onClose = (event?: SyntheticEvent<HTMLButtonElement>): void => {
-        if(event) {
-            event.preventDefault();
-        }
-        this.setState({visible: false});
-    };
 
 }

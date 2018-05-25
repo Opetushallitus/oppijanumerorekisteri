@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import type {Node} from 'react';
 import { Link } from 'react-router'
 import type { L } from '../../types/localisation.type'
 import type { PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
@@ -33,11 +34,11 @@ class PalvelukayttajaHakuTaulukko extends React.Component<Props> {
         return this.props.palvelukayttajat.data.length ? this.renderRivit(this.props.palvelukayttajat.data) : this.renderKokoRivi(this.props.L['HENKILOHAKU_EI_TULOKSIA'])
     }
 
-    renderRivit(palvelukayttajat: Array<PalvelukayttajaRead>) {
+    renderRivit(palvelukayttajat: Array<PalvelukayttajaRead>): Array<Node> {
         return palvelukayttajat.map(this.renderRivi)
     }
 
-    renderRivi(palvelukayttaja: PalvelukayttajaRead) {
+    renderRivi(palvelukayttaja: PalvelukayttajaRead): Node {
         return (
             <tr key={palvelukayttaja.oid}>
                 <td>

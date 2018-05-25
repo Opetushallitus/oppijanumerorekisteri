@@ -28,7 +28,7 @@ export default class KutsuOrganisaatios extends React.Component<Props> {
         )
     }
 
-    addEmptyOrganization(e: Event) {
+    addEmptyOrganization(e: SyntheticEvent<HTMLButtonElement>) {
         e.preventDefault();
         this.props.addOrganisaatio({
             oid: '',

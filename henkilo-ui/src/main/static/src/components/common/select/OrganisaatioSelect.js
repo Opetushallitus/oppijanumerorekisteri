@@ -12,6 +12,7 @@ type Props = {
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
+    onClose: ?SyntheticEvent<HTMLButtonElement> => void,
 }
 
 type State = {
@@ -47,7 +48,8 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
                   rowRenderer={this._renderRow}
                   width={630}
                   height={700}
-                  rowHeight={70}></List>
+                  rowHeight={70}
+            />
         </div>
     }
 
@@ -62,6 +64,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
 
     makeSelection = (organisaatio: OrganisaatioSelectObject): void => {
         this.props.onSelect(organisaatio);
+        this.props.onClose();
     };
 
     _renderOrganisaatioNimi = (organisaatio: OrganisaatioSelectObject) => {

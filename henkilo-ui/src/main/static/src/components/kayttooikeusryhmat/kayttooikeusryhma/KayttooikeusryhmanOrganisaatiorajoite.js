@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import OphSelect from '../../common/select/OphSelect';
 import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import type {Locale} from "../../../types/locale.type";
@@ -9,6 +8,7 @@ import type {L} from "../../../types/localisation.type";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
 import {OrganisaatioSelectModal} from "../../common/select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
+import OphCheckboxFieldset from "../../common/forms/OphCheckboxFieldset";
 
 type Props = {
     L: L,
@@ -20,9 +20,8 @@ type Props = {
     organisaatioSelections: Array<OrganisaatioSelectObject>,
     organisaatioSelectAction: (organisaatio: OrganisaatioSelectObject) => void,
     removeOrganisaatioSelectAction: (selection: OrganisaatioSelectObject) => void,
-    oppilaitostyypitSelections: Array<ReactSelectOption>,
-    oppilaitostyypitSelectAction: (selection: ReactSelectOption) => void,
-    removeOppilaitostyypitSelectionAction: (selection: ReactSelectOption) => void,
+    oppilaitostyypitSelections: Array<string>,
+    oppilaitostyypitSelectAction: (selection: SyntheticInputEvent<HTMLInputElement>) => void,
     omattiedotOrganisaatiosLoading: boolean
 }
 
@@ -58,7 +57,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                         disabled={this.props.omattiedotOrganisaatiosLoading || (this.props.organisaatios.length === 0)}
                         onSelect={this.props.organisaatioSelectAction}
                         organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(this.props.organisaatios, this.props.locale)}
-                    ></OrganisaatioSelectModal>
+                    />
 
                     <ItemList items={this.props.organisaatioSelections}
                               labelPath={['name']}
@@ -66,15 +65,15 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
 
                 </div>
                 <div className="flex-item-1 oppilaitostyyppi-wrapper">
-                    <OphSelect id="oppilaitostyyppi"
-                               options={this.state.oppilaitostyypitOptions}
-                               placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}
-                               onChange={this.props.oppilaitostyypitSelectAction}>
-                    </OphSelect>
-                    <ItemList items={this.props.oppilaitostyypitSelections}
-                              labelPath={['label']}
-                              removeAction={this.props.removeOppilaitostyypitSelectionAction}/>
-
+                    <OphCheckboxFieldset legendText={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_OPPILAITOSTYYPPI']}
+                                         options={this.state.oppilaitostyypitOptions
+                                         .map(option => ({
+                                             label: option.label,
+                                             value: option.value,
+                                             checked: this.props.oppilaitostyypitSelections.indexOf(option.value) !== -1,
+                                         }))}
+                                         selectAction={this.props.oppilaitostyypitSelectAction}
+                    />
                 </div>
             </div>
         </div>

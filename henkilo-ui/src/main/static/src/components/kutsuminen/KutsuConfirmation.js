@@ -91,11 +91,11 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         )
     }
 
-    _sendInvitation(e: Event) {
+    _sendInvitation(e: SyntheticEvent<HTMLButtonElement>) {
         this.sendInvitation(e, this.props.l10n[this.props.locale]);
     }
 
-    async sendInvitation(e: Event, L: L) {
+    async sendInvitation(e: SyntheticEvent<HTMLButtonElement>, L: L) {
         e.preventDefault();
 
         const payload = {
