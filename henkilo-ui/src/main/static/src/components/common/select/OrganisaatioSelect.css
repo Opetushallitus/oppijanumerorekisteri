@@ -50,3 +50,10 @@
 .organisaatio-select-list .organisaatio:hover {
     background-color: aliceblue;
 }
+
+.organisaatio-select-list .suunniteltu {
+    font-size: 0.8em;
+    color: #666666;
+    float: right;
+    margin-right: 15px;
+}
