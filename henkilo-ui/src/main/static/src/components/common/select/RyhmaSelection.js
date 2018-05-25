@@ -16,10 +16,7 @@ type Props = {
     selectOrganisaatio: () => any,
     locale: Locale,
     selectedOrganisaatioOid: string,
-    isRyhma: boolean,
     placeholder?: string,
-    organisaatioOptions: Array<Option>,
-    organisaatioFilter: any,
     ryhmaOptions:  Array<Option>,
     ryhmaFilter: any,
     clearable?: boolean,
@@ -40,8 +37,8 @@ class RyhmaSelection extends React.Component<Props, State> {
 
     render() {
         return <OphSelect className={'organisaatioSelection'}
-                          options={!this.props.isRyhma ? this.props.organisaatioOptions : this.props.ryhmaOptions}
-                          filterOptions={!this.props.isRyhma ? this.props.organisaatioFilter : this.props.ryhmaFilter}
+                          options={this.props.ryhmaOptions}
+                          filterOptions={this.props.ryhmaFilter}
                           placeholder={this.placeholder}
                           onChange={this.props.selectOrganisaatio}
                           value={this.props.selectedOrganisaatioOid}
@@ -55,8 +52,6 @@ class RyhmaSelection extends React.Component<Props, State> {
 const mapStateToProps = (state) => ({
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
-    organisaatioOptions: state.omattiedot.organisaatioOptions,
-    organisaatioFilter: state.omattiedot.organisaatioOptionsFilter,
     ryhmaOptions: state.omattiedot.organisaatioRyhmaOptions,
     ryhmaFilter: state.omattiedot.organisaatioRyhmaFilter,
 });

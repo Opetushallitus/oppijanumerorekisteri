@@ -31,7 +31,7 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
                                 selectOrganisaatio={organisationAction}
                                 selectedOrganisaatioOid={organisationValue}
                                 locale={locale}
-                                isRyhma={true}/>
+                />
             </div>
         </td>
         <td>

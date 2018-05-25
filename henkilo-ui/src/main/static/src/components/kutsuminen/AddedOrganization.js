@@ -70,7 +70,7 @@ class AddedOrganisation extends React.Component<Props, State> {
                     <label htmlFor="org">
                         {this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIOON_ORGANISAATIO']}
                     </label>
-                    <div className="organisaatioSelection-container flex-horizontal">
+                    <div className="flex-horizontal">
                         <input className="oph-input flex-item-1 kutsuminen-organisaatiosuodatus" type="text" value={this.state.organisaatioSelection} placeholder={this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIO']} readOnly/>
                         <OrganisaatioSelectModal locale={this.props.locale}
                                                  L={this.props.L}
@@ -79,10 +79,9 @@ class AddedOrganisation extends React.Component<Props, State> {
                                                  disabled={false}
                         ></OrganisaatioSelectModal>
                     </div>
-                    <div className="organisaatioSelection-container flex-horizontal">
+                    <div>
                         <RyhmaSelection selectedOrganisaatioOid={selectedOrganisaatioOid}
                                         selectOrganisaatio={this.selectOrganisaatio.bind(this)}
-                                        isRyhma={true}
                         />
                     </div>
                 </div>

@@ -147,11 +147,13 @@ export const getOrganisaatios = (organisaatios: Array<OrganisaatioHenkilo>, loca
     return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
 };
 
-export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale): { value: string, label: string, level: number } => {
+export const mapOrganisaatio = (organisaatio: Organisaatio, locale: Locale, sisallytaTyypit: boolean = true): { value: string, label: string, level: number } => {
     const organisaatioNimi = org => toLocalizedText(locale, organisaatio.nimi);
+    const nimi = organisaatioNimi(organisaatio)
+    const tyypit = sisallytaTyypit ? ` (${organisaatio.tyypit.join(',')})` : ''
     return {
         value: organisaatio.oid,
-        label: `${organisaatioNimi(organisaatio)} (${organisaatio.tyypit.join(',')})`,
+        label: `${nimi}${tyypit}`,
         level: organisaatio.level
     };
 };
@@ -166,7 +168,7 @@ export const getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>, isR
 
 export const getOrganisaatioOptionsAndFilter = (newOrganisaatios: Array<OrganisaatioHenkilo>, locale: Locale, isRyhma: boolean) => {
     const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma)
-        .map((organisaatio) => mapOrganisaatio(organisaatio, locale));
+        .map((organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma));
     // update index
     const index = createFilterOptions({options: newOptions});
     return {
