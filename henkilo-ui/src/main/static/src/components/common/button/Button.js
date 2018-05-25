@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 
 type Props = {
-    action?: (Event) => any,
+    action?: SyntheticEvent<HTMLButtonElement> => any,
     disabled?: boolean,
     href?: string,
     confirm?: boolean,

@@ -20,6 +20,7 @@ type Props = {
     placeholder?: string,
     disabled?: boolean,
     clearable?: ?boolean,
+    closeOnSelect?: boolean,
 }
 
 const OphSelect = (props: Props) => {
