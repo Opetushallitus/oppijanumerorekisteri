@@ -83,7 +83,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
     };
 
     _renderSuunniteltuNote = (organisaatio: OrganisaatioSelectObject) =>
-        organisaatio.status === 'SUUNNITELTU' ? <div className="suunniteltu">Suunniteltu</div> : null;
+        organisaatio.status === 'SUUNNITELTU' ? <div className="suunniteltu">{this.props.L['ORGANISAATIONVALINTA_SUUNNITELTU']}</div> : null;
 
     onFilter(event: SyntheticEvent<HTMLInputElement>) {
         const currentSearchWord: string = event.currentTarget.value;
