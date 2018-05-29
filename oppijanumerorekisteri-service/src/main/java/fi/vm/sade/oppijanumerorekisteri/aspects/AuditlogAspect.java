@@ -20,7 +20,7 @@ public class AuditlogAspect {
     }
 
     /* Henkilo */
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.createHenkilo(*))" +
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.createHenkilo(*))" +
             "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
     private Object logCreateHenkilo(ProceedingJoinPoint proceedingJoinPoint, Henkilo henkilo) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
@@ -28,7 +28,7 @@ public class AuditlogAspect {
         return result;
     }
 
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.updateHenkilo(*))" +
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.updateHenkilo(*))" +
             "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
     private Object logUpdateHenkilo(ProceedingJoinPoint proceedingJoinPoint, HenkiloUpdateDto henkilo) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
@@ -36,7 +36,7 @@ public class AuditlogAspect {
         return result;
     }
 
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.forceUpdateHenkilo(*))" +
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.forceUpdateHenkilo(*))" +
             "&& args(henkilo)", argNames = "proceedingJoinPoint, henkilo")
     private Object logForceUpdateHenkilo(ProceedingJoinPoint proceedingJoinPoint, HenkiloUpdateDto henkilo) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
@@ -44,7 +44,7 @@ public class AuditlogAspect {
         return result;
     }
 
-    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloService.disableHenkilo(*))" +
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService.disableHenkilo(*))" +
             "&& args(henkiloOid)", argNames = "proceedingJoinPoint, henkiloOid")
     private Object logDisableHenkilo(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
