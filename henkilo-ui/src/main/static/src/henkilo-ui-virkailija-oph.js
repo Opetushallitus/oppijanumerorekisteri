@@ -22,6 +22,7 @@ export default {
     "kayttooikeus-service.henkilo.organisaatiohenkilos": "kayttooikeus-service/henkilo/$1/organisaatiohenkilo",
     "kayttooikeus-service.henkilo.hakatunnus": "kayttooikeus-service/henkilo/$1/hakatunnus",
     "kayttooikeus-service.henkilo.henkilohaku": "kayttooikeus-service/henkilo/henkilohaku",
+    "kayttooikeus-service.henkilo.anomusilmoitus": "kayttooikeus-service/henkilo/$1/anomusilmoitus",
     "kayttooikeus-service.henkilo.henkilohakucount": "kayttooikeus-service/henkilo/henkilohakucount",
     "kayttooikeus-service.organisaatiohenkilo.passivoi": "kayttooikeus-service/organisaatiohenkilo/$1/$2",
     "kayttooikeus-service.henkilo.kayttajatieto": "kayttooikeus-service/henkilo/$1/kayttajatiedot",

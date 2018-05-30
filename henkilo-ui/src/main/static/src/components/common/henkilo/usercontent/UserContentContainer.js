@@ -17,6 +17,10 @@ import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../../types/notification.types";
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
 import type { Kayttaja } from '../../../../types/domain/kayttooikeus/kayttaja.types'
+import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
+import {http} from "../../../../http";
+import {urls} from 'oph-urls-js';
+import {fetchOmattiedot, updateAnomusilmoitus} from "../../../../actions/omattiedot.actions";
 
 type Props = {
     L: L,
@@ -40,6 +44,10 @@ type Props = {
     oidHenkilo: string,
     view: string,
     aktivoiHenkilo: (oid: string) => void,
+    omattiedot: OmattiedotState,
+    ownOid: string,
+    fetchOmattiedot: (?boolean) => any,
+    updateAnomusilmoitus: (boolean) => any
 }
 
 type State = {
@@ -54,21 +62,29 @@ class UserContentContainer extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        const henkiloUpdate = props.henkilo.henkilo ? JSON.parse(JSON.stringify(props.henkilo.henkilo)) : {};
+        henkiloUpdate.anomusilmoitus = props.omattiedot && props.omattiedot.anomusilmoitus;
+
         this.state = {
-            henkiloUpdate: props.henkilo.henkilo ? JSON.parse(JSON.stringify(props.henkilo.henkilo)) : {},
+            henkiloUpdate,
             readOnly: true,
             showPassive: false,
             isLoading: true,
         };
+
+
     };
 
     componentWillReceiveProps(nextProps: Props) {
         if (this.state.isLoading) {
-            const allLoaded = !nextProps.henkilo.henkiloLoading;
+            const allLoaded = !nextProps.henkilo.henkiloLoading && !nextProps.omattiedot.omattiedotLoading;
             if (allLoaded) {
+                const henkiloUpdate = JSON.parse(JSON.stringify(nextProps.henkilo.henkilo)); // deep copy
+                henkiloUpdate.anomusilmoitus = nextProps.omattiedot && nextProps.omattiedot.anomusilmoitus;
+
                 this.setState({
                     isLoading: false,
-                    henkiloUpdate: JSON.parse(JSON.stringify(nextProps.henkilo.henkilo)), // deep copy
+                    henkiloUpdate,
                 });
             }
         }
@@ -170,11 +186,33 @@ class UserContentContainer extends React.Component<Props, State> {
             type: NOTIFICATIONTYPES.ERROR,
             key: 'HENKILOUPDATEFAILED'
         };
+
         this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
+        this.anomus(henkiloUpdate);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
         }
+
+
         this.setState({readOnly: true});
+    }
+
+
+    async anomus(henkiloUpdate) {
+        if(this.props.view === 'OMATTIEDOT' && this.props.omattiedot.isAdmin) {
+            const initialAnomusilmoitusValue = this.props.omattiedot.anomusilmoitus;
+            const url = urls.url('kayttooikeus-service.henkilo.anomusilmoitus', henkiloUpdate.oidHenkilo);
+            try {
+                // päivitetään anomusilmoitus optimistisesti, jotta vältyttäisiin näytön vilkkumiselta
+                this.props.updateAnomusilmoitus(henkiloUpdate.anomusilmoitus);
+                await http.put(url, henkiloUpdate.anomusilmoitus);
+            } catch (error) {
+                // perutaan anomusilmoituksen optimistinen päivitys
+                this.props.updateAnomusilmoitus(initialAnomusilmoitusValue);
+                this.setState({henkiloUpdate: {...this.state.henkiloUpdate, anomusilmoitus: initialAnomusilmoitusValue}});
+                throw error;
+            }
+        }
     }
 
     _updateModelField(event: any) {
@@ -210,7 +248,9 @@ class UserContentContainer extends React.Component<Props, State> {
 const mapStateToProps = (state) => ({
     koodisto: state.koodisto,
     henkilo: state.henkilo,
+    omattiedot: state.omattiedot,
     L: state.l10n.localisations[state.locale],
+    ownOid: state.omattiedot.data.oid
 });
 
-export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto, aktivoiHenkilo})(UserContentContainer);
+export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto, aktivoiHenkilo, fetchOmattiedot, updateAnomusilmoitus})(UserContentContainer);
