@@ -10,8 +10,9 @@ import type {L} from "../../../../types/localisation.type";
 import {unlinkHenkilo, fetchHenkiloSlaves} from '../../../../actions/henkilo.actions';
 import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util'
+import HenkiloVarmentajaSuhde from "./HenkiloVarmentajaSuhde";
 
-type Props = {
+type LinkitetytHenkilotProps = {
     kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     henkilo: HenkiloState,
     L: L,
@@ -20,12 +21,24 @@ type Props = {
     oppija?: boolean,
 }
 
-class LinkitetytHenkilot extends React.Component<Props> {
-
+/**
+ * Henkilön linkitykset (duplikaattislave- ja varmentaja-suhteet)
+ */
+class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
     render() {
-        return <div>{this.props.henkilo.slaves.length
-            ? <LabelValueGroup valueGroup={this.valueGroup()} label={'HENKILO_LINKITETYT'}/>
-            : null}
+        return <div>
+            <React.Fragment>
+                {
+                    !!this.props.henkilo.slaves.length &&
+                    <LabelValueGroup valueGroup={this.valueGroup()} label={'HENKILO_LINKITETYT'}/>
+                }
+            </React.Fragment>
+            <HenkiloVarmentajaSuhde oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
+                                    type="henkiloVarmentajas"
+            />
+            <HenkiloVarmentajaSuhde oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
+                                    type="henkiloVarmennettavas"
+            />
         </div>;
     }
 
@@ -51,8 +64,8 @@ class LinkitetytHenkilot extends React.Component<Props> {
     }
 
     getLinkHref(oid) {
-        const url = this.props.oppija ? 'oppija' : 'virkailija'
-        return `/${url}/${oid}`
+        const url = this.props.oppija ? 'oppija' : 'virkailija';
+        return `/${url}/${oid}`;
     }
 
     async removeLink(masterOid, slaveOid) {
