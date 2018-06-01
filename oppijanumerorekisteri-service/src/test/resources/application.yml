@@ -19,8 +19,6 @@ oppijanumerorekisteri:
     enabled: false
   scheduling:
     enabled: false
-mock:
-  ldap: true
 cas:
   send-renew: false
   key: oppijanumerorekisteri-service

@@ -34,21 +34,13 @@ dev:
   username: user
   password: password
 cas:
-  ldap:
-    url: ldap://{{host_ldap}}/dc=opintopolku,dc=fi
-    managed-dn: {{ldap_manager_userdn}}
-    password: {{ldap_manager_password}}
-    user-search-base: ou=People
-    user-search-filter: (|(mail={0})(uid={0}))
-    group-search-base: ou=groups
-    group-search-filter: (uniqueMember={0})
-    group-role-attribute: cn
   service: https://{{host_virkailija}}/oppijanumerorekisteri-service
   send-renew: false
   key: oppijanumerorekisteri-service
 host:
   host-virkailija: {{host_virkailija}}
   host-cas: {{host_cas}}
+  host-alb: {{host_alb}}
 authentication:
   kayttooikeus:
     username: {{oppijanumerorekisteri_kayttooikeus_username}}
