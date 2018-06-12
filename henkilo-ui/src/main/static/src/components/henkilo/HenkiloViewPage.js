@@ -133,7 +133,7 @@ class HenkiloViewPage extends React.Component<Props> {
         )
     }
 
-    _parseRyhmaOptions() {
+    _parseRyhmaOptions(): Array<{label: string, value: string}> {
         return this.props.ryhmas ?
             this.props.ryhmas.ryhmas.map(ryhma => ({
                 label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',

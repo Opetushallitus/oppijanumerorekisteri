@@ -29,3 +29,14 @@ export type Organisaatio = {
     organisaatiotyypit: Array<string>,
     status: string
 }
+
+export type Ryhma = {
+    version: number,
+    parentOid: string,
+    parentOidPath: string,
+    alkuPvm: string,
+    lakkautusPvm: string,
+    kuvaus: {[string]: string},
+    ryhmatyypit: Array<string>,
+    kayttoryhmat: Array<string>
+}
