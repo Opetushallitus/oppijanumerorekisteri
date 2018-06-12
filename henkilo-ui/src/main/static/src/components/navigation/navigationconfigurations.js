@@ -8,6 +8,7 @@ export const mainNavigation: Array<Tab> = [
     {path: '/kutsulomake', label: 'NAVI_VIRKAILIJAN_KUTSUMINEN'},
     {path: '/henkilohaku', label: 'NAVI_HENKILOHAKU'},
     {path: '/oppija/luonti', label: 'NAVI_OPPIJAN_LUONTI', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
+    {path: '/oppijoidentuonti', label: 'NAVI_OPPIJOIDEN_TUONTI', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
 ];
 
 export const palvelukayttajaNavigation: Array<Tab> = [
