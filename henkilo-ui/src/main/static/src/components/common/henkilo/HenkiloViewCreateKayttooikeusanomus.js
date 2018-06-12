@@ -35,14 +35,14 @@ type Props = {
     locale: Locale,
     omattiedot: OmattiedotState,
     organisaatios: OrganisaatioState,
-    ryhmas: RyhmatState,
+    ryhmas?: RyhmatState,
     henkilo: HenkiloState,
     ryhmaOptions: Array<{label: string, value: string}>,
     kayttooikeusryhmat: Array<any>,
     fetchOrganisaatioKayttooikeusryhmat: (string) => void,
     createKayttooikeusanomus: (any) => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
-    addGlobalNotification: (GlobalNotificationConfig) => void
+    addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
 type State = {
@@ -360,7 +360,6 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         try {
             await this.props.createKayttooikeusanomus(anomusData);
         } catch (error) {
-            console.log('error');
             this.props.addGlobalNotification({
                 key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
                 type: NOTIFICATIONTYPES.ERROR,

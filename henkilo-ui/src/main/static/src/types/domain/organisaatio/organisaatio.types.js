@@ -31,6 +31,8 @@ export type Organisaatio = {
 }
 
 export type Ryhma = {
+    oid: string,
+    nimi: {[string]: string},
     version: number,
     parentOid: string,
     parentOidPath: string,

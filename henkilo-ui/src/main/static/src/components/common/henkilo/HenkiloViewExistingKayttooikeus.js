@@ -22,12 +22,13 @@ import {createKayttooikeusanomus} from "../../../actions/kayttooikeusryhma.actio
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 import {removeNotification} from '../../../actions/notifications.actions';
 import * as R from 'ramda';
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 type Props = {
     l10n: L10n,
     locale: Locale,
     oidHenkilo: string,
-    omattiedot?: {data: {oid: string}},
+    omattiedot: OmattiedotState,
     henkilo: HenkiloState,
     kayttooikeus: KayttooikeusRyhmaState,
     organisaatioCache: {[string]: {
