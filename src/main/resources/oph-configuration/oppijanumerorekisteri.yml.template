@@ -23,7 +23,7 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/authentication?ApplicationName=oppijanumerorekisteri-service
+    url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/{{postgresql_oppijanumerorekisteri_db | default('authentication')}}?ApplicationName=oppijanumerorekisteri-service
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
     hikari:
