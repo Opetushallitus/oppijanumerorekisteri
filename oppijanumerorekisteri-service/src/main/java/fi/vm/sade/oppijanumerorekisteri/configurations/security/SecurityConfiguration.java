@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
+import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
 import org.jasig.cas.client.session.SingleSignOutFilter;
@@ -9,10 +10,9 @@ import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.security.cas.ServiceProperties;
-import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
@@ -21,31 +21,21 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
-
-import java.util.Optional;
 
 @Profile("!dev")
 @Configuration
-@Import({LdapUserDetailsConfig.class, HttpMockedUserDetailsConfig.class})
 @EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CasProperties casProperties;
     private OphProperties ophProperties;
-
-    @Autowired(required = false)
-    private LdapUserDetailsService ldapUserDetailsService;
-
-    @Autowired(required = false)
-    private HttpMockedUserDetailsProvider fallbackUserDetailsService;
+    private Environment environment;
     
     @Autowired
-    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties) {
+    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, Environment environment) {
         this.casProperties = casProperties;
         this.ophProperties = ophProperties;
+        this.environment = environment;
     }
 
     @Bean
@@ -64,18 +54,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CasAuthenticationProvider casAuthenticationProvider() {
         CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
-        casAuthenticationProvider.setAuthenticationUserDetailsService(authenticationUserDetailsService());
+        String host = environment.getProperty("host.host-alb", "https://" + environment.getRequiredProperty("host.host-virkailija"));
+        casAuthenticationProvider.setUserDetailsService(new OphUserDetailsServiceImpl(host, "oppijanumerorekisteri"));
         casAuthenticationProvider.setServiceProperties(serviceProperties());
         casAuthenticationProvider.setTicketValidator(ticketValidator());
         casAuthenticationProvider.setKey(casProperties.getKey());
         return casAuthenticationProvider;
-    }
-
-    @Bean
-    public AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService() {
-        return (CasAssertionAuthenticationToken casAssertionAuthenticationToken)
-                -> Optional.<UserDetailsService>ofNullable(ldapUserDetailsService)
-                .orElse(fallbackUserDetailsService).loadUserByUsername(casAssertionAuthenticationToken.getName());
     }
 
     @Bean
