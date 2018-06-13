@@ -1,24 +1,35 @@
+// @flow
+
 import './Field.css';
 import React from 'react';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import OphSelect from '../select/OphSelect'
 import moment from 'moment';
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker'
 
-class Field extends React.Component {
-    static propTypes = {
-        readOnly: PropTypes.bool,
-        changeAction: PropTypes.func,
-        inputValue: PropTypes.string,
-        selectValue: PropTypes.string,
-        password: PropTypes.bool,
-        disabled: PropTypes.bool,
-        autofocus: PropTypes.bool,
-        placeholder: PropTypes.string,
-        isError: PropTypes.bool,
-    };
+type Props = {
+    readOnly: boolean,
+    changeAction: (any) => any,
+    inputValue: string,
+    selectValue?: string | boolean,
+    password?: boolean,
+    className?: string,
+    disabled?: boolean,
+    autofocus?: boolean,
+    placeholder?: string,
+    isError?: boolean,
+    data?: any,
+    date?: any,
+    children: any,
+    clearable?: boolean,
+}
+
+type State = {
+    readOnly: boolean
+}
+
+class Field extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
@@ -27,22 +38,27 @@ class Field extends React.Component {
     }
 
     render() {
-        const className = classNames({
+        const classNamesCreator = {
             'field': true,
-            [`${this.props.className}`]: this.props.className,
             'readOnly': this.props.readOnly,
             'oph-input': !this.props.readOnly && !this.props.data,
             'oph-input-has-error': this.props.isError,
-        });
+        };
+        if(this.props.className) {
+            classNamesCreator[this.props.className] = this.props.className
+        }
+        const className = classNames(classNamesCreator);
         return <span>{this.createField(className)}</span>;
     }
 
     createField(className) {
+
         const type = {type: this.props.password ? 'password' : 'text'};
+
         if (this.props.readOnly) {
             const value = this.props.date && this.props.children
                 ? moment(this.props.children).format()
-                : this.props.children
+                : this.props.children;
             return <span className={className}>{value}</span>;
         }
         if (this.props.data) {

@@ -2,7 +2,7 @@
 import {
     FETCH_OMATTIEDOT_REQUEST, FETCH_OMATTIEDOT_SUCCESS, FETCH_OMATTIEDOT_FAILURE,
     FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST, FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_CASME_SUCCESS
+    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_CASME_SUCCESS, UPDATE_ANOMUSILMOITUS
 } from '../actions/actiontypes';
 import {getOrganisaatioOptionsAndFilter} from "../utilities/organisaatio.util";
 import type {KayttooikeusOrganisaatiot} from "../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
@@ -16,12 +16,13 @@ export type OmattiedotState = {|
     +organisaatios: Array<any>,
     +casMeSuccess: boolean,
     +isAdmin: boolean,
+    +anomusilmoitus: boolean,
     +isOphVirkailija: boolean,
     +organisaatioOptions: Array<any>,
     +organisaatioOptionsFilter: Array<any>,
     +organisaatioRyhmaOptions: Array<any>,
     +organisaatioRyhmaFilter: Array<any>,
-    +organisaatiot: Array<KayttooikeusOrganisaatiot>
+    +organisaatiot: Array<KayttooikeusOrganisaatiot>,
 |}
 
 const initialState: OmattiedotState = {
@@ -29,6 +30,7 @@ const initialState: OmattiedotState = {
     data: undefined,
     isAdmin: false,
     isOphVirkailija: false,
+    anomusilmoitus: false,
     initialized: false,
     omattiedotOrganisaatiosLoading: false,
     organisaatios: [],
@@ -52,6 +54,7 @@ export const omattiedot = (state: OmattiedotState = initialState, action: any) =
                 isOphVirkailija: action.omattiedot.isMiniAdmin,
                 organisaatiot: action.omattiedot.organisaatiot,
                 initialized: true,
+                anomusilmoitus: action.omattiedot.anomusilmoitus
             };
         case FETCH_OMATTIEDOT_FAILURE:
             return Object.assign({}, state, { omattiedotLoading: false, initialized: true,});
@@ -72,6 +75,8 @@ export const omattiedot = (state: OmattiedotState = initialState, action: any) =
             return Object.assign({}, state, { omattiedotOrganisaatiosLoading: false } );
         case FETCH_CASME_SUCCESS:
             return Object.assign({}, state, {casMeSuccess: true});
+        case UPDATE_ANOMUSILMOITUS: 
+            return {...state, anomusilmoitus: action.value};
         default:
             return state;
     }

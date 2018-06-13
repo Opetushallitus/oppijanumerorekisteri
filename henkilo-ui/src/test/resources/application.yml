@@ -3,15 +3,6 @@ host:
   host-cas: localhost
   host-shibboleth: localhost
 cas:
-  ldap:
-    url: ldap://localhost
-    managed-dn: test
-    password: test
-    user-search-base: ou=Test
-    user-search-filter: (|(mail={0})(uid={0}))
-    group-search-base: ou=testgroups
-    group-search-filter: (uniqueMember={0})
-    group-role-attribute: cn
   service: http://localhost/kayttooikeus-service
   send-renew: false
   key: henkiloui-service

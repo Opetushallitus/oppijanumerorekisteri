@@ -8,10 +8,8 @@ import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.cas.ServiceProperties;
-import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
@@ -20,27 +18,20 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 
 @Profile("!dev")
 @Configuration
-@Import({LdapUserDetailsConfig.class})
 @EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CasProperties casProperties;
     private OphProperties ophProperties;
 
-    private LdapUserDetailsService ldapUserDetailsService;
-
     @Autowired
     public SecurityConfiguration(CasProperties casProperties,
-                                 OphProperties ophProperties,
-                                 LdapUserDetailsService ldapUserDetailsService) {
+                                 OphProperties ophProperties) {
         this.casProperties = casProperties;
         this.ophProperties = ophProperties;
-        this.ldapUserDetailsService = ldapUserDetailsService;
     }
 
     @Bean
@@ -59,17 +50,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CasAuthenticationProvider casAuthenticationProvider() {
         CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
-        casAuthenticationProvider.setAuthenticationUserDetailsService(authenticationUserDetailsService());
+        casAuthenticationProvider.setUserDetailsService(new EmptyUserDetailsServiceImpl());
         casAuthenticationProvider.setServiceProperties(serviceProperties());
         casAuthenticationProvider.setTicketValidator(cas20ServiceTicketValidator());
         casAuthenticationProvider.setKey(casProperties.getKey());
         return casAuthenticationProvider;
-    }
-
-    @Bean
-    public AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService() {
-        return (CasAssertionAuthenticationToken casAssertionAuthenticationToken)
-                -> ldapUserDetailsService.loadUserByUsername(casAssertionAuthenticationToken.getName());
     }
 
     @Bean

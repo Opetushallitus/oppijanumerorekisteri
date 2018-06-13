@@ -8,7 +8,6 @@ import Kutsumanimi from "../labelvalues/Kutsumanimi";
 import Oppijanumero from "../labelvalues/Oppijanumero";
 import Asiointikieli from "../labelvalues/Asiointikieli";
 import EditButton from "../buttons/EditButton";
-import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {L} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
@@ -21,6 +20,9 @@ import Hetu from "../labelvalues/Hetu";
 import Kansalaisuus from "../labelvalues/Kansalaisuus";
 import Aidinkieli from "../labelvalues/Aidinkieli";
 import Sukupuoli from "../labelvalues/Sukupuoli";
+import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
+import AnomusIlmoitus from "../labelvalues/AnomusIlmoitus";
+import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 
 type Props = {
     readOnly: boolean,
@@ -29,7 +31,7 @@ type Props = {
     updateModelAction: () => void,
     updateDateAction: () => void,
     edit: () => void,
-    henkiloUpdate: Henkilo,
+    henkiloUpdate: any,
     henkilo: HenkiloState,
     koodisto: any,
     L: L,
@@ -37,21 +39,18 @@ type Props = {
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
     oidHenkilo: string,
-    ownOid: string,
-    isValidForm: boolean
+    isValidForm: boolean,
+    omattiedot: OmattiedotState
 }
 
-type State = {
-
-}
-
-class VirkailijaUserContent extends React.Component<Props, State> {
+class OmattiedotUserContent extends React.Component<Props> {
     render() {
         return this.props.henkilo.henkiloLoading
         || this.props.henkilo.kayttajatietoLoading
         || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading
+        || this.props.omattiedot.omattiedotLoading
             ? <Loader />
             : <AbstractUserContent
                 readOnly={this.props.readOnly}
@@ -69,7 +68,11 @@ class VirkailijaUserContent extends React.Component<Props, State> {
             updateModelFieldAction: this.props.updateModelAction,
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
+            henkilo: this.props.henkilo,
+            omattiedot: this.props.omattiedot
         };
+
+        const showAnomusIlmoitus = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'KAYTTOOIKEUS_REKISTERINPITAJA']);
 
         // Basic info box content
         return [
@@ -91,10 +94,8 @@ class VirkailijaUserContent extends React.Component<Props, State> {
                 <Asiointikieli {...props} />,
             ],
             [
-                <Kayttajanimi
-                    {...props}
-                    disabled={true}
-                />,
+                <Kayttajanimi {...props} disabled={true} />,
+                showAnomusIlmoitus ? <AnomusIlmoitus {...props} /> : null
             ],
         ];
     };
@@ -109,7 +110,7 @@ class VirkailijaUserContent extends React.Component<Props, State> {
                 disabled={duplicate || passivoitu}
             />,
             <PasswordButton
-                oidHenkilo={this.props.ownOid}
+                oidHenkilo={this.props.omattiedot.data.oid}
                 styles={{top: '3rem', left: '0', width: '18rem'}}
                 disabled={duplicate || passivoitu}
             />,
@@ -126,8 +127,8 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
-    ownOid: state.omattiedot.data.oid,
+    omattiedot: state.omattiedot
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(VirkailijaUserContent);
+export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(OmattiedotUserContent);
 
