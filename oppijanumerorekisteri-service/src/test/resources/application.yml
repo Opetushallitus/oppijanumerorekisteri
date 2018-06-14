@@ -22,3 +22,5 @@ oppijanumerorekisteri:
 cas:
   send-renew: false
   key: oppijanumerorekisteri-service
+  proxy:
+    enabled: true
