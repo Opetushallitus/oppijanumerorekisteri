@@ -59,6 +59,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         KoodiValidator validator = new KoodiValidator(koodistoService, errors);
         validateSukupuoli(dto, validator);
         validateKotikunta(dto, validator);
+        validateAidinkieli(dto, validator);
         validateKansalaisuus(dto, validator);
         validateYhteystiedot(dto, validator);
     }
@@ -82,6 +83,14 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     private void validateKotikunta(HenkiloUpdateDto dto, KoodiValidator validator) {
         validator.validate(Koodisto.KUNTA, dto.getKotikunta(), "kotikunta", "invalid.kotikunta");
+    }
+
+    private void validateAidinkieli(HenkiloUpdateDto dto, KoodiValidator validator) {
+        if (dto.getAidinkieli() != null) {
+            validator.validate(Koodisto.KIELI, dto.getAidinkieli().getKieliKoodi(),
+                    String::toLowerCase, // koodistossa koodiarvot ovat virheellisesti isoilla kirjaimilla
+                    "aidinkieli.kieliKoodi", "invalid.aidinkieli");
+        }
     }
 
     private void validateKansalaisuus(HenkiloUpdateDto dto, KoodiValidator validator) {

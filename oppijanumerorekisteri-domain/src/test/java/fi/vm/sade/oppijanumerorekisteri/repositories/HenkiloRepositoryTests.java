@@ -131,7 +131,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 "fi", "suomi", "246", null, null, syntymaaika, luontiMuokkausPvm);
         Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
-        persistedHenkilo.getAidinkieli().setHenkilos(Collections.singleton(persistedHenkilo));
         this.testEntityManager.persist(persistedHenkilo.getAsiointiKieli());
         persistedHenkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persist(kansalaisuus));
         this.testEntityManager.persist(persistedHenkilo);

@@ -1,7 +1,7 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="ehcache.xsd">
     <cache name="koodistot"
-           maxEntriesLocalHeap="5"
+           maxEntriesLocalHeap="10"
            timeToLiveSeconds="300">
     </cache>
 </ehcache>

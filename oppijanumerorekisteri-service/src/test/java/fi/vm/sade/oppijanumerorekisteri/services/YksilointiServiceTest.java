@@ -84,8 +84,8 @@ public class YksilointiServiceTest {
                 kayttooikeusClientMock,
                 oppijanumerorekisteriProperties);
 
-        when(kielisyysRepository.findByKieliKoodi(anyString()))
-                .thenReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
+        when(kielisyysRepository.findOrCreateByKoodi(anyString()))
+                .thenAnswer(invocation -> new Kielisyys(invocation.getArgument(0)));
         doAnswer(AdditionalAnswers.returnsFirstArg()).when(kielisyysRepository).save(any(Kielisyys.class));
         when(kansalaisuusRepository.findOrCreate(anyString()))
                 .thenReturn(EntityUtils.createKansalaisuus("246"));

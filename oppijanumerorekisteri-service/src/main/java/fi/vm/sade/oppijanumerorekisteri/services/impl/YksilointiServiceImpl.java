@@ -237,7 +237,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .ifPresent(kansalaisuusKoodis -> kansalaisuusKoodis.forEach(yksilointitieto::addKansalaisuus));
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
-                .map(this::findOrCreateKielisyys)
+                .map(kielisyysRepository::findOrCreateByKoodi)
                 .ifPresent(yksilointitieto::setAidinkieli);
 
         yksilointitieto.clearYhteystiedotRyhma();
@@ -265,11 +265,6 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .filter(kansalaisuusKoodi ->
                         isKansalaisuusKoodiValid(Collections.singletonList(kansalaisuusKoodi)))
                 .map(kansalaisuusRepository::findOrCreate).collect(Collectors.toSet());
-    }
-
-    private Kielisyys findOrCreateKielisyys(final String kieliKoodi) {
-        return kielisyysRepository.findByKieliKoodi(kieliKoodi)
-                .orElseGet(() -> kielisyysRepository.save(Kielisyys.builder().kieliKoodi(kieliKoodi).build()));
     }
 
     private Set<YhteystiedotRyhma> addYhteystiedot(YksiloityHenkilo yksiloityHenkilo, Kielisyys asiointiKieli) {
@@ -334,7 +329,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
-                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(findOrCreateKielisyys(kieliKoodi)));
+                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(kielisyysRepository.findOrCreateByKoodi(kieliKoodi)));
 
         henkilo.setTurvakielto(yksiloityHenkilo.isTurvakielto());
         henkilo.setSyntymaaika(HetuUtils.dateFromHetu(yksiloityHenkilo.getHetu()));

@@ -3,10 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
-@EqualsAndHashCode(callSuper = false, exclude = "henkilos")
+@EqualsAndHashCode(callSuper = false)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,12 +17,12 @@ public class Kielisyys extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = -2129513559888443220L;
 
     @Column(name = "kielikoodi")
-    private String kieliKoodi;
+    private String kieliKoodi; // koodisto 'kieli'
 
     @Column(name = "kielityyppi")
     private String kieliTyyppi;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "kielisyys")
-    private Set<Henkilo> henkilos = new HashSet<>();
-
+    public Kielisyys(String kieliKoodi) {
+        this.kieliKoodi = kieliKoodi;
+    }
 }
