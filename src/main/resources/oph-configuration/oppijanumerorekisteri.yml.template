@@ -27,9 +27,9 @@ spring:
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
     hikari:
-      maximum-pool-size: 20
-      connection-timeout: 10000
-      max-lifetime: 900000
+      maximum-pool-size: {{postgresql_oppijanumerorekisteri_maximum_pool_size | default('20')}}
+      connection-timeout: {{postgresql_oppijanumerorekisteri_connection_timeout | default('10000')}}
+      max-lifetime: {{postgresql_oppijanumerorekisteri_max_lifetime | default('900000')}}
 dev:
   username: user
   password: password
