@@ -33,3 +33,6 @@ logging:
     fi.vm.sade.auditlog.Audit: info
     fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
     org.apache.http.client.protocol.ResponseProcessCookies: error
+cas:
+  proxy:
+    enabled: false
