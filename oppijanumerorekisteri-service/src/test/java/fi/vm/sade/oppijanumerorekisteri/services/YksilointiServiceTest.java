@@ -54,7 +54,6 @@ public class YksilointiServiceTest {
     @Before
     public void setup() {
         this.vtjClient = new MockVtjClient();
-        MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
         kayttooikeusClientMock = mock(KayttooikeusClient.class);
         OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
 
@@ -66,6 +65,7 @@ public class YksilointiServiceTest {
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         this.yksilointiService = new YksilointiServiceImpl(mock(DuplicateService.class),
+                mock(KoodistoService.class),
                 henkiloRepository,
                 henkiloService,
                 henkiloModificationService,
@@ -80,7 +80,6 @@ public class YksilointiServiceTest {
                 mock(AsiayhteysKayttooikeusRepository.class),
                 mock(OrikaConfiguration.class),
                 this.vtjClient,
-                mockKoodistoClient,
                 kayttooikeusClientMock,
                 oppijanumerorekisteriProperties);
 

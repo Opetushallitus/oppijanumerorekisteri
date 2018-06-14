@@ -24,6 +24,15 @@ public class KoodiValidator {
         this.errors = errors;
     }
 
+    public static boolean isValid(KoodistoService koodistoService, Koodisto koodisto, String koodi) {
+        return isValid(koodistoService, koodisto, koodi, identity());
+    }
+
+    public static boolean isValid(KoodistoService koodistoService, Koodisto koodisto, String koodi, Function<String, String> koodiArvoMapper) {
+        Iterable<KoodiType> koodit = koodistoService.list(koodisto);
+        return stream(koodit.spliterator(), false).anyMatch(t -> koodiArvoMapper.apply(t.getKoodiArvo()).equals(koodi));
+    }
+
     public void validate(Koodisto koodisto, String koodi, String field, String errorCode) {
         validate(koodisto, koodi, identity(), field, errorCode);
     }
@@ -32,9 +41,7 @@ public class KoodiValidator {
         if (koodi == null) {
             return;
         }
-        Iterable<KoodiType> koodit = koodistoService.list(koodisto);
-        if (stream(koodit.spliterator(), false)
-                .noneMatch(t -> koodiArvoMapper.apply(t.getKoodiArvo()).equals(koodi))) {
+        if (!isValid(koodistoService, koodisto, koodi, koodiArvoMapper)) {
             errors.rejectValue(field, errorCode, new Object[]{koodi}, "Tuntematon koodiston '" + koodisto.getUri() + "' koodi " + koodi);
         }
     }
