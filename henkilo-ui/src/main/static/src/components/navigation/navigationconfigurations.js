@@ -3,10 +3,28 @@
 import type {NaviTab} from "../../types/navigation.type";
 
 export const mainNavigation: Array<NaviTab> = [
-    {path: '/anomukset', label: 'NAVI_KAYTTOOIKEUSANOMUKSET'},
-    {path: '/kutsutut', label: 'NAVI_KUTSUTUT'},
-    {path: '/kutsulomake', label: 'NAVI_VIRKAILIJAN_KUTSUMINEN'},
-    {path: '/henkilohaku', label: 'NAVI_HENKILOHAKU'},
+    {path: '/anomukset', label: 'NAVI_KAYTTOOIKEUSANOMUKSET', sallitutRoolit: [
+        'OPPIJANUMEROREKISTERI_READ',
+        'OPPIJANUMEROREKISTERI_HENKILON_RU',
+        'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+        'KAYTTOOIKEUS_READ',
+        'KAYTTOOIKEUS_CRUD',
+    ]},
+    {path: '/kutsutut', label: 'NAVI_KUTSUTUT', sallitutRoolit: [
+        'KAYTTOOIKEUS_READ',
+        'KAYTTOOIKEUS_CRUD',
+    ]},
+    {path: '/kutsulomake', label: 'NAVI_VIRKAILIJAN_KUTSUMINEN', sallitutRoolit: [
+        'KAYTTOOIKEUS_READ',
+        'KAYTTOOIKEUS_CRUD',
+    ]},
+    {path: '/henkilohaku', label: 'NAVI_HENKILOHAKU', sallitutRoolit: [
+        'OPPIJANUMEROREKISTERI_READ',
+        'OPPIJANUMEROREKISTERI_HENKILON_RU',
+        'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+        'KAYTTOOIKEUS_READ',
+        'KAYTTOOIKEUS_CRUD',
+    ]},
     {path: '/oppija/luonti', label: 'NAVI_OPPIJAN_LUONTI', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
     {path: '/oppijoidentuonti', label: 'NAVI_OPPIJOIDEN_TUONTI', sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']},
 ];
