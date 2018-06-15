@@ -57,9 +57,9 @@ public class HenkiloCreatePostValidator implements Validator {
         koodiValidator.validate(Koodisto.KUNTA, henkilo.getKotikunta(), "kotikunta", "invalid.kotikunta");
 
         if (henkilo.getAidinkieli() != null) {
-            koodiValidator.validate(Koodisto.KIELI, henkilo.getAidinkieli().getKieliKoodi(),
+            koodiValidator.validate(Koodisto.KIELI,
                     String::toLowerCase, // koodistossa koodiarvot ovat virheellisesti isoilla kirjaimilla
-                    "aidinkieli.kieliKoodi", "invalid.aidinkieli");
+                    henkilo.getAidinkieli().getKieliKoodi(),  "aidinkieli.kieliKoodi", "invalid.aidinkieli");
         }
 
         Set<Kansalaisuus> kansalaisuusSet = henkilo.getKansalaisuus();

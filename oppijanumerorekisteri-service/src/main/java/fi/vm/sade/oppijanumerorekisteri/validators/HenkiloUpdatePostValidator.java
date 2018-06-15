@@ -87,9 +87,9 @@ public class HenkiloUpdatePostValidator implements Validator {
 
     private void validateAidinkieli(HenkiloUpdateDto dto, KoodiValidator validator) {
         if (dto.getAidinkieli() != null) {
-            validator.validate(Koodisto.KIELI, dto.getAidinkieli().getKieliKoodi(),
+            validator.validate(Koodisto.KIELI,
                     String::toLowerCase, // koodistossa koodiarvot ovat virheellisesti isoilla kirjaimilla
-                    "aidinkieli.kieliKoodi", "invalid.aidinkieli");
+                    dto.getAidinkieli().getKieliKoodi(), "aidinkieli.kieliKoodi", "invalid.aidinkieli");
         }
     }
 

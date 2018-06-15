@@ -25,23 +25,23 @@ public class KoodiValidator {
     }
 
     public static boolean isValid(KoodistoService koodistoService, Koodisto koodisto, String koodi) {
-        return isValid(koodistoService, koodisto, koodi, identity());
+        return isValid(koodistoService, koodisto, identity(), koodi);
     }
 
-    public static boolean isValid(KoodistoService koodistoService, Koodisto koodisto, String koodi, Function<String, String> koodiArvoMapper) {
+    public static boolean isValid(KoodistoService koodistoService, Koodisto koodisto, Function<String, String> koodiArvoMapper, String koodi) {
         Iterable<KoodiType> koodit = koodistoService.list(koodisto);
         return stream(koodit.spliterator(), false).anyMatch(t -> koodiArvoMapper.apply(t.getKoodiArvo()).equals(koodi));
     }
 
     public void validate(Koodisto koodisto, String koodi, String field, String errorCode) {
-        validate(koodisto, koodi, identity(), field, errorCode);
+        validate(koodisto, identity(), koodi, field, errorCode);
     }
 
-    public void validate(Koodisto koodisto, String koodi, Function<String, String> koodiArvoMapper, String field, String errorCode) {
+    public void validate(Koodisto koodisto, Function<String, String> koodiArvoMapper, String koodi, String field, String errorCode) {
         if (koodi == null) {
             return;
         }
-        if (!isValid(koodistoService, koodisto, koodi, koodiArvoMapper)) {
+        if (!isValid(koodistoService, koodisto, koodiArvoMapper, koodi)) {
             errors.rejectValue(field, errorCode, new Object[]{koodi}, "Tuntematon koodiston '" + koodisto.getUri() + "' koodi " + koodi);
         }
     }
