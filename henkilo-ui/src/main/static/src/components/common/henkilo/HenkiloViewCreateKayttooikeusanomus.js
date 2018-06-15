@@ -1,11 +1,11 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
 import * as R from 'ramda';
-import {ShowText} from '../../common/ShowText';
 import IconButton from '../button/IconButton';
 import CrossCircleIcon from '../icons/CrossCircleIcon';
 import EmailSelect from './select/EmailSelect';
@@ -16,24 +16,50 @@ import {
     createKayttooikeusanomus,
     fetchOrganisaatioKayttooikeusryhmat
 } from "../../../actions/kayttooikeusryhma.actions";
+import {addGlobalNotification} from "../../../actions/notification.actions";
 import {OrganisaatioSelectModal} from "../select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
-import {locale} from "../../../reducers/locale.reducer";
+import {LocalNotification} from "../Notification/LocalNotification";
+import type {L10n} from "../../../types/localisation.type";
+import type {Locale} from "../../../types/locale.type";
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
+import type {OrganisaatioState} from "../../../reducers/organisaatio.reducer";
+import type {RyhmatState} from "../../../reducers/ryhmat.reducer";
+import type {HenkiloState} from "../../../reducers/henkilo.reducer";
+import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
 
-class HenkiloViewCreateKayttooikeusanomus extends React.Component {
+type Props = {
+    l10n: L10n,
+    locale: Locale,
+    omattiedot: OmattiedotState,
+    organisaatios: OrganisaatioState,
+    ryhmas?: RyhmatState,
+    henkilo: HenkiloState,
+    ryhmaOptions: Array<{label: string, value: string}>,
+    kayttooikeusryhmat: Array<any>,
+    fetchOrganisaatioKayttooikeusryhmat: (string) => void,
+    createKayttooikeusanomus: (any) => void,
+    fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
+    addGlobalNotification: (GlobalNotificationConfig) => any
+}
 
-    static propTypes = {
-        l10n: PropTypes.object.isRequired,
-        locale: PropTypes.string.isRequired,
-        omattiedot: PropTypes.object.isRequired,
-        organisaatios: PropTypes.object.isRequired,
-        ryhmas: PropTypes.object.isRequired,
-        henkilo: PropTypes.object.isRequired,
-        ryhmaOptions: PropTypes.array.isRequired,
-        kayttooikeusryhmat: PropTypes.array.isRequired,
-        fetchOrganisaatioKayttooikeusryhmat: PropTypes.func.isRequired
-    };
+type State = {
+    organisaatioSelection: string,
+    organisaatioSelectionName: string,
+    ryhmaSelection: string,
+    kayttooikeusryhmaSelections: Array<any>,
+    perustelut: string,
+    emailOptions: {
+        emailSelection?: any,
+        missingEmail: boolean,
+        showMissingEmailNotification: boolean,
+        options?: any
+    }
+}
+
+class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
@@ -44,27 +70,12 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
             ryhmaSelection: '',
             kayttooikeusryhmaSelections: [],
             perustelut: '',
-            emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(props.henkilo),
+            emailOptions: this.createEmailOptions(props.henkilo),
         };
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(nextProps.henkilo)});
-    }
-
-    static createEmailOptions(henkilo) {
-        const emailOptions = HenkiloViewCreateKayttooikeusanomus._parseEmailOptions(henkilo);
-        if (emailOptions.length === 1) {
-            return {
-                emailSelection: emailOptions[0].value,
-                missingEmail: false,
-                showMissingEmailNotification: false
-            };
-        }
-        else if (emailOptions.length > 1) {
-            return {missingEmail: false, showMissingEmailNotification: false, emailSelection: '', options: emailOptions};
-        }
-        return {missingEmail: true, showMissingEmailNotification: true};
+        this.setState({emailOptions: this.createEmailOptions(nextProps.henkilo)});
     }
 
     render() {
@@ -192,6 +203,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
                               id="perustelut"
                               cols="30"
                               rows="10"
+                              placeholder={L['OMATTIEDOT_PERUSTELU_VIRHE']}
                               disabled={this.state.emailOptions.missingEmail} />
                         </div>
                     </div>
@@ -201,15 +213,22 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
                         <div className="oph-input-container">
                             <div className="anomus-button">
                                 <Button action={this._createKayttooikeusAnomus.bind(this)}
-                                        disabled={!this._isAnomusButtonDisabled()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
+                                        disabled={!this.validAnomusForm()}>{L['OMATTIEDOT_HAE_BUTTON']}</Button>
                             </div>
-                            <div className="anomus-requirements">
-                                <ShowText show={!this._validOrganisaatioOrRyhmaSelection()}><p>
-                                    !{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</p></ShowText>
-                                <ShowText show={this.state.emailOptions && this.state.emailOptions.length > 1 && !this._validEmailSelection()}><p>!{L['OMATTIEDOT_VAATIMUS_EMAIL']}</p>
-                                </ShowText>
-                                <ShowText show={!this._validKayttooikeusryhmaSelection()}><p>
-                                    !{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</p></ShowText>
+
+                            <div className="anomus-form-errors flex-horizontal">
+                                <div className="flex-item-1">
+                                    <LocalNotification title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
+                                                       toggle={!this.validAnomusForm()}
+                                                       type={NOTIFICATIONTYPES.WARNING}>
+                                        <ul>
+                                            {!this._validOrganisaatioOrRyhmaSelection() ? <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li> : null}
+                                            {!this._validKayttooikeusryhmaSelection() ? <li>{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</li> : null}
+                                            {!this._validEmailSelection() ? <li>{L['OMATTIEDOT_VAATIMUS_EMAIL']}</li> : null}
+                                            {!this.validPerustelu() ? <li>{L['OMATTIEDOT_PERUSTELU_VIRHE']}</li> : null}
+                                        </ul>
+                                    </LocalNotification>
+                                </div>
                             </div>
                         </div>
 
@@ -217,6 +236,21 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
 
                 </div>
             </div>);
+    }
+
+    createEmailOptions(henkilo) {
+        const emailOptions = this._parseEmailOptions(henkilo);
+        if (emailOptions.length === 1) {
+            return {
+                emailSelection: emailOptions[0].value,
+                missingEmail: false,
+                showMissingEmailNotification: false
+            };
+        }
+        else if (emailOptions.length > 1) {
+            return {missingEmail: false, showMissingEmailNotification: false, emailSelection: '', options: emailOptions};
+        }
+        return {missingEmail: true, showMissingEmailNotification: true};
     }
 
     _changeEmail(value) {
@@ -242,10 +276,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
     }
 
-    _isAnomusButtonDisabled() {
+    validAnomusForm() {
         return this._validOrganisaatioOrRyhmaSelection() &&
             this._validKayttooikeusryhmaSelection() &&
-            this._validEmailSelection();
+            this._validEmailSelection() &&
+            this.validPerustelu();
     }
 
     _validOrganisaatioOrRyhmaSelection() {
@@ -257,12 +292,16 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
     }
 
     _validEmailSelection() {
-        return this.state.emailSelection !== '' && !this.state.emailOptions.missingEmail;
+        return this.state.emailOptions && this.state.emailOptions.emailSelection !== '' && !this.state.emailOptions.missingEmail;
+    }
+
+    validPerustelu() {
+        return this.state.perustelut === undefined || this.state.perustelut.length <= 255;
     }
 
     _parseOrganisaatioSelectOptions(organisaatioState) {
         return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia && organisaatioState.organisaatioHierarkia.organisaatiot.length > 0 ?
-            organisaatioHierarkiaToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia.organisaatiot, locale) : [];
+            organisaatioHierarkiaToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia.organisaatiot, this.props.locale) : [];
     }
 
     _resetAnomusFormFields() {
@@ -272,11 +311,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
             ryhmaSelection: '',
             kayttooikeusryhmaSelections: [],
             perustelut: '',
-            emailOptions: HenkiloViewCreateKayttooikeusanomus.createEmailOptions(this.props.henkilo),
+            emailOptions: this.createEmailOptions(this.props.henkilo),
         });
     }
 
-    static _parseEmailOptions(henkilo) {
+    _parseEmailOptions(henkilo): Array<{value: string, label: string}> {
         let emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
@@ -288,7 +327,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
             });
         }
 
-        return emails.map(email => ({value: email, label: email}));
+        return emails.map(email => ({value: email || '', label: email || ''}));
     };
 
     _addKayttooikeusryhmaSelection(kayttooikeusryhma) {
@@ -318,15 +357,23 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component {
             kayttooikeusRyhmaIds,
             anojaOid: this.props.omattiedot.data.oid
         };
-        await this.props.createKayttooikeusanomus(anomusData);
+        try {
+            await this.props.createKayttooikeusanomus(anomusData);
+        } catch (error) {
+            this.props.addGlobalNotification({
+                key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
+                type: NOTIFICATIONTYPES.ERROR,
+                title: this.props.l10n[this.props.locale]['OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS'],
+                autoClose: 10000
+            });
+            throw error;
+        }
         this._resetAnomusFormFields();
         this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.omattiedot.data.oid);
     }
 
 }
 
-const mapStateToProps = state => ({
 
-});
 
-export default connect(mapStateToProps, {fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus})(HenkiloViewCreateKayttooikeusanomus);
+export default connect(() => ({}), {fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus, addGlobalNotification})(HenkiloViewCreateKayttooikeusanomus);

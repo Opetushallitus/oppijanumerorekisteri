@@ -46,3 +46,7 @@
     border: 1px solid #aeaeae;
     border-top: none;
 }
+
+.anomus-form-errors {
+    margin-top: 20px;
+}
