@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
@@ -42,6 +43,8 @@ public class YksilointiServiceTest {
 
     private HenkiloModificationService henkiloModificationService;
 
+    private KoodistoService koodistoService;
+
     private YksilointitietoRepository yksilointitietoRepository;
 
     private YksilointivirheRepository yksilointivirheRepository;
@@ -60,12 +63,13 @@ public class YksilointiServiceTest {
         henkiloRepository = mock(HenkiloRepository.class);
         henkiloService = mock(HenkiloService.class);
         henkiloModificationService = mock(HenkiloModificationService.class);
+        koodistoService = mock(KoodistoService.class);
         yksilointitietoRepository = mock(YksilointitietoRepository.class);
         yksilointivirheRepository = mock(YksilointivirheRepository.class);
         KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
         KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
         this.yksilointiService = new YksilointiServiceImpl(mock(DuplicateService.class),
-                mock(KoodistoService.class),
+                koodistoService,
                 henkiloRepository,
                 henkiloService,
                 henkiloModificationService,
@@ -83,6 +87,8 @@ public class YksilointiServiceTest {
                 kayttooikeusClientMock,
                 oppijanumerorekisteriProperties);
 
+        when(koodistoService.list(eq(Koodisto.KIELI)))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FI").koodi("SV").build());
         when(kielisyysRepository.findOrCreateByKoodi(anyString()))
                 .thenAnswer(invocation -> new Kielisyys(invocation.getArgument(0)));
         doAnswer(AdditionalAnswers.returnsFirstArg()).when(kielisyysRepository).save(any(Kielisyys.class));

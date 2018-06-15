@@ -239,6 +239,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .ifPresent(kansalaisuusKoodis -> kansalaisuusKoodis.forEach(yksilointitieto::addKansalaisuus));
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
+                .filter(koodi -> KoodiValidator.isValid(koodistoService, Koodisto.KIELI, koodi, String::toLowerCase))
                 .map(kielisyysRepository::findOrCreateByKoodi)
                 .ifPresent(yksilointitieto::setAidinkieli);
 
@@ -331,6 +332,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
+                .filter(koodi -> KoodiValidator.isValid(koodistoService, Koodisto.KIELI, koodi, String::toLowerCase))
                 .ifPresent(kieliKoodi -> henkilo.setAidinkieli(kielisyysRepository.findOrCreateByKoodi(kieliKoodi)));
 
         henkilo.setTurvakielto(yksiloityHenkilo.isTurvakielto());
