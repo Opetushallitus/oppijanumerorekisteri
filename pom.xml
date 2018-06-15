@@ -47,11 +47,8 @@
         <!-- querydsl metadata generation plugin -->
         <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
 
-        <!-- schema.ddl generation plugin and ant-run plugin to move the .ddl -->
+        <!-- schema.ddl generation plugin -->
         <hibernate-maven-plugin.version>2.1.1</hibernate-maven-plugin.version>
-        <ant-contrib.version>20020829</ant-contrib.version>
-        <jsch.version>0.1.54</jsch.version>
-        <ant-jsch.version>1.9.9</ant-jsch.version>
 
         <!-- DB. These are updated in spring-boot 2 -->
         <postgresql.version>42.2.1</postgresql.version>
