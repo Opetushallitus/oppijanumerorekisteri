@@ -2,12 +2,13 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.MockKoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
 import org.junit.After;
 import org.junit.Before;
@@ -59,10 +60,9 @@ public class IdentificationServiceIntegrationTest {
     public void setup() {
         this.mockVtjClient = new MockVtjClient();
         this.mockVtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
-        MockKoodistoClient mockKoodistoClient = new MockKoodistoClient();
 
-        given(this.koodistoClient.getKoodiValuesForKoodisto(anyString(), anyInt(), anyBoolean()))
-                .willReturn(mockKoodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 0, true));
+        given(this.koodistoClient.getKoodisForKoodisto(anyString(), anyInt(), anyBoolean()))
+                .willReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("752").koodi("246").build());
     }
 
     @After
@@ -72,9 +72,8 @@ public class IdentificationServiceIntegrationTest {
 
     @Test
     public void identifyHenkilos() {
-        @SuppressWarnings("unchecked")
         List<Henkilo> unidentifiedHenkilos = this.entityManager
-                .createNativeQuery("SELECT * FROM henkilo", Henkilo.class).getResultList();
+                .createQuery("SELECT h FROM Henkilo h", Henkilo.class).getResultList();
 
         given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
         given(this.vtjClient.fetchHenkilo("010101-123N"))
@@ -82,10 +81,10 @@ public class IdentificationServiceIntegrationTest {
 
         this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
 
-        Henkilo notFoundVtjResult = (Henkilo)this.entityManager
-                .createNativeQuery("SELECT * FROM henkilo WHERE hetu = '111111-1235'", Henkilo.class).getSingleResult();
-        Henkilo everythingOkResult = (Henkilo)this.entityManager
-                .createNativeQuery("SELECT * FROM henkilo WHERE hetu = '010101-123N'", Henkilo.class).getSingleResult();
+        Henkilo notFoundVtjResult = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.hetu = '111111-1235'", Henkilo.class).getSingleResult();
+        Henkilo everythingOkResult = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.hetu = '010101-123N'", Henkilo.class).getSingleResult();
 
         assertThat(everythingOkResult.isYksiloityVTJ()).isTrue();
         assertThat(everythingOkResult.getKutsumanimi()).isEqualTo("Teppo");

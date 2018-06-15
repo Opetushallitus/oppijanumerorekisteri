@@ -6,6 +6,4 @@ import java.util.List;
 
 public interface KoodistoClient {
     List<KoodiType> getKoodisForKoodisto(String koodistoUri, int koodistoVersio, boolean onlyValidKoodis);
-
-    List<String> getKoodiValuesForKoodisto(String koodistoUri, int koodistoVersion, boolean onlyValidKoodis);
 }
