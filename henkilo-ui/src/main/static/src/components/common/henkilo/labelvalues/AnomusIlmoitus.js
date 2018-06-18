@@ -20,7 +20,6 @@ class AnomusIlmoitus extends React.Component<Props> {
         return <LabelValue updateModelFieldAction={this.props.updateModelFieldAction}
                            values={{
                                 label: 'HENKILO_ANOMUSILMOITUKSET',
-                                value: this.props.omattiedot.anomusilmoitus ? this.props.L['HENKILO_YHTEISET_KYLLA'] : this.props.L['HENKILO_YHTEISET_EI'],
                                 inputValue: 'anomusilmoitus',
                                 readOnly: this.props.readOnly,
                                 selectValue: this.props.henkiloUpdate.anomusilmoitus,

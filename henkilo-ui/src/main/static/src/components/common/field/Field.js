@@ -56,10 +56,7 @@ class Field extends React.Component<Props, State> {
         const type = {type: this.props.password ? 'password' : 'text'};
 
         if (this.props.readOnly) {
-            const value = this.props.date && this.props.children
-                ? moment(this.props.children).format()
-                : this.props.children;
-            return <span className={className}>{value}</span>;
+            return <span className={className}>{this.getReadOnlyValue()}</span>;
         }
         if (this.props.data) {
             return <OphSelect
@@ -93,6 +90,16 @@ class Field extends React.Component<Props, State> {
                       placeholder={this.props.placeholder}
                       disabled={this.props.disabled}
         />;
+    }
+
+    getReadOnlyValue() {
+        if (this.props.data) {
+            const selected = this.props.data.find(item => item.value === this.props.selectValue)
+            return selected ? selected.label : null
+        }
+        return this.props.date && this.props.children
+            ? moment(this.props.children).format()
+            : this.props.children;
     }
 }
 
