@@ -172,8 +172,10 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _discard() {
+        const henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)) // deep copy
+        henkiloUpdate.anomusilmoitus = this.props.omattiedot && this.props.omattiedot.anomusilmoitus
         this.setState({
-            henkiloUpdate: JSON.parse(JSON.stringify(this.props.henkilo.henkilo)), // deep copy
+            henkiloUpdate: henkiloUpdate,
             readOnly: true,
         });
     }
