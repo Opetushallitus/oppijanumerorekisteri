@@ -72,7 +72,7 @@ class MasterHenkilo extends React.Component<Props> {
 }
 
 const mapStateToProps = (state) => {
-        return {
+    return {
         l10n: state.l10n.localisations,
         locale: state.locale,
         L: state.l10n.localisations[state.locale],
