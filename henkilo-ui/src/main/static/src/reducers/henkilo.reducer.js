@@ -22,6 +22,7 @@ import type {KayttajatiedotRead} from "../types/domain/kayttooikeus/Kayttajatied
 import type {HenkiloDuplicate} from "../types/domain/oppijanumerorekisteri/HenkiloDuplicate";
 import type {Hakemus} from "../types/domain/oppijanumerorekisteri/Hakemus.type";
 import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types'
+import type {Yksilointitieto} from "../types/domain/oppijanumerorekisteri/yksilointitieto.types";
 
 export type HenkiloState = {
     +henkiloLoading: boolean,
@@ -46,7 +47,7 @@ export type HenkiloState = {
     +masterLoading: boolean,
     +master: any,
     +yksilointitiedotLoading: boolean,
-    +yksilointitiedot: Array<any>,
+    +yksilointitiedot: Yksilointitieto,
     +hakemuksetLoading: boolean,
     +hakemukset: Array<Hakemus>,
 }
@@ -73,7 +74,7 @@ const initialState: HenkiloState = {
     masterLoading: true,
     master: {},
     yksilointitiedotLoading: false,
-    yksilointitiedot: [],
+    yksilointitiedot: {},
     hakemuksetLoading: false,
     hakemukset: [],
     ataruApplications: [],

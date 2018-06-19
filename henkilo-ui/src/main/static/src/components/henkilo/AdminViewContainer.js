@@ -4,7 +4,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import {
     fetchKayttaja,
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, fetchHenkiloSlaves, clearHenkilo
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, fetchHenkiloSlaves, clearHenkilo, fetchHenkiloYksilointitieto
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -44,6 +44,7 @@ type Props = {
     fetchYhteystietotyypitKoodisto: () => void,
     fetchAllKayttooikeusryhmasForHenkilo: (string) => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
+    fetchHenkiloYksilointitieto: (string) => void,
     fetchOmattiedotOrganisaatios: () => any,
     updateHenkiloNavigation: (Array<Tab>) => Navigation,
     l10n: L10n,
@@ -58,6 +59,7 @@ class AdminViewContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.clearHenkilo();
         await this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloYksilointitieto(this.props.oidHenkilo);
         this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
         this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
         this.props.fetchKieliKoodisto();
@@ -101,6 +103,7 @@ export default connect(mapStateToProps, {
     fetchYhteystietotyypitKoodisto,
     fetchKayttaja,
     fetchKayttajatieto,
+    fetchHenkiloYksilointitieto,
     updateHenkiloNavigation,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
