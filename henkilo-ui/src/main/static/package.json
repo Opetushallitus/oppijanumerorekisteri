@@ -6,7 +6,7 @@
     "babel-core": "6.26.3",
     "babel-polyfill": "6.26.0",
     "classnames": "2.2.5",
-    "history": "4.7.2",
+    "history": "3.3.0",
     "isomorphic-fetch": "2.2.1",
     "moment": "2.22.2",
     "normalizr": "3.2.4",
