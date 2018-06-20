@@ -10,7 +10,7 @@ import type {Yksilointitieto} from "../../types/domain/oppijanumerorekisteri/yks
 
 export const enabledDuplikaattiView = (oidHenkilo: string, masterLoading: boolean, masterHenkiloOid: string): boolean => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
 export const enabledVtjVertailuView = (henkilo: Henkilo): boolean => henkilo.yksilointiYritetty && !henkilo.yksiloityVTJ && !henkilo.duplicate;
-export const vtjDataAvailable = (yksilointitieto: Yksilointitieto): boolean => !isNil(yksilointitieto) && ( !isNil(yksilointitieto.etunimet) || !isNil(yksilointitieto.sukunimi) || !isNil(yksilointitieto.kutsumanimi) || !isNil(yksilointitieto.yhteystiedot) || !isNil(yksilointitieto.sukupuoli));
+export const vtjDataAvailable = (yksilointitieto: ?Yksilointitieto): boolean => !isNil(yksilointitieto) && ( !isNil(yksilointitieto.etunimet) || !isNil(yksilointitieto.sukunimi) || !isNil(yksilointitieto.kutsumanimi) || !isNil(yksilointitieto.yhteystiedot) || !isNil(yksilointitieto.sukupuoli));
 
 /*
  * Get tabs for a view in henkilo-component
