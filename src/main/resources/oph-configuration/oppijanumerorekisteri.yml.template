@@ -37,8 +37,6 @@ cas:
   service: https://{{host_virkailija}}/oppijanumerorekisteri-service
   send-renew: false
   key: oppijanumerorekisteri-service
-  proxy:
-    enabled: true
 host:
   host-virkailija: {{host_virkailija}}
   host-cas: {{host_cas}}

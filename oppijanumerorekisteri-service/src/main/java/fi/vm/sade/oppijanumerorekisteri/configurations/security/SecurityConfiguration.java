@@ -65,14 +65,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public TicketValidator ticketValidator() {
-        if (environment.getRequiredProperty("cas.proxy.enabled", Boolean.class)) {
-            Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(ophProperties.url("cas.url"));
-            ticketValidator.setProxyCallbackUrl(casProperties.getService() + "/j_spring_cas_security_proxyreceptor");
-            ticketValidator.setAcceptAnyProxy(true);
-            return ticketValidator;
-        } else {
-            return new Cas20ServiceTicketValidator(ophProperties.url("cas.url"));
-        }
+        Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(ophProperties.url("cas.url"));
+        ticketValidator.setAcceptAnyProxy(true);
+        return ticketValidator;
     }
 
     //
@@ -83,7 +78,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         OpintopolkuCasAuthenticationFilter casAuthenticationFilter = new OpintopolkuCasAuthenticationFilter(serviceProperties());
         casAuthenticationFilter.setAuthenticationManager(authenticationManager());
         casAuthenticationFilter.setFilterProcessesUrl("/j_spring_cas_security_check");
-        casAuthenticationFilter.setProxyReceptorUrl("/j_spring_cas_security_proxyreceptor");
         return casAuthenticationFilter;
     }
 
