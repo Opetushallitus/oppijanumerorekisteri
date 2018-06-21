@@ -1,10 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import com.querydsl.jpa.impl.JPAQuery;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
-import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
-import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import java.util.List;
@@ -31,10 +28,14 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
     public List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria) {
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QYhteystiedotRyhma qYhteystiedotRyhma = QYhteystiedotRyhma.yhteystiedotRyhma;
+        QYhteystieto qYhteystieto = QYhteystieto.yhteystieto;
 
         JPAQuery<TuontiRivi> query = new JPAQuery<>(entityManager)
                 .from(qTuontiRivi)
                 .join(qTuontiRivi.henkilo, qHenkilo).fetchJoin()
+                .leftJoin(qHenkilo.yhteystiedotRyhma, qYhteystiedotRyhma).fetchJoin()
+                .leftJoin(qYhteystiedotRyhma.yhteystieto, qYhteystieto).fetchJoin()
                 .select(qTuontiRivi);
 
         criteria.getQuery(entityManager, qHenkilo);
