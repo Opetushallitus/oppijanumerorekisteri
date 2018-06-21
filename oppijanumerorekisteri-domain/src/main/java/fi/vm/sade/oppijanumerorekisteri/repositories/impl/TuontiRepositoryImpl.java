@@ -25,20 +25,27 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
     }
 
     @Override
-    public List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria) {
+    public List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria, boolean isSuperUser) {
+        QTuonti qTuonti = QTuonti.tuonti;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QYhteystiedotRyhma qYhteystiedotRyhma = QYhteystiedotRyhma.yhteystiedotRyhma;
         QYhteystieto qYhteystieto = QYhteystieto.yhteystieto;
 
         JPAQuery<TuontiRivi> query = new JPAQuery<>(entityManager)
-                .from(qTuontiRivi)
+                .from(qTuonti)
+                .join(qTuonti.henkilot, qTuontiRivi)
                 .join(qTuontiRivi.henkilo, qHenkilo).fetchJoin()
                 .leftJoin(qHenkilo.yhteystiedotRyhma, qYhteystiedotRyhma).fetchJoin()
                 .leftJoin(qYhteystiedotRyhma.yhteystieto, qYhteystieto).fetchJoin()
-                .select(qTuontiRivi);
+                .select(qTuontiRivi)
+                .where(qTuonti.id.eq(criteria.getTuontiId()));
 
-        criteria.getQuery(entityManager, qHenkilo);
+        if (!isSuperUser) {
+            QOrganisaatio qOrganisaatio = QOrganisaatio.organisaatio;
+            query.join(qHenkilo.organisaatiot, qOrganisaatio);
+            query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
+        }
 
         return query.fetch();
     }

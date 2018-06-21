@@ -28,6 +28,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
     private static final String ROLE_OPPIJOIDENTUONTI_TEMPLATE = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_%s";
+    private static final String ROOT_ORGANISATION_SUFFIX = "_1.2.246.562.10.00000000001";
 
     private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
@@ -113,8 +114,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private boolean isSuperUser(Set<String> roles) {
         Set<String> rekisterinpitajaroolit = Stream.of(
-                ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA",
-                ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI").collect(toSet());
+                ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX,
+                ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI" + ROOT_ORGANISATION_SUFFIX).collect(toSet());
         return roles.stream().anyMatch(rekisterinpitajaroolit::contains);
     }
 
