@@ -42,15 +42,21 @@ public class OppijaServiceTest {
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
 
+    @MockBean
+    private PermissionChecker permissionChecker;
+
     @Autowired
     private OppijaService oppijaService;
 
     @Autowired
     private HenkiloRepository henkiloRepository;
+
     @Autowired
     private IdentificationRepository identificationRepository;
+
     @Autowired
     private TuontiRepository tuontiRepository;
+
     @Autowired
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 

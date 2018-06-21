@@ -37,7 +37,7 @@ public class PermissionCheckerTest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
@@ -45,7 +45,7 @@ public class PermissionCheckerTest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsRekisterinpitaja() throws Exception {
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
@@ -88,7 +88,7 @@ public class PermissionCheckerTest {
 
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
@@ -96,7 +96,7 @@ public class PermissionCheckerTest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsRekisterinpitaja() throws Exception {
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
@@ -135,14 +135,14 @@ public class PermissionCheckerTest {
 
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")
     public void isSuperUser() {
         boolean isSuperUser = this.permissionChecker.isSuperUser();
         assertThat(isSuperUser).isTrue();
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isRekisterinpitaja() {
         boolean isSuperUser = this.permissionChecker.isSuperUser();
         assertThat(isSuperUser).isTrue();
