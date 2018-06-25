@@ -46,7 +46,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
             <List className={"organisaatio-select-list"}
                   rowCount={this.state.organisaatiot.length}
                   rowRenderer={this._renderRow}
-                  width={630}
+                  width={656}
                   height={700}
                   rowHeight={70}
             />
@@ -59,6 +59,7 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
                     style={renderParams.style} key={organisaatio.oid}>
             {this._renderParents(organisaatio)}
             {this._renderOrganisaatioNimi(organisaatio)}
+            {this._renderSuunniteltuNote(organisaatio)}
         </div>;
     };
 
@@ -80,6 +81,9 @@ export class OrganisaatioSelect extends React.Component<Props, State> {
         return organisaatio.parentNames.map((parent: string, index: number) =>
             <span key={index} className="parent">{parent} > </span>);
     };
+
+    _renderSuunniteltuNote = (organisaatio: OrganisaatioSelectObject) =>
+        organisaatio.status === 'SUUNNITELTU' ? <div className="suunniteltu">{this.props.L['ORGANISAATIONVALINTA_SUUNNITELTU']}</div> : null;
 
     onFilter(event: SyntheticEvent<HTMLInputElement>) {
         const currentSearchWord: string = event.currentTarget.value;

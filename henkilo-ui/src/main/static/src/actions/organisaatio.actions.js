@@ -52,7 +52,7 @@ const requestAllHierarchialOrganisaatiosFailure = (error) => ({type: FETCH_ALL_O
 
 export const fetchAllHierarchialOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     if (getState().organisaatio.organisaatioHierarkia.numHits === 0 && !getState().organisaatio.organisaatioHierarkiaLoading) {
-        const url = urls.url('organisaatio-service.organisaatiot.hierarkia', {aktiiviset: true, suunnitellut: false, lakkautetut: false});
+        const url = urls.url('organisaatio-service.organisaatiot.hierarkia', {aktiiviset: true, suunnitellut: true, lakkautetut: false});
         const rootUrl = urls.url('organisaatio-service.organisaatio.ByOid', PropertySingleton.getState().rootOrganisaatioOid);
         dispatch(requestAllHierarchialOrganisaatios());
         try {

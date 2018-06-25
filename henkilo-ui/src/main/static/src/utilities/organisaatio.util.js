@@ -51,6 +51,7 @@ export const createOrganisaatioSelectObject = (organisaatio: Org, parentNames: A
         oid: organisaatio.oid,
         parentNames: parentNames,
         name: getLocalization(organisaatio.nimi, locale),
+        status: organisaatio.status,
         organisaatiotyypit: organisaatio.organisaatiotyypit || organisaatio.tyypit || [] // organisaatiopalvelusta suoraan tulevista organisaatioista 'organisaatiotyypit', kayttooikeuspalvelusta tulevista organisaatioista 'tyypit'
     }
 };
