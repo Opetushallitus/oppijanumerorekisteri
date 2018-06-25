@@ -9,3 +9,7 @@ declare module 'react-table/react-table.css' {
 declare module 'prop-types' {
     declare module.exports: any
 }
+
+declare module 'react-virtualized' {
+    declare module.exports: any
+}

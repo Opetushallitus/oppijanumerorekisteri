@@ -23,6 +23,7 @@ import {palvelukayttajat} from "./palvelukayttaja.reducer";
 import {palvelutState} from "./palvelut.reducer";
 import {kayttooikeusState} from "./kayttooikeus.reducer";
 import {notificationList} from "./notification.reducer";
+import {linkitykset} from "./henkiloLinkitys.reducer";
 
 const rootReducer = combineReducers({
     routing,
@@ -49,7 +50,8 @@ const rootReducer = combineReducers({
     oppijoidenTuontiListaus,
     palvelukayttajat,
     palvelutState,
-    kayttooikeusState
+    kayttooikeusState,
+    linkitykset,
 });
 
 export default rootReducer;

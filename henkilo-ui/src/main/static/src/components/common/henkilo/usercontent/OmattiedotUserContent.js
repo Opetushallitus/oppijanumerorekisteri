@@ -23,6 +23,7 @@ import Sukupuoli from "../labelvalues/Sukupuoli";
 import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
 import AnomusIlmoitus from "../labelvalues/AnomusIlmoitus";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
+import HenkiloVarmentajaSuhde from "../labelvalues/HenkiloVarmentajaSuhde";
 
 type Props = {
     readOnly: boolean,
@@ -95,7 +96,9 @@ class OmattiedotUserContent extends React.Component<Props> {
             ],
             [
                 <Kayttajanimi {...props} disabled={true} />,
-                showAnomusIlmoitus ? <AnomusIlmoitus {...props} /> : null
+                showAnomusIlmoitus ? <AnomusIlmoitus {...props} /> : null,
+                <HenkiloVarmentajaSuhde oidHenkilo={this.props.omattiedot.data.oid} type="henkiloVarmentajas" />,
+                <HenkiloVarmentajaSuhde oidHenkilo={this.props.omattiedot.data.oid} type="henkiloVarmennettavas" />,
             ],
         ];
     };

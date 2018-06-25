@@ -15,6 +15,8 @@ import HenkiloViewCreateKayttooikeusanomus from "../common/henkilo/HenkiloViewCr
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import type {OrganisaatioCache, OrganisaatioState} from "../../reducers/organisaatio.reducer";
 import { path } from 'ramda';
+import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
+import type {RyhmatState} from "../../reducers/ryhmat.reducer";
 
 type Props = {
     l10n: L10n,
@@ -28,13 +30,13 @@ type Props = {
     readOnlyButtons?: ((any) => void) => any,
     passivoiHenkiloOrg?: (henkiloOid: string, organisaatioOid: string) => void,
     organisaatioKayttooikeusryhmat?: {kayttooikeusryhmat: Array<any>},
+    omattiedot?: OmattiedotState,
+    fetchAllKayttooikeusAnomusForHenkilo?: (string) => void,
     oidHenkilo: string,
     view: string,
     organisaatios?: OrganisaatioState,
     organisaatioCache: OrganisaatioCache,
-    ryhmas?: {
-        ryhmas: Array<{nimi: {fi: string, sv: string, en: string,}, oid: string}>,
-    },
+    ryhmas?: RyhmatState,
 }
 
 class HenkiloViewPage extends React.Component<Props> {
@@ -52,7 +54,7 @@ class HenkiloViewPage extends React.Component<Props> {
             return <VirheKayttoEstetty L={this.props.l10n[this.props.locale]} />
         }
 
-        const kayttooikeusryhmat = path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) ? path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) : [];
+        const kayttooikeusryhmat: Array<any> = path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) ? path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) : [];
 
         return (
             <div>
@@ -133,7 +135,7 @@ class HenkiloViewPage extends React.Component<Props> {
         )
     }
 
-    _parseRyhmaOptions() {
+    _parseRyhmaOptions(): Array<{label: string, value: string}> {
         return this.props.ryhmas ?
             this.props.ryhmas.ryhmas.map(ryhma => ({
                 label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
