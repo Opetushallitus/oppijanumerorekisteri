@@ -33,6 +33,7 @@ import AktivoiButton from '../buttons/AktivoiButton';
 import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 import Sukupuoli from "../labelvalues/Sukupuoli";
+import SahkopostitunnisteButton from "../buttons/SahkopostitunnisteButton";
 
 type Props = {
     readOnly: boolean,
@@ -118,13 +119,14 @@ class AdminUserContent extends React.Component<Props, State> {
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
         const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo)
         const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILON_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
-
+        const isOnrRekisterinpitaja: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
         const editButton = hasHenkiloReadUpdateRights ? <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/> : null;
         const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
         const puraHetuttomanYksilointiButton = <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />;
         const passivoiButton = !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
         const aktivoiButton = passivoitu && hasHenkiloReadUpdateRights ? <AktivoiButton L={this.props.L} oid={this.props.henkilo.henkilo.oidHenkilo} onClick={this.props.aktivoiHenkilo} /> : null;
         const hakaButton = <HakaButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} disabled={duplicate || passivoitu} />;
+        const sahkopostiTunnisteButton = isOnrRekisterinpitaja ? <SahkopostitunnisteButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}}></SahkopostitunnisteButton> : null;
         const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
         const passwordButton = <PasswordButton oidHenkilo={this.props.oidHenkilo} styles={{top: '3rem', left: '0', width: '18rem'}} disabled={duplicate || passivoitu || kayttajatunnukseton} />;
 
@@ -135,6 +137,7 @@ class AdminUserContent extends React.Component<Props, State> {
             passivoiButton,
             aktivoiButton,
             hakaButton,
+            sahkopostiTunnisteButton,
             vtjOverrideButton,
             passwordButton
         ];
