@@ -42,8 +42,6 @@ const Kansalaisuus = (props: Props) => {
                         label: koodi[props.locale],
                         optionsName: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
                     })),
-                    value: props.koodisto.kansalaisuus
-                        .filter(kansalaisuus => kansalaisuus.value === values.kansalaisuusKoodi)[0][props.locale],
                     selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
                     disabled: disabled,
                     clearable: true,
@@ -62,7 +60,6 @@ const Kansalaisuus = (props: Props) => {
                     label: koodi[props.locale],
                     optionsName: 'kansalaisuus.' + (kansalaisuus.length) + '.kansalaisuusKoodi',
                 })),
-                value: null,
                 selectValue: props.henkiloUpdate.kansalaisuus[kansalaisuus.length] && props.henkiloUpdate.kansalaisuus[kansalaisuus.length].kansalaisuusKoodi,
                 disabled: disabled,
             }}
