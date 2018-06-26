@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -121,8 +122,8 @@ public class HenkiloModificationServiceImplTest {
         given(this.henkiloDataRepositoryMock.findByOidHenkiloIsIn(Collections.singletonList(henkiloUpdateDto.getOidHenkilo())))
                 .willReturn(Collections.singletonList(henkilo));
         given(userDetailsHelperMock.getCurrentUserOid()).willReturn("1.2.3.4.1");
-        given(this.kielisyysRepositoryMock.findByKieliKoodi(anyString()))
-                .willReturn(Optional.of(EntityUtils.createKielisyys("fi", "suomi")));
+        given(this.kielisyysRepositoryMock.findOrCreateByKoodi(anyString()))
+                .willAnswer(invocation -> new Kielisyys(invocation.getArgument(0)));
         given(this.kansalaisuusRepositoryMock.findOrCreate(anyString()))
                 .willReturn(EntityUtils.createKansalaisuus("246"));
         given(henkiloDataRepositoryMock.save(any(Henkilo.class)))
@@ -132,14 +133,11 @@ public class HenkiloModificationServiceImplTest {
         verify(this.henkiloDataRepositoryMock).save(argument.capture());
         verify(this.kayttooikeusClient, times(1)).ldapSynkroniseHenkilo(eq("1.2.3.4.5"));
 
-        assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getAidinkieli().getKieliTyyppi()).isEqualTo("suomi");
-        assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getAsiointiKieli().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("sv");
+        assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("sv");
 
         assertThat(argument.getValue().getKielisyys().size()).isEqualTo(1);
-        assertThat(argument.getValue().getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("fi");
-        assertThat(argument.getValue().getKielisyys().iterator().next().getKieliTyyppi()).isEqualTo("suomi");
+        assertThat(argument.getValue().getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("sv");
 
         assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
         assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");

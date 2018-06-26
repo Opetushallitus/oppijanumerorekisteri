@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
@@ -23,8 +22,11 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCri
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
+import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
@@ -63,6 +65,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     private static final Predicate<Collection> collectionNotEmpty = it -> !CollectionUtils.isEmpty(it);
 
     private final DuplicateService duplicateService;
+    private final KoodistoService koodistoService;
 
     private final HenkiloRepository henkiloRepository;
     private final HenkiloService henkiloService;
@@ -79,7 +82,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final OrikaConfiguration mapper;
 
     private final VtjClient vtjClient;
-    private final KoodistoClient koodistoClient;
     private final KayttooikeusClient kayttooikeusClient;
 
     private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
@@ -237,7 +239,8 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .ifPresent(kansalaisuusKoodis -> kansalaisuusKoodis.forEach(yksilointitieto::addKansalaisuus));
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
-                .map(this::findOrCreateKielisyys)
+                .filter(koodi -> KoodiValidator.isValid(koodistoService, Koodisto.KIELI, String::toLowerCase, koodi))
+                .map(kielisyysRepository::findOrCreateByKoodi)
                 .ifPresent(yksilointitieto::setAidinkieli);
 
         yksilointitieto.clearYhteystiedotRyhma();
@@ -263,13 +266,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     private Set<Kansalaisuus> findOrCreateKansalaisuus(@NotNull List<String> kansalaisuusKoodit) {
         return kansalaisuusKoodit.stream()
                 .filter(kansalaisuusKoodi ->
-                        isKansalaisuusKoodiValid(Collections.singletonList(kansalaisuusKoodi)))
+                        KoodiValidator.isValid(koodistoService, Koodisto.MAAT_JA_VALTIOT_2, kansalaisuusKoodi))
                 .map(kansalaisuusRepository::findOrCreate).collect(Collectors.toSet());
-    }
-
-    private Kielisyys findOrCreateKielisyys(final String kieliKoodi) {
-        return kielisyysRepository.findByKieliKoodi(kieliKoodi)
-                .orElseGet(() -> kielisyysRepository.save(Kielisyys.builder().kieliKoodi(kieliKoodi).build()));
     }
 
     private Set<YhteystiedotRyhma> addYhteystiedot(YksiloityHenkilo yksiloityHenkilo, Kielisyys asiointiKieli) {
@@ -334,7 +332,8 @@ public class YksilointiServiceImpl implements YksilointiService {
         updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
-                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(findOrCreateKielisyys(kieliKoodi)));
+                .filter(koodi -> KoodiValidator.isValid(koodistoService, Koodisto.KIELI, String::toLowerCase, koodi))
+                .ifPresent(kieliKoodi -> henkilo.setAidinkieli(kielisyysRepository.findOrCreateByKoodi(kieliKoodi)));
 
         henkilo.setTurvakielto(yksiloityHenkilo.isTurvakielto());
         henkilo.setSyntymaaika(HetuUtils.dateFromHetu(yksiloityHenkilo.getHetu()));
@@ -365,14 +364,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (isOppija(henkilo.getOidHenkilo()) && (!CollectionUtils.isEmpty(yksiloityHenkilo.getOsoitteet()) || !StringUtils.isEmpty(yksiloityHenkilo.getSahkoposti()))) {
             henkilo.addAllYhteystiedotRyhmas(addYhteystiedot(yksiloityHenkilo, henkilo.getAsiointiKieli()));
         }
-    }
-
-    private boolean isKansalaisuusKoodiValid(List<String> kansalaisuusKoodiList) {
-        List<String> koodiTypeList = koodistoClient.getKoodiValuesForKoodisto("maatjavaltiot2", 1, true);
-        // Make sure that all values from kansalaisuusSet are found from koodiTypeList.
-        return !(kansalaisuusKoodiList != null && !kansalaisuusKoodiList.stream()
-                .allMatch(kansalaisuus -> koodiTypeList.stream()
-                        .anyMatch(koodi -> koodi.equals(kansalaisuus))));
     }
 
     private void updateIfYksiloityValueNotNull(final String original, final String yksiloityValue, Consumer<String> consumer) {

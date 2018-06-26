@@ -20,7 +20,7 @@ public class EntityUtils {
     }
 
     static public Kielisyys createKielisyys(String kielikoodi, String kielityyppi) {
-        return new Kielisyys(kielikoodi, kielityyppi, null);
+        return new Kielisyys(kielikoodi, kielityyppi);
     }
 
     static public Henkilo createHenkilo(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,

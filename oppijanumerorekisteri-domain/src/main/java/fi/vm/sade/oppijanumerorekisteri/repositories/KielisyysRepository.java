@@ -13,4 +13,14 @@ import java.util.Optional;
 @Repository
 public interface KielisyysRepository extends QuerydslPredicateExecutor, JpaRepository<Kielisyys, Long> {
     Optional<Kielisyys> findByKieliKoodi(String kielikoodi);
+
+    /**
+     * Hakee kielisyyden koodin perusteella tai luo uuden jos ei löydy.
+     *
+     * @param koodi kielisyyden koodi
+     * @return kielisyys
+     */
+    default Kielisyys findOrCreateByKoodi(String koodi) {
+        return findByKieliKoodi(koodi).orElseGet(() -> save(new Kielisyys(koodi)));
+    }
 }
