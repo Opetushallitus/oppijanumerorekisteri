@@ -18,11 +18,13 @@ public interface TuontiRepositoryCustom {
 
     /**
      * Palauttaa oppijoiden tuonnin rivit ja niihin liittyvät henkilöt
-     * hakukriteerien perusteella.
+     * hakukriteerien perusteella. Hakee henkilöiden perustiedot,
+     * yhteystiedotryhmät ja yhteystiedot muistiin.
      *
      * @param criteria hakukriteerit
+     * @param isSuperUser
      * @return tuonnin rivit
      */
-    List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria);
+    List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria, boolean isSuperUser);
 
 }

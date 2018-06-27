@@ -114,7 +114,7 @@ public class OppijaServiceImpl implements OppijaService {
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setTuontiId(id);
         criteria.setOrganisaatioOids(organisaatioOids);
-        List<TuontiRivi> rivit = tuontiRepository.findRiviBy(criteria);
+        List<TuontiRivi> rivit = tuontiRepository.findRiviBy(criteria, this.permissionChecker.isSuperUser());
         if (rivit.isEmpty()) {
             throw new ForbiddenException("Oppijoiden tuonnin tietoihin ei oikeuksia");
         }
