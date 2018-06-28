@@ -71,6 +71,16 @@ public class IdentificationServiceImpl implements IdentificationService {
     }
 
     @Override
+    @Transactional
+    public Iterable<IdentificationDto> remove(String oid, IdentificationDto identificationDto) {
+        Henkilo henkilo = getHenkiloByOid(oid);
+        Identification identification = mapper.map(identificationDto, Identification.class);
+        henkilo.getIdentifications().remove(identification);
+        henkiloModificationService.update(henkilo);
+        return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
+    }
+
+    @Override
     @Transactional(propagation = Propagation.NEVER) // metodissa tehtyä selectejä ei ole tarpeen roikuttaa transaktiossa
     public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
         unidentified.stream()
