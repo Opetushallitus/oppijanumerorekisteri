@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import HenkiloViewPage from "../../components/henkilo/HenkiloViewPage";
 import {
     fetchKayttaja,
-    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo, fetchHenkiloSlaves
+    fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto
 } from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
@@ -47,6 +47,7 @@ type Props = {
     fetchYhteystietotyypitKoodisto: ()  => void,
     fetchAllKayttooikeusryhmasForHenkilo: (string) => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
+    fetchHenkiloYksilointitieto: (string) => void,
     fetchOmattiedotOrganisaatios: () => any,
     getGrantablePrivileges: (string) => void,
     kayttooikeus: KayttooikeusState
@@ -59,6 +60,7 @@ class VirkailijaViewContainer extends React.Component<Props> {
         this.props.updateHenkiloNavigation(tabs);
 
         await this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchHenkiloYksilointitieto(this.props.oidHenkilo);
         this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
         this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
         this.props.fetchKieliKoodisto();
@@ -109,6 +111,7 @@ export default connect(mapStateToProps, {
     fetchKayttaja,
     fetchKayttajatieto,
     updateHenkiloNavigation,
+    fetchHenkiloYksilointitieto,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma,

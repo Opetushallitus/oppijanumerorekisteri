@@ -2,11 +2,12 @@
 
 import React from 'react'
 import {connect} from 'react-redux';
-import {fetchHenkilo, fetchHenkiloSlaves} from "../../actions/henkilo.actions";
+import {fetchHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto} from "../../actions/henkilo.actions";
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
+
 import {updateHenkiloNavigation} from "../../actions/navigation.actions";
 import {oppijaNavi} from "../navigation/navigationconfigurations";
 import PropertySingleton from '../../globals/PropertySingleton'
@@ -26,6 +27,7 @@ type Props = {
     fetchYhteystietotyypitKoodisto: () => void,
     fetchKieliKoodisto: () => void,
     fetchKansalaisuusKoodisto: () => void,
+    fetchHenkiloYksilointitieto: (string) => void,
     updateHenkiloNavigation: (Array<Tab>) => Navigation,
     externalPermissionService?: string,
     koodisto: KoodistoState,
@@ -50,6 +52,7 @@ class OppijaViewContainer extends React.Component<Props> {
     async fetchOppijaViewData(oid) {
         this.props.updateHenkiloNavigation(oppijaNavi(oid));
         await this.props.fetchHenkilo(oid);
+        this.props.fetchHenkiloYksilointitieto(oid);
         this.props.fetchHenkiloSlaves(oid);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
@@ -72,6 +75,7 @@ export default connect(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloSlaves,
     fetchYhteystietotyypitKoodisto,
+    fetchHenkiloYksilointitieto,
     fetchKieliKoodisto,
     fetchKansalaisuusKoodisto,
     updateHenkiloNavigation})(OppijaViewContainer);
