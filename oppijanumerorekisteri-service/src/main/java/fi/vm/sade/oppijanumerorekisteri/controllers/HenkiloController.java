@@ -282,12 +282,13 @@ public class HenkiloController {
         return identificationService.create(oid, identification);
     }
 
-    @DeleteMapping("/{oid}/identification")
+    @DeleteMapping("/{oid}/identification/{idpEntityId}/{identifier}")
     @ApiOperation("Henkilön tunnistetietojen poistaminen")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Iterable<IdentificationDto> removeIdentification(@PathVariable String oid,
-                                                            @RequestBody @Validated IdentificationDto identification) {
-        return identificationService.remove(oid, identification);
+                                                            @PathVariable String idpEntityId,
+                                                            @PathVariable String identifier) {
+        return identificationService.remove(oid, IdentificationDto.of(idpEntityId, identifier));
     }
 
 
