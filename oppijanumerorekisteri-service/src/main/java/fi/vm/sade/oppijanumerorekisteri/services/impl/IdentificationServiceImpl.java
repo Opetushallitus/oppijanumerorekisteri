@@ -75,7 +75,9 @@ public class IdentificationServiceImpl implements IdentificationService {
     public Iterable<IdentificationDto> remove(String oid, IdentificationDto identificationDto) {
         Henkilo henkilo = getHenkiloByOid(oid);
         Identification identification = mapper.map(identificationDto, Identification.class);
-        henkilo.getIdentifications().remove(identification);
+        henkilo.getIdentifications().removeIf(i ->
+                identification.getIdpEntityId().equals(i.getIdpEntityId()) &&
+                        identification.getIdentifier().equals(i.getIdentifier()));
         henkiloModificationService.update(henkilo);
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
     }
