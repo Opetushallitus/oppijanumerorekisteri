@@ -288,10 +288,16 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async(dispatch, getState) 
         dispatch(requestHenkiloDuplicatesSuccess(oidHenkilo, duplicates));
     } catch (error) {
         dispatch(requestHenkiloDuplicatesFailure());
+        let errorMessage = localizeWithState('NOTIFICATION_DUPLIKAATIT_VIRHE', getState()) + " " + oidHenkilo;
+        if(error.message.startsWith('Failed to read response from ataru') || error.message.startsWith('Failed to fetch applications from ataru')) {
+            errorMessage = localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE', getState()) + " " + oidHenkilo;
+        } else if (error.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+            errorMessage = localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + " " + oidHenkilo;
+        }
         dispatch(addGlobalNotification({
             key: 'FETCH_DUPLICATES_FAIL',
             type: NOTIFICATIONTYPES.ERROR,
-            title: localizeWithState('NOTIFICATION_DUPLIKAATIT_VIRHE', getState()),
+            title: errorMessage,
             autoClose: 10000
         }));
         throw error;
@@ -310,10 +316,18 @@ export const fetchHenkiloHakemukset = (oid) => async(dispatch, getState) => {
         dispatch(requestHenkiloHakemuksetSuccess(hakemukset));
     } catch (error) {
         dispatch(requestHenkiloHakemuksetFailure());
+
+        let errorMessage = localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE', getState()) + " " + oid;
+        if(error.message.startsWith('Failed to read response from ataru') || error.message.startsWith('Failed to fetch applications from ataru')) {
+            errorMessage = localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_ATARU_VIRHE', getState()) + " " + oid;
+        } else if (error.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+            errorMessage = localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + " " + oid;
+        }
+
         dispatch(addGlobalNotification({
             key: 'HENKILOHAKEMUKSET_FAILURE',
             type: NOTIFICATIONTYPES.ERROR,
-            title: localizeWithState('NOTIFICATION_HENKILO_HAKEMUKSET_VIRHE', getState()),
+            title: errorMessage,
             autoClose: 10000
         }));
         throw error;
