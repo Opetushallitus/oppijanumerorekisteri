@@ -64,7 +64,6 @@ class VirkailijaViewContainer extends React.Component<Props> {
 
 
     async componentWillReceiveProps(nextProps: Props) {
-        this.props.clearHenkilo();
         const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'virkailija');
         this.props.updateHenkiloNavigation(tabs);
 
