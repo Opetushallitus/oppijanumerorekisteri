@@ -78,6 +78,8 @@ export default {
     "oppijanumerorekisteri-service.henkilo.yksilointitiedot": "oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot",
     "oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton": "oppijanumerorekisteri-service/henkilo/$1/yksilointitiedot/yliajayksiloimaton",
     "oppijanumerorekisteri-service.henkilo.current.asiointikieli": "oppijanumerorekisteri-service/henkilo/current/asiointiKieli",
+    "oppijanumerorekisteri-service.henkilo.identification": "oppijanumerorekisteri-service/henkilo/$1/identification",
+    "oppijanumerorekisteri-service.henkilo.identification.remove": "oppijanumerorekisteri-service/henkilo/$1/identification/$2/$3",
     "oppijanumerorekisteri-service.oppija.yhteenveto": "oppijanumerorekisteri-service/oppija/yhteenveto",
     "oppijanumerorekisteri-service.oppija": "oppijanumerorekisteri-service/oppija",
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",

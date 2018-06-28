@@ -3,7 +3,6 @@
 import React from 'react';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
-import * as R from 'ramda';
 import './HakaPopupContent.css';
 import type {L} from "../../../types/localisation.type";
 import Loader from "../icons/Loader";
@@ -11,6 +10,7 @@ import {connect} from "react-redux";
 import {addGlobalNotification} from "../../../actions/notification.actions";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
+import type {Identification} from "../../../types/domain/oppijanumerorekisteri/Identification.types";
 
 type Props = {
     henkiloOid: string,
@@ -36,10 +36,7 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
     }
 
     async componentDidMount() {
-        const tunnisteet = await this.getSahkopostitunnisteet();
-        this.setState({
-            sahkopostitunnisteet: tunnisteet
-        })
+        this.getSahkopostitunnisteet();
     }
 
     render() {
@@ -69,27 +66,51 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
         this.setState({newTunniste: event.currentTarget.value});
     }
 
-    addSahkopostitunniste() {
+    async addSahkopostitunniste() {
         if (this.state.newTunniste.length > 0) {
-            const tunnisteet = this.state.sahkopostitunnisteet.slice(0);
-            tunnisteet.push(this.state.newTunniste);
-            this.saveSahkopostitunnisteet(tunnisteet);
-            this.setState({newTunniste: ''});
+
+            const url = urls.url('oppijanumerorekisteri-service.henkilo.identification', this.props.henkiloOid);
+            try {
+                this.setState({loading: true});
+                const newTunnisteet = await http.post(url, this.stringToIdentification(this.state.newTunniste));
+                this.setState({newTunniste: '', sahkopostitunnisteet: this.identificationsToStrings(newTunnisteet), loading: false});
+            } catch (error) {
+                this.setState({loading: false});
+                this.props.addGlobalNotification({
+                    key: 'SAVE_SAHKOPOSTITUNNISTEET',
+                    type: NOTIFICATIONTYPES.ERROR,
+                    autoClose: 10000,
+                    title: this.props.L['SAHKOPOSTITUNNISTE_TALLENNUS_VIRHE']
+                });
+                throw error;
+            }
         }
     }
 
     async removeSahkopostitunniste(tunniste: string) {
-        const filteredTunnisteet = R.reject((hakatunniste) => hakatunniste === tunniste)(this.state.sahkopostitunnisteet);
-        await this.saveSahkopostitunnisteet(filteredTunnisteet);
+        const url = urls.url('oppijanumerorekisteri-service.henkilo.identification.remove', this.props.henkiloOid, 'email', tunniste );
+        try {
+            this.setState({loading: true});
+            const sahkopostitunnisteet = await http.delete(url);
+            this.setState({loading: false, sahkopostitunnisteet: this.identificationsToStrings(sahkopostitunnisteet)});
+        } catch (error) {
+            this.setState({loading: false});
+            this.props.addGlobalNotification({
+                key: 'REMOVE_SAHKOPOSTITUNNISTEET',
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000,
+                title: this.props.L['SAHKOPOSTITUNNISTE_POISTO_VIRHE']
+            });
+            throw error;
+        }
     }
 
     async getSahkopostitunnisteet() {
-        const url = urls.url('kayttooikeus-service.henkilo.sahkopostitunniste', this.props.henkiloOid);
+        const url = urls.url('oppijanumerorekisteri-service.henkilo.identification', this.props.henkiloOid);
         try {
-            this.setState({loading: true});
-            const sahkopostitunnisteet = await http.get(url);
-            this.setState({loading: false});
-            return sahkopostitunnisteet;
+            const tunnisteet: Array<Identification> = await http.get(url);
+            const sahkopostitunnisteet: Array<string> = this.identificationsToStrings(tunnisteet);
+            this.setState({loading: false, sahkopostitunnisteet});
         } catch (error) {
             this.setState({loading: false});
             this.props.addGlobalNotification({
@@ -102,23 +123,16 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
         }
     }
 
-    async saveSahkopostitunnisteet(newSahkopostitunnisteet: Array<string>) {
-        const url = urls.url('kayttooikeus-service.henkilo.sahkopostitunniste', this.props.henkiloOid);
-        try {
-            this.setState({loading: true});
-            const sahkopostitunnisteet = await http.put(url, newSahkopostitunnisteet);
-            this.setState({sahkopostitunnisteet, loading: false});
-        } catch (error) {
-            this.setState({loading: false});
-            this.props.addGlobalNotification({
-                key: 'SAVE_SAHKOPOSTITUNNISTEET',
-                type: NOTIFICATIONTYPES.ERROR,
-                autoClose: 10000,
-                title: this.props.L['SAHKOPOSTITUNNISTE_TALLENNUS_VIRHE']
-            });
-            throw error;
-        }
+    identificationsToStrings(tunnisteet: Array<Identification>): Array<string> {
+        return tunnisteet.filter( (tunniste: Identification) => tunniste.idpEntityId === 'email')
+            .map( (tunniste: Identification) => tunniste.identifier);
     }
+
+    stringToIdentification(tunniste: string): Identification {
+        return {identifier: tunniste, idpEntityId: 'email'};
+    }
+
+
 }
 
 export default connect(() => ({}), {addGlobalNotification})(SahkopostitunnistePopupContent)
