@@ -29,7 +29,7 @@ public class UserDetailsHelperImpl implements UserDetailsHelper {
     public String getCurrentUserOid() {
         return getAuthentication()
                 .map(authentication -> Optional.ofNullable(authentication.getName())
-                        .orElseThrow(UserHasNoOidException::new))
+                        .<UserHasNoOidException>orElseThrow(UserHasNoOidException::new))
                 .orElseThrow(() -> new UnauthorizedException("Käyttäjä ei ole kirjautunut"));
     }
 

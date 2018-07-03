@@ -27,3 +27,8 @@ cas:
 dev:
   username: username
   password: password
+aws:
+  region: eu-west-1
+  henkiloModifiedTopic:
+    enabled: true
+    topicArn: test-topic-arn
