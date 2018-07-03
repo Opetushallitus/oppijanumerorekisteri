@@ -97,9 +97,11 @@ public class HenkiloModificationServiceImplTest {
     @Mock
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
-
     @MockBean
     private KansalaisuusRepository kansalaisuusRepository;
+
+    @Mock
+    private HenkiloModifiedTopic henkiloModifiedTopic;
 
     @Before
     public void setup() {

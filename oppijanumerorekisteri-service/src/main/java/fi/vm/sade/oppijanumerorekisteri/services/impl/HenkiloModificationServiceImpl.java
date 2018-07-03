@@ -58,6 +58,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final HenkiloService henkiloService;
     private final DuplicateService duplicateService;
 
+    private final HenkiloModifiedTopic henkiloModifiedTopic;
+
     private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
     private final OidGenerator oidGenerator;
@@ -265,13 +267,16 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
         // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
-        henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).forEach(slave -> {
+        List<Henkilo> duplikaatit = henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).stream().map(slave -> {
             slave.setModified(nyt);
             kayttajaOid.ifPresent(slave::setKasittelijaOid);
-            henkiloDataRepository.save(slave);
+            return henkiloDataRepository.save(slave);
             // rakenne ei ole rekursiivinen (vaikka kantarakenne mahdollistaakin)
             // joten päivitystä ei tarvitse tehdä rekursiivisesti
-        });
+        }).collect(toList());
+
+        henkiloModifiedTopic.publish(tallennettu);
+        duplikaatit.forEach(henkiloModifiedTopic::publish);
 
         return tallennettu;
     }
@@ -432,7 +437,9 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }
 
-        return this.henkiloDataRepository.save(henkiloCreate);
+        Henkilo tallennettu = this.henkiloDataRepository.save(henkiloCreate);
+        henkiloModifiedTopic.publish(tallennettu);
+        return tallennettu;
     }
 
     @Override
