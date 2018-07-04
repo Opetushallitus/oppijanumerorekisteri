@@ -74,6 +74,7 @@ class VirkailijaViewContainer extends React.Component<Props> {
 
     async fetchVirkailijaViewData(oid) {
         await this.props.fetchHenkilo(oid);
+        this.props.fetchHenkiloYksilointitieto(oid);
         this.props.fetchHenkiloOrgs(oid);
         this.props.fetchHenkiloSlaves(oid);
         this.props.fetchKieliKoodisto();
