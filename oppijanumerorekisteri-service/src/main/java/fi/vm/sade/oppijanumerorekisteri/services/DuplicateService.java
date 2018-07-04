@@ -21,7 +21,7 @@ public interface DuplicateService {
 
     LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
-    void unlinkHenkilo(String oid, String slaveOid);
+    LinkResult unlinkHenkilo(String oid, String slaveOid);
 
     class LinkResult {
         public final Henkilo master;

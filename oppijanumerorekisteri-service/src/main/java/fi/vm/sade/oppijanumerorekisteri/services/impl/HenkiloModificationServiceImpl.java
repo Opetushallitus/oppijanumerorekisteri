@@ -442,6 +442,10 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return linked.slaveOids;
     }
 
+    public void unlinkHenkilo(String oid, String slaveOid) {
+        this.duplicateService.unlinkHenkilo(oid, slaveOid).modified.forEach(this::update);
+    }
+
     private String getFreePersonOid() {
         final String newOid = oidGenerator.generateOID();
         if (this.henkiloService.getOidExists(newOid)) {

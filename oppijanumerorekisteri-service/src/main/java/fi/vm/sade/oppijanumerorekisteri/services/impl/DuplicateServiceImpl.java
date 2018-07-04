@@ -249,14 +249,15 @@ public class DuplicateServiceImpl implements DuplicateService {
 
     @Override
     @Transactional
-    public void unlinkHenkilo(String oid, String slaveOid) {
-        Date modificationDate = new Date();
+    public LinkResult unlinkHenkilo(String oid, String slaveOid) {
+        Henkilo master = this.henkiloDataRepository.findByOidHenkilo(oid)
+                .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));
         Henkilo slave = this.henkiloDataRepository.findByOidHenkilo(slaveOid)
                 .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));
         slave.setDuplicate(false);
         slave.setPassivoitu(false);
-        slave.setModified(modificationDate);
         this.henkiloViiteRepository.removeByMasterOidAndSlaveOid(oid, slaveOid);
+        return new LinkResult(master, Lists.newArrayList(master, slave), new ArrayList<>());
     }
 
 }
