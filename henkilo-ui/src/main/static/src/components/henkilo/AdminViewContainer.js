@@ -57,25 +57,33 @@ type Props = {
 
 class AdminViewContainer extends React.Component<Props> {
     async componentDidMount() {
+        await this.fetchHenkiloViewData(this.props.oidHenkilo)
+    };
+
+    async componentWillReceiveProps(nextProps: Props) {
+        const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'admin');
+        this.props.updateHenkiloNavigation(tabs);
+
+        if (nextProps.oidHenkilo !== this.props.oidHenkilo) {
+            await this.fetchHenkiloViewData(nextProps.oidHenkilo)
+        }
+    }
+
+    async fetchHenkiloViewData(oid) {
         this.props.clearHenkilo();
-        await this.props.fetchHenkilo(this.props.oidHenkilo);
-        this.props.fetchHenkiloYksilointitieto(this.props.oidHenkilo);
-        this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
-        this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
+        await this.props.fetchHenkilo(oid);
+        this.props.fetchHenkiloOrgs(oid);
+        this.props.fetchHenkiloSlaves(oid);
+        this.props.fetchHenkiloYksilointitieto(oid);
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttaja(this.props.oidHenkilo);
-        this.props.fetchKayttajatieto(this.props.oidHenkilo);
+        this.props.fetchKayttaja(oid);
+        this.props.fetchKayttajatieto(oid);
         this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(oid);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
         this.props.fetchOmattiedotOrganisaatios();
-    };
-
-    componentWillReceiveProps(nextProps: Props) {
-        const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'admin');
-        this.props.updateHenkiloNavigation(tabs);
     }
 
     render() {

@@ -59,27 +59,33 @@ class VirkailijaViewContainer extends React.Component<Props> {
         const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
         this.props.updateHenkiloNavigation(tabs);
 
-        await this.props.fetchHenkilo(this.props.oidHenkilo);
-        this.props.fetchHenkiloYksilointitieto(this.props.oidHenkilo);
-        this.props.fetchHenkiloOrgs(this.props.oidHenkilo);
-        this.props.fetchHenkiloSlaves(this.props.oidHenkilo);
-        this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
-        this.props.fetchSukupuoliKoodisto();
-        this.props.fetchKayttaja(this.props.oidHenkilo);
-        this.props.fetchKayttajatieto(this.props.oidHenkilo);
-        this.props.fetchYhteystietotyypitKoodisto();
-        this.props.fetchAllKayttooikeusryhmasForHenkilo(this.props.oidHenkilo);
-        this.props.fetchAllKayttooikeusAnomusForHenkilo(this.props.oidHenkilo);
-        this.props.fetchOmattiedotOrganisaatios();
-
-        this.props.getGrantablePrivileges(this.props.oidHenkilo);
+        await this.fetchVirkailijaViewData(this.props.oidHenkilo)
     };
 
 
-    componentWillReceiveProps(nextProps: Props) {
+    async componentWillReceiveProps(nextProps: Props) {
         const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'virkailija');
         this.props.updateHenkiloNavigation(tabs);
+
+        if (nextProps.oidHenkilo !== this.props.oidHenkilo) {
+            await this.fetchVirkailijaViewData(nextProps.oidHenkilo)
+        }
+    }
+
+    async fetchVirkailijaViewData(oid) {
+        await this.props.fetchHenkilo(oid);
+        this.props.fetchHenkiloOrgs(oid);
+        this.props.fetchHenkiloSlaves(oid);
+        this.props.fetchKieliKoodisto();
+        this.props.fetchKansalaisuusKoodisto();
+        this.props.fetchSukupuoliKoodisto();
+        this.props.fetchKayttaja(oid);
+        this.props.fetchKayttajatieto(oid);
+        this.props.fetchYhteystietotyypitKoodisto();
+        this.props.fetchAllKayttooikeusryhmasForHenkilo(oid);
+        this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
+        this.props.fetchOmattiedotOrganisaatios();
+        this.props.getGrantablePrivileges(oid);
     }
 
     render() {
