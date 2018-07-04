@@ -243,6 +243,11 @@ public class HenkiloModificationServiceImplTest {
                 .thenReturn(Optional.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
+        when(duplicateService.removeDuplicateHetuAndLink(any(), eq("310817A983J")))
+                .thenAnswer(invocation -> {
+                    Henkilo h = invocation.getArgument(0);
+                    return new DuplicateService.LinkResult(h, Collections.singletonList(h), Collections.emptyList());
+                });
         HenkiloForceUpdateDto input = new HenkiloForceUpdateDto();
         input.setHetu("310817A983J");
         input.setSyntymaaika(LocalDate.of(2017, Month.OCTOBER, 6));

@@ -106,7 +106,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         Henkilo henkiloToUpdate = this.henkiloRepository.findByOidHenkilo(oidHenkilo)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + oidHenkilo));
 
-        this.duplicateService.removeDuplicateHetuAndLink(oidHenkilo, henkiloVahvaTunnistusDto.getHetu());
+        DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloToUpdate, henkiloVahvaTunnistusDto.getHetu());
 
         // No current hetu and hetu not already used => set hetu
         this.setHetuIfMatchesToHenkilo(henkiloVahvaTunnistusDto, henkiloToUpdate);
@@ -116,7 +116,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite(), alkupera);
         }
 
-        henkiloModificationService.update(henkiloToUpdate);
+        linked.modified.forEach(henkiloModificationService::update);
     }
 
     private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {

@@ -154,7 +154,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             throw new UnprocessableEntityException(errors);
         }
 
-        this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
+        DuplicateService.LinkResult linked = this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
@@ -171,7 +171,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 
-        return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
+        linked.modified.forEach(this::update);
+        return mapper.map(henkiloSaved, HenkiloReadDto.class);
     }
 
 
@@ -198,10 +199,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                     .map(this.henkiloDataRepository::save)
                     .findFirst();
         }
+        huoltaja.ifPresent(this::update);
         return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto, oppijanumerorekisteriProperties.getRootUserOid()));
     }
 
-    private void updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+    private DuplicateService.LinkResult updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         // Only if hetu has changed
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
             if (henkiloSaved.isYksiloityVTJ()) {
@@ -212,9 +214,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 henkiloSaved.addHetu(henkiloUpdateDto.getHetu());
             }
             String newHetu = henkiloUpdateDto.getHetu();
-            this.duplicateService.removeDuplicateHetuAndLink(henkiloUpdateDto.getOidHenkilo(), newHetu);
+            DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved, newHetu);
             henkiloSaved.setHetu(newHetu);
             henkiloUpdateDto.setHetu(null);
+            return linked;
+        } else {
+            return new DuplicateService.LinkResult(henkiloSaved, Collections.singletonList(henkiloSaved), Collections.emptyList());
         }
     }
 
@@ -430,6 +435,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return this.henkiloDataRepository.save(henkiloCreate);
     }
 
+    @Override
+    public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
+        DuplicateService.LinkResult linked = this.duplicateService.linkHenkilos(henkiloOid, similarHenkiloOids);
+        linked.modified.forEach(this::update);
+        return linked.slaveOids;
+    }
 
     private String getFreePersonOid() {
         final String newOid = oidGenerator.generateOID();

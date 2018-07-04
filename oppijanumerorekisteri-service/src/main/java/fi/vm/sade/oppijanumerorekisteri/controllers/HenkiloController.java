@@ -436,7 +436,7 @@ public class HenkiloController {
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.duplicateService.linkHenkilos(oid, slaveOids);
+        return this.henkiloModificationService.linkHenkilos(oid, slaveOids);
     }
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")

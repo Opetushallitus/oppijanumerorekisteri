@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -96,26 +98,26 @@ public class DuplicateServiceImpl implements DuplicateService {
 
     @Override
     @Transactional
-    public void removeDuplicateHetuAndLink(String oidHenkilo, String hetu) {
-        this.henkiloDataRepository.findByHetu(hetu)
-                .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
-                .ifPresent((oppijaWithSameHetu) -> {
+    public LinkResult removeDuplicateHetuAndLink(Henkilo henkilo, String hetu) {
+        return this.henkiloDataRepository.findByHetu(hetu)
+                .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(henkilo.getOidHenkilo()))
+                .map(oppijaWithSameHetu -> {
                     String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[oppijaWithSameHetu.getKaikkiHetut().size()]);
-                    henkiloDataRepository.findByOidHenkilo(oidHenkilo)
-                            .ifPresent(master -> master.addHetu(oppijaWithSameHetuHetuhistoria));
+                    henkilo.addHetu(oppijaWithSameHetuHetuhistoria);
                     oppijaWithSameHetu.clearHetut();
                     oppijaWithSameHetu.setHetu(null);
                     oppijaWithSameHetu.setYksiloity(false);
                     oppijaWithSameHetu.setYksiloityVTJ(false);
                     // Hetu is unique so we need to flush when moving it
                     this.henkiloDataRepository.saveAndFlush(oppijaWithSameHetu);
-                    this.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
-                });
+                    return this.linkHenkilos(henkilo.getOidHenkilo(), Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
+                })
+                .orElse(new LinkResult(henkilo, Collections.singletonList(henkilo), Collections.emptyList()));
     }
 
     @Override
     @Transactional
-    public Henkilo linkWithHetu(Henkilo henkilo, String hetu) {
+    public LinkResult linkWithHetu(Henkilo henkilo, String hetu) {
         return this.henkiloDataRepository.findByHetu(hetu)
                 .filter(henkiloByHetu -> !henkiloByHetu.equals(henkilo))
                 .map(henkiloByHetu -> {
@@ -131,22 +133,19 @@ public class DuplicateServiceImpl implements DuplicateService {
                         slave = henkilo;
                     }
                     slave.setHetu(null);
-                    this.linkHenkilos(master.getOidHenkilo(), Lists.newArrayList(slave.getOidHenkilo()));
-                    return master;
+                    return this.linkHenkilos(master.getOidHenkilo(), Lists.newArrayList(slave.getOidHenkilo()));
                 })
-                .orElse(henkilo);
+                .orElse(new LinkResult(henkilo, Collections.singletonList(henkilo), new ArrayList<>()));
     }
 
     @Override
     @Transactional
-    public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
-        Date modificationDate = new Date();
+    public LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
         similarHenkiloOids = similarHenkiloOids.stream().filter( oid -> !henkiloOid.equals(oid)).distinct().collect(toList());
 
         Henkilo master = determineMasterHenkilo(henkiloOid, similarHenkiloOids);
         master.setPassivoitu(false);
         master.setDuplicate(false);
-        master.setModified(modificationDate);
 
         List<String> slaveOids = similarHenkiloOids;
         if (!henkiloOid.equals(master.getOidHenkilo())) {
@@ -163,30 +162,33 @@ public class DuplicateServiceImpl implements DuplicateService {
                         .stream()
                         .map(HenkiloViite::getMasterOid).collect(toSet()));
 
-        for (String slaveOid : slaveOids) {
-            this.linkHenkilos(modificationDate, master, viite -> master.getOidHenkilo().equals(viite.getMasterOid()), slaveOid);
-        }
-
-        return slaveOids;
+        return new LinkResult(
+                master,
+                Stream.concat(
+                        slaveOids.stream().flatMap(oid -> this.linkHenkilos(master, oid).stream()),
+                        Stream.of(master)
+                ).collect(toList()),
+                slaveOids
+        );
     }
 
-    private void linkHenkilos(Date modificationDate,
-                              Henkilo master,
-                              java.util.function.Predicate<HenkiloViite> relatesToGivenMaster,
-                              String slaveOid) {
+    private List<Henkilo> linkHenkilos(Henkilo master, String slaveOid) {
         List<HenkiloViite> existingViittees = this.henkiloViiteRepository.findBySlaveOid(slaveOid);
-        existingViittees.stream().filter(relatesToGivenMaster.negate())
-                .forEach(viite -> {
-                    // If given slave already linked to another master, update the related (old) master
-                    this.henkiloDataRepository.findByOidHenkilo(viite.getMasterOid())
-                            .ifPresent( henkilo -> henkilo.setModified(modificationDate));
-                    // and remove this other viite:
+
+        Predicate<HenkiloViite> relatesToGivenMaster = viite -> master.getOidHenkilo().equals(viite.getMasterOid());
+        // Unlink slave from from possible previous master
+        List<Henkilo> previousMasters = existingViittees.stream().filter(relatesToGivenMaster.negate())
+                .flatMap(viite -> {
+                    String masterOid = viite.getMasterOid();
                     this.henkiloViiteRepository.delete(viite);
-                });
+                    return this.henkiloDataRepository.findByOidHenkilo(masterOid)
+                            .map(Stream::of).orElse(Stream.empty());
+                })
+                .collect(toList());
 
         if (existingViittees.stream().anyMatch(relatesToGivenMaster)) {
             // No need to add new viite (already linked to the given master):
-            return;
+            return previousMasters;
         }
 
         HenkiloViite viite = new HenkiloViite();
@@ -203,19 +205,17 @@ public class DuplicateServiceImpl implements DuplicateService {
         Optional<String> kasittelijaOid = this.userDetailsHelper.findCurrentUserOid();
         // Doesn't throw even if user doesn't exists in kayttooikeus-service
         this.kayttooikeusClient.passivoiHenkilo(duplicateHenkilo.getOidHenkilo(), kasittelijaOid.orElse(null));
-        duplicateHenkilo.setModified(modificationDate);
 
         // Preserve two-level hierarchy, re-link slave's slaves to new master
         this.henkiloViiteRepository.findByMasterOid(slaveOid).forEach( slavesSlave -> {
             if (slavesSlave.getSlaveOid().equals(master.getOidHenkilo())) {
                 this.henkiloViiteRepository.delete(slavesSlave);
             } else {
-                Henkilo slaveSlaveHenkilo = this.henkiloDataRepository.findByOidHenkilo(slavesSlave.getSlaveOid())
-                        .orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slavesSlave.getSlaveOid()));
-                slaveSlaveHenkilo.setModified(modificationDate);
                 slavesSlave.setMasterOid(master.getOidHenkilo());
             }
         });
+
+        return previousMasters;
     }
 
     private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
