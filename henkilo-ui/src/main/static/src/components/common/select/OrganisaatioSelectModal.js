@@ -6,7 +6,7 @@ import {OrganisaatioSelect} from "./OrganisaatioSelect";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import SelectModal from "../modal/SelectModal";
 
-type Props = {
+type OrganisaatioSelectModalProps = {
     locale: Locale,
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
@@ -21,9 +21,9 @@ type State = {
 /*
  * Organisaation valinta modalissa
  */
-export class OrganisaatioSelectModal extends React.Component<Props, State> {
+export class OrganisaatioSelectModal extends React.Component<OrganisaatioSelectModalProps, State> {
 
-    constructor(props: Props) {
+    constructor(props: OrganisaatioSelectModalProps) {
         super(props);
 
         this.state = {

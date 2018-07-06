@@ -12,6 +12,7 @@ import {urls} from 'oph-urls-js';
 
 import './TopNavigation.css';
 import {parsePalveluRoolit} from "../../utilities/palvelurooli.util";
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
 
 type Props = {
     naviTabs: Array<NaviTab>,
@@ -20,17 +21,23 @@ type Props = {
     isRekisterinpitaja: boolean,
     organisaatiot: Array<any>,
     naviOptions: NaviOptions,
+    route: any,
+    henkilo?: HenkiloState,
+    params?: {[string]: string},
 }
 
-const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, organisaatiot}: Props) => {
-    const isNoAuthenticationPage = naviOptions.isUnauthenticatedPage;
+const TopNavigation = ({pathName, L, isRekisterinpitaja, organisaatiot, route, params, henkilo}: Props) => {
+    const isNoAuthenticationPage = route.isUnauthenticated;
     const organisaatioList = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot;
     const roolit: Array<string> = parsePalveluRoolit(organisaatioList);
+    const naviConfig = route.getNaviTabs && route.getNaviTabs(params && params['oid'], henkilo, params && params['henkiloType']);
+    const naviTabs = naviConfig && naviConfig.naviTabs;
+    const naviOptions = naviConfig && naviConfig.naviOptions;
     return (
         <div id="topNavigation" className={classNames({'oph-bg-blue': !isNoAuthenticationPage})}>
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
             { !isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')}/> }
-            { !isNoAuthenticationPage && naviTabs.length > 0
+            { naviConfig && !isNoAuthenticationPage && naviTabs.length > 0
             && <ul className="tabs">
                 {/*eslint-disable no-script-url*/}
                 { naviOptions.backButton ? <li><a href="javascript:history.go(-1)">&#8701; {L['TAKAISIN_LINKKI']} <i className="fa fa-fw" aria-hidden="true">&nbsp;</i></a></li> : null }
@@ -47,7 +54,7 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
                         return <li key={index}>
                             <Link className={className} to={data.path}>
                                 {L[data.label] || data.label}
-                                {data.path === pathName && <i className="fa fa-angle-down" aria-hidden="true"></i>}
+                                {data.path === pathName && <i className="fa fa-angle-down" aria-hidden="true"/>}
                                 {data.path !== pathName && <i className="fa fa-fw" aria-hidden="true">&nbsp;</i>}
                             </Link>
                         </li>;
@@ -62,10 +69,9 @@ const TopNavigation = ({naviTabs, pathName, naviOptions, L, isRekisterinpitaja, 
 
 const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
-    naviTabs: state.naviState.naviTabs,
     isRekisterinpitaja: state.omattiedot.isAdmin,
     organisaatiot: state.omattiedot.organisaatiot,
-    naviOptions: state.naviState.naviOptions,
+    henkilo: state.henkilo,
 });
 
 export default connect(mapStateToProps, {})(TopNavigation);

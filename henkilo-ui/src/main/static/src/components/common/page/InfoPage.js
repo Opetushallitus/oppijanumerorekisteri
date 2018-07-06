@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import {updateUnauthenticatedNavigation} from "../../../actions/navigation.actions";
 import './InfoPage.css';
 
 
@@ -12,10 +11,6 @@ type Props = {
 }
 
 class InfoPage extends React.Component<Props> {
-    componentWillMount() {
-        this.props.updateUnauthenticatedNavigation();
-    }
-
     render() {
         return <div className="infoPageWrapper">
             <p className="oph-h2 oph-bold">{this.props.topicLocalised}</p>
@@ -24,4 +19,4 @@ class InfoPage extends React.Component<Props> {
     }
 }
 
-export default connect( () => ({}), {updateUnauthenticatedNavigation})(InfoPage);
+export default connect( () => ({}), {})(InfoPage);

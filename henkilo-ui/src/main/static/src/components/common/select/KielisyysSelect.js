@@ -4,7 +4,7 @@ import type {Koodisto} from '../../../types/domain/koodisto/koodisto.types'
 import type {Kielisyys} from '../../../types/domain/oppijanumerorekisteri/kielisyys.types'
 import KoodistoSelect from './KoodistoSelect'
 
-type Props = {
+type KielisyysSelectProps = {
     className?: string,
     placeholder: string,
     koodisto: Koodisto,
@@ -15,7 +15,7 @@ type Props = {
 /**
  * Komponentti kielisyyden valitsemiseen.
  */
-class KielisyysSelect extends React.Component<Props> {
+class KielisyysSelect extends React.Component<KielisyysSelectProps> {
 
     render() {
         return (
@@ -26,12 +26,12 @@ class KielisyysSelect extends React.Component<Props> {
                 value={this.props.value ? this.props.value.kieliKoodi : null}
                 onChange={this.onChange}
                 />
-        )
+        );
     }
 
     onChange = (value: ?string) => {
         this.props.onChange(value ? {kieliKoodi: value} : null)
-    }
+    };
 
 }
 

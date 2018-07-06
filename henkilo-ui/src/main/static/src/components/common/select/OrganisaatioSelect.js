@@ -7,7 +7,7 @@ import './OrganisaatioSelect.css';
 import * as R from 'ramda';
 import {List} from 'react-virtualized';
 
-type Props = {
+type OrganisaatioSelectProps = {
     locale: Locale,
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
@@ -21,7 +21,7 @@ type State = {
     organisaatiot: Array<OrganisaatioSelectObject>
 }
 
-export class OrganisaatioSelect extends React.Component<Props, State> {
+export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps, State> {
 
     constructor(props: Props) {
         super(props);

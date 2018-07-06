@@ -4,7 +4,6 @@ import './VirhePage.css';
 import {connect} from 'react-redux';
 import Button from "../button/Button";
 import type {L} from "../../../types/localisation.type";
-import {updateUnauthenticatedNavigation} from "../../../actions/navigation.actions";
 
 type Props = {
     topic: string,
@@ -12,13 +11,9 @@ type Props = {
     buttonText: string,
     theme: string,
     L: L,
-    updateUnauthenticatedNavigation: () => void,
 }
 
 class VirhePage extends React.Component<Props> {
-    componentWillMount() {
-        this.props.updateUnauthenticatedNavigation();
-    }
 
     render() {
         const classname = this.props.theme === 'gray' ? 'virhePageVirheWrapperGray' : 'virhePageVirheWrapper';
@@ -34,8 +29,8 @@ class VirhePage extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations['fi'],
 });
 
-export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(VirhePage);
+export default connect(mapStateToProps, {})(VirhePage);

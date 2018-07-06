@@ -10,15 +10,12 @@ import {
     fetchAllHierarchialOrganisaatios, fetchAllOrganisaatios,
     fetchAllRyhmas
 } from '../../actions/organisaatio.actions';
-import {updateEmptyNavigation} from "../../actions/navigation.actions";
 import HenkiloViewPage from "../henkilo/HenkiloViewPage";
 
 class OmattiedotPageContainer extends React.Component {
 
     async componentDidMount() {
         this.props.clearHenkilo();
-
-        this.props.updateEmptyNavigation();
 
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
@@ -75,4 +72,4 @@ export default connect(mapStateToProps, {
     fetchAllRyhmas,
     fetchAllHierarchialOrganisaatios,
     clearHenkilo,
-    updateEmptyNavigation})(OmattiedotPageContainer)
+})(OmattiedotPageContainer)

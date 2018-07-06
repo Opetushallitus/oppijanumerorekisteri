@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
-import {updateKayttooikeusryhmaNavigation} from '../../../actions/navigation.actions';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import {fetchOmattiedotOrganisaatios} from '../../../actions/omattiedot.actions';
 import {fetchOppilaitostyypit} from '../../../actions/koodisto.actions';
@@ -22,7 +21,6 @@ import {addGlobalNotification} from '../../../actions/notification.actions';
 
 type Props = {
     L: L,
-    updateKayttooikeusryhmaNavigation: () => void,
     fetchKayttooikeusryhmaById: (id: string) => Promise<any>,
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => Promise<any>,
     fetchOmattiedotOrganisaatios: () => void,
@@ -49,7 +47,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
 
     componentDidMount() {
         const kayttooikeusryhmaId: ?string  = this.props.kayttooikeusryhmaId;
-        this.props.updateKayttooikeusryhmaNavigation();
         this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
@@ -91,7 +88,14 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps, {
-    updateKayttooikeusryhmaNavigation, fetchOmattiedotOrganisaatios, fetchKayttooikeusryhmaById, fetchPalveluRooliByKayttooikeusryhmaId,
-    fetchOppilaitostyypit, fetchAllKayttooikeusryhma, fetchAllPalvelut, fetchPalveluKayttooikeus, fetchKayttooikeusryhmaSlaves, fetchAllOrganisaatios,
-    addGlobalNotification
-})(KayttooikeusryhmaPageContainer)
+    fetchOmattiedotOrganisaatios,
+    fetchKayttooikeusryhmaById,
+    fetchPalveluRooliByKayttooikeusryhmaId,
+    fetchOppilaitostyypit,
+    fetchAllKayttooikeusryhma,
+    fetchAllPalvelut,
+    fetchPalveluKayttooikeus,
+    fetchKayttooikeusryhmaSlaves,
+    fetchAllOrganisaatios,
+    addGlobalNotification,
+})(KayttooikeusryhmaPageContainer);

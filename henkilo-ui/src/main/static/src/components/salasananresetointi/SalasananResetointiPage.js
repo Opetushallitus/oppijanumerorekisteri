@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import type {Locale} from '../../types/locale.type';
 import type {L} from '../../types/localisation.type';
 import './SalasananResetointiPage.css';
-import {updateUnauthenticatedNavigation} from "../../actions/navigation.actions";
 import {urls} from 'oph-urls-js';
 import {http} from "../../http";
 import WideRedNotification from "../common/notifications/WideRedNotification";
@@ -16,7 +15,6 @@ import Button from '../common/button/Button';
 type Props = {
     L: L,
     locale: Locale,
-    updateUnauthenticatedNavigation: () => any,
     poletti: string
 }
 
@@ -48,10 +46,6 @@ class SalasananResetointiPage extends React.Component<Props, State> {
             showNotFoundError: false,
             showForbiddenError: false
         };
-    }
-
-    componentDidMount() {
-        this.props.updateUnauthenticatedNavigation();
     }
 
     render() {
@@ -126,8 +120,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
 
     toLogin = (event) => {
         event.preventDefault();
-        const url = urls.url('virkailijan-tyopoyta.base');
-        document.location.href = url;
+        document.location.href = urls.url('virkailijan-tyopoyta.base');
     };
 
     submitForm = async (event) => {
@@ -136,7 +129,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
         try {
             this.setState({
                 loading: true,
-            })
+            });
             await http.post(url, this.state.password);
             this.setState({
                 loading: false,
@@ -145,7 +138,7 @@ class SalasananResetointiPage extends React.Component<Props, State> {
                 showSetPassword: false
             });
         } catch (error) {
-            const newState = { loading: false }
+            const newState = { loading: false };
             if(error.errorType === 'NotFoundException') {
                 this.setState({ ...newState, showNotFoundError: true});
             } else if(error.errorType === 'ForbiddenException') {
@@ -168,4 +161,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {updateUnauthenticatedNavigation})(SalasananResetointiPage);
+export default connect(mapStateToProps, {})(SalasananResetointiPage);

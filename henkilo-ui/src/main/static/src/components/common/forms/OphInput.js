@@ -2,7 +2,7 @@
 import React from 'react'
 import classNames from 'classnames'
 
-type Props = {
+type OphInputProps = {
     type: string,
     name: string,
     value: string,
@@ -12,13 +12,13 @@ type Props = {
     disabled?: boolean,
 }
 
-class OphInput extends React.Component<Props> {
+class OphInput extends React.Component<OphInputProps> {
 
     render() {
         const classes = classNames({
             'oph-input': true,
             'oph-input-has-error': this.props.hasError,
-        })
+        });
         return (
             <input
                 type={this.props.type}
@@ -30,7 +30,7 @@ class OphInput extends React.Component<Props> {
                 placeholder={this.props.placeholder}
                 disabled={this.props.disabled}
             />
-        )
+        );
     }
 
 }

@@ -4,7 +4,7 @@ import Button from "../button/Button";
 import {SpinnerInButton} from "../icons/SpinnerInButton";
 import OphModal from "./OphModal";
 
-type Props = {
+type SelectModalProps = {
     disabled: boolean,
     buttonText: string,
     children?: React$Element<any>,
@@ -17,7 +17,7 @@ type State = {
 /**
  * Näyttää ja piilottaa lapsena annetun modalin. Välittää piilottamistoiminnon tälle modalille.
  */
-class SelectModal extends React.Component<Props, State> {
+class SelectModal extends React.Component<SelectModalProps, State> {
     constructor(props: Props) {
         super(props);
 

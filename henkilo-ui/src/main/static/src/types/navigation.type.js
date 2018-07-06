@@ -1,7 +1,7 @@
 // @flow
 
 export type NaviOptions = {
-    backButton?: ?string,
+    backButton?: ?boolean,
     isUnauthenticatedPage?: boolean,
     bgColor?: ?string,
 }

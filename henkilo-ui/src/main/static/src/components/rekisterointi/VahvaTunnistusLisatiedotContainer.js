@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
-import { updateUnauthenticatedNavigation } from '../../actions/navigation.actions'
 import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage'
 import type { Form, Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs'
 import type { Locale } from '../../types/locale.type'
@@ -11,7 +10,6 @@ import { http } from '../../http'
 import { isValidPassword } from '../../validation/PasswordValidator'
 
 type Props = {
-    updateUnauthenticatedNavigation: () => void,
     router: any,
     locale: Locale,
     L: L,
@@ -28,7 +26,7 @@ const getInitialValues = (): Values => ({
     password: '',
     passwordAgain: '',
     tyosahkopostiosoite: '',
-})
+});
 
 const getInitialMetadata = (props: Props): Metadata => ({
     salasana: {
@@ -41,15 +39,15 @@ const getInitialMetadata = (props: Props): Metadata => ({
         disabled: false,
         required: true,
     },
-})
+});
 
 class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
 
     constructor(props: Props) {
-        super(props)
-        const values = getInitialValues()
-        const metadata = getInitialMetadata(props)
-        const errors = this.getErrors(values, metadata, props.L)
+        super(props);
+        const values = getInitialValues();
+        const metadata = getInitialMetadata(props);
+        const errors = this.getErrors(values, metadata, props.L);
         this.state = {
             form: {
                 values: values,
@@ -58,10 +56,6 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                 submitted: false,
             },
         }
-    }
-
-    componentDidMount() {
-        this.props.updateUnauthenticatedNavigation()
     }
 
     render() {
@@ -78,20 +72,20 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
     }
 
     onChange = (name: string, value: any) => {
-        const values = { ...this.state.form.values, [name]: value }
-        const errors = this.getErrors(values, this.state.form.metadata, this.props.L)
-        const form = { ...this.state.form, values: values, errors: errors }
+        const values = { ...this.state.form.values, [name]: value };
+        const errors = this.getErrors(values, this.state.form.metadata, this.props.L);
+        const form = { ...this.state.form, values: values, errors: errors };
         this.setState({ ...this.state, form: form })
-    }
+    };
 
     getErrors = (values: Values, metadata: Metadata, L: L): Errors => {
-        let errors: Errors = []
+        let errors: Errors = [];
         // tarkistetaan pakollisuudet
         Object.entries(values).forEach(([name, value]) => {
             if (!value && metadata[name] && metadata[name].visible && metadata[name].required) {
                 errors.push({ name: name, text: L['LOMAKE_PAKOLLINEN_TIETO'] })
             }
-        })
+        });
         if (values.password) {
             if (!isValidPassword(values.password)) {
                 errors.push({ name: 'salasana', text: L['SALASANA_OHJE'] })
@@ -101,17 +95,17 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
             }
         }
         return errors
-    }
+    };
 
     onSubmit = async () => {
         try {
-            const form = { ...this.state.form, submitted: true }
-            this.setState({ ...this.state, form: form })
+            const form = { ...this.state.form, submitted: true };
+            this.setState({ ...this.state, form: form });
             if (this.state.form.errors.length === 0) {
-                const tunnistusParameters = { kielisyys: this.props.locale, loginToken: this.props.loginToken }
-                const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters)
-                const loginParameters = await http.post(tunnistusUrl, {...form.values, salasana: form.values.password})
-                const loginUrl = urls.url('cas.login', loginParameters)
+                const tunnistusParameters = { kielisyys: this.props.locale, loginToken: this.props.loginToken };
+                const tunnistusUrl = urls.url('kayttooikeus-service.cas.uudelleenrekisterointi', tunnistusParameters);
+                const loginParameters = await http.post(tunnistusUrl, {...form.values, salasana: form.values.password});
+                const loginUrl = urls.url('cas.login', loginParameters);
                 window.location.replace(loginUrl)
             }
         } catch (error) {
@@ -127,8 +121,8 @@ const mapStateToProps = (state, ownProps) => ({
     loginToken: ownProps.params['loginToken'],
     salasana: ownProps.params['salasana'] === 'true',
     tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
-})
+});
 
 export default connect(mapStateToProps, {
-    updateUnauthenticatedNavigation,
+
 })(VahvaTunnistusLisatiedotContainer)

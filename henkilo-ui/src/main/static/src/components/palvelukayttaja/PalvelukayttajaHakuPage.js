@@ -17,7 +17,7 @@ import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobjec
 import type {Locale} from "../../types/locale.type";
 import CloseButton from "../common/button/CloseButton";
 
-type Props = {
+type PalvelukayttajaHakuPageProps = {
     L: L,
     locale: Locale,
     organisaatiot: Array<OrganisaatioHenkilo>,
@@ -26,7 +26,7 @@ type Props = {
     organisaatiotLoading: boolean
 }
 
-class PalvelukayttajaHakuPage extends React.Component<Props> {
+class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPageProps> {
 
     render() {
         return (
@@ -60,8 +60,8 @@ class PalvelukayttajaHakuPage extends React.Component<Props> {
                     disabled={this.props.organisaatiotLoading}
                     organisaatiot={organisaatiot}
                     onSelect={this.onOrganisationChange}
-                ></OrganisaatioSelectModal>
-                <CloseButton closeAction={() => this.onOrganisationChange(undefined)}></CloseButton>
+                />
+                <CloseButton closeAction={() => this.onOrganisationChange(undefined)}/>
             </div>
 
             <SubOrganisationCheckbox
@@ -83,14 +83,14 @@ class PalvelukayttajaHakuPage extends React.Component<Props> {
         if (this.props.palvelukayttajat.criteria.nameQuery !== element.value) {
             this.props.onCriteriaChange({...this.props.palvelukayttajat.criteria, nameQuery: element.value})
         }
-    }
+    };
 
     onSubOrganisationChange = (element: SyntheticEvent<HTMLInputElement>) => {
         this.props.onCriteriaChange({
             ...this.props.palvelukayttajat.criteria,
             subOrganisation: element.currentTarget.checked
         })
-    }
+    };
 
     onOrganisationChange = (selection: ?OrganisaatioSelectObject) => {
         this.props.onCriteriaChange({

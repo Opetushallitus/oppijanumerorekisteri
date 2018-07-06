@@ -33,13 +33,13 @@ export type Form = {
     submitted: boolean,
 }
 
-type Props = {
+type VahvaTunnistusLisatiedotInputsProps = {
     L: L,
     form: Form,
     onChange: (name: string, value: any) => void,
 }
 
-class VahvaTunnistusLisatiedotInputs extends React.Component<Props> {
+class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisatiedotInputsProps> {
 
     render() {
         return (
@@ -91,11 +91,11 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<Props> {
 
     hasError = (name: string): boolean => {
         return this.props.form.submitted && this.props.form.errors.some(error => error.name === name)
-    }
+    };
 
     onInputChange = (event: SyntheticEvent<HTMLInputElement>) => {
         this.props.onChange(event.currentTarget.name, event.currentTarget.value)
-    }
+    };
 
 }
 

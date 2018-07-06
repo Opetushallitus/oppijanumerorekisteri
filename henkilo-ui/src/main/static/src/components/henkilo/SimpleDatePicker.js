@@ -3,9 +3,9 @@ import React from 'react'
 import DatePicker from 'react-datepicker'
 import Moment from 'moment'
 
-const DEFAULT_MODEL_FORMAT = 'YYYY-MM-DD'
+const DEFAULT_MODEL_FORMAT = 'YYYY-MM-DD';
 
-type Props = {
+type SimpleDatePickerProps = {
     className?: string,
     placeholder?: string,
     value: ?string,
@@ -17,7 +17,7 @@ type Props = {
 /**
  * Päivämäärävalitsin, jossa arvona käytetään merkkijonoa, esim. "2017-10-25".
  */
-class SimpleDatePicker extends React.Component<Props> {
+class SimpleDatePicker extends React.Component<SimpleDatePickerProps> {
 
     render() {
         return (
@@ -36,11 +36,11 @@ class SimpleDatePicker extends React.Component<Props> {
 
     getMomentValue = (): ?Moment => {
         return this.props.value ? Moment(this.props.value, this.getModelFormat()) : null
-    }
+    };
 
     getModelFormat = (): string => {
         return this.props.format ? this.props.format : DEFAULT_MODEL_FORMAT
-    }
+    };
 
     onChange = (value: ?Moment) => {
         this.props.onChange(value ? value.format(this.getModelFormat()) : null)

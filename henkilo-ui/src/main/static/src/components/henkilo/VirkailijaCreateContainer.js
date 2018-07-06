@@ -5,7 +5,6 @@ import { http } from '../../http'
 import { urls } from 'oph-urls-js'
 import type { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types'
 import type { L } from "../../types/localisation.type";
-import { updateEmptyNavigation } from "../../actions/navigation.actions";
 import VirkailijaCreateForm from './VirkailijaCreateForm';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator'
 import { isValidPassword } from '../../validation/PasswordValidator'
@@ -15,7 +14,6 @@ import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator'
 type Props = {
     router: any,
     L: L,
-    updateEmptyNavigation: () => void,
 }
 
 type State = {
@@ -29,7 +27,7 @@ type State = {
 class VirkailijaCreateContainer extends React.Component<Props, State> {
 
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             virkailija: {
@@ -43,10 +41,6 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
             },
             virheet: []
         };
-    }
-
-    componentDidMount() {
-        this.props.updateEmptyNavigation();
     }
 
     render() {
@@ -78,12 +72,12 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
     }
 
     onChange = (virkailija: VirkailijaCreate): void => {
-        const virheet = this.validate(virkailija)
+        const virheet = this.validate(virkailija);
         this.setState({ virkailija: virkailija, virheet: virheet });
-    }
+    };
 
     validate = (virkailija: VirkailijaCreate): Array<string> => {
-        const virheet = []
+        const virheet = [];
         if (virkailija.kutsumanimi) {
             if (!isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)) {
                 virheet.push(this.props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'])
@@ -103,14 +97,14 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
             }
         }
         return virheet
-    }
+    };
 
     onSubmit = async (virkailijaCreate: VirkailijaCreate): Promise<void> => {
         try {
             const oid = await this.createVirkailija(virkailijaCreate);
             this.navigateToVirkailija(oid);
         } catch (error) {
-            this.handleError(error)
+            this.handleError(error);
             throw error
         }
     };
@@ -123,12 +117,12 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
         } else {
             this.setState({ virheet: [...this.state.virheet, this.props.L['HENKILON_LUONTI_EPAONNISTUI']] })
         }
-    }
+    };
 
     createVirkailija = async (virkailija: VirkailijaCreate): Promise<string> => {
         const url = urls.url('kayttooikeus-service.virkailija');
         return await http.post(url, virkailija);
-    }
+    };
 
     navigateToVirkailija = (oid: string) => {
         this.props.router.push(`/virkailija/${oid}`);
@@ -142,4 +136,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, { updateEmptyNavigation })(VirkailijaCreateContainer);
+export default connect(mapStateToProps, { })(VirkailijaCreateContainer);

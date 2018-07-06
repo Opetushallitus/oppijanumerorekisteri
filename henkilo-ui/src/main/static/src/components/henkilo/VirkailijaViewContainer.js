@@ -10,16 +10,12 @@ import {
 import {
     fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
-import {updateHenkiloNavigation} from "../../actions/navigation.actions";
-import {henkiloViewTabs} from "../navigation/NavigationTabs";
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo, getGrantablePrivileges,
     updateHaettuKayttooikeusryhma,
 } from "../../actions/kayttooikeusryhma.actions";
 import {fetchOmattiedotOrganisaatios} from "../../actions/omattiedot.actions";
-import type {Navigation} from "../../actions/navigation.actions";
-import type {Tab} from "../../types/tab.types";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {OrganisaatioCache} from "../../reducers/organisaatio.reducer";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
@@ -30,7 +26,6 @@ import type {KayttooikeusState} from "../../reducers/kayttooikeus.reducer";
 type Props = {
     oidHenkilo: string,
     clearHenkilo: () => void,
-    updateHenkiloNavigation: (Array<Tab>) => Navigation,
     henkilo: HenkiloState,
     organisaatioCache: OrganisaatioCache,
     koodisto: KoodistoState,
@@ -56,17 +51,12 @@ type Props = {
 class VirkailijaViewContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.clearHenkilo();
-        const tabs = henkiloViewTabs(this.props.oidHenkilo, this.props.henkilo, 'virkailija');
-        this.props.updateHenkiloNavigation(tabs);
 
         await this.fetchVirkailijaViewData(this.props.oidHenkilo)
     };
 
 
     async componentWillReceiveProps(nextProps: Props) {
-        const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, 'virkailija');
-        this.props.updateHenkiloNavigation(tabs);
-
         if (nextProps.oidHenkilo !== this.props.oidHenkilo) {
             await this.fetchVirkailijaViewData(nextProps.oidHenkilo)
         }
@@ -117,7 +107,6 @@ export default connect(mapStateToProps, {
     fetchYhteystietotyypitKoodisto,
     fetchKayttaja,
     fetchKayttajatieto,
-    updateHenkiloNavigation,
     fetchHenkiloYksilointitieto,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,

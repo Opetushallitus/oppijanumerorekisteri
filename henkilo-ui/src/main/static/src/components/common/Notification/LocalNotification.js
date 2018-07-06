@@ -4,7 +4,7 @@ import {TypedNotification} from "./TypedNotification";
 import type {NotificationType} from "../../../types/notification.types";
 
 
-type Props = {
+type LocalNotificationProps = {
     type: NotificationType,
     title: string,
     toggle: boolean,
@@ -26,7 +26,7 @@ type State = {
  * @param onClose: Optional function to run when notification is closed
  * @param children: Optional content to be added after title https://opetushallitus.github.io/virkailija-styles/styleguide/src__modules__alerts.css.html
  */
-export class LocalNotification extends React.Component<Props, State> {
+export class LocalNotification extends React.Component<LocalNotificationProps, State> {
 
     state = {
         show: true,

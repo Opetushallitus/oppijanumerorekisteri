@@ -8,12 +8,12 @@ import type { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reduc
 import './PalvelukayttajaHakuTaulukko.css'
 import Loader from '../common/icons/Loader'
 
-type Props = {
+type PalvelukayttajaHakuTaulukkoProps = {
     L: L,
     palvelukayttajat: PalvelukayttajatState,
 }
 
-class PalvelukayttajaHakuTaulukko extends React.Component<Props> {
+class PalvelukayttajaHakuTaulukko extends React.Component<PalvelukayttajaHakuTaulukkoProps> {
 
     render() {
         return (
@@ -32,7 +32,7 @@ class PalvelukayttajaHakuTaulukko extends React.Component<Props> {
 
     renderData = () => {
         return this.props.palvelukayttajat.data.length ? this.renderRivit(this.props.palvelukayttajat.data) : this.renderKokoRivi(this.props.L['HENKILOHAKU_EI_TULOKSIA'])
-    }
+    };
 
     renderRivit(palvelukayttajat: Array<PalvelukayttajaRead>): Array<Node> {
         return palvelukayttajat.map(this.renderRivi)

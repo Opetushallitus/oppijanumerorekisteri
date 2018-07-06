@@ -2,7 +2,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import type { L } from '../../types/localisation.type'
-import { updatePalvelukayttajaNavigation } from '../../actions/navigation.actions'
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions'
 import { setPalvelukayttajatCriteria, fetchPalvelukayttajat } from '../../actions/palvelukayttaja.actions'
 import PalvelukayttajaHakuPage from './PalvelukayttajaHakuPage'
@@ -19,17 +18,10 @@ type Props = {
     fetchOmattiedotOrganisaatios: () => void,
     setPalvelukayttajatCriteria: (criteria: PalvelukayttajaCriteria) => void,
     fetchPalvelukayttajat: (criteria: PalvelukayttajaCriteria) => void,
-    updatePalvelukayttajaNavigation: () => void,
     omatOrganisaatiosLoading: boolean
 }
 
 class PalvelukayttajaHakuContainer extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props)
-
-        props.updatePalvelukayttajaNavigation()
-    }
 
     componentDidMount() {
         this.props.fetchOmattiedotOrganisaatios()
@@ -47,7 +39,7 @@ class PalvelukayttajaHakuContainer extends React.Component<Props> {
     }
 
     onCriteriaChange = (criteria: PalvelukayttajaCriteria) => {
-        this.props.setPalvelukayttajatCriteria(criteria)
+        this.props.setPalvelukayttajatCriteria(criteria);
         if (criteria.nameQuery || criteria.organisaatioOids) {
             this.props.fetchPalvelukayttajat(criteria)
         }
@@ -64,7 +56,6 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-    updatePalvelukayttajaNavigation,
     fetchOmattiedotOrganisaatios,
     setPalvelukayttajatCriteria,
     fetchPalvelukayttajat,
