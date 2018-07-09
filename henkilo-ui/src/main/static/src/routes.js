@@ -23,9 +23,20 @@ import HenkiloViewContainer from "./components/henkilo/HenkiloViewContainer";
 import AdminRedirect from "./components/henkilo/AdminRedirect";
 import {
     updateDefaultNavigation,
-    updateHenkiloNavigation, updateKayttooikeusryhmaNavigation, updateOppijaNavigation,
+    updateHenkiloNavigation, updateOppijaNavigation,
     updatePalvelukayttajaNavigation
-} from './actions/navigation.actions';
+} from './components/navigation/navigation.utils';
+import type {HenkiloState} from "./reducers/henkilo.reducer";
+import type {NaviTab} from "./types/navigation.type";
+
+export type RouteType = {
+    path: string,
+    component: React.Node,
+    title: string,
+    getNaviTabs: (?string, ?HenkiloState, ?string) => Array<NaviTab>,
+    isUnauthenticated: ?boolean,
+    backButton: ?boolean,
+}
 
 export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigation}>
     <Route path="/anomukset"
@@ -61,26 +72,31 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
            component={HenkiloViewContainer}
            title="TITLE_OPPIJA"
            getNaviTabs={updateOppijaNavigation}
+           backButton
     />
     <Route path="/virkailija/:oid"
            component={HenkiloViewContainer}
            title="TITLE_VIRKAILIJA"
            getNaviTabs={updateHenkiloNavigation}
+           backButton
     />
     <Route path="/admin/:oid"
            component={AdminRedirect}
            title="TITLE_ADMIN"
            getNaviTabs={updateHenkiloNavigation}
+           backButton
     />
     <Route path="/:henkiloType/:oid/vtjvertailu"
            component={VtjVertailuPage}
            title="TITLE_VTJ_VERTAILU"
            getNaviTabs={updateHenkiloNavigation}
+           backButton
     />
     <Route path="/:henkiloType/:oid/duplikaatit"
            component={DuplikaatitContainer}
            title="TITLE_DUPLIKAATTIHAKU"
            getNaviTabs={updateHenkiloNavigation}
+           backButton
     />
     <Route path="/omattiedot"
            component={OmattiedotContainer}
@@ -88,7 +104,7 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
     />
     <Route path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
            component={VahvaTunnistusLisatiedotContainer}
-           title=""
+           title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
            isUnauthenticated
     />
     <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken"
@@ -117,12 +133,12 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
     />
     <Route path="/kayttooikeusryhmat/lisaa"
            component={KayttooikeusryhmaPageContainer}
-           title=""
-           getNaviTabs={updateKayttooikeusryhmaNavigation}
+           title="TITLE_KAYTTO_OIKEUSRYHMA"
+           backButton
     />
     <Route path="/kayttooikeusryhmat/:id"
            component={KayttooikeusryhmaPageContainer}
-           title=""
+           title="TITLE_KAYTTO_OIKEUSRYHMA"
     />
     <Route path="/palvelukayttaja/luonti"
            component={PalveluCreateContainer}

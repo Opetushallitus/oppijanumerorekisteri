@@ -4,13 +4,12 @@ import {connect} from 'react-redux';
 import './InfoPage.css';
 
 
-type Props = {
+type InfoPageProps = {
     children: any,
     topicLocalised: string,
-    updateUnauthenticatedNavigation: () => void,
 }
 
-class InfoPage extends React.Component<Props> {
+class InfoPage extends React.Component<InfoPageProps> {
     render() {
         return <div className="infoPageWrapper">
             <p className="oph-h2 oph-bold">{this.props.topicLocalised}</p>

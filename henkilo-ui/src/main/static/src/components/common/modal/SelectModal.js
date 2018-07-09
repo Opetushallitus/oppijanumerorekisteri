@@ -18,7 +18,7 @@ type State = {
  * Näyttää ja piilottaa lapsena annetun modalin. Välittää piilottamistoiminnon tälle modalille.
  */
 class SelectModal extends React.Component<SelectModalProps, State> {
-    constructor(props: Props) {
+    constructor(props: SelectModalProps) {
         super(props);
 
         this.state = {

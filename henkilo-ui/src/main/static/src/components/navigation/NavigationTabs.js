@@ -4,8 +4,8 @@ import {path, isNil} from 'ramda';
 import {oppijaNavi, virkailijaNavi} from "./navigationconfigurations";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
-import type {Tab} from "../../types/tab.types";
 import type {Yksilointitieto} from "../../types/domain/oppijanumerorekisteri/yksilointitieto.types";
+import type {NaviTab} from "../../types/navigation.type";
 
 
 export const enabledDuplikaattiView = (oidHenkilo: string, masterLoading: boolean, masterHenkiloOid: string): boolean => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
@@ -17,7 +17,7 @@ export const vtjDataAvailable = (yksilointitieto: ?Yksilointitieto): boolean => 
  *
  * @Params (String oidHenkilo, Object Henkilo, String viewType [admin/virkailija])
  */
-export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henkiloType: string): Array<Tab>  => {
+export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henkiloType: string): Array<NaviTab>  => {
     const currentHenkilo: any = path(['henkilo'], henkilo);
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 

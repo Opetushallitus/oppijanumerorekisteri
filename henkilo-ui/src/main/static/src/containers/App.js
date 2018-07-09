@@ -1,3 +1,4 @@
+//flow
 import React from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
@@ -11,9 +12,10 @@ import PropertySingleton from "../globals/PropertySingleton";
 import {removeGlobalNotification} from "../actions/notification.actions";
 import { GlobalNotifications } from "../components/common/Notification/GlobalNotifications";
 import {LocalisationState} from "../reducers/l10n.reducer";
-import {ophLightGray} from "../actions/navigation.actions";
+import {ophLightGray} from "../components/navigation/navigation.utils";
 import type {Locale} from "../types/locale.type";
 import background from '../img/unauthenticated_background.jpg';
+import type {RouteType} from "../routes";
 
 type AppProps = {
     children: React.Node,
@@ -23,11 +25,13 @@ type AppProps = {
     },
     l10n: LocalisationState,
     locale: Locale,
+    routes: Array<RouteType>,
+    pathName: string,
 }
 
 type AppState = {
     lastPath: string,
-    route: any,
+    route: RouteType,
 }
 
 const fetchPrequelsIntervalInMillis = 30 * 1000;

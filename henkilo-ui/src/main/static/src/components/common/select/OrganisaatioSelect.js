@@ -23,7 +23,7 @@ type State = {
 
 export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps, State> {
 
-    constructor(props: Props) {
+    constructor(props: OrganisaatioSelectProps) {
         super(props);
         const allOrganisaatiot = this._sortAlphabetically(this.props.organisaatiot);
         this.state = {
