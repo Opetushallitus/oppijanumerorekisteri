@@ -19,6 +19,9 @@ export const vtjDataAvailable = (yksilointitieto: ?Yksilointitieto): boolean => 
  */
 export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henkiloType: string): Array<NaviTab>  => {
     const currentHenkilo: any = path(['henkilo'], henkilo);
+    if (!henkiloType) {
+        henkiloType = 'virkailija';
+    }
     const tabs = henkiloType === 'virkailija' ? virkailijaNavi(oidHenkilo) : oppijaNavi(oidHenkilo);
 
     const masterHenkiloOid: any = path(['master', 'oidHenkilo'], henkilo);
