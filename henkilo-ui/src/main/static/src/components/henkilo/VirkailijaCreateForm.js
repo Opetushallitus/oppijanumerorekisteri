@@ -7,7 +7,7 @@ import OphLabel from '../common/forms/OphLabel'
 import OphInput from '../common/forms/OphInput'
 import OphFieldText from '../common/forms/OphFieldText';
 
-type Props = {
+type VirkailijaCreateFormProps = {
     virkailija: VirkailijaCreate,
     disabled: boolean,
     onChange: (VirkailijaCreate) => void,
@@ -18,7 +18,7 @@ type Props = {
 /**
  * Virkailijan luonti -lomake.
  */
-class VirkailijaCreateForm extends React.Component<Props> {
+class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
 
     render() {
         return (
@@ -102,15 +102,15 @@ class VirkailijaCreateForm extends React.Component<Props> {
     }
 
     onInputChange = (event: SyntheticEvent<HTMLInputElement>) => {
-        const muutokset = { [event.currentTarget.name]: event.currentTarget.value }
-        this.props.onChange({ ...this.props.virkailija, ...muutokset })
-    }
+        const muutokset = { [event.currentTarget.name]: event.currentTarget.value };
+        this.props.onChange({ ...this.props.virkailija, ...muutokset });
+    };
 
     onSubmit = (event: SyntheticEvent<HTMLButtonElement>) => {
-        event.preventDefault()
-        this.props.onSubmit(this.props.virkailija)
+        event.preventDefault();
+        this.props.onSubmit(this.props.virkailija);
     }
 
-};
+}
 
 export default VirkailijaCreateForm;

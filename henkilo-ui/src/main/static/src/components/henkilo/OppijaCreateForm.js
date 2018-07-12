@@ -23,7 +23,7 @@ type Form = {
     sahkoposti: ?string,
 }
 
-type Props = {
+type OppijaCreateFormProps = {
     tallenna: (HenkiloCreate) => Promise<void>,
     locale: Locale,
     L: L,
@@ -53,9 +53,9 @@ const initialState = {
 /**
  * Oppijan luonti -lomake.
  */
-class OppijaCreateForm extends React.Component<Props, State> {
+class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
 
-    constructor(props: Props) {
+    constructor(props: OppijaCreateFormProps) {
         super(props);
 
         this.state = initialState

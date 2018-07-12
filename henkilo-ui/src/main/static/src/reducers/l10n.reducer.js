@@ -33,14 +33,14 @@ const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
     };
 };
 
-type State = {
+export type LocalisationState = {
     localisationsInitialized: boolean,
     localisations: L10n
 }
 
 const localisations: L10n = { fi: {}, sv: {}, en: {} };
 
-export const l10n = (state: State = {localisationsInitialized: false, localisations: localisations}, action: any) => {
+export const l10n = (state: LocalisationState = {localisationsInitialized: false, localisations: localisations}, action: any) => {
     switch (action.type) {
         case FETCH_LOCALISATIONS_REQUEST:
             return {...state, localisationsInitialized: false};

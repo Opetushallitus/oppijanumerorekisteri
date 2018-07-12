@@ -6,14 +6,14 @@ import VahvaTunnistusLisatiedotForm from './VahvaTunnistusLisatiedotForm'
 import type { Form } from './VahvaTunnistusLisatiedotInputs'
 import type { L } from '../../types/localisation.type'
 
-type Props = {
+type VahvaTunnistusLisatiedotPageProps = {
     L: L,
     form: Form,
     onChange: (name: string, value: any) => void,
     onSubmit: () => Promise<*>,
 }
 
-class VahvaTunnistusLisatiedotPage extends React.Component<Props> {
+class VahvaTunnistusLisatiedotPage extends React.Component<VahvaTunnistusLisatiedotPageProps> {
 
     render() {
         return (

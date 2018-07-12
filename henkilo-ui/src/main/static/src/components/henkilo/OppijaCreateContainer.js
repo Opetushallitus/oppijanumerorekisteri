@@ -15,7 +15,6 @@ import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henki
 import type {HenkiloDuplicate} from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate'
 import type {L} from "../../types/localisation.type";
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit'
-import {updateDefaultNavigation} from "../../actions/navigation.actions";
 import {addGlobalNotification} from "../../actions/notification.actions";
 import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
 
@@ -29,7 +28,6 @@ type Props = {
     kieliKoodisto: Koodisto,
     fetchKansalaisuusKoodisto: () => void,
     kansalaisuusKoodisto: Koodisto,
-    updateDefaultNavigation: () => void,
     addGlobalNotification: ({type: string, title: string}) => void,
 }
 
@@ -57,8 +55,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.props.updateDefaultNavigation();
-
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKieliKoodisto();
         this.props.fetchKansalaisuusKoodisto()
@@ -104,7 +100,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
         } catch (error) {
             this.props.addGlobalNotification({type: NOTIFICATIONTYPES.ERROR, title: this.props.L['HENKILON_LUONTI_EPAONNISTUI']});
             throw error
-        };
+        }
     };
 
     luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {
@@ -142,6 +138,5 @@ export default connect(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
-    updateDefaultNavigation,
     addGlobalNotification
 })(OppijaCreateContainer)

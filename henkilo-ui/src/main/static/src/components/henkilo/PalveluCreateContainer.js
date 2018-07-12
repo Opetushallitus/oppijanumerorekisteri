@@ -7,12 +7,10 @@ import PalveluCreateForm from './PalveluCreateForm'
 import type { PalvelukayttajaCreate, PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 import type {L} from "../../types/localisation.type";
-import {updatePalvelukayttajaNavigation} from "../../actions/navigation.actions";
 
 type Props = {
     router: any,
     L: L,
-    updatePalvelukayttajaNavigation: () => void,
 }
 
 type State = {
@@ -39,10 +37,6 @@ class PalveluCreateContainer extends React.Component<Props, State> {
         )
     }
 
-    componentDidMount() {
-        this.props.updatePalvelukayttajaNavigation();
-    }
-
     setError = (error) => {
         this.setState({error: error});
     };
@@ -60,7 +54,7 @@ class PalveluCreateContainer extends React.Component<Props, State> {
     createPalvelukayttaja = async (palvelukayttaja: PalvelukayttajaCreate): Promise<PalvelukayttajaRead> => {
         const url = urls.url('kayttooikeus-service.palvelukayttaja');
         return await http.post(url, palvelukayttaja);
-    }
+    };
 
     navigateToVirkailija = (oid) => {
         this.props.router.push(`/virkailija/${oid}`);
@@ -74,4 +68,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {updatePalvelukayttajaNavigation})(PalveluCreateContainer);
+export default connect(mapStateToProps, {})(PalveluCreateContainer);

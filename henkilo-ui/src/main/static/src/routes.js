@@ -21,29 +21,138 @@ import SalansananResetointiPage from "./components/salasananresetointi/Salasanan
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 import HenkiloViewContainer from "./components/henkilo/HenkiloViewContainer";
 import AdminRedirect from "./components/henkilo/AdminRedirect";
+import {
+    updateDefaultNavigation,
+    updateHenkiloNavigation, updateOppijaNavigation,
+    updatePalvelukayttajaNavigation
+} from './components/navigation/navigation.utils';
+import type {HenkiloState} from "./reducers/henkilo.reducer";
+import type {NaviTab} from "./types/navigation.type";
 
-export default <Route path="/" component={App}>
-    <Route path="/anomukset" component={AnomustListPageContainer} />
-    <Route path="/kutsutut" component={KutsututPageContainer} />
-    <Route path="/kutsulomake" component={KutsuminenPage} />
-    <Route path="/henkilohaku" component={HenkilohakuContainer} />
-    <Route path="/virkailija/luonti" component={VirkailijaCreateContainer} />
-    <Route path="/oppija/luonti" component={OppijaCreateContainer} />
-    <Route path="/oppija/:oid" component={HenkiloViewContainer} />
-    <Route path="/virkailija/:oid" component={HenkiloViewContainer} />
-    <Route path="/admin/:oid" component={AdminRedirect} />
-    <Route path="/:henkiloType/:oid/vtjvertailu" component={VtjVertailuPage}/>
-    <Route path="/:henkiloType/:oid/duplikaatit" component={DuplikaatitContainer} />
-    <Route path="/omattiedot" component={OmattiedotContainer} />
-    <Route path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana" component={VahvaTunnistusLisatiedotContainer} />
-    <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
-    <Route path="/vahvatunnistusinfo/:locale/:loginToken" component={VahvaTunnistusInfoContainer} />
-    <Route path="/rekisteroidy" component={RekisteroidyContainer} />
-    <Route path="/oppijoidentuonti" component={OppijoidenTuontiContainer} />
-    <Route path="/kayttooikeusryhmat" component={KayttooikeusryhmatHallintaContainer} />
-    <Route path="/kayttooikeusryhmat/lisaa" component={KayttooikeusryhmaPageContainer} />
-    <Route path="/kayttooikeusryhmat/:id" component={KayttooikeusryhmaPageContainer} />
-    <Route path="/palvelukayttaja/luonti" component={PalveluCreateContainer} />
-    <Route path="/palvelukayttaja" component={PalvelukayttajaHakuContainer} />
-    <Route path="/salasananresetointi/:locale/:poletti" component={SalansananResetointiPage} />
+export type RouteType = {
+    path: string,
+    component: React.Node,
+    title: string,
+    getNaviTabs: (?string, ?HenkiloState, ?string) => Array<NaviTab>,
+    isUnauthenticated: ?boolean,
+    backButton: ?boolean,
+}
+
+export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigation}>
+    <Route path="/anomukset"
+           component={AnomustListPageContainer}
+           title="TITLE_ANOMUKSET"
+           getNaviTabs={updateDefaultNavigation}
+    />
+    <Route path="/kutsutut"
+           component={KutsututPageContainer}
+           title="TITLE_KUTSUTUT"
+           getNaviTabs={updateDefaultNavigation}
+    />
+    <Route path="/kutsulomake"
+           component={KutsuminenPage}
+           title="TITLE_KUTSULOMAKE"
+           getNaviTabs={updateDefaultNavigation}
+    />
+    <Route path="/henkilohaku"
+           component={HenkilohakuContainer}
+           title="TITLE_HENKILOHAKU"
+           getNaviTabs={updateDefaultNavigation}
+    />
+    <Route path="/virkailija/luonti"
+           component={VirkailijaCreateContainer}
+           title=""
+    />
+    <Route path="/oppija/luonti"
+           component={OppijaCreateContainer}
+           title="TITLE_OPPIJA_LUONTI"
+           getNaviTabs={updateDefaultNavigation}
+    />
+    <Route path="/oppija/:oid"
+           component={HenkiloViewContainer}
+           title="TITLE_OPPIJA"
+           getNaviTabs={updateOppijaNavigation}
+           backButton
+    />
+    <Route path="/virkailija/:oid"
+           component={HenkiloViewContainer}
+           title="TITLE_VIRKAILIJA"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+    />
+    <Route path="/admin/:oid"
+           component={AdminRedirect}
+           title="TITLE_ADMIN"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+    />
+    <Route path="/:henkiloType/:oid/vtjvertailu"
+           component={VtjVertailuPage}
+           title="TITLE_VTJ_VERTAILU"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+    />
+    <Route path="/:henkiloType/:oid/duplikaatit"
+           component={DuplikaatitContainer}
+           title="TITLE_DUPLIKAATTIHAKU"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+    />
+    <Route path="/omattiedot"
+           component={OmattiedotContainer}
+           title="TITLE_OMAT_TIEDOT"
+    />
+    <Route path="/uudelleenrekisterointi/:locale/:loginToken/:tyosahkopostiosoite/:salasana"
+           component={VahvaTunnistusLisatiedotContainer}
+           title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
+           isUnauthenticated
+    />
+    <Route path="/vahvatunnistusinfo/virhe/:locale/:loginToken"
+           component={VahvaTunnistusInfoContainer}
+           title="TITLE_VIRHESIVU"
+           isUnauthenticated
+    />
+    <Route path="/vahvatunnistusinfo/:locale/:loginToken"
+           component={VahvaTunnistusInfoContainer}
+           title="TITLE_VIRKAILIJA_UUDELLEENTUNNISTAUTUMINEN"
+           isUnauthenticated
+    />
+    <Route path="/rekisteroidy"
+           component={RekisteroidyContainer}
+           title="TITLE_REKISTEROINTI"
+           isUnauthenticated
+    />
+    <Route path="/oppijoidentuonti"
+           component={OppijoidenTuontiContainer}
+           title="TITLE_OPPIJOIDENTUONTI"
+           getNaviTabs={updateDefaultNavigation}
+    />
+    <Route path="/kayttooikeusryhmat"
+           component={KayttooikeusryhmatHallintaContainer}
+           title="TITLE_KAYTTO_OIKEUSRYHMA"
+    />
+    <Route path="/kayttooikeusryhmat/lisaa"
+           component={KayttooikeusryhmaPageContainer}
+           title="TITLE_KAYTTO_OIKEUSRYHMA"
+           backButton
+    />
+    <Route path="/kayttooikeusryhmat/:id"
+           component={KayttooikeusryhmaPageContainer}
+           title="TITLE_KAYTTO_OIKEUSRYHMA"
+    />
+    <Route path="/palvelukayttaja/luonti"
+           component={PalveluCreateContainer}
+           title="TITLE_PALVELUKAYTTAJIEN_LUONTI"
+           getNaviTabs={updatePalvelukayttajaNavigation}
+    />
+    <Route path="/palvelukayttaja"
+           component={PalvelukayttajaHakuContainer}
+           title=""
+           getNaviTabs={updatePalvelukayttajaNavigation}
+    />
+    <Route path="/salasananresetointi/:locale/:poletti"
+           component={SalansananResetointiPage}
+           title=""
+           isUnauthenticated
+    />
 </Route>

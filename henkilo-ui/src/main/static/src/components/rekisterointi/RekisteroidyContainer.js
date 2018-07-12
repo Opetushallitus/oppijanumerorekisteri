@@ -1,7 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import RekisteroidyPage from "./RekisteroidyPage";
-import {updateUnauthenticatedNavigation} from "../../actions/navigation.actions";
 import {fetchKieliKoodisto} from "../../actions/koodisto.actions";
 import Loader from "../common/icons/Loader";
 import {createHenkiloByToken, fetchKutsuByToken} from "../../actions/kutsu.actions";
@@ -10,8 +9,6 @@ import VirhePage from "../common/page/VirhePage";
 
 class RekisteroidyContainer extends React.Component {
     componentWillMount() {
-        this.props.updateUnauthenticatedNavigation();
-
         this.props.fetchKieliKoodisto();
         this.props.fetchKutsuByToken(this.props.temporaryToken);
     }
@@ -59,5 +56,5 @@ const mapStateToProps = (state, ownProps) => {
     });
 };
 
-export default connect(mapStateToProps, {updateUnauthenticatedNavigation, fetchKieliKoodisto, fetchKutsuByToken, createHenkiloByToken,
+export default connect(mapStateToProps, {fetchKieliKoodisto, fetchKutsuByToken, createHenkiloByToken,
 removeNotification})(RekisteroidyContainer);

@@ -6,7 +6,7 @@ import type { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/hen
 import type { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate'
 import HenkiloViewDuplikaatit from '../../components/henkilo/duplikaatit/HenkiloViewDuplikaatit'
 
-type Props = {
+type OppijaCreateDuplikaatitProps = {
     locale: Locale,
     L: L,
     tallenna: (oppija: HenkiloCreate) => any,
@@ -18,7 +18,7 @@ type Props = {
 /**
  * Oppijoiden luonnissa näytettävät duplikaattihenkilöt.
  */
-class OppijaCreateDuplikaatit extends React.Component<Props> {
+class OppijaCreateDuplikaatit extends React.Component<OppijaCreateDuplikaatitProps> {
 
     render() {
         const henkilo = {

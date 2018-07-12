@@ -10,7 +10,7 @@ import { addGlobalNotification } from "../../actions/notification.actions";
 
 class AnomusPageContainer extends React.Component {
     render() {
-        const L = this.props.l10n[this.props.locale]
+        const L = this.props.l10n[this.props.locale];
         return (
           <div className="wrapper">
             <span className="oph-h2 oph-bold">{L['HENKILO_AVOIMET_KAYTTOOIKEUDET_OTSIKKO']}</span>

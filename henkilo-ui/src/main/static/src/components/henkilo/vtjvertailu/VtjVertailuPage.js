@@ -12,9 +12,8 @@ import {
 import {fetchOmattiedot} from "../../../actions/omattiedot.actions";
 import VtjVertailuListaus from './VtjVertailuListaus';
 import Loader from "../../common/icons/Loader";
-import {updateHenkiloNavigation} from "../../../actions/navigation.actions";
 import Button from "../../common/button/Button";
-import {enabledVtjVertailuView, henkiloViewTabs} from "../../navigation/NavigationTabs";
+import {enabledVtjVertailuView} from "../../navigation/NavigationTabs";
 import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
@@ -34,7 +33,6 @@ type Props = {
     fetchHenkiloYksilointitieto: (string) => void ,
     fetchHenkiloMaster: (string) => void,
     fetchOmattiedot: () => void,
-    updateHenkiloNavigation: (any) => void,
     overrideYksiloimatonHenkiloVtjData: (string) => void,
     fetchHenkiloSlaves: (string) => void,
     addGlobalNotification: (payload: GlobalNotificationConfig) => void
@@ -51,15 +49,10 @@ class VtjVertailuPage extends React.Component<Props> {
         this.props.fetchHenkiloSlaves(this.props.oidHenkilo); // tabs need data about master to switch duplicates tab enabled
     }
 
-    componentWillReceiveProps(nextProps) {
-        const tabs = henkiloViewTabs(this.props.oidHenkilo, nextProps.henkilo, nextProps.henkiloType);
-        this.props.updateHenkiloNavigation(tabs);
-    }
-
     render() {
         return this.props.henkilo.yksilointitiedotLoading || this.props.henkilo.henkiloLoading || this.props.omattiedot.omattiedotLoading ? <Loader/> :
             <div className="wrapper">
-                <p class="oph-h2 oph-bold">{this.props.L['HENKILO_VTJ_VERTAILU']}</p>
+                <p className="oph-h2 oph-bold">{this.props.L['HENKILO_VTJ_VERTAILU']}</p>
                 <VtjVertailuListaus henkilo={this.props.henkilo} L={this.props.L}/>
                 <Button action={this.overrideHenkiloInformation.bind(this)}
                         disabled={this.isDisabled()}>
@@ -116,7 +109,6 @@ export default connect(mapStateToProps, {
     fetchHenkiloYksilointitieto,
     fetchHenkiloMaster,
     fetchOmattiedot,
-    updateHenkiloNavigation,
     overrideYksiloimatonHenkiloVtjData,
     fetchHenkiloSlaves,
     addGlobalNotification

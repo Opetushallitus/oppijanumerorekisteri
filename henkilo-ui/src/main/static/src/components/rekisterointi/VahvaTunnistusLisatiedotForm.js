@@ -4,14 +4,14 @@ import VahvaTunnistusLisatiedotInputs from './VahvaTunnistusLisatiedotInputs'
 import type { Form } from './VahvaTunnistusLisatiedotInputs'
 import type { L } from '../../types/localisation.type'
 
-type Props = {
+type VahvaTunnistusLisatiedotFormProps = {
     L: L,
     form: Form,
     onChange: (name: string, value: any) => void,
     onSubmit: () => Promise<*>,
 }
 
-class VahvaTunnistusLisatiedotForm extends React.Component<Props> {
+class VahvaTunnistusLisatiedotForm extends React.Component<VahvaTunnistusLisatiedotFormProps> {
 
     render() {
         return (
@@ -30,10 +30,10 @@ class VahvaTunnistusLisatiedotForm extends React.Component<Props> {
 
     hasErrors = (): boolean => {
         return this.props.form.submitted && this.props.form.errors.length > 0
-    }
+    };
 
     onSubmit = (event: SyntheticEvent<HTMLButtonElement>) => {
-        event.preventDefault()
+        event.preventDefault();
         this.props.onSubmit()
     }
 

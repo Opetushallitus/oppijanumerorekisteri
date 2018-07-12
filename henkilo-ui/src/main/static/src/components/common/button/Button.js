@@ -4,7 +4,7 @@ import React from 'react'
 import classNames from 'classnames/bind';
 import Loader from '../icons/Loader';
 
-type Props = {
+type ButtonProps = {
     action?: SyntheticEvent<HTMLButtonElement> => any,
     disabled?: boolean,
     href?: string,
@@ -19,7 +19,7 @@ type Props = {
     loading?: boolean,
 }
 
-class Button extends React.Component<Props> {
+class Button extends React.Component<ButtonProps> {
 
     render() {
         const classNameProp = this.props.className ? this.props.className : '';

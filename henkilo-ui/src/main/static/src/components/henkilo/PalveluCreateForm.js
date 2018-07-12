@@ -3,7 +3,7 @@ import React from 'react'
 import type {PalvelukayttajaCreate} from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import type {L} from "../../types/localisation.type";
 
-type Props = {
+type PalveluCreateFormProps = {
     onSubmit: (PalvelukayttajaCreate) => Promise<void>,
     L: L,
 }
@@ -15,9 +15,9 @@ type State = {
 /**
  * Palvelukäyttäjän luonti -lomake.
  */
-class PalveluCreateForm extends React.Component<Props, State> {
+class PalveluCreateForm extends React.Component<PalveluCreateFormProps, State> {
 
-    constructor(props : Props) {
+    constructor(props : PalveluCreateFormProps) {
         super(props);
 
         this.state = {kayttaja: {nimi: ''}};
@@ -51,13 +51,13 @@ class PalveluCreateForm extends React.Component<Props, State> {
 
     onHenkiloInputChange = (event : SyntheticEvent<HTMLInputElement>) => {
         this.setState({kayttaja: {...this.state.kayttaja, [event.currentTarget.name]: event.currentTarget.value}});
-    }
+    };
 
     onSubmit = async (event : SyntheticEvent<HTMLButtonElement>) => {
         event.preventDefault();
         this.props.onSubmit(this.state.kayttaja);
-    }
+    };
 
-};
+}
 
 export default PalveluCreateForm;

@@ -2,7 +2,7 @@
 import * as React from 'react'
 import classNames from 'classnames'
 
-type Props = {
+type OphModalProps = {
     children: React.Node,
     title?: string,
     onClose: (SyntheticEvent<HTMLButtonElement>) => void,
@@ -12,7 +12,7 @@ type Props = {
 /**
  * Tyylioppaan mukainen modal.
  */
-class OphModal extends React.Component<Props> {
+class OphModal extends React.Component<OphModalProps> {
 
     render() {
         return (
