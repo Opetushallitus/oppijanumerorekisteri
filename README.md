@@ -14,8 +14,8 @@ Domain model
 ### oppijanumerorekisteri-service
 Palvelinpuoli
 
-## Ajaminen lokaalisti
-1) Hae `oppijanumerorekisteri.yml`-tiedosto luokalta ja vie se haluamaasi hakemistoon.
+## Ajaminen lokaalisti dev-moodissa
+1) Hae `oppijanumerorekisteri.yml`-tiedosto EC2-kontilta ja vie se haluamaasi hakemistoon.
 2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
 3) Aja projekti lokaalisti `mvn spring-boot:run "-Drun.jvmArguments=-Dspring.profiles.active=dev -Dspring.config.additional-location=<path/to/configfile>/oppijanumerorekisteri.yml"`
 
@@ -27,11 +27,32 @@ Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla 
 
 Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oidia kysyvät rajapinnat toimivat oikein.
 
-### Lombok
-Käytössä on lombok joten IDE tarvitsee pluginin ymmärtääkseen tämän annotaatioita.
+## Ajaminen ympäristön CAS-palvelimen kanssa
+1) Hae `oppijanumerorekisteri.yml`-tiedosto EC2-kontilta ja vie se haluamaasi hakemistoon.
+2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
+3) Muuta seuraavat. AWS:n takia kanta ja authorisointi on putkitettava bastionin kautta ssh-tunnelilla
+```yaml
+cas:
+  service: http://localhost:8180/oppijanumerorekisteri-service
+server:
+  port: 8180
+host:
+  host-alb: http://localhost:18087
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:18085/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service-local
+```
+Esimerkki tunnelista:
+```
+L18087 <host_alb_virkailija-osoite>:80
+L18085 <postgresql_oppijanumerorekisteri_host-osoite>:5432
+```
+Nämä osoitteet löytyvät environment repositorystä.
+
+=> Aja palvelu. Käytä rajapintoja valitsemasi ympäristön tunnuksilla.
 
 ## Lokaalin CAS palvelimen kanssa
-1) Hae luokalta `authentication`-projektin `common.properties`-tiedosto ja lisää se omaan oph-configuration-hakemistoosi nimellä `cas.properties`
+1) Hae EC2-kontilta `authentication`-projektin `common.properties`-tiedosto ja lisää se omaan oph-configuration-hakemistoosi nimellä `cas.properties`
 2) Käännä authentication projecti `mvn clean package`
 3) Kopioi `cas/target/cas-9.3-SNAPSHOT.war` tomcatin oletuskansioon `webapps` tai määrittämääsi kansioon ja uudelleennimeä se `cas.war`
 4) Aja tomcat `startup.bat` / `startup.sh`
@@ -42,9 +63,12 @@ cas:
 server:
   port: 8180
 ```
-5) Aja oppijanumerorekisteri
+=> Aja oppijanumerorekisteri
 
 `java -Dcas.baseUrl=http://localhost:8080 -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
+
+## Lombok
+Käytössä on lombok joten IDE tarvitsee pluginin ymmärtääkseen tämän annotaatioita.
 
 ## Url.properties ja CSRF
 Aina ulkoisia riippuvuuksia lisättäessä lisättävä osoite url.properties:iin
@@ -53,7 +77,7 @@ https://github.com/Opetushallitus/java-utils/tree/master/java-properties
 Näiden hakemiseen käytetään httpclient:ia jos CAS autentikointia ei tarvita
 https://github.com/Opetushallitus/java-utils/tree/master/httpclient
 
-Jos CAS autentikointia tarvitaa on käytettävä muuta clientia.
+Jos CAS autentikointia tarvitaan on käytettävä muuta clientia.
 
 ## Auditlokitus
 Koska käsitellään henkilötietoja kaikki servicekutsut lokitetaan alla olevan projektin mukaisesti
