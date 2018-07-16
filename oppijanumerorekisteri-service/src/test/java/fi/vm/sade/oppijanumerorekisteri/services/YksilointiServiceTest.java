@@ -4,17 +4,17 @@ import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
-import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.models.Yksilointitieto;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.AdditionalAnswers;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -22,71 +22,60 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@RunWith(SpringRunner.class)
 public class YksilointiServiceTest {
-    private MockVtjClient vtjClient;
+    @Spy
+    private MockVtjClient vtjClient = new MockVtjClient();
 
-    private YksilointiService yksilointiService;
+    @InjectMocks
+    private YksilointiServiceImpl yksilointiService;
 
+    @Mock
     private HenkiloRepository henkiloRepository;
 
+    @Mock
     private HenkiloService henkiloService;
 
+    @Mock
     private HenkiloModificationService henkiloModificationService;
 
+    @Mock
     private KoodistoService koodistoService;
 
+    @Mock
     private YksilointitietoRepository yksilointitietoRepository;
 
+    @Mock
     private YksilointivirheRepository yksilointivirheRepository;
 
+    @Mock
     private KayttooikeusClient kayttooikeusClientMock;
+
+    @Mock
+    private KielisyysRepository kielisyysRepository;
+
+    @Mock
+    private KansalaisuusRepository kansalaisuusRepository;
+
+    @Spy
+    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
+
+    @Mock
+    private OrikaConfiguration orikaConfiguration;
+
+    @Mock
+    private DuplicateService duplicateService;
 
     private final String henkiloOid = "1.2.246.562.24.27470134096";
     private Henkilo henkilo;
 
     @Before
     public void setup() {
-        this.vtjClient = new MockVtjClient();
-        kayttooikeusClientMock = mock(KayttooikeusClient.class);
-        OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
-
-        henkiloRepository = mock(HenkiloRepository.class);
-        henkiloService = mock(HenkiloService.class);
-        henkiloModificationService = mock(HenkiloModificationService.class);
-        koodistoService = mock(KoodistoService.class);
-        yksilointitietoRepository = mock(YksilointitietoRepository.class);
-        yksilointivirheRepository = mock(YksilointivirheRepository.class);
-        KielisyysRepository kielisyysRepository = mock(KielisyysRepository.class);
-        KansalaisuusRepository kansalaisuusRepository = mock(KansalaisuusRepository.class);
-        this.yksilointiService = new YksilointiServiceImpl(mock(DuplicateService.class),
-                koodistoService,
-                henkiloRepository,
-                henkiloService,
-                henkiloModificationService,
-                kansalaisuusRepository,
-                kielisyysRepository,
-                mock(YhteystiedotRyhmaRepository.class),
-                mock(YhteystietoRepository.class),
-                yksilointitietoRepository,
-                yksilointivirheRepository,
-                mock(AsiayhteysPalveluRepository.class),
-                mock(AsiayhteysHakemusRepository.class),
-                mock(AsiayhteysKayttooikeusRepository.class),
-                mock(OrikaConfiguration.class),
-                this.vtjClient,
-                kayttooikeusClientMock,
-                oppijanumerorekisteriProperties);
-
         when(koodistoService.list(eq(Koodisto.KIELI)))
                 .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FI").koodi("SV").build());
         when(kielisyysRepository.findOrCreateByKoodi(anyString()))
@@ -298,5 +287,27 @@ public class YksilointiServiceTest {
         verify(henkiloModificationService).update(eq(henkilo));
     }
 
+    @Test
+    public void terminoivaYksilointivirheEiUudelleenyriteta() {
+        when(this.henkiloRepository.findByOidHenkilo(eq("1.2.3.4.5"))).thenReturn(Optional.of(new Henkilo()));
+        this.yksilointiService.tallennaYksilointivirhe("1.2.3.4.5", new SuspendableIdentificationException(""));
 
+        ArgumentCaptor<Yksilointivirhe> yksilointivirheArgumentCaptor = ArgumentCaptor.forClass(Yksilointivirhe.class);
+        verify(this.yksilointivirheRepository).save(yksilointivirheArgumentCaptor.capture());
+        Yksilointivirhe yksilointivirhe = yksilointivirheArgumentCaptor.getValue();
+        assertThat(yksilointivirhe.getUudelleenyritysMaara()).isNull();
+        assertThat(yksilointivirhe.getUudelleenyritysAikaleima()).isNull();
+    }
+
+    @Test
+    public void eiTerminoivaYksilointivirheUudelleenyritetaan() {
+        when(this.henkiloRepository.findByOidHenkilo(eq("1.2.3.4.5"))).thenReturn(Optional.of(new Henkilo()));
+        this.yksilointiService.tallennaYksilointivirhe("1.2.3.4.5", new Exception(""));
+
+        ArgumentCaptor<Yksilointivirhe> yksilointivirheArgumentCaptor = ArgumentCaptor.forClass(Yksilointivirhe.class);
+        verify(this.yksilointivirheRepository).save(yksilointivirheArgumentCaptor.capture());
+        Yksilointivirhe yksilointivirhe = yksilointivirheArgumentCaptor.getValue();
+        assertThat(yksilointivirhe.getUudelleenyritysMaara()).isEqualTo(0);
+        assertThat(yksilointivirhe.getUudelleenyritysAikaleima()).isAfter(new Date());
+    }
 }

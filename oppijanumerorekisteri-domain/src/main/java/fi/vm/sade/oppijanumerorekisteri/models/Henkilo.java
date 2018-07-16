@@ -95,10 +95,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean yksilointiYritetty;
 
-    @Column(name = "ei_yksiloida", nullable = false)
-    @Deprecated // kts. Yksilointivirhe-entiteetti
-    private boolean eiYksiloida;
-
     @Column(nullable = false)
     private boolean duplicate;
 

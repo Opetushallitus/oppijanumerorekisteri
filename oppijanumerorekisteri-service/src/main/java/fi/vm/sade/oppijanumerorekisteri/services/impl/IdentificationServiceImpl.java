@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
+import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -73,7 +75,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     public void identifyHenkilos(Collection<Henkilo> unidentified, Long vtjRequestDelayInMillis) {
         unidentified.stream()
                 .peek(this::logFaults)
-                .filter(this::isNotBlackListed)
+                .filter(this::hasRetriableYksilointivirhe)
                 .filter(this::hasNoDataInconsistency)
                 .filter(Henkilo::hasNoFakeHetu)
                 .forEach(henkilo -> {
@@ -83,8 +85,12 @@ public class IdentificationServiceImpl implements IdentificationService {
                 });
     }
 
-    private boolean isNotBlackListed(Henkilo henkilo) {
-        return !henkilo.isEiYksiloida() && !yksilointivirheRepository.findByHenkilo(henkilo).isPresent();
+    private boolean hasRetriableYksilointivirhe(Henkilo henkilo) {
+        Optional<Yksilointivirhe> yksilointivirhe = yksilointivirheRepository.findByHenkilo(henkilo);
+        boolean yksilointiAikaleimaVoimasssa = yksilointivirhe.isPresent()
+                && yksilointivirhe.get().getUudelleenyritysAikaleima() != null
+                && new Date().after(yksilointivirhe.get().getUudelleenyritysAikaleima());
+        return !yksilointivirhe.isPresent() || yksilointiAikaleimaVoimasssa;
     }
 
     /**
@@ -92,7 +98,7 @@ public class IdentificationServiceImpl implements IdentificationService {
      * Those cases must be solved by officials.
      */
     private boolean hasNoDataInconsistency(Henkilo henkilo) {
-        return !(!henkilo.isYksiloityVTJ() && !henkilo.getHetu().isEmpty() && yksilointitietoRepository.findByHenkilo(henkilo).isPresent());
+        return !(!henkilo.isYksiloityVTJ() && StringUtils.hasLength(henkilo.getHetu()) && yksilointitietoRepository.findByHenkilo(henkilo).isPresent());
     }
 
     @Override
@@ -129,7 +135,7 @@ public class IdentificationServiceImpl implements IdentificationService {
         if (!log.isDebugEnabled()) {
             return;
         }
-        if (!isNotBlackListed(henkilo)) {
+        if (!hasRetriableYksilointivirhe(henkilo)) {
             log.debug("Henkilo {} has been black listed from processing.", henkilo.getOidHenkilo());
         }
         if (!hasNoDataInconsistency(henkilo)) {
