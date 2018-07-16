@@ -25,9 +25,4 @@ public class HenkiloVahvaTunnistusDto {
         this.hetu = requireNonNull(hetu);
     }
 
-    @Deprecated
-    public HenkiloVahvaTunnistusDto(String hetu, String etunimet, String sukunimi) {
-        this(hetu);
-    }
-
 }
