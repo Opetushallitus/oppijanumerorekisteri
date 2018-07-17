@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
@@ -17,8 +18,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -68,13 +71,15 @@ public class IdentificationServiceImplTest {
     }
 
     @Test
-    public void fakeHetuIsNotIdentified() {
+    public void fakeHetuPassedToYksilointiService() {
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("1.2.3.4.5")
                 .hetu("fakehet9")
                 .build();
         given(this.yksilointivirheRepository.findByHenkilo(henkilo)).willReturn(Optional.empty());
+        willThrow(SuspendableIdentificationException.class).given(this.yksilointiService).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
         this.identificationService.identifyHenkilos(Collections.singleton(henkilo), 1L);
-        verifyZeroInteractions(this.yksilointiService);
+        verify(this.yksilointiService, times(1)).yksiloiAutomaattisesti(eq("1.2.3.4.5"));
+        verify(this.yksilointiService, times(1)).tallennaYksilointivirhe(eq("1.2.3.4.5"), any());
     }
 }

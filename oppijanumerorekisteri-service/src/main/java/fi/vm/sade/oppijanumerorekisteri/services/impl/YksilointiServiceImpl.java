@@ -164,6 +164,10 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
         }
 
+        if (henkilo.isHetuFake()) {
+            throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
+        }
+
         /* VTJ data for Henkilo contains a huge data set and parsing this data
          * might change in the future, if Henkilo's data must contain all what
          * VTJ has to offer but that's still uncertain

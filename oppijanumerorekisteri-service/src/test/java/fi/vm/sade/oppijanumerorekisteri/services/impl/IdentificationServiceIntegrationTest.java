@@ -117,7 +117,9 @@ public class IdentificationServiceIntegrationTest {
                 .createQuery("SELECT y FROM Yksilointivirhe y", Yksilointivirhe.class).getResultList();
         assertThat(this.mapper.mapAsList(yksilointivirhe, YksilointiVirheDto.class))
                 .extracting(YksilointiVirheDto::getUudelleenyritysAikaleima, YksilointiVirheDto::getYksilointivirheTila)
-                .containsExactlyInAnyOrder(Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ),
+                .containsExactlyInAnyOrder(
+                        Tuple.tuple(null, YksilointivirheTila.HETU_EI_OIKEA),
+                        Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ),
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ));
 
     }
