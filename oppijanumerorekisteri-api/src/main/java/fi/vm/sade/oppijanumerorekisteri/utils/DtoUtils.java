@@ -63,7 +63,7 @@ public class DtoUtils {
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
                 syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, createdModified,
-                createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto));
+                createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>());
     }
 
     public static HenkiloCreateDto createHenkiloCreateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,

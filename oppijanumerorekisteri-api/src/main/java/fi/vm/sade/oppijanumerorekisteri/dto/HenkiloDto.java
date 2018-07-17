@@ -72,6 +72,8 @@ public class HenkiloDto implements Serializable {
 
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 
+    private Set<YksilointiVirheDto> yksilointivirheet = new HashSet<>();
+
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {
         return HenkiloTyyppi.OPPIJA;
