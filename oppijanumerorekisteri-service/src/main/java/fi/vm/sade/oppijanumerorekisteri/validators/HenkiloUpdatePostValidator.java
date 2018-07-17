@@ -7,42 +7,32 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.Objects;
 import java.util.Set;
+
 import static java.util.stream.Collectors.toSet;
 
 @Component
+@RequiredArgsConstructor
 public class HenkiloUpdatePostValidator implements Validator {
-    private UserDetailsHelper userDetailsHelper;
+    private final KoodistoService koodistoService;
 
-    private KoodistoService koodistoService;
-
-    private HenkiloRepository henkiloRepository;
-
-
-    @Autowired
-    public HenkiloUpdatePostValidator(UserDetailsHelper userDetailsHelper,
-                                      KoodistoService koodistoService,
-                                      HenkiloRepository henkiloRepository) {
-        this.userDetailsHelper = userDetailsHelper;
-        this.koodistoService = koodistoService;
-        this.henkiloRepository = henkiloRepository;
-    }
+    private final HenkiloRepository henkiloRepository;
 
     @Override
-    public boolean supports(Class<?> aClass) {
+    public boolean supports(@NotNull Class<?> aClass) {
         return HenkiloUpdateDto.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
+    public void validate(Object o, @NotNull Errors errors) {
         HenkiloUpdateDto henkiloUpdateDto = (HenkiloUpdateDto) o;
 
         this.henkiloRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
