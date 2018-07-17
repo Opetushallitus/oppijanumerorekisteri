@@ -216,7 +216,7 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        henkiloCreateDto.setHetu("hetu1");
+        henkiloCreateDto.setHetu("190259-817N");
         String yksiloitavaOid = this.henkiloModificationService.createHenkilo(henkiloCreateDto).getOidHenkilo();
 
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
@@ -224,7 +224,7 @@ public class YksilointiTests {
         yksiloityHenkilo.setKutsumanimi("teppo");
         yksiloityHenkilo.setSukunimi("testaaja");
         yksiloityHenkilo.setHetu("170498-993H");
-        when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(this.vtjClientMock.fetchHenkilo(eq("190259-817N"))).thenReturn(Optional.of(yksiloityHenkilo));
 
         this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
 
@@ -241,7 +241,7 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        henkiloCreateDto.setHetu("hetu1");
+        henkiloCreateDto.setHetu("190259-855W");
         henkiloCreateDto.setYksiloityVTJ(false);
         String yksiloitavaOid = this.henkiloModificationService.createHenkilo(henkiloCreateDto).getOidHenkilo();
 
@@ -258,7 +258,7 @@ public class YksilointiTests {
         yksiloityHenkilo.setKutsumanimi("teppo");
         yksiloityHenkilo.setSukunimi("testaaja");
         yksiloityHenkilo.setHetu("170498-993H");
-        when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(this.vtjClientMock.fetchHenkilo(eq("190259-855W"))).thenReturn(Optional.of(yksiloityHenkilo));
 
         this.yksilointiService.yksiloiAutomaattisesti(yksiloitavaOid);
 
@@ -282,7 +282,7 @@ public class YksilointiTests {
         henkiloCreateDto.setKutsumanimi("teppo");
         henkiloCreateDto.setEtunimet("teppo");
         henkiloCreateDto.setSukunimi("testaaja");
-        henkiloCreateDto.setHetu("hetu1");
+        henkiloCreateDto.setHetu("190259-817N");
         henkiloCreateDto.setYksiloityVTJ(false);
         String yksiloitavaOid = this.henkiloModificationService.createHenkilo(henkiloCreateDto).getOidHenkilo();
 
@@ -299,7 +299,7 @@ public class YksilointiTests {
         yksiloityHenkilo.setKutsumanimi("teppo");
         yksiloityHenkilo.setSukunimi("testaaja");
         yksiloityHenkilo.setHetu("170498-993H");
-        when(this.vtjClientMock.fetchHenkilo(eq("hetu1"))).thenReturn(Optional.of(yksiloityHenkilo));
+        when(this.vtjClientMock.fetchHenkilo(eq("190259-817N"))).thenReturn(Optional.of(yksiloityHenkilo));
 
         SecurityContextHolder.getContext().setAuthentication(null);
 

@@ -77,7 +77,6 @@ public class IdentificationServiceImpl implements IdentificationService {
                 .peek(this::logFaults)
                 .filter(this::hasRetriableYksilointivirhe)
                 .filter(this::hasNoDataInconsistency)
-                .filter(Henkilo::hasNoFakeHetu)
                 .forEach(henkilo -> {
                     this.waitBetweenRequests(vtjRequestDelayInMillis);
                     log.debug("Henkilo {} passed initial validation, {} to identify...", henkilo.getOidHenkilo(), henkilo.isYksilointiYritetty() ? "retrying" : "trying");
@@ -140,14 +139,6 @@ public class IdentificationServiceImpl implements IdentificationService {
         }
         if (!hasNoDataInconsistency(henkilo)) {
             log.debug("Henkilo {} has inconsistent data that must be solved by officials.", henkilo.getOidHenkilo());
-        }
-        /*
-         * Fake SSNs (900-series) are skipped since they have no counterpart in VTJ database, e.g. 123456-912X.
-         * NOTE: If test environment VTJ is fixed change this restriction to only apply for production environment since
-         * test environment uses the 900-series SSNs.
-         */
-        if (!henkilo.hasNoFakeHetu()) {
-            log.debug("Henkilo {} is using a fake SSN and cannot be identified.", henkilo.getOidHenkilo());
         }
     }
 

@@ -23,6 +23,9 @@ public class YksilointivirheDtoMapper extends CustomConverter<Yksilointivirhe, Y
             if (source.getViesti().startsWith("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: ")) {
                 yksilointivirheTila = YksilointivirheTila.HETU_EI_VTJ;
             }
+            else if (source.getViesti().startsWith("Henkilön hetu ei ole oikea: ")) {
+                yksilointivirheTila = YksilointivirheTila.HETU_EI_OIKEA;
+            }
             else {
                 yksilointivirheTila = YksilointivirheTila.MUU;
             }
