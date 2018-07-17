@@ -26,8 +26,6 @@ public class HenkiloUpdatePostValidatorTest {
     private HenkiloUpdatePostValidator validator;
 
     @Mock
-    private UserDetailsHelper userDetailsHelper;
-    @Mock
     private KoodistoService koodistoService;
     @Mock
     private HenkiloRepository henkiloRepository;
@@ -36,8 +34,7 @@ public class HenkiloUpdatePostValidatorTest {
 
     @Before
     public void setup() {
-        validator = new HenkiloUpdatePostValidator(userDetailsHelper,
-                koodistoService, henkiloRepository);
+        validator = new HenkiloUpdatePostValidator(koodistoService, henkiloRepository);
     }
 
     @Test

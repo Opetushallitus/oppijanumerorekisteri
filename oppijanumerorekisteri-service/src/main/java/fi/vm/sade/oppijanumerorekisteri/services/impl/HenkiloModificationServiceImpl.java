@@ -102,6 +102,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         if (!StringUtils.isEmpty(henkiloUpdateDto.getHetu()) && HetuUtils.hetuIsValid(henkiloUpdateDto.getHetu())) {
             henkiloUpdateDto.setSyntymaaika(HetuUtils.dateFromHetu(henkiloUpdateDto.getHetu()));
             henkiloUpdateDto.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloUpdateDto.getHetu()));
+            // In case hetu changes henkilo should be considered pristine from identification point of view
+            if (!Objects.equals(henkiloSaved.getHetu(), henkiloUpdateDto.getHetu())) {
+                henkiloSaved.getYksilointivirheet().clear();
+                henkiloSaved.setYksilointiYritetty(false);
+            }
         }
 
         this.henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, false);

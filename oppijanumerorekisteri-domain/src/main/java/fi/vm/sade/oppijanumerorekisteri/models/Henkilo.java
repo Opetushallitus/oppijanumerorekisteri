@@ -127,7 +127,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija")
     private String kasittelijaOid;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", orphanRemoval = true)
     @NotAudited
     Set<Yksilointivirhe> yksilointivirheet = new HashSet<>();
 

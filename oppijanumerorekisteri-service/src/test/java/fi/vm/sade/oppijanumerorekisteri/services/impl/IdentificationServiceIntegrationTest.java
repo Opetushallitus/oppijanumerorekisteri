@@ -100,11 +100,25 @@ public class IdentificationServiceIntegrationTest {
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
 
+    }
+
+    @Test
+    public void yksilointivirhe() {
+        List<Henkilo> unidentifiedHenkilos = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h", Henkilo.class).getResultList();
+
+        given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
+        given(this.vtjClient.fetchHenkilo("010101-123N"))
+                .willReturn(this.mockVtjClient.fetchHenkilo(""));
+
+        this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
+
         List<Yksilointivirhe> yksilointivirhe = this.entityManager
                 .createQuery("SELECT y FROM Yksilointivirhe y", Yksilointivirhe.class).getResultList();
         assertThat(this.mapper.mapAsList(yksilointivirhe, YksilointiVirheDto.class))
                 .extracting(YksilointiVirheDto::getUudelleenyritysAikaleima, YksilointiVirheDto::getYksilointivirheTila)
                 .containsExactlyInAnyOrder(Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ),
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ));
+
     }
 }

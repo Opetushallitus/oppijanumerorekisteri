@@ -19,11 +19,13 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.groups.Tuple.tuple;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -44,6 +46,9 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Autowired
     private HenkiloViiteRepository henkiloViiteRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Test
     @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
@@ -82,6 +87,24 @@ public class HenkiloModificationServiceIntegrationTest {
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksilointivirheRemovedOnHetuChange() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");
+        updateDto.setHetu("170775-941A");
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='YKSILOINNISSAVIRHE'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("YKSILOINNISSAVIRHE", "170775-941A", false);
+        assertThat(henkilo.getYksilointivirheet()).isEmpty();
     }
 
     @Test
