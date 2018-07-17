@@ -28,6 +28,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
                         @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
                         @NamedAttributeNode("kielisyys"),
+                        @NamedAttributeNode("yksilointivirheet"),
                 }
         )
 })
@@ -126,8 +127,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija")
     private String kasittelijaOid;
 
-    // Koodisto uses value "1" for male and "2" for female.
-    private String sukupuoli;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo")
+    @NotAudited
+    Set<Yksilointivirhe> yksilointivirheet = new HashSet<>();
+
+    private String sukupuoli; // sukupuoli-koodisto
 
     private LocalDate syntymaaika;
 
