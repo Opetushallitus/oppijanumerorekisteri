@@ -4,3 +4,5 @@ alter table yksilointivirhe
 
 alter table henkilo
     drop column if exists ei_yksiloida;
+
+delete from yksilointivirhe where poikkeus != 'fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException';
