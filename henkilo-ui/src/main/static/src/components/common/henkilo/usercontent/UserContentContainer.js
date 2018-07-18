@@ -22,6 +22,7 @@ import {http} from "../../../../http";
 import {urls} from 'oph-urls-js';
 import {fetchOmattiedot, updateAnomusilmoitus} from "../../../../actions/omattiedot.actions";
 import moment from 'moment';
+import PropertySingleton from "../../../../globals/PropertySingleton";
 
 type Props = {
     L: L,
@@ -267,7 +268,7 @@ class UserContentContainer extends React.Component<Props, State> {
         };
         const virheKey = yksilointivirheMap[virhe.yksilointivirheTila] || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
         return virhe.uudelleenyritysAikaleima
-            ? `${this.props.L[virheKey]} ${this.props.L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${moment(virhe.uudelleenyritysAikaleima).format()}`
+            ? `${this.props.L[virheKey]} ${this.props.L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${moment(virhe.uudelleenyritysAikaleima).format(PropertySingleton.getState().PVM_DATE_TIME_FORMAATTI)}`
             : this.props.L[virheKey];
     };
 }
