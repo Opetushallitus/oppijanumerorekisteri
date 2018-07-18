@@ -3,6 +3,12 @@
 import type {YhteystietoRyhma} from "./yhteystietoryhma.types";
 import type {Kansalaisuus} from "./kansalaisuus.types";
 import type {Kielisyys} from "./kielisyys.types";
+import Moment from 'moment';
+
+export type Yksilointivirhe = {
+    uudelleenyritysAikaleima: ?Moment,
+    yksilointivirheTila: 'HETU_EI_OIKEA' | 'HETU_EI_VTJ' | 'MUU_UUDELLEENYRITETTAVA' | 'MUU',
+}
 
 export type Henkilo = {
     oidHenkilo: string,
@@ -30,6 +36,7 @@ export type Henkilo = {
     vtjsynced: number,
     huoltaja: Henkilo,
     yhteystiedotRyhma: Array<YhteystietoRyhma>,
+    yksilointivirheet: Array<Yksilointivirhe>
 }
 
 export type HenkiloCreate = {

@@ -23,9 +23,8 @@ const Kansalaisuus = (props: Props) => {
     const kansalaisuus = (props.henkiloUpdate && props.henkiloUpdate.kansalaisuus) || [];
     const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
     return <div>
-        {kansalaisuus.map((values, idx) => <div>
-            <LabelValue
-                key={idx}
+        {kansalaisuus.map((values, idx) => <div key={idx}>
+                <LabelValue
                 readOnly={props.readOnly}
                 updateModelFieldAction={(newOption: any) => {
                     if (newOption === null) {

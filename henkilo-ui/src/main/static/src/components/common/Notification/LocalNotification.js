@@ -28,13 +28,13 @@ type State = {
  */
 export class LocalNotification extends React.Component<LocalNotificationProps, State> {
 
-    state = {
-        show: true,
-        toggle: false
-    };
+    constructor(props: LocalNotificationProps) {
+        super(props);
 
-    componentDidMount() {
-        this.setState({toggle: this.props.toggle});
+        this.state = {
+            show: true,
+            toggle: props.toggle,
+        };
     }
 
     render() {
@@ -47,7 +47,7 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
 
     closeAction = () => {
         this.setState({show: false});
-        if(this.props.onClose) {
+        if (this.props.onClose) {
             this.props.onClose();
         }
     }
