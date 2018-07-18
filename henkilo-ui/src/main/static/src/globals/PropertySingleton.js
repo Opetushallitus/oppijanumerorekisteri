@@ -26,7 +26,7 @@ class PropertySingleton {
             minimunPasswordLength: 8,
             PVM_FORMAATTI: 'D.M.YYYY',
             PVM_DBFORMAATTI: 'YYYY-MM-DD',
-            PVM_DATE_TIME_FORMAATTI: 'D.M.YYYY H:m',
+            PVM_DATE_TIME_FORMAATTI: 'D.M.YYYY H:mm',
         };
     }
 
