@@ -7,18 +7,19 @@ import type {NotificationType} from "../../../types/notification.types";
 type LocalNotificationProps = {
     type: NotificationType,
     title: string,
-    toggle: boolean,
+    toggle?: boolean,
     onClose?: () => void,
-    children?: React.Node
+    children?: React.Element<any> | Array<React.Element<any>> | string,
 }
 
 type State = {
     show: boolean, // Internally handled visibility. TRUE by default and set to FALSE when close action is run.
-    toggle: boolean // Visibility by prop. Notification can be hidden and shown multiple times
+    toggle: () => boolean // Visibility by prop. Notification can be hidden and shown multiple times
 }
 
 /*
- * Local notification (handles its visibility internally)
+ * Local notification (handles its visibility internally).
+ * If toggle is undefined at start automatically handles hiding of whole element according to if children are defined.
  *
  * @param type: Notification type ALERT, INFO, SUCCESS, WARNING
  * @param title: Title for notification.
@@ -33,12 +34,14 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
 
         this.state = {
             show: true,
-            toggle: props.toggle,
+            toggle: this.props.toggle === true || this.props.toggle === false
+                ? () => this.props.toggle === true
+                : () => this._childrenIsValid(),
         };
     }
 
     render() {
-        return this.state.show && this.props.toggle ?
+        return this.state.show && this.state.toggle() ?
             <TypedNotification type={this.props.type}
                                title={this.props.title}
                                closeAction={() => this.closeAction()}>{this.props.children}</TypedNotification>
@@ -50,6 +53,15 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
         if (this.props.onClose) {
             this.props.onClose();
         }
+    };
+
+    _childrenIsValid(): boolean {
+        return Array.isArray(this.props.children)
+            ? this.props.children.every(child => this._childIsValid(child))
+            : this._childIsValid(this.props.children);
     }
 
+    _childIsValid(child: ?React.Element<any> | string) {
+        return !!(child && typeof child !== 'string' && child.type === 'ul' && child.props && child.props.children);
+    }
 }

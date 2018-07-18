@@ -141,8 +141,7 @@ class UserContentContainer extends React.Component<Props, State> {
                 </ul>
             </LocalNotification>
             <LocalNotification title={this.props.L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']}
-                               type={NOTIFICATIONTYPES.ERROR}
-                               toggle>
+                               type={NOTIFICATIONTYPES.ERROR} >
                 <ul>
                     {this._validYksilointi() ? null : <li>{this._getYksilointivirhe()}</li>}
                 </ul>
