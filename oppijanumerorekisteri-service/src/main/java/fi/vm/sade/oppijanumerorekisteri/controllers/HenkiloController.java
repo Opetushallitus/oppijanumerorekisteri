@@ -481,4 +481,13 @@ public class HenkiloController {
     public String getCurrentUserAsiointikieli() {
         return this.henkiloService.getCurrentUserAsiointikieli();
     }
+
+    @ApiOperation("Hae kirjautuneen käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/current/omattiedot", method = RequestMethod.GET)
+    public HenkiloOmattiedotDto getCurrentUserOmatTiedot() {
+        return this.henkiloService.getOmatTiedot();
+    }
+
+
 }
