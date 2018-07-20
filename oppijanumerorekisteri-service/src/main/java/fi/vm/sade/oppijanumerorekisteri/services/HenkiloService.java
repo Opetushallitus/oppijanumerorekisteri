@@ -68,9 +68,17 @@ public interface HenkiloService {
     String getCurrentUserAsiointikieli();
 
     /**
-     * Hakee henkilön omat tiedot. Asiointikieli käyttää oletuskieltä suomi. Kutsumanimeen yritetään löytää sopiva arvo
-     * jos ei asetettu.
+     * Hakee henkilön omat tiedot.
+     * @see HenkiloService#getOmatTiedot(String)
      * @return kirjautuneen käyttäjän omat tiedot
      */
     HenkiloOmattiedotDto getOmatTiedot();
+
+    /**
+     * Hakee henkilön omat tiedot. Asiointikieli käyttää oletuskieltä suomi. Kutsumanimeen yritetään löytää sopiva arvo
+     * jos ei asetettu.
+     * @param oidHenkilo haettavan henkilön oid
+     * @return henkilön omat tiedot
+     */
+    HenkiloOmattiedotDto getOmatTiedot(String oidHenkilo);
 }

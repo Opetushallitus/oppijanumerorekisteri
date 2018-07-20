@@ -349,7 +349,13 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloOmattiedotDto getOmatTiedot() {
-        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(this.userDetailsHelper.getCurrentUserOid())
+        return this.getOmatTiedot(this.userDetailsHelper.getCurrentUserOid());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public HenkiloOmattiedotDto getOmatTiedot(String oidHenkilo) {
+        Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oidHenkilo)
                 .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " + this.userDetailsHelper.getCurrentUserOid()));
         return this.mapper.map(henkilo, HenkiloOmattiedotDto.class);
     }
