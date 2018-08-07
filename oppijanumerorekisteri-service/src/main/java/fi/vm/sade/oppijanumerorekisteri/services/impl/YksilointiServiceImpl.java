@@ -14,6 +14,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
@@ -39,8 +40,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -101,7 +105,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void tallennaYksilointivirhe(String henkiloOid, Exception exception) {
         henkiloRepository.findByOidHenkilo(henkiloOid).ifPresent(henkilo -> tallennaYksilointivirhe(henkilo, exception));
-
     }
 
     private void tallennaYksilointivirhe(Henkilo henkilo, Exception exception) {
@@ -112,7 +115,30 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointivirhe.setAikaleima(new Date());
         yksilointivirhe.setPoikkeus(exception.getClass().getCanonicalName());
         yksilointivirhe.setViesti(exception.getMessage());
+        // In case there is prior error already.
+        yksilointivirhe.setUudelleenyritysAikaleima(null);
+        yksilointivirhe.setUudelleenyritysMaara(null);
+        if (!(exception instanceof SuspendableIdentificationException)) {
+            Integer uusiYritysmaara = Optional.ofNullable(yksilointivirhe.getUudelleenyritysMaara())
+                    .map(maara -> maara++)
+                    .orElse(0);
+            yksilointivirhe.setUudelleenyritysMaara(uusiYritysmaara);
+            yksilointivirhe.setUudelleenyritysAikaleima(this.getUudelleenyritysAikaleima(uusiYritysmaara));
+        }
         yksilointivirheRepository.save(yksilointivirhe);
+    }
+
+    private Date getUudelleenyritysAikaleima(Integer uusiYritysmaara) {
+        LocalDateTime uusiAikaleima;
+        // Limit the exponential result to ~month (41 days)
+        if (uusiYritysmaara > 9 ) {
+            uusiAikaleima = LocalDateTime.now().plusMonths(1L);
+        }
+        else {
+            Function<Integer, Integer> exponentialFunction = maara -> (int)Math.pow(maara, 5) + 10;
+            uusiAikaleima = LocalDateTime.now().plusMinutes(exponentialFunction.apply(uusiYritysmaara));
+        }
+        return Date.from(uusiAikaleima.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
@@ -141,13 +167,17 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
         }
 
+        if (henkilo.isHetuFake()) {
+            throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
+        }
+
         /* VTJ data for Henkilo contains a huge data set and parsing this data
          * might change in the future, if Henkilo's data must contain all what
          * VTJ has to offer but that's still uncertain
          */
         YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
                 .orElseThrow(() ->
-                        new DataInconsistencyException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
+                        new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
         henkilo.setYksilointiYritetty(true);
 

@@ -1,8 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +20,8 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "yksilointivirhe", uniqueConstraints = {
         @UniqueConstraint(name = "uk_yksilointivirhe_01", columnNames = "henkilo_id"),
@@ -41,6 +41,12 @@ public class Yksilointivirhe extends IdentifiableAndVersionedEntity {
 
     @Column(name = "viesti")
     private String viesti;
+
+    @Column(name = "uudelleenyritys_maara")
+    private Integer uudelleenyritysMaara;
+
+    @Column(name = "uudelleenyritys_aikaleima")
+    private Date uudelleenyritysAikaleima;
 
     public Yksilointivirhe(Henkilo henkilo) {
         this.henkilo = henkilo;

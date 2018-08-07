@@ -57,7 +57,7 @@ public class IdentificationServiceIntegrationTests {
     @Test
     public void setStrongIdentifiedHetuNoHetuNamesMatch() {
         HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("new hetu", "Teppo Taneli", "Testaaja");
+                new HenkiloVahvaTunnistusDto("new hetu");
 
         this.identificationService.setStrongIdentifiedHetu("NoHetu", henkiloVahvaTunnistusDto);
 
@@ -70,7 +70,7 @@ public class IdentificationServiceIntegrationTests {
     @Test
     public void setStrongIdentifiedHetuCombineWithOppija() {
         HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("010101-234R", "Teppo Taneli", "Testaaja");
+                new HenkiloVahvaTunnistusDto("010101-234R");
 
         this.identificationService.setStrongIdentifiedHetu("NoHetu", henkiloVahvaTunnistusDto);
 
@@ -88,7 +88,7 @@ public class IdentificationServiceIntegrationTests {
     @Test
     public void setStrongIdentifiedHetuHetuAndNimetMatch() {
         HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("010101-123N", "Teppo Taneli", "Testaaja");
+                new HenkiloVahvaTunnistusDto("010101-123N");
 
         this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto);
 
@@ -101,7 +101,7 @@ public class IdentificationServiceIntegrationTests {
     @Test(expected = RuntimeException.class)
     public void setStrongIdentifiedHetu() {
         HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto =
-                new HenkiloVahvaTunnistusDto("111111-1235", "Teppo", "Testaaja");
+                new HenkiloVahvaTunnistusDto("111111-1235");
 
         this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto);
     }
@@ -151,5 +151,4 @@ public class IdentificationServiceIntegrationTests {
                         tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera2")
                 );
     }
-
 }

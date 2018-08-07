@@ -6,10 +6,15 @@ import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVirheDto;
+import fi.vm.sade.oppijanumerorekisteri.enums.YksilointivirheTila;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import org.assertj.core.groups.Tuple;
+import org.jresearch.orika.spring.OrikaSpringMapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +61,9 @@ public class IdentificationServiceIntegrationTest {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private OrikaSpringMapper mapper;
+
     @Before
     public void setup() {
         this.mockVtjClient = new MockVtjClient();
@@ -91,5 +99,28 @@ public class IdentificationServiceIntegrationTest {
 
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
+
+    }
+
+    @Test
+    public void yksilointivirhe() {
+        List<Henkilo> unidentifiedHenkilos = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h", Henkilo.class).getResultList();
+
+        given(this.vtjClient.fetchHenkilo("111111-1235")).willReturn(Optional.empty());
+        given(this.vtjClient.fetchHenkilo("010101-123N"))
+                .willReturn(this.mockVtjClient.fetchHenkilo(""));
+
+        this.identificationService.identifyHenkilos(unidentifiedHenkilos, 0L);
+
+        List<Yksilointivirhe> yksilointivirhe = this.entityManager
+                .createQuery("SELECT y FROM Yksilointivirhe y", Yksilointivirhe.class).getResultList();
+        assertThat(this.mapper.mapAsList(yksilointivirhe, YksilointiVirheDto.class))
+                .extracting(YksilointiVirheDto::getUudelleenyritysAikaleima, YksilointiVirheDto::getYksilointivirheTila)
+                .containsExactlyInAnyOrder(
+                        Tuple.tuple(null, YksilointivirheTila.HETU_EI_OIKEA),
+                        Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ),
+                        Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ));
+
     }
 }

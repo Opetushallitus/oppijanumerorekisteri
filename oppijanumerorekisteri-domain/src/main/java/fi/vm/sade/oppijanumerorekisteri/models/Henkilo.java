@@ -28,6 +28,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
                         @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
                         @NamedAttributeNode("kielisyys"),
+                        @NamedAttributeNode("yksilointivirheet"),
                 }
         )
 })
@@ -95,10 +96,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(nullable = false)
     private boolean yksilointiYritetty;
 
-    @Column(name = "ei_yksiloida", nullable = false)
-    @Deprecated // kts. Yksilointivirhe-entiteetti
-    private boolean eiYksiloida;
-
     @Column(nullable = false)
     private boolean duplicate;
 
@@ -130,8 +127,11 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija")
     private String kasittelijaOid;
 
-    // Koodisto uses value "1" for male and "2" for female.
-    private String sukupuoli;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "henkilo", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @NotAudited
+    Set<Yksilointivirhe> yksilointivirheet = new HashSet<>();
+
+    private String sukupuoli; // sukupuoli-koodisto
 
     private LocalDate syntymaaika;
 
@@ -219,8 +219,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         this.turvakielto = turvakielto;
     }
 
-    public Boolean hasNoFakeHetu() {
-        return !(hetu.charAt(7) == '9');
+    public Boolean isHetuFake() {
+        return hetu.charAt(7) == '9';
     }
 
     public boolean addOrganisaatio(Organisaatio organisaatio) {
