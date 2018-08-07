@@ -481,4 +481,20 @@ public class HenkiloController {
     public String getCurrentUserAsiointikieli() {
         return this.henkiloService.getCurrentUserAsiointikieli();
     }
+
+    @ApiOperation("Hae kirjautuneen käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/current/omattiedot", method = RequestMethod.GET)
+    public HenkiloOmattiedotDto getCurrentUserOmatTiedot() {
+        return this.henkiloService.getOmatTiedot();
+    }
+
+    @ApiOperation("Hae käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_OPHREKISTERI', 'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @RequestMapping(value = "/{oidHenkilo}/omattiedot", method = RequestMethod.GET)
+    public HenkiloOmattiedotDto getUserOmatTiedot(@PathVariable String oidHenkilo) {
+        return this.henkiloService.getOmatTiedot(oidHenkilo);
+    }
+
+
 }
