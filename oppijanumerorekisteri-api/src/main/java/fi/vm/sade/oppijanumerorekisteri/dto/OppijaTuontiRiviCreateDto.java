@@ -12,6 +12,8 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -52,6 +54,8 @@ public class OppijaTuontiRiviCreateDto {
 
         @NotNull
         private String sukunimi;
+
+        private LocalDate syntymaaika;
 
     }
 

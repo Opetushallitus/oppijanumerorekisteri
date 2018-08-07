@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class OppijaReadDto {
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;
+    private LocalDate syntymaaika;
     private KoodiNimiReadDto kotikunta;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
