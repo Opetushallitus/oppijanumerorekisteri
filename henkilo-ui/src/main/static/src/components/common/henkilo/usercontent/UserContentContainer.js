@@ -41,7 +41,7 @@ type Props = {
     readOnly?: boolean,
     basicInfo?: (boolean, (any) => void, (any) => void, any) => any,
     readOnlyButtons?: ((any) => void) => any,
-    updateHenkiloAndRefetch: (any, GlobalNotificationConfig) => void,
+    updateHenkiloAndRefetch: (any, boolean) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
     oidHenkilo: string,
     view: string,
@@ -190,14 +190,7 @@ class UserContentContainer extends React.Component<Props, State> {
 
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
-        const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
-            autoClose: 10000,
-            title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
-            type: NOTIFICATIONTYPES.ERROR,
-            key: 'HENKILOUPDATEFAILED'
-        };
-
-        this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
+        this.props.updateHenkiloAndRefetch(henkiloUpdate, true);
         this.anomus(henkiloUpdate);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
