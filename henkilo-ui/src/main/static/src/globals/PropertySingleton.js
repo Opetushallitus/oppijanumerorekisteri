@@ -1,4 +1,15 @@
+// @flow
+type State = {
+    idRunner?: number,
+    minimunPasswordLength?: number,
+    specialCharacterRegex?: RegExp,
+    numberRegex?: RegExp,
+    characterRegex?: RegExp,
+    [string]: string,
+}
+
 class PropertySingleton {
+    state: State;
     constructor() {
         this.state = {
             externalPermissionService: '',
@@ -14,12 +25,13 @@ class PropertySingleton {
             characterRegex: /[a-zA-Z]/,
             minimunPasswordLength: 8,
             PVM_FORMAATTI: 'D.M.YYYY',
-            PVM_DBFORMAATTI: 'YYYY-MM-DD'
+            PVM_DBFORMAATTI: 'YYYY-MM-DD',
+            PVM_DATE_TIME_FORMAATTI: 'D.M.YYYY H:mm',
         };
     }
 
-    setState(newState) {
-        this.state = Object.assign({}, this.state, newState);
+    setState(newState: State) {
+        this.state = {...this.state, ...newState};
     }
 
     getState() {
@@ -27,7 +39,7 @@ class PropertySingleton {
     }
 
     getNewId() {
-        this.state = Object.assign({}, this.state, {idRunner: this.state.idRunner+1});
+        this.state = Object.assign({}, this.state, {idRunner: this.state.idRunner + 1});
         return this.state.idRunner;
     }
 }

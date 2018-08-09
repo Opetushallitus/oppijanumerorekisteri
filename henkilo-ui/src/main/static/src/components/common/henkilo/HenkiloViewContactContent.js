@@ -235,14 +235,14 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 
     createFlatYhteystieto(contactInfoTemplate, yhteystietoList, idx, yhteystiedotRyhma, yhteystietotyypit, locale, henkiloUiId): ContactInfo {
         return {
-            value: contactInfoTemplate.map(((template, idx2) => (
+            value: contactInfoTemplate.map((template, idx2) => (
                 {
                     label: template.label,
                     value: yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0]
                     && yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0].yhteystietoArvo,
                     inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo',
                 }
-            ))),
+            )),
             name: yhteystiedotRyhma.ryhmaKuvaus && yhteystietotyypit.filter(kieli =>
             kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
             readOnly: yhteystiedotRyhma.readOnly,

@@ -21,6 +21,8 @@ import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 import {http} from "../../../../http";
 import {urls} from 'oph-urls-js';
 import {fetchOmattiedot, updateAnomusilmoitus} from "../../../../actions/omattiedot.actions";
+import moment from 'moment';
+import PropertySingleton from "../../../../globals/PropertySingleton";
 
 type Props = {
     L: L,
@@ -39,7 +41,7 @@ type Props = {
     readOnly?: boolean,
     basicInfo?: (boolean, (any) => void, (any) => void, any) => any,
     readOnlyButtons?: ((any) => void) => any,
-    updateHenkiloAndRefetch: (any, GlobalNotificationConfig) => void,
+    updateHenkiloAndRefetch: (any, boolean) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
     oidHenkilo: string,
     view: string,
@@ -139,6 +141,12 @@ class UserContentContainer extends React.Component<Props, State> {
                     {this._validKayttajatunnus() ? null : <li>{this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']}</li>}
                 </ul>
             </LocalNotification>
+            <LocalNotification title={this.props.L['HENKILO_YKSILOINTIVIRHE_OTSIKKO']}
+                               type={NOTIFICATIONTYPES.ERROR} >
+                <ul>
+                    {this._validYksilointi() ? null : <li>{this._getYksilointivirhe()}</li>}
+                </ul>
+            </LocalNotification>
         </div>;
     }
 
@@ -172,8 +180,8 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _discard() {
-        const henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)) // deep copy
-        henkiloUpdate.anomusilmoitus = this.props.omattiedot && this.props.omattiedot.anomusilmoitus
+        const henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
+        henkiloUpdate.anomusilmoitus = this.props.omattiedot && this.props.omattiedot.anomusilmoitus;
         this.setState({
             henkiloUpdate: henkiloUpdate,
             readOnly: true,
@@ -182,14 +190,7 @@ class UserContentContainer extends React.Component<Props, State> {
 
     _update() {
         const henkiloUpdate = Object.assign({}, this.state.henkiloUpdate);
-        const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
-            autoClose: 10000,
-            title: this.props.L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'],
-            type: NOTIFICATIONTYPES.ERROR,
-            key: 'HENKILOUPDATEFAILED'
-        };
-
-        this.props.updateHenkiloAndRefetch(henkiloUpdate, errorUpdateHenkiloNotification);
+        this.props.updateHenkiloAndRefetch(henkiloUpdate, true);
         this.anomus(henkiloUpdate);
         if (henkiloUpdate.kayttajanimi !== undefined) {
             this.props.updateAndRefetchKayttajatieto(henkiloUpdate.oidHenkilo, henkiloUpdate.kayttajanimi);
@@ -241,10 +242,28 @@ class UserContentContainer extends React.Component<Props, State> {
     };
 
     _validKayttajatunnus = (): boolean => {
-        const kayttajatunnus = this.state.henkiloUpdate.kayttajanimi
+        const kayttajatunnus = this.state.henkiloUpdate.kayttajanimi;
         return !kayttajatunnus || isValidKayttajatunnus(kayttajatunnus)
-    }
+    };
 
+    _validYksilointi() {
+        return !(this.props.henkilo.henkilo.yksilointivirheet && this.props.henkilo.henkilo.yksilointivirheet.length);
+    };
+
+    _getYksilointivirhe() {
+        const yksilointivirheet = this.props.henkilo.henkilo.yksilointivirheet;
+        const virhe = yksilointivirheet[0];
+        const yksilointivirheMap = {
+            HETU_EI_OIKEA: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_OIKEA',
+            HETU_EI_VTJ: 'HENKILO_YKSILOINTIVIRHE_HETU_EI_VTJ',
+            MUU_UUDELLEENYRITETTAVA: 'HENKILO_YKSILOINTIVIRHE_MUU_UUDELLEENYRITETTAVA',
+            MUU: 'HENKILO_YKSILOINTIVIRHE_MUU',
+        };
+        const virheKey = yksilointivirheMap[virhe.yksilointivirheTila] || 'HENKILO_YKSILOINTIVIRHE_OLETUS';
+        return virhe.uudelleenyritysAikaleima
+            ? `${this.props.L[virheKey]} ${this.props.L['HENKILO_YKSILOINTIVIRHE_UUDELLEENYRITYS']} ${moment(virhe.uudelleenyritysAikaleima).format(PropertySingleton.getState().PVM_DATE_TIME_FORMAATTI)}`
+            : this.props.L[virheKey];
+    };
 }
 
 const mapStateToProps = (state) => ({
