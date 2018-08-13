@@ -69,7 +69,7 @@ export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => (as
             type: NOTIFICATIONTYPES.ERROR,
             key: 'HENKILOUPDATEFAILED'
         };
-        if (errorNotificationConfig && error.status === 400 && error.message.indexOf('invalid.hetu') !== -1) {
+        if (errorNotificationConfig && error.status === 400 && error.message && error.message.indexOf('invalid.hetu') !== -1) {
             errorUpdateHenkiloNotification.title = L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU'];
             dispatch(addGlobalNotification(errorUpdateHenkiloNotification));
         }
