@@ -97,7 +97,7 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, get
         }
         const userOid = getState().omattiedot.data.oid;
         dispatch(requestOmattiedotOrganisaatios());
-        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid);
+        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid, {piilotaOikeudettomat: true});
         try {
             const omattiedotOrganisaatios = await http.get(url);
             dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios, getState().locale));
