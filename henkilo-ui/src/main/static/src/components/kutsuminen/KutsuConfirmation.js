@@ -14,6 +14,10 @@ import type {BasicinfoType} from "./BasicinfoForm";
 import type { L10n, L } from "../../types/localisation.type";
 import type { MyonnettyKayttooikeusryhma } from "../../types/domain/kayttooikeus/kayttooikeusryhma.types"
 import { LocalNotification } from "../common/Notification/LocalNotification";
+import {connect} from "react-redux";
+import { addGlobalNotification } from "../../actions/notification.actions";
+import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
+import type {GlobalNotificationConfig} from "../../types/notification.types";
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -23,6 +27,7 @@ type Props = {
     clearBasicInfo: () => void,
     locale: string,
     l10n: L10n,
+    addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
 type State = {
@@ -31,7 +36,7 @@ type State = {
     sent: boolean,
 }
 
-export default class KutsuConfirmation extends React.Component<Props, State> {
+class KutsuConfirmation extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -44,6 +49,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
 
     render() {
         const L = this.props.l10n[this.props.locale];
+
         return (
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
                 <div className="confirmation-modal">
@@ -59,6 +65,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                             : <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
+
                     <LocalNotification type="error" title={L['KUTSU_LUONTI_EPAONNISTUI']} toggle={this.state.notifications.length > 0}>
                         <ul>
                             {this.state.notifications.map((notification, index) => <li key={index}>{notification}</li>)}
@@ -96,6 +103,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     async sendInvitation(e: SyntheticEvent<HTMLButtonElement>, L: L) {
+
         e.preventDefault();
 
         const payload = {
@@ -112,19 +120,28 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         };
 
         try {
-            this.setState({loading: true})
+            this.setState({loading: true});
             const url = urls.url('kayttooikeus-service.kutsu');
             await http.post(url, payload);
             this.setState({loading: false, sent: true});
+            this.props.addGlobalNotification({
+                key: 'KUTSU_CONFIRMATION_SUCCESS',
+                type: NOTIFICATIONTYPES.SUCCESS,
+                autoClose: 10000,
+                title: this.props.l10n[this.props.locale]['KUTSU_LUONTI_ONNISTUI']
+            });
+
         } catch (error) {
-            const notifications = []
+            const notifications = [];
             if (error && error.message === 'kutsu_with_sahkoposti_already_sent') {
                 notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_ON_JO_LAHETETTY'])
             } else {
                 notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'])
             }
-            this.setState({loading: false, notifications: notifications})
+            this.setState({loading: false, notifications: notifications});
             throw error;
         }
     }
 }
+
+export default connect(() => ({}), {addGlobalNotification})(KutsuConfirmation);
