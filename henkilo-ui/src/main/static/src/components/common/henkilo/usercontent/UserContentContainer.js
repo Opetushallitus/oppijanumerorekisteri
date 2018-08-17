@@ -14,7 +14,6 @@ import PalveluUserContent from "./PalveluUserContent";
 import {isValidKutsumanimi} from "../../../../validation/KutsumanimiValidator";
 import {LocalNotification} from "../../Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../Notification/notificationtypes";
-import type {GlobalNotificationConfig} from "../../../../types/notification.types";
 import { isValidKayttajatunnus } from '../../../../validation/KayttajatunnusValidator';
 import type { Kayttaja } from '../../../../types/domain/kayttooikeus/kayttaja.types'
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
