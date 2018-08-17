@@ -3,13 +3,13 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Email;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 
 import java.time.LocalDate;
