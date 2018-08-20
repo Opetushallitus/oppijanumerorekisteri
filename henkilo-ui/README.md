@@ -56,7 +56,7 @@ Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyt
 
 
 ### Flowjs
-Voit ajaa tyyppitarkistukset lokaalisti komennolla `npm run flow`. Tämä ei kuitenkaa seuraa muutoksia, vaan prosessi päättyy heti ajon jälkeen. Kannattanee asentaa omaan IDEn plugin, joka hoitaa jatkuvan tyyppitarkistuksen.
+Voit ajaa tyyppitarkistukset lokaalisti komennolla `npm run flowrun`. Tämä ei kuitenkaa seuraa muutoksia, vaan prosessi päättyy heti ajon jälkeen. Kannattanee asentaa omaan IDEn plugin, joka hoitaa jatkuvan tyyppitarkistuksen.
 
 ### Riippuvuudet
 
