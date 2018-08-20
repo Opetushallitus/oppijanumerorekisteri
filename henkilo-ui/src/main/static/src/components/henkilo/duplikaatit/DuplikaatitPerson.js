@@ -107,8 +107,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         const href = hakemus.haku ? `/lomake-editori/applications/haku/${hakemus.haku}?application-key=${hakemus.oid}` : `/lomake-editori/applications/${hakemus.form}?application-key=${hakemus.oid}`;
         const aidinkieliKoodi = (hakemus.aidinkieli || "").toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
-        const kansalaisuusKoodi = (hakemus.kansalaisuus || "").toLocaleLowerCase();
-        const kansalaisuus = this._koodistoLabel(kansalaisuusKoodi, this.props.koodisto.kansalaisuus, this.props.locale);
+        const kansalaisuus = hakemus.kansalaisuus.map(k => this._koodistoLabel(k.toLocaleLowerCase(), this.props.koodisto.kansalaisuus, this.props.locale)).join(', ');
 
         return {
             oid: hakemus.oid,
