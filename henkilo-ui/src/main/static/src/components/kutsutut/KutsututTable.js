@@ -1,5 +1,6 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import moment from 'moment';
 import './KutsututTable.css';
@@ -7,15 +8,30 @@ import Table from '../common/table/Table';
 import Button from '../common/button/Button';
 import {renewKutsu} from "../../actions/kutsu.actions";
 import { toLocalizedText } from '../../localizabletext';
+import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
+import type {L} from "../../types/localisation.type";
+import type {GlobalNotificationConfig} from "../../types/notification.types";
+import {addGlobalNotification} from "../../actions/notification.actions";
+import type {Locale} from "../../types/locale.type";
 
-class KutsututTable extends React.Component {
+type Props = {
+    kutsus: Array<any>,
+    cancelInvitation: () => any,
+    isLoading: boolean,
+    allFetched: boolean,
+    addGlobalNotification: (GlobalNotificationConfig) => any,
+    renewKutsu: (number) => void,
+    L: L,
+    fetchKutsus: (any, ?boolean) => void,
+    cancelInvitation: (any) => any,
+    locale: Locale
+}
 
-    static propTypes = {
-        kutsus: PropTypes.array,
-        cancelInvitation: PropTypes.func.isRequired,
-        isLoading: PropTypes.bool.isRequired,
-        allFetched: PropTypes.bool.isRequired,
-    };
+type State = {
+    sorted: Array<any>
+}
+
+class KutsututTable extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
@@ -77,12 +93,18 @@ class KutsututTable extends React.Component {
 
     createKutsuLahetettyCell(kutsu) {
         const sent = moment(new Date(kutsu.aikaleima));
-        return (<span>{sent.format()} {sent.add(1, 'months').isBefore(moment()) ? <span className="oph-red">{this.props.L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span> : null}</span>);
+        return (<span>{sent.format('DD/MM/YYYY H:mm')} {sent.add(1, 'months').isBefore(moment()) ? <span className="oph-red">{this.props.L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span> : null}</span>);
     }
 
     createResendCell(kutsu) {
         const resendAction = async () => {
             await this.props.renewKutsu(kutsu.id);
+            this.props.addGlobalNotification({
+                key: 'KUTSU_CONFIRMATION_SUCCESS',
+                type: NOTIFICATIONTYPES.SUCCESS, 
+                autoClose: 10000,
+                title: this.props.L['KUTSU_LUONTI_ONNISTUI']
+            });
             this.props.fetchKutsus(this.state.sorted[0]);
         };
         return kutsu.tila === 'AVOIN' &&
@@ -127,4 +149,4 @@ const mapStateToProps = (state, ownProps) => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {renewKutsu})(KutsututTable);
+export default connect(mapStateToProps, {renewKutsu, addGlobalNotification})(KutsututTable);
