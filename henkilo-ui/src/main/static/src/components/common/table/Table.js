@@ -14,7 +14,7 @@ import type {TableHeading} from "../../../types/react-table.types";
 
 type Props = {
     headings: Array<TableHeading>,
-    data: Array<string | number | boolean>,
+    data: Array<any>,
     noDataText?: string,
     striped?: boolean,
     highlight?: boolean,
