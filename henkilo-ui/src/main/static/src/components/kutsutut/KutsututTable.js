@@ -77,7 +77,7 @@ class KutsututTable extends React.Component {
 
     createKutsuLahetettyCell(kutsu) {
         const sent = moment(new Date(kutsu.aikaleima));
-        return (<span>{sent.format('MM.DD.YYYY hh:mm')} {sent.add(1, 'months').isBefore(moment()) ? <span className="oph-red">{this.props.L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span> : null}</span>);
+        return (<span>{sent.format('DD/MM/YYYY hh:mm')} {sent.add(1, 'months').isBefore(moment()) ? <span className="oph-red">{this.props.L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span> : null}</span>);
     }
 
     createResendCell(kutsu) {
