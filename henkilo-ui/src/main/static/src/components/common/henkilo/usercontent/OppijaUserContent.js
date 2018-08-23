@@ -23,6 +23,7 @@ import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
+import Sukupuoli from "../labelvalues/Sukupuoli";
 
 type Props = {
     readOnly: boolean,
@@ -81,6 +82,7 @@ class OppijaUserContent extends React.Component<Props> {
             [
                 <Kansalaisuus {...basicInfoProps} />,
                 <Aidinkieli {...basicInfoProps} />,
+                <Sukupuoli {...basicInfoProps} />,
                 <Oppijanumero {...basicInfoProps} />,
                 <Asiointikieli {...basicInfoProps} />,
             ],

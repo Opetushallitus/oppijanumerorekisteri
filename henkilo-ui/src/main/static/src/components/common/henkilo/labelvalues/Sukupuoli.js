@@ -19,14 +19,14 @@ type Props = {
 }
 
 const Sukupuoli = (props: Props) => <LabelValue
-    readOnly={props.readOnly}
+    readOnly={!!props.henkilo.henkilo.yksiloityVTJ || props.readOnly}
     updateModelFieldAction={props.updateModelFieldAction}
     values={{
         label: 'HENKILO_SUKUPUOLI',
         data: props.koodisto.sukupuoli.map(koodi => ({value: koodi.value, label: koodi[props.locale],
             optionsName: 'sukupuoli',})),
         selectValue: props.henkiloUpdate.sukupuoli,
-        disabled: !!props.henkilo.henkilo.hetu,
+        disabled: !!props.henkilo.henkilo.yksiloityVTJ,
     }}
 />;
 

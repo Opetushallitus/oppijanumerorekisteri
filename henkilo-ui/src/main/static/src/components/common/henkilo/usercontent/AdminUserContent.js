@@ -30,6 +30,7 @@ import PasswordButton from "../buttons/PasswordButton";
 import AktivoiButton from '../buttons/AktivoiButton';
 import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
+import Sukupuoli from "../labelvalues/Sukupuoli";
 
 type Props = {
     readOnly: boolean,
@@ -94,6 +95,7 @@ class AdminUserContent extends React.Component<Props, State> {
             [
                 <Kansalaisuus {...props} />,
                 <Aidinkieli {...props} />,
+                <Sukupuoli {...props} />,
                 <Oppijanumero {...props} />,
                 <Asiointikieli {...props} />,
             ],
