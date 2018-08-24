@@ -17,6 +17,7 @@ public class HenkiloYhteystietoDto {
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;
+    private String asiointikieli;
     // yhteystietoryhma
     private Long yhteystietoRyhmaId;
     private String ryhmaKuvaus;

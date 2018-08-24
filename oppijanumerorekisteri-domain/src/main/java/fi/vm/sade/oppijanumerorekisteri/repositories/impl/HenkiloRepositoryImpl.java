@@ -139,10 +139,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public List<HenkiloYhteystietoDto> findWithYhteystiedotBy(HenkiloCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QKielisyys qAsiointikieli = new QKielisyys("asiointikieli");
         QYhteystiedotRyhma qYhteystiedotRyhma = QYhteystiedotRyhma.yhteystiedotRyhma;
         QYhteystieto qYhteystieto = QYhteystieto.yhteystieto;
 
         JPAQuery<HenkiloYhteystietoDto> query = jpa().from(qHenkilo)
+                .leftJoin(qHenkilo.asiointiKieli, qAsiointikieli)
                 .leftJoin(qHenkilo.yhteystiedotRyhma, qYhteystiedotRyhma)
                 .leftJoin(qYhteystiedotRyhma.yhteystieto, qYhteystieto)
                 .select(Projections.constructor(HenkiloYhteystietoDto.class,
@@ -151,6 +153,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.etunimet,
                         qHenkilo.kutsumanimi,
                         qHenkilo.sukunimi,
+                        qAsiointikieli.kieliKoodi,
                         qYhteystiedotRyhma.id,
                         qYhteystiedotRyhma.ryhmaKuvaus,
                         qYhteystiedotRyhma.ryhmaAlkuperaTieto,
