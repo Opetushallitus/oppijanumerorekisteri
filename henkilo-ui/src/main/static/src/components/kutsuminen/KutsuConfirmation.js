@@ -44,6 +44,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
 
     render() {
         const L = this.props.l10n[this.props.locale];
+
         return (
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
                 <div className="confirmation-modal">
@@ -59,6 +60,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
                             : <Button action={this._sendInvitation.bind(this)} loading={this.state.loading}>{L['VIRKAILIJAN_LISAYS_TALLENNA']}</Button>
                         }
                     </div>
+
                     <LocalNotification type="error" title={L['KUTSU_LUONTI_EPAONNISTUI']} toggle={this.state.notifications.length > 0}>
                         <ul>
                             {this.state.notifications.map((notification, index) => <li key={index}>{notification}</li>)}
@@ -96,6 +98,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     async sendInvitation(e: SyntheticEvent<HTMLButtonElement>, L: L) {
+
         e.preventDefault();
 
         const payload = {
@@ -112,19 +115,20 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         };
 
         try {
-            this.setState({loading: true})
+            this.setState({loading: true});
             const url = urls.url('kayttooikeus-service.kutsu');
             await http.post(url, payload);
             this.setState({loading: false, sent: true});
         } catch (error) {
-            const notifications = []
+            const notifications = [];
             if (error && error.message === 'kutsu_with_sahkoposti_already_sent') {
                 notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_ON_JO_LAHETETTY'])
             } else {
                 notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'])
             }
-            this.setState({loading: false, notifications: notifications})
+            this.setState({loading: false, notifications: notifications});
             throw error;
         }
     }
 }
+
