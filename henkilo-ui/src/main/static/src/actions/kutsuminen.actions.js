@@ -6,6 +6,7 @@ import { KUTSU_SET_ORGANISAATIO, KUTSU_ADD_ORGANISAATIO, KUTSU_REMOVE_ORGANISAAT
     FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST,
     FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_SUCCESS,
     FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE,
+    KUTSU_ORGANISAATIO_SET_PROPERTIES,
     ADD_ORGANISAATIO_PERMISSION, REMOVE_ORGANISAATIO_PERMISSION} from './actiontypes';
 
 export const kutsuSetOrganisaatio = (index, organisaatio) => dispatch => dispatch({type: KUTSU_SET_ORGANISAATIO, index, organisaatio});
@@ -18,6 +19,9 @@ export const addOrganisaatioPermission = (organisaatioOid, permission) => dispat
 
 export const removeOrganisaatioPermission = (organisaatioOid, permission) => dispatch =>
     dispatch({ type: REMOVE_ORGANISAATIO_PERMISSION, organisaatioOid, permission });
+
+export const kutsuOrganisaatioSetProperties = (index, properties) => dispatch =>
+    dispatch({ type: KUTSU_ORGANISAATIO_SET_PROPERTIES, index, properties })
 
 const requestKayttooikeusryhmaForHenkiloInOrganisaatio = (henkiloOid, organisaatioOid) => ({
     type: FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST,

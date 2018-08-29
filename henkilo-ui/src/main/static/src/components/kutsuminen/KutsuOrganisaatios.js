@@ -5,6 +5,7 @@ import Button from "../common/button/Button";
 import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {L} from "../../types/localisation.type";
+import moment from 'moment';
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -33,6 +34,7 @@ export default class KutsuOrganisaatios extends React.Component<Props> {
         this.props.addOrganisaatio({
             oid: '',
             organisation: {oid: ''},
+            voimassaLoppuPvm: moment().add(1, 'years').format('YYYY-MM-DD'),
             selectablePermissions: [],
             selectedPermissions: []
         });
