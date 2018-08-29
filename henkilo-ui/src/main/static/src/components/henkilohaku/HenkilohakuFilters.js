@@ -45,7 +45,6 @@ type Props = {
         }
     }>,
     ryhmas: {ryhmas: Array<{}>},
-    fetchOmattiedotOrganisaatios: () => any,
     fetchAllRyhmas: () => any,
     fetchAllKayttooikeusryhma: () => void,
     henkilohakuOrganisaatiotLoading: boolean,
