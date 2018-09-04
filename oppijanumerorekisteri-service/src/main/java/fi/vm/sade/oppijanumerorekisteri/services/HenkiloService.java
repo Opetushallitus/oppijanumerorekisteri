@@ -21,6 +21,8 @@ public interface HenkiloService {
 
     Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(HenkiloHakuCriteria criteria);
 
+    Iterable<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria);
+
     HenkiloHakuDto getByHakutermi(String hakutermi, ExternalPermissionService externalPermissionService);
 
     Iterable<String> listOidByYhteystieto(String arvo);

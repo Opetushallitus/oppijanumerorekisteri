@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,9 @@ public class HenkiloController {
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
+            notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
+    @Deprecated // riippuvuus käyttöoikeuspalveluun
     public Slice<HenkiloHakuDto> list(
             HenkiloHakuCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
@@ -77,6 +81,14 @@ public class HenkiloController {
     @ApiOperation(value = "Hakee henkilöiden OID:t yhteystiedon perusteella.")
     public Iterable<String> getByYhteystieto(@PathVariable String arvo) {
         return henkiloService.listOidByYhteystieto(arvo);
+    }
+
+    @PostMapping("/yhteystiedot")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
+    @ApiOperation("Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä")
+    public Iterable<HenkiloYhteystiedotDto> getYhteystiedot(@RequestBody HenkiloCriteria criteria) {
+        return henkiloService.listWithYhteystiedotAsAdmin(criteria);
     }
 
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")

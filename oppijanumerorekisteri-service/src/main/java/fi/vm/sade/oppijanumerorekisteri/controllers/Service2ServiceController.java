@@ -122,16 +122,20 @@ public class Service2ServiceController {
         }
     }
 
-    @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
+    @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
+            notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/perustiedot")
+    @Deprecated // riippuvuus käyttöoikeuspalveluun
     public Iterable<HenkiloHakuDto> list(@Validated @RequestBody HenkiloHakuCriteria criteria,
                                          @RequestParam(required = false) Long offset,
                                          @RequestParam(required = false) Long amount) {
         return henkiloService.list(criteria, offset, amount);
     }
 
-    @ApiOperation("Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä")
+    @ApiOperation(value = "Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä",
+            notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/yhteystiedot")
+    @Deprecated // riippuvuus käyttöoikeuspalveluun
     public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedot(@RequestBody HenkiloHakuCriteria criteria) {
         return henkiloService.listWithYhteystiedot(criteria);
     }
