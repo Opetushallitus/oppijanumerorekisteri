@@ -9,7 +9,7 @@ import {
     FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE,
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE, FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS, FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST
 } from "../actions/actiontypes";
-import type {TextGroup} from "../types/domain/kayttooikeus/textgroup.types";
+import {MyonnettyKayttooikeusryhma} from "../types/domain/kayttooikeus/kayttooikeusryhma.types";
 
 export type KayttooikeusRyhmaState = {
     +kayttooikeusAnomus: Array<{
@@ -21,17 +21,7 @@ export type KayttooikeusRyhmaState = {
         }
     }>,
     +kayttooikeusAnomusLoading: boolean,
-    +kayttooikeus: Array<{
-        tila: string,
-        organisaatioOid: string,
-        ryhmaNames: TextGroup,
-        alkuPvm: string,
-        voimassaPvm: string,
-        kasitelty: string,
-        kasittelijaNimi: string,
-        kasittelijaOid: string,
-        ryhmaId: number,
-    }>,
+    +kayttooikeus: Array<MyonnettyKayttooikeusryhma>,
     +kayttooikeusLoading: boolean,
     +grantableKayttooikeus: {},
     +grantableKayttooikeusLoading: boolean,

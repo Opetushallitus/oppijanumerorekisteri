@@ -23,6 +23,8 @@ import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.r
 import {removeNotification} from '../../../actions/notifications.actions';
 import * as R from 'ramda';
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
+import {createEmailOptions} from "../../../utilities/henkilo.util";
+import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 
 type Props = {
     l10n: L10n,
@@ -103,52 +105,19 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
 
         this.state = {
             dates: this.props.kayttooikeus.kayttooikeus
-                .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
+                .filter(this._filterExpiredKayttooikeus)
                 .map(kayttooikeusAnomus => ({
                     alkupvm: moment(),
                     loppupvm: this.props.vuosia ? moment().add(this.props.vuosia, 'years') : moment(kayttooikeusAnomus.voimassaPvm, PropertySingleton.state.PVM_DBFORMAATTI).add(1, 'years')
                 })),
-            ...this.createEmailOptions(this.props.henkilo),
+            ...createEmailOptions(this.props.henkilo, this._filterExpiredKayttooikeus, this.props.kayttooikeus.kayttooikeus),
         };
     }
 
     componentWillReceiveProps(nextProps: Props) {
         this.setState({
-            ...this.createEmailOptions(nextProps.henkilo),
+            ...createEmailOptions(nextProps.henkilo, this._filterExpiredKayttooikeus, this.props.kayttooikeus.kayttooikeus),
         });
-    }
-
-
-    createEmailOptions(henkilo): {emailSelection: Array<EmailOption>, missingEmail: boolean, showMissingEmailNotification: boolean, emailOptions: Array<EmailOption>} {
-        const emailOptions = this._parseEmailOptions(henkilo);
-        if (emailOptions.length === 1) {
-            return {
-                emailSelection: this.props.kayttooikeus.kayttooikeus
-                    .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
-                    .map(uusittavaKayttooikeusRyhma => emailOptions[0]),
-                missingEmail: false,
-                showMissingEmailNotification: false,
-                emailOptions,
-            };
-        }
-        else if (emailOptions.length > 1) {
-            return {
-                missingEmail: false,
-                showMissingEmailNotification: false,
-                emailOptions,
-                emailSelection: this.props.kayttooikeus.kayttooikeus
-                    .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
-                    .map(uusittavaKayttooikeusRyhma => ({value: ''})),
-            };
-        }
-        return {
-            missingEmail: true,
-            showMissingEmailNotification: true,
-            emailOptions,
-            emailSelection: this.props.kayttooikeus.kayttooikeus
-                .filter(kayttooikeus => kayttooikeus.tila !== PropertySingleton.getState().KAYTTOOIKEUS_SULJETTU)
-                .map(uusittavaKayttooikeusRyhma => ({value: ''})),
-        };
     }
 
     loppupvmAction(value, idx) {
@@ -159,9 +128,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         });
     }
 
-    createRows(headingList) {
+    createRows(headingList: Array<string>) {
         this._rows = this.props.kayttooikeus.kayttooikeus
-            .filter(kayttooikeus => kayttooikeus.tila !== 'SULJETTU')
+            .filter(this._filterExpiredKayttooikeus)
             .map((uusittavaKayttooikeusRyhma, idx) => {
                 const organisaatio = this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid]
                     || StaticUtils.defaultOrganisaatio(uusittavaKayttooikeusRyhma.organisaatioOid, this.props.l10n);
@@ -274,21 +243,6 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         );
     }
 
-    _parseEmailOptions(henkilo) {
-        let emails = [];
-        if (henkilo.henkilo.yhteystiedotRyhma) {
-            henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
-                yhteystietoRyhma.yhteystieto.forEach(yhteys => {
-                    if (yhteys.yhteystietoTyyppi === PropertySingleton.getState().SAHKOPOSTI) {
-                        emails.push(yhteys.yhteystietoArvo);
-                    }
-                })
-            });
-        }
-
-        return emails.map(email => ({value: email, label: email}));
-    }
-
     async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
         const anomusData = {
@@ -301,6 +255,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         await this.props.createKayttooikeusanomus(anomusData);
         const oid: any = R.path(['omattiedot','data','oid'], this.props);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
+    }
+
+    _filterExpiredKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {
+        return kayttooikeus.tila !== 'SULJETTU' && kayttooikeus.tila !== 'VANHENTUNUT'
     }
 
 }
