@@ -37,7 +37,7 @@ export type MyonnettyKayttooikeusryhma = {
     myonnettyTapahtumaId: ?number,
     alkuPvm: ?string,
     voimassaPvm: ?string,
-    tila?: KayttooikeudenTila,
+    tila: KayttooikeudenTila,
     kasitelty?: string,
     kasittelijaOid: string,
     kasittelijaNimi: string,

@@ -90,18 +90,18 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     createRows(headingList: Array<string>) {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(this._filterExistingKayttooikeus)
-            .map( (kayttooikeus, idx) => ({
-                [headingList[0]]: toLocalizedText(this.props.locale, (this.props.organisaatioCache[kayttooikeus.organisaatioOid]
-                || StaticUtils.defaultOrganisaatio(kayttooikeus.organisaatioOid, this.props.l10n)).nimi),
-                [headingList[1]]: kayttooikeus.ryhmaNames.texts
+            .map( (vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma, idx: number) => ({
+                [headingList[0]]: toLocalizedText(this.props.locale, (this.props.organisaatioCache[vanhentunutKayttooikeus.organisaatioOid]
+                || StaticUtils.defaultOrganisaatio(vanhentunutKayttooikeus.organisaatioOid, this.props.l10n)).nimi),
+                [headingList[1]]: vanhentunutKayttooikeus.ryhmaNames.texts
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
-                [headingList[2]]: this.L[kayttooikeus.tila],
-                [headingList[3]]: {kasitelty: moment(kayttooikeus.kasitelty), kasittelija: kayttooikeus.kasittelijaNimi || kayttooikeus.kasittelijaOid},
-                [headingList[4]]: kayttooikeus.tila === 'VANHENTUNUT' && <div>
+                [headingList[2]]: this.L[vanhentunutKayttooikeus.tila],
+                [headingList[3]]: {kasitelty: moment(vanhentunutKayttooikeus.kasitelty), kasittelija: vanhentunutKayttooikeus.kasittelijaNimi || vanhentunutKayttooikeus.kasittelijaOid},
+                [headingList[4]]: vanhentunutKayttooikeus.tila === 'VANHENTUNUT' && !this.hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus) && <div>
                     {this.createEmailSelectionIfMoreThanOne(idx)}
-                    <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(kayttooikeus, idx)}
-                                         disabled={this.isHaeJatkoaikaaButtonDisabled(idx, kayttooikeus)} />
-                </div>,
+                    <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(vanhentunutKayttooikeus, idx)}
+                                         disabled={this.isHaeJatkoaikaaButtonDisabled(idx, vanhentunutKayttooikeus)} />
+                </div>
             }));
     };
 
@@ -153,10 +153,19 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
     }
 
-    isHaeJatkoaikaaButtonDisabled(idx: number, uusittavaKayttooikeusRyhma: any) {
+    hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma) {
+        // palauttaa true jos vanhentunutKayttooikeus löytyy myös voimassaolevista käyttöoikeuksista
+        return !!this.props.kayttooikeus.kayttooikeus
+            .filter( (kayttooikeus: MyonnettyKayttooikeusryhma) => kayttooikeus.tila !== 'SULJETTU' && kayttooikeus.tila !== 'VANHENTUNUT')
+            .reduce( (previous: boolean, current: MyonnettyKayttooikeusryhma) => {
+                return previous || ( (current.organisaatioOid === vanhentunutKayttooikeus.organisaatioOid) && (current.ryhmaId === vanhentunutKayttooikeus.ryhmaId) )
+            }, false);
+    }
+
+    isHaeJatkoaikaaButtonDisabled(idx: number, vanhentunutKayttooikeusryhma: MyonnettyKayttooikeusryhma) {
         const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus
-            .filter(haettuKayttooikeusRyhma => haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId
-                && uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid)[0];
+            .filter(haettuKayttooikeusRyhma => haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === vanhentunutKayttooikeusryhma.ryhmaId
+                && vanhentunutKayttooikeusryhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid)[0];
         return this.state.emailSelection[idx].value === '' || this.state.emailOptions.length === 0 || anomusAlreadyExists;
     }
 }
