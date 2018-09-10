@@ -25,6 +25,7 @@ import * as R from 'ramda';
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import {createEmailOptions} from "../../../utilities/henkilo.util";
 import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
+import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
 
 type Props = {
     l10n: L10n,
@@ -155,7 +156,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                         </div>
                         <div style={{display: 'table-cell'}}>
                             <MyonnaButton
-                                myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, 'MYONNETTY', idx,
+                                myonnaAction={() => this.updateKayttooikeusryhma(uusittavaKayttooikeusRyhma.ryhmaId, KAYTTOOIKEUDENTILA.MYONNETTY, idx,
                                     uusittavaKayttooikeusRyhma.organisaatioOid)}
                                 L={this.L}
                                 disabled={this.hasNoPermission(uusittavaKayttooikeusRyhma.organisaatioOid, uusittavaKayttooikeusRyhma.ryhmaId)} />
@@ -258,7 +259,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     }
 
     _filterExpiredKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {
-        return kayttooikeus.tila !== 'SULJETTU' && kayttooikeus.tila !== 'VANHENTUNUT'
+        return kayttooikeus.tila !== KAYTTOOIKEUDENTILA.SULJETTU && kayttooikeus.tila !== KAYTTOOIKEUDENTILA.VANHENTUNUT
     }
 
 }

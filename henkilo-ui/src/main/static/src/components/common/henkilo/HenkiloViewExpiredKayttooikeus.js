@@ -21,6 +21,7 @@ import {
 } from "../../../actions/kayttooikeusryhma.actions";
 import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
+import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
 
 type Props = {
     l10n: L10n,
@@ -97,7 +98,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
                     .filter(text => text.lang === this.props.locale.toUpperCase())[0].text,
                 [headingList[2]]: this.L[vanhentunutKayttooikeus.tila],
                 [headingList[3]]: {kasitelty: moment(vanhentunutKayttooikeus.kasitelty), kasittelija: vanhentunutKayttooikeus.kasittelijaNimi || vanhentunutKayttooikeus.kasittelijaOid},
-                [headingList[4]]: vanhentunutKayttooikeus.tila === 'VANHENTUNUT' && !this.hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus) && <div>
+                [headingList[4]]: vanhentunutKayttooikeus.tila === KAYTTOOIKEUDENTILA.VANHENTUNUT && !this.hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus) && <div>
                     {this.createEmailSelectionIfMoreThanOne(idx)}
                     <HaeJatkoaikaaButton haeJatkoaikaaAction={() => this._createKayttooikeusAnomus(vanhentunutKayttooikeus, idx)}
                                          disabled={this.isHaeJatkoaikaaButtonDisabled(idx, vanhentunutKayttooikeus)} />
@@ -136,7 +137,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 
     _filterExistingKayttooikeus(kayttooikeus: MyonnettyKayttooikeusryhma) {
-        return kayttooikeus.tila === 'SULJETTU' || kayttooikeus.tila === 'VANHENTUNUT';
+        return kayttooikeus.tila === KAYTTOOIKEUDENTILA.SULJETTU || kayttooikeus.tila === KAYTTOOIKEUDENTILA.VANHENTUNUT;
     }
 
     async _createKayttooikeusAnomus(kayttooikeusryhma: MyonnettyKayttooikeusryhma, idx) {
@@ -156,7 +157,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     hideVanhentunutKayttooikeusUusintaButton(vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma) {
         // palauttaa true jos vanhentunutKayttooikeus löytyy myös voimassaolevista käyttöoikeuksista
         return !!this.props.kayttooikeus.kayttooikeus
-            .filter( (kayttooikeus: MyonnettyKayttooikeusryhma) => kayttooikeus.tila !== 'SULJETTU' && kayttooikeus.tila !== 'VANHENTUNUT')
+            .filter( (kayttooikeus: MyonnettyKayttooikeusryhma) => kayttooikeus.tila !== KAYTTOOIKEUDENTILA.SULJETTU && kayttooikeus.tila !== KAYTTOOIKEUDENTILA.VANHENTUNUT)
             .reduce( (previous: boolean, current: MyonnettyKayttooikeusryhma) => {
                 return previous || ( (current.organisaatioOid === vanhentunutKayttooikeus.organisaatioOid) && (current.ryhmaId === vanhentunutKayttooikeus.ryhmaId) )
             }, false);

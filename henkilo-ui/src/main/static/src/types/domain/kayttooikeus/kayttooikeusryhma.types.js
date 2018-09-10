@@ -3,8 +3,7 @@
 import type {TextGroup} from "./textgroup.types";
 import type {PalveluRooliModify} from "./PalveluRooliModify.types";
 import type {OrganisaatioViite} from "./organisaatioviite.types";
-
-export type KayttooikeudenTila = 'HYLATTY' | 'UUSITTU' | 'ANOTTU' | 'SULJETTU' | 'MYONNETTY' | 'PERUUTETTU' | 'VANHENTUNUT';
+import type {KayttoOikeudenTila} from "./KayttoOikeudenTila.types";
 
 export type Kayttooikeusryhma = {
     id: number,
@@ -37,7 +36,7 @@ export type MyonnettyKayttooikeusryhma = {
     myonnettyTapahtumaId: ?number,
     alkuPvm: ?string,
     voimassaPvm: ?string,
-    tila: KayttooikeudenTila,
+    tila: KayttoOikeudenTila,
     kasitelty?: string,
     kasittelijaOid: string,
     kasittelijaNimi: string,
