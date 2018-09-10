@@ -55,7 +55,7 @@ type State = {
     henkiloUpdate: any,
     readOnly: boolean,
     showPassive: boolean,
-    isLoading: boolean,
+    isLoading: boolean
 }
 
 class UserContentContainer extends React.Component<Props, State> {
@@ -70,24 +70,26 @@ class UserContentContainer extends React.Component<Props, State> {
             henkiloUpdate,
             readOnly: true,
             showPassive: false,
-            isLoading: true,
+            isLoading: true
         };
 
 
     };
 
     componentWillReceiveProps(nextProps: Props) {
-        if (this.state.isLoading) {
-            const allLoaded = !nextProps.henkilo.henkiloLoading && !nextProps.omattiedot.omattiedotLoading;
-            if (allLoaded) {
-                const henkiloUpdate = JSON.parse(JSON.stringify(nextProps.henkilo.henkilo)); // deep copy
-                henkiloUpdate.anomusilmoitus = nextProps.omattiedot && nextProps.omattiedot.anomusilmoitus;
+        const allLoaded = !nextProps.henkilo.henkiloLoading && !nextProps.omattiedot.omattiedotLoading;
 
-                this.setState({
-                    isLoading: false,
-                    henkiloUpdate,
-                });
-            }
+        if (allLoaded && this.state.isLoading) {
+
+            const henkiloUpdate = JSON.parse(JSON.stringify(nextProps.henkilo.henkilo)); // deep copy
+            henkiloUpdate.anomusilmoitus = nextProps.omattiedot && nextProps.omattiedot.anomusilmoitus;
+
+            this.setState({
+                henkiloUpdate,
+                isLoading: false
+            });
+        } else {
+            this.setState({isLoading: true});
         }
     }
 
