@@ -23,7 +23,25 @@ class VahvaTunnistusInfoContainer extends React.Component {
                                 text="VAHVATUNNISTUSINFO_VIRHE_PALVELUKAYTTAJA_TEKSTI"
                                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"/>
         }
-        else if(this.props.virhe) {
+        else if (this.props.loginToken === 'eiloydy') {
+            return <VirhePage theme="gray"
+                                topic="VAHVATUNNISTUSINFO_VIRHE_EI_LOYDY_OTSIKKO"
+                                text="VAHVATUNNISTUSINFO_VIRHE_EI_LOYDY_TEKSTI"
+                                buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"/>
+        }
+        else if (this.props.loginToken === 'passivoitu') {
+            return <VirhePage theme="gray"
+                                topic="VAHVATUNNISTUSINFO_VIRHE_PASSIVOITU_OTSIKKO"
+                                text="VAHVATUNNISTUSINFO_VIRHE_PASSIVOITU_TEKSTI"
+                                buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"/>
+        }
+        else if (this.props.loginToken === 'eivirkailija') {
+            return <VirhePage theme="gray"
+                                topic="VAHVATUNNISTUSINFO_VIRHE_EI_VIRKAILIJA_OTSIKKO"
+                                text="VAHVATUNNISTUSINFO_VIRHE_EI_VIRKAILIJA_TEKSTI"
+                                buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"/>
+        }
+        else if (this.props.virhe) {
             return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO"
                               text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
         }
