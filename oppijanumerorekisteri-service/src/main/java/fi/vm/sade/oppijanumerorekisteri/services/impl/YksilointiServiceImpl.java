@@ -179,6 +179,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElseThrow(() ->
                         new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
+        yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
         henkilo.setYksilointiYritetty(true);
 
         Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
@@ -211,7 +212,6 @@ public class YksilointiServiceImpl implements YksilointiService {
             henkilo.setYksiloity(false);
 
             yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
-            yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
         }
 
         return henkiloModificationService.update(henkilo);
