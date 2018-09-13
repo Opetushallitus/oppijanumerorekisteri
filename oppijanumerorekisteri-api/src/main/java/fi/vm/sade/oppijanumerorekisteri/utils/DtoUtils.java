@@ -63,7 +63,7 @@ public class DtoUtils {
         return new HenkiloDto(oidHenkilo, hetu, passivoitu, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
                 syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, createdModified,
-                createdModified, null, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>());
+                createdModified, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>());
     }
 
     public static HenkiloCreateDto createHenkiloCreateDto(String etunimet, String kutsumanimi, String sukunimi, String hetu, String oidHenkilo,
@@ -75,13 +75,12 @@ public class DtoUtils {
         kansalaisuus.setKansalaisuusKoodi(kansalaisuuskoodi);
         LocalDate syntymaAika = LocalDate.of(1970, 10, 14);
 
-        Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
         return new HenkiloCreateDto(hetu, passivoitu, etunimet, kutsumanimi, sukunimi, aidinkieli,
                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
                 null, "1.2.3.4.5", null, false, false,
-                false, false, false, null, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
+                false, false, false, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
     }
 
     public static HenkiloHetuAndOidDto createHenkiloHetuAndOidDto(String henkiloOid, String hetu, Date vtjsynced) {

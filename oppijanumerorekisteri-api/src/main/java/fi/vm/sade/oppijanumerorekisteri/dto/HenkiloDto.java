@@ -68,8 +68,6 @@ public class HenkiloDto implements Serializable {
 
     private Date vtjsynced;
 
-    private HenkiloDto huoltaja;
-
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 
     private Set<YksilointiVirheDto> yksilointivirheet = new HashSet<>();

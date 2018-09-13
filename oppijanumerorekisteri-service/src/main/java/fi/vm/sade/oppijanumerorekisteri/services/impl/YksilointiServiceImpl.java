@@ -28,6 +28,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
+import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
@@ -386,6 +387,25 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         henkilo.setSukupuoli(maaritaSukupuoli(yksiloityHenkilo));
         henkilo.setKotikunta(yksiloityHenkilo.getKotikunta());
+
+        // Always clear/replace the current ones.
+        Set<Henkilo> huoltajat = Optional.ofNullable(yksiloityHenkilo.getHuoltajat())
+                .filter(collectionNotEmpty)
+                .map(this::findOrCreateHuoltajat)
+                .orElseGet(HashSet::new);
+        henkilo.setHuoltajat(huoltajat);
+    }
+
+    private Set<Henkilo> findOrCreateHuoltajat(Collection<Huoltaja> huoltajas) {
+        return huoltajas.stream()
+                .map(huoltaja -> this.henkiloRepository.findByHetu(huoltaja.getHetu())
+                        .orElseGet(() -> this.henkiloModificationService.createHenkilo(Henkilo.builder()
+                                .etunimet(huoltaja.getEtunimi())
+                                .kutsumanimi(huoltaja.getKutsumanimi())
+                                .sukunimi(huoltaja.getSukunimi())
+                                .hetu(huoltaja.getHetu())
+                                .build())))
+                .collect(Collectors.toSet());
     }
 
     private void removeVtjYhteystiedotAndUpdateForOppija(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {

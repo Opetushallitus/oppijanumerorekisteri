@@ -17,7 +17,9 @@ import org.mockito.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -203,6 +205,20 @@ public class YksilointiServiceTest {
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        verify(henkiloModificationService).update(eq(yksiloity));
+    }
+
+    @Test
+    public void huoltajatTallentuvatKorvatenVanhan() {
+        this.henkilo.setHuoltajat(Collections.singleton(Henkilo.builder().oidHenkilo("vanhahuoltaja").build()));
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-huoltajat.json");
+        when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        when(henkiloModificationService.createHenkilo(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+        assertThat(yksiloity.getHuoltajat())
+                .extracting(Henkilo::getHetu)
+                .containsExactlyInAnyOrder("tarjanhetu", "tapinhetu");
         verify(henkiloModificationService).update(eq(yksiloity));
     }
 

@@ -141,11 +141,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String oppijanumero;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "huoltaja_id")
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private Henkilo huoltaja;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
@@ -179,6 +174,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(name = "passinumero", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<String> passinumerot;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "henkilo_huoltaja",
+            joinColumns = @JoinColumn(name = "henkilo_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "huoltaja_id", referencedColumnName = "id"))
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private Set<Henkilo> huoltajat = new HashSet<>();
 
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
