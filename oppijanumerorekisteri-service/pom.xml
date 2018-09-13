@@ -75,6 +75,20 @@
             <groupId>fi.vm.sade.rajapinnat</groupId>
             <artifactId>vtj-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>ryhmasahkoposti-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.wordnik</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- Spring-boot -->
         <dependency>
