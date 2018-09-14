@@ -56,7 +56,7 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
             KayttajaReadDto dto = cachingRestClient.get(url, KayttajaReadDto.class);
             return Optional.of(dto);
         } catch (CachingRestClient.HttpException ex) {
-            if (ex.getStatusCode() == HttpStatus.OK.value()) {
+            if (ex.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
                 return Optional.empty();
             }
             throw new RestClientException(ex.getMessage(), ex);
