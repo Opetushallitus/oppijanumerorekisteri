@@ -53,6 +53,8 @@ public class YksilointiTests {
     private KayttooikeusClient kayttooikeusClientMock;
     @Autowired
     private DatabaseService databaseService;
+    @MockBean
+    private OppijaTuontiService oppijaTuontiService;
 
     @Autowired
     private YksilointiTask yksilointiTask;
@@ -66,6 +68,8 @@ public class YksilointiTests {
     private AsiayhteysHakemusRepository asiayhteysHakemusRepository;
     @Autowired
     private AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
+
+
 
     @After
     public void cleanup() {

@@ -62,10 +62,10 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
                 .join(qTuontiRivi.henkilo, qHenkilo)
                 .select(qTuonti)
                 .where(qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
-                        .and( qHenkilo.yksilointiYritetty
-                                .and(qHenkilo.yksiloity.not())
-                                .and(qHenkilo.yksiloityVTJ.not()))
-                        .and(qTuonti.ilmoitustarveKasitelty.not()) )
+                        .and( qHenkilo.yksilointiYritetty.isTrue()
+                                .and(qHenkilo.yksiloity.isFalse())
+                                .and(qHenkilo.yksiloityVTJ.isFalse()))
+                        .and(qTuonti.ilmoitustarveKasitelty.isFalse()) )
                 .distinct();
 
         return query.fetch();
