@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TuontiRepositoryCustom {
 
@@ -26,5 +27,11 @@ public interface TuontiRepositoryCustom {
      * @return tuonnin rivit
      */
     List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria, boolean isSuperUser);
+
+    /**
+     * Palauttaa niiden Oppijoiden tuontien sähköpostiosoitteet, joissa kaikkia oppijoita ei ole saatu yksilöityä
+     * ja joita ei ole vielä käsitelty
+     */
+    List<Tuonti> findTuontiWithYksilointivirhe();
 
 }

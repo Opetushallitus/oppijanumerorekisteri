@@ -19,9 +19,9 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +33,13 @@ import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
+
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -55,6 +56,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final KayttooikeusClient kayttooikeusClient;
     private final UserDetailsHelper userDetailsHelper;
     private final ObjectMapper objectMapper;
+    private final EmailService emailService;
 
     @Override
     public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
@@ -219,6 +221,17 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
                 .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
                 .collect(toSet());
+    }
+
+    @Override
+    @Transactional
+    public void handleOppijaTuontiIlmoitus() {
+        List<Tuonti> tuontiList = tuontiRepository.findTuontiWithYksilointivirhe();
+        Set<String> sahkopostiosoitteet = tuontiList.stream().map(tuonti -> tuonti.getSahkoposti()).collect(Collectors.toSet());
+        for ( Tuonti tuonti : tuontiList) {
+            tuonti.setIlmoitustarveKasitelty(true);
+        }
+        emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
     }
 
 }

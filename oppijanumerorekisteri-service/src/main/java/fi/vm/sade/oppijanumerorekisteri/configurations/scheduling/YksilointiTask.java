@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,15 +27,18 @@ public class YksilointiTask extends RecurringTask {
     private final OppijanumerorekisteriProperties properties;
     private final HenkiloRepository henkiloRepository;
     private final IdentificationService identificationService;
+    private final OppijaTuontiService oppijaTuontiService;
 
     @Autowired
     public YksilointiTask(OppijanumerorekisteriProperties properties,
                           HenkiloRepository henkiloRepository,
-                          IdentificationService identificationService) {
+                          IdentificationService identificationService,
+                          OppijaTuontiService oppijaTuontiService) {
         super("yksilointi task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getYksilointi().getFixedDelayInMillis())));
         this.properties = properties;
         this.henkiloRepository = henkiloRepository;
         this.identificationService = identificationService;
+        this.oppijaTuontiService = oppijaTuontiService;
     }
 
     @Override
@@ -54,7 +58,9 @@ public class YksilointiTask extends RecurringTask {
 
             long duration = System.currentTimeMillis() - start;
             log.info("Identification completed, duration: " + duration + "ms");
-        }
 
+            // Onko oppijoiden tuonteja valmistunut ja onko tarvetta lähettää sähköposti-ilmoitus
+            oppijaTuontiService.handleOppijaTuontiIlmoitus();
+        }
     }
 }

@@ -42,4 +42,12 @@ public interface OppijaTuontiService {
      */
     Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid);
 
+
+    /*
+     * Tarkistaa onko kannassa valmistuneita oppijatuonteja, joissa kaikkia oppijoita ei ole onnistuttu yksilöimään
+     * ja joihin ei ole vielä lähetetty sähköposti-ilmoitusta
+     *
+     */
+    void handleOppijaTuontiIlmoitus();
+
 }

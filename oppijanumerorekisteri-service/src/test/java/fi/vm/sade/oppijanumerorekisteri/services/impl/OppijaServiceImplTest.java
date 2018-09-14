@@ -64,6 +64,9 @@ public class OppijaServiceImplTest {
     private KayttooikeusClient kayttooikeusClientMock;
     @Mock
     private ObjectMapper objectMapperMock;
+    @Mock
+    private EmailService emailService;
+
 
     @Before
     public void setup() {
@@ -73,7 +76,8 @@ public class OppijaServiceImplTest {
                 henkiloRepositoryMock,
                 tuontiRepositoryMock, organisaatioRepositoryMock,
                 kayttooikeusClientMock, userDetailsHelperMock,
-                objectMapperMock);
+                objectMapperMock,
+                emailService);
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,

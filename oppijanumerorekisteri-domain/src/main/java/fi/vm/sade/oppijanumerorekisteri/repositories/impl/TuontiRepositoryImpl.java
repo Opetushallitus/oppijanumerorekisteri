@@ -4,8 +4,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaContext;
@@ -46,6 +46,27 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
             query.join(qHenkilo.organisaatiot, qOrganisaatio);
             query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
         }
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<Tuonti> findTuontiWithYksilointivirhe() {
+        QTuonti qTuonti = QTuonti.tuonti;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<Tuonti> query = new JPAQuery<>(entityManager)
+                .from(qTuonti)
+                .join(qTuonti.henkilot, qTuontiRivi)
+                .join(qTuontiRivi.henkilo, qHenkilo)
+                .select(qTuonti)
+                .where(qTuonti.kasiteltyja.goe(qTuonti.kasiteltavia)
+                        .and( qHenkilo.yksilointiYritetty
+                                .and(qHenkilo.yksiloity.not())
+                                .and(qHenkilo.yksiloityVTJ.not()))
+                        .and(qTuonti.ilmoitustarveKasitelty.not()) )
+                .distinct();
 
         return query.fetch();
     }
