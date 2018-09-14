@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
@@ -37,6 +36,9 @@ import org.springframework.transaction.annotation.Propagation;
 
 import java.util.Map;
 import java.util.function.Function;
+
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -58,7 +60,6 @@ public class OppijaServiceImpl implements OppijaService {
     private final OrganisaatioRepository organisaatioRepository;
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
-    private final KayttooikeusClient kayttooikeusClient;
 
     @Override
     public String create(OppijaCreateDto dto) {
@@ -66,8 +67,7 @@ public class OppijaServiceImpl implements OppijaService {
 
         // lisätään oppija virkailijan organisaatioihin
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        Set<Organisaatio> organisaatiot = oppijaTuontiService
-                .getOrCreateOrganisaatioByHenkilo(kayttajaOid);
+        Set<Organisaatio> organisaatiot = oppijaTuontiService.getOrCreateOrganisaatioByKayttaja();
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
@@ -108,9 +108,7 @@ public class OppijaServiceImpl implements OppijaService {
         Tuonti entity = getTuontiEntity(id);
 
         // ladataan rivit yhdellä haulla
-        String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        Set<String> organisaatioOids = kayttooikeusClient
-                .getAktiivisetOrganisaatioHenkilot(kayttajaOid);
+        Set<String> organisaatioOids = oppijaTuontiService.getOrganisaatioOidsByKayttaja();
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setTuontiId(id);
         criteria.setOrganisaatioOids(organisaatioOids);
@@ -193,8 +191,7 @@ public class OppijaServiceImpl implements OppijaService {
     public void addKayttajanOrganisaatiot(String henkiloOid) {
         Henkilo henkilo = getHenkiloEntity(henkiloOid);
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-        Set<Organisaatio> organisaatiot = oppijaTuontiService
-                .getOrCreateOrganisaatioByHenkilo(kayttajaOid);
+        Set<Organisaatio> organisaatiot = oppijaTuontiService.getOrCreateOrganisaatioByKayttaja();
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
         }
@@ -237,8 +234,7 @@ public class OppijaServiceImpl implements OppijaService {
         // muut käyttäjät ainoastaan omista organisaatioista
         if (!permissionChecker.isSuperUser()) {
             String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-            Set<String> organisaatioOidsByKayttaja = kayttooikeusClient
-                    .getAktiivisetOrganisaatioHenkilot(kayttajaOid);
+            Set<String> organisaatioOidsByKayttaja = oppijaTuontiService.getOrganisaatioOidsByKayttaja();
             if (organisaatioOidsByKayttaja.isEmpty()) {
                 throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid));
             }

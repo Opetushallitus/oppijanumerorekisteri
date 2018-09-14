@@ -133,6 +133,32 @@ public class PermissionCheckerTest {
         assertThat(hasAccess).isFalse();
     }
 
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = {
+            "APP_OPPIJANUMEROREKISTERI_READ_1.2.246.562.10.12345678901",
+            "APP_OPPIJANUMEROREKISTERI_CRUD_1.2.246.562.10.98765432109",
+            "_",
+            "__",
+            "",
+            "outoRooli",
+            "1.2.246.562.10.66666666666"
+    })
+    public void getOrganisaatioOids() {
+        assertThat(permissionChecker.getOrganisaatioOids())
+                .containsExactlyInAnyOrder("1.2.246.562.10.12345678901", "1.2.246.562.10.98765432109", "1.2.246.562.10.66666666666");
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = {
+            "APP_OPPIJANUMEROREKISTERI_READ_1.2.246.562.10.00000000001",
+            "APP_OPPIJANUMEROREKISTERI_CRUD_1.2.246.562.10.98765432109",
+    })
+    public void getOrganisaatioOidsWithKayttooikeus() {
+        assertThat(permissionChecker.getOrganisaatioOids("OPPIJANUMEROREKISTERI", "READ"))
+                .containsExactlyInAnyOrder("1.2.246.562.10.00000000001");
+        assertThat(permissionChecker.getOrganisaatioOids("OPPIJANUMEROREKISTERI", "UPDATE"))
+                .isEmpty();
+    }
 
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")

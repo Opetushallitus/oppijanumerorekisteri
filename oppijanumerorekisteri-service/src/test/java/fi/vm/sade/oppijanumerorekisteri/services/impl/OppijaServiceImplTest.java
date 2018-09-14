@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
@@ -59,9 +58,7 @@ public class OppijaServiceImplTest {
     @Mock
     private UserDetailsHelper userDetailsHelperMock;
     @Mock
-    private PermissionChecker permissionChecker;
-    @Mock
-    private KayttooikeusClient kayttooikeusClientMock;
+    private PermissionChecker permissionCheckerMock;
     @Mock
     private ObjectMapper objectMapperMock;
 
@@ -72,7 +69,7 @@ public class OppijaServiceImplTest {
                 mapperMock,
                 henkiloRepositoryMock,
                 tuontiRepositoryMock, organisaatioRepositoryMock,
-                kayttooikeusClientMock, userDetailsHelperMock,
+                userDetailsHelperMock, permissionCheckerMock,
                 objectMapperMock);
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
@@ -81,13 +78,13 @@ public class OppijaServiceImplTest {
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
                 organisaatioRepositoryMock, userDetailsHelperMock,
-                permissionChecker, kayttooikeusClientMock);
+                permissionCheckerMock);
     }
 
     @Test
     public void listMastersShouldFilterOrganisaatioOids() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder()
                 .organisaatioOids(Stream.of("oid1", "oid2").collect(toSet()))
                 .build();
@@ -105,7 +102,7 @@ public class OppijaServiceImplTest {
     @Test
     public void listMastersShouldSetOrganisaatioOidsWhenCriteriaNull() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
@@ -121,7 +118,7 @@ public class OppijaServiceImplTest {
     @Test
     public void listMastersShouldSetOrganisaatioOidsWhenCriteriaEmpty() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder().organisaatioOids(emptySet()).build();
         int page = 1;
         int count = 20;
@@ -137,7 +134,7 @@ public class OppijaServiceImplTest {
     @Test
     public void listMastersShouldSkipFindByWhenOrganisaatiotEmpty() {
         Set<String> organisaatiot = emptySet();
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
@@ -150,7 +147,7 @@ public class OppijaServiceImplTest {
 
     @Test
     public void listMastersByTest() {
-        when(permissionChecker.isSuperUser()).thenReturn(true);
+        when(permissionCheckerMock.isSuperUser()).thenReturn(true);
         Henkilo henkilo1slave = new Henkilo();
         henkilo1slave.setOidHenkilo("oid1");
         Henkilo henkilo2 = new Henkilo();

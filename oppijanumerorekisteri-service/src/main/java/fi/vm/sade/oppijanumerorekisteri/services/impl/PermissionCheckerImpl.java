@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +29,10 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
     private static final String ROLE_OPPIJOIDENTUONTI_TEMPLATE = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_%s";
-    private static final String ROOT_ORGANISATION_SUFFIX = "_1.2.246.562.10.00000000001";
+    private static final String ORGANISAATIO_OID_PREFIX = "1.2.246.562.10";
+    private static final String ROOT_ORGANISATION_SUFFIX = String.format("_%s.00000000001", ORGANISAATIO_OID_PREFIX);
+    public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
+    public static final String KAYTTOOIKEUS_OPPIJOIDENTUONTI = "OPPIJOIDENTUONTI";
 
     private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
@@ -105,6 +109,25 @@ public class PermissionCheckerImpl implements PermissionChecker {
         }
         String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
         return hasPermissionFunction.apply(callingUserOid, callingUserRoles);
+    }
+
+    @Override
+    public Set<String> getOrganisaatioOids() {
+        return getOrganisaatioOids(rooli -> true);
+    }
+
+    @Override
+    public Set<String> getOrganisaatioOids(String palvelu, String kayttooikeus) {
+        final String asd = String.format("ROLE_APP_%s_%s", palvelu, kayttooikeus);
+        return getOrganisaatioOids(rooli -> rooli.startsWith(asd));
+    }
+
+    private Set<String> getOrganisaatioOids(Predicate<String> rooliPredicate) {
+        return getCasRoles().stream()
+                .filter(rooliPredicate)
+                .map(rooli -> rooli.substring(rooli.lastIndexOf("_") + 1))
+                .filter(str -> str.startsWith(ORGANISAATIO_OID_PREFIX))
+                .collect(toSet());
     }
 
     @Override

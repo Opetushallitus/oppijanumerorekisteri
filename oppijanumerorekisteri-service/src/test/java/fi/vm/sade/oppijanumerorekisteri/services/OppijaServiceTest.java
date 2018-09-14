@@ -63,7 +63,7 @@ public class OppijaServiceTest {
     @Before
     public void setup() {
         when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("user1"));
-        when(kayttooikeusClient.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(singleton("1.2.3.4"));
+        when(permissionChecker.getOrganisaatioOids(any(), any())).thenReturn(singleton("1.2.3.4"));
     }
 
     @After

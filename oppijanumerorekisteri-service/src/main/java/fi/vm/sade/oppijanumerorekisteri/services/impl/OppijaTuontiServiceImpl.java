@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
@@ -19,9 +18,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +27,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
 import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
+
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -52,8 +52,8 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
-    private final KayttooikeusClient kayttooikeusClient;
     private final UserDetailsHelper userDetailsHelper;
+    private final PermissionChecker permissionChecker;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -112,7 +112,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     private Set<TuontiRivi> create(List<OppijaTuontiRiviCreateDto> henkilot, String kasittelijaOid) {
         // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
-        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByHenkilo(kasittelijaOid);
+        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByKayttaja();
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppijat liitetään", kasittelijaOid));
         }
@@ -212,9 +212,14 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     }
 
     @Override
-    public Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid) {
+    public Set<String> getOrganisaatioOidsByKayttaja() {
+        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
+    }
+
+    @Override
+    public Set<Organisaatio> getOrCreateOrganisaatioByKayttaja() {
         // haetaan käyttäjän organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
-        Set<String> organisaatioOids = kayttooikeusClient.getAktiivisetOrganisaatioHenkilot(henkiloOid);
+        Set<String> organisaatioOids = getOrganisaatioOidsByKayttaja();
         return organisaatioOids.stream()
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
                 .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
