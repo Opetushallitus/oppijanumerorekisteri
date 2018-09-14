@@ -58,6 +58,11 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     @Override
     public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
+        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByKayttaja();
+        if (organisaatiot.isEmpty()) {
+            throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joihin oppijat liitetään", userDetailsHelper.getCurrentUserOid()));
+        }
+
         final byte[] data;
         try {
             data = objectMapper.writeValueAsBytes(dto);
@@ -72,6 +77,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         tuonti.setSahkoposti(dto.getSahkoposti());
         tuonti.setData(tuontiData);
         tuonti.setKasiteltavia(dto.getHenkilot().size());
+        tuonti.setOrganisaatiot(organisaatiot);
         tuonti = tuontiRepository.save(tuonti);
 
         return mapper.map(tuonti, OppijaTuontiPerustiedotReadDto.class);
@@ -84,6 +90,11 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .orElseThrow(DataInconsistencyException::new);
         if (tuonti.isKasitelty()) {
             return true;
+        }
+
+        Set<Organisaatio> organisaatiot = tuonti.getOrganisaatiot();
+        if (organisaatiot.isEmpty()) {
+            throw new DataInconsistencyException(String.format("Tuonnissa %s ei ole liitettynä yhtään organisaatiota", tuonti.getId()));
         }
 
         final OppijaTuontiCreateDto dto;
@@ -102,7 +113,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
         List<OppijaTuontiRiviCreateDto> kasiteltavat = dto.getHenkilot().subList(fromIndex, toIndex);
         String kasittelijaOid = tuonti.getKasittelijaOid();
-        Set<TuontiRivi> rivit = create(kasiteltavat, kasittelijaOid);
+        Set<TuontiRivi> rivit = create(kasiteltavat, kasittelijaOid, organisaatiot);
 
         tuonti.getHenkilot().addAll(rivit);
         tuonti.setKasiteltyja(toIndex);
@@ -110,13 +121,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         return tuonti.isKasitelty();
     }
 
-    private Set<TuontiRivi> create(List<OppijaTuontiRiviCreateDto> henkilot, String kasittelijaOid) {
-        // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
-        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByKayttaja();
-        if (organisaatiot.isEmpty()) {
-            throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppijat liitetään", kasittelijaOid));
-        }
-
+    private Set<TuontiRivi> create(List<OppijaTuontiRiviCreateDto> henkilot, String kasittelijaOid, Set<Organisaatio> organisaatiot) {
         // haetaan jo luodut henkilöt
         // oid
         Set<String> oids = henkilot.stream()
