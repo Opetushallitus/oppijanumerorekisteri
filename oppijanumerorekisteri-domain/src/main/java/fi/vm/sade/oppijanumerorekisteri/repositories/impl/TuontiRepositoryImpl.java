@@ -61,7 +61,7 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
                 .join(qTuonti.henkilot, qTuontiRivi)
                 .join(qTuontiRivi.henkilo, qHenkilo)
                 .select(qTuonti)
-                .where(qTuonti.kasiteltyja.goe(qTuonti.kasiteltavia)
+                .where(qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
                         .and( qHenkilo.yksilointiYritetty
                                 .and(qHenkilo.yksiloity.not())
                                 .and(qHenkilo.yksiloityVTJ.not()))
