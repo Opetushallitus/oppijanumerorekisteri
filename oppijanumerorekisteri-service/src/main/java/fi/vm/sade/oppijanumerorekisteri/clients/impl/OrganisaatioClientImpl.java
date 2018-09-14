@@ -1,10 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.httpclient.OphHttpClient;
 import fi.vm.sade.javautils.httpclient.OphHttpResponse;
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import java.util.Optional;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,17 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
                     }
                     return Optional.of(objectMapper.readValue(response.asInputStream(), OrganisaatioDto.class));
                 });
+    }
+
+    @Override
+    public Set<String> getChildOids(String oid) {
+        return httpClient.get("organisaatio-service.organisaatio.byOid.childoids", oid)
+                .expectStatus(HttpStatus.OK.value())
+                .accept(OphHttpClient.JSON)
+                .retryOnError(MAX_RETRY_COUNT)
+                .execute((OphHttpResponse response) -> objectMapper
+                        .readerFor(new TypeReference<Set<String>>() {})
+                        .readValue(response.asInputStream()));
     }
 
 }
