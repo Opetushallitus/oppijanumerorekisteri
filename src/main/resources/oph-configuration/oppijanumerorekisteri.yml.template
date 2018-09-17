@@ -57,6 +57,10 @@ authentication:
   henkilotietomuutos:
     username: {{authentication_app_username_to_henkilotietomuutos}}
     password: {{authentication_app_password_to_henkilotietomuutos}}
+  viestintapalvelu:
+    username: {{oppijanumerorekisteri_viestinta_username}}
+    password: {{oppijanumerorekisteri_viestinta_password}}
+
 oppijanumerorekisteri:
   uses-ssl-proxy: true
   scheduling:
