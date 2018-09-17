@@ -4,6 +4,7 @@ import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private final UserDetailsHelper userDetailsHelper;
 
     private final OrganisaatioRepository organisaatioRepository;
+
+    private final OrganisaatioService organisaatioService;
 
     public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
@@ -100,11 +103,16 @@ public class PermissionCheckerImpl implements PermissionChecker {
             // sallitaan tietojen käsittely jos virkailija ja oppija
             // ovat samassa organisaatiossa (ja virkailijalla on
             // oppijoiden tuonti -rooli kyseiseen organisaatioon)
-            List<String> organisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
-            if (organisaatioOids.stream()
-                    .map(organisaatioOid -> String.format(ROLE_OPPIJOIDENTUONTI_TEMPLATE, organisaatioOid))
-                    .anyMatch(rooli -> callingUserRoles.contains(rooli))) {
-                return true;
+            List<String> oppijaOrganisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
+            if (!oppijaOrganisaatioOids.isEmpty()) {
+                Set<String> kayttajaOrganisaatioOids = getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI)
+                        .stream()
+                        .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                                organisaatioService.getChildOids(organisaatioOid).stream()))
+                        .collect(toSet());
+                if (oppijaOrganisaatioOids.stream().anyMatch(kayttajaOrganisaatioOids::contains)) {
+                    return true;
+                }
             }
         }
         String callingUserOid = this.userDetailsHelper.getCurrentUserOid();

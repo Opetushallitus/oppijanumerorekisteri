@@ -6,9 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import java.io.IOException;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
+
 import org.assertj.core.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -28,12 +27,14 @@ public class PermissionCheckerTest {
     private KayttooikeusClient kayttooikeusClient;
     @MockBean
     private OrganisaatioRepository organisaatioRepository;
+    @MockBean
+    private OrganisaatioService organisaatioService;
 
     private PermissionChecker permissionChecker;
 
     @Before
     public void setup() {
-        this.permissionChecker = new PermissionCheckerImpl(this.kayttooikeusClient, new UserDetailsHelperImpl(), organisaatioRepository);
+        this.permissionChecker = new PermissionCheckerImpl(this.kayttooikeusClient, new UserDetailsHelperImpl(), organisaatioRepository, organisaatioService);
     }
 
     @Test
@@ -184,28 +185,43 @@ public class PermissionCheckerTest {
     @Test
     @WithMockUser(value = "kayttajaOid", roles = {
         "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
-        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid0",
-        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid1"
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.0",
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.1"
     })
     public void isAllowedToAccessPersonTODO1() throws IOException {
-        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid1"));
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1"));
         assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isTrue();
 
-        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid2"));
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.2"));
         assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isFalse();
     }
 
     @Test
     @WithMockUser(value = "kayttajaOid", roles = {
         "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
-        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid0",
-        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_organisaatioOid1"
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.0",
+        "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.1"
     })
     public void isAllowedToAccessPersonTODO2() throws IOException {
-        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid1"));
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1"));
         assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isTrue();
 
-        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("organisaatioOid2"));
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.2"));
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isFalse();
+    }
+
+    @Test
+    @WithMockUser(value = "kayttajaOid", roles = {
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI",
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.0",
+            "APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_1.2.246.562.10.1"
+    })
+    public void isAllowedToAccessPersonOppijoidenTuontiAliorganisaatio() throws IOException {
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1.1"));
+        when(organisaatioService.getChildOids(eq("1.2.246.562.10.1"))).thenReturn(singleton("1.2.246.562.10.1.1"));
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isTrue();
+
+        when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1.2"));
         assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isFalse();
     }
 }
