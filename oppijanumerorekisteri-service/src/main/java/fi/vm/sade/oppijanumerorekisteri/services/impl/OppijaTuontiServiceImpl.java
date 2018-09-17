@@ -36,12 +36,14 @@ import static java.util.stream.Collectors.toMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toSet;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -230,6 +232,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         Set<String> sahkopostiosoitteet = tuontiList.stream()
                 .map(t -> t.getSahkoposti())
                 .collect(Collectors.toSet());
+        log.info("Sending oppijtuontivirheilmoitus-emails to " + sahkopostiosoitteet.size() + " recipients");
         emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
 
         // Asettaa ilmoitustarvekasitelty-tiedon trueksi tuonneille, joiden yhteyssähköpostiin on lähetetty ilmoitus ja
