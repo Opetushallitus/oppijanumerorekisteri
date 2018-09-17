@@ -8,7 +8,9 @@ import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import java.util.Optional;
 import java.util.Set;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,8 +51,13 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
                 .accept(OphHttpClient.JSON)
                 .retryOnError(MAX_RETRY_COUNT)
                 .execute((OphHttpResponse response) -> objectMapper
-                        .readerFor(new TypeReference<Set<String>>() {})
-                        .readValue(response.asInputStream()));
+                        .readValue(response.asInputStream(), ChildOids.class).getOids());
+    }
+
+    @Getter
+    @Setter
+    private static class ChildOids {
+        private Set<String> oids;
     }
 
 }
