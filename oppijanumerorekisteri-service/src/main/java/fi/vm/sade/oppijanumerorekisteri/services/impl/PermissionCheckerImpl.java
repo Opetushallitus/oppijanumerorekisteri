@@ -123,8 +123,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     @Override
     public Set<String> getOrganisaatioOids(String palvelu, String kayttooikeus) {
-        final String asd = String.format("ROLE_APP_%s_%s", palvelu, kayttooikeus);
-        return getOrganisaatioOids(rooli -> rooli.startsWith(asd));
+        final String haluttuRooli = String.format("ROLE_APP_%s_%s", palvelu, kayttooikeus);
+        return getOrganisaatioOids(kayttajanRooli -> kayttajanRooli.startsWith(haluttuRooli));
     }
 
     private Set<String> getOrganisaatioOids(Predicate<String> rooliPredicate) {
