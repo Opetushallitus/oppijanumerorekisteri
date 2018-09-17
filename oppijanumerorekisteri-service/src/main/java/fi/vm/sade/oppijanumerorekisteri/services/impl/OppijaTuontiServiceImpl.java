@@ -226,12 +226,20 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     @Override
     @Transactional
     public void handleOppijaTuontiIlmoitus() {
-        List<Tuonti> tuontiList = tuontiRepository.findTuontiWithYksilointivirhe();
-        Set<String> sahkopostiosoitteet = tuontiList.stream().map(tuonti -> tuonti.getSahkoposti()).collect(Collectors.toSet());
+        List<Tuonti> tuontiList = tuontiRepository.findTuontiWithIlmoitustarve();
+        Set<String> sahkopostiosoitteet = tuontiList.stream()
+                .map(t -> t.getSahkoposti())
+                .collect(Collectors.toSet());
+        emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
+
+        // Asettaa ilmoitustarvekasitelty-tiedon trueksi tuonneille, joiden yhteyssähköpostiin on lähetetty ilmoitus ja
+        // joille sitä ei tarvitse lähettää
+        List<Tuonti> tuonnitWithoutIlmoitusTarve = tuontiRepository.findNotKasiteltyTuontiWithoutIlmoitustarve();
+        tuontiList.addAll(tuonnitWithoutIlmoitusTarve);
         for ( Tuonti tuonti : tuontiList) {
             tuonti.setIlmoitustarveKasitelty(true);
         }
-        emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
+
     }
 
 }

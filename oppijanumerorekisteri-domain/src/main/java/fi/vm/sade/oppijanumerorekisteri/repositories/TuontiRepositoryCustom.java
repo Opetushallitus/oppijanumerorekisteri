@@ -29,9 +29,17 @@ public interface TuontiRepositoryCustom {
     List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria, boolean isSuperUser);
 
     /**
-     * Palauttaa niiden Oppijoiden tuontien sähköpostiosoitteet, joissa kaikkia oppijoita ei ole saatu yksilöityä
-     * ja joita ei ole vielä käsitelty
+     * Palauttaa ne Oppijoiden tuonnit, joissa on tarve lähettää sähköposti-ilmoitus
+     *
+     * @return oppijoiden tuonnit
      */
-    List<Tuonti> findTuontiWithYksilointivirhe();
+    List<Tuonti> findTuontiWithIlmoitustarve();
+
+    /**
+     * Palauttaa ne oppijoiden tuonnit, joissa ilmoitusta ei lähetetä ja joita ei ole merkattu käsitellyiksi
+     *
+     * @return oppijoiden tuonnit
+     */
+    List<Tuonti> findNotKasiteltyTuontiWithoutIlmoitustarve();
 
 }

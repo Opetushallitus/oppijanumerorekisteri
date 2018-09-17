@@ -51,7 +51,7 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
     }
 
     @Override
-    public List<Tuonti> findTuontiWithYksilointivirhe() {
+    public List<Tuonti> findTuontiWithIlmoitustarve() {
         QTuonti qTuonti = QTuonti.tuonti;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         QHenkilo qHenkilo = QHenkilo.henkilo;
@@ -62,12 +62,31 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
                 .join(qTuontiRivi.henkilo, qHenkilo)
                 .select(qTuonti)
                 .where(qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
+                        .and(qTuonti.sahkoposti.isNotNull())
                         .and( qHenkilo.yksilointiYritetty.isTrue()
                                 .and(qHenkilo.yksiloity.isFalse())
                                 .and(qHenkilo.yksiloityVTJ.isFalse()))
-                        .and(qTuonti.ilmoitustarveKasitelty.isFalse()) )
-                .distinct();
+                        .and(qTuonti.ilmoitustarveKasitelty.isFalse()) );
+        return query.fetch();
+    }
 
+    @Override
+    public List<Tuonti> findNotKasiteltyTuontiWithoutIlmoitustarve() {
+        QTuonti qTuonti = QTuonti.tuonti;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<Tuonti> query = new JPAQuery<>(entityManager)
+                .from(qTuonti)
+                    .join(qTuonti.henkilot, qTuontiRivi)
+                    .join(qTuontiRivi.henkilo, qHenkilo)
+                .select(qTuonti)
+                .where( qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
+                            .and( qTuonti.ilmoitustarveKasitelty.isFalse())
+                            .and( qHenkilo.yksilointiYritetty.isTrue()
+                                .and( qHenkilo.yksiloity.isTrue().or( qHenkilo.yksiloityVTJ.isTrue() )
+                                .or(qTuonti.sahkoposti.isNull()))
+                        ));
         return query.fetch();
     }
 
