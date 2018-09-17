@@ -29,7 +29,6 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
-    private static final String ROLE_OPPIJOIDENTUONTI_TEMPLATE = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_%s";
     private static final String ORGANISAATIO_OID_PREFIX = "1.2.246.562.10";
     private static final String ROOT_ORGANISATION_SUFFIX = String.format("_%s.00000000001", ORGANISAATIO_OID_PREFIX);
     public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
@@ -103,14 +102,12 @@ public class PermissionCheckerImpl implements PermissionChecker {
             // sallitaan tietojen käsittely jos virkailija ja oppija
             // ovat samassa organisaatiossa (ja virkailijalla on
             // oppijoiden tuonti -rooli kyseiseen organisaatioon)
-            List<String> oppijaOrganisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
-            if (!oppijaOrganisaatioOids.isEmpty()) {
-                Set<String> kayttajaOrganisaatioOids = getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI)
-                        .stream()
+            List<String> organisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
+            if (!organisaatioOids.isEmpty()) {
+                if (getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
                         .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
                                 organisaatioService.getChildOids(organisaatioOid).stream()))
-                        .collect(toSet());
-                if (oppijaOrganisaatioOids.stream().anyMatch(kayttajaOrganisaatioOids::contains)) {
+                        .anyMatch(organisaatioOids::contains)) {
                     return true;
                 }
             }
