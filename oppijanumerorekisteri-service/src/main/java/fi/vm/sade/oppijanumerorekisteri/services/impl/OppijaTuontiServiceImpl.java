@@ -233,7 +233,9 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(t -> t.getSahkoposti())
                 .collect(Collectors.toSet());
         log.info("Sending oppijtuontivirheilmoitus-emails to " + sahkopostiosoitteet.size() + " recipients");
-        emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
+        if(sahkopostiosoitteet.size() > 0) {
+            emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
+        }
 
         // Asettaa ilmoitustarvekasitelty-tiedon trueksi tuonneille, joiden yhteyssähköpostiin on lähetetty ilmoitus ja
         // joille sitä ei tarvitse lähettää
