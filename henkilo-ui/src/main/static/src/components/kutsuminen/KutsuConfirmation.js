@@ -108,6 +108,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
             asiointikieli: this.props.basicInfo.languageCode,
             organisaatiot: R.map(addedOrg => ({
                 organisaatioOid: addedOrg.oid,
+                voimassaLoppuPvm: addedOrg.voimassaLoppuPvm,
                 kayttoOikeusRyhmat: R.map(selectedPermission => ({
                     id: selectedPermission.ryhmaId
                 }))(addedOrg.selectedPermissions)

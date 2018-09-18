@@ -22,6 +22,7 @@ export type OrganisaatioHenkilo = {
 export type KutsuOrganisaatio = {
     oid: string,
     organisation: {oid: string},
+    voimassaLoppuPvm: ?string,
     selectablePermissions: Array<MyonnettyKayttooikeusryhma>,
     selectedPermissions: Array<MyonnettyKayttooikeusryhma>,
 };

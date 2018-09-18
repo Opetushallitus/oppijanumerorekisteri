@@ -9,6 +9,7 @@ import {
     kutsuClearOrganisaatios,
     kutsuSetOrganisaatio,
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
+    kutsuOrganisaatioSetProperties,
     addOrganisaatioPermission,
     removeOrganisaatioPermission
 } from '../../actions/kutsuminen.actions';
@@ -27,6 +28,8 @@ import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSele
 import {myonnettyToKayttooikeusryhma} from '../../utils/KayttooikeusryhmaUtils'
 import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
+import SimpleDatePicker from '../henkilo/SimpleDatePicker';
+import moment from 'moment';
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -41,6 +44,7 @@ type Props = {
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
     removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
+    kutsuOrganisaatioSetProperties: (index: number, { [string]: any }) => void,
     ryhmatState: any
 }
 
@@ -112,6 +116,20 @@ class AddedOrganisation extends React.Component<Props, State> {
                             )
                         })}
                     </ul>
+
+                    <div className="clear"/>
+
+                    <label>
+                        {this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}
+                    </label>
+                    <div>
+                        <SimpleDatePicker
+                            className="oph-input"
+                            value={addedOrg.voimassaLoppuPvm}
+                            onChange={this.selectVoimassaLoppuPvm}
+                            filterDate={(date) => date.isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
+                            />
+                    </div>
                 </div>
                 <div className="clear"/>
             </div>
@@ -120,6 +138,10 @@ class AddedOrganisation extends React.Component<Props, State> {
 
     removeOrganisaatio(oid) {
         this.props.kutsuRemoveOrganisaatio(oid);
+    }
+
+    selectVoimassaLoppuPvm = (voimassaLoppuPvm: ?string) => {
+        this.props.kutsuOrganisaatioSetProperties(this.props.index, { voimassaLoppuPvm: voimassaLoppuPvm })
     }
 
     addPermission(selectablePermissions, kayttooikeusryhma) {
@@ -165,6 +187,7 @@ export default connect(mapStateToProps, {
     kutsuRemoveOrganisaatio,
     kutsuClearOrganisaatios,
     fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
+    kutsuOrganisaatioSetProperties,
     addOrganisaatioPermission,
     removeOrganisaatioPermission,
 })(AddedOrganisation);
