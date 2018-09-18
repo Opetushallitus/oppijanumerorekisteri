@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
@@ -106,7 +107,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
             if (!organisaatioOids.isEmpty()) {
                 if (getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
                         .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
-                                organisaatioService.getChildOids(organisaatioOid).stream()))
+                                organisaatioService.getChildOids(organisaatioOid, OrganisaatioTilat.vainAktiiviset()).stream()))
                         .anyMatch(organisaatioOids::contains)) {
                     return true;
                 }

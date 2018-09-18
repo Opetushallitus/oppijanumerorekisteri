@@ -225,7 +225,7 @@ public class OppijaServiceImpl implements OppijaService {
         if (!permissionChecker.isSuperUser()) {
             String kayttajaOid = userDetailsHelper.getCurrentUserOid();
             Set<String> organisaatioOidsByKayttaja = oppijaTuontiService.getOrganisaatioOidsByKayttaja().stream()
-                    .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid), organisaatioService.getChildOids(organisaatioOid).stream()))
+                    .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid), organisaatioService.getChildOids(organisaatioOid, OrganisaatioTilat.vainAktiiviset()).stream()))
                     .collect(toSet());
             if (organisaatioOidsByKayttaja.isEmpty()) {
                 throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid));

@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import java.util.Optional;
 import java.util.Set;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -45,8 +46,8 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
     }
 
     @Override
-    public Set<String> getChildOids(String oid) {
-        return httpClient.get("organisaatio-service.organisaatio.byOid.childoids", oid)
+    public Set<String> getChildOids(String oid, OrganisaatioTilat tilat) {
+        return httpClient.get("organisaatio-service.organisaatio.byOid.childoids", oid, tilat.asMap())
                 .expectStatus(HttpStatus.OK.value())
                 .accept(OphHttpClient.JSON)
                 .retryOnError(MAX_RETRY_COUNT)

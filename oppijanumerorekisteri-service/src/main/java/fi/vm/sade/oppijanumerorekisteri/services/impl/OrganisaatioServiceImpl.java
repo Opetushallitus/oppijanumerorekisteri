@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
@@ -28,8 +29,8 @@ public class OrganisaatioServiceImpl implements OrganisaatioService {
     }
 
     @Override
-    public Set<String> getChildOids(String oid) {
-        return organisaatioClient.getChildOids(oid);
+    public Set<String> getChildOids(String oid, OrganisaatioTilat tilat) {
+        return organisaatioClient.getChildOids(oid, tilat);
     }
 
 }

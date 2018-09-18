@@ -218,7 +218,7 @@ public class PermissionCheckerTest {
     })
     public void isAllowedToAccessPersonOppijoidenTuontiAliorganisaatio() throws IOException {
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1.1"));
-        when(organisaatioService.getChildOids(eq("1.2.246.562.10.1"))).thenReturn(singleton("1.2.246.562.10.1.1"));
+        when(organisaatioService.getChildOids(eq("1.2.246.562.10.1"), any())).thenReturn(singleton("1.2.246.562.10.1.1"));
         assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isTrue();
 
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1.2"));

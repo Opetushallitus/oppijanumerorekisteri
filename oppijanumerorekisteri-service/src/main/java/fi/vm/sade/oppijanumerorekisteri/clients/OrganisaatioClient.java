@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -33,9 +34,10 @@ public interface OrganisaatioClient {
     /**
      * Palauttaa organisaation aliorganisaatiot.
      * @param oid organisaatio
+     * @param tilat organisaatioiden tilat
      * @return aliorganisaatiot
      */
-    Set<String> getChildOids(String oid);
+    Set<String> getChildOids(String oid, OrganisaatioTilat tilat);
 
     @Getter
     @Setter
