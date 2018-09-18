@@ -16,7 +16,10 @@ import {
     FETCH_CASME_FAILURE,
     FETCH_CASME_SUCCESS,
     LOCATION_CHANGE,
-    UPDATE_ANOMUSILMOITUS
+    UPDATE_ANOMUSILMOITUS,
+    FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
+    FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
+    FETCH_HENKILOHAKUORGANISAATIOT_FAILURE
 } from './actiontypes';
 import {Dispatch} from "../types/dispatch.type";
 import type {Omattiedot} from "../types/domain/kayttooikeus/Omattiedot.types";
@@ -97,12 +100,32 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, get
         }
         const userOid = getState().omattiedot.data.oid;
         dispatch(requestOmattiedotOrganisaatios());
-        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid);
+        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid, {piilotaOikeudettomat: true});
         try {
             const omattiedotOrganisaatios = await http.get(url);
             dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios, getState().locale));
         } catch (error) {
             dispatch(receiveOmattiedotOrganisaatiosFailure(error));
+            throw error;
+        }
+    }
+};
+
+
+const requestOmatHenkilohakuOrganisaatiot = () => ({type: FETCH_HENKILOHAKUORGANISAATIOT_REQUEST});
+const receiveOmatHenkilohakuOrganisaatiotSuccess = (organisaatiot, locale) => ({type: FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS, organisaatiot, locale});
+const receiveOmatHenkilohakuOrganisaatiotFailure = () => ({type: FETCH_HENKILOHAKUORGANISAATIOT_FAILURE});
+export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+    // Fetch only once
+    if(getState().omattiedot.henkilohakuOrganisaatiot.length === 0 && !getState().omattiedot.henkilohakuOrganisaatiotLoading) {
+        const oid = R.path(['omattiedot', 'data', 'oid'], getState());
+        dispatch(requestOmatHenkilohakuOrganisaatiot());
+        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oid, {requiredRoles: "HENKILOHAKU"});
+        try {
+            const omatHenkilohakuOrganisaatiot = await http.get(url);
+            dispatch(receiveOmatHenkilohakuOrganisaatiotSuccess(omatHenkilohakuOrganisaatiot, getState().locale));
+        } catch (error) {
+            dispatch(receiveOmatHenkilohakuOrganisaatiotFailure());
             throw error;
         }
     }

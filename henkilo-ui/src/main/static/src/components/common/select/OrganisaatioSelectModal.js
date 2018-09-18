@@ -23,14 +23,6 @@ type State = {
  */
 export class OrganisaatioSelectModal extends React.Component<OrganisaatioSelectModalProps, State> {
 
-    constructor(props: OrganisaatioSelectModalProps) {
-        super(props);
-
-        this.state = {
-            visible: false
-        }
-    }
-
     render() {
         return <SelectModal disabled={this.props.disabled}
                             buttonText={this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO']} >
@@ -38,7 +30,6 @@ export class OrganisaatioSelectModal extends React.Component<OrganisaatioSelectM
                 locale={this.props.locale}
                 L={this.props.L}
                 organisaatiot={this.props.organisaatiot}
-                onClose={() => {/*override*/}}
                 onSelect={(organisaatio) => {this.props.onSelect(organisaatio)}}
             />
         </SelectModal>;
