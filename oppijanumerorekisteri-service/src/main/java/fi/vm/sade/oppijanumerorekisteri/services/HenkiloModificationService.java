@@ -20,6 +20,13 @@ public interface HenkiloModificationService {
 
     HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
 
+    /**
+     * Luo huoltajan. Tämä pitää erikseen liittää lapseen HenkiloHuoltajaSuhde luokan kautta.
+     * @param huoltajaCreateDto Huoltajan tiedot hetulla tai ilman
+     * @return Luotu huoltaja
+     */
+    Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto);
+
     Henkilo createHenkilo(Henkilo henkiloCreate);
 
     Henkilo createHenkilo(Henkilo henkiloCreate, String kasittelijaOid, boolean validate);

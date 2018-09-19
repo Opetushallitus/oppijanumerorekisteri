@@ -175,19 +175,16 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<String> passinumerot;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "henkilo_huoltaja",
-            joinColumns = @JoinColumn(name = "henkilo_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "huoltaja_id", referencedColumnName = "id"))
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private Set<Henkilo> huoltajat = new HashSet<>();
+    private Set<HenkiloHuoltajaSuhde> huoltajat = new HashSet<>();
 
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
     }
 
     public void clearKansalaisuus() {
-        if(this.kansalaisuus == null) {
+        if (this.kansalaisuus == null) {
             this.kansalaisuus = new HashSet<>();
         }
         this.kansalaisuus.clear();

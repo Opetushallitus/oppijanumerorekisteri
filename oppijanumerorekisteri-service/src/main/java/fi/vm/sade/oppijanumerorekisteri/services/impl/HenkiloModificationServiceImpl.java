@@ -12,6 +12,10 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
@@ -32,6 +36,8 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
 
+
+import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysPalveluRepository;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -130,7 +136,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
-        Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
+        final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
         if (henkiloUpdateDto.getEtunimet() != null || henkiloUpdateDto.getKutsumanimi() != null) {
@@ -149,10 +155,19 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
-        this.mapper.map(henkiloUpdateDto, henkiloSaved);
-        henkiloSaved = update(henkiloSaved);
+        Optional.ofNullable(henkiloUpdateDto.getHuoltajat())
+                .map(huoltajaCreateDtos -> huoltajaCreateDtos.stream()
+                        .map(huoltajaCreateDto -> HenkiloHuoltajaSuhde.builder()
+                                .lapsi(henkiloSaved)
+                                .huoltaja(this.createHenkilo(huoltajaCreateDto))
+                                .huoltajuustyyppiKoodi(huoltajaCreateDto.getHuoltajuustyyppiKoodi())
+                                .build())
+                        .collect(Collectors.toSet()))
+                .ifPresent(henkiloSaved::setHuoltajat);
 
-        return mapper.map(henkiloSaved, HenkiloReadDto.class);
+        this.mapper.map(henkiloUpdateDto, henkiloSaved);
+
+        return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
     }
 
     private void updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
@@ -322,6 +337,13 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     public HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto) {
         Henkilo henkilo = this.mapper.map(henkiloDto, Henkilo.class);
         return this.mapper.map(this.createHenkilo(henkilo), HenkiloDto.class);
+    }
+
+    @Override
+    @Transactional
+    public Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto) {
+        Henkilo henkilo = this.mapper.map(huoltajaCreateDto, Henkilo.class);
+        return this.createHenkilo(henkilo, userDetailsHelper.getCurrentUserOid(), StringUtils.isEmpty(henkilo.getHetu()));
     }
 
     @Override

@@ -1,8 +1,9 @@
-create table if not exists henkilo_huoltaja (
+create table if not exists henkilo_huoltaja_suhde (
   id bigint primary key,
-  version bigint NOT NULL,
-  henkilo_id bigint NOT NULL references henkilo(id),
-  huoltaja_id bigint NOT NULL references henkilo(id)
+  version bigint not null,
+  lapsi_id bigint not null references henkilo(id),
+  huoltaja_id bigint not null references henkilo(id),
+  huoltajuustyyppi_koodi varchar(2) not null
 )
 
 alter table henkilo drop column if exists huoltaja_id;

@@ -3,15 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysKayttooikeusDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloOidHetuNimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.NimiDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
-import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
@@ -389,23 +381,29 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setKotikunta(yksiloityHenkilo.getKotikunta());
 
         // Always clear/replace the current ones.
-        Set<Henkilo> huoltajat = Optional.ofNullable(yksiloityHenkilo.getHuoltajat())
+        Set<HenkiloHuoltajaSuhde> huoltajat = Optional.ofNullable(yksiloityHenkilo.getHuoltajat())
                 .filter(collectionNotEmpty)
-                .map(this::findOrCreateHuoltajat)
+                .map(huoltajas -> huoltajas.stream()
+                        // Filter off huoltajas with invalid hetu
+                        .filter(huoltaja -> StringUtils.isEmpty(huoltaja.getHetu()) || HetuUtils.hetuIsValid(huoltaja.getHetu()))
+                        .map(huoltaja -> this.findOrCreateHuoltaja(huoltaja, henkilo))
+                        .collect(Collectors.toSet()))
                 .orElseGet(HashSet::new);
         henkilo.setHuoltajat(huoltajat);
     }
 
-    private Set<Henkilo> findOrCreateHuoltajat(Collection<Huoltaja> huoltajas) {
-        return huoltajas.stream()
-                .map(huoltaja -> this.henkiloRepository.findByHetu(huoltaja.getHetu())
-                        .orElseGet(() -> this.henkiloModificationService.createHenkilo(Henkilo.builder()
-                                .etunimet(huoltaja.getEtunimi())
-                                .kutsumanimi(huoltaja.getKutsumanimi())
-                                .sukunimi(huoltaja.getSukunimi())
-                                .hetu(huoltaja.getHetu())
-                                .build())))
-                .collect(Collectors.toSet());
+    private HenkiloHuoltajaSuhde findOrCreateHuoltaja(Huoltaja huoltaja, Henkilo lapsi) {
+        Henkilo persistedHuoltaja = this.henkiloRepository.findByHetu(huoltaja.getHetu())
+                .orElseGet(() -> this.henkiloModificationService.createHenkilo(HuoltajaCreateDto.builder()
+                        .etunimet(huoltaja.getEtunimi())
+                        .sukunimi(huoltaja.getSukunimi())
+                        .hetu(huoltaja.getHetu())
+                        .build()));
+        return HenkiloHuoltajaSuhde.builder()
+                .huoltajuustyyppiKoodi(huoltaja.getHuoltajuustyyppiKoodi())
+                .lapsi(lapsi)
+                .huoltaja(persistedHuoltaja)
+                .build();
     }
 
     private void removeVtjYhteystiedotAndUpdateForOppija(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
