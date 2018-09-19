@@ -17,13 +17,14 @@ import type {OrganisaatioCache, OrganisaatioState} from "../../reducers/organisa
 import { path } from 'ramda';
 import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
 import type {RyhmatState} from "../../reducers/ryhmat.reducer";
+import type {HenkiloState} from "../../reducers/henkilo.reducer";
 
 type Props = {
     l10n: L10n,
     locale: Locale,
     updateHenkiloAndRefetch?: (any) => void,
     updateAndRefetchKayttajatieto?: (henkiloOid: string, kayttajatunnus: string) => void,
-    henkilo: any,
+    henkilo: HenkiloState,
     kayttooikeus: any,
     koodisto: any,
     createBasicInfo?: (boolean, (any) => void, (any) => void, any) => any,
@@ -113,7 +114,9 @@ class HenkiloViewPage extends React.Component<Props> {
                     {
                         this.props.kayttooikeus.kayttooikeusLoading
                             ? <Loader />
-                            : <HenkiloViewExpiredKayttooikeus {...this.props} />
+                            : <HenkiloViewExpiredKayttooikeus {...this.props}
+                                                              oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
+                                                              isOmattiedot={this.props.view === 'OMATTIEDOT'} />
                     }
                 </div>}
                 {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA'

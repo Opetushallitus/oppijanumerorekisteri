@@ -8,6 +8,7 @@ import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpen
 import type {Locale} from "../../types/locale.type";
 import type {GlobalNotificationConfig} from "../../types/notification.types";
 import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
+import {KAYTTOOIKEUDENTILA} from "../../globals/KayttooikeudenTila";
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -60,7 +61,7 @@ class AnomusPage extends React.Component<Props, State> {
             showOwnAnomus: false,
             adminView: this.props.isAdmin,
             anomuksenTilat: ['ANOTTU'],
-            kayttoOikeudenTilas: ['ANOTTU'],
+            kayttoOikeudenTilas: [KAYTTOOIKEUDENTILA.ANOTTU],
         },
         sorted: [{id: 'ANOTTU_PVM', desc: true}],
         allFetched: false,
@@ -164,7 +165,7 @@ class AnomusPage extends React.Component<Props, State> {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(id, kayttoOikeudenTila, alkupvm, loppupvm, hylkaysperuste);
             this.setState({anomusModifiedHenkilo: henkilo});
-            const notificationMessageKey = kayttoOikeudenTila === 'HYLATTY' ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS' : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
+            const notificationMessageKey = kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS' : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
             this.props.addGlobalNotification({
                 key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
                 type: NOTIFICATIONTYPES.SUCCESS,
@@ -173,7 +174,7 @@ class AnomusPage extends React.Component<Props, State> {
             });
             this.props.clearHaettuKayttooikeusryhma(id);
         } catch (error) {
-            const notificationMessageKey = kayttoOikeudenTila === 'HYLATTY' ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE' : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
+            const notificationMessageKey = kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE' : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
             this.props.addGlobalNotification({
                 key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
                 type: NOTIFICATIONTYPES.ERROR,
