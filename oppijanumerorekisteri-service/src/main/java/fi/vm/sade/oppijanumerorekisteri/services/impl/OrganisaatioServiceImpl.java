@@ -29,8 +29,8 @@ public class OrganisaatioServiceImpl implements OrganisaatioService {
     }
 
     @Override
-    public Set<String> getChildOids(String oid, OrganisaatioTilat tilat) {
-        return organisaatioClient.getChildOids(oid, tilat);
+    public Set<String> getChildOids(String oid, boolean rekursiivisesti, OrganisaatioTilat tilat) {
+        return organisaatioClient.getChildOids(oid, rekursiivisesti, tilat);
     }
 
 }

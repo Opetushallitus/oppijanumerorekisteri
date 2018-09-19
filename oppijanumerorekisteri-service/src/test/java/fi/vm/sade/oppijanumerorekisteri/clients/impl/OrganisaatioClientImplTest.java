@@ -60,13 +60,17 @@ public class OrganisaatioClientImplTest {
     public void getChildOids() {
         prepareHttpResponseMock("{\"oids\": [\"oid656\", \"oid956\"]}");
 
-        Set<String> childOids = client.getChildOids("oid123", OrganisaatioTilat.vainAktiiviset());
+        Set<String> childOids = client.getChildOids("oid123", true, OrganisaatioTilat.vainAktiiviset());
 
         assertThat(childOids).containsExactlyInAnyOrder("oid656", "oid956");
         ArgumentCaptor<OphRequestParameters> requestParametersArgumentCaptor = ArgumentCaptor.forClass(OphRequestParameters.class);
         verify(httpClientProxyMock).createRequest(requestParametersArgumentCaptor.capture());
         OphRequestParameters requestParameters = requestParametersArgumentCaptor.getValue();
-        assertThat(requestParameters.url).isEqualTo("https://localhost/organisaatio-service/rest/organisaatio/oid123/childoids?aktiiviset=true&suunnitellut=false&lakkautetut=false");
+        assertThat(requestParameters.url).startsWith("https://localhost/organisaatio-service/rest/organisaatio/oid123/childoids?")
+                .contains("rekursiivisesti=true")
+                .contains("aktiiviset=true")
+                .contains("suunnitellut=false")
+                .contains("lakkautetut=false");
     }
 
 }

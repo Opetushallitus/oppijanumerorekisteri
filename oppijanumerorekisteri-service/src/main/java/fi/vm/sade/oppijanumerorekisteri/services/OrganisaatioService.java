@@ -27,9 +27,10 @@ public interface OrganisaatioService {
     /**
      * Palauttaa organisaation aliorganisaatiot.
      * @param oid organisaatio
+     * @param rekursiivisesti haetaanko aliorganisaatiot rekursiivisesti
      * @param tilat organisaatioiden tilat
      * @return aliorganisaatiot
      */
-    Set<String> getChildOids(String oid, OrganisaatioTilat tilat);
+    Set<String> getChildOids(String oid, boolean rekursiivisesti, OrganisaatioTilat tilat);
 
 }

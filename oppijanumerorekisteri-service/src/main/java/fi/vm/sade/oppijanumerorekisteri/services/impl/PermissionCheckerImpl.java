@@ -107,7 +107,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
             if (!organisaatioOids.isEmpty()) {
                 if (getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
                         .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
-                                organisaatioService.getChildOids(organisaatioOid, OrganisaatioTilat.vainAktiiviset()).stream()))
+                                organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.vainAktiiviset()).stream()))
                         .anyMatch(organisaatioOids::contains)) {
                     return true;
                 }
