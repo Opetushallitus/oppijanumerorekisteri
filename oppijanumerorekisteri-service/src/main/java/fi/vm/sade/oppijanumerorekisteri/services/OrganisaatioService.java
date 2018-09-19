@@ -1,8 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
+
+import java.util.Set;
 
 /**
  * Rajapinta oppijan organisaatioiden käsittelyyn.
@@ -20,5 +23,14 @@ public interface OrganisaatioService {
      * organisaatiopalvelusta
      */
     Organisaatio create(String oid);
+
+    /**
+     * Palauttaa organisaation aliorganisaatiot.
+     * @param oid organisaatio
+     * @param rekursiivisesti haetaanko aliorganisaatiot rekursiivisesti
+     * @param tilat organisaatioiden tilat
+     * @return aliorganisaatiot
+     */
+    Set<String> getChildOids(String oid, boolean rekursiivisesti, OrganisaatioTilat tilat);
 
 }

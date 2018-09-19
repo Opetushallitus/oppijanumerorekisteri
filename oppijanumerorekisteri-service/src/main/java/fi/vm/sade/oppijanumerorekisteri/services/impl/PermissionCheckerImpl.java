@@ -3,7 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,8 +30,10 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
     private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
-    private static final String ROLE_OPPIJOIDENTUONTI_TEMPLATE = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI_%s";
-    private static final String ROOT_ORGANISATION_SUFFIX = "_1.2.246.562.10.00000000001";
+    private static final String ORGANISAATIO_OID_PREFIX = "1.2.246.562.10";
+    private static final String ROOT_ORGANISATION_SUFFIX = String.format("_%s.00000000001", ORGANISAATIO_OID_PREFIX);
+    public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
+    public static final String KAYTTOOIKEUS_OPPIJOIDENTUONTI = "OPPIJOIDENTUONTI";
 
     private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
@@ -37,6 +42,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private final UserDetailsHelper userDetailsHelper;
 
     private final OrganisaatioRepository organisaatioRepository;
+
+    private final OrganisaatioService organisaatioService;
 
     public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
@@ -97,14 +104,36 @@ public class PermissionCheckerImpl implements PermissionChecker {
             // ovat samassa organisaatiossa (ja virkailijalla on
             // oppijoiden tuonti -rooli kyseiseen organisaatioon)
             List<String> organisaatioOids = organisaatioRepository.findOidByHenkiloOid(userOid);
-            if (organisaatioOids.stream()
-                    .map(organisaatioOid -> String.format(ROLE_OPPIJOIDENTUONTI_TEMPLATE, organisaatioOid))
-                    .anyMatch(rooli -> callingUserRoles.contains(rooli))) {
-                return true;
+            if (!organisaatioOids.isEmpty()) {
+                if (getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
+                        .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                                organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.vainAktiiviset()).stream()))
+                        .anyMatch(organisaatioOids::contains)) {
+                    return true;
+                }
             }
         }
         String callingUserOid = this.userDetailsHelper.getCurrentUserOid();
         return hasPermissionFunction.apply(callingUserOid, callingUserRoles);
+    }
+
+    @Override
+    public Set<String> getOrganisaatioOids() {
+        return getOrganisaatioOids(rooli -> true);
+    }
+
+    @Override
+    public Set<String> getOrganisaatioOids(String palvelu, String kayttooikeus) {
+        final String haluttuRooli = String.format("ROLE_APP_%s_%s", palvelu, kayttooikeus);
+        return getOrganisaatioOids(kayttajanRooli -> kayttajanRooli.startsWith(haluttuRooli));
+    }
+
+    private Set<String> getOrganisaatioOids(Predicate<String> rooliPredicate) {
+        return getCasRoles().stream()
+                .filter(rooliPredicate)
+                .map(rooli -> rooli.substring(rooli.lastIndexOf("_") + 1))
+                .filter(str -> str.startsWith(ORGANISAATIO_OID_PREFIX))
+                .collect(toSet());
     }
 
     @Override

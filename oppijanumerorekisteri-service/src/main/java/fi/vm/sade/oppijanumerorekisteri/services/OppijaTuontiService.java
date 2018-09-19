@@ -35,11 +35,16 @@ public interface OppijaTuontiService {
     boolean create(long id, int eräkoko);
 
     /**
-     * Luo ja palauttaa henkilön aktiiviset organisaatiot.
-     *
-     * @param henkiloOid henkilö oid
+     * Palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.
      * @return aktiiviset organisaatiot
      */
-    Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid);
+    Set<String> getOrganisaatioOidsByKayttaja();
+
+    /**
+     * Luo ja palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.
+     *
+     * @return aktiiviset organisaatiot
+     */
+    Set<Organisaatio> getOrCreateOrganisaatioByKayttaja();
 
 }
