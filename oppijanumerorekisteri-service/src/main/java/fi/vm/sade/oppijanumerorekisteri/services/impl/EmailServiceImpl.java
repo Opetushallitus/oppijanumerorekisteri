@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Lists;
+import fi.vm.sade.kayttooikeus.dto.AnomusKasiteltyRecipientDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.RyhmasahkopostiClient;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.services.EmailService;
 import fi.vm.sade.properties.OphProperties;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
@@ -10,17 +13,21 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonList;
 
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
     private static final String TUONTI_YKSILOINTI_VIRHE_EMAIL_TEMPLATE_NAME = "tuontivirhe_email";
-    private static final String LANGUAGE_CODE = "fi";
+    private static final String LANGUAGE_CODE = "FI";
+    private static final String CALLING_PROCESS = "oppijanumerorekisteri";
 
     private final RyhmasahkopostiClient ryhmasahkopostiClient;
     private final OphProperties urlProperties;
@@ -39,7 +46,11 @@ public class EmailServiceImpl implements EmailService {
 
         EmailMessage emailMessage = new EmailMessage();
         emailMessage.setTemplateName(TUONTI_YKSILOINTI_VIRHE_EMAIL_TEMPLATE_NAME);
+        emailMessage.setHtml(true);
+        emailMessage.setCharset("UTF-8");
         emailMessage.setLanguageCode(LANGUAGE_CODE);
+        emailMessage.setFrom("noreply@oph.fi");
+        emailMessage.setCallingProcess(CALLING_PROCESS);
 
         EmailData emailData = new EmailData();
         emailData.setRecipient(recipients);

@@ -232,8 +232,8 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         Set<String> sahkopostiosoitteet = tuontiList.stream()
                 .map(t -> t.getSahkoposti())
                 .collect(Collectors.toSet());
-        log.info("Sending oppijtuontivirheilmoitus-emails to " + sahkopostiosoitteet.size() + " recipients");
         if(sahkopostiosoitteet.size() > 0) {
+
             emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
         }
 
@@ -244,6 +244,8 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         for ( Tuonti tuonti : tuontiList) {
             tuonti.setIlmoitustarveKasitelty(true);
         }
+
+        log.info("Oppijatuontien tilat käsitelty. Virheilmoitussähköposteja lähetetty " + sahkopostiosoitteet.size() + " ja tuonteja asetettu käsittelyiksi " + tuontiList.size());
 
     }
 
