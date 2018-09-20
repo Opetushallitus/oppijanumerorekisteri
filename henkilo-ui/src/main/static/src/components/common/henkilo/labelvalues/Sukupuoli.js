@@ -19,7 +19,7 @@ type Props = {
 }
 
 const Sukupuoli = (props: Props) => <LabelValue
-    readOnly={!!props.henkilo.henkilo.yksiloityVTJ || props.readOnly}
+    readOnly={props.readOnly}
     updateModelFieldAction={props.updateModelFieldAction}
     values={{
         label: 'HENKILO_SUKUPUOLI',
