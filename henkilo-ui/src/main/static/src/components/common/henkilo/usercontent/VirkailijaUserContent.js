@@ -68,6 +68,7 @@ class VirkailijaUserContent extends React.Component<Props> {
             henkiloUpdate: this.props.henkiloUpdate,
         };
 
+
         // Basic info box content
         return [
             [
