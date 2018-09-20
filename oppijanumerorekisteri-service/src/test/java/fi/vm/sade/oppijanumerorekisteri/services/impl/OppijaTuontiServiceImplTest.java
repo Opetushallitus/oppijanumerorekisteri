@@ -12,9 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,40 +30,13 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class OppijaTuontiServiceImplTest {
 
+    @InjectMocks
     private OppijaTuontiServiceImpl oppijaTuontiServiceImpl;
 
     @Mock
-    private HenkiloService henkiloServiceMock;
-    @Mock
-    private HenkiloModificationService henkiloModificationServiceMock;
-    @Mock
-    private OrikaConfiguration mapperMock;
-    @Mock
-    private HenkiloRepository henkiloRepositoryMock;
-    @Mock
     private TuontiRepository tuontiRepositoryMock;
     @Mock
-    private OrganisaatioRepository organisaatioRepositoryMock;
-    @Mock
-    private UserDetailsHelper userDetailsHelperMock;
-    @Mock
-    private KayttooikeusClient kayttooikeusClientMock;
-    @Mock
-    private ObjectMapper objectMapperMock;
-    @Mock
     private EmailService emailService;
-
-    @Before
-    public void setup() {
-        oppijaTuontiServiceImpl = new OppijaTuontiServiceImpl(henkiloServiceMock,
-                henkiloModificationServiceMock,
-                mapperMock,
-                henkiloRepositoryMock,
-                tuontiRepositoryMock, organisaatioRepositoryMock,
-                kayttooikeusClientMock, userDetailsHelperMock,
-                objectMapperMock,
-                emailService);
-    }
 
     @Test
     public void handleOppijaTuontiIlmoitusTest() {
