@@ -13,6 +13,7 @@ type KayttooikeusRyhma = {
 type KutsuOrganisaatio = {
     nimi: TextGroupMap,
     organisaatioOid: string,
+    voimassaLoppuPvm: ?string,
     kayttooikeusryhmat: Array<KayttooikeusRyhma>
 }
 

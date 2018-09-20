@@ -12,7 +12,7 @@ type OrganisaatioSelectProps = {
     L: L,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
-    onClose: ?SyntheticEvent<HTMLButtonElement> => void,
+    onClose?: ?SyntheticEvent<HTMLButtonElement> => void,
 }
 
 type State = {
@@ -65,7 +65,9 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
 
     makeSelection = (organisaatio: OrganisaatioSelectObject): void => {
         this.props.onSelect(organisaatio);
-        this.props.onClose();
+        if(this.props.onClose) {
+            this.props.onClose();
+        }
     };
 
     _renderOrganisaatioNimi = (organisaatio: OrganisaatioSelectObject) => {

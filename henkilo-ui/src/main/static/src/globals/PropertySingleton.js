@@ -19,7 +19,6 @@ class PropertySingleton {
             TYOOSOITE: 'yhteystietotyyppi2',
             YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI: 'alkupera2',
             SAHKOPOSTI: 'YHTEYSTIETO_SAHKOPOSTI',
-            KAYTTOOIKEUS_SULJETTU: 'SULJETTU',
             specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\\/<>?]/,
             numberRegex: /\d/,
             characterRegex: /[a-zA-Z]/,

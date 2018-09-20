@@ -23,6 +23,7 @@ import * as R from 'ramda';
 import {localize, localizeTextGroup} from "../../../utilities/localisation.util";
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import type {TableHeading} from "../../../types/react-table.types";
+import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: any,
@@ -182,7 +183,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         return <div>
             <div className="anomuslistaus-myonnabutton" style={{display: 'table-cell', paddingRight: '10px'}}>
                 <MyonnaButton myonnaAction={() => this.updateHaettuKayttooikeusryhma(haettuKayttooikeusRyhma.id,
-                    'MYONNETTY', idx, henkilo)}
+                    KAYTTOOIKEUDENTILA.MYONNETTY, idx, henkilo)}
                               L={this.L}
                               disabled={noPermission || this.state.disabledMyonnettyButtons[haettuKayttooikeusRyhma.id]} />
             </div>
@@ -216,10 +217,10 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         }
         const disabledMyonnettyButtons = {...this.state.disabledMyonnettyButtons};
         const disabledHylkaaButtons = {...this.state.disabledHylkaaButtons};
-        if(tila === 'MYONNETTY') {
+        if(tila === KAYTTOOIKEUDENTILA.MYONNETTY) {
             disabledMyonnettyButtons[id] = true;
         }
-        if(tila === 'HYLATTY') {
+        if(tila === KAYTTOOIKEUDENTILA.HYLATTY) {
             disabledHylkaaButtons[id] = true;
         }
         this.setState({showHylkaysPopup: false, disabledMyonnettyButtons, disabledHylkaaButtons});
@@ -260,7 +261,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', anojaOid);
         http.get(url).then( (myonnettyKayttooikeusryhmat: Array<MyonnettyKayttooikeusryhma>) => {
             const kayttooikeudet: Array<KayttooikeusryhmaData> = myonnettyKayttooikeusryhmat
-                .filter( (myonnettyKayttooikeusryhmat: MyonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhmat.tila !== 'ANOTTU')
+                .filter( (myonnettyKayttooikeusryhmat: MyonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhmat.tila !== KAYTTOOIKEUDENTILA.ANOTTU)
                 .map( this._parseAnojaKayttooikeus );
             const anojaKayttooikeusryhmat = { anojaOid, kayttooikeudet: kayttooikeudet, error: false };
             const kayttooikeusRyhmatByAnoja = this.state.kayttooikeusRyhmatByAnoja;
@@ -297,7 +298,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const noLoppupvm = localize('HENKILO_AVOIMET_KAYTTOOIKEUDET_EI_LOPPUPVM', this.props.l10n, this.props.locale);
         if(!myonnettyKayttooikeusryhma.voimassaPvm) {
             return noLoppupvm;
-        } else if(myonnettyKayttooikeusryhma.tila !== 'SULJETTU') {
+        } else if(myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
             return myonnettyKayttooikeusryhma.voimassaPvm ? moment(new Date(myonnettyKayttooikeusryhma.voimassaPvm)).format() : noLoppupvm;
         }
         return myonnettyKayttooikeusryhma.kasitelty ? new Date(myonnettyKayttooikeusryhma.kasitelty).toString() : noLoppupvm;
