@@ -233,7 +233,6 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(t -> t.getSahkoposti())
                 .collect(Collectors.toSet());
         if(sahkopostiosoitteet.size() > 0) {
-
             emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
         }
 
