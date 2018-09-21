@@ -12,12 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
-import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
-import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
@@ -36,18 +31,15 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -171,10 +163,6 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
         }
 
-        /* VTJ data for Henkilo contains a huge data set and parsing this data
-         * might change in the future, if Henkilo's data must contain all what
-         * VTJ has to offer but that's still uncertain
-         */
         YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
                 .orElseThrow(() ->
                         new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
@@ -182,22 +170,8 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
         henkilo.setYksilointiYritetty(true);
 
-        Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
-                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(Collections::emptyList)
-                        .stream()
-                        .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
-                        .map(YksiloityHenkilo.EntinenNimi::getArvo))
-                .filter(Objects::nonNull)
-                .collect(toCollection(LinkedHashSet::new));
-        NimienYhtenevyys nimienYhtenevyys = tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
-
-        if (!nimienYhtenevyys.etunimimatch || !nimienYhtenevyys.sukunimimatch) {
-            logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
-                    + "--Annetut etunimet: " + henkilo.getEtunimet() + ", VTJ: " + yksiloityHenkilo.getEtunimi() + "\n"
-                    + "--Annettu kutsumanimi: " + henkilo.getKutsumanimi() + ", VTJ: " + yksiloityHenkilo.getKutsumanimi() + "\n"
-                    + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ (ml. entiset): " + kaikkiSukunimet.stream().collect(joining(", ")));
-
-            addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
+        if (yhtenevyysTarkistus.apply(henkilo, yksiloityHenkilo)) {
+            this.addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
         }
         else {
             logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
@@ -215,6 +189,31 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         return henkiloModificationService.update(henkilo);
+    }
+
+    // Palauttaa tiedon ovatko henkilön nimet epävastaavia VTJ-datan kanssa.
+    private Boolean yhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+        Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
+                Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(Collections::emptyList)
+                        .stream()
+                        .filter(YksiloityHenkilo.EntinenNimi::isSukunimi)
+                        .map(YksiloityHenkilo.EntinenNimi::getArvo))
+                .filter(Objects::nonNull)
+                .collect(toCollection(LinkedHashSet::new));
+        NimienYhtenevyys nimienYhtenevyys =  tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
+        boolean nimetEivatVastaa = !nimienYhtenevyys.etunimimatch || !nimienYhtenevyys.sukunimimatch;
+        if (nimetEivatVastaa) {
+            logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
+                    + "--Annetut etunimet: " + henkilo.getEtunimet() + ", VTJ: " + yksiloityHenkilo.getEtunimi() + "\n"
+                    + "--Annettu kutsumanimi: " + henkilo.getKutsumanimi() + ", VTJ: " + yksiloityHenkilo.getKutsumanimi() + "\n"
+                    + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ (ml. entiset): " + String.join(", ", kaikkiSukunimet));
+        }
+        return nimetEivatVastaa;
+    }
+
+    // Nimitarkistus jätetään väliin.
+    private Boolean skipYhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+        return false;
     }
 
     private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo, Set<String> kaikkiSukunimet) {

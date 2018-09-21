@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysPalveluRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
@@ -37,7 +38,6 @@ import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
 
 
-import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysPalveluRepository;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -164,6 +164,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                                 .build())
                         .collect(Collectors.toSet()))
                 .ifPresent(henkiloSaved::setHuoltajat);
+        henkiloUpdateDto.setHuoltajat(null);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 

@@ -17,7 +17,7 @@ public class HuoltajaCreateDtoConverter extends CustomConverter<HuoltajaCreateDt
     public Henkilo convert(HuoltajaCreateDto source, Type<? extends Henkilo> destinationType, MappingContext mappingContext) {
         Henkilo henkilo = new Henkilo();
         this.mapperFacade.map(source, henkilo);
-        Optional.of(source.getKansalaisuusKoodi())
+        Optional.ofNullable(source.getKansalaisuusKoodi())
                 .map(kansalaisuusKoodis -> kansalaisuusKoodis.stream()
                         .map(Kansalaisuus::new)
                         .collect(Collectors.toSet()))

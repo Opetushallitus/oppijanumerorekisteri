@@ -12,16 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import javax.validation.Valid;
 
 
 @Api(tags = "Henkilot")
@@ -131,7 +130,7 @@ public class HenkiloController {
     @RequestMapping(value = "", method = RequestMethod.PUT)
     public String updateHenkilo(@RequestBody @Validated HenkiloUpdateDto henkiloUpdateDto,
                                 @RequestHeader(value = "External-Permission-Service", required = false)
-                                        ExternalPermissionService permissionService) throws BindException {
+                                        ExternalPermissionService permissionService) {
         return this.henkiloModificationService.updateHenkilo(henkiloUpdateDto).getOidHenkilo();
     }
 
@@ -190,7 +189,7 @@ public class HenkiloController {
     @ApiOperation(value = "Passivoi henkilön mukaanlukien käyttöoikeudet ja organisaatiot.",
             notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
             authorizations = @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"))
-    public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) throws IOException {
+    public void passivateHenkilo(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) {
         this.henkiloModificationService.disableHenkilo(oid);
     }
 
@@ -222,7 +221,7 @@ public class HenkiloController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createHenkiloFromHenkiloCreateDto(@ApiParam("Henkilön sukupuolen kelvolliset arvot löytyvät sukupuoli koodistosta.")
-                                                    @RequestBody @Validated HenkiloCreateDto henkilo) throws BindException {
+                                                    @RequestBody @Validated HenkiloCreateDto henkilo) {
         return this.henkiloModificationService.createHenkilo(henkilo).getOidHenkilo();
     }
 
@@ -258,7 +257,6 @@ public class HenkiloController {
     public Map<String, HenkiloDto> masterHenkilosByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
                                                            @RequestHeader(value = "External-Permission-Service", required = false)
                                                           ExternalPermissionService permissionService) throws IOException {
-
         return this.permissionChecker.getPermissionCheckedHenkilos(
                 this.henkiloService.getMastersByOids(Sets.newHashSet(oids)),
                 Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),

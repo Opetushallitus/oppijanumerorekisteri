@@ -32,16 +32,14 @@
   ],
   "huoltajat": [
     {
-      "etunimi": "Tarja Tanja",
-      "kutsumanimi": "Tarja",
-      "sukunimi": "Testaaja",
-      "hetu": "tarjanhetu"
+      "hetu": "200998-9237",
+      "huoltajuustyyppiKoodi": "03"
     },
     {
       "etunimi": "Tappi Topio",
       "kutsumanimi": "Tappi",
       "sukunimi": "Testaaja",
-      "hetu": "tapinhetu"
+      "huoltajuustyyppiKoodi": "03"
     }
   ]
 }

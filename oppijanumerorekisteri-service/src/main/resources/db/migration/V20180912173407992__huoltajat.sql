@@ -4,7 +4,7 @@ create table if not exists henkilo_huoltaja_suhde (
   lapsi_id bigint not null references henkilo(id),
   huoltaja_id bigint not null references henkilo(id),
   huoltajuustyyppi_koodi varchar(2) not null
-)
+);
 
 alter table henkilo drop column if exists huoltaja_id;
 
