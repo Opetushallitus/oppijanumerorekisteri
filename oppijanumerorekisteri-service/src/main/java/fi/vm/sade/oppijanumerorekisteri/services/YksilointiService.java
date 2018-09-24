@@ -34,13 +34,6 @@ public interface YksilointiService {
     Henkilo hetuttomanYksilointi(String henkiloOid);
 
     /**
-     * Yksilöi henkilön pelkällä hetulla tarkistamatta nimitietoja. Tämä
-     * @param henkiloOid Henkilön oid
-     * @return Yksilöity henkilö
-     */
-    Henkilo yksiloiPelkallaHetulla(String henkiloOid);
-
-    /**
      * Purkaa virkailijan käsin yksilöimän henkilön yksilöinnin
      * @param henkiloOid Henkilön oid
      * @return Yksilöimätön henkilö
@@ -62,10 +55,10 @@ public interface YksilointiService {
      */
     YksilointitietoDto getYksilointiTiedot(String henkiloOid);
 
-    /*
+    /**
      * Yliajaa henkilön tiedot VTJ:n tiedoilla.
      *
-     * @param henkiloOid
+     * @param henkiloOid Henkilön oid
      */
     void yliajaHenkilonTiedot(String henkiloOid);
 

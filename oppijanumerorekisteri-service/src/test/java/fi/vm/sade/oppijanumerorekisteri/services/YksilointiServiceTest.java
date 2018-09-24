@@ -135,13 +135,13 @@ public class YksilointiServiceTest {
 
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
-        Henkilo yksiloity = this.yksilointiService.yksiloiPelkallaHetulla(this.henkiloOid);
+        Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity).extracting(Henkilo::isYksiloityVTJ).containsExactly(true);
         verify(this.yksilointitietoRepository, times(0)).save(any());
     }
 
     @Test
-    public void yksiloiManuaalisestiPelkallaHetullaEpaonnistuu() {
+    public void yksiloiManuaalisestiPelkallaHetullaJaTyhjillaNimilla() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
         this.henkilo.setEtunimet("");
         this.henkilo.setKutsumanimi("");
@@ -150,8 +150,8 @@ public class YksilointiServiceTest {
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
-        assertThat(yksiloity).extracting(Henkilo::isYksiloityVTJ).containsExactly(false);
-        verify(this.yksilointitietoRepository, times(1)).save(any());
+        assertThat(yksiloity).extracting(Henkilo::isYksiloityVTJ).containsExactly(true);
+        verify(this.yksilointitietoRepository, times(0)).save(any());
     }
 
     @Test

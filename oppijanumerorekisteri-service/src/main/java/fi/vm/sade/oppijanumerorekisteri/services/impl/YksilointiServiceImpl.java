@@ -31,7 +31,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -170,7 +169,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
         henkilo.setYksilointiYritetty(true);
 
-        if (yhtenevyysTarkistus.apply(henkilo, yksiloityHenkilo)) {
+        if (this.yhtenevyysTarkistus(henkilo, yksiloityHenkilo)) {
             this.addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
         }
         else {
@@ -193,6 +192,9 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     // Palauttaa tiedon ovatko henkilön nimet epävastaavia VTJ-datan kanssa.
     private Boolean yhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+        if (StringUtils.hasLength(henkilo.getHetu()) && StringUtils.isEmpty(henkilo.getSukunimi()) && StringUtils.isEmpty(henkilo.getEtunimet())) {
+            return false;
+        }
         Set<String> kaikkiSukunimet = Stream.concat(Stream.of(yksiloityHenkilo.getSukunimi()),
                 Optional.ofNullable(yksiloityHenkilo.getEntisetNimet()).orElseGet(Collections::emptyList)
                         .stream()
@@ -200,7 +202,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                         .map(YksiloityHenkilo.EntinenNimi::getArvo))
                 .filter(Objects::nonNull)
                 .collect(toCollection(LinkedHashSet::new));
-        NimienYhtenevyys nimienYhtenevyys =  tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
+        NimienYhtenevyys nimienYhtenevyys = tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
         boolean nimetEivatVastaa = !nimienYhtenevyys.etunimimatch || !nimienYhtenevyys.sukunimimatch;
         if (nimetEivatVastaa) {
             logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
@@ -209,11 +211,6 @@ public class YksilointiServiceImpl implements YksilointiService {
                     + "--Annettu sukunimi: " + henkilo.getSukunimi() + ", VTJ (ml. entiset): " + String.join(", ", kaikkiSukunimet));
         }
         return nimetEivatVastaa;
-    }
-
-    // Nimitarkistus jätetään väliin.
-    private Boolean skipYhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
-        return false;
     }
 
     private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo, Set<String> kaikkiSukunimet) {
