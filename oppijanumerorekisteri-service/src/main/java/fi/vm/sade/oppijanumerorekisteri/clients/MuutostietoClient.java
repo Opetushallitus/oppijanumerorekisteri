@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface MuutostietoClient {
 
-    List<String> sendHetus(MuutostietoHetus hetus);
+    void sendHetus(MuutostietoHetus hetus);
 
 }
