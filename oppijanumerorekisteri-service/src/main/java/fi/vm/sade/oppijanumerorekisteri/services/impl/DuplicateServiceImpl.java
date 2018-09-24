@@ -169,6 +169,7 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .orElseThrow( () -> new NotFoundException("Henkilo not found with given oid " + slaveOid) );
         duplicateHenkilo.setDuplicate(true);
         duplicateHenkilo.setPassivoitu(true);
+        duplicateHenkilo.setHuoltajat(new HashSet<>());
         // käyttäjä ei ole aina tiedossa (esim. yksilöinnin tausta-ajo)
         Optional<String> kasittelijaOid = this.userDetailsHelper.findCurrentUserOid();
         // Doesn't throw even if user doesn't exists in kayttooikeus-service
