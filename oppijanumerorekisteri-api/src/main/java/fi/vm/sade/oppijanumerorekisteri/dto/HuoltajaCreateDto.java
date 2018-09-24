@@ -27,7 +27,7 @@ public class HuoltajaCreateDto {
 
     private LocalDate syntymaaika;
 
-    // Kansalaisuus koodisto
+    // Valtiot ja maat 2 koodisto
     private Set<String> kansalaisuusKoodi;
 
     // Huoltajuustyyppi koodisto

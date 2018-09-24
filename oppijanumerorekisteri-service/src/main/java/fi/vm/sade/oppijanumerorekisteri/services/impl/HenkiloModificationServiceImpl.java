@@ -21,6 +21,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     private final HenkiloUpdatePostValidator henkiloUpdatePostValidator;
     private final HenkiloCreatePostValidator henkiloCreatePostValidator;
+    private final HuoltajaCreatePostValidator huoltajaCreatePostValidator;
 
     private final HenkiloRepository henkiloDataRepository;
     private final KielisyysRepository kielisyysRepository;
@@ -159,7 +161,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 .map(huoltajaCreateDtos -> huoltajaCreateDtos.stream()
                         .map(huoltajaCreateDto -> HenkiloHuoltajaSuhde.builder()
                                 .lapsi(henkiloSaved)
-                                .huoltaja(this.createHenkilo(huoltajaCreateDto))
+                                .huoltaja(this.findOrCreateHuoltaja(huoltajaCreateDto))
                                 .huoltajuustyyppiKoodi(huoltajaCreateDto.getHuoltajuustyyppiKoodi())
                                 .build())
                         .collect(Collectors.toSet()))
@@ -169,6 +171,14 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 
         return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
+    }
+
+    private Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto) {
+        Optional<Henkilo> huoltaja = Optional.empty();
+        if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
+            huoltaja = this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu());
+        }
+        return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto));
     }
 
     private void updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
@@ -343,6 +353,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     @Transactional
     public Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto) {
+        BindException errors = new BindException(huoltajaCreateDto, "huoltajaCreateDto");
+        this.huoltajaCreatePostValidator.validate(huoltajaCreateDto, errors);
+        if (errors.hasErrors()) {
+            throw new UnprocessableEntityException(errors);
+        }
         Henkilo henkilo = this.mapper.map(huoltajaCreateDto, Henkilo.class);
         return this.createHenkilo(henkilo, userDetailsHelper.getCurrentUserOid(), StringUtils.isEmpty(henkilo.getHetu()));
     }
