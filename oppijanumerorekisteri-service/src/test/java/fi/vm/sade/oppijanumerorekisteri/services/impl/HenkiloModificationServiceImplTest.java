@@ -20,6 +20,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -70,6 +72,9 @@ public class HenkiloModificationServiceImplTest {
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
 
     @Mock
+    private HuoltajaCreatePostValidator huoltajaCreatePostValidator;
+
+    @Mock
     private HenkiloRepository henkiloDataRepositoryMock;
 
     @Mock
@@ -92,6 +97,9 @@ public class HenkiloModificationServiceImplTest {
 
     @Mock
     private OidGenerator oidGenerator;
+
+    @MockBean
+    private KansalaisuusRepository kansalaisuusRepository;
 
     @Before
     public void setup() {

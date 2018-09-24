@@ -147,11 +147,19 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloUpdateDto.setKutsumanimi(Optional.ofNullable(henkiloUpdateDto.getKutsumanimi()).orElse(henkiloSaved.getKutsumanimi()));
         }
 
-        BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDto");
+        BindException errors = new BindException(henkiloUpdateDto, "henkiloForceUpdateDto");
         this.henkiloUpdatePostValidator.validateWithoutHetu(henkiloUpdateDto, errors);
+        if (!errors.hasErrors() && henkiloUpdateDto.getHuoltajat() != null) {
+            // These can't be validated in henkiloUpdatePostValidator because different errors type
+            for (HuoltajaCreateDto huoltajaCreateDto : henkiloUpdateDto.getHuoltajat()) {
+                errors = new BindException(huoltajaCreateDto, "huoltajaCreateDto");
+                this.huoltajaCreatePostValidator.validate(huoltajaCreateDto, errors);
+            }
+        }
         if (errors.hasErrors()) {
             throw new UnprocessableEntityException(errors);
         }
+
 
         this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
 
@@ -183,7 +191,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                     .map(HenkiloHuoltajaSuhde::getHuoltaja)
                     .filter(existingHuoltaja -> huoltajaCreateDto.getEtunimet().equals(existingHuoltaja.getEtunimet()))
                     .filter(existingHuoltaja -> huoltajaCreateDto.getSukunimi().equals(existingHuoltaja.getSukunimi()))
-                    .map(existingHuoltaja -> this.mapper.map(huoltajaCreateDto, Henkilo.class))
+                    .map(existingHuoltaja -> {
+                        this.mapper.map(huoltajaCreateDto, existingHuoltaja);
+                        return existingHuoltaja;
+                    })
+                    .map(this.henkiloDataRepository::save)
                     .findFirst();
         }
         return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto));

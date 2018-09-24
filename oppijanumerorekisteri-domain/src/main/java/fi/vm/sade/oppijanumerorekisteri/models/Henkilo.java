@@ -176,7 +176,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<String> passinumerot;
 
-    @OneToMany(mappedBy = "lapsi", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lapsi", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @NotAudited
     private Set<HenkiloHuoltajaSuhde> huoltajat = new HashSet<>();
 
@@ -270,6 +270,22 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         private Boolean turvakielto = false;
 
         private String sukupuoli = "1";
+    }
 
+    // Preserves the existing list because orphan removal.
+    public void setHuoltajat(Set<HenkiloHuoltajaSuhde> huoltajat) {
+        if (this.huoltajat != null) {
+            this.huoltajat.clear();
+        }
+        else {
+            this.huoltajat = new HashSet<>();
+        }
+        this.huoltajat.addAll(huoltajat);
+    }
+
+    public void clearHuoltajat() {
+        if (this.huoltajat != null) {
+            this.huoltajat.clear();
+        }
     }
 }

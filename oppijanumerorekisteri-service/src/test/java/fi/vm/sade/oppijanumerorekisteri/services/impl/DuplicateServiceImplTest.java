@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.junit.Test;
@@ -57,6 +58,9 @@ public class DuplicateServiceImplTest {
 
     @MockBean
     private KayttooikeusClient kayttooikeusClient;
+
+    @MockBean
+    private KansalaisuusRepository kansalaisuusRepository;
 
     @Test
     public void getHenkiloDuplicateDtoListShouldReturnApplicationsFromAtaruAndHakuApp() {

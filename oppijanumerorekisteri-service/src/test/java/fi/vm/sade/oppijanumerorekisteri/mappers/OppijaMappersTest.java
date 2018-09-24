@@ -4,10 +4,12 @@ import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
+import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +20,9 @@ public class OppijaMappersTest {
 
     @Autowired
     private OrikaConfiguration mapper;
+
+    @MockBean
+    private KansalaisuusRepository kansalaisuusRepository;
 
     @Test
     public void mapperShouldMapOid() {
