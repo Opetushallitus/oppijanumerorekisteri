@@ -161,7 +161,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 .map(huoltajaCreateDtos -> huoltajaCreateDtos.stream()
                         .map(huoltajaCreateDto -> HenkiloHuoltajaSuhde.builder()
                                 .lapsi(henkiloSaved)
-                                .huoltaja(this.findOrCreateHuoltaja(huoltajaCreateDto))
+                                .huoltaja(this.findOrCreateHuoltaja(huoltajaCreateDto, henkiloSaved))
                                 .huoltajuustyyppiKoodi(huoltajaCreateDto.getHuoltajuustyyppiKoodi())
                                 .build())
                         .collect(Collectors.toSet()))
@@ -173,10 +173,18 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
     }
 
-    private Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto) {
+    private Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi) {
         Optional<Henkilo> huoltaja = Optional.empty();
         if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
             huoltaja = this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu());
+        }
+        else if (StringUtils.hasLength(huoltajaCreateDto.getEtunimet()) && StringUtils.hasLength(huoltajaCreateDto.getSukunimi())) {
+            huoltaja = lapsi.getHuoltajat().stream()
+                    .map(HenkiloHuoltajaSuhde::getHuoltaja)
+                    .filter(existingHuoltaja -> huoltajaCreateDto.getEtunimet().equals(existingHuoltaja.getEtunimet()))
+                    .filter(existingHuoltaja -> huoltajaCreateDto.getSukunimi().equals(existingHuoltaja.getSukunimi()))
+                    .map(existingHuoltaja -> this.mapper.map(huoltajaCreateDto, Henkilo.class))
+                    .findFirst();
         }
         return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto));
     }
