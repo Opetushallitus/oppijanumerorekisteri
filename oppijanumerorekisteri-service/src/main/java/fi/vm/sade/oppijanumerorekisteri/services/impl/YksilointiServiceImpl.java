@@ -56,7 +56,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     private final KoodistoService koodistoService;
 
     private final HenkiloRepository henkiloRepository;
-    private final HenkiloService henkiloService;
     private final HenkiloModificationService henkiloModificationService;
     private final KansalaisuusRepository kansalaisuusRepository;
     private final KielisyysRepository kielisyysRepository;
