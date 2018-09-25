@@ -247,7 +247,7 @@ public class YksilointiServiceTest {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-huoltajat.json");
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
         when(henkiloModificationService.createHenkilo(any(Henkilo.class))).thenAnswer(returnsFirstArg());
-        when(henkiloModificationService.createHenkilo(any(HuoltajaCreateDto.class))).thenAnswer((input) -> {
+        when(henkiloModificationService.findOrCreateHuoltaja(any(HuoltajaCreateDto.class), any(Henkilo.class))).thenAnswer((input) -> {
             HuoltajaCreateDto huoltajaCreateDto = input.getArgument(0);
             return Henkilo.builder().hetu(huoltajaCreateDto.getHetu()).etunimet(huoltajaCreateDto.getEtunimet()).sukunimi(huoltajaCreateDto.getSukunimi()).build();
         });

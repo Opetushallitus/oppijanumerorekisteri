@@ -10,6 +10,9 @@ public interface HenkiloModificationService {
 
     HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto);
 
+    //    @Transactional
+    Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi);
+
     Henkilo update(Henkilo henkilo);
 
     Henkilo disableHenkilo(String oid);

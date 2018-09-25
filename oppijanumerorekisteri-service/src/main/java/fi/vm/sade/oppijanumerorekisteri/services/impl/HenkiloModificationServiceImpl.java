@@ -181,7 +181,9 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
     }
 
-    private Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi) {
+    @Transactional
+    @Override
+    public Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi) {
         Optional<Henkilo> huoltaja = Optional.empty();
         if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
             huoltaja = this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu());

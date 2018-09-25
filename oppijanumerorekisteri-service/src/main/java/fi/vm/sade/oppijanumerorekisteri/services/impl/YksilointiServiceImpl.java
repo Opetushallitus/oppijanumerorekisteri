@@ -379,25 +379,24 @@ public class YksilointiServiceImpl implements YksilointiService {
         Set<HenkiloHuoltajaSuhde> huoltajat = Optional.ofNullable(yksiloityHenkilo.getHuoltajat())
                 .filter(collectionNotEmpty)
                 .map(huoltajas -> huoltajas.stream()
-                        // Filter off huoltajas with invalid hetu
-                        .filter(huoltaja -> StringUtils.isEmpty(huoltaja.getHetu()) || HetuUtils.hetuIsValid(huoltaja.getHetu()))
-                        .map(huoltaja -> this.findOrCreateHuoltaja(huoltaja, henkilo))
+                        .map(this::huoltajaToHuoltajaCreateDto)
+                        .map(huoltaja -> HenkiloHuoltajaSuhde.builder()
+                                .lapsi(henkilo)
+                                .huoltaja(this.henkiloModificationService.findOrCreateHuoltaja(huoltaja, henkilo))
+                                .huoltajuustyyppiKoodi(huoltaja.getHuoltajuustyyppiKoodi())
+                                .build())
                         .collect(Collectors.toSet()))
                 .orElseGet(HashSet::new);
         henkilo.setHuoltajat(huoltajat);
     }
 
-    private HenkiloHuoltajaSuhde findOrCreateHuoltaja(Huoltaja huoltaja, Henkilo lapsi) {
-        Henkilo persistedHuoltaja = this.henkiloRepository.findByHetu(huoltaja.getHetu())
-                .orElseGet(() -> this.henkiloModificationService.createHenkilo(HuoltajaCreateDto.builder()
-                        .etunimet(huoltaja.getEtunimi())
-                        .sukunimi(huoltaja.getSukunimi())
-                        .hetu(huoltaja.getHetu())
-                        .build()));
-        return HenkiloHuoltajaSuhde.builder()
+    private HuoltajaCreateDto huoltajaToHuoltajaCreateDto(Huoltaja huoltaja) {
+        // kansalaisuus jne tiedot ei löydy vtj soso rajapinnan skeemasta
+        return HuoltajaCreateDto.builder()
+                .hetu(huoltaja.getHetu())
+                .etunimet(huoltaja.getEtunimi())
+                .sukunimi(huoltaja.getSukunimi())
                 .huoltajuustyyppiKoodi(huoltaja.getHuoltajuustyyppiKoodi())
-                .lapsi(lapsi)
-                .huoltaja(persistedHuoltaja)
                 .build();
     }
 
