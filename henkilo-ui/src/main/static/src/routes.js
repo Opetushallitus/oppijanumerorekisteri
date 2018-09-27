@@ -37,6 +37,7 @@ export type RouteType = {
     getNaviTabs: (?string, ?HenkiloState, ?string) => Array<NaviTab>,
     isUnauthenticated: ?boolean,
     backButton: ?boolean,
+    henkiloType: ?string,
 }
 
 export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigation}>
@@ -74,12 +75,14 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
            title="TITLE_OPPIJA"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="oppija"
     />
     <Route path="/virkailija/:oid"
            component={HenkiloViewContainer}
            title="TITLE_VIRKAILIJA"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="virkailija"
     />
     <Route path="/admin/:oid"
            component={AdminRedirect}
@@ -87,17 +90,33 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
            getNaviTabs={updateHenkiloNavigation}
            backButton
     />
-    <Route path="/:henkiloType/:oid/vtjvertailu"
+    <Route path="/oppija/:oid/vtjvertailu"
            component={VtjVertailuPage}
            title="TITLE_VTJ_VERTAILU"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="oppija"
     />
-    <Route path="/:henkiloType/:oid/duplikaatit"
+    <Route path="/virkailija/:oid/vtjvertailu"
+           component={VtjVertailuPage}
+           title="TITLE_VTJ_VERTAILU"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+           henkiloType="virkailija"
+    />
+    <Route path="/oppija/:oid/duplikaatit"
            component={DuplikaatitContainer}
            title="TITLE_DUPLIKAATTIHAKU"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="oppija"
+    />
+    <Route path="/virkailija/:oid/duplikaatit"
+           component={DuplikaatitContainer}
+           title="TITLE_DUPLIKAATTIHAKU"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+           henkiloType="virkailija"
     />
     <Route path="/omattiedot"
            component={OmattiedotContainer}
