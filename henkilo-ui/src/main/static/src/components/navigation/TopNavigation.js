@@ -32,7 +32,7 @@ const TopNavigation = ({pathName, L, isRekisterinpitaja, organisaatiot, route, p
     const isNoAuthenticationPage = route.isUnauthenticated;
     const organisaatioList = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot;
     const roolit: Array<string> = parsePalveluRoolit(organisaatioList);
-    const naviTabs = route.getNaviTabs && route.getNaviTabs(params && params['oid'], henkilo, params && params['henkiloType']);
+    const naviTabs = route.getNaviTabs && route.getNaviTabs(params && params['oid'], henkilo, route.henkiloType);
     return (
         <div id="topNavigation" className={classNames({'oph-bg-blue': !isNoAuthenticationPage})}>
             {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
