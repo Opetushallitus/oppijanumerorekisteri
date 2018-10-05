@@ -187,6 +187,13 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                     .map(this::updateHenkilo)
                     .orElseGet(() -> createHenkilo(oppija));
 
+            Optional.ofNullable(oppija.getHenkilo().getOid()).ifPresent(oid -> henkilotByOid.put(oid, henkilo));
+            Optional.ofNullable(oppija.getHenkilo().getHetu()).ifPresent(hetu -> henkilotByHetu.put(hetu, henkilo));
+            Optional.ofNullable(oppija.getHenkilo().getPassinumero())
+                    .ifPresent(passinumero -> henkilotByPassinumero.put(passinumero, henkilo));
+            Optional.ofNullable(oppija.getHenkilo().getSahkoposti())
+                    .ifPresent(sahkoposti -> henkilotBySahkoposti.put(sahkoposti, henkilo));
+
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
             rivi.setHenkilo(henkilo);
             return rivi;
