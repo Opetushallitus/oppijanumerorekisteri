@@ -1,13 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,8 +17,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tuonti_rivi", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_tuonti_rivi_01", columnNames = {"tuonti_id", "henkilo_id"})
+@Table(name = "tuonti_rivi", indexes = {
+    @Index(name = "ix_tuonti_rivi_01", columnList = "tuonti_id, henkilo_id")
 })
 public class TuontiRivi extends IdentifiableAndVersionedEntity {
 
