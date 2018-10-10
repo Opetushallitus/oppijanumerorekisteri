@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Autowired
     private HenkiloViiteRepository henkiloViiteRepository;
+
+    @Autowired
+    private YksilointitietoRepository yksilointitietoRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -104,6 +108,96 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSAVIRHE", "170775-941A", false);
         assertThat(henkilo.getYksilointivirheet()).isEmpty();
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksilointivirheRemovedOnHetuToEmpty() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");
+        updateDto.setHetu("");
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='YKSILOINNISSAVIRHE'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("YKSILOINNISSAVIRHE", null, false);
+        assertThat(henkilo.getYksilointivirheet()).isEmpty();
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksilointivirheRemainsOnHetuToNull() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");
+        updateDto.setHetu(null);
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='YKSILOINNISSAVIRHE'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("YKSILOINNISSAVIRHE", "170798-9330", true);
+        assertThat(henkilo.getYksilointivirheet()).hasSize(1);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksilointitietoRemovedOnHetuChange() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
+        updateDto.setHetu("170775-989V");
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='YKSILOINNISSANIMIPIELESSA'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("YKSILOINNISSANIMIPIELESSA", "170775-989V", false);
+        assertThat(yksilointitietoRepository.findByHenkilo(henkilo)).isEmpty();
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksilointitietoRemovedOnHetuToEmpty() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
+        updateDto.setHetu("");
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='YKSILOINNISSANIMIPIELESSA'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("YKSILOINNISSANIMIPIELESSA", null, false);
+        assertThat(yksilointitietoRepository.findByHenkilo(henkilo)).isEmpty();
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksilointitietoRemainsOnHetuToNull() {
+        HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
+        updateDto.setHetu(null);
+
+        henkiloModificationService.updateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='YKSILOINNISSANIMIPIELESSA'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("YKSILOINNISSANIMIPIELESSA", "170798-915D", true);
+        assertThat(yksilointitietoRepository.findByHenkilo(henkilo)).isNotEmpty();
     }
 
     @Test

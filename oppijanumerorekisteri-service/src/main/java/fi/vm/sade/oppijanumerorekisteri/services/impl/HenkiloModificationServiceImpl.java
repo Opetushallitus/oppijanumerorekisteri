@@ -11,9 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
@@ -33,7 +31,7 @@ import java.util.stream.Stream;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
-import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysPalveluRepository;
+
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -47,6 +45,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final HenkiloRepository henkiloDataRepository;
     private final KielisyysRepository kielisyysRepository;
     private final KansalaisuusRepository kansalaisuusRepository;
+    private final YksilointitietoRepository yksilointitietoRepository;
     private final AsiayhteysPalveluRepository asiayhteysPalveluRepository;
 
     private final KayttooikeusClient kayttooikeusClient;
@@ -102,11 +101,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         if (!StringUtils.isEmpty(henkiloUpdateDto.getHetu()) && HetuUtils.hetuIsValid(henkiloUpdateDto.getHetu())) {
             henkiloUpdateDto.setSyntymaaika(HetuUtils.dateFromHetu(henkiloUpdateDto.getHetu()));
             henkiloUpdateDto.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloUpdateDto.getHetu()));
-            // In case hetu changes henkilo should be considered pristine from identification point of view
-            if (!Objects.equals(henkiloSaved.getHetu(), henkiloUpdateDto.getHetu())) {
-                henkiloSaved.getYksilointivirheet().clear();
-                henkiloSaved.setYksilointiYritetty(false);
-            }
+        }
+        // In case hetu changes henkilo should be considered pristine from identification point of view
+        if (henkiloUpdateDto.getHetu() != null && !Objects.equals(henkiloSaved.getHetu(), henkiloUpdateDto.getHetu())) {
+            yksilointitietoRepository.findByHenkilo(henkiloSaved).ifPresent(yksilointitietoRepository::delete);
+            henkiloSaved.getYksilointivirheet().clear();
+            henkiloSaved.setYksilointiYritetty(false);
         }
 
         this.henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, false);
