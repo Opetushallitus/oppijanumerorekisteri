@@ -134,8 +134,9 @@ public interface HenkiloJpaRepository {
     /**
      * Palauttaa yksilöityjen henkilöiden lukumäärän. Yksilöidyksi lasketaan
      * sekä manuaalisesti yksilöidyt hetuttomat että automaattisesti yksilöidyt
-     * hetulliset henkilöt.
+     * hetulliset henkilöt ja passivoidut.
      *
+     * @see YksilointiTila#OK
      * @param criteria hakukriteerit
      * @return onnistuneiden lukumäärä
      */
@@ -147,6 +148,8 @@ public interface HenkiloJpaRepository {
      * hetulliset henkilöt joille {@link Henkilo#yksilointiYritetty} on
      * <code>true</code>.
      *
+     * @see YksilointiTila#HETU_PUUTTUU
+     * @see YksilointiTila#VIRHE
      * @param criteria hakukriteerit
      * @return virheellisten lukumäärä
      */
@@ -157,6 +160,7 @@ public interface HenkiloJpaRepository {
      * Keskeneräisiä ovat hetulliset henkilöt joita ei ole vielä yksilöity ja
      * {@link Henkilo#yksilointiYritetty} on <code>false</code>.
      *
+     * @see YksilointiTila#KESKEN
      * @param criteria hakukriteerit
      * @return keskeneräisten lukumäärä
      */
