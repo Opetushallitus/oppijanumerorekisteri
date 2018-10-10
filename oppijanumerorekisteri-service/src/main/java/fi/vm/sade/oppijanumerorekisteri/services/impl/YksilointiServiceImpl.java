@@ -98,7 +98,15 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void yksiloiAutomaattisesti(final String henkiloOid) {
-        henkiloRepository.findByOidHenkilo(henkiloOid).ifPresent(this::yksiloiHenkilo);
+        henkiloRepository.findByOidHenkilo(henkiloOid).ifPresent(this::yksiloiAutomaattisesti);
+    }
+
+    private void yksiloiAutomaattisesti(Henkilo henkilo) {
+        if (StringUtils.isEmpty(henkilo.getHetu())) {
+            logger.warn("Henkilöä '{}' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo());
+            return;
+        }
+        yksiloiHenkilo(henkilo);
     }
 
     @Override
@@ -145,6 +153,9 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public Henkilo yksiloiManuaalisesti(final String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        if (StringUtils.isEmpty(henkilo.getHetu())) {
+            throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
+        }
         return yksiloiHenkilo(henkilo);
     }
 
@@ -163,10 +174,6 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private @NotNull Henkilo yksiloiHenkilo(@NotNull final Henkilo henkilo) {
-        if (StringUtils.isEmpty(henkilo.getHetu())) {
-            throw new ValidationException(String.format("Henkilöä '%s' ei voida yksilöidä koska hetu puuttuu", henkilo.getOidHenkilo()));
-        }
-
         if (henkilo.isHetuFake()) {
             throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
         }
