@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVirheDto;
 import fi.vm.sade.oppijanumerorekisteri.enums.YksilointivirheTila;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointivirhe;
+import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointivirheRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
@@ -30,10 +31,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 // Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
 // See IdentificationServiceIntegrationTests if you want to add more tests.
@@ -63,6 +64,9 @@ public class IdentificationServiceIntegrationTest {
 
     @Autowired
     private OrikaSpringMapper mapper;
+
+    @Autowired
+    private YksilointivirheRepository yksilointivirheRepository;
 
     @Before
     public void setup() {
@@ -122,5 +126,24 @@ public class IdentificationServiceIntegrationTest {
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ),
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ));
 
+    }
+
+    @Test
+    public void identifyHenkilosToimiiJosHenkilollaOnOllutToinenHetu() {
+        List<Henkilo> yksiloimattomat = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE hetu IN ('111111-1234', '010101-123N') ORDER BY id ASC", Henkilo.class)
+                .getResultList();
+        when(vtjClient.fetchHenkilo(eq("111111-1234"))).thenReturn(mockVtjClient.fetchHenkilo("010101-123N"));
+        when(vtjClient.fetchHenkilo(not(eq("111111-1234")))).thenThrow(new IllegalArgumentException("Ei pitäisi tapahtua"));
+
+        identificationService.identifyHenkilos(yksiloimattomat, 0L);
+
+        assertThat(yksiloimattomat).allSatisfy(henkilo -> {
+            Optional<Yksilointivirhe> yksilointivirhe = yksilointivirheRepository.findByHenkilo(henkilo);
+            assertThat(yksilointivirhe)
+                    .withFailMessage("Henkilöllä '%s' ei pitäisi olla yksilöintivirhettä: %s",
+                            henkilo.getOidHenkilo(), yksilointivirhe.map(Yksilointivirhe::getViesti))
+                    .isNotPresent();
+        });
     }
 }
