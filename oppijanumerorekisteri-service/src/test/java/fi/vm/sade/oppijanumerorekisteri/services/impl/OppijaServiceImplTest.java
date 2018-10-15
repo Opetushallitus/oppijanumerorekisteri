@@ -60,6 +60,9 @@ public class OppijaServiceImplTest {
     private PermissionChecker permissionCheckerMock;
     @Mock
     private ObjectMapper objectMapperMock;
+    @Mock
+    private EmailService emailService;
+
 
     @Before
     public void setup() {
@@ -67,9 +70,13 @@ public class OppijaServiceImplTest {
                 henkiloModificationServiceMock,
                 mapperMock,
                 henkiloRepositoryMock,
-                tuontiRepositoryMock, organisaatioRepositoryMock,
-                userDetailsHelperMock, permissionCheckerMock,
-                objectMapperMock);
+                tuontiRepositoryMock,
+                organisaatioRepositoryMock,
+                userDetailsHelperMock,
+                permissionCheckerMock,
+                objectMapperMock,
+                emailService);
+
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,

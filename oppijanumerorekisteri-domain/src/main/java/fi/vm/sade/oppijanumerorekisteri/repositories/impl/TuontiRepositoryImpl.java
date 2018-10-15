@@ -4,8 +4,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaContext;
@@ -47,6 +47,46 @@ public class TuontiRepositoryImpl implements TuontiRepositoryCustom {
             query.where(qOrganisaatio.oid.in(criteria.getOrganisaatioOids()));
         }
 
+        return query.fetch();
+    }
+
+    @Override
+    public List<Tuonti> findTuontiWithIlmoitustarve() {
+        QTuonti qTuonti = QTuonti.tuonti;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<Tuonti> query = new JPAQuery<>(entityManager)
+                .from(qTuonti)
+                .join(qTuonti.henkilot, qTuontiRivi)
+                .join(qTuontiRivi.henkilo, qHenkilo)
+                .select(qTuonti)
+                .where(qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
+                        .and(qTuonti.sahkoposti.isNotNull())
+                        .and( qHenkilo.yksilointiYritetty.isTrue()
+                                .and(qHenkilo.yksiloity.isFalse())
+                                .and(qHenkilo.yksiloityVTJ.isFalse()))
+                        .and(qTuonti.ilmoitustarveKasitelty.isFalse()) );
+        return query.fetch();
+    }
+
+    @Override
+    public List<Tuonti> findNotKasiteltyTuontiWithoutIlmoitustarve() {
+        QTuonti qTuonti = QTuonti.tuonti;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery<Tuonti> query = new JPAQuery<>(entityManager)
+                .from(qTuonti)
+                    .join(qTuonti.henkilot, qTuontiRivi)
+                    .join(qTuontiRivi.henkilo, qHenkilo)
+                .select(qTuonti)
+                .where( qTuonti.kasiteltyja.eq(qTuonti.kasiteltavia)
+                            .and( qTuonti.ilmoitustarveKasitelty.isFalse())
+                            .and( qHenkilo.yksilointiYritetty.isTrue()
+                                .and( qHenkilo.yksiloity.isTrue().or( qHenkilo.yksiloityVTJ.isTrue() )
+                                .or(qTuonti.sahkoposti.isNull()))
+                        ));
         return query.fetch();
     }
 

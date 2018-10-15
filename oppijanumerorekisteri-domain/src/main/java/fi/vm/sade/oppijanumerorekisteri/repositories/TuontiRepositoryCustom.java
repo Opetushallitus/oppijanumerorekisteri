@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TuontiRepositoryCustom {
 
@@ -26,5 +27,19 @@ public interface TuontiRepositoryCustom {
      * @return tuonnin rivit
      */
     List<TuontiRivi> findRiviBy(OppijaTuontiCriteria criteria, boolean isSuperUser);
+
+    /**
+     * Palauttaa ne Oppijoiden tuonnit, joissa on tarve lähettää sähköposti-ilmoitus
+     *
+     * @return oppijoiden tuonnit
+     */
+    List<Tuonti> findTuontiWithIlmoitustarve();
+
+    /**
+     * Palauttaa ne oppijoiden tuonnit, joissa ilmoitusta ei lähetetä ja joita ei ole merkattu käsitellyiksi
+     *
+     * @return oppijoiden tuonnit
+     */
+    List<Tuonti> findNotKasiteltyTuontiWithoutIlmoitustarve();
 
 }

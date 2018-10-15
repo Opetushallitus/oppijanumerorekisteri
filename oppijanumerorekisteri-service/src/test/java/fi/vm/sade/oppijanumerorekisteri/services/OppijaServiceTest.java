@@ -350,4 +350,6 @@ public class OppijaServiceTest {
         assertThat(henkiloRepository.findAll()).hasSize(1);
     }
 
+
+
 }

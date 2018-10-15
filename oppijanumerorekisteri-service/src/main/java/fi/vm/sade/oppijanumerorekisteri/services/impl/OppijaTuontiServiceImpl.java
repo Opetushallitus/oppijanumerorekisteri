@@ -18,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 
 import java.io.IOException;
@@ -33,14 +34,17 @@ import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toSet;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -55,6 +59,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
     private final ObjectMapper objectMapper;
+    private final EmailService emailService;
 
     @Override
     public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
@@ -236,6 +241,29 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
                 .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
                 .collect(toSet());
+    }
+
+    @Override
+    @Transactional
+    public void handleOppijaTuontiIlmoitus() {
+        List<Tuonti> tuontiList = tuontiRepository.findTuontiWithIlmoitustarve();
+        Set<String> sahkopostiosoitteet = tuontiList.stream()
+                .map(t -> t.getSahkoposti())
+                .collect(Collectors.toSet());
+        if(sahkopostiosoitteet.size() > 0) {
+            emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
+        }
+
+        // Asettaa ilmoitustarvekasitelty-tiedon trueksi tuonneille, joiden yhteyssähköpostiin on lähetetty ilmoitus ja
+        // joille sitä ei tarvitse lähettää
+        List<Tuonti> tuonnitWithoutIlmoitusTarve = tuontiRepository.findNotKasiteltyTuontiWithoutIlmoitustarve();
+        tuontiList.addAll(tuonnitWithoutIlmoitusTarve);
+        for ( Tuonti tuonti : tuontiList) {
+            tuonti.setIlmoitustarveKasitelty(true);
+        }
+
+        log.info("Oppijatuontien tilat käsitelty. Virheilmoitussähköposteja lähetetty " + sahkopostiosoitteet.size() + " ja tuonteja asetettu käsittelyiksi " + tuontiList.size());
+
     }
 
 }

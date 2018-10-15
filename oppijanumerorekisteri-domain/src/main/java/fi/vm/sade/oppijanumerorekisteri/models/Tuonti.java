@@ -47,6 +47,12 @@ public class Tuonti extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija_oid")
     private String kasittelijaOid;
 
+    /*
+     * Yksilöintipuutteisiin liittyvä ilmoitustarve käsitelty
+     */
+    @Column(name = "ilmoitustarve_kasitelty")
+    private boolean ilmoitustarveKasitelty;
+
     /**
      * Käsitelty data.
      */

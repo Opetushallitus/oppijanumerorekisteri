@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.configurations.AsyncConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
