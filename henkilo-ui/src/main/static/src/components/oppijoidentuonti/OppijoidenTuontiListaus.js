@@ -80,7 +80,7 @@ class OppijoidenTuontiListaus extends React.Component {
 
     renderOppijaLinkki(henkilo) {
         const linkki = `oppija/${henkilo.oid}`;
-        const nimi = [henkilo.etunimet, henkilo.sukunimi].join(' ');
+        const nimi = `${henkilo.sukunimi}, ${henkilo.etunimet}`;
         return <Link to={linkki}>{nimi}</Link>;
     }
 
