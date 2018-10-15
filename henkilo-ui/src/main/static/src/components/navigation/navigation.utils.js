@@ -1,7 +1,6 @@
 // @flow
 import {
     mainNavigation,
-    oppijaNavi,
     palvelukayttajaNavigation
 } from "./navigationconfigurations";
 import {henkiloViewTabs} from "./NavigationTabs";
