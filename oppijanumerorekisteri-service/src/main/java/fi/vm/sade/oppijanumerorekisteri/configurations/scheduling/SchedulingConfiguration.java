@@ -20,9 +20,10 @@ public class SchedulingConfiguration {
     @Bean(destroyMethod = "stop")
     Scheduler scheduler(@Qualifier("dataSource") DataSource dataSource,
                         YksilointiTask yksilointiTask,
+                        CasClientSessionCleanerTask casClientSessionCleanerTask,
                         HenkilotietomuutosHetuSyncTask henkilotietomuutosHetuSyncTask) {
         Scheduler scheduler = Scheduler.create(dataSource)
-                .startTasks(yksilointiTask, henkilotietomuutosHetuSyncTask)
+                .startTasks(yksilointiTask, casClientSessionCleanerTask, henkilotietomuutosHetuSyncTask)
                 .threads(1)
                 .build();
         scheduler.start();

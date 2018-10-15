@@ -4,9 +4,9 @@ import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
+import org.jasig.cas.client.session.SessionMappingStorage;
 import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
-import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,12 +31,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private CasProperties casProperties;
     private OphProperties ophProperties;
     private Environment environment;
+    private SessionMappingStorage sessionMappingStorage;
     
     @Autowired
-    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, Environment environment) {
+    public SecurityConfiguration(CasProperties casProperties, OphProperties ophProperties, Environment environment,
+                                 SessionMappingStorage sessionMappingStorage) {
         this.casProperties = casProperties;
         this.ophProperties = ophProperties;
         this.environment = environment;
+        this.sessionMappingStorage = sessionMappingStorage;
     }
 
     @Bean
@@ -91,6 +94,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         SingleSignOutFilter singleSignOutFilter = new SingleSignOutFilter();
         singleSignOutFilter.setCasServerUrlPrefix(this.ophProperties.url("url-cas"));
         singleSignOutFilter.setIgnoreInitConfiguration(true);
+        singleSignOutFilter.setSessionMappingStorage(sessionMappingStorage);
         return singleSignOutFilter;
     }
 

@@ -13,15 +13,10 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfigurati
 import fi.vm.sade.oppijanumerorekisteri.dto.MuutostietoHetus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 
 import static org.apache.http.HttpStatus.SC_OK;
 
@@ -48,7 +43,7 @@ public class MuutostietoClientImpl implements MuutostietoClient {
     }
 
     @Override
-    public List<String> sendHetus(MuutostietoHetus hetus) {
+    public void sendHetus(MuutostietoHetus hetus) {
         OphHttpEntity entity = new OphHttpEntity.Builder()
                 .content(serializeHetus(hetus))
                 .build();
@@ -58,7 +53,7 @@ public class MuutostietoClientImpl implements MuutostietoClient {
                 .setEntity(entity).build())) {
             int responseCode = response.getStatusCode();
             if (responseCode == SC_OK) {
-                return deserializeHetus(response);
+                return;
             }
             throw new RestClientException(String.format("Henkilotietomuutos-service returned error status code %d", responseCode));
         }
@@ -72,15 +67,6 @@ public class MuutostietoClientImpl implements MuutostietoClient {
             return objectMapper.writeValueAsString(hetus);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Could not serialize muutostietohetus: ", e);
-        }
-    }
-
-    private List<String> deserializeHetus(OphHttpResponse response) {
-        try (InputStream is = response.asInputStream()) {
-            return objectMapper.readValue(is, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
-        } catch (IOException e) {
-            log.error("Failed to read response: {}", e);
-            return Collections.emptyList();
         }
     }
 

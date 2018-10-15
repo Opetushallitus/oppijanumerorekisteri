@@ -15,7 +15,11 @@ import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
+import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
+import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
@@ -40,13 +44,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -81,6 +81,9 @@ public class HenkiloModificationServiceImplTest {
 
     @Mock
     private KansalaisuusRepository kansalaisuusRepositoryMock;
+
+    @Mock
+    private YksilointitietoRepository yksilointitietoRepositoryMock;
 
     @Mock
     private KayttooikeusClient kayttooikeusClient;

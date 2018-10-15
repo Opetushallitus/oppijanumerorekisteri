@@ -1,21 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
+import lombok.*;
+
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Oppijoita tuodaan oppijanumerorekisteriin oppilashallintojärjestelmistä
@@ -70,6 +59,17 @@ public class Tuonti extends IdentifiableAndVersionedEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tuonti_id", nullable = false, foreignKey = @ForeignKey(name = "fk_tuonti_rivi_tuonti"))
     private Set<TuontiRivi> henkilot = new HashSet<>();
+
+    /**
+     * Organisaatiot joihin oppijat liitetään.
+     */
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @JoinTable(name = "tuonti_organisaatio",
+            joinColumns = @JoinColumn(name = "tuonti_id", referencedColumnName = "id"),
+            foreignKey = @ForeignKey(name = "fk_tuonti_organisaatio_tuonti"),
+            inverseJoinColumns = @JoinColumn(name = "organisaatio_id", referencedColumnName = "id"),
+            inverseForeignKey = @ForeignKey(name = "fk_tuonti_organisaatio_organisaatio"))
+    private Set<Organisaatio> organisaatiot;
 
     public boolean isKasitelty() {
         return kasiteltyja >= kasiteltavia;

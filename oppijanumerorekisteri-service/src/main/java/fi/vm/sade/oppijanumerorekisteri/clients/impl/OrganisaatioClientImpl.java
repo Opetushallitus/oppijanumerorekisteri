@@ -1,14 +1,24 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.httpclient.OphHttpClient;
 import fi.vm.sade.javautils.httpclient.OphHttpResponse;
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
+
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
+
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.util.Collections.singletonMap;
 
 @Service
 @Transactional
@@ -37,6 +47,22 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
                     }
                     return Optional.of(objectMapper.readValue(response.asInputStream(), OrganisaatioDto.class));
                 });
+    }
+
+    @Override
+    public Set<String> getChildOids(String oid, boolean rekursiivisesti, OrganisaatioTilat tilat) {
+        return httpClient.get("organisaatio-service.organisaatio.byOid.childoids", oid, singletonMap("rekursiivisesti", rekursiivisesti), tilat.asMap())
+                .expectStatus(HttpStatus.OK.value())
+                .accept(OphHttpClient.JSON)
+                .retryOnError(MAX_RETRY_COUNT)
+                .execute((OphHttpResponse response) -> objectMapper
+                        .readValue(response.asInputStream(), ChildOids.class).getOids());
+    }
+
+    @Getter
+    @Setter
+    private static class ChildOids {
+        private Set<String> oids;
     }
 
 }

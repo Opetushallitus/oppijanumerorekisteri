@@ -1,9 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.Page;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -13,29 +12,28 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptySet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import static java.util.stream.Collectors.toSet;
-import java.util.stream.Stream;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
+import static java.util.stream.Collectors.toSet;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OppijaServiceImplTest {
@@ -59,9 +57,7 @@ public class OppijaServiceImplTest {
     @Mock
     private UserDetailsHelper userDetailsHelperMock;
     @Mock
-    private PermissionChecker permissionChecker;
-    @Mock
-    private KayttooikeusClient kayttooikeusClientMock;
+    private PermissionChecker permissionCheckerMock;
     @Mock
     private ObjectMapper objectMapperMock;
     @Mock
@@ -74,10 +70,13 @@ public class OppijaServiceImplTest {
                 henkiloModificationServiceMock,
                 mapperMock,
                 henkiloRepositoryMock,
-                tuontiRepositoryMock, organisaatioRepositoryMock,
-                kayttooikeusClientMock, userDetailsHelperMock,
+                tuontiRepositoryMock,
+                organisaatioRepositoryMock,
+                userDetailsHelperMock,
+                permissionCheckerMock,
                 objectMapperMock,
                 emailService);
+
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,
@@ -85,13 +84,13 @@ public class OppijaServiceImplTest {
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
                 organisaatioRepositoryMock, userDetailsHelperMock,
-                permissionChecker, kayttooikeusClientMock);
+                permissionCheckerMock);
     }
 
     @Test
     public void listMastersShouldFilterOrganisaatioOids() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder()
                 .organisaatioOids(Stream.of("oid1", "oid2").collect(toSet()))
                 .build();
@@ -109,7 +108,7 @@ public class OppijaServiceImplTest {
     @Test
     public void listMastersShouldSetOrganisaatioOidsWhenCriteriaNull() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
@@ -125,7 +124,7 @@ public class OppijaServiceImplTest {
     @Test
     public void listMastersShouldSetOrganisaatioOidsWhenCriteriaEmpty() {
         Set<String> organisaatiot = Stream.of("oid1", "oid3").collect(toSet());
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = OppijaTuontiCriteria.builder().organisaatioOids(emptySet()).build();
         int page = 1;
         int count = 20;
@@ -141,7 +140,7 @@ public class OppijaServiceImplTest {
     @Test
     public void listMastersShouldSkipFindByWhenOrganisaatiotEmpty() {
         Set<String> organisaatiot = emptySet();
-        when(kayttooikeusClientMock.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(organisaatiot);
+        when(permissionCheckerMock.getOrganisaatioOids(any(), any())).thenReturn(organisaatiot);
         OppijaTuontiCriteria input = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
@@ -154,7 +153,7 @@ public class OppijaServiceImplTest {
 
     @Test
     public void listMastersByTest() {
-        when(permissionChecker.isSuperUser()).thenReturn(true);
+        when(permissionCheckerMock.isSuperUser()).thenReturn(true);
         Henkilo henkilo1slave = new Henkilo();
         henkilo1slave.setOidHenkilo("oid1");
         Henkilo henkilo2 = new Henkilo();

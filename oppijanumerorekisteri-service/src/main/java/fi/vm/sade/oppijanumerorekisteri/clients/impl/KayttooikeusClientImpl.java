@@ -1,34 +1,26 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.generic.rest.CachingRestClient;
+import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.PermissionCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
-import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
-import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import java.util.Optional;
-import static java.util.stream.Collectors.toSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
 
 @Component
 public class KayttooikeusClientImpl implements KayttooikeusClient {
@@ -143,26 +135,6 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         } catch (IOException e) {
             throw new RestClientException(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilot(String henkiloOid) {
-        try {
-            String url = urlConfiguration.url("kayttooikeus-service.henkilo.organisaatiohenkilo", henkiloOid);
-            try (InputStream response = cachingRestClient.get(url)) {
-                return objectMapper.readValue(response, new TypeReference<List<OrganisaatioHenkiloDto>>() {});
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
-    public Set<String> getAktiivisetOrganisaatioHenkilot(String henkiloOid) {
-        return getOrganisaatioHenkilot(henkiloOid).stream()
-                .filter(organisaatioHenkilo -> !organisaatioHenkilo.isPassivoitu())
-                .map(OrganisaatioHenkiloDto::getOrganisaatioOid)
-                .collect(toSet());
     }
 
     @Override

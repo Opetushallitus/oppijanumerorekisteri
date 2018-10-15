@@ -2,6 +2,9 @@ package fi.vm.sade.oppijanumerorekisteri.clients;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,6 +30,15 @@ public interface OrganisaatioClient {
      * @return organisaatio
      */
     Optional<OrganisaatioDto> getByOid(String oid);
+
+    /**
+     * Palauttaa organisaation aliorganisaatiot.
+     * @param oid organisaatio
+     * @param rekursiivisesti haetaanko aliorganisaatiot rekursiivisesti
+     * @param tilat organisaatioiden tilat
+     * @return aliorganisaatiot
+     */
+    Set<String> getChildOids(String oid, boolean rekursiivisesti, OrganisaatioTilat tilat);
 
     @Getter
     @Setter

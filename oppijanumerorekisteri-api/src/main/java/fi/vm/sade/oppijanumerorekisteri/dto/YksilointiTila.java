@@ -3,7 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 public enum YksilointiTila {
 
     /**
-     * Henkilö on yksilöity (joko manuaaalisesti tai automaattisesti).
+     * Henkilö on yksilöity (joko manuaaalisesti tai automaattisesti) tai passivoitu.
      */
     OK,
     /**

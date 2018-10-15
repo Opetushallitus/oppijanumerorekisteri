@@ -244,6 +244,9 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
      * @see YksilointiTila tilojen määritykset
      */
     public YksilointiTila getYksilointiTila() {
+        if (duplicate || passivoitu) {
+            return YksilointiTila.OK;
+        }
         if (yksiloity || yksiloityVTJ) {
             return YksilointiTila.OK;
         }

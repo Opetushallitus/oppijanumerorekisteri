@@ -63,7 +63,7 @@ public class OppijaServiceTest {
     @Before
     public void setup() {
         when(userDetailsHelper.findCurrentUserOid()).thenReturn(Optional.of("user1"));
-        when(kayttooikeusClient.getAktiivisetOrganisaatioHenkilot(any())).thenReturn(singleton("1.2.3.4"));
+        when(permissionChecker.getOrganisaatioOids(any(), any())).thenReturn(singleton("1.2.3.4"));
     }
 
     @After
@@ -115,6 +115,44 @@ public class OppijaServiceTest {
         assertThat(readDto.getHenkilot())
                 .extracting(OppijaTuontiRiviReadDto::getTunniste)
                 .containsExactly("tunniste1");
+        List<Henkilo> henkilot = henkiloRepository.findAll();
+        assertThat(henkilot).hasSize(1);
+        Henkilo henkilo = henkilot.iterator().next();
+        assertThat(henkilo).extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getSukunimi)
+                .containsExactly("180897-945K", "etu", "suku");
+    }
+
+    @Test
+    public void getOrCreateShouldCreateNewHenkiloWithSameHetu() {
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste1")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .oid("oid1")
+                                .hetu("180897-945K")
+                                .etunimet("etu")
+                                .kutsumanimi("etu")
+                                .sukunimi("suku")
+                                .build())
+                        .build(), OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste2")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .oid("oid1")
+                                .hetu("180897-945K")
+                                .etunimet("etu")
+                                .kutsumanimi("etu")
+                                .sukunimi("suku")
+                                .build())
+                        .build())
+                        .collect(toList()))
+                .build();
+
+        OppijaTuontiReadDto readDto = create(createDto);
+
+        assertThat(readDto.getId()).isNotNull();
+        assertThat(readDto.getHenkilot())
+                .extracting(OppijaTuontiRiviReadDto::getTunniste)
+                .containsExactlyInAnyOrder("tunniste1", "tunniste2");
         List<Henkilo> henkilot = henkiloRepository.findAll();
         assertThat(henkilot).hasSize(1);
         Henkilo henkilo = henkilot.iterator().next();

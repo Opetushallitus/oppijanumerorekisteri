@@ -534,6 +534,8 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return criteria.getQuery(entityManager, qHenkilo)
                 .where(anyOf(
+                        qHenkilo.duplicate.isTrue(),
+                        qHenkilo.passivoitu.isTrue(),
                         qHenkilo.yksiloity.isTrue(),
                         qHenkilo.yksiloityVTJ.isTrue()
                 )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
@@ -543,6 +545,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public long countByYksilointiVirheet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return criteria.getQuery(entityManager, qHenkilo)
+                .where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse())
                 .where(anyOf(
                         allOf(
                                 qHenkilo.hetu.isNull(),
@@ -563,6 +566,8 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         return criteria.getQuery(entityManager, qHenkilo)
                 .where(allOf(
+                        qHenkilo.duplicate.isFalse(),
+                        qHenkilo.passivoitu.isFalse(),
                         qHenkilo.hetu.isNotNull(),
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),

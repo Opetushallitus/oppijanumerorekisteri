@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
@@ -29,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
 import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -55,13 +56,18 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
-    private final KayttooikeusClient kayttooikeusClient;
     private final UserDetailsHelper userDetailsHelper;
+    private final PermissionChecker permissionChecker;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
 
     @Override
     public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
+        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByKayttaja();
+        if (organisaatiot.isEmpty()) {
+            throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joihin oppijat liitetään", userDetailsHelper.getCurrentUserOid()));
+        }
+
         final byte[] data;
         try {
             data = objectMapper.writeValueAsBytes(dto);
@@ -76,6 +82,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         tuonti.setSahkoposti(dto.getSahkoposti());
         tuonti.setData(tuontiData);
         tuonti.setKasiteltavia(dto.getHenkilot().size());
+        tuonti.setOrganisaatiot(organisaatiot);
         tuonti = tuontiRepository.save(tuonti);
 
         return mapper.map(tuonti, OppijaTuontiPerustiedotReadDto.class);
@@ -88,6 +95,11 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .orElseThrow(DataInconsistencyException::new);
         if (tuonti.isKasitelty()) {
             return true;
+        }
+
+        Set<Organisaatio> organisaatiot = tuonti.getOrganisaatiot();
+        if (organisaatiot.isEmpty()) {
+            throw new DataInconsistencyException(String.format("Tuonnissa %s ei ole liitettynä yhtään organisaatiota", tuonti.getId()));
         }
 
         final OppijaTuontiCreateDto dto;
@@ -106,7 +118,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
         List<OppijaTuontiRiviCreateDto> kasiteltavat = dto.getHenkilot().subList(fromIndex, toIndex);
         String kasittelijaOid = tuonti.getKasittelijaOid();
-        Set<TuontiRivi> rivit = create(kasiteltavat, kasittelijaOid);
+        Set<TuontiRivi> rivit = create(kasiteltavat, kasittelijaOid, organisaatiot);
 
         tuonti.getHenkilot().addAll(rivit);
         tuonti.setKasiteltyja(toIndex);
@@ -114,13 +126,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         return tuonti.isKasitelty();
     }
 
-    private Set<TuontiRivi> create(List<OppijaTuontiRiviCreateDto> henkilot, String kasittelijaOid) {
-        // haetaan käyttäjän organisaatiot (joihin oppijat liitetään)
-        Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByHenkilo(kasittelijaOid);
-        if (organisaatiot.isEmpty()) {
-            throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppijat liitetään", kasittelijaOid));
-        }
-
+    private Set<TuontiRivi> create(List<OppijaTuontiRiviCreateDto> henkilot, String kasittelijaOid, Set<Organisaatio> organisaatiot) {
         // haetaan jo luodut henkilöt
         // oid
         Set<String> oids = henkilot.stream()
@@ -186,6 +192,13 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                     .map(this::updateHenkilo)
                     .orElseGet(() -> createHenkilo(oppija));
 
+            Optional.ofNullable(oppija.getHenkilo().getOid()).ifPresent(oid -> henkilotByOid.put(oid, henkilo));
+            Optional.ofNullable(oppija.getHenkilo().getHetu()).ifPresent(hetu -> henkilotByHetu.put(hetu, henkilo));
+            Optional.ofNullable(oppija.getHenkilo().getPassinumero())
+                    .ifPresent(passinumero -> henkilotByPassinumero.put(passinumero, henkilo));
+            Optional.ofNullable(oppija.getHenkilo().getSahkoposti())
+                    .ifPresent(sahkoposti -> henkilotBySahkoposti.put(sahkoposti, henkilo));
+
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
             rivi.setHenkilo(henkilo);
             return rivi;
@@ -216,9 +229,14 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     }
 
     @Override
-    public Set<Organisaatio> getOrCreateOrganisaatioByHenkilo(String henkiloOid) {
+    public Set<String> getOrganisaatioOidsByKayttaja() {
+        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
+    }
+
+    @Override
+    public Set<Organisaatio> getOrCreateOrganisaatioByKayttaja() {
         // haetaan käyttäjän organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
-        Set<String> organisaatioOids = kayttooikeusClient.getAktiivisetOrganisaatioHenkilot(henkiloOid);
+        Set<String> organisaatioOids = getOrganisaatioOidsByKayttaja();
         return organisaatioOids.stream()
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
                 .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
