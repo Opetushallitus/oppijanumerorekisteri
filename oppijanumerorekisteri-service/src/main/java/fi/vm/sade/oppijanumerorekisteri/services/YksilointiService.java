@@ -1,22 +1,43 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysKayttooikeusDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.YksilointitietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiVertailuDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
 public interface YksilointiService {
 
+    /**
+     * Automaattisen massayksilöintiprosessin käynnistämä yksilöinti. Ohittaa henkilöt joita ei löydy.
+     * @param henkiloOid Henkilön oid
+     */
     void yksiloiAutomaattisesti(String henkiloOid);
 
+    /**
+     * Tallentaa henkilön yksilöintiprosessissa tulleen virheen.
+     * @param henkiloOid Henkilön oid
+     * @param exception Yksilöintiprosessin virhe
+     */
     void tallennaYksilointivirhe(String henkiloOid, Exception exception);
 
+    /**
+     * Käsin käynnistetty yksilöinti. Yleensä virkailija yliajaa henkilön tiedot tämän avulla. Olettaa oidia vastaavan
+     * henkilön löytymistä.
+     * @param henkiloOid Henkilön oid
+     * @return Yksilöity henkilö
+     */
     Henkilo yksiloiManuaalisesti(final String henkiloOid);
 
+    /**
+     * Virkailijan käynnistämä hetuttoman henkilön yksilöinti.
+     * @param henkiloOid Henkilön oid
+     * @return Yksilöity henkilö
+     */
     Henkilo hetuttomanYksilointi(String henkiloOid);
 
+    /**
+     * Purkaa virkailijan käsin yksilöimän henkilön yksilöinnin
+     * @param henkiloOid Henkilön oid
+     * @return Yksilöimätön henkilö
+     */
     Henkilo puraHeikkoYksilointi(final String henkiloOid);
 
     /**
@@ -29,15 +50,15 @@ public interface YksilointiService {
     /**
      * Hakee henkilon yksilointitiedot oidin perusteella
      *
-     * @param henkiloOid
+     * @param henkiloOid Henkilön oid
      * @return YksilointitietoDto
      */
     YksilointitietoDto getYksilointiTiedot(String henkiloOid);
 
-    /*
+    /**
      * Yliajaa henkilön tiedot VTJ:n tiedoilla.
      *
-     * @param henkiloOid
+     * @param henkiloOid Henkilön oid
      */
     void yliajaHenkilonTiedot(String henkiloOid);
 

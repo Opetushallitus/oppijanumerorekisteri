@@ -34,7 +34,6 @@ public class HenkiloReadDto {
     private String kasittelijaOid;
     private KielisyysReadDto asiointiKieli;
     private KielisyysReadDto aidinkieli;
-    private HenkiloReadDto huoltaja;
     private Set<KielisyysReadDto> kielisyys;
     private Set<KansalaisuusReadDto> kansalaisuus;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;

@@ -1,13 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloForceUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
@@ -22,10 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -49,6 +55,9 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Autowired
     private YksilointitietoRepository yksilointitietoRepository;
+
+    @MockBean
+    private KoodistoService koodistoService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -235,6 +244,66 @@ public class HenkiloModificationServiceIntegrationTest {
         Throwable throwable = catchThrowable(() -> henkiloModificationService.forceUpdateHenkilo(updateDto));
 
         assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void huoltajaCreateValidoiHuoltajanHuoltajatyyppi() {
+        KoodiType koodiType = new KoodiType();
+        koodiType.setKoodiArvo("03");
+        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(koodiType));
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .hetu("hetu")
+                .huoltajuustyyppiKoodi("VÄÄRÄ TYYPPI")
+                .kansalaisuusKoodi(Collections.singleton("246"))
+                .build();
+
+        Throwable throwable = catchThrowable(() -> henkiloModificationService.createHenkilo(huoltajaCreateDto));
+
+        assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void huoltajaCreateValidoiHuoltajanKansalaisuus() {
+        KoodiType huoltajuustyyppi = new KoodiType();
+        huoltajuustyyppi.setKoodiArvo("03");
+        KoodiType kansalaisuustyyppi = new KoodiType();
+        kansalaisuustyyppi.setKoodiArvo("246");
+        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
+        given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .hetu("hetu")
+                .huoltajuustyyppiKoodi("03")
+                .kansalaisuusKoodi(Collections.singleton("VÄÄRÄ TYYPPI"))
+                .build();
+
+        Throwable throwable = catchThrowable(() -> henkiloModificationService.createHenkilo(huoltajaCreateDto));
+
+        assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void huoltajaCreate() {
+        KoodiType huoltajuustyyppi = new KoodiType();
+        huoltajuustyyppi.setKoodiArvo("03");
+        KoodiType kansalaisuustyyppi = new KoodiType();
+        kansalaisuustyyppi.setKoodiArvo("246");
+        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
+        given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .hetu("hetu")
+                .huoltajuustyyppiKoodi("03")
+                .kansalaisuusKoodi(Collections.singleton("246"))
+                .build();
+
+        Henkilo huoltaja = henkiloModificationService.createHenkilo(huoltajaCreateDto);
+        assertThat(huoltaja).extracting(Henkilo::getHetu).containsExactly("hetu");
+        assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
     }
 
 }

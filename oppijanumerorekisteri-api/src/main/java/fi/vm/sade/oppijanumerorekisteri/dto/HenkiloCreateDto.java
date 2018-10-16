@@ -67,8 +67,6 @@ public class HenkiloCreateDto implements Serializable {
 
     private Date vtjsynced;
 
-    private HenkiloCreateDto huoltaja;
-
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 
     private Set<String> passinumerot = new HashSet<>();

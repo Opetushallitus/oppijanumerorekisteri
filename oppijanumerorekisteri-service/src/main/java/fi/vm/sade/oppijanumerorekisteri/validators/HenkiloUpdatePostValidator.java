@@ -52,6 +52,7 @@ public class HenkiloUpdatePostValidator implements Validator {
         validateAidinkieli(dto, validator);
         validateKansalaisuus(dto, validator);
         validateYhteystiedot(dto, validator);
+
     }
 
     private void validateKutsumanimi(HenkiloUpdateDto dto, Errors errors) {

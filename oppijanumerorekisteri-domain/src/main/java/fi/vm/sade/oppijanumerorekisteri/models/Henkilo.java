@@ -2,17 +2,18 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 
 
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
-import java.time.LocalDate;
-
 import lombok.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder(builderClassName = "builder")
 @Getter @Setter
@@ -141,11 +142,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String oppijanumero;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "huoltaja_id")
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private Henkilo huoltaja;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
@@ -180,12 +176,16 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<String> passinumerot;
 
+    @OneToMany(mappedBy = "lapsi", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotAudited
+    private Set<HenkiloHuoltajaSuhde> huoltajat = new HashSet<>();
+
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
     }
 
     public void clearKansalaisuus() {
-        if(this.kansalaisuus == null) {
+        if (this.kansalaisuus == null) {
             this.kansalaisuus = new HashSet<>();
         }
         this.kansalaisuus.clear();
@@ -270,6 +270,22 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         private Boolean turvakielto = false;
 
         private String sukupuoli = "1";
+    }
 
+    // Preserves the existing list because orphan removal.
+    public void setHuoltajat(Set<HenkiloHuoltajaSuhde> huoltajat) {
+        if (this.huoltajat != null) {
+            this.huoltajat.clear();
+        }
+        else {
+            this.huoltajat = new HashSet<>();
+        }
+        this.huoltajat.addAll(huoltajat);
+    }
+
+    public void clearHuoltajat() {
+        if (this.huoltajat != null) {
+            this.huoltajat.clear();
+        }
     }
 }

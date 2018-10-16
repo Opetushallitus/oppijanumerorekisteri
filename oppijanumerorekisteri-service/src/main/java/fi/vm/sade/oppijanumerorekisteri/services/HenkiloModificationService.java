@@ -10,6 +10,8 @@ public interface HenkiloModificationService {
 
     HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto);
 
+    Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi);
+
     Henkilo update(Henkilo henkilo);
 
     Henkilo disableHenkilo(String oid);
@@ -19,6 +21,13 @@ public interface HenkiloModificationService {
     List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
 
     HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
+
+    /**
+     * Luo huoltajan. Tämä pitää erikseen liittää lapseen HenkiloHuoltajaSuhde luokan kautta.
+     * @param huoltajaCreateDto Huoltajan tiedot hetulla tai ilman
+     * @return Luotu huoltaja
+     */
+    Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto);
 
     Henkilo createHenkilo(Henkilo henkiloCreate);
 

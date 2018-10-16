@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
@@ -10,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
+import org.assertj.core.groups.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +19,7 @@ import org.mockito.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
@@ -124,6 +127,34 @@ public class YksilointiServiceTest {
     }
 
     @Test
+    public void yksiloiPelkallaHetulla() {
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+        this.henkilo.setEtunimet(null);
+        this.henkilo.setKutsumanimi(null);
+        this.henkilo.setSukunimi(null);
+
+        when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
+        Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
+        assertThat(yksiloity).extracting(Henkilo::isYksiloityVTJ).containsExactly(true);
+        verify(this.yksilointitietoRepository, times(0)).save(any());
+    }
+
+    @Test
+    public void yksiloiManuaalisestiPelkallaHetullaJaTyhjillaNimilla() {
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
+        this.henkilo.setEtunimet("");
+        this.henkilo.setKutsumanimi("");
+        this.henkilo.setSukunimi("");
+
+        when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
+        Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
+        assertThat(yksiloity).extracting(Henkilo::isYksiloityVTJ).containsExactly(true);
+        verify(this.yksilointitietoRepository, times(0)).save(any());
+    }
+
+    @Test
     public void paivitaTurvakieltoYksiloiManuaalisesti() {
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-ok.json");
         this.henkilo.setTurvakielto(true);
@@ -203,6 +234,31 @@ public class YksilointiServiceTest {
 
         Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
         assertThat(yksiloity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
+        verify(henkiloModificationService).update(eq(yksiloity));
+    }
+
+    @Test
+    public void huoltajatTallentuvatKorvatenVanhan() {
+        this.henkilo.setHuoltajat(Collections.singleton(HenkiloHuoltajaSuhde.builder()
+                .huoltaja(Henkilo.builder().oidHenkilo("vanhahuoltaja").build())
+                .lapsi(this.henkilo)
+                .huoltajuustyyppiKoodi("")
+                .build()));
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-huoltajat.json");
+        when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        when(henkiloModificationService.createHenkilo(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+        when(henkiloModificationService.findOrCreateHuoltaja(any(HuoltajaCreateDto.class), any(Henkilo.class))).thenAnswer((input) -> {
+            HuoltajaCreateDto huoltajaCreateDto = input.getArgument(0);
+            return Henkilo.builder().hetu(huoltajaCreateDto.getHetu()).etunimet(huoltajaCreateDto.getEtunimet()).sukunimi(huoltajaCreateDto.getSukunimi()).build();
+        });
+
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+        assertThat(yksiloity.getHuoltajat().stream().map(HenkiloHuoltajaSuhde::getHuoltaja))
+                .extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getSukunimi)
+                .containsExactlyInAnyOrder(Tuple.tuple("200998-9237", null, null), Tuple.tuple(null, "Tappi Topio", "Testaaja"));
+        assertThat(yksiloity.getHuoltajat())
+                .extracting(HenkiloHuoltajaSuhde::getHuoltajuustyyppiKoodi)
+                .containsExactly("03", "03");
         verify(henkiloModificationService).update(eq(yksiloity));
     }
 

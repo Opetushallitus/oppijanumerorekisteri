@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.Set;
+
 import static java.util.stream.Collectors.toSet;
 
 @Component
@@ -28,12 +30,12 @@ public class HenkiloCreatePostValidator implements Validator {
     }
 
     @Override
-    public boolean supports(Class<?> aClass) {
+    public boolean supports(@NotNull Class<?> aClass) {
         return Henkilo.class.equals(aClass);
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
+    public void validate(Object o, @NotNull Errors errors) {
         Henkilo henkilo = (Henkilo) o;
 
         String hetu = henkilo.getHetu();

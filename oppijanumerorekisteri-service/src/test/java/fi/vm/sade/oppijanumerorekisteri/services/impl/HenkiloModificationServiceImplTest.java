@@ -8,10 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
-import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
@@ -23,6 +20,8 @@ import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import fi.vm.sade.oppijanumerorekisteri.validators.HuoltajaCreatePostValidator;
+import org.assertj.core.groups.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,15 +31,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -74,6 +72,9 @@ public class HenkiloModificationServiceImplTest {
     private HenkiloCreatePostValidator henkiloCreatePostValidator;
 
     @Mock
+    private HuoltajaCreatePostValidator huoltajaCreatePostValidator;
+
+    @Mock
     private HenkiloRepository henkiloDataRepositoryMock;
 
     @Mock
@@ -96,6 +97,9 @@ public class HenkiloModificationServiceImplTest {
 
     @Mock
     private OidGenerator oidGenerator;
+
+    @MockBean
+    private KansalaisuusRepository kansalaisuusRepository;
 
     @Before
     public void setup() {
@@ -496,6 +500,89 @@ public class HenkiloModificationServiceImplTest {
         given(this.oidGenerator.generateOID()).willReturn("oid");
         String oid = ReflectionTestUtils.invokeMethod(service, "getFreePersonOid");
         assertThat(oid).isNotNull();
+    }
+
+    @Test
+    public void hetullinenHuoltajaLuodaan() {
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        doReturn(Henkilo.builder().hetu("huoltajanhetu").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
+        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .hetu("huoltajanhetu")
+                .build();
+        HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
+        henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
+        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class));
+    }
+
+    @Test
+    public void hetullinenHuoltajaLoytyyEnnestaan() {
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        given(this.henkiloDataRepositoryMock.findByHetu(eq("huoltajanhetu"))).willReturn(Optional.of(new Henkilo()));
+        doReturn(Henkilo.builder().hetu("huoltajanhetu").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
+        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .hetu("huoltajanhetu")
+                .build();
+        HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
+        henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
+        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        verify(this.henkiloDataRepositoryMock, times(1)).findByHetu(eq("huoltajanhetu"));
+        verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
+    }
+
+    @Test
+    public void hetutonHuoltajaLuodaan() {
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(new Henkilo()));
+        doReturn(Henkilo.builder().etunimet("etunimi").sukunimi("sukunimi").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
+        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .etunimet("etunimi")
+                .sukunimi("sukunimi")
+                .build();
+        HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
+        henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
+        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class));
+    }
+
+    @Test
+    public void hetutonHuoltajaLoytyyEnnestaan() {
+        Henkilo henkiloResult = new Henkilo();
+        henkiloResult.setHuoltajat(Collections.singleton(HenkiloHuoltajaSuhde.builder()
+                .lapsi(henkiloResult)
+                .huoltaja(Henkilo.builder()
+                        .etunimet("etunimi")
+                        .sukunimi("sukunimi")
+                        .build())
+                .huoltajuustyyppiKoodi("03")
+                .build()));
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(henkiloResult));
+        doReturn(Henkilo.builder().etunimet("etunimi").sukunimi("sukunimi").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));
+        given(this.henkiloDataRepositoryMock.findSlavesByMasterOid(any())).willReturn(new ArrayList<>());
+        given(henkiloDataRepositoryMock.save(any(Henkilo.class))).willAnswer(returnsFirstArg());
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .etunimet("etunimi")
+                .sukunimi("sukunimi")
+                .kansalaisuusKoodi(Collections.singleton("246"))
+                .syntymaaika(LocalDate.of(2000, 2, 2))
+                .build();
+        HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
+        henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
+        this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
+        assertThat(henkiloResult.getHuoltajat().stream().map(HenkiloHuoltajaSuhde::getHuoltaja).collect(Collectors.toList()))
+                .extracting(Henkilo::getEtunimet, Henkilo::getSyntymaaika)
+                .containsExactly(Tuple.tuple("etunimi", LocalDate.of(2000, 2, 2)));
+        verify(this.henkiloDataRepositoryMock, times(0)).findByHetu(any());
+        verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
     }
 
 }

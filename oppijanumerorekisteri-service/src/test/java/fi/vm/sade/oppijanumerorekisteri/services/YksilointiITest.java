@@ -5,37 +5,18 @@ import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.scheduling.YksilointiTask;
-import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysHakemusDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysHakemus;
+import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysKayttooikeus;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
-import fi.vm.sade.oppijanumerorekisteri.dto.AsiayhteysKayttooikeusDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloReadDto;
-import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysKayttooikeus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysKayttooikeusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
-import java.time.LocalDate;
-import java.time.Month;
-import static java.util.Collections.singletonList;
-import java.util.List;
-import java.util.Optional;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.from;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -43,9 +24,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @RunWith(SpringRunner.class)
 @IntegrationTest
-public class YksilointiTests {
+public class YksilointiITest {
 
     @MockBean
     private VtjClient vtjClientMock;
