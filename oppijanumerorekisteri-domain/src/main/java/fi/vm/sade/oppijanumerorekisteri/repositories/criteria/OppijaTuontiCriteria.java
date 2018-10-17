@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.QTuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
+import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Set;
 import javax.persistence.EntityManager;

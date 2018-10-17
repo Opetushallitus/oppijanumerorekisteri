@@ -1,14 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
@@ -108,8 +101,10 @@ public class OppijaController {
     public Page<OppijaListDto> list(
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
-            @RequestParam(required = false, defaultValue = "20") @Min(1) int count) {
-        return oppijaService.list(criteria, page, count);
+            @RequestParam(required = false, defaultValue = "20") @Min(1) int count,
+            @RequestParam(required = false, defaultValue = "TIME") OppijaTuontiSortKey sortKey,
+            @RequestParam(required = false, defaultValue = "ASC") Sort.Direction sortDirection) {
+        return oppijaService.list(criteria, page, count, sortKey, sortDirection);
     }
 
     @GetMapping("/muuttuneet")
