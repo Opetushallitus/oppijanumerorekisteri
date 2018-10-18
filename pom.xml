@@ -258,7 +258,7 @@ buildTtime=${maven.build.timestamp}
     <repositories>
         <repository>
             <id>oph-sade-artifactory-snapshots</id>
-            <url>https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local</url>
+            <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -268,7 +268,7 @@ buildTtime=${maven.build.timestamp}
         </repository>
         <repository>
             <id>oph-sade-artifactory-releases</id>
-            <url>https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local</url>
+            <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
         </repository>
     </repositories>
 
@@ -276,12 +276,12 @@ buildTtime=${maven.build.timestamp}
         <repository>
             <id>oph-sade-artifactory</id>
             <name>oph-sade-artifactory-releases</name>
-            <url>https://artifactory.oph.ware.fi/artifactory/oph-sade-release-local</url>
+            <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local</url>
         </repository>
         <snapshotRepository>
             <id>oph-sade-artifactory</id>
             <name>oph-sade-artifactory-snapshots</name>
-            <url>https://artifactory.oph.ware.fi/artifactory/oph-sade-snapshot-local</url>
+            <url>https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 </project>

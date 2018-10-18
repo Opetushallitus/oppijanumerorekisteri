@@ -1,0 +1,45 @@
+sudo: required
+language: java
+jdk:
+  - oraclejdk8
+services:
+  - docker
+cache:
+  directories:
+    - $HOME/.m2
+env:
+  global:
+    # ARTIFACTORY_USERNAME
+    - secure: "XcSBLMBDQh81X9KRwOfrSsoa1TIAgPy+JP4y90An6TB+LmiyCiiXsh2THHkXolOg0wcpDwXQ89v02uuIzZcKsGGUV2g4JqveZoyoWx/R3itWhvQYuicTrDHtJZB+SiwXGn9DknZj1laItgVLuWzgtLqU3TjbdiZ81VEgarFu94ljsbulhVe3f4Kcnc9WjUiL9EeTvpHC83byzkkUiaauyofgH7FkgFh4jS/50b+OeWgJcjRniN/hoE/yEvrLh4BOPO+WbtriaySdd0CtFnaIGQtw+Xq46SwDkHWj2M5SEaGS9vg3LQwpx/86bybIKCq5x6W74s5OHm17yGRLKD95OkzUrjhbztKFQnsA0+OiHunKF5MKAAovX7z3PX2cHNjjFmI7r3k9RONtDdQsQQuNF6Z2VNSck04HXvvJF3T97ZF5/QDtzG4nBbPUe86Mx64m0SGTVylW7+n1ILxK8u7yGCvT5wGVKiY6Wmf8T1Y69+1vvP9Ok4jY/BZazz0uryeKGTCoj9VY5GWRf7/edtDZumWta3GJl6R0Zq7nlT6Dzp7BVPU6NNSDnvrY/2vUU27QvAq0aDyLPBeP/uOqqeqbavsEP5eOm0yyt2S4vr7SloqLsg9nyH89GnE6Q0r0VMhAeZs/B4mRmQTLRIRgdv9IYH9kaWy4Euu5P/8s7fFxvtU="
+    # ARTIFACTORY_PASSWORD
+    - secure: "bhKO6PsgkRzkHFkpKfBostd8Bwm/uXk93d2hCtzCli03AoA6bcrkRHe01NSdWp0YLUaUqa7K/OsFJf/NcUXaVT31m5akgaxWY57M9QCITbJU233nMLPdpccn4gN8nfs3Ylxf6FGJBntnBBPrq42pKcjkwChe9/ZM0Xuzzz2I5tFR3P0pddjIGhtd9gSFyUbiz1UDwTN47hRJ/pkfRwZhN3n407NGnjZWNfn+yYkOpD/4ywMtUM2MNAuke0ymx7E965a3eRNnfNmPuBvgGBnri/JxTGkoCLVlaMwObZHvpqclWhX/jD+HLNZRg5F67VYRePVD47Fd4hMMd2mfXr0NRJteLG6+vBFB2ISL/WhJqcNOk91XUdr5vo9+pninKwcoRf09LapdrvMWlUOOZY5AagH0BNVypuoI2Y3VWUIFYTq0NpnAaK21NR5gyrMWkyxXjdkL1EX3qaAF032JyvIq4M2yQNixsADr2h5tfgbwVojm/r4Cc5J/0ShpWFUwmp7n08hJJcfn42EEY40YluPYlbgtfCVQCY7PWNt4kZJ/RojDrBZrjFP00mAhm1BVAYtYBFymga4XT6TEiKgomeABRn3Ti56kKu2LnlDo77X+rB4wfTgwB3vSxn5sREFQu6QyiwWvkvhL/oU1dNwe2RphTQRror44dm64CuFmvRNTtS4="
+    # AWS_ACCESS_KEY_ID
+    - secure: "OOlWHSMTfLDZupr3bUFwO4bvnf1Zb5pXm8Qv+87Ofj2TLgrksjoeL64ZvpEXJHc4bYm0oo1tKtFQtYp+sk7Gm4Bj3TWFgR1nn3twyOsMolGNhcTStivDsme+KFTRZt7FPtzYKSgTBkG7axmyAY+F/rKidBXov4yCd6DNO+3ZDV7hZPjBlRQJI8bvEQQYoDgrAZHjaWjngJk9kJRJVmtN1X3Heg7OC6fd41/25TTQmCZKqNQpt0A9/JTaD9mwtzxGM6vXGdsi4QjN+Bql0FOhow1XTFv4RiLAqDfmofXuCHTuRajdOvV8WA45qFgVQicV1u813gMN29jFjK5xKlhvKXqGMfkFIgJ3LerH5tUcCNe7FP80t/lNiVOauB1IfN90jYiK1JUVWgsF7d6nMqfqzEPSbTeIaimNuHXknzDS14vrjRRs0AY9cAGITeKu1fCEB61hWNsjn515IoF00nMvbRbVRyhMq3Zl/rA7SwgeRv8xQDMzWS78EMDvN1y0mWQvgtLnPu94WXZQ7iatDid4BO8cLUW9H3yhhPhUDfatLZ3wng8wFEcaHsEYzzNwTToVuH1hqv/cF73zKL8edanGI72zMKJrPXGBn4ewDZVByBAQkPwCu/+FOev2e9pwPy1191cEigdSQL0U1Yusodh+86Atw1iUNp8FfvjPjqHIW40="
+    # AWS_SECRET_ACCESS_KEY
+    - secure: "k12BOjFVyWGRy8EvU4eJ6AU7AAgWm/MM1I/ynXHCZ7fDjzQ6EF3nnUlYeSZFXKzQVc/AoEzJmjyQivfTlJ7/e3Qv7xSArYi2J/dMiM8180jzD1wxFQNXSqObg7r74IRoUw9Sbvlm9RyiCxPDpQrdRi7AxHOJWK1k0/C00tqbgurxayRcorR0PVXIh/SbDaRPII23tSdJR3rizz0n3ZDssemFW8IQD85k49/WFlU/zo/gwxuWmEzEJ7yWxfvqx9318tDkr689Bczghdze3laEj1cbFo767QMjMlCs6/5a9prItEGcVaUOWeQM8p7TrLkMDTy2eXZPNKO0XKtSasVtJHGi+tyXLFcVdnl+4rs6lYuEioZboL68Un6dovVtVrwJtIc/KY4BDUi4vuUyxEVjyjG0gM77H2gDLhGsEbkMtzpg7gkVbAF7vQ39HTyK9OesmphSC9rtrsTUul0lnjR/blKPxbsN2w2ckYHiMx7VVUF6tlMFkh0XVN+zP1QUcoEp0nEhOnCqHyEvXLYaTPOcrdtIQ1JNPQEgPoaqG530y/HZjsWjXQDAvovgomz2jUmRCWA2QvstEJ+a++aMiUR5Aw2T07f/h/VltwaGrBMdvQqgn8yBJVggF6ud+41nFsUwk0t8S7CjGI9jmGLgeTMhaINYMve5lAj2e+mkn4nxDsw="
+
+install:
+  - git clone https://github.com/Opetushallitus/ci-tools.git
+  - source ci-tools/common/setup-tools.sh
+  - export ARTIFACT_NAME="oppijanumerorekisteri"
+
+script:
+  - mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER}
+
+  - mv oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*.jar $DOCKER_BUILD_DIR/artifact/${ARTIFACT_NAME}.jar
+  - cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
+
+  - export BASE_IMAGE="base-legacy:0.1"
+  - ./ci-tools/common/pull-image.sh
+  - ./ci-tools/build/build-fatjar.sh $ARTIFACT_NAME
+
+deploy:
+  - provider: script
+    script: mvn deploy -pl oppijanumerorekisteri-api -DskipTests --settings ci-tools/common/maven-settings.xml
+    skip_cleanup: true
+    on:
+      branch: master
+  - provider: script
+    script: ./ci-tools/build/upload-image.sh $ARTIFACT_NAME
+    on:
+      all_branches: true
