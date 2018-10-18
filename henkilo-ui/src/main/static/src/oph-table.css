@@ -1,0 +1,29 @@
+.oph-table .ReactTable.table .rt-thead.-header {
+    background-color: #eee;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+.oph-table .ReactTable.table .rt-resizable-header.rt-th {
+    border-right: 1px solid #d5d5d5 !important;
+}
+
+.oph-table .ReactTable.table .rt-resizable-header.rt-th:last-child {
+    border-right: 0 !important;
+}
+
+.oph-table .ReactTable.table {
+    border: 1px solid #d5d5d5;
+}
+
+.oph-table .ReactTable.table .rt-tbody .rt-td {
+    border-right: 1px solid #d5d5d5 !important;
+    padding: 5px;
+}
+
+.oph-table .ReactTable.table .rt-tbody .rt-td:last-child {
+    border-right: 0 !important;
+}
+
+.oph-table .sortable-header:hover {
+    cursor: pointer;
+}
