@@ -7,6 +7,7 @@
     margin-bottom: 10px;
 }
 
-.kayttooikeusryhman-myonto-kohde .oppilaitostyyppi-wrapper {
+.kayttooikeusryhman-myonto-kohde .oppilaitostyyppi-wrapper,
+.kayttooikeusryhman-myonto-kohde .organisaatiotyyppi-wrapper {
     margin-left: 10px;
 }

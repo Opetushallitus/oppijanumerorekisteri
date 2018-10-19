@@ -4,7 +4,8 @@ import {
     FETCH_KIELIKOODISTO_SUCCESS,
     FETCH_SUKUPUOLIKOODISTO_REQUEST, FETCH_SUKUPUOLIKOODISTO_SUCCESS, FETCH_YHTEYSTIETOTYYPITKOODISTO_REQUEST,
     FETCH_YHTEYSTIETOTYYPITKOODISTO_SUCCESS, FETCH_MAATJAVALTIOTKOODISTO_REQUEST, FETCH_MAATJAVALTIOTKOODISTO_SUCCESS,
-    FETCH_OPPILAITOSTYYPIT_REQUEST, FETCH_OPPILAITOSTYYPIT_SUCCESS, FETCH_OPPILAITOSTYYPIT_FAILURE
+    FETCH_OPPILAITOSTYYPIT_REQUEST, FETCH_OPPILAITOSTYYPIT_SUCCESS, FETCH_OPPILAITOSTYYPIT_FAILURE,
+    FETCH_ORGANISAATIOTYYPIT_REQUEST, FETCH_ORGANISAATIOTYYPIT_SUCCESS, FETCH_ORGANISAATIOTYYPIT_FAILURE,
 } from "../actions/actiontypes";
 import StaticUtils from "../components/common/StaticUtils";
 import type {Koodisto} from '../types/domain/koodisto/koodisto.types'
@@ -30,6 +31,8 @@ export type KoodistoState = {
     sukupuoliKoodisto: Koodisto,
     oppilaitostyypitLoading: boolean,
     oppilaitostyypit: Array<any>,
+    organisaatiotyyppiKoodistoLoading: boolean,
+    organisaatiotyyppiKoodisto: Koodisto,
     maatjavaltiot1KoodistoLoading: boolean,
     maatjavaltiot1: any
 }
@@ -37,7 +40,7 @@ export type KoodistoState = {
 export const koodisto = (state: KoodistoState = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,
                              yhteystietotyypitKoodistoLoading: true, kieli: [], kieliKoodisto: [], kansalaisuus: [], kansalaisuusKoodisto: [], sukupuoli: [], sukupuoliKoodisto: [],
                              yhteystietotyypit: [], maatjavaltiot1KoodistoLoading: true, maatjavaltiot1: [],
-                            oppilaitostyypitLoading: false, oppilaitostyypit: []}, action: any): KoodistoState => {
+                            oppilaitostyypitLoading: false, oppilaitostyypit: [], organisaatiotyyppiKoodistoLoading: false, organisaatiotyyppiKoodisto: []}, action: any): KoodistoState => {
     switch (action.type) {
         case FETCH_KANSALAISUUSKOODISTO_REQUEST:
             return Object.assign({}, state, {kansalaisuusKoodistoLoading: true});
@@ -65,6 +68,12 @@ export const koodisto = (state: KoodistoState = {kieliKoodistoLoading: true, kan
             return {...state, oppilaitostyypitLoading: false, oppilaitostyypit: mapKoodistoValuesByLocale(action.oppilaitostyypit)};
         case FETCH_OPPILAITOSTYYPIT_FAILURE:
             return {...state, oppilaitostyypitLoading: false};
+        case FETCH_ORGANISAATIOTYYPIT_REQUEST:
+            return {...state, organisaatiotyyppiKoodistoLoading: true};
+        case FETCH_ORGANISAATIOTYYPIT_SUCCESS:
+            return {...state, organisaatiotyyppiKoodistoLoading: false, organisaatiotyyppiKoodisto: action.organisaatiotyyppiKoodisto};
+        case FETCH_ORGANISAATIOTYYPIT_FAILURE:
+            return {...state, organisaatiotyyppiKoodistoLoading: false};
         default:
             return state;
     }
