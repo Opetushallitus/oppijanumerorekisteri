@@ -301,7 +301,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         } else if(myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.SULJETTU) {
             return myonnettyKayttooikeusryhma.voimassaPvm ? moment(new Date(myonnettyKayttooikeusryhma.voimassaPvm)).format() : noLoppupvm;
         }
-        return myonnettyKayttooikeusryhma.kasitelty ? new Date(myonnettyKayttooikeusryhma.kasitelty).toString() : noLoppupvm;
+        return new Date(myonnettyKayttooikeusryhma.kasitelty).toString();
     };
 
     _hasAnojaKayttooikeusData = (anojaOid: string): boolean => {
