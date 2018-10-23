@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
@@ -102,6 +103,20 @@ public class HenkiloServiceImpl implements HenkiloService {
         HenkiloCriteria henkiloCriteria = createHenkiloCriteria(criteria, kayttooikeudet);
 
         return mapper.map(henkiloDataRepository.findWithYhteystiedotBy(henkiloCriteria),
+                new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
+                new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<HenkiloYhteystiedotDto> listWithYhteystiedotAsAdmin(HenkiloCriteria criteria) {
+        if (criteria.getHenkiloOids() == null) {
+            throw new ValidationException("Pakollinen hakuehto 'henkiloOids' puuttuu");
+        }
+        if (criteria.getHenkiloOids().isEmpty()) {
+            return emptyList();
+        }
+        return mapper.map(henkiloDataRepository.findWithYhteystiedotBy(criteria),
                 new TypeBuilder<List<HenkiloYhteystietoDto>>() {}.build(),
                 new TypeBuilder<List<HenkiloYhteystiedotDto>>() {}.build());
     }

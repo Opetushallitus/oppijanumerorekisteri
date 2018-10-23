@@ -15,6 +15,7 @@ public class HenkiloYhteystiedotDto {
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;
+    private String asiointikieli;
     private List<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
 }
