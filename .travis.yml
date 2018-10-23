@@ -29,7 +29,7 @@ script:
   - mv oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*.jar $DOCKER_BUILD_DIR/artifact/${ARTIFACT_NAME}.jar
   - cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
 
-  - export BASE_IMAGE="base-legacy:0.1"
+  - export BASE_IMAGE="baseimage-fatjar:master"
   - ./ci-tools/common/pull-image.sh
   - ./ci-tools/build/build-fatjar.sh $ARTIFACT_NAME
 
