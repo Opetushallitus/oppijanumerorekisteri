@@ -166,4 +166,5 @@ public interface HenkiloJpaRepository {
      */
     long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria);
 
+    List<HenkiloPerustietoDto> findPerustiedotByHetuIn(List<String> hetut);
 }

@@ -369,6 +369,22 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     }
 
+    @Test
+    public void findPerustiedotByHetuIn() {
+        LocalDate syntymaaika = LocalDate.of(2016, Month.DECEMBER, 20);
+        Date luontiMuokkausPvm = new Timestamp(System.currentTimeMillis());
+        HenkiloPerustietoDto assertHenkilo = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5",
+                "fi", "suomi", "246", null, null, syntymaaika, luontiMuokkausPvm);
+        Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
+                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
+        this.testEntityManager.persist(persistedHenkilo.getAsiointiKieli());
+        persistedHenkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persist(kansalaisuus));
+        this.testEntityManager.persist(persistedHenkilo);
+        this.testEntityManager.flush();
+        List<HenkiloPerustietoDto> resultHenkiloList = this.dataRepository.findPerustiedotByHetuIn(Collections.singletonList("123456-9999"));
+        assertThat(resultHenkiloList.get(0)).isEqualToComparingFieldByFieldRecursively(assertHenkilo);
+    }
+
     private void persistHenkilo(Henkilo henkilo) {
         this.testEntityManager.persistAndFlush(henkilo.getAidinkieli());
         if (!CollectionUtils.isEmpty(henkilo.getKansalaisuus())) {
