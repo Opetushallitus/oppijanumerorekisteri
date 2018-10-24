@@ -1,3 +1,4 @@
+// @flow
 import {
     FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST,
     FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_SUCCESS,
@@ -6,8 +7,22 @@ import {
     FETCH_OPPIJOIDEN_TUONTI_LISTAUS_SUCCESS,
     FETCH_OPPIJOIDEN_TUONTI_LISTAUS_FAILURE,
 } from '../actions/actiontypes';
+import type {Page} from "../types/Page.types";
+import type {OppijaList} from "../types/domain/oppijanumerorekisteri/oppijalist.types";
+import type {OppijaTuontiYhteenveto} from "../types/domain/oppijanumerorekisteri/oppijatuontiyhteenveto.types";
 
-export const oppijoidenTuontiYhteenveto = (state = {loading: true, data: {}}, action) => {
+
+export type TuontiYhteenvetoState = {
+    loading: boolean,
+    data: OppijaTuontiYhteenveto | {}
+}
+
+export type TuontiListausState = {
+    loading: boolean,
+    data: Page<OppijaList> | any
+}
+
+export const oppijoidenTuontiYhteenveto = (state: TuontiYhteenvetoState = {loading: true, data: {}}, action: any) => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST:
             return {...state, loading: true};
@@ -20,7 +35,7 @@ export const oppijoidenTuontiYhteenveto = (state = {loading: true, data: {}}, ac
     }
 };
 
-export const oppijoidenTuontiListaus = (state = {loading: true, data: {}}, action) => {
+export const oppijoidenTuontiListaus = (state: TuontiListausState = {loading: true, data: {}}, action: any) => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_LISTAUS_REQUEST:
             return {...state, loading: true};

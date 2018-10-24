@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import './AnomusPage.css'
+import '../../oph-table.css'
 import Loader from '../common/icons/Loader'
 import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm'
 import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus"
@@ -89,7 +89,7 @@ class AnomusPage extends React.Component<Props, State> {
 
     render() {
         return (
-          <div className="anomus-table">
+          <div className="oph-table">
               <HaetutKayttooikeusRyhmatHakuForm onSubmit={this.onSubmit.bind(this)}/>
 
               {
