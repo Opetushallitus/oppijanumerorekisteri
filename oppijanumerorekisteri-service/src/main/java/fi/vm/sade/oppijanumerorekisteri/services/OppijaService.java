@@ -1,14 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaListDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.MasterHenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiYhteenvetoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.Page;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 
 /**
@@ -77,7 +70,7 @@ public interface OppijaService {
      * @param count sivun koko
      * @return henkilöt
      */
-    Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count);
+    Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection);
 
     /**
      * Palauttaa annettujen hakukriteerien mukaisen henkilöiden master-tiedot.

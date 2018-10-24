@@ -15,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
+import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactory;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -125,10 +126,10 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count) {
+    public Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection) {
         prepare(criteria);
-        OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
-                OppijaTuontiSort.Column.MODIFIED, OppijaTuontiSort.Column.ID);
+
+        OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(sortDirection, sortKey);
         LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
@@ -141,8 +142,8 @@ public class OppijaServiceImpl implements OppijaService {
     public Page<MasterHenkiloDto<OppijaReadDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count) {
         // haetaan henkilöt
         prepare(criteria);
-        OppijaTuontiSort sort = new OppijaTuontiSort(Sort.Direction.ASC,
-                OppijaTuontiSort.Column.MODIFIED, OppijaTuontiSort.Column.ID);
+
+        OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(Sort.Direction.ASC, OppijaTuontiSortKey.TIME);
         LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
