@@ -35,7 +35,7 @@ public class OppijaTuontiSort {
 
     @RequiredArgsConstructor
     public enum Column {
-        MODIFIED(t -> t.modified),
+        CREATED(t -> t.created),
         SUKUNIMI(t -> t.sukunimi),
         ETUNIMET(t -> t.etunimet),
         KUTSUMANIMI(t -> t.kutsumanimi),

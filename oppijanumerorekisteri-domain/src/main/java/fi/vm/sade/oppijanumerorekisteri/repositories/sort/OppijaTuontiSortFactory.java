@@ -11,7 +11,7 @@ public class OppijaTuontiSortFactory {
     public static OppijaTuontiSort getOppijaTuontiSort(Sort.Direction sortDirection, OppijaTuontiSortKey oppijaTuontiSortKey) {
         switch(oppijaTuontiSortKey) {
             case TIME:
-                return new OppijaTuontiSort(sortDirection, MODIFIED, ID);
+                return new OppijaTuontiSort(sortDirection, CREATED, ID);
             case NAME:
                 return new OppijaTuontiSort(sortDirection, SUKUNIMI, ETUNIMET, ID);
             default:
