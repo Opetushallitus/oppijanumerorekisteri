@@ -40,7 +40,7 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
                 className: 'yksilointi-tila-sarake'
             },
             {
-                Header: this.renderSortableHeader('OPPIJOIDEN_TUONTI_AIKA', 'TIME'),
+                Header: this.renderSortableHeader('OPPIJOIDEN_TUONTI_AIKA', 'CREATED'),
                 accessor: henkilo => this.renderAikaleima(henkilo.luotu),
                 id: 'luotu'
             },
