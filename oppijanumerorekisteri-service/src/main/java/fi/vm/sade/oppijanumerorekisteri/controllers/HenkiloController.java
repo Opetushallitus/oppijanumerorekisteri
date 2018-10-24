@@ -506,5 +506,15 @@ public class HenkiloController {
         return this.henkiloService.getOmatTiedot(oidHenkilo);
     }
 
-
+    @ApiOperation("Hakee annetun henkilötunnus-listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
+    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
+            + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
+            + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
+            + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @RequestMapping(value = "/henkiloPerustietosByHenkiloHetuList", method = RequestMethod.POST)
+    public List<HenkiloPerustietoDto> henkilotByHenkiloHetuList(@ApiParam("Format: [\"hetu1\", ...]") @RequestBody List<String> henkiloHetus) {
+        return this.henkiloService.getHenkiloPerustietoByHetus(henkiloHetus);
+    }
 }

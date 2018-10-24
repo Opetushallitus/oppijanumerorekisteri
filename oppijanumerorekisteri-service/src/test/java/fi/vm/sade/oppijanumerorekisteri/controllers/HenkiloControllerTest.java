@@ -354,4 +354,34 @@ public class HenkiloControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void findHenkilotByHetusList() throws Exception {
+        HenkiloPerustietoDto henkiloPerustietoDto = DtoUtils.createHenkiloPerustietoDto("arpa", "arpa", "kuutio", "081296-967T",
+                "1.2.3.4.5", "fi", "suomi", "246", singletonList("externalid1"), emptyList(), null, new Date());
+        String hetuList = "[\"081296-967T\"]";
+        String returnContent = "[" +
+                "  {" +
+                "    \"aidinkieli\": {" +
+                "      \"kieliKoodi\": \"fi\"," +
+                "      \"kieliTyyppi\": \"suomi\"" +
+                "    }," +
+                "    \"asiointiKieli\": {" +
+                "      \"kieliKoodi\": \"fi\"," +
+                "      \"kieliTyyppi\": \"suomi\"" +
+                "    }," +
+                "    \"etunimet\": \"arpa\"," +
+                "    \"hetu\": \"081296-967T\"," +
+                "    \"kutsumanimi\": \"arpa\"," +
+                "    \"oidHenkilo\": \"1.2.3.4.5\"," +
+                "    \"sukunimi\": \"kuutio\"" +
+                "  }" +
+                "]";
+        given(this.henkiloService.getHenkiloPerustietoByHetus(Collections.singletonList("081296-967T")))
+                .willReturn(Collections.singletonList(henkiloPerustietoDto));
+        this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloHetuList").content(hetuList)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk()).andExpect(content().json(returnContent));
+    }
 }
