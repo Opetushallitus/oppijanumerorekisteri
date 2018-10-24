@@ -102,7 +102,7 @@ public class OppijaController {
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count,
-            @RequestParam(required = false, defaultValue = "TIME") OppijaTuontiSortKey sortKey,
+            @RequestParam(required = false, defaultValue = "CREATED") OppijaTuontiSortKey sortKey,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction sortDirection) {
         return oppijaService.list(criteria, page, count, sortKey, sortDirection);
     }

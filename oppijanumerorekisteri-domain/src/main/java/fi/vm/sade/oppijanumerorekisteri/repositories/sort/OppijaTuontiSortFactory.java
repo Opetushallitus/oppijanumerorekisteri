@@ -10,10 +10,12 @@ public class OppijaTuontiSortFactory {
 
     public static OppijaTuontiSort getOppijaTuontiSort(Sort.Direction sortDirection, OppijaTuontiSortKey oppijaTuontiSortKey) {
         switch(oppijaTuontiSortKey) {
-            case TIME:
+            case CREATED:
                 return new OppijaTuontiSort(sortDirection, CREATED, ID);
             case NAME:
                 return new OppijaTuontiSort(sortDirection, SUKUNIMI, ETUNIMET, ID);
+            case MODIFIED:
+                return new OppijaTuontiSort(sortDirection, MODIFIED, ID);
             default:
                 throw new IllegalArgumentException(String.format("Tuntematon järjestysavain: %s", oppijaTuontiSortKey));
         }

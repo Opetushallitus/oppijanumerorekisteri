@@ -143,7 +143,7 @@ public class OppijaServiceImpl implements OppijaService {
         // haetaan henkilöt
         prepare(criteria);
 
-        OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(Sort.Direction.ASC, OppijaTuontiSortKey.TIME);
+        OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(Sort.Direction.ASC, OppijaTuontiSortKey.MODIFIED);
         LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
