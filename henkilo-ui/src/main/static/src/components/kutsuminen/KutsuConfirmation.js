@@ -101,13 +101,15 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
 
         e.preventDefault();
 
+        const sahkoposti = this.props.basicInfo.email && this.props.basicInfo.email.trim();
         const payload = {
             etunimi: this.props.basicInfo.etunimi,
             sukunimi: this.props.basicInfo.sukunimi,
-            sahkoposti: this.props.basicInfo.email,
+            sahkoposti,
             asiointikieli: this.props.basicInfo.languageCode,
             organisaatiot: R.map(addedOrg => ({
                 organisaatioOid: addedOrg.oid,
+                voimassaLoppuPvm: addedOrg.voimassaLoppuPvm,
                 kayttoOikeusRyhmat: R.map(selectedPermission => ({
                     id: selectedPermission.ryhmaId
                 }))(addedOrg.selectedPermissions)

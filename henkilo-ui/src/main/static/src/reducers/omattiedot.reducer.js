@@ -1,8 +1,16 @@
 // @flow
 import {
-    FETCH_OMATTIEDOT_REQUEST, FETCH_OMATTIEDOT_SUCCESS, FETCH_OMATTIEDOT_FAILURE,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST, FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
-    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE, FETCH_CASME_SUCCESS, UPDATE_ANOMUSILMOITUS
+    FETCH_OMATTIEDOT_REQUEST,
+    FETCH_OMATTIEDOT_SUCCESS,
+    FETCH_OMATTIEDOT_FAILURE,
+    FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST,
+    FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
+    FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
+    FETCH_CASME_SUCCESS,
+    UPDATE_ANOMUSILMOITUS,
+    FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
+    FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
+    FETCH_HENKILOHAKUORGANISAATIOT_FAILURE
 } from '../actions/actiontypes';
 import {getOrganisaatioOptionsAndFilter} from "../utilities/organisaatio.util";
 import type {KayttooikeusOrganisaatiot} from "../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
@@ -23,6 +31,8 @@ export type OmattiedotState = {|
     +organisaatioRyhmaOptions: Array<any>,
     +organisaatioRyhmaFilter: Array<any>,
     +organisaatiot: Array<KayttooikeusOrganisaatiot>,
+    +henkilohakuOrganisaatiotLoading: boolean,
+    +henkilohakuOrganisaatiot: Array<KayttooikeusOrganisaatiot>
 |}
 
 const initialState: OmattiedotState = {
@@ -39,7 +49,9 @@ const initialState: OmattiedotState = {
     organisaatioOptionsFilter: [],
     organisaatioRyhmaOptions: [],
     organisaatioRyhmaFilter: [],
-    organisaatiot: []
+    organisaatiot: [],
+    henkilohakuOrganisaatiotLoading: false,
+    henkilohakuOrganisaatiot: []
 };
 
 export const omattiedot = (state: OmattiedotState = initialState, action: any) => {
@@ -71,11 +83,20 @@ export const omattiedot = (state: OmattiedotState = initialState, action: any) =
                 organisaatioRyhmaOptions: newRyhmaOptions.options,
                 organisaatioRyhmaFilter: newRyhmaOptions.filterOptions,
             };
+        case FETCH_HENKILOHAKUORGANISAATIOT_REQUEST:
+            return { ...state, henkilohakuOrganisaatiotLoading: true};
+        case FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS:
+            return {...state,
+                henkilohakuOrganisaatiot: action.organisaatiot,
+                henkilohakuOrganisaatiotLoading: false,
+            };
+        case FETCH_HENKILOHAKUORGANISAATIOT_FAILURE:
+            return { ...state, henkilohakuOrganisaatiotLoading: false };
         case FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE:
             return Object.assign({}, state, { omattiedotOrganisaatiosLoading: false } );
         case FETCH_CASME_SUCCESS:
             return Object.assign({}, state, {casMeSuccess: true});
-        case UPDATE_ANOMUSILMOITUS: 
+        case UPDATE_ANOMUSILMOITUS:
             return {...state, anomusilmoitus: action.value};
         default:
             return state;

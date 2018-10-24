@@ -1,7 +1,6 @@
 // @flow
 import {
     mainNavigation,
-    oppijaNavi,
     palvelukayttajaNavigation
 } from "./navigationconfigurations";
 import {henkiloViewTabs} from "./NavigationTabs";
@@ -14,5 +13,3 @@ export const updateDefaultNavigation = () => mainNavigation;
 export const updatePalvelukayttajaNavigation = () => palvelukayttajaNavigation;
 
 export const updateHenkiloNavigation = (oidHenkilo: string, henkiloState: HenkiloState, henkiloType: string) => henkiloViewTabs(oidHenkilo, henkiloState, henkiloType);
-
-export const updateOppijaNavigation = (oidHenkilo: string) => oppijaNavi(oidHenkilo);

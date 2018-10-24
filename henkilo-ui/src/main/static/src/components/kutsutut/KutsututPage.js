@@ -203,7 +203,7 @@ export default class KutsututPage extends React.Component<Props, State> {
                             </tr>
                             <tr>
                                 <th>{this.L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO']}</th>
-                                <td>{moment(this.state.confirmDeleteFor && this.state.confirmDeleteFor.aikaleima).format()}</td>
+                                <td>{this.state.confirmDeleteFor && moment(this.state.confirmDeleteFor.aikaleima).format()}</td>
                             </tr>
                             </tbody>
                         </table>

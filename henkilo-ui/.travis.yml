@@ -1,0 +1,36 @@
+sudo: required
+language: java
+jdk:
+  - oraclejdk8
+services:
+  - docker
+cache:
+  directories:
+    - $HOME/.m2
+env:
+  global:
+    # AWS_ACCESS_KEY_ID
+    - secure: "G+tzsQ8eUmi2hsv3E8FfY2yXkAONO+VuxlQJVi1m3GcTB4x2d+B1B37vCGHCILOz6tVrB6L/ohSi8xE5XZf/rJfp4GxQUiHFlDngORGjBoYd2gcgVYsHkLbx/RDQ0a1kMtjUE2Zfsg7GMmDl+8nzsMvG26P/jLOLBMrmjbkHHmIm1MZIs/W1f0sQRSWYfoiRfJXjeF1z06FM7p7iWgrHnNQPxCWSlD5I9K09gmXmXwlT5DLMzQgTvPNl2CrP2iGwkSweK2ICuCCvP5bmzqnLLbrNuWpguqSSKKXNjkYShBQK1h9HyrtyiXwPYiDsh0kAaTltPiqopF9BtzlxdWHKE+1n5q2sZ4UCECf2UaLUlUbTn1+KYOPY/DuifRcuCooZi3oMDBIUrMPbFO94ub8cGu3guFuEAT5Sa+cAU2UrCiLFDisvsmHhgAmDMLOlx7NnQlB1HdclZaY8C+Ef4/TmCOQhcK6g4jYQNG0NUodVhtkXo/9bGMlJcqiOpbDcByPbz71+ezP6qcuFmE3FFDd/VZuoAjKrZhB5GHY9IYTVtj31xfGoMMqgQy9DQ4hoRciD48rxGsvdkOy75KF03Z9QDJ6bbPvalNQFQqHSlOrg04HAGIvMYeyxpq7Opz5ok+HNUoRPTSDUBXtTQ1b7t/wKTNaSfa0fslhfJo/R8am5M/U="
+    # AWS_SECRET_ACCESS_KEY
+    - secure: "zoN/k383EjilwkhnSrROqREKz+sJAOpR+rHlf4nJouZ7sdCPCUrOa7Lv/MashK9xK0zsDPAH7uH9xZ6PYDxvoj8uN6h9/FVn6lTaQDgyJ1YgfA/xH8z5Q++8Qw5utw7YiCQNlGRVaqJGfL8uG7GhBunpxsprbtLlFkILYdVkuQFEFsb2Om25AelmfZZ2MOENS6EgNVut6jQb6H6yCY0bqjTNDq+EgZMPCXeW0aglO6yU9IVg5QzEtDlYKHFa4urQAlRdbor3iGw+P9HYmg6Lpx8EQlCtaSwm7ePfc4CsfsuEFgzhXsdRTSCOYrbzp1VfBIO3cKCvn4zgMjTQvZ31ujQ6WGaSuyNcLqM5yTCkj/w2WLVeXM2XZILeld5YzmM0IfjmH5j8rfaChN3QdU/DSKWqiuD/FJFPZOTHgVugo8gn0U3GAY2wkvO6o93LhiASeap2L9PAX7DGnjjeVxmvGVL7zEoUEZXRAqHMKRCWFdMgVh005Nbgx9YC/2CDbqAFRfJcEeNffx16UsYr1irENK4O/jr8jO4SRBINxaK891UDhNPXbO2dBqdL3KzHHuWu2T642qvvJGZqPCcbmTwERhHC75fUQxvUXZqCOlmU9/EKrDJOR2XmgsRZ7uoXlYEEwWsBeSQcPwnotsfLP1/lYy2vTqcp/pGNlNWjhR2T0Tg="
+
+install:
+  - git clone https://github.com/Opetushallitus/ci-tools.git
+  - source ci-tools/common/setup-tools.sh
+  - export ARTIFACT_NAME="henkilo-ui"
+
+script:
+  - mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER}
+
+  - mv target/henkiloui-*.jar $DOCKER_BUILD_DIR/artifact/${ARTIFACT_NAME}.jar
+  - cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
+
+  - export BASE_IMAGE="baseimage-fatjar:master"
+  - ./ci-tools/common/pull-image.sh
+  - ./ci-tools/build/build-fatjar.sh $ARTIFACT_NAME
+
+deploy:
+  - provider: script
+    script: ./ci-tools/build/upload-image.sh $ARTIFACT_NAME
+    on:
+      all_branches: true

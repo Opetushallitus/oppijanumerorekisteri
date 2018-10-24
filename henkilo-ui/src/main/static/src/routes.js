@@ -1,4 +1,5 @@
-import React from 'react'
+// @flow
+import * as React from 'react'
 import { Route } from 'react-router'
 import App from './containers/App'
 import KutsututPageContainer from './components/kutsutut/KutsututPageContainer';
@@ -23,7 +24,7 @@ import HenkiloViewContainer from "./components/henkilo/HenkiloViewContainer";
 import AdminRedirect from "./components/henkilo/AdminRedirect";
 import {
     updateDefaultNavigation,
-    updateHenkiloNavigation, updateOppijaNavigation,
+    updateHenkiloNavigation,
     updatePalvelukayttajaNavigation
 } from './components/navigation/navigation.utils';
 import type {HenkiloState} from "./reducers/henkilo.reducer";
@@ -36,6 +37,7 @@ export type RouteType = {
     getNaviTabs: (?string, ?HenkiloState, ?string) => Array<NaviTab>,
     isUnauthenticated: ?boolean,
     backButton: ?boolean,
+    henkiloType: ?string,
 }
 
 export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigation}>
@@ -71,14 +73,16 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
     <Route path="/oppija/:oid"
            component={HenkiloViewContainer}
            title="TITLE_OPPIJA"
-           getNaviTabs={updateOppijaNavigation}
+           getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="oppija"
     />
     <Route path="/virkailija/:oid"
            component={HenkiloViewContainer}
            title="TITLE_VIRKAILIJA"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="virkailija"
     />
     <Route path="/admin/:oid"
            component={AdminRedirect}
@@ -86,17 +90,33 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
            getNaviTabs={updateHenkiloNavigation}
            backButton
     />
-    <Route path="/:henkiloType/:oid/vtjvertailu"
+    <Route path="/oppija/:oid/vtjvertailu"
            component={VtjVertailuPage}
            title="TITLE_VTJ_VERTAILU"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="oppija"
     />
-    <Route path="/:henkiloType/:oid/duplikaatit"
+    <Route path="/virkailija/:oid/vtjvertailu"
+           component={VtjVertailuPage}
+           title="TITLE_VTJ_VERTAILU"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+           henkiloType="virkailija"
+    />
+    <Route path="/oppija/:oid/duplikaatit"
            component={DuplikaatitContainer}
            title="TITLE_DUPLIKAATTIHAKU"
            getNaviTabs={updateHenkiloNavigation}
            backButton
+           henkiloType="oppija"
+    />
+    <Route path="/virkailija/:oid/duplikaatit"
+           component={DuplikaatitContainer}
+           title="TITLE_DUPLIKAATTIHAKU"
+           getNaviTabs={updateHenkiloNavigation}
+           backButton
+           henkiloType="virkailija"
     />
     <Route path="/omattiedot"
            component={OmattiedotContainer}
