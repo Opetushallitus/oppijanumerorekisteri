@@ -57,7 +57,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
             <span>{henkilo.kutsumanimi}</span>
             <span>{henkilo.etunimet}</span>
             <span>{henkilo.sukunimi}</span>
-            <span>{henkilo.sukupuoli === '2' ? L['HENKILO_YHTEISET_NAINEN'] : L['HENKILO_YHTEISET_MIES']}</span>
+            <span>{this.renderSukupuoli(henkilo.sukupuoli)}</span>
             <span>{henkilo.syntymaaika}</span>
             <span><Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>{henkilo.oidHenkilo}</Link></span>
             <span>{hakemus.kansalaisuus || ''}</span>
@@ -84,6 +84,17 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                          onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}/></span>
             }
         </div>;
+    }
+
+    renderSukupuoli(sukupuoli: ?string) {
+        switch (sukupuoli) {
+            case '1':
+                return this.props.L['HENKILO_YHTEISET_MIES'];
+            case '2':
+                return this.props.L['HENKILO_YHTEISET_NAINEN'];
+            default:
+                return '';
+        }
     }
 
     _onCheck(oid: string) {
