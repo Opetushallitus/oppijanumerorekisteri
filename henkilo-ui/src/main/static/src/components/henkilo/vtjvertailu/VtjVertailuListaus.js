@@ -73,10 +73,10 @@ export default class VtjVertailuListaus extends React.Component {
     }
 
     renderSukupuoli(henkilo) {
-        if(henkilo.sukupuoli === 1) {
+        if(henkilo.sukupuoli === '1') {
             return this.props.L['HENKILO_VTJ_SUKUPUOLI_MIES'];
         }
-        else if(henkilo.sukupuoli === 2) {
+        else if(henkilo.sukupuoli === '2') {
             return this.props.L['HENKILO_VTJ_SUKUPUOLI_NAINEN'];
         }
         else {
