@@ -4,10 +4,12 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
@@ -17,7 +19,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,9 +31,11 @@ import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.HenkiloPopulator.henkilo;
+import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.TuontiPopulator.tuonti;
 import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.YhteystiedotRyhmaPopulator.ryhma;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -383,6 +386,46 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         this.testEntityManager.flush();
         List<HenkiloPerustietoDto> resultHenkiloList = this.dataRepository.findPerustiedotByHetuIn(Collections.singletonList("123456-9999"));
         assertThat(resultHenkiloList.get(0)).isEqualToComparingFieldByFieldRecursively(assertHenkilo);
+    }
+
+    public void findByOppijaTuontiCriteria() {
+        populate(tuonti(
+                henkilo("hetuton"),
+                henkilo("hetuton_yksiloity").yksiloity(),
+                henkilo("hetullinen").hetu("251098-9515"),
+                henkilo("hetullinen_yksilointi_yritetty").hetu("251098-991E").yksilointiYritetty(),
+                henkilo("hetullinen_yksiloity").hetu("251098-937P").yksiloityVtj(),
+                henkilo("passivoitu").passivoitu(),
+                henkilo("duplikaatti").duplikaatti()
+        ));
+
+        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
+        criteria.setVainVirheet(false);
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetuton_yksiloity", YksilointiTila.OK),
+                        tuple("hetullinen", YksilointiTila.KESKEN),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
+                        tuple("hetullinen_yksiloity", YksilointiTila.OK),
+                        tuple("passivoitu", YksilointiTila.OK),
+                        tuple("duplikaatti", YksilointiTila.OK));
+
+        criteria.setVainVirheet(true);
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo)
+                .containsExactlyInAnyOrder("hetuton", "hetullinen_yksilointi_yritetty");
+
+        criteria.setVainVirheet(false);
+        assertThat(dataRepository.countByYksilointiOnnistuneet(criteria)).isEqualTo(4);
+        assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(1);
+        assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
+
+        criteria.setVainVirheet(true);
+        assertThat(dataRepository.countByYksilointiOnnistuneet(criteria)).isEqualTo(0);
+        assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(0);
+        assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
     }
 
     private void persistHenkilo(Henkilo henkilo) {

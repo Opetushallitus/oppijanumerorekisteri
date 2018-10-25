@@ -32,4 +32,8 @@ public class TuontiRivi extends IdentifiableAndVersionedEntity {
     @Column(name = "tunniste")
     private String tunniste;
 
+    public TuontiRivi(Henkilo henkilo) {
+        this.henkilo = henkilo;
+    }
+
 }
