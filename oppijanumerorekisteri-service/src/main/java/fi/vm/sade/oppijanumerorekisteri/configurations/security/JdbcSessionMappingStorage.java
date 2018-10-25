@@ -51,7 +51,7 @@ public class JdbcSessionMappingStorage implements OphSessionMappingStorage {
 
     @Override
     public void addSessionById(String mappingId, HttpSession session) {
-        String sql = "INSERT INTO cas_client_session (mapping_id, session_id) VALUES (?, ?)";
+        String sql = "INSERT INTO cas_client_session (mapping_id, session_id) VALUES (?, ?) ON CONFLICT (mapping_id) DO NOTHING";
         jdbcTemplate.update(sql, mappingId, session.getId());
     }
 
