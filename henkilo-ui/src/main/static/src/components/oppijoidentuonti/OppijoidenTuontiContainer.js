@@ -48,7 +48,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                 count: 20,
                 vainVirheet: false,
                 sortDirection: 'DESC',
-                sortKey: 'TIME'
+                sortKey: 'CREATED'
             },
         };
     }
