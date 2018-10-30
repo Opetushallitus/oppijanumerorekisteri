@@ -375,4 +375,12 @@ public class HenkiloServiceImpl implements HenkiloService {
         return this.mapper.map(henkilo, HenkiloOmattiedotDto.class);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<HenkiloPerustietoDto> getHenkiloPerustietoByHetus(List<String> hetus) {
+        if (hetus.size() > MAX_FETCH_PERSONS) {
+            throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + hetus.size());
+        }
+        return this.henkiloDataRepository.findPerustiedotByHetuIn(hetus);
+    }
 }

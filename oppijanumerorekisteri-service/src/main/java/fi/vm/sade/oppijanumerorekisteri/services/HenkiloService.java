@@ -83,4 +83,6 @@ public interface HenkiloService {
      * @return henkilön omat tiedot
      */
     HenkiloOmattiedotDto getOmatTiedot(String oidHenkilo);
+
+    List<HenkiloPerustietoDto> getHenkiloPerustietoByHetus(List<String> hetus);
 }

@@ -578,4 +578,39 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
     }
 
+    @Override
+    public List<HenkiloPerustietoDto> findPerustiedotByHetuIn(List<String> hetuList) {
+        List<HenkiloPerustietoDto> henkiloDtoList = jpa().from(henkilo)
+                .select(Projections.bean(HenkiloPerustietoDto.class, henkilo.oidHenkilo, henkilo.hetu, henkilo.etunimet,
+                        henkilo.kutsumanimi,henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
+                .where(henkilo.hetu.in(hetuList)).fetch();
+
+        Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)
+                .select(henkilo.hetu, Projections.bean(KielisyysDto.class,
+                        henkilo.asiointiKieli.kieliKoodi, henkilo.asiointiKieli.kieliTyyppi))
+                .where(henkilo.hetu.in(hetuList))
+                .fetch().stream().collect(Collectors.toMap(tuple ->
+                        tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
+
+        Map<String, KielisyysDto> stringAidinkieliMap = jpa().from(henkilo)
+                .select(henkilo.hetu, Projections.bean(KielisyysDto.class,
+                        henkilo.aidinkieli.kieliKoodi, henkilo.aidinkieli.kieliTyyppi))
+                .where(henkilo.hetu.in(hetuList))
+                .fetch().stream().collect(Collectors.toMap(tuple ->
+                        tuple.get(0, String.class), tuple -> tuple.get(1, KielisyysDto.class)));
+
+        Map<String, List<KansalaisuusDto>> stringKansalaisuusMap = jpa().from(henkilo)
+                .innerJoin(henkilo.kansalaisuus, kansalaisuus)
+                .where(henkilo.hetu.in(hetuList))
+                .transform(groupBy(henkilo.hetu).as(list(Projections.bean(KansalaisuusDto.class, kansalaisuus.kansalaisuusKoodi))));
+
+        henkiloDtoList.forEach(henkiloDto -> {
+            henkiloDto.setAsiointiKieli(stringAsiointikieliMap.get(henkiloDto.getHetu()));
+            henkiloDto.setAidinkieli(stringAidinkieliMap.get(henkiloDto.getHetu()));
+            if (stringKansalaisuusMap.get(henkiloDto.getHetu()) != null) {
+                henkiloDto.setKansalaisuus(new HashSet<>(stringKansalaisuusMap.get(henkiloDto.getHetu())));
+            }
+        });
+        return henkiloDtoList;
+    }
 }
