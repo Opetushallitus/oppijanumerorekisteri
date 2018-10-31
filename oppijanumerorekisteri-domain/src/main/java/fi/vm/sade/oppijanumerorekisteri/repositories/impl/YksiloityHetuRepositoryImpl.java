@@ -24,35 +24,35 @@ public class YksiloityHetuRepositoryImpl implements YksiloityHetuRepository {
     @Override
     public Collection<String> findAll() {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qYksiloityHenkilo = Expressions.stringPath("yksiloityHetu");
+        StringPath qYksiloityHetu = Expressions.stringPath("yksiloityHetu");
         return new JPAQuery<>(entityManager)
                 .from(qHenkilo)
-                .join(qHenkilo.yksiloityHetu, qYksiloityHenkilo)
-                .select(qYksiloityHenkilo)
+                .join(qHenkilo.yksiloityHetu, qYksiloityHetu)
+                .select(qYksiloityHetu)
                 .fetch();
     }
 
     @Override
     public Collection<String> findByHenkilo(Henkilo henkilo) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qYksiloityHenkilo = Expressions.stringPath("yksiloityHetu");
+        StringPath qYksiloityHetu = Expressions.stringPath("yksiloityHetu");
         return new JPAQuery<>(entityManager)
                 .from(qHenkilo)
-                .join(qHenkilo.yksiloityHetu, qYksiloityHenkilo)
+                .join(qHenkilo.yksiloityHetu, qYksiloityHetu)
                 .where(qHenkilo.eq(henkilo))
-                .select(qYksiloityHenkilo)
+                .select(qYksiloityHetu)
                 .fetch();
     }
 
     @Override
     public Collection<String> findByHenkiloOid(String oid) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qYksiloityHenkilo = Expressions.stringPath("yksiloityHetu");
+        StringPath qYksiloityHetu = Expressions.stringPath("yksiloityHetu");
         return new JPAQuery<>(entityManager)
                 .from(qHenkilo)
-                .join(qHenkilo.yksiloityHetu, qYksiloityHenkilo)
+                .join(qHenkilo.yksiloityHetu, qYksiloityHetu)
                 .where(qHenkilo.oidHenkilo.eq(oid))
-                .select(qYksiloityHenkilo)
+                .select(qYksiloityHetu)
                 .fetch();
     }
 
