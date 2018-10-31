@@ -77,6 +77,8 @@ public interface HenkiloJpaRepository {
 
     Optional<String> findOidByHetu(String hetu);
 
+    Optional<String> findOidByYksiloityHetu(String hetu);
+
     List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi);
 
     List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
@@ -117,6 +119,8 @@ public interface HenkiloJpaRepository {
 
     Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByHetu(String hetu);
 
+    Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByYksiloityHetu(String hetu);
+
     List<Henkilo> findSlavesByMasterOid(String henkiloOid);
 
     List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria);
@@ -126,6 +130,8 @@ public interface HenkiloJpaRepository {
     Iterable<String> findOidByYhteystieto(String arvo);
 
     Iterable<String> findPassinumerotByOid(String oid);
+
+    Map<String, Henkilo> findAndMapByYksiloityHetu(Set<String> hetut);
 
     Map<String, Henkilo> findAndMapByPassinumerot(Set<String> passinumerot);
 

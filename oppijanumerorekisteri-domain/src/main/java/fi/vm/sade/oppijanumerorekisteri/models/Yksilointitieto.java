@@ -22,6 +22,8 @@ public class Yksilointitieto extends IdentifiableAndVersionedEntity {
     @JoinColumn(name = "henkiloid", nullable = false, unique = true)
     private Henkilo henkilo;
 
+    private String hetu;
+
     private String etunimet;
 
     private String kutsumanimi;

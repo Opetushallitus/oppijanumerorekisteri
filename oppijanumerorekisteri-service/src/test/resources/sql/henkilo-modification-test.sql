@@ -5,6 +5,9 @@ INSERT INTO henkilo (id, version, hetu, oidhenkilo, created, modified, duplicate
 (-4, 0, '170798-915D', 'YKSILOINNISSANIMIPIELESSA', NOW(), NOW(), FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja')
 ;
 
+INSERT INTO yksiloity_hetu (henkilo_id, hetu)
+SELECT id, hetu FROM henkilo WHERE yksiloityvtj = TRUE;
+
 INSERT INTO yksilointivirhe (id, version, aikaleima, poikkeus, henkilo_id) VALUES
 (-1, 0, NOW(), 'fi.vm.sade.oppijanumerorekisteri.exceptions.SuspendableIdentificationException', -3)
 ;

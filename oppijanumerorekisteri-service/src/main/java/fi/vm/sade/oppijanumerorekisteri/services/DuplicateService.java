@@ -17,6 +17,8 @@ public interface DuplicateService {
 
     void removeDuplicateHetuAndLink(String oidHenkilo, String hetu);
 
+    Henkilo linkWithHetu(Henkilo henkilo, String hetu);
+
     List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
     void unlinkHenkilo(String oid, String slaveOid);

@@ -24,6 +24,8 @@ public class HenkiloDto implements Serializable {
 
     private String hetu;
 
+    private Set<String> yksiloityHetu;
+
     private boolean passivoitu;
 
     private String etunimet;

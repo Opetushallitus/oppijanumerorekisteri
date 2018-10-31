@@ -369,6 +369,41 @@ public class OppijaServiceTest {
     }
 
     @Test
+    public void getOrCreateShouldFindByYksiloityHetu() {
+        Henkilo henkilo = Henkilo.builder()
+                .oidHenkilo("oid1")
+                .hetu("180897-945K")
+                .yksiloityHetu(Stream.of("180897-945K", "180897-787F").collect(toSet()))
+                .etunimet("etu")
+                .kutsumanimi("suku")
+                .sukunimi("suku")
+                .created(new Date())
+                .modified(new Date())
+                .build();
+        henkiloRepository.save(henkilo);
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste1")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .hetu("180897-787F")
+                                .etunimet("etu")
+                                .kutsumanimi("etu")
+                                .sukunimi("suku")
+                                .build())
+                        .build())
+                        .collect(toList()))
+                .build();
+
+        OppijaTuontiReadDto readDto = create(createDto);
+
+        assertThat(readDto.getId()).isNotNull();
+        assertThat(readDto.getHenkilot())
+                .extracting(OppijaTuontiRiviReadDto::getTunniste, t -> t.getHenkilo().getOid())
+                .containsExactly(tuple("tunniste1", "oid1"));
+        assertThat(henkiloRepository.findAll()).hasSize(1);
+    }
+
+    @Test
     public void getOrCreateShouldFindByPassinumero() {
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")

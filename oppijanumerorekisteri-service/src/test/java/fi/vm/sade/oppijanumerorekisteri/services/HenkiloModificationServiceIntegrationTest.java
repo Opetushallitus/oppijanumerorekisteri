@@ -104,6 +104,24 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Test
     @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksiloityHetuAddedOnHetuChange() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setHetu("170775-973B");
+
+        henkiloModificationService.forceUpdateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='VTJYKSILOITY1'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("VTJYKSILOITY1", "170775-973B", false);
+        assertThat(henkilo.getYksiloityHetu()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
     public void yksilointivirheRemovedOnHetuChange() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");

@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
+
 @Builder(builderClassName = "builder")
 @Getter @Setter
 @NoArgsConstructor
@@ -40,8 +42,23 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @Column(name = "oidhenkilo", nullable = false)
     private String oidHenkilo;
 
+    /**
+     * Henkilön nykyinen hetu (voi olla yksilöity tai yksilöimätön).
+     */
     @Column(unique = true)
     private String hetu;
+
+    /**
+     * Henkilön yksilöidyt hetut (nykyinen ja joskus käytössä olleet).
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "yksiloity_hetu",
+            joinColumns = @JoinColumn(name = "henkilo_id"),
+            foreignKey = @ForeignKey(name = "fk_yksiloity_hetu"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_yksiloity_hetu_01", columnNames = "hetu"))
+    @Column(name = "hetu", nullable = false)
+    @NotAudited
+    private Set<String> yksiloityHetu;
 
     private String etunimet;
 
@@ -257,6 +274,20 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             return YksilointiTila.VIRHE;
         }
         return YksilointiTila.KESKEN;
+    }
+
+    public boolean addYksiloityHetu(String... hetu) {
+        if (this.yksiloityHetu == null) {
+            this.yksiloityHetu = new HashSet<>();
+        }
+        return this.yksiloityHetu.addAll(asList(hetu));
+    }
+
+    public boolean removeYksiloityHetu(String... hetu) {
+        if (this.yksiloityHetu == null) {
+            this.yksiloityHetu = new HashSet<>();
+        }
+        return this.yksiloityHetu.removeAll(asList(hetu));
     }
 
     // Initialize default values for lombok builder

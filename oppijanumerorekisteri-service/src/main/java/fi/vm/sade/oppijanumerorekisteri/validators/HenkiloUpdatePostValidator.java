@@ -15,7 +15,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -116,11 +119,13 @@ public class HenkiloUpdatePostValidator implements Validator {
                 errors.rejectValue("hetu", "socialsecuritynr.already.set");
             } else if (!StringUtils.isEmpty(dto.getHetu())) {
                 // tarkistetaan että hetu on uniikki
-                henkiloRepository.findByHetu(dto.getHetu()).ifPresent(henkiloByHetu -> {
+                Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream
+                        .of(henkiloRepository::findByHetu, henkiloRepository::findByYksiloityHetu);
+                findByHetuFunctions.forEach(findByHetuFun -> findByHetuFun.apply(dto.getHetu()).ifPresent(henkiloByHetu -> {
                     if (!henkiloByHetu.getOidHenkilo().equals(dto.getOidHenkilo())) {
                         errors.rejectValue("hetu", "socialsecuritynr.already.exists");
                     }
-                });
+                }));
             }
         }
     }

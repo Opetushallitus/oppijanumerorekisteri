@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
@@ -14,7 +13,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -39,8 +41,11 @@ public class HenkiloCreatePostValidator implements Validator {
         Henkilo henkilo = (Henkilo) o;
 
         String hetu = henkilo.getHetu();
-        if (!StringUtils.isEmpty(hetu) && this.henkiloRepository.exists(QHenkilo.henkilo.hetu.eq(hetu))) {
-            errors.rejectValue("hetu", "socialsecuritynr.already.exists");
+        if (!StringUtils.isEmpty(hetu)) {
+            Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream
+                    .of(henkiloRepository::findByHetu, henkiloRepository::findByYksiloityHetu);
+            findByHetuFunctions.forEach(findByHetuFun -> findByHetuFun.apply(hetu).ifPresent(henkiloByHetu
+                    -> errors.rejectValue("hetu", "socialsecuritynr.already.exists")));
         }
 
         KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkilo.getEtunimet());
