@@ -1,8 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
+import fi.vm.sade.oppijanumerorekisteri.dto.KoodiUpdateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import org.junit.Test;
@@ -33,6 +36,27 @@ public class OppijaMappersTest {
         OppijaTuontiRiviReadDto dto = mapper.map(entity, OppijaTuontiRiviReadDto.class);
 
         assertThat(dto.getHenkilo().getOid()).isEqualTo("oid123");
+    }
+
+    @Test
+    public void mapperShouldMapAidinkieliUppercaseToDto() {
+        TuontiRivi entity = TuontiRivi.builder()
+                .henkilo(Henkilo.builder().aidinkieli(new Kielisyys("fi")).build())
+                .build();
+
+        OppijaTuontiRiviReadDto dto = mapper.map(entity, OppijaTuontiRiviReadDto.class);
+
+        assertThat(dto.getHenkilo().getAidinkieli().getKoodi()).isEqualTo("FI");
+    }
+
+    @Test
+    public void mapperShouldMapAidinkieliLowercaseToEntity() {
+        OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto dto = new OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto();
+        dto.setAidinkieli(new KoodiUpdateDto("FI"));
+
+        Henkilo entity = mapper.map(dto, Henkilo.class);
+
+        assertThat(entity.getAidinkieli().getKieliKoodi()).isEqualTo("fi");
     }
 
 }

@@ -1,36 +1,38 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
+import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
+import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
-import static java.util.Collections.singleton;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import java.util.stream.Stream;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -44,6 +46,12 @@ public class OppijaServiceTest {
 
     @MockBean
     private PermissionChecker permissionChecker;
+
+    @MockBean
+    private KoodistoService koodistoService;
+
+    @Autowired
+    private DatabaseService databaseService;
 
     @Autowired
     private OppijaService oppijaService;
@@ -68,8 +76,7 @@ public class OppijaServiceTest {
 
     @After
     public void cleanup() {
-        tuontiRepository.deleteAll();
-        henkiloRepository.deleteAll();
+        databaseService.truncate();
     }
 
     private OppijaTuontiReadDto create(OppijaTuontiCreateDto createDto) {
@@ -208,6 +215,89 @@ public class OppijaServiceTest {
         assertThat(identifications)
                 .extracting(Identification::getIdentifier)
                 .containsExactly("example@example.com");
+    }
+
+    @Test
+    public void getOrCreateShouldCreateNewHenkiloWithSukupuoli() {
+        when(koodistoService.list(eq(Koodisto.SUKUPUOLI)))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.SUKUPUOLI).koodi("1").build());
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste1")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .sahkoposti("example@example.com")
+                                .etunimet("etu")
+                                .kutsumanimi("etu")
+                                .sukunimi("suku")
+                                .sukupuoli(new KoodiUpdateDto("1"))
+                                .build())
+                        .build())
+                        .collect(toList()))
+                .build();
+
+        OppijaTuontiReadDto readDto = create(createDto);
+
+        List<Henkilo> henkilot = henkiloRepository.findAll();
+        assertThat(henkilot).hasSize(1);
+        Henkilo henkilo = henkilot.iterator().next();
+        assertThat(henkilo.getSukupuoli()).isEqualTo("1");
+    }
+
+    @Test
+    public void getOrCreateShouldCreateNewHenkiloWithAidinkieli() {
+        when(koodistoService.list(eq(Koodisto.KIELI)))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI).koodi("FI").koodi("SV").build());
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste1")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .sahkoposti("example@example.com")
+                                .etunimet("etu")
+                                .kutsumanimi("etu")
+                                .sukunimi("suku")
+                                .aidinkieli(new KoodiUpdateDto("SV"))
+                                .build())
+                        .build())
+                        .collect(toList()))
+                .build();
+
+        OppijaTuontiReadDto readDto = create(createDto);
+
+        databaseService.runInTransaction(() -> {
+            List<String> aidinkieli = henkiloRepository.findAll().stream()
+                    .map(henkilo -> henkilo.getAidinkieli().getKieliKoodi())
+                    .collect(toList());
+            assertThat(aidinkieli).containsExactly("sv");
+        });
+    }
+
+    @Test
+    public void getOrCreateShouldCreateNewHenkiloWithKansalaisuus() {
+        when(koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2)))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.MAAT_JA_VALTIOT_2).koodi("123").koodi("456").build());
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste1")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .sahkoposti("example@example.com")
+                                .etunimet("etu")
+                                .kutsumanimi("etu")
+                                .sukunimi("suku")
+                                .kansalaisuus(Stream.of("123", "456").map(koodi -> new KoodiUpdateDto(koodi)).collect(toSet()))
+                                .build())
+                        .build())
+                        .collect(toList()))
+                .build();
+
+        OppijaTuontiReadDto readDto = create(createDto);
+
+        databaseService.runInTransaction(() -> {
+            List<String> kansalaisuus = henkiloRepository.findAll().stream().flatMap(henkilo ->
+                    henkilo.getKansalaisuus().stream()
+                            .map(Kansalaisuus::getKansalaisuusKoodi))
+                    .collect(toList());
+            assertThat(kansalaisuus).containsExactlyInAnyOrder("123", "456");
+        });
     }
 
     @Test

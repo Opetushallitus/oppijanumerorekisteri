@@ -2,46 +2,38 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.Identification;
-import static fi.vm.sade.oppijanumerorekisteri.models.Identification.SAHKOPOSTI_IDP_ENTITY_ID;
-import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
-import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
-import fi.vm.sade.oppijanumerorekisteri.models.TuontiData;
-import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
-import static java.util.Collections.emptyMap;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static fi.vm.sade.oppijanumerorekisteri.models.Identification.SAHKOPOSTI_IDP_ENTITY_ID;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
+import static java.util.Collections.emptyMap;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 @Slf4j
@@ -50,7 +42,6 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
-    private final HenkiloService henkiloService;
     private final HenkiloModificationService henkiloModificationService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
@@ -60,9 +51,16 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final PermissionChecker permissionChecker;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final OppijaTuontiCreatePostValidator validator;
 
     @Override
     public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
+        BindException errors = new BindException(dto, "oppijaTuontiCreateDto");
+        validator.validate(dto, errors);
+        if (errors.hasErrors()) {
+            throw new UnprocessableEntityException(errors);
+        }
+
         Set<Organisaatio> organisaatiot = getOrCreateOrganisaatioByKayttaja();
         if (organisaatiot.isEmpty()) {
             throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joihin oppijat liitetään", userDetailsHelper.getCurrentUserOid()));

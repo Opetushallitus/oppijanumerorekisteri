@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
+import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,11 +63,12 @@ public class OppijaServiceImplTest {
     private ObjectMapper objectMapperMock;
     @Mock
     private EmailService emailService;
-
+    @Mock
+    private OppijaTuontiCreatePostValidator oppijaTuontiCreatePostValidatorMock;
 
     @Before
     public void setup() {
-        OppijaTuontiServiceImpl oppijaTuontiServiceImpl = new OppijaTuontiServiceImpl(henkiloServiceMock,
+        OppijaTuontiServiceImpl oppijaTuontiServiceImpl = new OppijaTuontiServiceImpl(
                 henkiloModificationServiceMock,
                 mapperMock,
                 henkiloRepositoryMock,
@@ -75,7 +77,8 @@ public class OppijaServiceImplTest {
                 userDetailsHelperMock,
                 permissionCheckerMock,
                 objectMapperMock,
-                emailService);
+                emailService,
+                oppijaTuontiCreatePostValidatorMock);
 
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
