@@ -107,10 +107,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloUpdateDto.setKotikunta(null);
         }
 
-        if (!StringUtils.isEmpty(henkiloUpdateDto.getHetu()) && HetuUtils.hetuIsValid(henkiloUpdateDto.getHetu())) {
-            henkiloUpdateDto.setSyntymaaika(HetuUtils.dateFromHetu(henkiloUpdateDto.getHetu()));
-            henkiloUpdateDto.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloUpdateDto.getHetu()));
-        }
         // In case hetu changes henkilo should be considered pristine from identification point of view
         if (henkiloUpdateDto.getHetu() != null && !Objects.equals(henkiloSaved.getHetu(), henkiloUpdateDto.getHetu())) {
             yksilointitietoRepository.findByHenkilo(henkiloSaved).ifPresent(yksilointitietoRepository::delete);
@@ -161,7 +157,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             throw new UnprocessableEntityException(errors);
         }
 
-        final String uusiHetu = henkiloUpdateDto.getHetu();
         this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
@@ -178,11 +173,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         henkiloUpdateDto.setHuoltajat(null);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
-
-        if (!StringUtils.isEmpty(uusiHetu) && HetuUtils.hetuIsValid(uusiHetu)) {
-            henkiloSaved.setSyntymaaika(HetuUtils.dateFromHetu(uusiHetu));
-            henkiloSaved.setSukupuoli(HetuUtils.sukupuoliFromHetu(uusiHetu));
-        }
 
         return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
     }
@@ -285,6 +275,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     @Override
     public Henkilo update(Henkilo henkilo) {
+        setSyntymaaikaAndSukupuoliFromHetu(henkilo);
+
         Date nyt = new Date();
         Optional<String> kayttajaOid = userDetailsHelper.findCurrentUserOid();
 
@@ -420,10 +412,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         if (StringUtils.isEmpty(henkiloCreate.getHetu())) {
             henkiloCreate.setHetu(null);
         }
-        if (!StringUtils.isEmpty(henkiloCreate.getHetu()) && HetuUtils.hetuIsValid(henkiloCreate.getHetu())) {
-            henkiloCreate.setSyntymaaika(HetuUtils.dateFromHetu(henkiloCreate.getHetu()));
-            henkiloCreate.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkiloCreate.getHetu()));
-        }
+        setSyntymaaikaAndSukupuoliFromHetu(henkiloCreate);
         henkiloCreate.setOidHenkilo(getFreePersonOid());
         henkiloCreate.setCreated(new Date());
         henkiloCreate.setModified(henkiloCreate.getCreated());
@@ -471,6 +460,13 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             return getFreePersonOid();
         }
         return newOid;
+    }
+
+    private static void setSyntymaaikaAndSukupuoliFromHetu(Henkilo henkilo) {
+        if (HetuUtils.hetuIsValid(henkilo.getHetu())) {
+            henkilo.setSyntymaaika(HetuUtils.dateFromHetu(henkilo.getHetu()));
+            henkilo.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkilo.getHetu()));
+        }
     }
 
 }
