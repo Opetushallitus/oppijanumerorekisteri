@@ -13,10 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.OidGenerator;
-import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
-import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
@@ -64,6 +61,9 @@ public class HenkiloModificationServiceImplTest {
 
     @Mock
     private HenkiloService henkiloService;
+
+    @Mock
+    private DuplicateService duplicateService;
 
     @Mock
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
@@ -235,6 +235,28 @@ public class HenkiloModificationServiceImplTest {
         ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
         verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
         Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getSukupuoli()).isEqualTo("1");
+    }
+
+    @Test
+    public void forceUpdateHenkiloShouldSaveHetu() {
+        when(henkiloDataRepositoryMock.findByOidHenkilo(any()))
+                .thenReturn(Optional.of(new Henkilo()));
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloForceUpdateDto input = new HenkiloForceUpdateDto();
+        input.setHetu("310817A983J");
+        input.setSyntymaaika(LocalDate.of(2017, Month.OCTOBER, 6));
+        input.setSukunimi("2");
+
+        HenkiloReadDto output = service.forceUpdateHenkilo(input);
+
+        assertThat(output.getHetu()).isEqualTo("310817A983J");
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isEqualTo("310817A983J");
+        assertThat(saved.getSyntymaaika()).isEqualTo("2017-08-31");
         assertThat(saved.getSukupuoli()).isEqualTo("1");
     }
 

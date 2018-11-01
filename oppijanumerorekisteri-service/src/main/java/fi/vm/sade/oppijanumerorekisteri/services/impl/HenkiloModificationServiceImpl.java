@@ -161,7 +161,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             throw new UnprocessableEntityException(errors);
         }
 
-
+        final String uusiHetu = henkiloUpdateDto.getHetu();
         this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
@@ -178,6 +178,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         henkiloUpdateDto.setHuoltajat(null);
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
+
+        if (!StringUtils.isEmpty(uusiHetu) && HetuUtils.hetuIsValid(uusiHetu)) {
+            henkiloSaved.setSyntymaaika(HetuUtils.dateFromHetu(uusiHetu));
+            henkiloSaved.setSukupuoli(HetuUtils.sukupuoliFromHetu(uusiHetu));
+        }
 
         return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
     }
