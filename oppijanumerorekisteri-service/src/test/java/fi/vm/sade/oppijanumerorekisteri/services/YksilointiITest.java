@@ -77,7 +77,7 @@ public class YksilointiITest {
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksiloiAutomaattisestiHetuMuutosUusiHetuYksiloityEnsin() {
-        String uusiHetu = "190198-727T";
+        String uusiHetu = "200198-7484";
         String vanhaHetu = "190198-5259";
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(uusiHetu);
@@ -106,12 +106,16 @@ public class YksilointiITest {
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(null, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 19), Henkilo::getSyntymaaika)
+                    .returns("1", Henkilo::getSukupuoli)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
         assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(uusiHetu, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
                     .returns(uusiOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -121,7 +125,7 @@ public class YksilointiITest {
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksiloiAutomaattisestiHetuMuutosVanhaHetuYksiloityEnsin() {
-        String uusiHetu = "190198-727T";
+        String uusiHetu = "200198-7484";
         String vanhaHetu = "190198-5259";
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(uusiHetu);
@@ -151,6 +155,8 @@ public class YksilointiITest {
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(uusiHetu, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
                     .returns(vanhaOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -158,6 +164,8 @@ public class YksilointiITest {
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(null, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
                     .returns(null, Henkilo::getOppijanumero)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
@@ -236,7 +244,7 @@ public class YksilointiITest {
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yliajaHenkilonTiedotHetuMuutosUusiHetuYksiloityEnsin() {
-        String uusiHetu = "190198-727T";
+        String uusiHetu = "200198-7484";
         String vanhaHetu = "190198-5259";
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(uusiHetu);
@@ -266,12 +274,16 @@ public class YksilointiITest {
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(null, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 19), Henkilo::getSyntymaaika)
+                    .returns("1", Henkilo::getSukupuoli)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
         assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(uusiHetu, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
                     .returns(uusiOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -281,7 +293,7 @@ public class YksilointiITest {
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yliajaHenkilonTiedotHetuMuutosVanhaHetuYksiloityEnsin() {
-        String uusiHetu = "190198-727T";
+        String uusiHetu = "200198-7484";
         String vanhaHetu = "190198-5259";
         YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
         yksiloityHenkilo.setHetu(uusiHetu);
@@ -313,6 +325,8 @@ public class YksilointiITest {
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(uusiHetu, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
                     .returns(vanhaOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -320,6 +334,8 @@ public class YksilointiITest {
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(null, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
                     .returns(null, Henkilo::getOppijanumero)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });

@@ -522,7 +522,11 @@ public class YksilointiServiceImpl implements YksilointiService {
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
         henkilo.setEtunimet(yksilointitieto.getEtunimet());
         henkilo.setSukunimi(yksilointitieto.getSukunimi());
+        if (HetuUtils.hetuIsValid(uusiHetu)) {
+            henkilo.setSyntymaaika(HetuUtils.dateFromHetu(uusiHetu));
+        }
         henkilo.setSukupuoli(yksilointitieto.getSukupuoli());
+
         henkilo.setKotikunta(yksilointitieto.getKotikunta());
         henkilo.setYksiloityVTJ(true);
         henkilo.setYksiloity(false);
