@@ -108,6 +108,7 @@ public class YksilointiITest {
                     .returns(null, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 19), Henkilo::getSyntymaaika)
                     .returns("1", Henkilo::getSukupuoli)
+                    .returns(null, Henkilo::getOppijanumero)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
         assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();

@@ -178,7 +178,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         else {
             logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
 
-            henkilo.setOppijanumero(henkilo.getOidHenkilo());
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
             if (this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo)) {
