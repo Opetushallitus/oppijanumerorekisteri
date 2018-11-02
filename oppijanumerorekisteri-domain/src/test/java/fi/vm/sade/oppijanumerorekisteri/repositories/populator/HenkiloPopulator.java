@@ -20,6 +20,11 @@ public class HenkiloPopulator implements Populator<Henkilo> {
     private Populator<Henkilo> master;
     private DateTime created;
     private DateTime modified;
+    private boolean passivoitu;
+    private boolean duplikaatti;
+    private boolean yksilointiYritetty;
+    private boolean yksiloity;
+    private boolean yksiloityVtj;
 
     public HenkiloPopulator(String oid) {
         this.oid = oid;
@@ -54,6 +59,31 @@ public class HenkiloPopulator implements Populator<Henkilo> {
         return this;
     }
 
+    public HenkiloPopulator passivoitu() {
+        this.passivoitu = true;
+        return this;
+    }
+
+    public HenkiloPopulator duplikaatti() {
+        this.duplikaatti = true;
+        return this;
+    }
+
+    public HenkiloPopulator yksilointiYritetty() {
+        this.yksilointiYritetty = true;
+        return this;
+    }
+
+    public HenkiloPopulator yksiloity() {
+        this.yksiloity = true;
+        return this;
+    }
+
+    public HenkiloPopulator yksiloityVtj() {
+        this.yksiloityVtj = true;
+        return this;
+    }
+
     @Override
     public Henkilo apply(EntityManager entityManager) {
         Optional<Henkilo> masterHenkilo = ofNullable(master).map(m -> m.apply(entityManager));
@@ -64,6 +94,11 @@ public class HenkiloPopulator implements Populator<Henkilo> {
             henkilo.setHetu(hetu);
             henkilo.setCreated(created == null ? new Date() : created.toDate());
             henkilo.setModified(modified != null ? modified.toDate() : henkilo.getCreated());
+            henkilo.setPassivoitu(passivoitu);
+            henkilo.setDuplicate(duplikaatti);
+            henkilo.setYksilointiYritetty(yksilointiYritetty);
+            henkilo.setYksiloity(yksiloity);
+            henkilo.setYksiloityVTJ(yksiloityVtj);
             entityManager.persist(henkilo);
 
             yhteystietoRyhmas.forEach(ryhmaPopulator -> {

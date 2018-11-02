@@ -74,6 +74,7 @@ public class OppijaTuontiCriteria {
             query.where(qOrganisaatio.oid.in(organisaatioOids));
         }
         if (Boolean.TRUE.equals(vainVirheet)) {
+            query.where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse());
             query.where(anyOf(
                     allOf(
                             qHenkilo.hetu.isNull(),
