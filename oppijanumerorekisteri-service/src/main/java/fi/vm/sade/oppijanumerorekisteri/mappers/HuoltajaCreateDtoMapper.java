@@ -30,6 +30,9 @@ public class HuoltajaCreateDtoMapper {
                                                 .orElseGet(() -> kansalaisuusRepository.save(new Kansalaisuus(kansalaisuusKoodi))))
                                         .collect(Collectors.toSet()))
                                 .ifPresent(henkilo::setKansalaisuus);
+                        if ("".equals(huoltajaCreateDto.getHetu())) {
+                            huoltajaCreateDto.setHetu(null);
+                        }
                     }
                 })
                 .toClassMap();

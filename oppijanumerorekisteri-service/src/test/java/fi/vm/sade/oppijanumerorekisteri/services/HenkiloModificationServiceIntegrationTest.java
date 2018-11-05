@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -303,6 +304,32 @@ public class HenkiloModificationServiceIntegrationTest {
 
         Henkilo huoltaja = henkiloModificationService.createHenkilo(huoltajaCreateDto);
         assertThat(huoltaja).extracting(Henkilo::getHetu).containsExactly("hetu");
+        assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void huoltajaCreateWithEmptyHetu() {
+        KoodiType huoltajuustyyppi = new KoodiType();
+        huoltajuustyyppi.setKoodiArvo("03");
+        KoodiType kansalaisuustyyppi = new KoodiType();
+        kansalaisuustyyppi.setKoodiArvo("246");
+        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
+        given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
+
+        HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
+                .hetu("")
+                .etunimet("huoltaja")
+                .sukunimi("tyhjallahetulla")
+                .syntymaaika(LocalDate.of(1950, 2, 2))
+                .huoltajuustyyppiKoodi("03")
+                .kansalaisuusKoodi(Collections.singleton("246"))
+                .build();
+
+        Henkilo huoltaja = henkiloModificationService.createHenkilo(huoltajaCreateDto);
+        assertThat(huoltaja)
+                .extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getKutsumanimi, Henkilo::getSukunimi, Henkilo::getSyntymaaika)
+                .containsExactly(null, "huoltaja", "huoltaja", "tyhjallahetulla", LocalDate.of(1950, 2, 2));
         assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
     }
 
