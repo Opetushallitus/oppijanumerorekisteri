@@ -165,6 +165,10 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElseThrow(() ->
                         new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
+        if (yksiloityHenkilo.isPassivoitu()) {
+            throw new SuspendableIdentificationException("Henkilön hetu on passivoitu: " + henkilo.getHetu());
+        }
+
         yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
         henkilo.setYksilointiYritetty(true);
 

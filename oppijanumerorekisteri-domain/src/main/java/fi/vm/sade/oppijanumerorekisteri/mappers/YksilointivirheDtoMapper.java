@@ -26,6 +26,9 @@ public class YksilointivirheDtoMapper extends CustomConverter<Yksilointivirhe, Y
             else if (source.getViesti().startsWith("Henkilön hetu ei ole oikea: ")) {
                 yksilointivirheTila = YksilointivirheTila.HETU_EI_OIKEA;
             }
+            else if (source.getViesti().contains("Henkilön hetu on passivoitu: ")) {
+                yksilointivirheTila = YksilointivirheTila.HETU_PASSIVOITU;
+            }
             else {
                 yksilointivirheTila = YksilointivirheTila.MUU;
             }
