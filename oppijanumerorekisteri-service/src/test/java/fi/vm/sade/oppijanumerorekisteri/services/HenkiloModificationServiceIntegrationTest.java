@@ -28,7 +28,9 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.eq;
@@ -100,6 +102,42 @@ public class HenkiloModificationServiceIntegrationTest {
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksiloityHetuAdded() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setYksiloityHetu(Stream.of("111111-985K", "170775-973B").collect(toSet()));
+
+        henkiloModificationService.forceUpdateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='VTJYKSILOITY1'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("VTJYKSILOITY1", "111111-985K", false);
+        assertThat(henkilo.getYksiloityHetu()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void yksiloityHetuNotModified() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setYksiloityHetu(null);
+
+        henkiloModificationService.forceUpdateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='VTJYKSILOITY1'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("VTJYKSILOITY1", "111111-985K", false);
+        assertThat(henkilo.getYksiloityHetu()).containsExactlyInAnyOrder("111111-985K");
     }
 
     @Test
