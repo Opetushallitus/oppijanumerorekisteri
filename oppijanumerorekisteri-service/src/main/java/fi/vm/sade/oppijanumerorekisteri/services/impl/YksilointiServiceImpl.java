@@ -174,6 +174,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         if (this.yhtenevyysTarkistus(henkilo, yksiloityHenkilo)) {
             this.addYksilointitietosWhenNamesDoNotMatch(henkilo, yksiloityHenkilo);
+            return henkiloModificationService.update(henkilo);
         }
         else {
             logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
@@ -186,10 +187,11 @@ public class YksilointiServiceImpl implements YksilointiService {
                 henkilo.setYksiloity(false);
 
                 yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
+                return henkiloModificationService.update(henkilo);
             }
         }
 
-        return henkiloModificationService.update(henkilo);
+        return henkilo;
     }
 
     // Palauttaa tiedon ovatko henkilön nimet epävastaavia VTJ-datan kanssa.
@@ -487,8 +489,8 @@ public class YksilointiServiceImpl implements YksilointiService {
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         if (this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo)) {
             henkilo.setVtjsynced(new Date());
+            henkiloModificationService.update(henkilo);
         }
-        henkiloModificationService.update(henkilo);
     }
 
     @Override
