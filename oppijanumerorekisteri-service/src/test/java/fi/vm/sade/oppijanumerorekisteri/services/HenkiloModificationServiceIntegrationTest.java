@@ -28,7 +28,9 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.eq;
@@ -100,6 +102,60 @@ public class HenkiloModificationServiceIntegrationTest {
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void kaikkiHetutAdded() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setKaikkiHetut(Stream.of("111111-985K", "170775-973B").collect(toSet()));
+
+        henkiloModificationService.forceUpdateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='VTJYKSILOITY1'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("VTJYKSILOITY1", "111111-985K", false);
+        assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void kaikkiHetutNotModified() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setKaikkiHetut(null);
+
+        henkiloModificationService.forceUpdateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='VTJYKSILOITY1'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("VTJYKSILOITY1", "111111-985K", false);
+        assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    public void kaikkiHetutAddedOnHetuChange() {
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("VTJYKSILOITY1");
+        updateDto.setHetu("170775-973B");
+
+        henkiloModificationService.forceUpdateHenkilo(updateDto);
+        Henkilo henkilo = this.entityManager
+                .createQuery("SELECT h FROM Henkilo h WHERE h.oidHenkilo='VTJYKSILOITY1'", Henkilo.class)
+                .getSingleResult();
+
+        assertThat(henkilo)
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
+                .containsExactly("VTJYKSILOITY1", "170775-973B", false);
+        assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
     }
 
     @Test

@@ -182,6 +182,16 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
+    public Optional<String> findOidByKaikkiHetut(String hetu) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
+        return Optional.ofNullable(jpa().select(qHenkilo.oidHenkilo).from(qHenkilo)
+                .join(qHenkilo.kaikkiHetut, qHetu)
+                .where(qHetu.eq(hetu))
+                .fetchOne());
+    }
+
+    @Override
     public List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
         JPAQuery<Henkilo> query = jpa().select(Projections.bean(Henkilo.class, henkilo.oidHenkilo, henkilo.etunimet,
                 henkilo.kutsumanimi, henkilo.sukunimi, henkilo.hetu))
@@ -429,6 +439,22 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
+    public Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByKaikkiHetut(String hetu) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
+
+        return Optional.ofNullable(jpa().from(qHenkilo)
+                .join(qHenkilo.kaikkiHetut, qHetu).where(qHetu.eq(hetu))
+                .select(Projections.bean(HenkiloOidHetuNimiDto.class,
+                        qHenkilo.oidHenkilo,
+                        qHenkilo.hetu,
+                        qHenkilo.etunimet,
+                        qHenkilo.kutsumanimi,
+                        qHenkilo.sukunimi))
+                .fetchOne());
+    }
+
+    @Override
     public List<Henkilo> findSlavesByMasterOid(String henkiloOid) {
         QHenkilo qMaster = new QHenkilo("master");
         QHenkilo qSlave = new QHenkilo("slave");
@@ -505,6 +531,18 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .where(qHenkilo.oidHenkilo.eq(oid))
                 .select(qPassinumero)
                 .fetch();
+    }
+
+    @Override
+    public Map<String, Henkilo> findAndMapByKaikkiHetut(Set<String> hetut) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
+
+        return jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.kaikkiHetut, qHetu)
+                .where(qHetu.in(hetut))
+                .transform(groupBy(qHetu).as(qHenkilo));
     }
 
     @Override

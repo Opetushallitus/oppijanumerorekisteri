@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
 
 import java.io.IOException;
 import java.util.*;
@@ -139,9 +138,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                 .map(t -> t.getHenkilo().getHetu())
                 .filter(Objects::nonNull)
                 .collect(toSet());
-        Map<String, Henkilo> henkilotByHetu = hetut.isEmpty() ? emptyMap() : henkiloRepository
-                .findByHetuIn(hetut).stream()
-                .collect(toMap(Henkilo::getHetu, identity()));
+        Map<String, Henkilo> henkilotByHetu = hetut.isEmpty() ? emptyMap() : getHenkilotByHetu(hetut);
         // passinumerot
         Set<String> passinumerot = henkilot.stream()
                 .map(t -> t.getHenkilo().getPassinumero())
@@ -161,6 +158,14 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         return henkilot.stream()
                 .map(tuontiRiviMapper::map)
                 .collect(toSet());
+    }
+
+    private Map<String, Henkilo> getHenkilotByHetu(Set<String> hetut) {
+        Map<String, Henkilo> henkilotByHetu = henkiloRepository
+                .findByHetuIn(hetut).stream()
+                .collect(toMap(Henkilo::getHetu, identity()));
+        henkilotByHetu.putAll(henkiloRepository.findAndMapByKaikkiHetut(hetut));
+        return henkilotByHetu;
     }
 
     @RequiredArgsConstructor

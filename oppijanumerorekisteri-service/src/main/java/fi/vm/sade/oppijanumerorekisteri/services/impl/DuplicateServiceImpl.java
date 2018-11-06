@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplikaattiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
@@ -106,6 +107,30 @@ public class DuplicateServiceImpl implements DuplicateService {
                     this.henkiloDataRepository.saveAndFlush(oppijaWithSameHetu);
                     this.linkHenkilos(oidHenkilo, Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
                 });
+    }
+
+    @Override
+    @Transactional
+    public Henkilo linkWithHetu(Henkilo henkilo, String hetu) {
+        return this.henkiloDataRepository.findByHetu(hetu)
+                .filter(henkiloByHetu -> !henkiloByHetu.equals(henkilo))
+                .map(henkiloByHetu -> {
+                    if (henkiloByHetu.isYksiloityVTJ() && (henkilo.isYksiloity() || henkilo.isYksiloityVTJ())) {
+                        throw new ValidationException(String.format("Henkilöitä %s ja %s ei voida yhdistää koska molemmat ovat jo yksilöity",
+                                henkilo.getOidHenkilo(), henkiloByHetu.getOidHenkilo()));
+                    }
+                    Henkilo master = henkilo;
+                    Henkilo slave = henkiloByHetu;
+                    if (henkiloByHetu.isYksiloityVTJ()) {
+                        // pidetään yksilöity yksilöitynä
+                        master = henkiloByHetu;
+                        slave = henkilo;
+                    }
+                    slave.setHetu(null);
+                    this.linkHenkilos(master.getOidHenkilo(), Lists.newArrayList(slave.getOidHenkilo()));
+                    return master;
+                })
+                .orElse(henkilo);
     }
 
     @Override

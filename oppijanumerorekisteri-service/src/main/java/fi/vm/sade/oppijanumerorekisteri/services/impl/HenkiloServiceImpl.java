@@ -22,6 +22,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
@@ -197,7 +198,9 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public String getOidByHetu(String hetu) {
-        return this.henkiloDataRepository.findOidByHetu(hetu).orElseThrow(NotFoundException::new);
+        return OptionalUtils.or(this.henkiloDataRepository.findOidByHetu(hetu),
+                () -> this.henkiloDataRepository.findOidByKaikkiHetut(hetu))
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -228,7 +231,9 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu) {
-        return henkiloDataRepository.findOidHetuNimiByHetu(hetu).orElseThrow(NotFoundException::new);
+        return OptionalUtils.or(henkiloDataRepository.findOidHetuNimiByHetu(hetu),
+                () -> henkiloDataRepository.findOidHetuNimiByKaikkiHetut(hetu))
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override
@@ -333,7 +338,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloReadDto getByHetu(String hetu) {
-        Henkilo henkilo = henkiloDataRepository.findByHetu(hetu)
+        Henkilo henkilo = OptionalUtils.or(henkiloDataRepository.findByHetu(hetu),
+                () -> henkiloDataRepository.findByKaikkiHetut(hetu))
                 .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
         return mapper.map(henkilo, HenkiloReadDto.class);
     }

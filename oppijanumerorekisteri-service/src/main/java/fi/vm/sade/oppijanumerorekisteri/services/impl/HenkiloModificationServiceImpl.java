@@ -18,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
+import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
@@ -186,7 +187,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     public Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi) {
         Optional<Henkilo> huoltaja = Optional.empty();
         if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
-            huoltaja = this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu());
+            huoltaja = OptionalUtils.or(this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu()),
+                    () -> this.henkiloDataRepository.findByKaikkiHetut(huoltajaCreateDto.getHetu()));
         }
         else if (StringUtils.hasLength(huoltajaCreateDto.getEtunimet()) && StringUtils.hasLength(huoltajaCreateDto.getSukunimi())) {
             huoltaja = lapsi.getHuoltajat().stream()
@@ -206,6 +208,13 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private void updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         // Only if hetu has changed
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
+            if (henkiloSaved.isYksiloityVTJ()) {
+                henkiloDataRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkiloByUusiHetu -> {
+                    henkiloByUusiHetu.removeHetu(henkiloUpdateDto.getHetu());
+                    henkiloDataRepository.saveAndFlush(henkiloByUusiHetu);
+                });
+                henkiloSaved.addHetu(henkiloUpdateDto.getHetu());
+            }
             String newHetu = henkiloUpdateDto.getHetu();
             this.duplicateService.removeDuplicateHetuAndLink(henkiloUpdateDto.getOidHenkilo(), newHetu);
             henkiloSaved.setHetu(newHetu);
@@ -322,7 +331,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 dto -> Optional.ofNullable(dto.getIdentifications())
                         .filter(identifications -> !identifications.isEmpty())
                         .flatMap(identifications -> findUnique(henkiloDataRepository.findByIdentifications(identifications))),
-                dto -> Optional.ofNullable(dto.getHetu()).flatMap(henkiloDataRepository::findByHetu)
+                dto -> Optional.ofNullable(dto.getHetu()).flatMap(hetu -> OptionalUtils.or(
+                        henkiloDataRepository.findByHetu(hetu), () -> henkiloDataRepository.findByKaikkiHetut(hetu)))
         ).map(transformer -> transformer.apply(henkiloPerustietoDto))
                 .filter(Optional::isPresent)
                 .map(Optional::get)

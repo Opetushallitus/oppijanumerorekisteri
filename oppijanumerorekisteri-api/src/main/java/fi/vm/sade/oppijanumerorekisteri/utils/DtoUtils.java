@@ -60,7 +60,7 @@ public class DtoUtils {
         Date createdModified = new Date(29364800000L);
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
-        return new HenkiloDto(oidHenkilo, hetu, passivoitu, etunimet, kutsumanimi, sukunimi,
+        return new HenkiloDto(oidHenkilo, hetu, null, passivoitu, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
                 syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, createdModified,
                 createdModified, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>());
