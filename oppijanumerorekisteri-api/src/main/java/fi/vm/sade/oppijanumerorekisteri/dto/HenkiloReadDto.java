@@ -15,7 +15,7 @@ public class HenkiloReadDto {
     private LocalDate syntymaaika;
     private LocalDate kuolinpaiva;
     private String hetu;
-    private Set<String> yksiloityHetu;
+    private Set<String> kaikkiHetut;
     private String kutsumanimi;
     private String oidHenkilo;
     private String oppijanumero;

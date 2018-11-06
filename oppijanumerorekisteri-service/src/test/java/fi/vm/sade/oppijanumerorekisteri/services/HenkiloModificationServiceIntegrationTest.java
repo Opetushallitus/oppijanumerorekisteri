@@ -106,10 +106,10 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Test
     @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
-    public void yksiloityHetuAdded() {
+    public void kaikkiHetutAdded() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
-        updateDto.setYksiloityHetu(Stream.of("111111-985K", "170775-973B").collect(toSet()));
+        updateDto.setKaikkiHetut(Stream.of("111111-985K", "170775-973B").collect(toSet()));
 
         henkiloModificationService.forceUpdateHenkilo(updateDto);
         Henkilo henkilo = this.entityManager
@@ -119,15 +119,15 @@ public class HenkiloModificationServiceIntegrationTest {
         assertThat(henkilo)
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("VTJYKSILOITY1", "111111-985K", false);
-        assertThat(henkilo.getYksiloityHetu()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
+        assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
     }
 
     @Test
     @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
-    public void yksiloityHetuNotModified() {
+    public void kaikkiHetutNotModified() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
-        updateDto.setYksiloityHetu(null);
+        updateDto.setKaikkiHetut(null);
 
         henkiloModificationService.forceUpdateHenkilo(updateDto);
         Henkilo henkilo = this.entityManager
@@ -137,12 +137,12 @@ public class HenkiloModificationServiceIntegrationTest {
         assertThat(henkilo)
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("VTJYKSILOITY1", "111111-985K", false);
-        assertThat(henkilo.getYksiloityHetu()).containsExactlyInAnyOrder("111111-985K");
+        assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K");
     }
 
     @Test
     @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
-    public void yksiloityHetuAddedOnHetuChange() {
+    public void kaikkiHetutAddedOnHetuChange() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
         updateDto.setHetu("170775-973B");
@@ -155,7 +155,7 @@ public class HenkiloModificationServiceIntegrationTest {
         assertThat(henkilo)
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("VTJYKSILOITY1", "170775-973B", false);
-        assertThat(henkilo.getYksiloityHetu()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
+        assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
     }
 
     @Test

@@ -49,16 +49,17 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private String hetu;
 
     /**
-     * Henkilön yksilöidyt hetut (nykyinen ja joskus käytössä olleet).
+     * Henkilön kaikki viralliset hetut (nykyinen ja joskus käytössä olleet).
+     * Huom! Ei sisällä yksilöimättömien henkilöiden hetuja.
      */
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "yksiloity_hetu",
+    @CollectionTable(name = "henkilo_hetu",
             joinColumns = @JoinColumn(name = "henkilo_id"),
-            foreignKey = @ForeignKey(name = "fk_yksiloity_hetu"),
-            uniqueConstraints = @UniqueConstraint(name = "uk_yksiloity_hetu_01", columnNames = "hetu"))
+            foreignKey = @ForeignKey(name = "fk_henkilo_hetu_henkilo"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_henkilo_hetu_01", columnNames = "hetu"))
     @Column(name = "hetu", nullable = false)
     @NotAudited
-    private Set<String> yksiloityHetu;
+    private Set<String> kaikkiHetut;
 
     private String etunimet;
 
@@ -276,18 +277,18 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         return YksilointiTila.KESKEN;
     }
 
-    public boolean addYksiloityHetu(String... hetu) {
-        if (this.yksiloityHetu == null) {
-            this.yksiloityHetu = new HashSet<>();
+    public boolean addHetu(String... hetut) {
+        if (this.kaikkiHetut == null) {
+            this.kaikkiHetut = new HashSet<>();
         }
-        return this.yksiloityHetu.addAll(asList(hetu));
+        return this.kaikkiHetut.addAll(asList(hetut));
     }
 
-    public boolean removeYksiloityHetu(String... hetu) {
-        if (this.yksiloityHetu == null) {
-            this.yksiloityHetu = new HashSet<>();
+    public boolean removeHetu(String... hetut) {
+        if (this.kaikkiHetut == null) {
+            this.kaikkiHetut = new HashSet<>();
         }
-        return this.yksiloityHetu.removeAll(asList(hetu));
+        return this.kaikkiHetut.removeAll(asList(hetut));
     }
 
     // Initialize default values for lombok builder

@@ -43,7 +43,7 @@ public class HenkiloCreatePostValidator implements Validator {
         String hetu = henkilo.getHetu();
         if (!StringUtils.isEmpty(hetu)) {
             Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream
-                    .of(henkiloRepository::findByHetu, henkiloRepository::findByYksiloityHetu);
+                    .of(henkiloRepository::findByHetu, henkiloRepository::findByKaikkiHetut);
             findByHetuFunctions.forEach(findByHetuFun -> findByHetuFun.apply(hetu).ifPresent(henkiloByHetu
                     -> errors.rejectValue("hetu", "socialsecuritynr.already.exists")));
         }

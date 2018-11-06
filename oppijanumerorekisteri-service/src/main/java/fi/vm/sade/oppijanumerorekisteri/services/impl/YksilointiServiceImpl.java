@@ -357,10 +357,10 @@ public class YksilointiServiceImpl implements YksilointiService {
                 return false;
             }
             henkilo.setHetu(uusiHetu);
-            henkilo.addYksiloityHetu(uusiHetu);
+            henkilo.addHetu(uusiHetu);
         }
 
-        henkilo.addYksiloityHetu(nykyinenHetu);
+        henkilo.addHetu(nykyinenHetu);
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
 
         updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
@@ -416,8 +416,8 @@ public class YksilointiServiceImpl implements YksilointiService {
     private boolean kasitteleHetuMuutos(Henkilo henkilo, String nykyinenHetu, String uusiHetu) {
         Henkilo master = duplicateService.linkWithHetu(henkilo, uusiHetu);
         if (!master.equals(henkilo)) {
-            henkilo.removeYksiloityHetu(nykyinenHetu, uusiHetu);
-            master.addYksiloityHetu(nykyinenHetu, uusiHetu);
+            henkilo.removeHetu(nykyinenHetu, uusiHetu);
+            master.addHetu(nykyinenHetu, uusiHetu);
             return true;
         }
         return false;
@@ -516,10 +516,10 @@ public class YksilointiServiceImpl implements YksilointiService {
                 return;
             }
             henkilo.setHetu(uusiHetu);
-            henkilo.addYksiloityHetu(uusiHetu);
+            henkilo.addHetu(uusiHetu);
         }
 
-        henkilo.addYksiloityHetu(nykyinenHetu);
+        henkilo.addHetu(nykyinenHetu);
         henkilo.setOppijanumero(henkilo.getOidHenkilo());
         henkilo.setEtunimet(yksilointitieto.getEtunimet());
         henkilo.setSukunimi(yksilointitieto.getSukunimi());

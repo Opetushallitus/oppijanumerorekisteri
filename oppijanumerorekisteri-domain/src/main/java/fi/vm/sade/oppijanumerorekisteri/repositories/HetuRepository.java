@@ -4,7 +4,12 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
 import java.util.Collection;
 
-public interface YksiloityHetuRepository {
+/**
+ * Tietokantakyselyt henkilöiden virallisten hetujen listaamiseen.
+ *
+ * Huom! Ei palauta yksilöimättömien henkilöiden hetuja.
+ */
+public interface HetuRepository {
 
     Collection<String> findAll();
 

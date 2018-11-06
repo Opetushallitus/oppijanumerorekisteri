@@ -19,7 +19,7 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor, JpaReposit
 
     Optional<Henkilo> findByHetu(String hetu);
 
-    Optional<Henkilo> findByYksiloityHetu(String hetu);
+    Optional<Henkilo> findByKaikkiHetut(String hetu);
 
     List<Henkilo> findByHetuIn(Set<String> hetut);
 

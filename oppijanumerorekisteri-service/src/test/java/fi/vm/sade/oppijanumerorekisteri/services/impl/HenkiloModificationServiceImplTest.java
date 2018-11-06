@@ -318,7 +318,7 @@ public class HenkiloModificationServiceImplTest {
     }
 
     @Test
-    public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByYksiloityHetu() {
+    public void findOrCreateHenkiloFromPerustietoDtoHenkiloFoundByKaikkiHetut() {
         LocalDate syntymaaika = LocalDate.now();
         Date modified = new Date();
         HenkiloPerustietoDto henkiloPerustietoDtoInput = DtoUtils.createHenkiloPerustietoDto(null, null, null,
@@ -329,7 +329,7 @@ public class HenkiloModificationServiceImplTest {
                 "fi", "suomi", "246", modified, new Date(), "1.2.3.4.1", "arpa@kuutio.fi", syntymaaika);
 
 
-        given(this.henkiloDataRepositoryMock.findByYksiloityHetu(henkiloPerustietoDtoInput.getHetu())).willReturn(Optional.of(henkilo));
+        given(this.henkiloDataRepositoryMock.findByKaikkiHetut(henkiloPerustietoDtoInput.getHetu())).willReturn(Optional.of(henkilo));
         assertThat(this.service.findOrCreateHenkiloFromPerustietoDto(henkiloPerustietoDtoInput).getDto())
                 .isEqualToComparingFieldByFieldRecursively(henkiloPerustietoDtoMock);
     }

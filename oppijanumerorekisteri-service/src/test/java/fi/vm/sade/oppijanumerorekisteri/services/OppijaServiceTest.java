@@ -369,11 +369,11 @@ public class OppijaServiceTest {
     }
 
     @Test
-    public void getOrCreateShouldFindByYksiloityHetu() {
+    public void getOrCreateShouldFindByKaikkiHetut() {
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")
                 .hetu("180897-945K")
-                .yksiloityHetu(Stream.of("180897-945K", "180897-787F").collect(toSet()))
+                .kaikkiHetut(Stream.of("180897-945K", "180897-787F").collect(toSet()))
                 .etunimet("etu")
                 .kutsumanimi("suku")
                 .sukunimi("suku")

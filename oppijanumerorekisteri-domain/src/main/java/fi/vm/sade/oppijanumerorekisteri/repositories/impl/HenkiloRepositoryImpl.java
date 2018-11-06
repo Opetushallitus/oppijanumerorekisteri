@@ -182,12 +182,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Optional<String> findOidByYksiloityHetu(String hetu) {
+    public Optional<String> findOidByKaikkiHetut(String hetu) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qYksiloityHetu = Expressions.stringPath("yksiloityHetu");
+        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
         return Optional.ofNullable(jpa().select(qHenkilo.oidHenkilo).from(qHenkilo)
-                .join(qHenkilo.yksiloityHetu, qYksiloityHetu)
-                .where(qYksiloityHetu.eq(hetu))
+                .join(qHenkilo.kaikkiHetut, qHetu)
+                .where(qHetu.eq(hetu))
                 .fetchOne());
     }
 
@@ -439,12 +439,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByYksiloityHetu(String hetu) {
+    public Optional<HenkiloOidHetuNimiDto> findOidHetuNimiByKaikkiHetut(String hetu) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qYksiloityHetu = Expressions.stringPath("yksiloityHetu");
+        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
 
         return Optional.ofNullable(jpa().from(qHenkilo)
-                .join(qHenkilo.yksiloityHetu, qYksiloityHetu).where(qYksiloityHetu.eq(hetu))
+                .join(qHenkilo.kaikkiHetut, qHetu).where(qHetu.eq(hetu))
                 .select(Projections.bean(HenkiloOidHetuNimiDto.class,
                         qHenkilo.oidHenkilo,
                         qHenkilo.hetu,
@@ -534,15 +534,15 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public Map<String, Henkilo> findAndMapByYksiloityHetu(Set<String> hetut) {
+    public Map<String, Henkilo> findAndMapByKaikkiHetut(Set<String> hetut) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        StringPath qYksiloityHetu = Expressions.stringPath("yksiloityHetu");
+        StringPath qHetu = Expressions.stringPath("kaikkiHetut");
 
         return jpa()
                 .from(qHenkilo)
-                .join(qHenkilo.yksiloityHetu, qYksiloityHetu)
-                .where(qYksiloityHetu.in(hetut))
-                .transform(groupBy(qYksiloityHetu).as(qHenkilo));
+                .join(qHenkilo.kaikkiHetut, qHetu)
+                .where(qHetu.in(hetut))
+                .transform(groupBy(qHetu).as(qHenkilo));
     }
 
     @Override

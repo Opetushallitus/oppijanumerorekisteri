@@ -120,7 +120,7 @@ public class HenkiloUpdatePostValidator implements Validator {
             } else if (!StringUtils.isEmpty(dto.getHetu())) {
                 // tarkistetaan että hetu on uniikki
                 Stream<Function<String, Optional<Henkilo>>> findByHetuFunctions = Stream
-                        .of(henkiloRepository::findByHetu, henkiloRepository::findByYksiloityHetu);
+                        .of(henkiloRepository::findByHetu, henkiloRepository::findByKaikkiHetut);
                 findByHetuFunctions.forEach(findByHetuFun -> findByHetuFun.apply(dto.getHetu()).ifPresent(henkiloByHetu -> {
                     if (!henkiloByHetu.getOidHenkilo().equals(dto.getOidHenkilo())) {
                         errors.rejectValue("hetu", "socialsecuritynr.already.exists");

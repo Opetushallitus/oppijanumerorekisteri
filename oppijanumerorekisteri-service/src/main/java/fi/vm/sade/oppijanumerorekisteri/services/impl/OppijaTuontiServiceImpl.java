@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
 
 import java.io.IOException;
 import java.util.*;
@@ -165,7 +164,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         Map<String, Henkilo> henkilotByHetu = henkiloRepository
                 .findByHetuIn(hetut).stream()
                 .collect(toMap(Henkilo::getHetu, identity()));
-        henkilotByHetu.putAll(henkiloRepository.findAndMapByYksiloityHetu(hetut));
+        henkilotByHetu.putAll(henkiloRepository.findAndMapByKaikkiHetut(hetut));
         return henkilotByHetu;
     }
 

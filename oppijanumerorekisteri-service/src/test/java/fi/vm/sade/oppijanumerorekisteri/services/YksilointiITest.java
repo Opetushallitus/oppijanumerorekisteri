@@ -12,7 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysHakemusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysKayttooikeusRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.YksiloityHetuRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HetuRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.joda.time.DateTime;
@@ -61,7 +61,7 @@ public class YksilointiITest {
     @Autowired
     private HenkiloRepository henkiloRepository;
     @Autowired
-    private YksiloityHetuRepository yksiloityHetuRepository;
+    private HetuRepository hetuRepository;
     @Autowired
     private AsiayhteysHakemusRepository asiayhteysHakemusRepository;
     @Autowired
@@ -112,7 +112,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
+        assertThat(hetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(uusiHetu, Henkilo::getHetu)
@@ -122,7 +122,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(uusiOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
+        assertThat(hetuRepository.findByHenkiloOid(uusiOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
+        assertThat(hetuRepository.findByHenkiloOid(vanhaOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(null, Henkilo::getHetu)
@@ -174,7 +174,7 @@ public class YksilointiITest {
                     .returns(false, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(uusiOid)).isEmpty();
+        assertThat(hetuRepository.findByHenkiloOid(uusiOid)).isEmpty();
     }
 
     @Test
@@ -285,7 +285,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
+        assertThat(hetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(uusiHetu, Henkilo::getHetu)
@@ -295,7 +295,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(uusiOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
+        assertThat(hetuRepository.findByHenkiloOid(uusiOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
     }
 
     @Test
@@ -339,7 +339,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(vanhaOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
+        assertThat(hetuRepository.findByHenkiloOid(vanhaOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
         assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
             assertThat(henkiloByUusiOid)
                     .returns(null, Henkilo::getHetu)
@@ -349,7 +349,7 @@ public class YksilointiITest {
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
-        assertThat(yksiloityHetuRepository.findByHenkiloOid(uusiOid)).isEmpty();
+        assertThat(hetuRepository.findByHenkiloOid(uusiOid)).isEmpty();
     }
 
     @Test
