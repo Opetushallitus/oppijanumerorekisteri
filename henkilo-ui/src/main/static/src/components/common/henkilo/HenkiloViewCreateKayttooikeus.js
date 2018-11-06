@@ -12,7 +12,7 @@ import {
     addKayttooikeusToHenkilo,
     fetchAllowedKayttooikeusryhmasForOrganisation
 } from "../../../actions/kayttooikeusryhma.actions";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {ValidationMessage} from "../../../types/validation.type";
 import PropertySingleton from "../../../globals/PropertySingleton";
@@ -26,7 +26,7 @@ type Props = {
     existingKayttooikeusRef: {},
     oidHenkilo: string,
     fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
-    L: L,
+    L: Localisations,
     locale: Locale,
     oidHenkilo: string,
     addKayttooikeusToHenkilo: (string, string, Array<{id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string}>) => void;

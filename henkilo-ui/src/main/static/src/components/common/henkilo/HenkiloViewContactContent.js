@@ -12,7 +12,7 @@ import AddIcon from '../icons/AddIcon';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
 import {updateHenkiloAndRefetch} from '../../../actions/henkilo.actions';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {Henkilo} from "../../../types/domain/oppijanumerorekisteri/henkilo.types";
@@ -22,7 +22,7 @@ import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     henkilo: HenkiloState,
     readOnly: boolean,

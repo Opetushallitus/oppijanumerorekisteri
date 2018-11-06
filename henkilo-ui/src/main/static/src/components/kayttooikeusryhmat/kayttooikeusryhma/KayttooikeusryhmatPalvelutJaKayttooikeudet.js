@@ -10,11 +10,11 @@ import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {PalveluKayttooikeus} from "../../../types/domain/kayttooikeus/palvelukayttooikeus.types";
 import type {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage";
 import PalveluJaKayttooikeusSelections from "./PalveluJaKayttooikeusSelections";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     palvelutState: PalvelutState,
     kayttooikeusState: KayttooikeusState,

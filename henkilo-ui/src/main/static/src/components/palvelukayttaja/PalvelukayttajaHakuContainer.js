@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import { connect } from 'react-redux'
-import type { L } from '../../types/localisation.type'
+import type { Localisations } from '../../types/localisation.type'
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions'
 import { setPalvelukayttajatCriteria, fetchPalvelukayttajat } from '../../actions/palvelukayttaja.actions'
 import PalvelukayttajaHakuPage from './PalvelukayttajaHakuPage'
@@ -11,7 +11,7 @@ import type { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/Organi
 import type {Locale} from "../../types/locale.type";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     palvelukayttajat: PalvelukayttajatState,
     omatOrganisaatiot: Array<OrganisaatioHenkilo>,

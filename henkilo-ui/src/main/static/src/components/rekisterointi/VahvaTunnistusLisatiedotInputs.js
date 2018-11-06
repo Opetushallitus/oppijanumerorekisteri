@@ -4,7 +4,7 @@ import OphField from '../common/forms/OphField'
 import OphLabel from '../common/forms/OphLabel'
 import OphInput from '../common/forms/OphInput'
 import { LocalNotification } from '../common/Notification/LocalNotification'
-import type { L } from '../../types/localisation.type'
+import type { Localisations } from '../../types/localisation.type'
 import Salasana from "../common/henkilo/labelvalues/Salasana";
 
 export type Values = {
@@ -34,7 +34,7 @@ export type Form = {
 }
 
 type VahvaTunnistusLisatiedotInputsProps = {
-    L: L,
+    L: Localisations,
     form: Form,
     onChange: (name: string, value: any) => void,
 }

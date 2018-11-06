@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import './DuplikaatitPerson.css';
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import type {DuplikaatitHakemus} from "../../../types/duplikaatithakemus.types";
@@ -14,7 +14,7 @@ import type {Hakemus} from "../../../types/domain/oppijanumerorekisteri/Hakemus.
 
 type Props = {
     henkilo: any,
-    L: L,
+    L: Localisations,
     locale: Locale,
     koodisto: KoodistoState,
     setSelection: (string) => void,

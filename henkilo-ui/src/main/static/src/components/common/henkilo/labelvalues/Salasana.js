@@ -2,12 +2,12 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import LabelValue from "./LabelValue";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 
 type Props = {
     disabled: boolean,
     isError: boolean,
-    L: L,
+    L: Localisations,
     updateModelFieldAction: (any) => void,
 }
 

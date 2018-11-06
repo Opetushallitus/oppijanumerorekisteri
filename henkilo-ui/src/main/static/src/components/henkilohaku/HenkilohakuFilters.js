@@ -15,7 +15,7 @@ import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions
 import StaticUtils from "../common/StaticUtils";
 import CloseButton from "../common/button/CloseButton";
 import * as R from 'ramda';
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
@@ -24,7 +24,7 @@ import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobjec
 import type {KayttooikeusOrganisaatiot} from "../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     ryhmaSelectionAction: ({value: ?number}) => void,
     selectedRyhma: ?string,

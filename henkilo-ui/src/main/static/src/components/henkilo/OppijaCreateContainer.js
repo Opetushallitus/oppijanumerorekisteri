@@ -13,7 +13,7 @@ import type {Koodisto} from '../../types/domain/koodisto/koodisto.types'
 import OppijaCreateForm from './OppijaCreateForm'
 import type {HenkiloCreate} from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import type {HenkiloDuplicate} from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate'
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit'
 import {addGlobalNotification} from "../../actions/notification.actions";
 import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
@@ -21,7 +21,7 @@ import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
 type Props = {
     router: any,
     locale: Locale,
-    L: L,
+    L: Localisations,
     fetchSukupuoliKoodisto: () => void,
     sukupuoliKoodisto: Koodisto,
     fetchKieliKoodisto: () => void,

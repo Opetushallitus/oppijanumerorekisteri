@@ -2,14 +2,14 @@
 import React from 'react'
 import type {Node} from 'react';
 import { Link } from 'react-router'
-import type { L } from '../../types/localisation.type'
+import type { Localisations } from '../../types/localisation.type'
 import type { PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import type { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer'
 import './PalvelukayttajaHakuTaulukko.css'
 import Loader from '../common/icons/Loader'
 
 type PalvelukayttajaHakuTaulukkoProps = {
-    L: L,
+    L: Localisations,
     palvelukayttajat: PalvelukayttajatState,
 }
 

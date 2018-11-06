@@ -3,12 +3,12 @@ import React from 'react'
 import type {Locale} from '../../../types/locale.type'
 import KayttooikeusryhmaSelect from '../select/KayttooikeusryhmaSelect'
 import type {Kayttooikeusryhma} from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types'
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import SelectModal from "../modal/SelectModal";
 
 type Props = {
     locale: Locale,
-    L: L,
+    L: Localisations,
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void,
     disabled: boolean,

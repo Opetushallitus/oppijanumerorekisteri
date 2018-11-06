@@ -2,13 +2,13 @@
 import React from 'react'
 import Button from "../common/button/Button";
 import {urls} from 'oph-urls-js';
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import InfoPage from "../common/page/InfoPage";
 
 type Props = {
     loginToken: string,
     locale: string,
-    L: L,
+    L: Localisations,
 }
 
 class VahvaTunnistusInfoPage extends React.Component<Props> {

@@ -15,7 +15,7 @@ import EditButton from "../buttons/EditButton";
 import YksiloiHetutonButton from "../buttons/YksiloiHetutonButton";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
 import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
@@ -35,7 +35,7 @@ type Props = {
     henkiloUpdate: Henkilo,
     henkilo: HenkiloState,
     koodisto: any,
-    L: L,
+    L: Localisations,
     locale: Locale,
     yksiloiHenkilo: () => void,
     oidHenkilo: string,

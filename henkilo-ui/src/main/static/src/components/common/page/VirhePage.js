@@ -3,14 +3,14 @@ import React from 'react';
 import './VirhePage.css';
 import {connect} from 'react-redux';
 import Button from "../button/Button";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 
 type Props = {
     topic: string,
     text: string,
     buttonText: string,
     theme: string,
-    L: L,
+    L: Localisations,
 }
 
 class VirhePage extends React.Component<Props> {

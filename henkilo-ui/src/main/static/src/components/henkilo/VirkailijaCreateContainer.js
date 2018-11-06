@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { http } from '../../http'
 import { urls } from 'oph-urls-js'
 import type { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types'
-import type { L } from "../../types/localisation.type";
+import type { Localisations } from "../../types/localisation.type";
 import VirkailijaCreateForm from './VirkailijaCreateForm';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator'
 import { isValidPassword } from '../../validation/PasswordValidator'
@@ -13,7 +13,7 @@ import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator'
 
 type Props = {
     router: any,
-    L: L,
+    L: Localisations,
 }
 
 type State = {

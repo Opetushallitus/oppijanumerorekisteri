@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import type { L } from '../../types/localisation.type'
+import type { Localisations } from '../../types/localisation.type'
 import type { Locale } from '../../types/locale.type'
 import type { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/henkilo.types'
 import type { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate'
@@ -8,7 +8,7 @@ import HenkiloViewDuplikaatit from '../../components/henkilo/duplikaatit/Henkilo
 
 type OppijaCreateDuplikaatitProps = {
     locale: Locale,
-    L: L,
+    L: Localisations,
     tallenna: (oppija: HenkiloCreate) => any,
     peruuta: () => any,
     oppija: HenkiloCreate,

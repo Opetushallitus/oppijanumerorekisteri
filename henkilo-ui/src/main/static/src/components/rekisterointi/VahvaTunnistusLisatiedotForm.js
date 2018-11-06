@@ -2,10 +2,10 @@
 import React from 'react'
 import VahvaTunnistusLisatiedotInputs from './VahvaTunnistusLisatiedotInputs'
 import type { Form } from './VahvaTunnistusLisatiedotInputs'
-import type { L } from '../../types/localisation.type'
+import type { Localisations } from '../../types/localisation.type'
 
 type VahvaTunnistusLisatiedotFormProps = {
-    L: L,
+    L: Localisations,
     form: Form,
     onChange: (name: string, value: any) => void,
     onSubmit: () => Promise<*>,

@@ -2,11 +2,11 @@
 import './LoaderWithText.css';
 import React from 'react';
 import {connect} from 'react-redux';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import Loader from "../icons/Loader";
 
 type Props = {
-    L: L,
+    L: Localisations,
     label?: string,
     labelkey: ?string,
 }

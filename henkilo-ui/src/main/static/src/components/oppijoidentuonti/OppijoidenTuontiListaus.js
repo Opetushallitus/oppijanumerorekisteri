@@ -8,7 +8,7 @@ import moment from 'moment'
 import TableLoader from '../common/icons/TableLoader'
 import YksilointiTilaIkoni from './YksilointiTilaIkoni'
 import './OppijoidenTuontiListaus.css';
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import type {TuontiListausState} from "../../reducers/oppijoidentuonti.reducer";
 import type {OppijaList} from "../../types/domain/oppijanumerorekisteri/oppijalist.types";
 import SortIconNone from "../common/icons/SortIconNone";
@@ -18,7 +18,7 @@ import SortDescIcon from "../common/icons/SortDescIcon";
 
 
 type Props = {
-    L: L,
+    L: Localisations,
     state: TuontiListausState,
     onFetchData: (number, number) => void,
     onChangeSorting: (string, string) => void,

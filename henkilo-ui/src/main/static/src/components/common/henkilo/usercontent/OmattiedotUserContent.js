@@ -9,7 +9,7 @@ import Oppijanumero from "../labelvalues/Oppijanumero";
 import Asiointikieli from "../labelvalues/Asiointikieli";
 import EditButton from "../buttons/EditButton";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
 import {fetchHenkiloSlaves, yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
@@ -35,7 +35,7 @@ type Props = {
     henkiloUpdate: any,
     henkilo: HenkiloState,
     koodisto: any,
-    L: L,
+    L: Localisations,
     locale: Locale,
     yksiloiHenkilo: () => void,
     isAdmin: boolean,

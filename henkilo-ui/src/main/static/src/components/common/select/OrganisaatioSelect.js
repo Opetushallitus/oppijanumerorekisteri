@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import type {Locale} from "../../../types/locale.type";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import './OrganisaatioSelect.css';
 import * as R from 'ramda';
@@ -9,7 +9,7 @@ import {List} from 'react-virtualized';
 
 type OrganisaatioSelectProps = {
     locale: Locale,
-    L: L,
+    L: Localisations,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
     onClose?: ?SyntheticEvent<HTMLButtonElement> => void,

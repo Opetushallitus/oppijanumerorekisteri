@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage'
 import type { Form, Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs'
 import type { Locale } from '../../types/locale.type'
-import type { L } from '../../types/localisation.type'
+import type { Localisations } from '../../types/localisation.type'
 import { urls } from 'oph-urls-js'
 import { http } from '../../http'
 import { isValidPassword } from '../../validation/PasswordValidator'
@@ -12,7 +12,7 @@ import { isValidPassword } from '../../validation/PasswordValidator'
 type Props = {
     router: any,
     locale: Locale,
-    L: L,
+    L: Localisations,
     loginToken: string,
     salasana: boolean,
     tyosahkopostiosoite: boolean,
@@ -78,7 +78,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         this.setState({ ...this.state, form: form })
     };
 
-    getErrors = (values: Values, metadata: Metadata, L: L): Errors => {
+    getErrors = (values: Values, metadata: Metadata, L: Localisations): Errors => {
         let errors: Errors = [];
         // tarkistetaan pakollisuudet
         Object.entries(values).forEach(([name, value]) => {

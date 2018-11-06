@@ -2,10 +2,10 @@
 import React from 'react';
 import type {KayttooikeusryhmaKuvaus} from "./KayttooikeusryhmaPage";
 import './KayttooikeusryhmatKuvaus.css';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 
 type Props = {
-    L: L,
+    L: Localisations,
     description: KayttooikeusryhmaKuvaus,
     setDescription: (string, string) => void
 }

@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import LabelValue from "./LabelValue";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import {connect} from "react-redux";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 
@@ -10,7 +10,7 @@ type Props = {
     omattiedot: OmattiedotState,
     readOnly?: boolean,
     henkiloUpdate: any,
-    L: L
+    L: Localisations
 }
 
 class AnomusIlmoitus extends React.Component<Props> {

@@ -6,14 +6,14 @@ import Columns from 'react-columns';
 import type {Locale} from '../../../types/locale.type';
 import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton";
 import StaticUtils from "../StaticUtils";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import { toLocalizedText } from '../../../localizabletext'
 import {passivoiHenkiloOrg} from '../../../actions/henkilo.actions';
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     readOnly: boolean,
     henkilo: HenkiloState,

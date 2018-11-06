@@ -13,7 +13,7 @@ import type {
     HenkilohakuCriteria,
     HenkilohakuQueryparameters
 } from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
-import type {L, L10n} from "../../types/localisation.type";
+import type {Localisations, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {HenkilohakuResult} from "../../types/domain/kayttooikeus/HenkilohakuResult.types";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
@@ -46,7 +46,7 @@ type State = {
 class HenkilohakuPage extends React.Component<Props, State> {
 
     initialised: boolean = false;
-    L:L = this.props.l10n[this.props.locale];
+    L:Localisations = this.props.l10n[this.props.locale];
 
     state: State = {
         henkilohakuModel: {

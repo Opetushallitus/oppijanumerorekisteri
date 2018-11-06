@@ -1,12 +1,12 @@
 // @flow
 import './CKHaeButton.css'
 import React from 'react'
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import ValidationMessageButton from "../../button/ValidationMessageButton";
 import type {ValidationMessage} from "../../../../types/validation.type";
 
 type Props = {
-    L: L,
+    L: Localisations,
     validationMessages: {[key: string]: ValidationMessage},
     haeButtonAction: () => void,
 }

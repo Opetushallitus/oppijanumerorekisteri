@@ -55,7 +55,7 @@ class ConfirmButton extends React.Component {
         this.setState({
             confirmState: false
         });
-        this.props.action(arguments);
+        this.props.action();
     }
 }
 

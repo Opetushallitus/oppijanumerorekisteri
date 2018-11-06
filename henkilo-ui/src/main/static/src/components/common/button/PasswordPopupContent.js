@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import classNames from 'classnames/bind';
 import './PasswordPopupContent.css';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import {isValidPassword} from "../../../validation/PasswordValidator";
 import {addGlobalNotification} from "../../../actions/notification.actions";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
@@ -14,7 +14,7 @@ import PropertySingleton from "../../../globals/PropertySingleton";
 
 type Props = {
     oidHenkilo: string,
-    L: L,
+    L: Localisations,
     addGlobalNotification: (GlobalNotificationConfig) => any
 }
 

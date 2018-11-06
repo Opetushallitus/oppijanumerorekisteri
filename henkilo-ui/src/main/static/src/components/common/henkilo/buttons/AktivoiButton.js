@@ -1,10 +1,10 @@
 // @flow
 import React from 'react';
-import type { L } from '../../../../types/localisation.type';
+import type { Localisations } from '../../../../types/localisation.type';
 import ConfirmButton from '../../button/ConfirmButton';
 
 type Props = {
-    L: L,
+    L: Localisations,
     oid: string,
     onClick: (string) => void,
 }

@@ -6,7 +6,7 @@ import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
 import * as R from 'ramda';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import {unlinkHenkilo, fetchHenkiloSlaves} from '../../../../actions/henkilo.actions';
 import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util'
@@ -15,7 +15,7 @@ import HenkiloVarmentajaSuhde from "./HenkiloVarmentajaSuhde";
 type LinkitetytHenkilotProps = {
     kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     henkilo: HenkiloState,
-    L: L,
+    L: Localisations,
     unlinkHenkilo: (string, string) => void,
     fetchHenkiloSlaves: (string) => void,
     oppija?: boolean,

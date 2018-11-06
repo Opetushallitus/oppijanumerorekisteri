@@ -7,7 +7,7 @@ import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import LocalizedTextGroup from "../../common/LocalizedTextGroup";
 import type {Text} from "../../../types/domain/kayttooikeus/text.types";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import {localizeTextGroup} from "../../../utilities/localisation.util";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
     items: Array<Kayttooikeusryhma>,
     labelPath: Array<string>,
     locale: Locale,
-    L: L,
+    L: Localisations,
     router: any,
     filter: string
 }
