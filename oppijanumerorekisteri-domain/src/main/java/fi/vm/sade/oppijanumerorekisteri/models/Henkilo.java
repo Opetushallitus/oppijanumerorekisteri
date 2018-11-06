@@ -115,7 +115,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @JoinTable(name = "henkilo_kansalaisuus", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(
             name = "kansalaisuus_id", referencedColumnName = "id"))
-    @BatchSize(size = 100)
+    @BatchSize(size = 1000)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Set<Kansalaisuus> kansalaisuus = new HashSet<>();
 

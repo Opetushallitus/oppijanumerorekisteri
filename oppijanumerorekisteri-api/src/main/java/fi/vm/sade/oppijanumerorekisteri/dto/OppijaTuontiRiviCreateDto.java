@@ -13,6 +13,7 @@ import lombok.Setter;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -56,6 +57,15 @@ public class OppijaTuontiRiviCreateDto {
         private String sukunimi;
 
         private LocalDate syntymaaika;
+
+        @ApiModelProperty("Koodisto 'sukupuoli'")
+        private KoodiUpdateDto sukupuoli;
+
+        @ApiModelProperty("Koodisto 'kieli'")
+        private KoodiUpdateDto aidinkieli;
+
+        @ApiModelProperty("Koodisto 'maatjavaltiot2'")
+        private Collection<KoodiUpdateDto> kansalaisuus;
 
     }
 
