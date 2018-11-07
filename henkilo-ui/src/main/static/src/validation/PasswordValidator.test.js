@@ -1,5 +1,4 @@
 // @flow
-
 import {
     containsLowercaseLetters, containsNumber, containsSpecialCharacter, containsUppercaseLetters, isValidPassword,
     isValidPasswordLength

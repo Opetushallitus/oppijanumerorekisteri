@@ -20,7 +20,8 @@ type SearchCriteria = {
     count: number,
     vainVirheet: boolean,
     sortDirection: string,
-    sortKey: string
+    sortKey: string,
+    nimiHaku: ?string,
 }
 
 type Props = {

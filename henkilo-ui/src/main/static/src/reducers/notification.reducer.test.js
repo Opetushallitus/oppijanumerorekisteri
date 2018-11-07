@@ -1,5 +1,4 @@
 // @flow
-
 import {notificationList} from './notification.reducer';
 import {GLOBAL_NOTIFICATION} from "../actions/actiontypes";
 import type {GlobalNotificationConfig} from "../types/notification.types";

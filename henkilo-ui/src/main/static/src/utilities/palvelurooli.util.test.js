@@ -1,5 +1,4 @@
 // @flow
-
 import {
     hasAnyPalveluRooli, hasPalveluRooliByOrganisaatioOid, kayttooikeusMatchesAnyPalveluRooli,
     organisaatioContainsAnyPalveluRooli,
