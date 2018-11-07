@@ -40,7 +40,10 @@ const TopNavigation = ({pathName, L, isRekisterinpitaja, organisaatiot, route, p
             { !isNoAuthenticationPage
             && <ul className="tabs">
                 {/*eslint-disable no-script-url*/}
-                { route.backButton ? <li><a href="javascript:history.go(-1)">&#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon /></a></li> : null }
+                { route.backButton
+                    // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                    ? <li><a href="javascript:history.go(-1)">&#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon /></a></li>
+                    : null }
                 {/*eslint-enable no-script-url*/}
                 { naviTabs && naviTabs.length > 0
                 && naviTabs
