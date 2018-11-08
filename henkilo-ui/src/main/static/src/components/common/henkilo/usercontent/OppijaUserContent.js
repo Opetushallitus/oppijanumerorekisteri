@@ -9,6 +9,7 @@ import Hetu from "../labelvalues/Hetu";
 import Kutsumanimi from "../labelvalues/Kutsumanimi";
 import Kansalaisuus from "../labelvalues/Kansalaisuus";
 import Aidinkieli from "../labelvalues/Aidinkieli";
+import Oid from "../labelvalues/Oid";
 import Oppijanumero from "../labelvalues/Oppijanumero";
 import Asiointikieli from "../labelvalues/Asiointikieli";
 import EditButton from "../buttons/EditButton";
@@ -87,6 +88,7 @@ class OppijaUserContent extends React.Component<Props> {
                 <Asiointikieli {...basicInfoProps} />,
             ],
             [
+                <Oid {...basicInfoProps} />,
                 <LinkitetytHenkilot oppija={true} />,
                 <MasterHenkilo oidHenkilo={this.props.oidHenkilo} oppija={true} />
             ],

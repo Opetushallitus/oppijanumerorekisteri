@@ -5,6 +5,7 @@ import AbstractUserContent from "./AbstractUserContent";
 import Sukunimi from "../labelvalues/Sukunimi";
 import Etunimet from "../labelvalues/Etunimet";
 import Kutsumanimi from "../labelvalues/Kutsumanimi";
+import Oid from "../labelvalues/Oid";
 import Oppijanumero from "../labelvalues/Oppijanumero";
 import Asiointikieli from "../labelvalues/Asiointikieli";
 import EditButton from "../buttons/EditButton";
@@ -95,6 +96,7 @@ class OmattiedotUserContent extends React.Component<Props> {
                 <Asiointikieli {...props} />,
             ],
             [
+                <Oid {...props} />,
                 <Kayttajanimi {...props} disabled={true} />,
                 showAnomusIlmoitus ? <AnomusIlmoitus {...props} /> : null,
                 <HenkiloVarmentajaSuhde oidHenkilo={this.props.omattiedot.data.oid} type="henkiloVarmentajas" />,

@@ -10,6 +10,7 @@ import type {Localisations} from "../../../../types/localisation.type";
 import type {Locale} from "../../../../types/locale.type";
 import {fetchHenkiloSlaves, fetchKayttajatieto, yksiloiHenkilo} from "../../../../actions/henkilo.actions";
 import Loader from "../../icons/Loader";
+import Oid from "../labelvalues/Oid";
 import Kayttajanimi from "../labelvalues/Kayttajanimi";
 import PasswordButton from "../buttons/PasswordButton";
 import * as R from 'ramda';
@@ -78,6 +79,7 @@ class PalveluUserContent extends React.Component<Props, State> {
                 />,
             ],
             [
+                <Oid {...props} />,
                 <Kayttajanimi disabled={!this.props.isAdmin && !!R.path(['kayttajatieto', 'username'], this.props.henkilo)}
                               {...props}
                 />,

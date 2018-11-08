@@ -10,13 +10,13 @@ type Props = {
     updateModelFieldAction: () => void,
 }
 
-const Oppijanumero = (props: Props) => <LabelValue
+const Oid = (props: Props) => <LabelValue
     readOnly={props.readOnly}
     updateModelFieldAction={props.updateModelFieldAction}
     values={{
-        label: 'HENKILO_OPPIJANUMERO',
-        value: props.henkilo.master.oppijanumero,
-        inputValue: 'oppijanumero',
+        label: 'HENKILO_OID',
+        value: props.henkilo.henkilo.oidHenkilo,
+        inputValue: 'oidHenkilo',
         readOnly: true,
     }}
 />;
@@ -25,4 +25,4 @@ const mapStateToProps = state => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {})(Oppijanumero);
+export default connect(mapStateToProps, {})(Oid);
