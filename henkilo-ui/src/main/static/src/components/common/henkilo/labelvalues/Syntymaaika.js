@@ -21,7 +21,7 @@ const Syntymaaika = (props: Props) => {
             inputValue: 'syntymaaika',
             date: true,
             value: props.henkiloUpdate.syntymaaika,
-            disabled: !!props.henkilo.henkilo.hetu,
+            disabled: !!props.henkiloUpdate.hetu,
         }}
     />;
 };
