@@ -52,7 +52,6 @@ export default {
     "kayttooikeus-service.palvelu.listaus": "kayttooikeus-service/palvelu",
     "kayttooikeus-service.kayttooikeus.listaus": "kayttooikeus-service/kayttooikeus/$1",
     "kayttooikeus-service.anomus.haetut-kayttooikeusryhmat": "kayttooikeus-service/kayttooikeusanomus/haettuKayttoOikeusRyhma",
-    "kayttooikeus-service.salasana.resetointi": "kayttooikeus-service/salasana/resetointi/$1",
     "kayttooikeus-service.cas.uudelleenrekisterointi": "kayttooikeus-service/cas/uudelleenrekisterointi",
     "kayttooikeus-service.henkilo.linkitykset": "kayttooikeus-service/henkilo/$1/linkitykset",
 
@@ -94,9 +93,6 @@ export default {
     "shibboleth.baseUrl": "/",
     "shibboleth.identification": "shibbolethVirkailija/virkailija$1",
     "shibboleth.kayttooikeus-service.cas.tunnistus": "kayttooikeus-service/cas/tunnistus",
-
-    "virkailijan-tyopoyta.baseUrl": "/",
-    "virkailijan-tyopoyta.base": "virkailijan-tyopoyta",
 
     "virkailija-raamit.baseUrl": "/",
     "virkailija-raamit.raamit.js": "virkailija-raamit/apply-raamit.js",

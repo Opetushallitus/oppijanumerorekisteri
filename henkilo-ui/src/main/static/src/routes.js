@@ -18,7 +18,6 @@ import OppijaCreateContainer from "./components/henkilo/OppijaCreateContainer";
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import PalveluCreateContainer from "./components/henkilo/PalveluCreateContainer";
 import PalvelukayttajaHakuContainer from "./components/palvelukayttaja/PalvelukayttajaHakuContainer";
-import SalansananResetointiPage from "./components/salasananresetointi/SalasananResetointiPage";
 import VahvaTunnistusLisatiedotContainer from './components/rekisterointi/VahvaTunnistusLisatiedotContainer';
 import HenkiloViewContainer from "./components/henkilo/HenkiloViewContainer";
 import AdminRedirect from "./components/henkilo/AdminRedirect";
@@ -169,10 +168,5 @@ export default <Route path="/" component={App} getNaviTabs={updateDefaultNavigat
            component={PalvelukayttajaHakuContainer}
            title=""
            getNaviTabs={updatePalvelukayttajaNavigation}
-    />
-    <Route path="/salasananresetointi/:locale/:poletti"
-           component={SalansananResetointiPage}
-           title=""
-           isUnauthenticated
     />
 </Route>
