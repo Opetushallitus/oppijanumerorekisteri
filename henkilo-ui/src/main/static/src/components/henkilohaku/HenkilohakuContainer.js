@@ -17,7 +17,7 @@ import type {
 } from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
 import type {HenkilohakuState} from "../../reducers/henkilohaku.reducer";
 import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
-import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
+import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 
 type Props = {
     router: any,
@@ -49,13 +49,15 @@ class HenkilohakuContainer extends React.Component<Props,> {
     async componentWillMount() {
         await this.props.fetchOmattiedotOrganisaatios();
 
-        if (!hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
-            'OPPIJANUMEROREKISTERI_READ',
-            'OPPIJANUMEROREKISTERI_HENKILON_RU',
-            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
-            'KAYTTOOIKEUS_READ',
-            'KAYTTOOIKEUS_CRUD'
-        ]) && hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'])) {
+        const kayttooikeudet = parsePalveluRoolit(this.props.omattiedot.organisaatiot)
+        const vainOppijoidenTuonti = kayttooikeudet.every(kayttooikeus =>
+                kayttooikeus.startsWith('OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')
+                || (!kayttooikeus.startsWith('OPPIJANUMEROREKISTERI')
+                    && !kayttooikeus.startsWith('KAYTTOOIKEUS')
+                    && !kayttooikeus.startsWith('HENKILONHALLINTA')))
+            && hasAnyPalveluRooli(this.props.omattiedot.organisaatiot,
+                                  ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'])
+        if (vainOppijoidenTuonti) {
             this.props.router.replace('/oppijoidentuonti')
         }
 
