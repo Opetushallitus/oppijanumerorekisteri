@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -97,6 +98,10 @@ public class HenkiloModificationServiceImplTest {
 
     @Mock
     private OidGenerator oidGenerator;
+
+    @Mock
+    private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
+
 
     @MockBean
     private KansalaisuusRepository kansalaisuusRepository;
@@ -554,7 +559,7 @@ public class HenkiloModificationServiceImplTest {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
         this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
-        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class));
+        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class), any());
     }
 
     @Test
@@ -589,7 +594,7 @@ public class HenkiloModificationServiceImplTest {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setHuoltajat(Collections.singleton(huoltajaCreateDto));
         this.service.forceUpdateHenkilo(henkiloForceUpdateDto);
-        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class));
+        verify(this.service, times(1)).createHenkilo(any(HuoltajaCreateDto.class), any());
     }
 
     @Test

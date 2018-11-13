@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
@@ -66,6 +67,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
     private final OidGenerator oidGenerator;
+
+    private final OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
     // Mapper is configured to ignore null values so setting henkiloUpdateDto field to null is same as skipping the field.
     // If one wishes to enable validation groups with hibernate one needs to disable automatic validation and manually
@@ -177,6 +180,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
     }
 
+
     @Transactional
     @Override
     public Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi) {
@@ -197,7 +201,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                     .map(this.henkiloDataRepository::save)
                     .findFirst();
         }
-        return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto));
+        return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto, oppijanumerorekisteriProperties.getRootUserOid()));
     }
 
     private void updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
@@ -381,14 +385,20 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
     @Override
     @Transactional
-    public Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto) {
+    public Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto, String kasittelijaOid) {
         BindException errors = new BindException(huoltajaCreateDto, "huoltajaCreateDto");
         this.huoltajaCreatePostValidator.validate(huoltajaCreateDto, errors);
         if (errors.hasErrors()) {
             throw new UnprocessableEntityException(errors);
         }
         Henkilo henkilo = this.mapper.map(huoltajaCreateDto, Henkilo.class);
-        return this.createHenkilo(henkilo, userDetailsHelper.getCurrentUserOid(), StringUtils.isEmpty(henkilo.getHetu()));
+        return this.createHenkilo(henkilo, kasittelijaOid, StringUtils.isEmpty(henkilo.getHetu()));
+    }
+
+    @Override
+    @Transactional
+    public Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto) {
+        return createHenkilo(huoltajaCreateDto, userDetailsHelper.getCurrentUserOid());
     }
 
     @Override

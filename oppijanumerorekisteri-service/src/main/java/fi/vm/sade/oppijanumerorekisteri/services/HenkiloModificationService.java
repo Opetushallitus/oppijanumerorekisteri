@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public interface HenkiloModificationService {
     List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
 
     HenkiloDto createHenkilo(HenkiloCreateDto henkiloDto);
+
+    Henkilo createHenkilo(HuoltajaCreateDto huoltajaCreateDto, String kasittelijaOid);
 
     /**
      * Luo huoltajan. Tämä pitää erikseen liittää lapseen HenkiloHuoltajaSuhde luokan kautta.
