@@ -85,10 +85,10 @@ class OppijaUserContent extends React.Component<Props> {
                 <Aidinkieli {...basicInfoProps} />,
                 <Sukupuoli {...basicInfoProps} />,
                 <Oppijanumero {...basicInfoProps} />,
+                <Oid {...basicInfoProps} />,
                 <Asiointikieli {...basicInfoProps} />,
             ],
             [
-                <Oid {...basicInfoProps} />,
                 <LinkitetytHenkilot oppija={true} />,
                 <MasterHenkilo oidHenkilo={this.props.oidHenkilo} oppija={true} />
             ],

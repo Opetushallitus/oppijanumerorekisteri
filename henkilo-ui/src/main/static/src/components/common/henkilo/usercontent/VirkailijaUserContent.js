@@ -83,9 +83,9 @@ class VirkailijaUserContent extends React.Component<Props> {
             ],
             [
                 <Oppijanumero {...props} />,
+                <Oid {...props} />,
             ],
             [
-                <Oid {...props} />,
                 <Kayttajanimi {...props}
                               disabled={true}
                 />,

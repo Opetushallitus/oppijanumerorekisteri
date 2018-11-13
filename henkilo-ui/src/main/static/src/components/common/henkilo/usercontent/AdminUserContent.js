@@ -98,10 +98,10 @@ class AdminUserContent extends React.Component<Props, State> {
                 <Aidinkieli {...props} />,
                 <Sukupuoli {...props} />,
                 <Oppijanumero {...props} />,
+                <Oid {...props} />,
                 <Asiointikieli {...props} />,
             ],
             [
-                <Oid {...props} />,
                 <Kayttajanimi {...props}
                               disabled={!this.props.isAdmin}
                 />,

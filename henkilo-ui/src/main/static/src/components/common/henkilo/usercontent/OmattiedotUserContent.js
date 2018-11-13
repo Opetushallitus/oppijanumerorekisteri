@@ -93,10 +93,10 @@ class OmattiedotUserContent extends React.Component<Props> {
                 <Aidinkieli {...props} />,
                 <Sukupuoli {...props} />,
                 <Oppijanumero {...props} />,
+                <Oid {...props} />,
                 <Asiointikieli {...props} />,
             ],
             [
-                <Oid {...props} />,
                 <Kayttajanimi {...props} disabled={true} />,
                 showAnomusIlmoitus ? <AnomusIlmoitus {...props} /> : null,
                 <HenkiloVarmentajaSuhde oidHenkilo={this.props.omattiedot.data.oid} type="henkiloVarmentajas" />,
