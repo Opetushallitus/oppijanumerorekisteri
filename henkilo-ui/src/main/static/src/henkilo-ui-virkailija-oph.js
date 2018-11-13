@@ -89,6 +89,7 @@ export default {
     "koodisto-service.koodisto.yhteystietotyypit": "koodisto-service/rest/json/yhteystietotyypit/koodi",
     "koodisto-service.koodisto.maatjavaltiot1": "koodisto-service/rest/json/maatjavaltiot1/koodi",
     "koodisto-service.koodisto.oppilaitostyypit": "koodisto-service/rest/codeelement/codes/oppilaitostyyppi/1",
+    "koodisto-service.koodisto.organisaatiotyypit": "koodisto-service/rest/codeelement/codes/organisaatiotyyppi/3",
 
     "shibboleth.baseUrl": "/",
     "shibboleth.identification": "shibbolethVirkailija/virkailija$1",

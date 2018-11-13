@@ -55,6 +55,7 @@ export type KayttooikeusryhmaForm = {
     ryhmaRestriction: boolean,
     organisaatioSelections: Array<OrganisaatioSelectObject>,
     oppilaitostyypitSelections: Array<string>,
+    organisaatiotyypitSelections: Array<string>,
     kayttooikeusryhmaSelections: Array<ReactSelectOption>,
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>,
 }
@@ -94,6 +95,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             description: {fi: '', sv: '', en: ''},
             organisaatioSelections: [],
             oppilaitostyypitSelections: [],
+            organisaatiotyypitSelections: [],
             ryhmaRestriction: false,
             kayttooikeusryhmaSelections: [],
             palveluJaKayttooikeusSelections: [],
@@ -149,6 +151,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                                                    removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
                                                    oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
                                                    oppilaitostyypitSelections={this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections}
+                                                   organisaatiotyypitSelectAction={this._onOrganisaatiotyypitSelection}
+                                                   organisaatiotyypitSelections={this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections}
             />
 
             <MyonnettavatKayttooikeusryhmat {...this.props}
@@ -224,6 +228,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             description: this._parseExistingTextsData(R.path(['kayttooikeusryhma', 'kuvaus', 'texts'], kayttooikeusryhmaState)),
             organisaatioSelections: this._parseExistingOrganisaatioData(R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState), this.props.organisaatioCache),
             oppilaitostyypitSelections: this._parseExistingOppilaitostyyppiData(R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState)),
+            organisaatiotyypitSelections: this._parseExistingOrganisaatiotyyppiData(R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState)),
             ryhmaRestriction: this._parseExistingRyhmaRestriction(kayttooikeusryhmaState),
             kayttooikeusryhmaSelections: this._parseExistingKayttooikeusryhmaSelections(kayttooikeusryhmaState.kayttooikeusryhmaSlaves),
             palveluJaKayttooikeusSelections: this._parseExistingPalvelutRoolitData(kayttooikeusryhmaState.palvelutRoolit),
@@ -284,7 +289,11 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _isOppilaitosId = (input: string): boolean => {
-        return input.split('.')[4] === undefined;
+        return !this._isOrganisaatioOid(input) && !this._isOrganisaatiotyyppi(input) && !this._isRyhmaOid(input);
+    };
+
+    _isOrganisaatiotyyppi = (input: string): boolean => {
+        return input.startsWith('organisaatiotyyppi_');
     };
 
     _isRyhmaOid = (input: string): boolean => {
@@ -298,6 +307,15 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             .filter((organisaatioViite: any) => this._isOppilaitosId(organisaatioViite.organisaatioTyyppi));
         const ids = oppilaitosOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
         return oppilaitostyypit.filter((oppilaitostyyppi: string) => R.contains(oppilaitostyyppi, ids));
+    };
+
+    _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: any): Array<string> => {
+        const organisaatiotyypit: Array<string> = this.props.koodisto.organisaatiotyyppiKoodisto
+            .map(organisaatiotyyppiKoodi => (organisaatiotyyppiKoodi.koodiUri));
+        const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet
+            .filter((organisaatioViite: any) => this._isOrganisaatiotyyppi(organisaatioViite.organisaatioTyyppi));
+        const ids = organisaatiotyyppiOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
+        return organisaatiotyypit.filter((organisaatiotyyppi: string) => R.contains(organisaatiotyyppi, ids));
     };
 
     _parseExistingPalvelutRoolitData = (palvelutRoolit: Array<PalveluRooli>): Array<any> => {
@@ -363,6 +381,30 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
                     oppilaitostyypitSelections: newOppilaitostyypitSelections
+                }
+            });
+        }
+    };
+
+    _onOrganisaatiotyypitSelection = (selection: SyntheticInputEvent<HTMLInputElement>): void => {
+        if (selection.target.checked) {
+            const currentOrganisaatiotyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections;
+            if (!currentOrganisaatiotyypitSelections.some((organisaatiotyyppi: string) => organisaatiotyyppi === selection.target.value)) {
+                this.setState({
+                    kayttooikeusryhmaForm: {
+                        ...this.state.kayttooikeusryhmaForm,
+                        organisaatiotyypitSelections: [...currentOrganisaatiotyypitSelections, selection.target.value]
+                    }
+                });
+            }
+        }
+        else {
+            const newOrganisaatiotyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections
+                .filter((organisaatiotyyppi: string) => selection.target.value !== organisaatiotyyppi);
+            this.setState({
+                kayttooikeusryhmaForm: {
+                    ...this.state.kayttooikeusryhmaForm,
+                    organisaatiotyypitSelections: newOrganisaatiotyypitSelections
                 }
             });
         }
@@ -500,11 +542,13 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _parseOrganisaatioTyypit = (): Array<string> => {
-        const organisaatioTyypit = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
+        const oppilaitostyypit = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
+        const organisaatiotyypit = this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections;
+        const tyypit = oppilaitostyypit.concat(organisaatiotyypit);
         const organisaatiot = this.state.kayttooikeusryhmaForm.organisaatioSelections
             .map((item: OrganisaatioSelectObject) => item.oid);
         const ryhmaRestrictionviite = this.state.ryhmaRestrictionViite ? [this.state.ryhmaRestrictionViite.organisaatioTyyppi] : [];
-        return this.state.ryhmaRestrictionViite ? organisaatioTyypit.concat(organisaatiot).concat(ryhmaRestrictionviite) : organisaatioTyypit.concat(organisaatiot);
+        return this.state.ryhmaRestrictionViite ? tyypit.concat(organisaatiot).concat(ryhmaRestrictionviite) : tyypit.concat(organisaatiot);
     };
 
     _hasPassiveOrganisaatioRajoite = (): boolean => {
