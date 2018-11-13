@@ -79,6 +79,8 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                 <DelayedSearchInput setSearchQueryAction={this.onChangeNimiHaku}
                                     loading={this.props.isOppijaHakuLoading}
                                     defaultNameQuery={this.state.criteria.nimiHaku}
+                                    minSearchValueLength={2}
+                                    placeholder={this.props.L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']}
                 />
 
                 <OppijoidenTuontiListaus state={this.props.listaus}
