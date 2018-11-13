@@ -58,7 +58,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         oidHenkilo: ownProps.params['oid'],
         externalPermissionService: ownProps.location.query.permissionCheckService,
-        henkiloType: ownProps.params['henkiloType'],
+        henkiloType: ownProps.route['henkiloType'],
         l10n: state.l10n.localisations,
         locale: state.locale,
         henkilo: state.henkilo,
