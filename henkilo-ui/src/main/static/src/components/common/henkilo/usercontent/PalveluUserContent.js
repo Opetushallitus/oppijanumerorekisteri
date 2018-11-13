@@ -91,6 +91,7 @@ class PalveluUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo)
         return [
             <EditButton
                 editAction={this.props.edit}
@@ -104,7 +105,7 @@ class PalveluUserContent extends React.Component<Props, State> {
             <PasswordButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={{top: '3rem', left: '0', width: '18rem'}}
-                disabled={duplicate || passivoitu}
+                disabled={duplicate || passivoitu || kayttajatunnukseton}
             />,
         ];
     };

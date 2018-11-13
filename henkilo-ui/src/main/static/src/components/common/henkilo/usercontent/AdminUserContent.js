@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import {connect} from 'react-redux';
+import * as R from 'ramda';
 import AbstractUserContent from "./AbstractUserContent";
 import Sukunimi from "../labelvalues/Sukunimi";
 import Etunimet from "../labelvalues/Etunimet";
@@ -115,6 +116,7 @@ class AdminUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo)
         const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_HENKILON_RU', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA']);
 
         const editButton = hasHenkiloReadUpdateRights ? <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu}/> : null;
@@ -124,7 +126,7 @@ class AdminUserContent extends React.Component<Props, State> {
         const aktivoiButton = passivoitu && hasHenkiloReadUpdateRights ? <AktivoiButton L={this.props.L} oid={this.props.henkilo.henkilo.oidHenkilo} onClick={this.props.aktivoiHenkilo} /> : null;
         const hakaButton = <HakaButton oidHenkilo={this.props.oidHenkilo} styles={{left: '0px', top: '3rem', width: '15rem', padding: '30px'}} disabled={duplicate || passivoitu} />;
         const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
-        const passwordButton = <PasswordButton oidHenkilo={this.props.oidHenkilo} styles={{top: '3rem', left: '0', width: '18rem'}} disabled={duplicate || passivoitu} />;
+        const passwordButton = <PasswordButton oidHenkilo={this.props.oidHenkilo} styles={{top: '3rem', left: '0', width: '18rem'}} disabled={duplicate || passivoitu || kayttajatunnukseton} />;
 
         return [
             editButton,
