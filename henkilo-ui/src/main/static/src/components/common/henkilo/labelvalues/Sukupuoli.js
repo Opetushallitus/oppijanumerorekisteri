@@ -26,7 +26,7 @@ const Sukupuoli = (props: Props) => <LabelValue
         data: props.koodisto.sukupuoli.map(koodi => ({value: koodi.value, label: koodi[props.locale],
             optionsName: 'sukupuoli',})),
         selectValue: props.henkiloUpdate.sukupuoli,
-        disabled: !!props.henkilo.henkilo.yksiloityVTJ,
+        disabled: !!props.henkiloUpdate.hetu,
     }}
 />;
 

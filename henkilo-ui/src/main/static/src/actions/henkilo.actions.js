@@ -64,23 +64,35 @@ export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => (as
         dispatch(fetchHenkilo(oid));
     } catch (error) {
         const L = getState().l10n.localisations[getState().locale];
-        const errorUpdateHenkiloNotification: GlobalNotificationConfig = {
-            autoClose: 10000,
-            type: NOTIFICATIONTYPES.ERROR,
-            key: 'HENKILOUPDATEFAILED'
-        };
-        if (errorNotificationConfig && error.status === 400 && error.message && error.message.indexOf('invalid.hetu') !== -1) {
-            errorUpdateHenkiloNotification.title = L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU'];
-            dispatch(addGlobalNotification(errorUpdateHenkiloNotification));
-        }
-        else if (errorNotificationConfig) {
-            errorUpdateHenkiloNotification.title = L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE'];
-            dispatch(addGlobalNotification(errorUpdateHenkiloNotification));
+        if (errorNotificationConfig) {
+            const errorMessages = getUpdateHenkiloErrorMessages(error, L)
+            if (errorMessages.length > 0) {
+                errorMessages.forEach(errorMessage => dispatch(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage))))
+            } else {
+                const errorUpdateHenkiloNotification = createUpdateHenkiloErrorNotification(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE']);
+                dispatch(addGlobalNotification(errorUpdateHenkiloNotification));
+            }
         }
         dispatch(errorHenkiloUpdate(error));
         throw error;
     }
 });
+const createUpdateHenkiloErrorNotification = (title: string): GlobalNotificationConfig => ({
+    autoClose: 10000,
+    type: NOTIFICATIONTYPES.ERROR,
+    key: 'HENKILOUPDATEFAILED',
+    title: title,
+})
+const getUpdateHenkiloErrorMessages = (error, L): Array<string> => {
+    let errorMessages = []
+    if (error.status === 400 && error.message && error.message.indexOf('invalid.hetu') !== -1) {
+        errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU'])
+    }
+    if (error.status === 400 && JSON.stringify(error).includes('socialsecuritynr.already.exists')) {
+        errorMessages.push(L['NOTIFICATION_HENKILOTIEDOT_TALLENNUS_VIRHE_HETU_KAYTOSSA'])
+    }
+    return errorMessages;
+}
 
 export const fetchKayttaja = (oid) => (async dispatch => {
     dispatch({ type: FETCH_KAYTTAJA_REQUEST, oid });
