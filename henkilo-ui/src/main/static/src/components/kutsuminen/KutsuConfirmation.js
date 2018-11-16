@@ -11,7 +11,7 @@ import type {
     KutsuOrganisaatio
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {BasicinfoType} from "./BasicinfoForm";
-import type { L10n, L } from "../../types/localisation.type";
+import type { L10n, Localisations } from "../../types/localisation.type";
 import type { MyonnettyKayttooikeusryhma } from "../../types/domain/kayttooikeus/kayttooikeusryhma.types"
 import { LocalNotification } from "../common/Notification/LocalNotification";
 
@@ -97,7 +97,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
         this.sendInvitation(e, this.props.l10n[this.props.locale]);
     }
 
-    async sendInvitation(e: SyntheticEvent<HTMLButtonElement>, L: L) {
+    async sendInvitation(e: SyntheticEvent<HTMLButtonElement>, L: Localisations) {
 
         e.preventDefault();
 

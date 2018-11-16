@@ -15,12 +15,12 @@ import {fetchAllPalvelut} from "../../../actions/palvelut.actions";
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import {fetchPalveluKayttooikeus} from "../../../actions/kayttooikeus.actions";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import {addGlobalNotification} from '../../../actions/notification.actions';
 
 type Props = {
-    L: L,
+    L: Localisations,
     fetchKayttooikeusryhmaById: (id: string) => Promise<any>,
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => Promise<any>,
     fetchOmattiedotOrganisaatios: () => void,

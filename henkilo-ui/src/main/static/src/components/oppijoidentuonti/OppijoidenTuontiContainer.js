@@ -10,8 +10,9 @@ import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import type {OppijaTuontiYhteenveto} from "../../types/domain/oppijanumerorekisteri/oppijatuontiyhteenveto.types";
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import type {TuontiListausState} from "../../reducers/oppijoidentuonti.reducer";
+import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 
 
 type SearchCriteria = {
@@ -19,15 +20,17 @@ type SearchCriteria = {
     count: number,
     vainVirheet: boolean,
     sortDirection: string,
-    sortKey: string
+    sortKey: string,
+    nimiHaku: ?string,
 }
 
 type Props = {
     fetchOppijoidenTuontiYhteenveto: () => any,
     fetchOppijoidenTuontiListaus: (SearchCriteria) => any,
     yhteenveto: OppijaTuontiYhteenveto | {},
-    L: L,
-    listaus: TuontiListausState
+    L: Localisations,
+    listaus: TuontiListausState,
+    isOppijaHakuLoading: boolean,
 }
 
 type State = {
@@ -48,7 +51,8 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                 count: 20,
                 vainVirheet: false,
                 sortDirection: 'DESC',
-                sortKey: 'CREATED'
+                sortKey: 'CREATED',
+                nimiHaku: null,
             },
         };
     }
@@ -71,6 +75,13 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                         </BooleanRadioButtonGroup>
                     </div>
                 </div>
+
+                <DelayedSearchInput setSearchQueryAction={this.onChangeNimiHaku}
+                                    loading={this.props.isOppijaHakuLoading}
+                                    defaultNameQuery={this.state.criteria.nimiHaku}
+                                    minSearchValueLength={2}
+                                    placeholder={this.props.L['OPPIJOIDEN_TUONTI_HAE_HENKILOITA']}
+                />
 
                 <OppijoidenTuontiListaus state={this.props.listaus}
                                          onFetchData={this.onFetchData}
@@ -100,19 +111,25 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
         this.setState( { criteria: criteria }, () => this.onFetchData(page, pageSize));
     };
 
+    onChangeNimiHaku = (element: HTMLInputElement) => {
+        const criteria: SearchCriteria = {...this.state.criteria, nimiHaku: element.value};
+        this.setState( { criteria: criteria }, () => this.onFetchData(criteria.page, criteria.count));
+    };
+
     onFetchData = (page, count) => {
         const criteria: SearchCriteria = {...this.state.criteria, page: page, count: count};
         this.setState({criteria: criteria});
         this.props.fetchOppijoidenTuontiListaus(criteria);
-    }
+    };
 
-};
+}
 
 const mapStateToProps = (state) => {
     return {
         yhteenveto: state.oppijoidenTuontiYhteenveto,
         listaus: state.oppijoidenTuontiListaus,
         L: state.l10n.localisations[state.locale],
+        isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
     };
 };
 

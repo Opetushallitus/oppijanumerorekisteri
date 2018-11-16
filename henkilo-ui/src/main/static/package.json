@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "homepage": "/henkilo-ui",
   "dependencies": {
-    "babel-core": "6.26.0",
-    "babel-polyfill": "6.26.0",
+    "@babel/polyfill": "7.0.0",
     "classnames": "2.2.5",
     "history": "3.3.0",
     "isomorphic-fetch": "2.2.1",
@@ -36,14 +35,15 @@
     "shallow-equal-fuzzy": "0.0.2"
   },
   "devDependencies": {
-    "flow-bin": "0.79.0",
+    "flow-bin": "0.84.0",
     "flow-typed": "2.5.1",
-    "jest": "21.2.1",
-    "react-scripts": "1.1.4",
+    "react-scripts": "2.1.1",
     "redux-devtools": "3.4.1",
     "redux-devtools-dock-monitor": "1.1.2",
     "redux-devtools-log-monitor": "1.4.0",
-    "redux-logger": "3.0.6"
+    "redux-logger": "3.0.6",
+    "jest-resolve": "^23.6.0",
+    "request": "^2.88.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,7 +52,13 @@
     "eject": "react-scripts eject",
     "postinstall": "flow-typed install",
     "flowrun": "flow && flow stop",
-    "flow-install": "flow-typed install"
+    "test:debug": "react-scripts --inspect-brk test --runInBand"
   },
-  "proxy": "http://localhost:8280"
+  "proxy": "http://localhost:8280",
+  "browserslist": [
+    "last 1 version",
+    "> 1%",
+    "maintained node versions",
+    "not dead"
+  ]
 }

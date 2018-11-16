@@ -2,11 +2,11 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import Button from "../../button/Button";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 
 type Props = {
     editAction: () => any,
-    L: L,
+    L: Localisations,
     disabled?: boolean
 }
 

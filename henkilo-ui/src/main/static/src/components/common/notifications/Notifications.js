@@ -3,7 +3,7 @@ import React from 'react'
 import WideGreenNotification from "./WideGreenNotification";
 import WideRedNotification from "./WideRedNotification";
 import WideBlueNotification from "./WideBlueNotification";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 
 export type NotificationType = 'ok' | 'error'
 
@@ -17,7 +17,7 @@ export type Notification = {|
 
 type Props = {|
     notifications: Array<Notification>,
-    L: L,
+    L: Localisations,
     closeAction: (type: NotificationType, id: ?string) => void,
     styles?: any,
 |}

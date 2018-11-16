@@ -1,11 +1,11 @@
 // @flow
 import React from 'react'
 import type {PalvelukayttajaCreate} from '../../types/domain/kayttooikeus/palvelukayttaja.types'
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 
 type PalveluCreateFormProps = {
     onSubmit: (PalvelukayttajaCreate) => Promise<void>,
-    L: L,
+    L: Localisations,
 }
 
 type State = {

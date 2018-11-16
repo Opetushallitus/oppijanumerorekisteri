@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import type {L} from '../../types/localisation.type'
+import type {Localisations} from '../../types/localisation.type'
 import type {PalvelukayttajaCriteria} from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import type {PalvelukayttajatState} from '../../reducers/palvelukayttaja.reducer'
 import type {OrganisaatioHenkilo} from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types'
@@ -18,7 +18,7 @@ import type {Locale} from "../../types/locale.type";
 import CloseButton from "../common/button/CloseButton";
 
 type PalvelukayttajaHakuPageProps = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     organisaatiot: Array<OrganisaatioHenkilo>,
     onCriteriaChange: (critera: PalvelukayttajaCriteria) => void,

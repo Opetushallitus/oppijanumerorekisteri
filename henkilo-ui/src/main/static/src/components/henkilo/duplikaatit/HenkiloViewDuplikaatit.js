@@ -10,7 +10,7 @@ import type {Notification} from '../../common/notifications/Notifications'
 import {FloatingBar} from "./FloatingBar";
 import {enabledDuplikaattiView} from "../../navigation/NavigationTabs";
 import type {Locale} from '../../../types/locale.type'
-import type {L} from '../../../types/localisation.type'
+import type {Localisations} from '../../../types/localisation.type'
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import {LocalNotification} from "../../common/Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
@@ -19,7 +19,7 @@ import { linkHenkilos } from "../../../actions/henkilo.actions";
 type Props = {
     router?: any,
     locale: Locale,
-    L: L,
+    L: Localisations,
     oidHenkilo?: string,
     henkilo: any, // HenkiloState | HenkiloCreate
     henkiloType: string,

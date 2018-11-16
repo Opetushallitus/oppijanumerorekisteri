@@ -2,7 +2,7 @@
 import React from 'react'
 import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
 
 export type BasicinfoType = {
@@ -15,7 +15,7 @@ export type BasicinfoType = {
 type Props = {
     disabled: boolean,
     basicInfo: BasicinfoType,
-    L: L,
+    L: Localisations,
     setBasicInfo: () => void,
     locale: string,
     setBasicInfo: (BasicinfoType) => void,

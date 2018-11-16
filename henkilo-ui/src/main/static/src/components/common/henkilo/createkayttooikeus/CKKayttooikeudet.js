@@ -4,7 +4,7 @@ import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectMo
 import { toLocalizedText } from '../../../../localizabletext'
 import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils'
 import type { MyonnettyKayttooikeusryhma } from '../../../../types/domain/kayttooikeus/kayttooikeusryhma.types'
-import type { L } from '../../../../types/localisation.type'
+import type { Localisations } from '../../../../types/localisation.type'
 import type { Locale } from '../../../../types/locale.type'
 
 export type ValittuKayttooikeusryhma = {
@@ -17,7 +17,7 @@ type Props = {
     selectedList: Array<ValittuKayttooikeusryhma>,
     kayttooikeusAction: (ValittuKayttooikeusryhma) => void,
     close: (kayttooikeusryhmaId: number) => void,
-    L: L,
+    L: Localisations,
     locale: Locale,
 }
 

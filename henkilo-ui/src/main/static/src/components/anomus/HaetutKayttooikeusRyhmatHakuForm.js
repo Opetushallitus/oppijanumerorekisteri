@@ -11,14 +11,14 @@ import CloseButton from "../common/button/CloseButton";
 import OphSelect from "../common/select/OphSelect";
 import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions';
 import * as R from 'ramda';
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: Locale,
     onSubmit: ({}) => void,
     organisaatios: Array<{}>,

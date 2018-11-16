@@ -10,7 +10,7 @@ import KoodistoSelect from '../common/select/KoodistoSelect'
 import KielisyysSelect from '../common/select/KielisyysSelect'
 import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect'
 import {isValidKutsumanimi} from '../../validation/KutsumanimiValidator'
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import LoaderWithText from "../common/loadingbar/LoaderWithText";
 
 type Error = {
@@ -26,7 +26,7 @@ type Form = {
 type OppijaCreateFormProps = {
     tallenna: (HenkiloCreate) => Promise<void>,
     locale: Locale,
-    L: L,
+    L: Localisations,
     sukupuoliKoodisto: Koodisto,
     kieliKoodisto: Koodisto,
     kansalaisuusKoodisto: Koodisto,

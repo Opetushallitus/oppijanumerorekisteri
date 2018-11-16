@@ -4,13 +4,13 @@ import { AddedOrganizations } from './AddedOrganizations';
 import Button from "../common/button/Button";
 import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import moment from 'moment';
 import PropertySingleton from '../../globals/PropertySingleton';
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
-    L: L,
+    L: Localisations,
     henkilo: Henkilo,
     addOrganisaatio: (KutsuOrganisaatio) => void,
     locale: string,

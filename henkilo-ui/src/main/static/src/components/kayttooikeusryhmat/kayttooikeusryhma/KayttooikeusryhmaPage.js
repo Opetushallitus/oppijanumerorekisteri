@@ -23,7 +23,7 @@ import {
 } from '../../../utilities/organisaatio.util';
 import OphModal from "../../common/modal/OphModal";
 import {SpinnerInButton} from "../../common/icons/SpinnerInButton";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import {LocalNotification} from "../../common/Notification/LocalNotification";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
@@ -61,7 +61,7 @@ export type KayttooikeusryhmaForm = {
 }
 
 type Props = {
-    L: L,
+    L: Localisations,
     router: any,
     organisaatios: Array<OrganisaatioHenkilo>,
     koodisto: KoodistoState,

@@ -4,10 +4,10 @@ import {connect} from 'react-redux';
 import PopupButton from "../../button/PopupButton";
 import PasswordPopupContent from "../../button/PasswordPopupContent";
 import {removeNotification} from "../../../../actions/notifications.actions";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 
 type Props = {
-    L: L,
+    L: Localisations,
     styles: any,
     disabled?: boolean,
     oidHenkilo: string,

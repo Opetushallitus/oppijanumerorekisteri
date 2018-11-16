@@ -4,11 +4,11 @@ import {connect} from 'react-redux';
 import ConfirmButton from "../../button/ConfirmButton";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import {yksiloiHenkilo} from "../../../../actions/henkilo.actions";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 
 type Props = {
     henkilo: HenkiloState,
-    L: L,
+    L: Localisations,
     yksiloiHenkilo: (string) => void,
     disabled?: boolean
 }

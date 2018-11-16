@@ -10,7 +10,7 @@ import KutsuConfirmation from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import type {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
-import type {L, L10n} from "../../types/localisation.type";
+import type {Localisations, L10n} from "../../types/localisation.type";
 import ValidationMessageButton from "../common/button/ValidationMessageButton";
 import type {ValidationMessage} from "../../types/validation.type";
 import type {BasicinfoType} from "./BasicinfoForm";
@@ -22,7 +22,7 @@ import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
     fetchAllRyhmas: () => void,
-    L: L,
+    L: Localisations,
     l10n: L10n,
     locale: string,
     addedOrgs: Array<KutsuOrganisaatio>,

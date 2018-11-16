@@ -14,7 +14,7 @@ import WideBlueNotification from "../../common/notifications/WideBlueNotificatio
 import PropertySingleton from "../../../globals/PropertySingleton";
 import { toLocalizedText } from '../../../localizabletext';
 import {addKayttooikeusToHenkilo, removePrivilege, fetchAllKayttooikeusAnomusForHenkilo} from '../../../actions/kayttooikeusryhma.actions';
-import type {L, L10n} from "../../../types/localisation.type";
+import type {Localisations, L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {TableHeading} from "../../../types/react-table.types";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
@@ -73,7 +73,7 @@ type State = {
 }
 
 class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
-    L: L;
+    L: Localisations;
     headingList: Array<TableHeading>;
     tableHeadings: Array<TableHeading>;
     _rows: Array<string | number | boolean>;

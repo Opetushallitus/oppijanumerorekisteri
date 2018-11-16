@@ -1,5 +1,4 @@
 // @flow
-
 import {vtjDataAvailable} from "./NavigationTabs";
 
 describe('Test NavigationTabs', () => {

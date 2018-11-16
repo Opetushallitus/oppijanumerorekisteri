@@ -6,7 +6,7 @@ import Table from '../table/Table'
 import moment from 'moment'
 import StaticUtils from '../StaticUtils'
 import { toLocalizedText } from '../../../localizabletext'
-import type {L, L10n} from "../../../types/localisation.type";
+import type {Localisations, L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {TableHeading} from "../../../types/react-table.types";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
@@ -52,7 +52,7 @@ type State = {
 
 class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
 
-    L: L;
+    L: Localisations;
     tableHeadings: Array<TableHeading>;
     _rows: Array<any>;
 

@@ -5,7 +5,7 @@ import {Link} from 'react-router'
 import {fetchHenkilo, fetchHenkiloMaster, unlinkHenkilo} from "../../../../actions/henkilo.actions"
 import LabelValue from "./LabelValue"
 import TextButton from "../../button/TextButton";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util'
@@ -14,7 +14,7 @@ type Props = {
     kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     oidHenkilo: string,
     henkilo: HenkiloState,
-    L: L,
+    L: Localisations,
     fetchHenkiloMaster: (string) => void,
     fetchHenkilo: (string) => void,
     unlinkHenkilo: (string, string) => void,

@@ -6,11 +6,11 @@ import {urls} from 'oph-urls-js'
 import PalveluCreateForm from './PalveluCreateForm'
 import type { PalvelukayttajaCreate, PalvelukayttajaRead } from '../../types/domain/kayttooikeus/palvelukayttaja.types'
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 
 type Props = {
     router: any,
-    L: L,
+    L: Localisations,
 }
 
 type State = {

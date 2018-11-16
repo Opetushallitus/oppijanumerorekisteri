@@ -13,7 +13,7 @@ import {toLocalizedText} from '../../../localizabletext'
 import PopupButton from "../button/PopupButton";
 import AnomusHylkaysPopup from '../../anomus/AnomusHylkaysPopup';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import type {L, L10n} from "../../../types/localisation.type";
+import type {Localisations, L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 import type {HaettuKayttooikeusryhma} from "../../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
@@ -74,7 +74,7 @@ type Props = {
 
 class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
-    L: L;
+    L: Localisations;
     headingList: Array<TableHeading>;
     tableHeadings: Array<TableHeading>;
     _rows: Array<any>;

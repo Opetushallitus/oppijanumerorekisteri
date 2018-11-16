@@ -8,7 +8,7 @@ import KutsututTable from './KutsututTable';
 import DelayedSearchInput from "../henkilohaku/DelayedSearchInput";
 import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
 import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
-import type {L, L10n} from "../../types/localisation.type";
+import type {Localisations, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
@@ -66,7 +66,7 @@ type State = {
 }
 
 export default class KutsututPage extends React.Component<Props, State> {
-    L: L;
+    L: Localisations;
     defaultLimit: number;
     defaultOffset: number;
     offset: number;

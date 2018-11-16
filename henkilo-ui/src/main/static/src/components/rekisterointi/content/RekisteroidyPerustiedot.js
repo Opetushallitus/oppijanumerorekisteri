@@ -7,7 +7,7 @@ import Kutsumanimi from "../../common/henkilo/labelvalues/Kutsumanimi";
 import Kayttajanimi from "../../common/henkilo/labelvalues/Kayttajanimi";
 import Salasana from "../../common/henkilo/labelvalues/Salasana";
 import Asiointikieli from "../../common/henkilo/labelvalues/Asiointikieli";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 
 type Props = {
     henkilo: {
@@ -32,7 +32,7 @@ type Props = {
     isPasswordError: boolean,
     isLanguageError: boolean,
     isKutsumanimiError: boolean,
-    L: L,
+    L: Localisations,
 }
 
 class RekisteroidyPerustiedot extends React.Component<Props> {

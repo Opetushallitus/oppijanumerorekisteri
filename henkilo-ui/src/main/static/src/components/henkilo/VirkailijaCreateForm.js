@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import type { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types'
-import type { L } from "../../types/localisation.type";
+import type { Localisations } from "../../types/localisation.type";
 import OphField from '../common/forms/OphField'
 import OphLabel from '../common/forms/OphLabel'
 import OphInput from '../common/forms/OphInput'
@@ -12,7 +12,7 @@ type VirkailijaCreateFormProps = {
     disabled: boolean,
     onChange: (VirkailijaCreate) => void,
     onSubmit: (VirkailijaCreate) => Promise<void>,
-    L: L,
+    L: Localisations,
 }
 
 /**

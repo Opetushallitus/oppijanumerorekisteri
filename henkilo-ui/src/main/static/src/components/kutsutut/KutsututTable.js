@@ -9,7 +9,7 @@ import Button from '../common/button/Button';
 import {renewKutsu} from "../../actions/kutsu.actions";
 import { toLocalizedText } from '../../localizabletext';
 import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import type {GlobalNotificationConfig} from "../../types/notification.types";
 import {addGlobalNotification} from "../../actions/notification.actions";
 import type {Locale} from "../../types/locale.type";
@@ -21,7 +21,7 @@ type Props = {
     allFetched: boolean,
     addGlobalNotification: (GlobalNotificationConfig) => any,
     renewKutsu: (number) => void,
-    L: L,
+    L: Localisations,
     fetchKutsus: (any, ?boolean) => void,
     cancelInvitation: (any) => any,
     locale: Locale

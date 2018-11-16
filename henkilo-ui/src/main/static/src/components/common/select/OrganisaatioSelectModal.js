@@ -1,14 +1,14 @@
 // @flow
 import React from 'react';
 import type {Locale} from "../../../types/locale.type";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import {OrganisaatioSelect} from "./OrganisaatioSelect";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import SelectModal from "../modal/SelectModal";
 
 type OrganisaatioSelectModalProps = {
     locale: Locale,
-    L: L,
+    L: Localisations,
     organisaatiot: Array<OrganisaatioSelectObject>,
     onSelect: (organisaatio: OrganisaatioSelectObject) => void,
     disabled: boolean

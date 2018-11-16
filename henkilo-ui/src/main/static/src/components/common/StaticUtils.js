@@ -1,7 +1,7 @@
 // @flow
 
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
-import type {L, L10n} from "../../types/localisation.type";
+import type {Localisations, L10n} from "../../types/localisation.type";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 import type {Locale} from "../../types/locale.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
@@ -103,7 +103,7 @@ class StaticUtils {
         return (arr && arr.length) ? arr.filter(item => item).reduce((type1, type2) => type1.concat(', ', type2)) : '';
     };
 
-    static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: L, uppercase?: boolean) {
+    static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: Localisations, uppercase?: boolean) {
         return tyypit && tyypit.length
             ? '(' + tyypit
                 .map(tyyppi => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)

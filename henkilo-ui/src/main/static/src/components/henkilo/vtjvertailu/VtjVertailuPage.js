@@ -17,7 +17,7 @@ import {enabledVtjVertailuView} from "../../navigation/NavigationTabs";
 import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import {addGlobalNotification} from "../../../actions/notification.actions";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
@@ -28,7 +28,7 @@ type Props = {
     henkilo: HenkiloState,
     ownOid: string,
     omattiedot: OmattiedotState,
-    L: L,
+    L: Localisations,
     fetchHenkilo: (string) => void,
     fetchHenkiloYksilointitieto: (string) => void ,
     fetchHenkiloMaster: (string) => void,

@@ -4,7 +4,7 @@ import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import type {Locale} from "../../../types/locale.type";
 import type {ReactSelectOption} from "../../../types/react-select.types";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
 import {OrganisaatioSelectModal} from "../../common/select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
@@ -12,7 +12,7 @@ import OphCheckboxFieldset from "../../common/forms/OphCheckboxFieldset";
 import { toLocalizedText } from '../../../localizabletext';
 
 type Props = {
-    L: L,
+    L: Localisations,
     organisaatios: Array<any>,
     koodisto: any,
     locale: Locale,

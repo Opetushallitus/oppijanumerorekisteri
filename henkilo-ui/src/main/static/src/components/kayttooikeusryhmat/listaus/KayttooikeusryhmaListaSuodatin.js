@@ -1,11 +1,11 @@
 // @flow
 import React from 'react';
 import './KayttooikeusryhmaListaSuodatin.css';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import { Link } from 'react-router';
 
 type Props = {
-    L: L,
+    L: Localisations,
     muokkausoikeus: boolean,
     onFilterEvent: (event: SyntheticInputEvent<HTMLInputElement>) => void,
     router: any

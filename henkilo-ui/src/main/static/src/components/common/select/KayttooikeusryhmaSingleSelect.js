@@ -4,10 +4,10 @@ import {connect} from 'react-redux';
 import OphSelect from "./OphSelect";
 import StaticUtils from "../StaticUtils";
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 
 type Props = {
-    L: L,
+    L: Localisations,
     locale: string,
     fetchAllKayttooikeusryhma: (boolean) => void,
     kayttooikeusRyhmas: Array<{id: number, description: {texts: Array<{lang: string, text: string}>}}>,

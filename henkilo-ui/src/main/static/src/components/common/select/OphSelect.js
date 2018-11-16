@@ -7,11 +7,11 @@ import {connect} from 'react-redux';
 import Select from 'react-virtualized-select';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
-import type {L} from '../../../types/localisation.type';
+import type {Localisations} from '../../../types/localisation.type';
 import type {ReactSelectOption} from "../../../types/react-select.types";
 
 type Props = {
-    L: L,
+    L: Localisations,
     onChange: ({label: string, value: string, optionsName: string}) => void,
     className: string,
     options: Array<ReactSelectOption>,

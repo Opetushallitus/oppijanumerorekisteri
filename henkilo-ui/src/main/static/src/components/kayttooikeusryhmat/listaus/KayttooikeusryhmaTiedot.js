@@ -8,14 +8,14 @@ import * as R from 'ramda';
 import type {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli.types";
 import LocalizedTextGroup from "../../common/LocalizedTextGroup";
 import './KayttooikeusryhmaTiedot.css';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import { Link } from 'react-router';
 
 type Props = {
     muokkausoikeus: boolean,
     item: Kayttooikeusryhma,
     locale: Locale,
-    L: L,
+    L: Localisations,
     show: boolean,
     router: any
 }

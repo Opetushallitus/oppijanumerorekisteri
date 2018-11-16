@@ -5,11 +5,11 @@ import ConfirmButton from "../../button/ConfirmButton";
 import Button from "../../button/Button";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import {passivoiHenkilo} from "../../../../actions/henkilo.actions";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 
 type Props = {
     henkilo: HenkiloState,
-    L: L,
+    L: Localisations,
     passivoiHenkilo: (string) => void,
     disabled?: boolean
 }

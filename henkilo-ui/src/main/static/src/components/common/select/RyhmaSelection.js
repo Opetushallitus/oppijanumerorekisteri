@@ -3,7 +3,7 @@ import './RyhmaSelection.css';
 import React from 'react';
 import OphSelect from './OphSelect';
 import {connect} from 'react-redux';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
 
 type Option = {
@@ -12,7 +12,7 @@ type Option = {
 }
 
 type Props = {
-    L: L,
+    L: Localisations,
     selectOrganisaatio: () => any,
     locale: Locale,
     selectedOrganisaatioOid: string,

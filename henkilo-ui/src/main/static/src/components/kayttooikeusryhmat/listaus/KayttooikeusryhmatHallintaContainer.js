@@ -5,7 +5,7 @@ import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.acti
 import Loader from "../../common/icons/Loader";
 import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util'
 
 
@@ -15,7 +15,7 @@ type Props = {
     kayttooikeusryhmat: any,
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
-    L: L,
+    L: Localisations,
     router: any,
 }
 

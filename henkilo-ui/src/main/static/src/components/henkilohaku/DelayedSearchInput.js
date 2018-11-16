@@ -1,16 +1,28 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import ReactTimeout from 'react-timeout'
+// @flow
+import React from 'react';
+import ReactTimeout from 'react-timeout';
+
+type SearchQuery = (HTMLInputElement) => void;
+
+type DelayedSearchInputProps = {
+    setSearchQueryAction: SearchQuery,
+    loading: boolean,
+    defaultNameQuery: ?string,
+    placeholder: ?string,
+    customTimeout: ?number,
+    minSearchValueLength: ?number,
+    setTimeout: any,
+    clearTimeout: any,
+}
+
+type DelayedSearchInputState = {
+    timeoutEvent: any,
+    singleActionQueue: ?() => void,
+}
 
 // Provides input with delay timer and single action queue.
-class DelayedSearchInput extends React.Component {
-    static propTypes = {
-        setSearchQueryAction: PropTypes.func.isRequired,
-        loading: PropTypes.bool.isRequired,
-        defaultNameQuery: PropTypes.string,
-        placeholder: PropTypes.string,
-        customTimeout: PropTypes.number,
-    };
+class DelayedSearchInput extends React.Component<DelayedSearchInputProps, DelayedSearchInputState> {
+    timeout: number;
 
     constructor(props) {
         super(props);
@@ -23,8 +35,8 @@ class DelayedSearchInput extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(!nextProps.isLoading && this.state.singleActionQueue !== null) {
+    componentWillReceiveProps(nextProps: DelayedSearchInputProps) {
+        if(!nextProps.loading && !!this.state.singleActionQueue) {
             this.state.singleActionQueue();
             this.setState({
                 singleActionQueue: null,
@@ -41,21 +53,23 @@ class DelayedSearchInput extends React.Component {
     }
 
     typewatch(event) {
-        const value = event.target;
-        if(this.state.timeoutEvent !== null) {
+        const element: HTMLInputElement = event.target;
+        if (this.state.timeoutEvent !== null) {
             this.props.clearTimeout(this.state.timeoutEvent);
         }
-        this.setState({
-            timeoutEvent: this.props.setTimeout(() => {
-                this.setState({timeoutEvent: null});
-                if(this.props.loading) {
-                    this.setState({singleActionQueue: () => this.props.setSearchQueryAction(value),})
-                }
-                else {
-                    this.props.setSearchQueryAction(value);
-                }
-            }, this.timeout),
-        });
+        if (!this.props.minSearchValueLength || (!element.value || element.value.length >= this.props.minSearchValueLength)) {
+            this.setState({
+                timeoutEvent: this.props.setTimeout(() => {
+                    this.setState({timeoutEvent: null});
+                    if (this.props.loading) {
+                        this.setState({singleActionQueue: () => this.props.setSearchQueryAction(element),})
+                    }
+                    else {
+                        this.props.setSearchQueryAction(element);
+                    }
+                }, this.timeout),
+            });
+        }
     }
 }
 

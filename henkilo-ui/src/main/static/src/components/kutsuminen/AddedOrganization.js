@@ -23,7 +23,7 @@ import type {
     KutsuOrganisaatio, Organisaatio,
     OrganisaatioHenkilo
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
-import type {L} from "../../types/localisation.type";
+import type {Localisations} from "../../types/localisation.type";
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal'
 import {myonnettyToKayttooikeusryhma} from '../../utils/KayttooikeusryhmaUtils'
 import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
@@ -35,7 +35,7 @@ type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
     addedOrg: KutsuOrganisaatio,
     locale: string,
-    L: L,
+    L: Localisations,
     omatOrganisaatios: Array<OrganisaatioHenkilo>,
     index: number,
     kutsuRemoveOrganisaatio: (string) => void,
