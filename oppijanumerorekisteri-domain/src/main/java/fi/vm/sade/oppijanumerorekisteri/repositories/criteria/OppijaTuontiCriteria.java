@@ -1,23 +1,24 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
-import static com.querydsl.core.types.dsl.Expressions.allOf;
-import static com.querydsl.core.types.dsl.Expressions.anyOf;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.QOrganisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.QTuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.QTuontiRivi;
-import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Set;
-import javax.persistence.EntityManager;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.EntityManager;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.querydsl.core.types.dsl.Expressions.allOf;
+import static com.querydsl.core.types.dsl.Expressions.anyOf;
 
 @Getter
 @Setter
@@ -36,6 +37,8 @@ public class OppijaTuontiCriteria {
     private Set<String> organisaatioOids;
 
     private Boolean vainVirheet;
+
+    private String nimiHaku;
 
     public boolean setOrRetainOrganisaatioOids(Set<String> oids) {
         if (organisaatioOids == null || organisaatioOids.isEmpty()) {
@@ -88,6 +91,42 @@ public class OppijaTuontiCriteria {
                             qHenkilo.yksilointiYritetty.isTrue()
                     )
             ));
+        }
+
+        if (StringUtils.hasLength(this.nimiHaku)) {
+            String trimmedQuery = this.nimiHaku.trim();
+            List<String> queryParts = Arrays.asList(trimmedQuery.split(" "));
+
+            if (queryParts.size() > 1) {
+                // expect sukunimi to be first or last of queryParts
+                // use startsWithIgnoreCase to get use of index
+
+                BooleanBuilder SukunimiEtunimiPredicate = new BooleanBuilder();
+                SukunimiEtunimiPredicate.and(qHenkilo.sukunimi.startsWithIgnoreCase(queryParts.get(0)));
+                String etunimiLast = String.join(" ", queryParts.subList(1, queryParts.size()));
+                SukunimiEtunimiPredicate.and(qHenkilo.etunimet.startsWithIgnoreCase(etunimiLast)
+                        .or(qHenkilo.kutsumanimi.startsWithIgnoreCase(etunimiLast)));
+
+                BooleanBuilder etunimiSukunimiPredicate = new BooleanBuilder();
+                etunimiSukunimiPredicate.and(qHenkilo.sukunimi.startsWithIgnoreCase(queryParts.get(queryParts.size() - 1)));
+                String etunimiFirst = String.join(" ", queryParts.subList(0, queryParts.size() - 1));
+                etunimiSukunimiPredicate.and(qHenkilo.etunimet.startsWithIgnoreCase(etunimiFirst)
+                        .or(qHenkilo.kutsumanimi.startsWithIgnoreCase(etunimiFirst)));
+
+                query.where(SukunimiEtunimiPredicate
+                        .or(etunimiSukunimiPredicate)
+                        .or(qHenkilo.etunimet.startsWithIgnoreCase(trimmedQuery)));
+            } else {
+                query.where(
+                        Expressions.anyOf(
+                                qHenkilo.oidHenkilo.eq(trimmedQuery),
+                                qHenkilo.etunimet.startsWithIgnoreCase(trimmedQuery),
+                                qHenkilo.sukunimi.startsWithIgnoreCase(trimmedQuery),
+                                qHenkilo.kutsumanimi.startsWithIgnoreCase(trimmedQuery),
+                                qHenkilo.hetu.eq(trimmedQuery)
+                        )
+                );
+            }
         }
 
         return query;

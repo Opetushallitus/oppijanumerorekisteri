@@ -11,7 +11,9 @@ import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -476,5 +480,103 @@ public class OppijaServiceTest {
     }
 
 
+    @Test
+    public void shouldFindByNameAsAdmin() {
+        given(this.permissionChecker.isSuperUser()).willReturn(true);
+
+        Henkilo henkilo = Henkilo.builder()
+                .oidHenkilo("oid1")
+                .passinumerot(Collections.singleton("passi123"))
+                .identifications(Stream.of(Identification.builder()
+                        .idpEntityId("email")
+                        .identifier("example@example.com")
+                        .build())
+                        .collect(toSet()))
+                .etunimet("Arpa Noppa")
+                .kutsumanimi("Noppa")
+                .sukunimi("Kuutio")
+                .created(new Date())
+                .modified(new Date())
+                .build();
+        henkiloRepository.save(henkilo);
+
+        OppijaTuontiCreateDto createDto = OppijaTuontiCreateDto.builder()
+                .henkilot(Stream.of(OppijaTuontiRiviCreateDto.builder()
+                        .tunniste("tunniste1")
+                        .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                .passinumero("passi123")
+                                .etunimet("Arpa Noppa")
+                                .kutsumanimi("Noppa")
+                                .sukunimi("Kuutio")
+                                .build())
+                        .build())
+                        .collect(toList()))
+                .build();
+        create(createDto);
+
+        OppijaTuontiCriteria criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("arpa")
+                .build();
+        Page<OppijaListDto> result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("ar")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("noppa")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("nop")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("kuutio")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("kuu")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("arpa noppa kuutio")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("noppa kuutio")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+
+        criteria = OppijaTuontiCriteria.builder()
+                .nimiHaku("siansaksaa")
+                .build();
+        result = this.oppijaService
+                .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        assertThat(result.iterator()).extracting(OppijaListDto::getOid).isEmpty();
+
+    }
 
 }
