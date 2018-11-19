@@ -5,6 +5,7 @@ import AbstractUserContent from "./AbstractUserContent";
 import Sukunimi from "../labelvalues/Sukunimi";
 import Etunimet from "../labelvalues/Etunimet";
 import Kutsumanimi from "../labelvalues/Kutsumanimi";
+import Oid from "../labelvalues/Oid";
 import Oppijanumero from "../labelvalues/Oppijanumero";
 import Asiointikieli from "../labelvalues/Asiointikieli";
 import EditButton from "../buttons/EditButton";
@@ -82,6 +83,7 @@ class VirkailijaUserContent extends React.Component<Props> {
             ],
             [
                 <Oppijanumero {...props} />,
+                <Oid {...props} />,
             ],
             [
                 <Kayttajanimi {...props}
