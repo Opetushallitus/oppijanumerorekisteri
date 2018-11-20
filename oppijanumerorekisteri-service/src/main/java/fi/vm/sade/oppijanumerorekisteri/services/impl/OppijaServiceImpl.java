@@ -59,9 +59,6 @@ public class OppijaServiceImpl implements OppijaService {
         // lisätään oppija virkailijan organisaatioihin
         String kayttajaOid = userDetailsHelper.getCurrentUserOid();
         Set<Organisaatio> organisaatiot = oppijaTuontiService.getOrCreateOrganisaatioByKayttaja();
-        if (organisaatiot.isEmpty()) {
-            throw new ValidationException(String.format("Henkilöllä %s ei ole yhtään organisaatiota joihin oppija liitetään", kayttajaOid));
-        }
         organisaatiot.forEach(entity::addOrganisaatio);
 
         entity = henkiloModificationService.createHenkilo(entity, kayttajaOid, true);
