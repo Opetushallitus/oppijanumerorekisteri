@@ -1,13 +1,11 @@
 // @flow
 
 import React from 'react';
-import {connect} from 'react-redux';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
 import {reject} from 'ramda';
 import './HakaPopupContent.css';
-import type {L10n, Localisations} from "../../../types/localisation.type";
-import type {Locale} from "../../../types/locale.type";
+import type {Localisations} from "../../../types/localisation.type";
 
 type Props = {
     henkiloOid: string,
