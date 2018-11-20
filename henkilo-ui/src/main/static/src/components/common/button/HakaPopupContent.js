@@ -1,20 +1,30 @@
+// @flow
 import React from 'react';
-import PropTypes from 'prop-types'
+import {connect} from 'react-redux';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
 import * as R from 'ramda';
 import './HakaPopupContent.css';
+import type {L10n, Localisations} from "../../../types/localisation.type";
+import type {Locale} from "../../../types/locale.type";
+import {addGlobalNotification} from "../../../actions/notification.actions";
+import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 
-export default class HakatunnistePopupContent extends React.Component {
+type Props = {
+    henkiloOid: string,
+    l10n: L10n,
+    locale: Locale,
+    L: Localisations
+}
 
-    static propTypes = {
-        henkiloOid: PropTypes.string.isRequired,
-        l10n: PropTypes.object,
-        locale: PropTypes.string,
-        L: PropTypes.object
-    };
+type State = {
+    hakatunnisteet: Array<string>,
+    newTunnisteValue: string
+}
 
-    constructor(props) {
+export default class HakatunnistePopupContent extends React.Component<Props, State> {
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             hakatunnisteet: [],
@@ -46,14 +56,18 @@ export default class HakatunnistePopupContent extends React.Component {
                        placeholder="Lisää uusi tunnus"
                        value={this.state.newTunnisteValue}
                        onChange={this.handleChange.bind(this)}
-                       onKeyPress={ (e) => e.key === 'Enter' ? this.addHakatunniste() : null}/>
+                       onKeyPress={ (e: SyntheticKeyboardEvent<HTMLInputElement>) => e.key === 'Enter' ? this.addHakatunniste() : null}/>
+                { this.state.hakatunnisteet.includes(this.state.newTunnisteValue) ?
+                    <div className="oph-field-text oph-error">{this.props.L['HAKATUNNISTEET_VIRHE_OLEMASSAOLEVA']}</div> :
+                    null }
                 <button className="save oph-button oph-button-primary"
+                        disabled={this.state.hakatunnisteet.includes(this.state.newTunnisteValue)}
                         onClick={() => this.addHakatunniste()}>{L['TALLENNA_TUNNUS']}</button>
             </div>
         </div>);
     }
 
-    handleChange(event) {
+    handleChange(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({newTunnisteValue: event.target.value});
     }
 
@@ -64,10 +78,9 @@ export default class HakatunnistePopupContent extends React.Component {
             this.saveHakatunnisteet(tunnisteet);
             this.setState({newTunnisteValue: ''});
         }
-
     }
 
-    async removeHakatunniste(tunniste) {
+    async removeHakatunniste(tunniste: string) {
         const filteredTunnisteet = R.reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
         await this.saveHakatunnisteet(filteredTunnisteet);
     }
@@ -93,3 +106,4 @@ export default class HakatunnistePopupContent extends React.Component {
     }
 
 }
+
