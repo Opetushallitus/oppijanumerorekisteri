@@ -108,7 +108,6 @@ public class YksilointiITest {
                     .returns(null, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 19), Henkilo::getSyntymaaika)
                     .returns("1", Henkilo::getSukupuoli)
-                    .returns(null, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
@@ -118,7 +117,6 @@ public class YksilointiITest {
                     .returns(uusiHetu, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
                     .returns("2", Henkilo::getSukupuoli)
-                    .returns(uusiOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -160,7 +158,6 @@ public class YksilointiITest {
                     .returns(uusiHetu, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
                     .returns("2", Henkilo::getSukupuoli)
-                    .returns(vanhaOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -170,7 +167,6 @@ public class YksilointiITest {
                     .returns(null, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
                     .returns("2", Henkilo::getSukupuoli)
-                    .returns(null, Henkilo::getOppijanumero)
                     .returns(false, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
@@ -281,7 +277,6 @@ public class YksilointiITest {
                     .returns(null, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 19), Henkilo::getSyntymaaika)
                     .returns("1", Henkilo::getSukupuoli)
-                    .returns(null, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
@@ -291,7 +286,6 @@ public class YksilointiITest {
                     .returns(uusiHetu, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
                     .returns("2", Henkilo::getSukupuoli)
-                    .returns(uusiOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -335,7 +329,6 @@ public class YksilointiITest {
                     .returns(uusiHetu, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
                     .returns("2", Henkilo::getSukupuoli)
-                    .returns(vanhaOid, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(true, Henkilo::isYksiloityVTJ);
         });
@@ -345,7 +338,6 @@ public class YksilointiITest {
                     .returns(null, Henkilo::getHetu)
                     .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
                     .returns("2", Henkilo::getSukupuoli)
-                    .returns(null, Henkilo::getOppijanumero)
                     .returns(true, Henkilo::isYksilointiYritetty)
                     .returns(false, Henkilo::isYksiloityVTJ);
         });

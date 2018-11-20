@@ -514,14 +514,14 @@ public class HenkiloModificationServiceImplTest {
         input.setYksiloity(false);
         output = service.createHenkilo(input);
         assertThat(output)
-                .extracting(Henkilo::getOidHenkilo, Henkilo::getOppijanumero, Henkilo::isYksiloity)
-                .containsExactly("oid1", null, false);
+                .extracting(Henkilo::getOidHenkilo, Henkilo::isYksiloity)
+                .containsExactly("oid1", false);
 
         input.setYksiloity(true);
         output = service.createHenkilo(input);
         assertThat(output)
-                .extracting(Henkilo::getOidHenkilo, Henkilo::getOppijanumero, Henkilo::isYksiloity)
-                .containsExactly("oid1", "oid1", true);
+                .extracting(Henkilo::getOidHenkilo, Henkilo::isYksiloity)
+                .containsExactly("oid1", true);
 
         input.setYksiloity(true);
         input.setHetu("241197-9877");

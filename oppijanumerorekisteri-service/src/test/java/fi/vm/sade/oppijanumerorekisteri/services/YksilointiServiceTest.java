@@ -287,7 +287,6 @@ public class YksilointiServiceTest {
         assertThat(hlo.isYksiloity()).isTrue();
         verify(henkiloModificationService).update(eq(hlo));
         assertThat(hlo.isDuplicate()).isFalse();
-        assertThat(hlo.getOppijanumero()).isEqualTo(henkiloOid);
     }
 
     @Test

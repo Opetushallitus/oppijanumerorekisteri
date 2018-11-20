@@ -51,8 +51,6 @@ public class HenkiloCreateDto implements Serializable {
 
     private String kotikunta;
 
-    private String oppijanumero;
-
     private Boolean turvakielto;
 
     private Boolean eiSuomalaistaHetua;

@@ -18,7 +18,6 @@ public class HenkiloReadDto {
     private Set<String> kaikkiHetut;
     private String kutsumanimi;
     private String oidHenkilo;
-    private String oppijanumero;
     private String sukunimi;
     private String sukupuoli;
     private String kotikunta;

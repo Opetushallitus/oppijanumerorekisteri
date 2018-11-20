@@ -10,7 +10,6 @@ import lombok.Setter;
 public class OppijaListDto {
 
     private String oid;
-    private String oppijanumero;
     private Date luotu;
     private Date muokattu;
     private String hetu;

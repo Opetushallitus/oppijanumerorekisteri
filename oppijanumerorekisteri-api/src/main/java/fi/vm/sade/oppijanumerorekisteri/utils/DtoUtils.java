@@ -62,7 +62,7 @@ public class DtoUtils {
 
         return new HenkiloDto(oidHenkilo, hetu, null, passivoitu, etunimet, kutsumanimi, sukunimi,
                  aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
-                syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, createdModified,
+                syntymaAika, "1", null, null, false, false, false, false, false, createdModified,
                 createdModified, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>());
     }
 
@@ -79,7 +79,7 @@ public class DtoUtils {
 
         return new HenkiloCreateDto(hetu, passivoitu, etunimet, kutsumanimi, sukunimi, aidinkieli,
                 aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
-                null, "1.2.3.4.5", null, false, false,
+                null, null, false, false,
                 false, false, false, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
     }
 
