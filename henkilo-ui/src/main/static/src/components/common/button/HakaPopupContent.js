@@ -1,19 +1,16 @@
 // @flow
+
 import React from 'react';
 import {connect} from 'react-redux';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
-import * as R from 'ramda';
+import {reject} from 'ramda';
 import './HakaPopupContent.css';
 import type {L10n, Localisations} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
-import {addGlobalNotification} from "../../../actions/notification.actions";
-import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 
 type Props = {
     henkiloOid: string,
-    l10n: L10n,
-    locale: Locale,
     L: Localisations
 }
 
@@ -40,14 +37,13 @@ export default class HakatunnistePopupContent extends React.Component<Props, Sta
     }
 
     render() {
-        const L = this.props.L ? this.props.L : this.props.l10n[this.props.locale];
         return (<div className="hakapopupcontent">
             <ul>
                 { this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     (<li className="tag" key={hakatunniste}><span>{hakatunniste}</span> <a className="remove"
-                                                                                           onClick={ () => this.removeHakatunniste(hakatunniste)}>{L['POISTA']}</a>
-                    </li>)) : <span className="oph-h4 oph-strong hakapopup">{L['EI_HAKATUNNUKSIA']}</span>}
+                                                                                           onClick={ () => this.removeHakatunniste(hakatunniste)}>{this.props.L['POISTA']}</a>
+                    </li>)) : <span className="oph-h4 oph-strong hakapopup">{this.props.L['EI_HAKATUNNUKSIA']}</span>}
             </ul>
             <div className="oph-field oph-field-is-required">
                 <input type="text"
@@ -62,7 +58,7 @@ export default class HakatunnistePopupContent extends React.Component<Props, Sta
                     null }
                 <button className="save oph-button oph-button-primary"
                         disabled={this.state.hakatunnisteet.includes(this.state.newTunnisteValue)}
-                        onClick={() => this.addHakatunniste()}>{L['TALLENNA_TUNNUS']}</button>
+                        onClick={() => this.addHakatunniste()}>{this.props.L['TALLENNA_TUNNUS']}</button>
             </div>
         </div>);
     }
@@ -81,7 +77,7 @@ export default class HakatunnistePopupContent extends React.Component<Props, Sta
     }
 
     async removeHakatunniste(tunniste: string) {
-        const filteredTunnisteet = R.reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
+        const filteredTunnisteet = reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
         await this.saveHakatunnisteet(filteredTunnisteet);
     }
 
@@ -95,7 +91,7 @@ export default class HakatunnistePopupContent extends React.Component<Props, Sta
         }
     }
 
-    async saveHakatunnisteet(newHakatunnisteet) {
+    async saveHakatunnisteet(newHakatunnisteet: Array<string>) {
         const url = urls.url('kayttooikeus-service.henkilo.hakatunnus', this.props.henkiloOid);
         try {
             const hakatunnisteet = await http.put(url, newHakatunnisteet);
