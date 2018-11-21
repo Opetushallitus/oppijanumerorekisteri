@@ -24,6 +24,7 @@ import {localize, localizeTextGroup} from "../../../utilities/localisation.util"
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import type {TableHeading} from "../../../types/react-table.types";
 import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
+import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: any,
@@ -51,11 +52,7 @@ type Props = {
     updateHaettuKayttooikeusryhma?: (number, string, string, string, any, string) => Promise<any>,
     isOmattiedot?: boolean,
     omattiedot?: OmattiedotState,
-    kayttooikeus: {
-        kayttooikeusAnomus: Array<any>,
-        grantableKayttooikeus: any,
-        grantableKayttooikeusLoading: boolean
-    },
+    kayttooikeus: KayttooikeusRyhmaState,
     organisaatioCache: {
         nimi: string
     },

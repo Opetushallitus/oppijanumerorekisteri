@@ -8,6 +8,7 @@ type SelectModalProps = {
     disabled: boolean,
     buttonText: string,
     children?: React$Element<any>,
+    loading?: boolean,
 }
 
 type State = {
@@ -22,15 +23,15 @@ class SelectModal extends React.Component<SelectModalProps, State> {
         super(props);
 
         this.state = {
-            visible: false
+            visible: false,
         };
     }
 
     render() {
         return <React.Fragment>
-            <Button disabled={this.props.disabled}
+            <Button disabled={this.props.disabled || !!this.props.loading}
                     action={this._onOpen}>
-                <SpinnerInButton show={this.props.disabled}/> { this.props.buttonText }
+                <SpinnerInButton show={!!this.props.loading}/> { this.props.buttonText }
             </Button>
             { this.state.visible
                 ? <OphModal onClose={this._onClose}>

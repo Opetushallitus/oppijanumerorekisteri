@@ -1,9 +1,16 @@
+// @flow
 import {
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_SUCCESS,
     FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_FAILURE } from '../actions/actiontypes';
 
-export const OrganisaatioKayttooikeusryhmat = ( state = { kayttooikeusryhmatLoading: false, organisaatioOid: null, kayttooikeusryhmat: [] }, action) => {
+export type OrganisaatioKayttooikeusryhmatState = {
+    kayttooikeusryhmatLoading: boolean,
+    organisaatioOid: ?string,
+    kayttooikeusryhmat: Array<{}>,
+}
+
+export const OrganisaatioKayttooikeusryhmat = ( state: OrganisaatioKayttooikeusryhmatState = { kayttooikeusryhmatLoading: false, organisaatioOid: null, kayttooikeusryhmat: [] }, action: any) => {
 
     switch( action.type ) {
         case FETCH_KAYTTOOIKEUSRYHMA_FOR_ORGANISAATIO_REQUEST:

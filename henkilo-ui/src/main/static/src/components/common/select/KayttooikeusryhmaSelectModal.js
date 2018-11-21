@@ -12,6 +12,7 @@ type Props = {
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void,
     disabled: boolean,
+    loading: boolean,
 }
 
 type State = {
@@ -32,6 +33,7 @@ class KayttooikeusryhmaSelectModal extends React.Component<Props, State> {
     render() {
         return (
             <SelectModal disabled={this.props.disabled}
+                         loading={this.props.loading}
                          buttonText={this.props.L['OMATTIEDOT_VALITSE_KAYTTOOIKEUSRYHMA']}>
                 <KayttooikeusryhmaSelect
                     locale={this.props.locale}

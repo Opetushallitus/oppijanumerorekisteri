@@ -22,6 +22,7 @@ import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {KayttooikeusState} from "../../reducers/kayttooikeus.reducer";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
 import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
+import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
 type Props = {
     oidHenkilo: string, // tarkasteltava
@@ -45,7 +46,7 @@ type Props = {
     l10n: L10n,
     locale: Locale,
     henkilo: HenkiloState,
-    kayttooikeus: KayttooikeusState,
+    kayttooikeus: KayttooikeusRyhmaState,
     koodisto: KoodistoState,
     organisaatioCache: OrganisaatioState,
 }

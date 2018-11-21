@@ -29,6 +29,7 @@ import type {RyhmatState} from "../../../reducers/ryhmat.reducer";
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
+import type {OrganisaatioKayttooikeusryhmatState} from "../../../reducers/organisaatiokayttooikeusryhmat.reducer";
 
 type Props = {
     l10n: L10n,
@@ -40,6 +41,7 @@ type Props = {
     ryhmaOptions: Array<{label: string, value: string}>,
     kayttooikeusryhmat: Array<any>,
     fetchOrganisaatioKayttooikeusryhmat: (string) => void,
+    organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState,
     createKayttooikeusanomus: (any) => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
     addGlobalNotification: (GlobalNotificationConfig) => any
@@ -157,7 +159,8 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                                 L={L}
                                 kayttooikeusryhmat={kayttooikeusryhmat}
                                 onSelect={this._addKayttooikeusryhmaSelection.bind(this)}
-                                disabled={kayttooikeusryhmat.length === 0 || this.state.emailOptions.missingEmail}
+                                disabled={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading || kayttooikeusryhmat.length === 0 || this.state.emailOptions.missingEmail}
+                                loading={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
                             />
                         </div>
                     </div>

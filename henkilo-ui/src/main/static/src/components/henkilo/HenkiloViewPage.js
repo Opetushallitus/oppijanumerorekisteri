@@ -18,6 +18,9 @@ import { path } from 'ramda';
 import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
 import type {RyhmatState} from "../../reducers/ryhmat.reducer";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
+import type {OrganisaatioKayttooikeusryhmatState} from "../../reducers/organisaatiokayttooikeusryhmat.reducer";
+import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
+import type {KoodistoState} from "../../reducers/koodisto.reducer";
 
 type Props = {
     l10n: L10n,
@@ -25,12 +28,12 @@ type Props = {
     updateHenkiloAndRefetch?: (any) => void,
     updateAndRefetchKayttajatieto?: (henkiloOid: string, kayttajatunnus: string) => void,
     henkilo: HenkiloState,
-    kayttooikeus: any,
-    koodisto: any,
+    kayttooikeus: KayttooikeusRyhmaState,
+    koodisto: KoodistoState,
     createBasicInfo?: (boolean, (any) => void, (any) => void, any) => any,
     readOnlyButtons?: ((any) => void) => any,
     passivoiHenkiloOrg?: (henkiloOid: string, organisaatioOid: string) => void,
-    organisaatioKayttooikeusryhmat?: {kayttooikeusryhmat: Array<any>},
+    organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState,
     omattiedot?: OmattiedotState,
     fetchAllKayttooikeusAnomusForHenkilo?: (string) => void,
     oidHenkilo: string,
@@ -56,6 +59,8 @@ class HenkiloViewPage extends React.Component<Props> {
         }
 
         const kayttooikeusryhmat: Array<any> = path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) ? path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat) : [];
+
+        const kayttooikeusState = this.props.kayttooikeus || {};
 
         return (
             <div>
@@ -88,7 +93,7 @@ class HenkiloViewPage extends React.Component<Props> {
                 </div>}
                 {this.props.view !== 'OPPIJA' && <div className="wrapper" ref={(ref) => this.existingKayttooikeusRef = ref}>
                     {
-                        this.props.kayttooikeus.kayttooikeusLoading
+                        kayttooikeusState.kayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewExistingKayttooikeus
                                 {...this.props}
@@ -101,7 +106,7 @@ class HenkiloViewPage extends React.Component<Props> {
                 {this.props.henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && this.props.view !== 'OPPIJA' &&
                 <div className="wrapper">
                     {
-                        this.props.kayttooikeus.kayttooikeusAnomusLoading
+                        kayttooikeusState.kayttooikeusAnomusLoading
                             ? <Loader />
                             : <HenkiloViewOpenKayttooikeusanomus
                                 {...this.props}
@@ -112,7 +117,7 @@ class HenkiloViewPage extends React.Component<Props> {
                 }
                 {this.props.view !== 'OPPIJA' && <div className="wrapper">
                     {
-                        this.props.kayttooikeus.kayttooikeusLoading
+                        kayttooikeusState.kayttooikeusLoading
                             ? <Loader />
                             : <HenkiloViewExpiredKayttooikeus {...this.props}
                                                               oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
