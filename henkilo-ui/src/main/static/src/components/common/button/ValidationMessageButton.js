@@ -7,6 +7,7 @@ type Props = {
     children: any,
     validationMessages: {[key: string]: ValidationMessage},
     buttonAction: (any) => void,
+    disabled?: boolean,
 }
 
 // Nappi jonka oikealla puolella tulostuvat mustat validointitekstit. Olettaa kaikkien syötteiden olevan lokalisoituja.
@@ -15,7 +16,7 @@ class ValidationMessageButton extends React.Component<Props>{
     render() {
         return <div>
             <div className="haeButtonWrapper">
-                <Button disabled={Object.keys(this.props.validationMessages).some(key => !this.props.validationMessages[key].isValid)}
+                <Button disabled={!!this.props.disabled || Object.keys(this.props.validationMessages).some(key => !this.props.validationMessages[key].isValid)}
                         action={this.props.buttonAction}>
                     {this.props.children}
                 </Button>

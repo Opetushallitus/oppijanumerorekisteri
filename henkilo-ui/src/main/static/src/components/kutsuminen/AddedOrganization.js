@@ -101,7 +101,7 @@ class AddedOrganization extends React.Component<Props, State> {
                             L={this.props.L}
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             onSelect={this.addPermission.bind(this, selectablePermissions)}
-                            disabled={addedOrg.isPermissionsLoading || !addedOrg.oid}
+                            isOrganisaatioSelected={!!addedOrg.oid}
                             loading={addedOrg.isPermissionsLoading}
                         />
                     </div>

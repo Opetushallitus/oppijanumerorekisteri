@@ -159,8 +159,9 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                                 L={L}
                                 kayttooikeusryhmat={kayttooikeusryhmat}
                                 onSelect={this._addKayttooikeusryhmaSelection.bind(this)}
-                                disabled={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading || kayttooikeusryhmat.length === 0 || this.state.emailOptions.missingEmail}
+                                disabled={this.state.emailOptions.missingEmail}
                                 loading={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
+                                isOrganisaatioSelected={!!this.state.organisaatioSelection}
                             />
                         </div>
                     </div>

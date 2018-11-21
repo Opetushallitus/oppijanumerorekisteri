@@ -13,19 +13,20 @@ export type ValittuKayttooikeusryhma = {
 }
 
 type Props = {
-    kayttooikeusData: AllowedKayttooikeus,
+    kayttooikeusData: ?AllowedKayttooikeus,
     selectedList: Array<ValittuKayttooikeusryhma>,
     kayttooikeusAction: (ValittuKayttooikeusryhma) => void,
     close: (kayttooikeusryhmaId: number) => void,
     L: Localisations,
     locale: Locale,
     loading: boolean,
+    selectedOrganisationOid: string,
 }
 
-const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale, loading}: Props) => {
-    const kayttooikeusryhmat = kayttooikeusData && kayttooikeusData
+const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale, loading, selectedOrganisationOid}: Props) => {
+    const kayttooikeusryhmat = (kayttooikeusData && kayttooikeusData
         .filter(myonnetty => selectedList.every(selected => selected.value !== myonnetty.ryhmaId))
-        .map(myonnettyToKayttooikeusryhma)
+        .map(myonnettyToKayttooikeusryhma)) || [];
     return <tr key="kayttooikeusKayttooikeudetField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
@@ -41,8 +42,8 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
                             value: kayttooikeusryhma.id,
                             label: toLocalizedText(locale, kayttooikeusryhma.nimi)
                         })}
-                        disabled={kayttooikeusData === undefined}
                         loading={loading}
+                        isOrganisaatioSelected={!!selectedOrganisationOid}
                         />
                 </div>
             </div>

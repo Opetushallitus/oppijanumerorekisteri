@@ -211,6 +211,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                                               close={this.close}
                                               kayttooikeusAction={this.kayttooikeudetAction}
                                               loading={this.props.kayttooikeus.allowedKayttooikeus.loading}
+                                              selectedOrganisationOid={this.state.organisaatioSelection}
                             />
                             <CKHaeButton L={this.props.L}
                                          validationMessages={this.state.validationMessages}
