@@ -38,7 +38,8 @@ public class OppijaController {
     @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
             + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation(value = "Yksittäisen oppijan luonti")
+    @ApiOperation(value = "Yksittäisen oppijan luonti",
+            notes = "Lisää automaattisesti oppijan käyttäjän organisaatioihin.")
     public String create(@Valid @RequestBody OppijaCreateDto dto) {
         return oppijaService.create(dto);
     }
