@@ -1,15 +1,20 @@
 // @flow
 
 import React from 'react';
+import {connect} from 'react-redux';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
 import {reject} from 'ramda';
 import './HakaPopupContent.css';
 import type {Localisations} from "../../../types/localisation.type";
+import {addGlobalNotification} from "../../../actions/notification.actions";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
+import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
 
 type Props = {
     henkiloOid: string,
-    L: Localisations
+    L: Localisations,
+    addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
 type State = {
@@ -17,7 +22,7 @@ type State = {
     newTunnisteValue: string
 }
 
-export default class HakatunnistePopupContent extends React.Component<Props, State> {
+class HakatunnistePopupContent extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -69,14 +74,14 @@ export default class HakatunnistePopupContent extends React.Component<Props, Sta
         if (this.state.newTunnisteValue.length > 0) {
             const tunnisteet = this.state.hakatunnisteet.slice(0);
             tunnisteet.push(this.state.newTunnisteValue);
-            this.saveHakatunnisteet(tunnisteet);
+            this.saveHakatunnisteet(tunnisteet, this.state.newTunnisteValue);
             this.setState({newTunnisteValue: ''});
         }
     }
 
     async removeHakatunniste(tunniste: string) {
         const filteredTunnisteet = reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
-        await this.saveHakatunnisteet(filteredTunnisteet);
+        await this.saveHakatunnisteet(filteredTunnisteet, tunniste);
     }
 
     async getHakatunnisteet() {
@@ -89,15 +94,25 @@ export default class HakatunnistePopupContent extends React.Component<Props, Sta
         }
     }
 
-    async saveHakatunnisteet(newHakatunnisteet: Array<string>) {
+    async saveHakatunnisteet(newHakatunnisteet: Array<string>, newTunnisteValue: string) {
+        console.log(newHakatunnisteet);
         const url = urls.url('kayttooikeus-service.henkilo.hakatunnus', this.props.henkiloOid);
         try {
             const hakatunnisteet = await http.put(url, newHakatunnisteet);
             this.setState({hakatunnisteet});
         } catch (error) {
+            if(error.errorType === 'ValidationException' && error.message.indexOf('ovat jo käytössä') !== -1) {
+                this.props.addGlobalNotification({
+                    key: 'DUPLICATE_HAKA_KEY',
+                    type: NOTIFICATIONTYPES.ERROR,
+                    title: `${this.props.L['HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU']} (${newTunnisteValue}) ${this.props.L['HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU']}`,
+                    autoClose: 5000
+                });
+            }
             throw error;
         }
     }
 
 }
 
+export default connect(() => ({}), {addGlobalNotification})(HakatunnistePopupContent)
