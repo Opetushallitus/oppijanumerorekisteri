@@ -4,12 +4,14 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.ClassMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +34,10 @@ public class HuoltajaCreateDtoMapper {
                                 .ifPresent(henkilo::setKansalaisuus);
                         if ("".equals(huoltajaCreateDto.getHetu())) {
                             huoltajaCreateDto.setHetu(null);
+                        }
+                        if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
+                            henkilo.setSyntymaaika(HetuUtils.dateFromHetu(huoltajaCreateDto.getHetu()));
+                            henkilo.setSukupuoli(HetuUtils.sukupuoliFromHetu(huoltajaCreateDto.getHetu()));
                         }
                     }
                 })
