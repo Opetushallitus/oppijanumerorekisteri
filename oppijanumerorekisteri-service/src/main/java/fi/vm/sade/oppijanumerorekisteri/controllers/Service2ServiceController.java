@@ -72,7 +72,7 @@ public class Service2ServiceController {
     }
 
     @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'APP_HENKILONHALLINTA_OPHREKISTERI', 'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/duplicateHenkilos", method = RequestMethod.POST) 
     public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria criteria) {
         return this.henkiloService.findHenkiloViittees(criteria);
