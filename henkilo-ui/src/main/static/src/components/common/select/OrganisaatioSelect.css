@@ -51,7 +51,8 @@
     background-color: aliceblue;
 }
 
-.organisaatio-select-list .suunniteltu {
+.organisaatio-select-list .suunniteltu,
+.organisaatio-select-list .passiivinen {
     font-size: 0.8em;
     color: #666666;
     float: right;
