@@ -1,18 +1,22 @@
-import * as R from 'ramda';
+// @flow
+import {find, propEq, reject} from 'ramda';
 
-import {KUTSU_ADD_ORGANISAATIO,
+import {
+    KUTSU_ADD_ORGANISAATIO,
     KUTSU_CLEAR_ORGANISAATIOS,
     KUTSU_REMOVE_ORGANISAATIO,
     KUTSU_SET_ORGANISAATIO,
-    FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST,
-    FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_SUCCESS,
-    FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE,
     KUTSU_ORGANISAATIO_SET_PROPERTIES,
-    ADD_ORGANISAATIO_PERMISSION, REMOVE_ORGANISAATIO_PERMISSION} from '../actions/actiontypes';
+    ADD_ORGANISAATIO_PERMISSION,
+    REMOVE_ORGANISAATIO_PERMISSION,
+    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
+    FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE
+} from '../actions/actiontypes';
+import type {KutsuOrganisaatio} from "../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 
-export const kutsuminenOrganisaatios = (state = [], action) => {
-    const newOrganisaatios = state.slice();
-    let kutsu;
+export const kutsuminenOrganisaatios = (state: Array<KutsuOrganisaatio> = [], action: any): Array<KutsuOrganisaatio> => {
+    const newOrganisaatios = [...state];
+    let kutsu: ?KutsuOrganisaatio;
     switch (action.type) {
         case KUTSU_ADD_ORGANISAATIO:
             newOrganisaatios.push(action.organisaatio);
@@ -23,39 +27,50 @@ export const kutsuminenOrganisaatios = (state = [], action) => {
                 organisation: action.organisaatio,
                 selectablePermissions: [],
                 selectedPermissions: [],
-                permissionFetched: false,
-            }
+                isPermissionsLoading: false,
+            };
             newOrganisaatios[action.index] = { ...newOrganisaatios[action.index], ...properties };
             return newOrganisaatios;
         case KUTSU_REMOVE_ORGANISAATIO:
-            return R.reject( organisaatio => organisaatio.oid === action.organisaatioOid, newOrganisaatios );
+            return reject( organisaatio => organisaatio.oid === action.organisaatioOid, newOrganisaatios );
         case KUTSU_CLEAR_ORGANISAATIOS:
             return [];
-        case FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST:
-            kutsu = R.find(R.propEq('oid', action.organisaatioOid))(newOrganisaatios);
-            kutsu.permissionFetched = false;
+        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST:
+            const propeq = propEq('oid', action.oidOrganisation);
+            kutsu = find(propeq)(newOrganisaatios);
+            if (kutsu) {
+                kutsu.isPermissionsLoading = true;
+            }
             return newOrganisaatios;
-        case FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_SUCCESS:
-            kutsu = R.find(R.propEq('oid', action.organisaatioOid))(newOrganisaatios);
-            kutsu.selectablePermissions = action.kayttooikeusryhmat;
-            kutsu.permissionFetched = true;
+        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS:
+            kutsu = find(propEq('oid', action.oidOrganisation))(newOrganisaatios);
+            if (kutsu) {
+                kutsu.selectablePermissions = action.allowedKayttooikeus;
+                kutsu.isPermissionsLoading = false;
+            }
             return newOrganisaatios;
-        case FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE:
-            kutsu = R.find(R.propEq('oid', action.organisaatioOid))(newOrganisaatios);
-            kutsu.permissionFetched = true;
+        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE:
+            kutsu = find(propEq('oid', action.oidOrganisation))(newOrganisaatios);
+            if (kutsu) {
+                kutsu.isPermissionsLoading = false;
+            }
             return newOrganisaatios;
         case KUTSU_ORGANISAATIO_SET_PROPERTIES:
-            newOrganisaatios[action.index] = { ...newOrganisaatios[action.index], ...action.properties }
-            return newOrganisaatios
+            newOrganisaatios[action.index] = { ...newOrganisaatios[action.index], ...action.properties };
+            return newOrganisaatios;
         case ADD_ORGANISAATIO_PERMISSION:
-            kutsu = R.find(R.propEq('oid', action.organisaatioOid))(newOrganisaatios);
-            kutsu.selectedPermissions.push(action.permission);
-            kutsu.selectablePermissions = R.reject( (selectablePermission) => selectablePermission.ryhmaId === action.permission.ryhmaId, kutsu.selectablePermissions );
+            kutsu = find(propEq('oid', action.organisaatioOid))(newOrganisaatios);
+            if (kutsu) {
+                kutsu.selectedPermissions.push(action.permission);
+                kutsu.selectablePermissions = reject((selectablePermission) => selectablePermission.ryhmaId === action.permission.ryhmaId, kutsu.selectablePermissions);
+            }
             return newOrganisaatios;
         case REMOVE_ORGANISAATIO_PERMISSION:
-            kutsu = R.find(R.propEq('oid', action.organisaatioOid))(newOrganisaatios);
-            kutsu.selectedPermissions = R.reject( (selectedPermission) => selectedPermission.ryhmaId === action.permission.ryhmaId, kutsu.selectedPermissions );
-            kutsu.selectablePermissions.push(action.permission);
+            kutsu = find(propEq('oid', action.organisaatioOid))(newOrganisaatios);
+            if (kutsu) {
+                kutsu.selectedPermissions = reject((selectedPermission) => selectedPermission.ryhmaId === action.permission.ryhmaId, kutsu.selectedPermissions);
+                kutsu.selectablePermissions.push(action.permission);
+            }
             return newOrganisaatios;
         default:
             return state;

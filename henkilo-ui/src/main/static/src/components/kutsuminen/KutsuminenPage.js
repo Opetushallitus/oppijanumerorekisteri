@@ -48,7 +48,7 @@ type State = {
     validationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage},
 }
 
-class KutsuFormPage extends React.Component<Props, State>  {
+class KutsuminenPage extends React.Component<Props, State>  {
     initialBasicInfo: {
         etunimi: string,
         sukunimi: string,
@@ -160,7 +160,7 @@ class KutsuFormPage extends React.Component<Props, State>  {
 
     static isValid(basicInfo: BasicinfoType): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;
-        return KutsuFormPage.isValidEmail(email) && !!etunimi && !!sukunimi && !!languageCode;
+        return KutsuminenPage.isValidEmail(email) && !!etunimi && !!sukunimi && !!languageCode;
     }
 
     isOrganizationsValid(newAddedOrgs): boolean {
@@ -176,7 +176,7 @@ class KutsuFormPage extends React.Component<Props, State>  {
                 ...this.state.validationMessages,
                 allFilled: {
                     ...this.state.validationMessages.allFilled,
-                    isValid: KutsuFormPage.isValid(basicInfo),
+                    isValid: KutsuminenPage.isValid(basicInfo),
                 },
             },
         });
@@ -233,4 +233,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo, fetchAllRyhmas})(KutsuFormPage);
+export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo, fetchAllRyhmas})(KutsuminenPage);

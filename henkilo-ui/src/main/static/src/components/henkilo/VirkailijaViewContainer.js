@@ -21,7 +21,7 @@ import type {OrganisaatioCache} from "../../reducers/organisaatio.reducer";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
 import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
-import type {KayttooikeusState} from "../../reducers/kayttooikeus.reducer";
+import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
 type Props = {
     oidHenkilo: string,
@@ -45,7 +45,7 @@ type Props = {
     fetchHenkiloYksilointitieto: (string) => void,
     fetchOmattiedotOrganisaatios: () => any,
     getGrantablePrivileges: (string) => void,
-    kayttooikeus: KayttooikeusState
+    kayttooikeus: KayttooikeusRyhmaState,
 }
 
 class VirkailijaViewContainer extends React.Component<Props> {

@@ -3,9 +3,9 @@ import React from 'react'
 import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal'
 import { toLocalizedText } from '../../../../localizabletext'
 import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils'
-import type { MyonnettyKayttooikeusryhma } from '../../../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 import type { Localisations } from '../../../../types/localisation.type'
 import type { Locale } from '../../../../types/locale.type'
+import type {AllowedKayttooikeus} from "../../../../reducers/kayttooikeusryhma.reducer";
 
 export type ValittuKayttooikeusryhma = {
     value: number,
@@ -13,18 +13,20 @@ export type ValittuKayttooikeusryhma = {
 }
 
 type Props = {
-    kayttooikeusData: Array<MyonnettyKayttooikeusryhma>,
+    kayttooikeusData: ?AllowedKayttooikeus,
     selectedList: Array<ValittuKayttooikeusryhma>,
     kayttooikeusAction: (ValittuKayttooikeusryhma) => void,
     close: (kayttooikeusryhmaId: number) => void,
     L: Localisations,
     locale: Locale,
+    loading: boolean,
+    selectedOrganisationOid: string,
 }
 
-const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale}: Props) => {
-    const kayttooikeusryhmat = kayttooikeusData && kayttooikeusData
+const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale, loading, selectedOrganisationOid}: Props) => {
+    const kayttooikeusryhmat = (kayttooikeusData && kayttooikeusData
         .filter(myonnetty => selectedList.every(selected => selected.value !== myonnetty.ryhmaId))
-        .map(myonnettyToKayttooikeusryhma)
+        .map(myonnettyToKayttooikeusryhma)) || [];
     return <tr key="kayttooikeusKayttooikeudetField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
@@ -40,7 +42,8 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
                             value: kayttooikeusryhma.id,
                             label: toLocalizedText(locale, kayttooikeusryhma.nimi)
                         })}
-                        disabled={kayttooikeusData === undefined}
+                        loading={loading}
+                        isOrganisaatioSelected={!!selectedOrganisationOid}
                         />
                 </div>
             </div>

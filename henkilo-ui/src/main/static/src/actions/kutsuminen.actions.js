@@ -1,11 +1,4 @@
-
-import { http } from '../http';
-import { urls } from 'oph-urls-js';
-
 import { KUTSU_SET_ORGANISAATIO, KUTSU_ADD_ORGANISAATIO, KUTSU_REMOVE_ORGANISAATIO, KUTSU_CLEAR_ORGANISAATIOS,
-    FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST,
-    FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_SUCCESS,
-    FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE,
     KUTSU_ORGANISAATIO_SET_PROPERTIES,
     ADD_ORGANISAATIO_PERMISSION, REMOVE_ORGANISAATIO_PERMISSION} from './actiontypes';
 
@@ -21,30 +14,4 @@ export const removeOrganisaatioPermission = (organisaatioOid, permission) => dis
     dispatch({ type: REMOVE_ORGANISAATIO_PERMISSION, organisaatioOid, permission });
 
 export const kutsuOrganisaatioSetProperties = (index, properties) => dispatch =>
-    dispatch({ type: KUTSU_ORGANISAATIO_SET_PROPERTIES, index, properties })
-
-const requestKayttooikeusryhmaForHenkiloInOrganisaatio = (henkiloOid, organisaatioOid) => ({
-    type: FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_REQUEST,
-    henkiloOid,
-    organisaatioOid
-});
-const receiveKayttooikeusryhmaForHenkiloInOrganisaatioSuccess = (organisaatioOid, kayttooikeusryhmat) => ({
-    type: FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_SUCCESS,
-    kayttooikeusryhmat,
-    organisaatioOid
-});
-const receiveKayttooikeusryhmaForHenkiloInOrganisaatioFailure = (error) => ({
-    type: FETCH_KUTSUJAKAYTTOOIKEUS_FOR_HENKILO_IN_ORGANISAATIO_FAILURE,
-    error
-});
-export const fetchKutsujaKayttooikeusForHenkiloInOrganisaatio = ( henkiloOid, organisaatioOid ) => async dispatch => {
-    dispatch(requestKayttooikeusryhmaForHenkiloInOrganisaatio(henkiloOid, organisaatioOid));
-    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.forHenkilo.inOrganisaatio', henkiloOid, organisaatioOid);
-    try {
-        const kayttooikeusryhma = await http.get(url);
-        dispatch(receiveKayttooikeusryhmaForHenkiloInOrganisaatioSuccess(organisaatioOid, kayttooikeusryhma));
-    } catch(error) {
-        dispatch(receiveKayttooikeusryhmaForHenkiloInOrganisaatioFailure(error));
-        console.error(`Fetching kayttooikeusryhmät for henkilo (${henkiloOid}) in organisaatio (${organisaatioOid}) failed`, error);
-    }
-};
+    dispatch({ type: KUTSU_ORGANISAATIO_SET_PROPERTIES, index, properties });

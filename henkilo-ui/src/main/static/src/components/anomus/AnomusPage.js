@@ -9,6 +9,7 @@ import type {Locale} from "../../types/locale.type";
 import type {GlobalNotificationConfig} from "../../types/notification.types";
 import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
 import {KAYTTOOIKEUDENTILA} from "../../globals/KayttooikeudenTila";
+import {getEmptyKayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -97,7 +98,7 @@ class AnomusPage extends React.Component<Props, State> {
                       ? <Loader />
                       : <div>
                           <HenkiloViewOpenKayttooikeusanomus
-                              kayttooikeus={{
+                              kayttooikeus={{...getEmptyKayttooikeusRyhmaState(),
                                   kayttooikeusAnomus: this.props.kayttooikeusAnomus,
                                   grantableKayttooikeus: {},
                                   grantableKayttooikeusLoading: true,

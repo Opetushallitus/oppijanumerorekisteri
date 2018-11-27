@@ -37,7 +37,8 @@ export default class KutsuOrganisaatios extends React.Component<Props> {
             organisation: {oid: ''},
             voimassaLoppuPvm: moment().add(1, 'years').format(PropertySingleton.state.PVM_DBFORMAATTI),
             selectablePermissions: [],
-            selectedPermissions: []
+            selectedPermissions: [],
+            isPermissionsLoading: false,
         });
     }
 

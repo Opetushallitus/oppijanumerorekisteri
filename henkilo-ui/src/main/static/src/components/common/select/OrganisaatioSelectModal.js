@@ -24,7 +24,7 @@ type State = {
 export class OrganisaatioSelectModal extends React.Component<OrganisaatioSelectModalProps, State> {
 
     render() {
-        return <SelectModal disabled={this.props.disabled}
+        return <SelectModal disabled={this.props.disabled} loading={this.props.disabled}
                             buttonText={this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO']} >
             <OrganisaatioSelect
                 locale={this.props.locale}

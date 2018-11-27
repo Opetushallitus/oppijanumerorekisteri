@@ -1,13 +1,16 @@
 // @flow
 import React from 'react';
-import Button from "../button/Button";
 import {SpinnerInButton} from "../icons/SpinnerInButton";
 import OphModal from "./OphModal";
+import ValidationMessageButton from "../button/ValidationMessageButton";
+import type {ValidationMessage} from "../../../types/validation.type";
 
 type SelectModalProps = {
     disabled: boolean,
     buttonText: string,
     children?: React$Element<any>,
+    loading?: boolean,
+    validationMessages?: {[string]: ValidationMessage}
 }
 
 type State = {
@@ -22,16 +25,17 @@ class SelectModal extends React.Component<SelectModalProps, State> {
         super(props);
 
         this.state = {
-            visible: false
+            visible: false,
         };
     }
 
     render() {
         return <React.Fragment>
-            <Button disabled={this.props.disabled}
-                    action={this._onOpen}>
-                <SpinnerInButton show={this.props.disabled}/> { this.props.buttonText }
-            </Button>
+            <ValidationMessageButton disabled={this.props.disabled || !!this.props.loading}
+                                     validationMessages={this.props.validationMessages || {}}
+                                     buttonAction={this._onOpen}>
+                <SpinnerInButton show={!!this.props.loading}/> { this.props.buttonText }
+            </ValidationMessageButton>
             { this.state.visible
                 ? <OphModal onClose={this._onClose}>
                     {this.props.children

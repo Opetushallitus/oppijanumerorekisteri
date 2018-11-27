@@ -8,7 +8,6 @@ import {
     kutsuRemoveOrganisaatio,
     kutsuClearOrganisaatios,
     kutsuSetOrganisaatio,
-    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
     kutsuOrganisaatioSetProperties,
     addOrganisaatioPermission,
     removeOrganisaatioPermission
@@ -30,6 +29,7 @@ import type {MyonnettyKayttooikeusryhma} from '../../types/domain/kayttooikeus/k
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import moment from 'moment';
+import {fetchAllowedKayttooikeusryhmasForOrganisation} from "../../actions/kayttooikeusryhma.actions";
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -40,7 +40,7 @@ type Props = {
     index: number,
     kutsuRemoveOrganisaatio: (string) => void,
     kutsuSetOrganisaatio: (number, Organisaatio) => void,
-    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio: (string, string) => void,
+    fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
     removeOrganisaatioPermission: (string, MyonnettyKayttooikeusryhma) => void,
@@ -52,7 +52,7 @@ type State = {
     organisaatioSelection: string
 }
 
-class AddedOrganisation extends React.Component<Props, State> {
+class AddedOrganization extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -66,7 +66,7 @@ class AddedOrganisation extends React.Component<Props, State> {
         const addedOrg = this.props.addedOrg;
         const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
         const selectablePermissions: Array<MyonnettyKayttooikeusryhma> | any = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
-        const kayttooikeusryhmat = selectablePermissions.map(myonnettyToKayttooikeusryhma)
+        const kayttooikeusryhmat = selectablePermissions.map(myonnettyToKayttooikeusryhma);
 
         return (
             <div className="added-org" key={addedOrg.oid}>
@@ -101,7 +101,8 @@ class AddedOrganisation extends React.Component<Props, State> {
                             L={this.props.L}
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             onSelect={this.addPermission.bind(this, selectablePermissions)}
-                            disabled={!addedOrg.oid}
+                            isOrganisaatioSelected={!!addedOrg.oid}
+                            loading={addedOrg.isPermissionsLoading}
                         />
                     </div>
 
@@ -168,7 +169,7 @@ class AddedOrganisation extends React.Component<Props, State> {
                 this.setState({organisaatioSelection: ''});
             }
             this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
-            this.props.fetchKutsujaKayttooikeusForHenkiloInOrganisaatio(this.props.currentHenkiloOid, selectedOrganisaatioOid);
+            this.props.fetchAllowedKayttooikeusryhmasForOrganisation(this.props.currentHenkiloOid, selectedOrganisaatioOid);
         }
     }
 }
@@ -186,8 +187,8 @@ export default connect(mapStateToProps, {
     kutsuSetOrganisaatio,
     kutsuRemoveOrganisaatio,
     kutsuClearOrganisaatios,
-    fetchKutsujaKayttooikeusForHenkiloInOrganisaatio,
+    fetchAllowedKayttooikeusryhmasForOrganisation,
     kutsuOrganisaatioSetProperties,
     addOrganisaatioPermission,
     removeOrganisaatioPermission,
-})(AddedOrganisation);
+})(AddedOrganization);

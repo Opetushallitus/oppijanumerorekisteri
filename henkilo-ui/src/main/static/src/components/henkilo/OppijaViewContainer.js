@@ -14,6 +14,7 @@ import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
+import {getEmptyKayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
 type Props = {
     oidHenkilo: string,
@@ -54,7 +55,7 @@ class OppijaViewContainer extends React.Component<Props> {
     }
 
     render() {
-        return <HenkiloViewPage {...this.props} kayttooikeus={[]} organisaatioCache={{}} view={'OPPIJA'}/>;
+        return <HenkiloViewPage {...this.props} kayttooikeus={getEmptyKayttooikeusRyhmaState()} organisaatioCache={{}} view={'OPPIJA'}/>;
     }
 }
 

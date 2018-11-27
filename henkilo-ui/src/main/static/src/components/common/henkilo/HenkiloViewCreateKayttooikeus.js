@@ -18,11 +18,12 @@ import type {ValidationMessage} from "../../../types/validation.type";
 import PropertySingleton from "../../../globals/PropertySingleton";
 import type { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet'
 import type {OrganisaatioState} from "../../../reducers/organisaatio.reducer";
+import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
 type Props = {
     organisaatios: OrganisaatioState,
     vuosia: number,
-    kayttooikeus: {allowedKayttooikeus: {}},
+    kayttooikeus: KayttooikeusRyhmaState,
     existingKayttooikeusRef: {},
     oidHenkilo: string,
     fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
@@ -208,7 +209,10 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                                               kayttooikeusData={this.props.kayttooikeus.allowedKayttooikeus[this.props.oidHenkilo]}
                                               selectedList={this.state.selectedList}
                                               close={this.close}
-                                              kayttooikeusAction={this.kayttooikeudetAction} />
+                                              kayttooikeusAction={this.kayttooikeudetAction}
+                                              loading={this.props.kayttooikeus.allowedKayttooikeus.loading}
+                                              selectedOrganisationOid={this.state.organisaatioSelection}
+                            />
                             <CKHaeButton L={this.props.L}
                                          validationMessages={this.state.validationMessages}
                                          haeButtonAction={this.createKayttooikeusAction} />
