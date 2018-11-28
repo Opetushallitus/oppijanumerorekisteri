@@ -158,8 +158,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String kotikunta; // kunta-koodisto
 
-    private String oppijanumero;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
@@ -320,4 +318,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
             this.huoltajat.clear();
         }
     }
+
+    public String getOppijanumero() {
+        if(this.yksiloity || this.yksiloityVTJ) {
+            return oidHenkilo;
+        }
+
+        return null;
+    }
+
 }

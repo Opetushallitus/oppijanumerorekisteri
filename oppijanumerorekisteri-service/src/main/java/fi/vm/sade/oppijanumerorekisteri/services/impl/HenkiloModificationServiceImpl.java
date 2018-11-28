@@ -436,7 +436,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             if (henkiloCreate.isDuplicate()) {
                 throw new ValidationException("Henkilö on duplikaatti, yksilöintiä ei voida tehdä");
             }
-            henkiloCreate.setOppijanumero(henkiloCreate.getOidHenkilo());
         }
 
         // hylätään tyhjät passinumerot

@@ -152,7 +152,6 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         henkilo.setYksiloity(true);
         henkilo.setDuplicate(false);
-        henkilo.setOppijanumero(henkilo.getOidHenkilo());
         return henkiloModificationService.update(henkilo);
     }
 
@@ -361,7 +360,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         henkilo.addHetu(nykyinenHetu);
-        henkilo.setOppijanumero(henkilo.getOidHenkilo());
 
         updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
         updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
@@ -520,7 +518,6 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         henkilo.addHetu(nykyinenHetu);
-        henkilo.setOppijanumero(henkilo.getOidHenkilo());
         henkilo.setEtunimet(yksilointitieto.getEtunimet());
         henkilo.setSukunimi(yksilointitieto.getSukunimi());
         if (HetuUtils.hetuIsValid(uusiHetu)) {
