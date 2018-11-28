@@ -353,13 +353,13 @@ public class HenkiloModificationServiceIntegrationTest {
         given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
-                .hetu("hetu")
+                .hetu("271198-9197")
                 .huoltajuustyyppiKoodi("03")
                 .kansalaisuusKoodi(Collections.singleton("246"))
                 .build();
 
         Henkilo huoltaja = henkiloModificationService.createHenkilo(huoltajaCreateDto);
-        assertThat(huoltaja).extracting(Henkilo::getHetu).containsExactly("hetu");
+        assertThat(huoltaja).extracting(Henkilo::getHetu).containsExactly("271198-9197");
         assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
     }
 
