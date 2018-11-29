@@ -1,20 +1,30 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types'
+import {connect} from 'react-redux';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
-import * as R from 'ramda';
+import {reject} from 'ramda';
 import './HakaPopupContent.css';
+import type {Localisations} from "../../../types/localisation.type";
+import {addGlobalNotification} from "../../../actions/notification.actions";
+import type {GlobalNotificationConfig} from "../../../types/notification.types";
+import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
 
-export default class HakatunnistePopupContent extends React.Component {
+type Props = {
+    henkiloOid: string,
+    L: Localisations,
+    addGlobalNotification: (GlobalNotificationConfig) => any
+}
 
-    static propTypes = {
-        henkiloOid: PropTypes.string.isRequired,
-        l10n: PropTypes.object,
-        locale: PropTypes.string,
-        L: PropTypes.object
-    };
+type State = {
+    hakatunnisteet: Array<string>,
+    newTunnisteValue: string
+}
 
-    constructor(props) {
+class HakatunnistePopupContent extends React.Component<Props, State> {
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             hakatunnisteet: [],
@@ -30,14 +40,13 @@ export default class HakatunnistePopupContent extends React.Component {
     }
 
     render() {
-        const L = this.props.L ? this.props.L : this.props.l10n[this.props.locale];
         return (<div className="hakapopupcontent">
             <ul>
                 { this.state.hakatunnisteet.length > 0 ? this.state.hakatunnisteet.map(hakatunniste =>
                     // eslint-disable-next-line jsx-a11y/anchor-is-valid
                     (<li className="tag" key={hakatunniste}><span>{hakatunniste}</span> <a className="remove"
-                                                                                           onClick={ () => this.removeHakatunniste(hakatunniste)}>{L['POISTA']}</a>
-                    </li>)) : <span className="oph-h4 oph-strong hakapopup">{L['EI_HAKATUNNUKSIA']}</span>}
+                                                                                           onClick={ () => this.removeHakatunniste(hakatunniste)}>{this.props.L['POISTA']}</a>
+                    </li>)) : <span className="oph-h4 oph-strong hakapopup">{this.props.L['EI_HAKATUNNUKSIA']}</span>}
             </ul>
             <div className="oph-field oph-field-is-required">
                 <input type="text"
@@ -46,14 +55,18 @@ export default class HakatunnistePopupContent extends React.Component {
                        placeholder="Lisää uusi tunnus"
                        value={this.state.newTunnisteValue}
                        onChange={this.handleChange.bind(this)}
-                       onKeyPress={ (e) => e.key === 'Enter' ? this.addHakatunniste() : null}/>
+                       onKeyPress={ (e: SyntheticKeyboardEvent<HTMLInputElement>) => e.key === 'Enter' ? this.addHakatunniste() : null}/>
+                { this.state.hakatunnisteet.includes(this.state.newTunnisteValue) ?
+                    <div className="oph-field-text oph-error">{this.props.L['HAKATUNNISTEET_VIRHE_OLEMASSAOLEVA']}</div> :
+                    null }
                 <button className="save oph-button oph-button-primary"
-                        onClick={() => this.addHakatunniste()}>{L['TALLENNA_TUNNUS']}</button>
+                        disabled={this.state.hakatunnisteet.includes(this.state.newTunnisteValue)}
+                        onClick={() => this.addHakatunniste()}>{this.props.L['TALLENNA_TUNNUS']}</button>
             </div>
         </div>);
     }
 
-    handleChange(event) {
+    handleChange(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({newTunnisteValue: event.target.value});
     }
 
@@ -61,15 +74,14 @@ export default class HakatunnistePopupContent extends React.Component {
         if (this.state.newTunnisteValue.length > 0) {
             const tunnisteet = this.state.hakatunnisteet.slice(0);
             tunnisteet.push(this.state.newTunnisteValue);
-            this.saveHakatunnisteet(tunnisteet);
+            this.saveHakatunnisteet(tunnisteet, this.state.newTunnisteValue);
             this.setState({newTunnisteValue: ''});
         }
-
     }
 
-    async removeHakatunniste(tunniste) {
-        const filteredTunnisteet = R.reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
-        await this.saveHakatunnisteet(filteredTunnisteet);
+    async removeHakatunniste(tunniste: string) {
+        const filteredTunnisteet = reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
+        await this.saveHakatunnisteet(filteredTunnisteet, tunniste);
     }
 
     async getHakatunnisteet() {
@@ -82,14 +94,25 @@ export default class HakatunnistePopupContent extends React.Component {
         }
     }
 
-    async saveHakatunnisteet(newHakatunnisteet) {
+    async saveHakatunnisteet(newHakatunnisteet: Array<string>, newTunnisteValue: string) {
+        console.log(newHakatunnisteet);
         const url = urls.url('kayttooikeus-service.henkilo.hakatunnus', this.props.henkiloOid);
         try {
             const hakatunnisteet = await http.put(url, newHakatunnisteet);
             this.setState({hakatunnisteet});
         } catch (error) {
+            if(error.errorType === 'ValidationException' && error.message.indexOf('ovat jo käytössä') !== -1) {
+                this.props.addGlobalNotification({
+                    key: 'DUPLICATE_HAKA_KEY',
+                    type: NOTIFICATIONTYPES.ERROR,
+                    title: `${this.props.L['HAKATUNNISTEET_VIRHE_KAYTOSSA_ALKU']} (${newTunnisteValue}) ${this.props.L['HAKATUNNISTEET_VIRHE_KAYTOSSA_LOPPU']}`,
+                    autoClose: 5000
+                });
+            }
             throw error;
         }
     }
 
 }
+
+export default connect(() => ({}), {addGlobalNotification})(HakatunnistePopupContent)
