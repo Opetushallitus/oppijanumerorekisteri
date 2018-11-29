@@ -48,6 +48,10 @@ public class OppijaTuontiCriteria {
         return organisaatioOids.retainAll(oids);
     }
 
+    public boolean hasConditions() {
+        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || Boolean.TRUE.equals(this.vainVirheet) || StringUtils.hasLength(this.nimiHaku);
+    }
+
     /**
      * Palauttaa kyselyn tästä hakukriteeristä.
      *

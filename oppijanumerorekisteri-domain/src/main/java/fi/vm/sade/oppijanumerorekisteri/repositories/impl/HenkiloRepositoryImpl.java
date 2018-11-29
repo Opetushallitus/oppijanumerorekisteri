@@ -5,6 +5,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -95,8 +96,16 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public long countBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(this.entityManager, qHenkilo)
-                .select(qHenkilo.oidHenkilo)
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        if (criteria.hasConditions()) {
+            return criteria.getQuery(this.entityManager, qHenkilo)
+                    .select(qTuontiRivi.henkilo)
+                    .distinct()
+                    .fetchCount();
+        }
+        return new JPAQuery<>(this.entityManager)
+                .from(qTuontiRivi)
+                .select(qTuontiRivi.henkilo)
                 .distinct()
                 .fetchCount();
     }
@@ -573,18 +582,20 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public long countByYksilointiOnnistuneet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
-                .where(anyOf(
-                        qHenkilo.duplicate.isTrue(),
-                        qHenkilo.passivoitu.isTrue(),
-                        qHenkilo.yksiloity.isTrue(),
-                        qHenkilo.yksiloityVTJ.isTrue()
-                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+                .where(qTuontiRivi.henkilo.notIn(JPAExpressions.selectFrom(henkilo).where(allOf(
+                        qHenkilo.duplicate.isFalse(),
+                        qHenkilo.passivoitu.isFalse(),
+                        qHenkilo.yksiloity.isFalse(),
+                        qHenkilo.yksiloityVTJ.isFalse()))
+                )).select(qTuontiRivi.henkilo).distinct().fetchCount();
     }
 
     @Override
     public long countByYksilointiVirheet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
                 .where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse())
                 .where(anyOf(
@@ -599,12 +610,13 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                                 qHenkilo.yksiloityVTJ.isFalse(),
                                 qHenkilo.yksilointiYritetty.isTrue()
                         )
-                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo).distinct().fetchCount();
     }
 
     @Override
     public long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
                 .where(allOf(
                         qHenkilo.duplicate.isFalse(),
@@ -613,7 +625,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
-                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo).distinct().fetchCount();
     }
 
     @Override
