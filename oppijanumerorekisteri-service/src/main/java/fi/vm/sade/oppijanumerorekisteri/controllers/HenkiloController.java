@@ -117,6 +117,7 @@ public class HenkiloController {
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
