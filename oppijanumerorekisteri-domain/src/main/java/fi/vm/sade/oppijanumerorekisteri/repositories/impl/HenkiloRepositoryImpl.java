@@ -586,7 +586,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
                 // This is bit faster than doing same other way around but we are still joining two large tables when no conditions are given
-                .where(qTuontiRivi.henkilo.id.notIn(JPAExpressions.select(henkilo.id).from(henkilo).where(allOf(
+                .where(qTuontiRivi.henkilo.id.notIn(JPAExpressions.select(henkilo.id).from(qHenkilo).where(allOf(
                         qHenkilo.duplicate.isFalse(),
                         qHenkilo.passivoitu.isFalse(),
                         qHenkilo.yksiloity.isFalse(),
