@@ -6,6 +6,10 @@ type State = {
     numberRegex?: RegExp,
     characterRegex?: RegExp,
     [string]: string,
+    KOTIOSOITE?: string,
+    TYOOSOITE?: string,
+    YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI?: string,
+    SAHKOPOSTI?: string,
 }
 
 class PropertySingleton {

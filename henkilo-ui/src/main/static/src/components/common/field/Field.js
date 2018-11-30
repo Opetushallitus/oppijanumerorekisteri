@@ -7,6 +7,7 @@ import classNames from 'classnames/bind';
 import OphSelect from '../select/OphSelect'
 import moment from 'moment';
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker'
+import {validateEmail} from "../../../validation/EmailValidator";
 
 type Props = {
     readOnly: boolean,
@@ -14,6 +15,7 @@ type Props = {
     inputValue: string,
     selectValue?: string | boolean,
     password?: boolean,
+    isEmail?: boolean,
     className?: string,
     disabled?: boolean,
     autofocus?: boolean,
@@ -26,7 +28,8 @@ type Props = {
 }
 
 type State = {
-    readOnly: boolean
+    readOnly: boolean,
+    inputError: boolean
 }
 
 class Field extends React.Component<Props, State> {
@@ -34,7 +37,10 @@ class Field extends React.Component<Props, State> {
     constructor(props) {
         super(props);
 
-        this.state = {readOnly: true};
+        this.state = {
+            readOnly: true,
+            inputError: false
+        };
     }
 
     render() {
@@ -42,7 +48,7 @@ class Field extends React.Component<Props, State> {
             'field': true,
             'readOnly': this.props.readOnly,
             'oph-input': !this.props.readOnly && !this.props.data,
-            'oph-input-has-error': this.props.isError,
+            'oph-input-has-error': this.props.isError || this.state.inputError,
         };
         if(this.props.className) {
             classNamesCreator[this.props.className] = this.props.className
@@ -52,8 +58,14 @@ class Field extends React.Component<Props, State> {
     }
 
     createField(className) {
+        let type = 'text';
 
-        const type = {type: this.props.password ? 'password' : 'text'};
+        if(this.props.password) {
+            type = 'password';
+        }
+        if(this.props.isEmail) {
+            type = 'email';
+        }
 
         if (this.props.readOnly) {
             return <span className={className}>{this.getReadOnlyValue()}</span>;
@@ -83,20 +95,27 @@ class Field extends React.Component<Props, State> {
         return <input className={className}
                       name={this.props.inputValue}
                       key={this.props.inputValue}
-                      onChange={this.props.changeAction}
+                      onChange={(event) => {
+                          this.setState({inputError: this.isValidEmailInputEvent(type, event)});
+                          this.props.changeAction(event);
+                      }}
                       defaultValue={this.props.children}
-                      {...type}
                       autoFocus={this.props.autofocus}
                       placeholder={this.props.placeholder}
                       disabled={this.props.disabled}
+                      type={type}
         />;
+    }
+
+    isValidEmailInputEvent(type: string, event: SyntheticEvent<HTMLButtonElement>) {
+        return type === 'email' && event.currentTarget.value !== '' && !validateEmail(event.currentTarget.value);
     }
 
     getReadOnlyValue() {
         if (this.props.data) {
             const selected = this.props.data.find(item => item.value === this.props.selectValue)
             return selected ? selected.label : null
-        }
+    }
         return this.props.date && this.props.children
             ? moment(this.props.children).format()
             : this.props.children;
