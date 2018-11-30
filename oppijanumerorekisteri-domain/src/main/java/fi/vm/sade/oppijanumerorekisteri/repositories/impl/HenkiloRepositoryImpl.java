@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
@@ -584,14 +585,21 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public long countByYksilointiOnnistuneet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
-        return criteria.getQuery(entityManager, qHenkilo)
-                // This is bit faster than doing same other way around but we are still joining two large tables when no conditions are given
-                .where(qTuontiRivi.henkilo.id.notIn(JPAExpressions.select(henkilo.id).from(qHenkilo).where(allOf(
-                        qHenkilo.duplicate.isFalse(),
-                        qHenkilo.passivoitu.isFalse(),
-                        qHenkilo.yksiloity.isFalse(),
-                        qHenkilo.yksiloityVTJ.isFalse()))
-                )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
+        QHenkilo subQHenkilo = new QHenkilo("subQHenkilo");
+        SubQueryExpression<Long> subQuery = JPAExpressions.select(subQHenkilo.id).from(subQHenkilo).where(allOf(
+                subQHenkilo.duplicate.isFalse(),
+                subQHenkilo.passivoitu.isFalse(),
+                subQHenkilo.yksiloity.isFalse(),
+                subQHenkilo.yksiloityVTJ.isFalse())
+        );
+        if (criteria.hasConditions()) {
+            return criteria.getQuery(this.entityManager, qHenkilo).where(qTuontiRivi.henkilo.id.notIn(subQuery))
+                    .select(qTuontiRivi.henkilo.id).distinct().fetchCount();
+        }
+        // We don't need to join two large tables this way without proper conditions
+        return new JPAQuery<>(this.entityManager)
+                .from(qTuontiRivi)
+                .where(qTuontiRivi.henkilo.id.notIn(subQuery)).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override

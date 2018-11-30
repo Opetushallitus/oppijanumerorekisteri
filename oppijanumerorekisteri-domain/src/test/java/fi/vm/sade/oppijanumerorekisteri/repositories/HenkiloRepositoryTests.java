@@ -7,6 +7,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
@@ -388,8 +389,9 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(resultHenkiloList.get(0)).isEqualToComparingFieldByFieldRecursively(assertHenkilo);
     }
 
-    public void findByOppijaTuontiCriteria() {
-        populate(tuonti(
+    @Test
+    public void findByOppijaTuontiCriteriaTest() {
+        Tuonti tuonti = populate(tuonti(
                 henkilo("hetuton"),
                 henkilo("hetuton_yksiloity").yksiloity(),
                 henkilo("hetullinen").hetu("251098-9515"),
@@ -400,6 +402,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         ));
 
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
+        criteria.setTuontiId(null);
         criteria.setVainVirheet(false);
         assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
@@ -412,20 +415,40 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                         tuple("passivoitu", YksilointiTila.OK),
                         tuple("duplikaatti", YksilointiTila.OK));
 
+        criteria.setTuontiId(null);
         criteria.setVainVirheet(true);
         assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
                 .extracting(Henkilo::getOidHenkilo)
                 .containsExactlyInAnyOrder("hetuton", "hetullinen_yksilointi_yritetty");
 
+        criteria.setTuontiId(null);
         criteria.setVainVirheet(false);
         assertThat(dataRepository.countByYksilointiOnnistuneet(criteria)).isEqualTo(4);
         assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(1);
         assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
+        assertThat(dataRepository.countBy(criteria)).isEqualTo(7);
 
+        criteria.setTuontiId(null);
         criteria.setVainVirheet(true);
         assertThat(dataRepository.countByYksilointiOnnistuneet(criteria)).isEqualTo(0);
         assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(0);
         assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
+        assertThat(dataRepository.countBy(criteria)).isEqualTo(2);
+
+        criteria.setTuontiId(tuonti.getId());
+        criteria.setVainVirheet(false);
+        assertThat(dataRepository.countByYksilointiOnnistuneet(criteria)).isEqualTo(4);
+        assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(1);
+        assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
+        assertThat(dataRepository.countBy(criteria)).isEqualTo(7);
+
+        criteria.setTuontiId(tuonti.getId());
+        criteria.setVainVirheet(true);
+        assertThat(dataRepository.countByYksilointiOnnistuneet(criteria)).isEqualTo(0);
+        assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(0);
+        assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
+        assertThat(dataRepository.countBy(criteria)).isEqualTo(2);
+
     }
 
     private void persistHenkilo(Henkilo henkilo) {
