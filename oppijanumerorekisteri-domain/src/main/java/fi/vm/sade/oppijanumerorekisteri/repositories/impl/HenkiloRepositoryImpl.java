@@ -99,13 +99,14 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         if (criteria.hasConditions()) {
             return criteria.getQuery(this.entityManager, qHenkilo)
-                    .select(qTuontiRivi.henkilo)
+                    .select(qTuontiRivi.henkilo.id)
                     .distinct()
                     .fetchCount();
         }
+        // Joining two large tables is expensive (tuonti_rivi and henkilo) without proper conditions
         return new JPAQuery<>(this.entityManager)
                 .from(qTuontiRivi)
-                .select(qTuontiRivi.henkilo)
+                .select(qTuontiRivi.henkilo.id)
                 .distinct()
                 .fetchCount();
     }
@@ -584,12 +585,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
-                .where(qTuontiRivi.henkilo.notIn(JPAExpressions.selectFrom(henkilo).where(allOf(
+                .where(qTuontiRivi.henkilo.id.notIn(JPAExpressions.select(henkilo.id).from(henkilo).where(allOf(
                         qHenkilo.duplicate.isFalse(),
                         qHenkilo.passivoitu.isFalse(),
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse()))
-                )).select(qTuontiRivi.henkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override
@@ -610,7 +611,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                                 qHenkilo.yksiloityVTJ.isFalse(),
                                 qHenkilo.yksilointiYritetty.isTrue()
                         )
-                )).select(qTuontiRivi.henkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override
@@ -625,7 +626,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
-                )).select(qTuontiRivi.henkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override
