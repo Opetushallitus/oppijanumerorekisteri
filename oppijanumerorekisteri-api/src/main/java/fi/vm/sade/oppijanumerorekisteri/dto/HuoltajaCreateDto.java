@@ -27,12 +27,16 @@ public class HuoltajaCreateDto {
 
     private LocalDate syntymaaika;
 
+    private Boolean yksiloityVTJ;
+
     // Valtiot ja maat 2 koodisto
     private Set<String> kansalaisuusKoodi;
 
     // Huoltajuustyyppi koodisto
     @NotNull
     private String huoltajuustyyppiKoodi;
+
+    private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
     public String getKutsumanimi() {
         return etunimet == null

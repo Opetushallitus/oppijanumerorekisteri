@@ -9,15 +9,8 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
-import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
-import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
-import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysPalveluRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
@@ -38,9 +31,6 @@ import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
 import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.found;
-import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
-
-
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -188,6 +178,9 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         if (StringUtils.hasLength(huoltajaCreateDto.getHetu())) {
             huoltaja = OptionalUtils.or(this.henkiloDataRepository.findByHetu(huoltajaCreateDto.getHetu()),
                     () -> this.henkiloDataRepository.findByKaikkiHetut(huoltajaCreateDto.getHetu()));
+            // Ainoastaan etukäteen kutsujan "yksilöimä" huoltaja
+            huoltaja.filter(henkilo -> Boolean.TRUE.equals(huoltajaCreateDto.getYksiloityVTJ()))
+                    .ifPresent(henkilo -> this.mapper.map(huoltajaCreateDto, henkilo));
         }
         else if (StringUtils.hasLength(huoltajaCreateDto.getEtunimet()) && StringUtils.hasLength(huoltajaCreateDto.getSukunimi())) {
             huoltaja = lapsi.getHuoltajat().stream()
