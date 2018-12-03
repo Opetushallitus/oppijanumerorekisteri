@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -71,18 +72,19 @@ public class HenkiloModificationServiceIntegrationTest {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setOidHenkilo("VTJYKSILOITY1");
         henkiloForceUpdateDto.setHetu("111111-1234");
+        henkiloForceUpdateDto.setKaikkiHetut(Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
         HenkiloReadDto henkiloReadDto = this.henkiloModificationService.forceUpdateHenkilo(henkiloForceUpdateDto);
 
         assertThat(henkiloReadDto)
-                .extracting(HenkiloReadDto::getOidHenkilo, HenkiloReadDto::getHetu, HenkiloReadDto::getYksiloityVTJ)
-                .containsExactly("VTJYKSILOITY1", "111111-1234", true);
+                .extracting(HenkiloReadDto::getOidHenkilo, HenkiloReadDto::getHetu, HenkiloReadDto::getYksiloityVTJ, HenkiloReadDto::getKaikkiHetut)
+                .containsExactly("VTJYKSILOITY1", "111111-1234", true, Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
         Henkilo henkilo = this.henkiloRepository.findByOidHenkilo("VTJYKSILOITY2")
                 .orElseThrow(RuntimeException::new);
         assertThat(henkilo)
-                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksiloityVTJ)
-                .containsExactly("VTJYKSILOITY2", null, false);
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksiloityVTJ, Henkilo::getKaikkiHetut)
+                .containsExactly("VTJYKSILOITY2", null, false, emptySet());
 
         List<HenkiloViite> henkiloViiteList = this.henkiloViiteRepository.findByMasterOid("VTJYKSILOITY1");
         assertThat(henkiloViiteList)

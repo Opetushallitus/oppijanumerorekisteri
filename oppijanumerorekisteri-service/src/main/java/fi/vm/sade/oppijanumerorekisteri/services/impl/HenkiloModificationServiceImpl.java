@@ -202,7 +202,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
             if (henkiloSaved.isYksiloityVTJ()) {
                 henkiloDataRepository.findByHetu(henkiloUpdateDto.getHetu()).ifPresent(henkiloByUusiHetu -> {
-                    henkiloByUusiHetu.removeHetu(henkiloUpdateDto.getHetu());
+                    henkiloByUusiHetu.clearHetut();
                     henkiloDataRepository.saveAndFlush(henkiloByUusiHetu);
                 });
                 henkiloSaved.addHetu(henkiloUpdateDto.getHetu());
