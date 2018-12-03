@@ -289,6 +289,12 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         return this.kaikkiHetut.removeAll(asList(hetut));
     }
 
+    public void clearHetut() {
+        if (this.kaikkiHetut != null) {
+            this.kaikkiHetut.clear();
+        }
+    }
+
     // Initialize default values for lombok builder
     public static class builder {
         private Boolean yksiloity = false;
