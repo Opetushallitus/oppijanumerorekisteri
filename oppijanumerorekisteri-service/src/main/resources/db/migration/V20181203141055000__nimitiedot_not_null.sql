@@ -1,5 +1,5 @@
 
-update henkilo set kutsumanimi = henkilo.etunimet where kutsumanimi is null;
+update henkilo set kutsumanimi = henkilo.etunimet where kutsumanimi is null or kutsumanimi = '';
 
 alter table henkilo
     alter column etunimet set not null;
