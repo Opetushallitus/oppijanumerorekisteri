@@ -329,10 +329,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     }
 
     public void setKutsumanimi(String kutsumanimi) {
-        if(StringUtils.isEmpty(kutsumanimi)) {
+        this.kutsumanimi = kutsumanimi;
+        if(StringUtils.isEmpty(this.kutsumanimi)) {
             this.kutsumanimi = this.etunimet;
         }
-        this.kutsumanimi = kutsumanimi;
     }
 
 
