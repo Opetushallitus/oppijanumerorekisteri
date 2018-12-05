@@ -3,8 +3,10 @@ package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -95,8 +97,17 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public long countBy(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(this.entityManager, qHenkilo)
-                .select(qHenkilo.oidHenkilo)
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        if (criteria.hasConditions()) {
+            return criteria.getQuery(this.entityManager, qHenkilo)
+                    .select(qTuontiRivi.henkilo.id)
+                    .distinct()
+                    .fetchCount();
+        }
+        // Joining two large tables is expensive (tuonti_rivi and henkilo) without proper conditions
+        return new JPAQuery<>(this.entityManager)
+                .from(qTuontiRivi)
+                .select(qTuontiRivi.henkilo.id)
                 .distinct()
                 .fetchCount();
     }
@@ -573,18 +584,28 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public long countByYksilointiOnnistuneet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
-        return criteria.getQuery(entityManager, qHenkilo)
-                .where(anyOf(
-                        qHenkilo.duplicate.isTrue(),
-                        qHenkilo.passivoitu.isTrue(),
-                        qHenkilo.yksiloity.isTrue(),
-                        qHenkilo.yksiloityVTJ.isTrue()
-                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
+        QHenkilo subQHenkilo = new QHenkilo("subQHenkilo");
+        SubQueryExpression<Long> subQuery = JPAExpressions.select(subQHenkilo.id).from(subQHenkilo).where(allOf(
+                subQHenkilo.duplicate.isFalse(),
+                subQHenkilo.passivoitu.isFalse(),
+                subQHenkilo.yksiloity.isFalse(),
+                subQHenkilo.yksiloityVTJ.isFalse())
+        );
+        if (criteria.hasConditions()) {
+            return criteria.getQuery(this.entityManager, qHenkilo).where(qTuontiRivi.henkilo.id.notIn(subQuery))
+                    .select(qTuontiRivi.henkilo.id).distinct().fetchCount();
+        }
+        // We don't need to join two large tables this way without proper conditions
+        return new JPAQuery<>(this.entityManager)
+                .from(qTuontiRivi)
+                .where(qTuontiRivi.henkilo.id.notIn(subQuery)).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override
     public long countByYksilointiVirheet(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
                 .where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse())
                 .where(anyOf(
@@ -599,12 +620,13 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                                 qHenkilo.yksiloityVTJ.isFalse(),
                                 qHenkilo.yksilointiYritetty.isTrue()
                         )
-                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override
     public long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
+        QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
                 .where(allOf(
                         qHenkilo.duplicate.isFalse(),
@@ -613,7 +635,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                         qHenkilo.yksiloity.isFalse(),
                         qHenkilo.yksiloityVTJ.isFalse(),
                         qHenkilo.yksilointiYritetty.isFalse()
-                )).select(qHenkilo.oidHenkilo).distinct().fetchCount();
+                )).select(qTuontiRivi.henkilo.id).distinct().fetchCount();
     }
 
     @Override
