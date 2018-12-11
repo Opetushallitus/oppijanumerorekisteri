@@ -32,3 +32,11 @@ INSERT INTO yhteystiedot (id, version, yhteystieto_tyyppi, yhteystieto_arvo, yht
 (-1, 0, 'YHTEYSTIETO_SAHKOPOSTI', 'X', -1)
 ;
 
+INSERT INTO kansalaisuus (id, version, kansalaisuuskoodi) VALUES
+(-1, 0, '246')
+;
+
+INSERT INTO henkilo_kansalaisuus (henkilo_id, kansalaisuus_id) VALUES
+(-5, -1)
+;
+
