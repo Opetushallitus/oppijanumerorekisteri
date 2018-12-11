@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFactory;
@@ -20,12 +21,15 @@ import java.util.stream.Collectors;
 public class HuoltajaCreateDtoMapper {
 
     @Bean
-    public ClassMap<HuoltajaCreateDto, Henkilo> huoltajaCreateDtoHenkiloClassMap(MapperFactory mapperFactory, KansalaisuusRepository kansalaisuusRepository) {
+    public ClassMap<HuoltajaCreateDto, Henkilo> huoltajaCreateDtoHenkiloClassMap(MapperFactory mapperFactory, KansalaisuusRepository kansalaisuusRepository, OrikaConfiguration mapper) {
         return mapperFactory.classMap(HuoltajaCreateDto.class, Henkilo.class)
+                .exclude("yhteystiedotRyhma")
                 .byDefault()
                 .customize(new CustomMapper<HuoltajaCreateDto, Henkilo>() {
                     @Override
                     public void mapAtoB(HuoltajaCreateDto huoltajaCreateDto, Henkilo henkilo, MappingContext context) {
+                        YhteystietoryhmaUtils.updateYhteystiedot(huoltajaCreateDto.getYhteystiedotRyhma(), henkilo.getYhteystiedotRyhma(), true, mapper);
+
                         Optional.ofNullable(huoltajaCreateDto.getKansalaisuusKoodi())
                                 .map(kansalaisuusKoodis -> kansalaisuusKoodis.stream()
                                         .map(kansalaisuusKoodi -> kansalaisuusRepository.findByKansalaisuusKoodi(kansalaisuusKoodi)

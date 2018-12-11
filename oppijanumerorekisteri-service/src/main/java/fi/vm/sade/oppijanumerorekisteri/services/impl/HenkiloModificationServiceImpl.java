@@ -9,10 +9,14 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.models.*;
+import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
+import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
@@ -215,31 +219,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     private void henkiloUpdateSetReusableFields(HenkiloUpdateDto henkiloUpdateDto, Henkilo henkiloSaved, boolean overwriteReadOnly) {
-        if (henkiloUpdateDto.getYhteystiedotRyhma() != null) {
-            final Collection<YhteystiedotRyhma> readOnlyRyhmat;
-            if (!overwriteReadOnly) {
-                // poistetaan käyttäjän antamista ryhmistä read-only merkityt
-                readOnlyRyhmat = henkiloSaved.getYhteystiedotRyhma().stream()
-                        .filter(YhteystiedotRyhma::isReadOnly).collect(toList());
-                henkiloUpdateDto.getYhteystiedotRyhma().removeIf(dto
-                        -> readOnlyRyhmat.stream().anyMatch(entity -> entity.isEquivalentTo(dto)));
-            } else {
-                readOnlyRyhmat = Collections.emptyList();
-            }
-            // rakennetaan ryhmälista uudelleen
-            henkiloSaved.getYhteystiedotRyhma().clear();
-            henkiloSaved.getYhteystiedotRyhma().addAll(Stream.concat(
-                    // käyttäjän muokkaukset
-                    henkiloUpdateDto.getYhteystiedotRyhma().stream().map(yhteystiedotRyhmaDto -> {
-                        YhteystiedotRyhma yhteystiedotRyhma = this.mapper.map(yhteystiedotRyhmaDto, YhteystiedotRyhma.class);
-                        yhteystiedotRyhma.setId(null);
-                        return yhteystiedotRyhma;
-                    }), readOnlyRyhmat.stream()) // lisätään read-only ryhmät takaisin
-                    .filter(YhteystiedotRyhma::isNotEmpty) // poistetaan tyhjät yhteystietoryhmät (myös read-only)
-                    .collect(toSet()));
-
-            henkiloUpdateDto.setYhteystiedotRyhma(null);
-        }
+        YhteystietoryhmaUtils.updateYhteystiedot(henkiloUpdateDto.getYhteystiedotRyhma(), henkiloSaved.getYhteystiedotRyhma(), overwriteReadOnly, this.mapper);
+        henkiloUpdateDto.setYhteystiedotRyhma(null);
 
         if (henkiloUpdateDto.getAidinkieli() != null && henkiloUpdateDto.getAidinkieli().getKieliKoodi() != null) {
             henkiloSaved.setAidinkieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAidinkieli().getKieliKoodi()));
