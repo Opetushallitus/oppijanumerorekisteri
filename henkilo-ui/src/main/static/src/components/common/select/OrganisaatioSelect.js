@@ -60,6 +60,7 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
             {this._renderParents(organisaatio)}
             {this._renderOrganisaatioNimi(organisaatio)}
             {this._renderSuunniteltuNote(organisaatio)}
+            {this._renderPassiivinenNote(organisaatio)}
         </div>;
     };
 
@@ -86,6 +87,9 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
 
     _renderSuunniteltuNote = (organisaatio: OrganisaatioSelectObject) =>
         organisaatio.status === 'SUUNNITELTU' ? <div className="suunniteltu">{this.props.L['ORGANISAATIONVALINTA_SUUNNITELTU']}</div> : null;
+
+    _renderPassiivinenNote = (organisaatio: OrganisaatioSelectObject) =>
+        organisaatio.status === 'PASSIIVINEN' ? <div className="passiivinen">{this.props.L['ORGANISAATIONVALINTA_PASSIIVINEN']}</div> : null;
 
     onFilter(event: SyntheticEvent<HTMLInputElement>) {
         const currentSearchWord: string = event.currentTarget.value;
