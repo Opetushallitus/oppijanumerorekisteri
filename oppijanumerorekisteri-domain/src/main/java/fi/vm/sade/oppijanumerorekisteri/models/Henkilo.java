@@ -7,6 +7,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -332,5 +333,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
         return null;
     }
+
+    public void setKutsumanimi(String kutsumanimi) {
+        this.kutsumanimi = kutsumanimi;
+        if(StringUtils.isEmpty(this.kutsumanimi)) {
+            this.kutsumanimi = this.etunimet;
+        }
+    }
+
 
 }
