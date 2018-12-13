@@ -65,8 +65,8 @@ public class PermissionCheckerTest {
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = {"USER"})
     public void isAllowedToAccessPersonFromKayttooikeusService() throws Exception {
-        given(this.kayttooikeusClient.checkUserPermissionToUser(eq("1.2.3.4.5"), eq("1.2.3.4.0"),
-                anyList(), eq(null), anySet()))
+        given(this.kayttooikeusClient.checkUserPermissionToUserByPalveluRooli(eq("1.2.3.4.5"), eq("1.2.3.4.0"),
+                anyMap(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
@@ -76,18 +76,10 @@ public class PermissionCheckerTest {
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = {"USER"})
     public void isAllowedToAccessPersonNot() throws Exception {
-        given(this.kayttooikeusClient.checkUserPermissionToUser(eq("1.2.3.4.5"), eq("1.2.3.4.0"),
-                anyList(), eq(null), anySet()))
-                .willReturn(false);
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isFalse();
     }
-
-
-
-
-
 
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")

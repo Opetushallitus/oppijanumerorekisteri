@@ -56,29 +56,6 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
     }
 
     @Override
-    @Deprecated
-    public boolean checkUserPermissionToUser(String callingUserOid, String userOid, List<String> allowedRoles,
-                                             ExternalPermissionService externalPermissionService, Set<String> callingUserRoles) {
-        PermissionCheckDto permissionCheckDto = new PermissionCheckDto();
-        permissionCheckDto.setAllowedRoles(allowedRoles);
-        permissionCheckDto.setCallingUserOid(callingUserOid);
-        permissionCheckDto.setCallingUserRoles(callingUserRoles);
-        permissionCheckDto.setExternalPermissionService(externalPermissionService);
-        permissionCheckDto.setUserOid(userOid);
-        String url = this.urlConfiguration.url("kayttooikeus-service.s2s-checkUserPermissionToUser");
-        OphHttpRequest request = OphHttpRequest.Builder.post(url)
-                .setEntity(new OphHttpEntity.Builder()
-                        .content(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(permissionCheckDto)))
-                        .contentType(ContentType.APPLICATION_JSON)
-                        .build())
-                .build();
-        return httpClient.<Boolean>execute(request)
-                .expectedStatus(200)
-                .mapWith(json -> ioExceptionToRestClientException(() -> objectMapper.readerFor(Boolean.class).readValue(json)))
-                .orElseThrow(() -> noContentOrNotFoundException(url));
-    }
-
-    @Override
     public boolean checkUserPermissionToUserByPalveluRooli(String callingUserOid, String userOid, Map<String, List<String>> allowedPalveluRooli,
                                              ExternalPermissionService externalPermissionService, Set<String> callingUserRoles) {
         PermissionCheckDto permissionCheckDto = new PermissionCheckDto();

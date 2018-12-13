@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.clients;
 
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
-import fi.vm.sade.kayttooikeus.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
@@ -14,10 +13,6 @@ import java.util.Set;
 public interface KayttooikeusClient {
 
     Optional<KayttajaReadDto> getKayttajaByOid(String oid);
-
-    @Deprecated
-    boolean checkUserPermissionToUser(String callingUserOid, String userOid, List<String> allowedRoles,
-                                      ExternalPermissionService externalPermissionService, Set<String> callingUserRoles);
 
     boolean checkUserPermissionToUserByPalveluRooli(String callingUserOid, String userOid, Map<String, List<String>> allowedPalveluRooli,
                                       ExternalPermissionService externalPermissionService, Set<String> callingUserRoles);
