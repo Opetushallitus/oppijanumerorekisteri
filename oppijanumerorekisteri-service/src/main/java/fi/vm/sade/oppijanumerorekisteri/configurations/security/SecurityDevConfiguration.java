@@ -49,7 +49,7 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder())
                 .withUser(devProperties.getUsername())
                 .password(passwordEncoder().encode(devProperties.getPassword()))
-                .roles("APP_HENKILONHALLINTA_OPHREKISTERI");
+                .roles("APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA");
     }
     
 }

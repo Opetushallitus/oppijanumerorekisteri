@@ -178,7 +178,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void paivitaYksilointitiedot() {
         String hetu = "190198-727T";
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
@@ -211,7 +211,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yliajaHenkilonTiedot() {
         String hetu = "190198-727T";
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
@@ -353,7 +353,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void hetuttomanYksilointiJaPuraHeikkoYksilointi() {
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
         henkiloCreateDto.setKutsumanimi("teppo");
@@ -381,7 +381,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void enableYksilointiHakemus() {
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
         henkiloCreateDto.setKutsumanimi("teppo");
@@ -406,7 +406,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void enableYksilointiKayttooikeus() {
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
         henkiloCreateDto.setKutsumanimi("teppo");
@@ -421,7 +421,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void hetuUpdates() {
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
         henkiloCreateDto.setKutsumanimi("teppo");
@@ -446,7 +446,7 @@ public class YksilointiITest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void henkiloAlreadyExistsWithSameHetu() {
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
         henkiloCreateDto.setKutsumanimi("teppo");
@@ -489,7 +489,7 @@ public class YksilointiITest {
 
     @Test
     public void henkiloAlreadyExistsWithSameHetuAnonymous() {
-        SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken("1.2.3.4.5", null, "APP_HENKILONHALLINTA_OPHREKISTERI"));
+        SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken("1.2.3.4.5", null, "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA"));
 
         HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
         henkiloCreateDto.setKutsumanimi("teppo");

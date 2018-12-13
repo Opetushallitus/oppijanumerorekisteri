@@ -5,8 +5,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
-import java.io.IOException;
-
 import org.assertj.core.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.IOException;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,7 +38,7 @@ public class PermissionCheckerTest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
@@ -89,7 +89,7 @@ public class PermissionCheckerTest {
 
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
                 .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
@@ -162,7 +162,7 @@ public class PermissionCheckerTest {
     }
 
     @Test
-    @WithMockUser(value = "1.2.3.4.5", roles = "APP_HENKILONHALLINTA_OPHREKISTERI_1.2.246.562.10.00000000001")
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isSuperUser() {
         boolean isSuperUser = this.permissionChecker.isSuperUser();
         assertThat(isSuperUser).isTrue();

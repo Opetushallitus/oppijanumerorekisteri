@@ -62,7 +62,7 @@ public class HenkiloModificationServiceIntegrationTest {
     private EntityManager entityManager;
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void updateVtjYksiloityHetuAndVtjYksiloityHasHenkiloHasNewHetu() {
         HenkiloForceUpdateDto henkiloForceUpdateDto = new HenkiloForceUpdateDto();
         henkiloForceUpdateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -88,7 +88,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void updateHenkiloTallentaaKutsumanimimuutoksen() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -102,7 +102,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void kaikkiHetutAdded() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -120,7 +120,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void kaikkiHetutNotModified() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -138,7 +138,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void kaikkiHetutAddedOnHetuChange() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -156,7 +156,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksilointivirheRemovedOnHetuChange() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");
@@ -174,7 +174,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksilointivirheRemovedOnHetuToEmpty() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");
@@ -192,7 +192,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksilointivirheRemainsOnHetuToNull() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSAVIRHE");
@@ -210,7 +210,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksilointitietoRemovedOnHetuChange() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
@@ -228,7 +228,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksilointitietoRemovedOnHetuToEmpty() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
@@ -246,7 +246,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yksilointitietoRemainsOnHetuToNull() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
@@ -264,7 +264,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void updateHenkiloValidoiKutsumanimimuutoksen() {
         HenkiloUpdateDto updateDto = new HenkiloUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -276,7 +276,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void forceUpdateHenkiloTallentaaKutsumanimimuutoksen() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -289,7 +289,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void forceUpdateHenkiloValidoiKutsumanimimuutoksen() {
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
         updateDto.setOidHenkilo("VTJYKSILOITY1");
@@ -301,7 +301,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateValidoiHuoltajanHuoltajatyyppi() {
         KoodiType koodiType = new KoodiType();
         koodiType.setKoodiArvo("03");
@@ -319,7 +319,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateValidoiHuoltajanKansalaisuus() {
         KoodiType huoltajuustyyppi = new KoodiType();
         huoltajuustyyppi.setKoodiArvo("03");
@@ -340,7 +340,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreate() {
         KoodiType huoltajuustyyppi = new KoodiType();
         huoltajuustyyppi.setKoodiArvo("03");
@@ -361,7 +361,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaUpdateExisting() {
         KoodiType huoltajuustyyppi = new KoodiType();
         huoltajuustyyppi.setKoodiArvo("03");
@@ -397,7 +397,7 @@ public class HenkiloModificationServiceIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "APP_HENKILONHALLINTA_OPHREKISTERI")
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateWithEmptyHetu() {
         KoodiType huoltajuustyyppi = new KoodiType();
         huoltajuustyyppi.setKoodiArvo("03");
