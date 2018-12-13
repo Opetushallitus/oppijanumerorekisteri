@@ -64,6 +64,7 @@ public class HenkiloController {
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
             notes = "Hakutermillä haetaan henkilön nimen, henkilötunnuksen ja OID:n mukaan."
                     + " Jos henkilöitä löytyy useita, palautetaan niistä nimen mukaan ensimmäinen."
@@ -71,7 +72,7 @@ public class HenkiloController {
     public HenkiloHakuDto getByHakutermi(
             @PathVariable String hakutermi,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return henkiloService.getByHakutermi(hakutermi, permissionService);
+        return henkiloService.getByHakutermi(hakutermi);
     }
 
     @GetMapping("/yhteystieto={arvo}/oid")

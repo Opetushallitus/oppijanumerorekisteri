@@ -3,11 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import com.google.common.collect.Lists;
 import com.querydsl.core.types.Predicate;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
-import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
@@ -30,13 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
@@ -124,7 +119,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public HenkiloHakuDto getByHakutermi(String hakutermi, ExternalPermissionService externalPermissionService) {
+    public HenkiloHakuDto getByHakutermi(String hakutermi) {
         OppijaCriteria criteria = OppijaCriteria.builder()
                 .passivoitu(false).duplikaatti(false)
                 .hakutermi(hakutermi).build();
@@ -133,23 +128,8 @@ public class HenkiloServiceImpl implements HenkiloService {
         if (henkilot.isEmpty() || henkilot.size() > 1) {
             throw new NotFoundException("Henkilöä ei löytynyt hakuehdoilla");
         }
-        HenkiloHakuDto henkilo = henkilot.get(0);
-        if (!isAllowedToAccessPerson(henkilo.getOidHenkilo(), externalPermissionService)) {
-            throw new ForbiddenException("Henkilön tietoihin ei oikeuksia");
-        }
 
-        return henkilo;
-    }
-
-    private boolean isAllowedToAccessPerson(String henkiloOid, ExternalPermissionService externalPermissionService) {
-        try {
-            List<String> sallitutRoolit = Stream
-                    .of("READ", "READ_UPDATE", "CRUD", "OPHREKISTERI")
-                    .collect(toList());
-            return permissionChecker.isAllowedToAccessPerson(henkiloOid, sallitutRoolit, externalPermissionService);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        return henkilot.get(0);
     }
 
     @Override
