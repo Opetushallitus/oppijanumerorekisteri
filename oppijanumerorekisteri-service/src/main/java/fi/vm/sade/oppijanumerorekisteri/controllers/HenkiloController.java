@@ -42,7 +42,6 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
-            + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
@@ -61,7 +60,6 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ',"
             + "'ROLE_APP_HENKILONHALLINTA_READ_UPDATE',"
             + "'ROLE_APP_HENKILONHALLINTA_CRUD',"
-            + "'ROLE_APP_HENKILONHALLINTA_KKVASTUU',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
@@ -316,13 +314,12 @@ public class HenkiloController {
         return this.henkiloService.listPossibleHenkiloTypesAccessible();
     }
 
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/yksiloi", method = RequestMethod.POST)
     @ApiOperation(value = "Käynnistää henkilön yksilöinnin.",
             notes = "Käynnistää henkilön yksilöintiprosessin VTJ:n suuntaan manuaalisesti.",
             authorizations = {@Authorization("ROLE_APP_HENKILONHALLINTA_READ_UPDATE"),
                     @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
-                    @Authorization("ROLE_APP_HENKILONHALLINTA_KKVASTUU"),
                     @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"),
                     @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiManuaalisesti(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
@@ -331,13 +328,12 @@ public class HenkiloController {
         this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
     }
 
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}} , #permissionService )")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}} , #permissionService )")
     @RequestMapping(value = "/{oid}/yksiloihetuton", method = RequestMethod.POST)
     @ApiOperation(value = "Yksilöi hetuttoman henkilön.",
     notes = "Yksilöi hetuttoman henkilön.",
     authorizations = {@Authorization("ROLE_APP_HENKILONHALLINTA_READ_UPDATE"),
             @Authorization("ROLE_APP_HENKILONHALLINTA_CRUD"),
-            @Authorization("ROLE_APP_HENKILONHALLINTA_KKVASTUU"),
             @Authorization("ROLE_APP_HENKILONHALLINTA_OPHREKISTERI"),
             @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiHetuton(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
@@ -346,7 +342,7 @@ public class HenkiloController {
     }
 
 
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {'HENKILONHALLINTA': {'READ_UPDATE', 'CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/purayksilointi", method = RequestMethod.POST)
     @ApiOperation(value = "Henkilön yksilöinnin purku.",
             notes = "Purkaa hetuttoman henkilön yksilöinnin",
@@ -357,8 +353,7 @@ public class HenkiloController {
     }
 
     @PutMapping("/{oid}/yksilointitiedot")
-    @PreAuthorize("hasAnyRole('ROLE_APP_KAYTTOOIKEUS_SCHEDULE',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     @ApiOperation("Päivittään yksilöidyn henkilön tiedot VTJ:stä")
     public void paivitaYksilointitiedot(@PathVariable String oid) {
@@ -435,7 +430,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/duplicates")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
     public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
@@ -443,7 +438,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/hakemukset")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'KKVASTUU', 'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'READ_UPDATE', 'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Hakee henkilön hakemukset haku-app:sta ja atarusta.")
     public List<HakemusDto> getApplications(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.duplicateService.getApplications(oid);
@@ -463,7 +458,7 @@ public class HenkiloController {
     }
 
     @PostMapping("/{oid}/link")
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'CRUD', 'KKVASTUU'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
+    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#oid, {'HENKILONHALLINTA': {'CRUD'}, 'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {

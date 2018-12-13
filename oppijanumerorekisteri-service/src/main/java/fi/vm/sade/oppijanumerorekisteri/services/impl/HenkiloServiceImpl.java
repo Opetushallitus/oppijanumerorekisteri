@@ -144,7 +144,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     private boolean isAllowedToAccessPerson(String henkiloOid, ExternalPermissionService externalPermissionService) {
         try {
             List<String> sallitutRoolit = Stream
-                    .of("READ", "READ_UPDATE", "CRUD", "KKVASTUU", "OPHREKISTERI")
+                    .of("READ", "READ_UPDATE", "CRUD", "OPHREKISTERI")
                     .collect(toList());
             return permissionChecker.isAllowedToAccessPerson(henkiloOid, sallitutRoolit, externalPermissionService);
         } catch (IOException ex) {
