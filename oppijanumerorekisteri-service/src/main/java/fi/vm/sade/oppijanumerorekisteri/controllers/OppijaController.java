@@ -81,8 +81,7 @@ public class OppijaController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('APP_HENKILONHALLINTA_OPHREKISTERI',"
-            + "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
     public Page<OppijaListDto> list(

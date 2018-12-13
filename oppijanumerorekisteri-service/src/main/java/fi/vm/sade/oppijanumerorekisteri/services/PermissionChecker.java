@@ -9,14 +9,11 @@ import java.util.Map;
 import java.util.Set;
 
 public interface PermissionChecker {
-    List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
+    List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                   ExternalPermissionService permissionCheckService) throws IOException;
 
-    Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, List<String> allowedRoles,
+    Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException;
-    @Deprecated
-    boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
-                                           ExternalPermissionService externalPermissionService) throws IOException;
 
     boolean isAllowedToAccessPerson(String userOid, Map<String, List<String>> allowedPalveluRooli, ExternalPermissionService externalPermissionService) throws IOException;
 

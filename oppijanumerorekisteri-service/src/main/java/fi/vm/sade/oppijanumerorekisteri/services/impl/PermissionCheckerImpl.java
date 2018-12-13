@@ -44,7 +44,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private final OrganisaatioService organisaatioService;
 
-    public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
+    @Override
+    public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
         List<HenkiloDto> permissionCheckedPersons = new ArrayList<>();
 
@@ -61,7 +62,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
         return permissionCheckedPersons;
     }
 
-    public Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, List<String> allowedRoles,
+    @Override
+    public Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
         if (persons == null || persons.isEmpty()) {
             return new HashMap<>();
@@ -74,15 +76,6 @@ public class PermissionCheckerImpl implements PermissionChecker {
             }
         }
         return permissionCheckedPersons;
-    }
-
-    @Override
-    @Deprecated
-    public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
-                                           ExternalPermissionService externalPermissionService) throws IOException {
-        return isAllowedToAccessPerson(userOid, (callingUserOid, callingUserRoles)
-                -> kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles, externalPermissionService, callingUserRoles)
-        );
     }
 
     @Override

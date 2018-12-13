@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -226,7 +226,7 @@ public class HenkiloController {
                                                           ExternalPermissionService permissionService) throws IOException {
         return this.permissionChecker.getPermissionCheckedHenkilos(
                 this.henkiloService.getHenkilosByOids(oids),
-                Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),
+                Collections.singletonMap("OPPIJANUMEROREKISTERI", Arrays.asList("READ", "HENKILON_RU")),
                 permissionService
         );
     }
@@ -241,7 +241,7 @@ public class HenkiloController {
                                                           ExternalPermissionService permissionService) throws IOException {
         return this.permissionChecker.getPermissionCheckedHenkilos(
                 this.henkiloService.getMastersByOids(Sets.newHashSet(oids)),
-                Lists.newArrayList("READ", "READ_UPDATE", "CRUD"),
+                Collections.singletonMap("OPPIJANUMEROREKISTERI", Arrays.asList("READ", "HENKILON_RU")),
                 permissionService
         );
     }

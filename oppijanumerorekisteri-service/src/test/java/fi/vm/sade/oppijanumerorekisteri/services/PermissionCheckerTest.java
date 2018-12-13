@@ -14,6 +14,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +42,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -49,7 +50,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsRekisterinpitaja() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -57,7 +58,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5")
     public void isAllowedToAccessPersonOwnData() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.5", Lists.newArrayList(), null);
+                .isAllowedToAccessPerson("1.2.3.4.5", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -68,7 +69,7 @@ public class PermissionCheckerTest {
                 anyList(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -79,7 +80,7 @@ public class PermissionCheckerTest {
                 anyList(), eq(null), anySet()))
                 .willReturn(false);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Lists.newArrayList(), null);
+                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isFalse();
     }
 
@@ -190,10 +191,10 @@ public class PermissionCheckerTest {
     })
     public void isAllowedToAccessPersonTODO1() throws IOException {
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isTrue();
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", new HashMap<>(), null)).isTrue();
 
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.2"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyList(), null)).isFalse();
+        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", new HashMap<>(), null)).isFalse();
     }
 
     @Test
