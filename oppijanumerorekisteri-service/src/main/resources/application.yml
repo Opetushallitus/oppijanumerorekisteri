@@ -23,6 +23,10 @@ spring:
     # If DB is not empty will not run migrations until this version
     baseline-version: 20180423104403142
     out-of-order: true
+  jpa:
+    properties:
+      # https://hibernate.atlassian.net/browse/HHH-12368
+      hibernate.jdbc.lob.non_contextual_creation: true
 logging:
   level:
     root: info
