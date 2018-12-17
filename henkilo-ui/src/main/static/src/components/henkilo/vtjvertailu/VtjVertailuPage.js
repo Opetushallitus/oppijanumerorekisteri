@@ -83,7 +83,7 @@ class VtjVertailuPage extends React.Component<Props> {
     }
 
     isDisabled(): boolean {
-        const hasAccess = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA', 'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']);
+        const hasAccess = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'OPPIJANUMEROREKISTERI_VTJ_VERTAILUNAKYMA', 'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']);
         const currentUserIsViewedHenkilo = this.props.oidHenkilo === this.props.ownOid;
         const isEnabledVtjVertailuView = enabledVtjVertailuView(this.props.henkilo.henkilo);
         return !isEnabledVtjVertailuView || currentUserIsViewedHenkilo || !hasAccess;
