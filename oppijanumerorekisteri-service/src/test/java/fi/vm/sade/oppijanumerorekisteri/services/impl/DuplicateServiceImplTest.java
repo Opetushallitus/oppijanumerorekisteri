@@ -23,10 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -97,6 +94,27 @@ public class DuplicateServiceImplTest {
         assertThat(henkiloDuplicateDto3.getHakemukset().size()).isEqualTo(1);
         assertThat(henkiloDuplicateDto3.getHakemukset()).contains(hakemusDto2);
 
+
+    }
+
+    @Test
+    public void removeDuplicateHetuAndLinkShouldMoveHetusToNewMasterAndRemoveThemFromNewSlave() {
+
+        Henkilo existingDuplicateHenkilo = EntityUtils.createHenkilo("Testi Henkilö", "Testi", "Sukunimi1", "hetu", "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+        existingDuplicateHenkilo.addHetu("hetu1", "hetu2");
+        existingDuplicateHenkilo.setYksiloityVTJ(true);
+
+        Henkilo newStronglyIdentifiedHenkilo = EntityUtils.createHenkilo("Testi2 Henkilö2", "Testi2", "Sukunimi2", "hetu", "2.3.4.5.6", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
+
+        given(this.henkiloRepository.findByHetu("hetu")).willReturn(Optional.of(existingDuplicateHenkilo));
+        given(this.henkiloRepository.findByOidHenkilo("1.2.3.4.5")).willReturn(Optional.of(existingDuplicateHenkilo));
+        given(this.henkiloRepository.findByOidHenkilo("2.3.4.5.6")).willReturn(Optional.of(newStronglyIdentifiedHenkilo));
+
+        this.duplicateService.removeDuplicateHetuAndLink("2.3.4.5.6", "hetu");
+
+        assertThat(existingDuplicateHenkilo.isYksiloityVTJ()).isFalse();
+        assertThat(newStronglyIdentifiedHenkilo.getKaikkiHetut()).containsExactly("hetu1", "hetu2");
+        assertThat(existingDuplicateHenkilo.getKaikkiHetut()).isEmpty();
 
     }
 
