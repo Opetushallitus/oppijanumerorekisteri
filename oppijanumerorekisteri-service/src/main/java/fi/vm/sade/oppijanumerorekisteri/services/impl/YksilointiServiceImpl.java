@@ -106,15 +106,15 @@ public class YksilointiServiceImpl implements YksilointiService {
         yksilointivirhe.setAikaleima(new Date());
         yksilointivirhe.setPoikkeus(exception.getClass().getCanonicalName());
         yksilointivirhe.setViesti(exception.getMessage());
-        // In case there is prior error already.
-        yksilointivirhe.setUudelleenyritysAikaleima(null);
-        yksilointivirhe.setUudelleenyritysMaara(null);
         if (!(exception instanceof SuspendableIdentificationException)) {
             Integer uusiYritysmaara = Optional.ofNullable(yksilointivirhe.getUudelleenyritysMaara())
-                    .map(maara -> maara++)
+                    .map(maara -> ++maara)
                     .orElse(0);
             yksilointivirhe.setUudelleenyritysMaara(uusiYritysmaara);
             yksilointivirhe.setUudelleenyritysAikaleima(this.getUudelleenyritysAikaleima(uusiYritysmaara));
+        } else {
+            yksilointivirhe.setUudelleenyritysAikaleima(null);
+            yksilointivirhe.setUudelleenyritysMaara(null);
         }
         yksilointivirheRepository.save(yksilointivirhe);
     }

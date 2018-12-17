@@ -357,6 +357,25 @@ public class YksilointiServiceTest {
     }
 
     @Test
+    public void terminoivaYksilointivirheUudelleenyritysMaaraNull() {
+        Date date = new Date();
+        when(this.henkiloRepository.findByOidHenkilo(eq("1.2.3.4.5"))).thenReturn(Optional.of(new Henkilo()));
+        when(this.yksilointivirheRepository.findByHenkilo(any(Henkilo.class))).thenReturn(Optional.of(Yksilointivirhe
+                .builder()
+                .uudelleenyritysMaara(5)
+                .uudelleenyritysAikaleima(date)
+                .build()));
+
+        this.yksilointiService.tallennaYksilointivirhe("1.2.3.4.5", new SuspendableIdentificationException(""));
+
+        ArgumentCaptor<Yksilointivirhe> yksilointivirheArgumentCaptor = ArgumentCaptor.forClass(Yksilointivirhe.class);
+        verify(this.yksilointivirheRepository).save(yksilointivirheArgumentCaptor.capture());
+        Yksilointivirhe yksilointivirhe = yksilointivirheArgumentCaptor.getValue();
+        assertThat(yksilointivirhe.getUudelleenyritysMaara()).isNull();
+        assertThat(yksilointivirhe.getUudelleenyritysAikaleima()).isNull();
+    }
+
+    @Test
     public void eiTerminoivaYksilointivirheUudelleenyritetaan() {
         when(this.henkiloRepository.findByOidHenkilo(eq("1.2.3.4.5"))).thenReturn(Optional.of(new Henkilo()));
         this.yksilointiService.tallennaYksilointivirhe("1.2.3.4.5", new Exception(""));
@@ -366,5 +385,24 @@ public class YksilointiServiceTest {
         Yksilointivirhe yksilointivirhe = yksilointivirheArgumentCaptor.getValue();
         assertThat(yksilointivirhe.getUudelleenyritysMaara()).isEqualTo(0);
         assertThat(yksilointivirhe.getUudelleenyritysAikaleima()).isAfter(new Date());
+    }
+
+    @Test
+    public void eiTerminoivaYksilointivirheUudelleenyritysMaaraKasvaa() {
+        Date date = new Date();
+        when(this.henkiloRepository.findByOidHenkilo(eq("1.2.3.4.5"))).thenReturn(Optional.of(new Henkilo()));
+        when(this.yksilointivirheRepository.findByHenkilo(any(Henkilo.class))).thenReturn(Optional.of(Yksilointivirhe
+                .builder()
+                .uudelleenyritysMaara(5)
+                .uudelleenyritysAikaleima(date)
+                .build()));
+
+        this.yksilointiService.tallennaYksilointivirhe("1.2.3.4.5", new Exception(""));
+
+        ArgumentCaptor<Yksilointivirhe> yksilointivirheArgumentCaptor = ArgumentCaptor.forClass(Yksilointivirhe.class);
+        verify(this.yksilointivirheRepository).save(yksilointivirheArgumentCaptor.capture());
+        Yksilointivirhe yksilointivirhe = yksilointivirheArgumentCaptor.getValue();
+        assertThat(yksilointivirhe.getUudelleenyritysMaara()).isEqualTo(6);
+        assertThat(yksilointivirhe.getUudelleenyritysAikaleima()).isAfter(date);
     }
 }
