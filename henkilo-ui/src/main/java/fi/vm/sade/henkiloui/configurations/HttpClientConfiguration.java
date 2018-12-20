@@ -17,8 +17,7 @@ public class HttpClientConfiguration {
     @Bean
     @Primary
     public OphHttpClient ophHttpClient() {
-        return new OphHttpClient.Builder()
-                .clientSubSystemCode(CLIENT_SUB_SYSTEM_CODE)
+        return new OphHttpClient.Builder(CLIENT_SUB_SYSTEM_CODE)
                 .build();
     }
 
@@ -31,8 +30,7 @@ public class HttpClientConfiguration {
                 .username(environment.getRequiredProperty("henkiloui.palvelukayttajat.lokalisointi.kayttajatunnus"))
                 .password(environment.getRequiredProperty("henkiloui.palvelukayttajat.lokalisointi.salasana"))
                 .build();
-        return new OphHttpClient.Builder()
-                .clientSubSystemCode(CLIENT_SUB_SYSTEM_CODE)
+        return new OphHttpClient.Builder(CLIENT_SUB_SYSTEM_CODE)
                 .authenticator(authenticator)
                 .build();
     }
