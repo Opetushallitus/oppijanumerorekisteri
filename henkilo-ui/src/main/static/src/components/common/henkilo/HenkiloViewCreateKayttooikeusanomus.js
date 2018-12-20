@@ -146,14 +146,12 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                         </div> : null
                     }
 
-
                     <div className="oph-field oph-field-inline">
                         <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                             {L['OMATTIEDOT_ANOTTAVAT']}*
                         </label>
 
                         <div className="oph-input-container kayttooikeus-selection-wrapper">
-
                             <KayttooikeusryhmaSelectModal
                                 locale={this.props.locale}
                                 L={L}
@@ -161,7 +159,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                                 onSelect={this._addKayttooikeusryhmaSelection.bind(this)}
                                 disabled={this.state.emailOptions.missingEmail}
                                 loading={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
-                                isOrganisaatioSelected={!!this.state.organisaatioSelection}
+                                isOrganisaatioSelected={!!this.state.organisaatioSelection || !!this.state.ryhmaSelection}
                             />
                         </div>
                     </div>
@@ -252,7 +250,12 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
             };
         }
         else if (emailOptions.length > 1) {
-            return {missingEmail: false, showMissingEmailNotification: false, emailSelection: '', options: emailOptions};
+            return {
+                missingEmail: false,
+                showMissingEmailNotification: false,
+                emailSelection: '',
+                options: emailOptions
+            };
         }
         return {missingEmail: true, showMissingEmailNotification: true};
     }
@@ -330,7 +333,6 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                 })
             });
         }
-
         return emails.map(email => ({value: email || '', label: email || ''}));
     };
 

@@ -90,6 +90,8 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
             const isOrganisaatio = value.hasOwnProperty('oid');
             const oid = isOrganisaatio ? value.oid : value.value;
 
+            // ryhmaName -muuttujaa ei näytetä missään. Sitä käytetään vain käyttöoikeuden valintamodalin enablointiin
+            const ryhmaName: string = !isOrganisaatio && oid ? 'Ryhmävalinta' : '';
             this.setState({
                 validationMessages: {
                     ...this.state.validationMessages,
@@ -102,7 +104,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                     ...this.state.kayttooikeusModel,
                     kayttokohdeOrganisationOid: oid,
                 },
-                organisaatioSelection: isOrganisaatio ? value.name : ''
+                organisaatioSelection: isOrganisaatio ? value.name : ryhmaName
             });
             this.props.fetchAllowedKayttooikeusryhmasForOrganisation(this.props.oidHenkilo, oid);
         };
@@ -174,8 +176,6 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
 
         this.state = this.initialState;
     };
-
-
 
     render() {
         return (
