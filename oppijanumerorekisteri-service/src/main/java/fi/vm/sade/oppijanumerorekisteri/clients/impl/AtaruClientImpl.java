@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.http.OphHttpClient;
 import fi.vm.sade.javautils.http.OphHttpRequest;
-import fi.vm.sade.javautils.http.OphHttpResponse;
 import fi.vm.sade.javautils.http.auth.CasAuthenticator;
 import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,33 +43,33 @@ public class AtaruClientImpl implements AtaruClient{
     @Override
     public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
         TypeReference<List<Map<String, Object>>> hakemusType = new TypeReference<List<Map<String, Object>>>() {};
-
-        Map<String, List<HakemusDto>> hakemuksetByHenkiloOid = oids.stream()
-                .collect( Collectors.toMap(Function.identity(), oid -> {
-
-                    OphHttpResponse response = doGetRequest( (String) oid);
-                    if (response.getStatusCode() == 200) {
-                        try (InputStream is = response.asInputStream()) {
-                            List<Map<String, Object>> hakemukset = objectMapper.readValue(is, hakemusType);
-                            List<HakemusDto> hakemusList = hakemukset.stream().map(hakemusData -> {
-                                hakemusData.put("service", "ataru");
-                                return new HakemusDto(hakemusData);
-                            }).collect(Collectors.toList());
-                            return hakemusList;
-                        } catch (IOException e) {
-                            throw new HttpConnectionException("Failed to read response from ataru. Requested applications for user oid: " + oid + " " + e.toString());
-                        }
-                    } else {
-                        throw new HttpConnectionException("Failed to fetch applications from ataru. Status code: " + response.getStatusCode() + ". Requested applications for users: " + oids.toString());
-                    }
-                }));
-        return hakemuksetByHenkiloOid;
+        return oids.stream().collect(Collectors.toMap(Function.identity(), oid -> fetchByOid(oid, hakemusType)));
     }
 
-    private OphHttpResponse doGetRequest(String oid) {
+    private List<HakemusDto> fetchByOid(String oid, TypeReference<List<Map<String, Object>>> hakemusType) {
         String url = urlConfiguration.url("ataru.applications", oid);
         OphHttpRequest request = OphHttpRequest.Builder.get(url).build();
-        return this.ophHttpClient.execute(request);
+        return this.ophHttpClient.<List<HakemusDto>>execute(request)
+                .expectedStatus(200)
+                .mapWith(json -> jsonToHakemusDtoList(oid, json, hakemusType))
+                .orElseThrow(() -> new HttpConnectionException("Failed to fetch applications from ataru. Status code: 204 or 404. Requested applications for user: " + oid));
+    }
+
+    private List<HakemusDto> jsonToHakemusDtoList(String oid, String json, TypeReference<List<Map<String, Object>>> hakemusType) {
+        try {
+            return jsonToHakemusDtoList(json, hakemusType);
+        } catch (IOException e) {
+            throw new HttpConnectionException("Failed to read response from ataru. Requested applications for user oid: " + oid, e);
+        }
+    }
+
+    private List<HakemusDto> jsonToHakemusDtoList(String json, TypeReference<List<Map<String, Object>>> hakemusType) throws IOException {
+        List<Map<String, Object>> hakemukset = objectMapper.readValue(json, hakemusType);
+        List<HakemusDto> hakemusList = hakemukset.stream().map(hakemusData -> {
+            hakemusData.put("service", "ataru");
+            return new HakemusDto(hakemusData);
+        }).collect(Collectors.toList());
+        return hakemusList;
     }
 
     private OphHttpClient createOphHttpClient() {
@@ -82,6 +83,6 @@ public class AtaruClientImpl implements AtaruClient{
                 .addSpringSecSuffix(false)
                 .build();
 
-        return new OphHttpClient.Builder().authenticator(authenticator).build();
+        return new OphHttpClient.Builder(ConfigEnums.SUBSYSTEMCODE.value()).authenticator(authenticator).build();
     }
 }

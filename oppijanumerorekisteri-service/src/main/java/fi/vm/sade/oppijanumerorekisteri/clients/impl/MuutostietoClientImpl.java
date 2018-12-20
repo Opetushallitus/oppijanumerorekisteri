@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.http.OphHttpClient;
 import fi.vm.sade.javautils.http.OphHttpEntity;
 import fi.vm.sade.javautils.http.OphHttpRequest;
-import fi.vm.sade.javautils.http.OphHttpResponse;
 import fi.vm.sade.javautils.http.auth.CasAuthenticator;
 import fi.vm.sade.oppijanumerorekisteri.clients.MuutostietoClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.MuutostietoHetus;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestClientException;
 
 import javax.annotation.PostConstruct;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import static java.util.function.Function.identity;
 
 @Component
 @Slf4j
@@ -39,27 +39,21 @@ public class MuutostietoClientImpl implements MuutostietoClient {
                 .casServiceUrl(urlConfiguration.url("henkilotietomuutos-service.security-check"))
                 .build();
 
-        this.httpClient = new OphHttpClient.Builder().authenticator(authenticator).build();
+        this.httpClient = new OphHttpClient.Builder(ConfigEnums.SUBSYSTEMCODE.value()).authenticator(authenticator).build();
     }
 
     @Override
     public void sendHetus(MuutostietoHetus hetus) {
+        String url = urlConfiguration.url("henkilotietomuutos-service.vtj.hetut");
         OphHttpEntity entity = new OphHttpEntity.Builder()
                 .content(serializeHetus(hetus))
                 .build();
-
-        try (OphHttpResponse response = httpClient.execute(OphHttpRequest.Builder
-                .post(urlConfiguration.url("henkilotietomuutos-service.vtj.hetut"))
-                .setEntity(entity).build())) {
-            int responseCode = response.getStatusCode();
-            if (responseCode == SC_OK) {
-                return;
-            }
-            throw new RestClientException(String.format("Henkilotietomuutos-service returned error status code %d", responseCode));
-        }
-        catch (Exception e) {
-            throw new RestClientException("Error trying to update hetus to henkilotietomuutos-service", e);
-        }
+        httpClient.<String>execute(OphHttpRequest.Builder
+                .post(url)
+                .setEntity(entity).build())
+                .expectedStatus(200)
+                .mapWith(identity())
+                .orElseThrow(() -> new RestClientException(String.format("Osoite %s palautti 204 tai 404", url)));
     }
 
     private String serializeHetus(MuutostietoHetus hetus) {
