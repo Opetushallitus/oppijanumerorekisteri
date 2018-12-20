@@ -10,16 +10,16 @@ import {urls} from 'oph-urls-js';
 import type {
     KutsuOrganisaatio
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
-import type {BasicinfoType} from "./BasicinfoForm";
 import type { L10n, Localisations } from "../../types/localisation.type";
 import type { MyonnettyKayttooikeusryhma } from "../../types/domain/kayttooikeus/kayttooikeusryhma.types"
 import { LocalNotification } from "../common/Notification/LocalNotification";
+import type {KutsuBasicInfo} from "../../types/KutsuBasicInfo.types";
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
     modalCloseFn: (any) => void,
     modalOpen: boolean,
-    basicInfo: BasicinfoType,
+    basicInfo: KutsuBasicInfo,
     clearBasicInfo: () => void,
     locale: string,
     l10n: L10n,
@@ -44,7 +44,6 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
 
     render() {
         const L = this.props.l10n[this.props.locale];
-
         return (
             <Modal show={this.props.modalOpen} onClose={this.props.modalCloseFn} closeOnOuterClick={true}>
                 <div className="confirmation-modal">
@@ -107,6 +106,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
             sukunimi: this.props.basicInfo.sukunimi,
             sahkoposti,
             asiointikieli: this.props.basicInfo.languageCode,
+            saate: this.props.basicInfo.saate ? this.props.basicInfo.saate : undefined,
             organisaatiot: R.map(addedOrg => ({
                 organisaatioOid: addedOrg.oid,
                 voimassaLoppuPvm: addedOrg.voimassaLoppuPvm,

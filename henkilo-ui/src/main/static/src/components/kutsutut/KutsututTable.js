@@ -13,6 +13,7 @@ import type {Localisations} from "../../types/localisation.type";
 import type {GlobalNotificationConfig} from "../../types/notification.types";
 import {addGlobalNotification} from "../../actions/notification.actions";
 import type {Locale} from "../../types/locale.type";
+import PopupButton from "../common/button/PopupButton";
 
 type Props = {
     kutsus: Array<any>,
@@ -47,6 +48,7 @@ class KutsututTable extends React.Component<Props, State> {
             { key: 'KUTSUT_SAHKOPOSTI_OTSIKKO', label: L['KUTSUT_SAHKOPOSTI_OTSIKKO'] },
             { key: 'KUTSUTUT_ORGANISAATIO_OTSIKKO', label: L['KUTSUTUT_ORGANISAATIO_OTSIKKO'], notSortable: true, },
             { key: 'KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO', label: L['KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO'] },
+            { key: 'KUTSUTUT_SAATE_OTSIKKO', label: L['KUTSUTUT_SAATE_OTSIKKO'], maxWidth: 100, notSortable: true},
             { key: 'KUTSUTUT_LAHETA_UUDELLEEN', label: L['KUTSUTUT_LAHETA_UUDELLEEN'], notSortable: true},
             { key: 'KUTSU_PERUUTA', label: L['KUTSUTUT_PERUUTA_KUTSU'], notSortable: true},
         ];
@@ -56,6 +58,7 @@ class KutsututTable extends React.Component<Props, State> {
             KUTSUT_SAHKOPOSTI_OTSIKKO: this.createSahkopostiCell(kutsu),
             KUTSUTUT_ORGANISAATIO_OTSIKKO: this.createOrganisaatiotCell(kutsu),
             KUTSUTUT_KUTSU_LAHETETTY_OTSIKKO: this.createKutsuLahetettyCell(kutsu),
+            KUTSUTUT_SAATE_OTSIKKO: this.createSaateCell(kutsu),
             KUTSUTUT_LAHETA_UUDELLEEN: this.createResendCell(kutsu),
             KUTSU_PERUUTA: this.createPeruutaCell(kutsu)
         }));
@@ -89,6 +92,19 @@ class KutsututTable extends React.Component<Props, State> {
         return (<div>
                 { kutsu.organisaatiot.map(org => <div key={org.organisaatioOid}>{toLocalizedText(this.props.locale, org.nimi) || org.organisaatioOid}</div>)}
                 </div>);
+    }
+
+    createSaateCell(kutsu) {
+        return kutsu.saate ? <PopupButton
+            popupClass={'oph-popup-default oph-popup-bottom'}
+            popupButtonWrapperPositioning={'absolute'}
+            popupArrowStyles={{marginLeft: '10px'}}
+            popupButtonClasses={'oph-button oph-button-ghost'}
+            popupStyle={{left: '-20px', width: '20rem', padding: '30px', position: 'absolute'}}
+            simple={true}
+            popupContent={<p>{kutsu.saate}</p>}>{this.props.L['AVAA']}</PopupButton> : null;
+
+
     }
 
     createKutsuLahetettyCell(kutsu) {
