@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.function.Function.identity;
+
 @Component
 public class LokalisointiClientImpl implements LokalisointiClient {
 
@@ -47,7 +49,7 @@ public class LokalisointiClientImpl implements LokalisointiClient {
         return ophHttpClient.<Collection<LokalisointiDto>>execute(httpRequest)
                 .expectedStatus(200)
                 .mapWith(json -> fromJson(json, objectMapper.getTypeFactory().constructCollectionType(List.class, LokalisointiDto.class)))
-                .orElseThrow(() -> new RuntimeException(String.format("Osoite %s palautti 204 tai 404")));
+                .orElseThrow(() -> new RuntimeException(String.format("Käännösten lataaminen epäonnistui, lokalisointipalvelu palautti 204 tai 404 (%s)", url)));
     }
 
     private <T> T fromJson(String json, JavaType javaType) {
@@ -69,11 +71,11 @@ public class LokalisointiClientImpl implements LokalisointiClient {
                 .post(url)
                 .setEntity(httpEntity)
                 .build();
-        String responseAsJson = ophHttpClient.<String>execute(httpRequest)
+        String json = ophHttpClient.<String>execute(httpRequest)
                 .expectedStatus(200)
-                .mapWith(json -> json)
-                .orElseThrow(() -> new UnsupportedOperationException(String.format("Osoite %s palautti 204 tai 404", url)));
-        LOGGER.info("Lokalisointipalvelu palautti: {}", responseAsJson);
+                .mapWith(identity())
+                .orElseThrow(() -> new RuntimeException(String.format("Käännösten tallentaminen epäonnistui, lokalisointipalvelu palautti 204 tai 404 (%s)", url)));
+        LOGGER.info("Lokalisointipalvelu palautti: {}", json);
     }
 
     private String toJson(Object dto) {
