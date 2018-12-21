@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Authentication
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -44,14 +45,17 @@ public class RyhmasahkopostiClientImpl implements RyhmasahkopostiClient {
     @Override
     public void sendRyhmaSahkoposti(EmailData emailData) {
         String url = this.urlConfiguration.url("ryhmasahkoposti-service.email");
-        OphHttpEntity entity = new OphHttpEntity.Builder()
-                .content(serializeEmailData(emailData))
+        OphHttpRequest request = OphHttpRequest.Builder
+                .post(url)
+                .setEntity(new OphHttpEntity.Builder()
+                        .content(serializeEmailData(emailData))
+                        .contentType(ContentType.APPLICATION_JSON)
+                        .build())
                 .build();
-        OphHttpRequest request = OphHttpRequest.Builder.post(url).setEntity(entity).build();
         httpClient.<String>execute(request)
                 .expectedStatus(200)
                 .mapWith(identity())
-                .orElseThrow(() -> new RestClientException(String.format("Osoite %s palautti 204 tai 404", url)));
+                .orElseThrow(() -> new RestClientException(String.format("Sending email failed. Ryhmasahkopostipalvelu returned error status code 204 or 404")));
     }
 
     private String serializeEmailData(EmailData emailData) {

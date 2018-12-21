@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfigurati
 import fi.vm.sade.oppijanumerorekisteri.dto.MuutostietoHetus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
@@ -45,15 +46,17 @@ public class MuutostietoClientImpl implements MuutostietoClient {
     @Override
     public void sendHetus(MuutostietoHetus hetus) {
         String url = urlConfiguration.url("henkilotietomuutos-service.vtj.hetut");
-        OphHttpEntity entity = new OphHttpEntity.Builder()
-                .content(serializeHetus(hetus))
-                .build();
-        httpClient.<String>execute(OphHttpRequest.Builder
+        OphHttpRequest request = OphHttpRequest.Builder
                 .post(url)
-                .setEntity(entity).build())
+                .setEntity(new OphHttpEntity.Builder()
+                        .content(serializeHetus(hetus))
+                        .contentType(ContentType.APPLICATION_JSON)
+                        .build())
+                .build();
+        httpClient.<String>execute(request)
                 .expectedStatus(200)
                 .mapWith(identity())
-                .orElseThrow(() -> new RestClientException(String.format("Osoite %s palautti 204 tai 404", url)));
+                .orElseThrow(() -> new RestClientException(String.format("Henkilotietomuutos-service returned error status code 204 or 404")));
     }
 
     private String serializeHetus(MuutostietoHetus hetus) {

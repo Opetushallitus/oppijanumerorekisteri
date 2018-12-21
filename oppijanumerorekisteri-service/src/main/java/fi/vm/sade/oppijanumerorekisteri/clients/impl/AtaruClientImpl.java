@@ -48,8 +48,7 @@ public class AtaruClientImpl implements AtaruClient{
 
     private List<HakemusDto> fetchByOid(String oid, TypeReference<List<Map<String, Object>>> hakemusType) {
         String url = urlConfiguration.url("ataru.applications", oid);
-        OphHttpRequest request = OphHttpRequest.Builder.get(url).build();
-        return this.ophHttpClient.<List<HakemusDto>>execute(request)
+        return this.ophHttpClient.<List<HakemusDto>>execute(OphHttpRequest.Builder.get(url).build())
                 .expectedStatus(200)
                 .mapWith(json -> jsonToHakemusDtoList(oid, json, hakemusType))
                 .orElseThrow(() -> new HttpConnectionException("Failed to fetch applications from ataru. Status code: 204 or 404. Requested applications for user: " + oid));
