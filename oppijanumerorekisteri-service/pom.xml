@@ -68,10 +68,6 @@
             <artifactId>koodisto-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>fi.vm.sade.rajapinnat</groupId>
             <artifactId>vtj-api</artifactId>
         </dependency>

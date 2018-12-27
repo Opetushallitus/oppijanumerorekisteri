@@ -1,60 +1,58 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.generic.rest.CachingRestClient;
+import fi.vm.sade.javautils.http.OphHttpClient;
+import fi.vm.sade.javautils.http.OphHttpEntity;
+import fi.vm.sade.javautils.http.OphHttpRequest;
+import fi.vm.sade.javautils.http.auth.CasAuthenticator;
 import fi.vm.sade.kayttooikeus.dto.KayttooikeudetDto;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.PermissionCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.KayttajaReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.annotation.PostConstruct;
 import java.util.*;
 
-import static fi.vm.sade.javautils.httpclient.OphHttpClient.JSON;
+import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.ioExceptionToRestClientException;
+import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.noContentOrNotFoundException;
+import static java.util.function.Function.identity;
 
 @Component
+@RequiredArgsConstructor
 public class KayttooikeusClientImpl implements KayttooikeusClient {
-    private final ObjectMapper objectMapper;
-    private final UrlConfiguration urlConfiguration;
-    // Static so caching is used properly.
-    private final static CachingRestClient cachingRestClient = new CachingRestClient()
-            .setClientSubSystemCode("oppijanumerorekisteri.oppijanumerorekisteri-service");
 
-    @Autowired
-    public KayttooikeusClientImpl(ObjectMapper objectMapper, UrlConfiguration urlConfiguration,
-                                  AuthenticationProperties authenticationProperties) {
-        this.objectMapper = objectMapper;
-        this.urlConfiguration = urlConfiguration;
-        cachingRestClient.setWebCasUrl(this.urlConfiguration.url("cas.url"));
-        cachingRestClient.setCasService(this.urlConfiguration.url("kayttooikeus-service.security-check"));
-        cachingRestClient.setUsername(authenticationProperties.getKayttooikeus().getUsername());
-        cachingRestClient.setPassword(authenticationProperties.getKayttooikeus().getPassword());
+    private OphHttpClient httpClient;
+    private final UrlConfiguration urlConfiguration;
+    private final ObjectMapper objectMapper;
+    private final AuthenticationProperties authenticationProperties;
+
+    @PostConstruct
+    public void setup() {
+        CasAuthenticator authenticator = new CasAuthenticator.Builder()
+                .username(authenticationProperties.getKayttooikeus().getUsername())
+                .password(authenticationProperties.getKayttooikeus().getPassword())
+                .webCasUrl(urlConfiguration.url("cas.url"))
+                .casServiceUrl(urlConfiguration.url("kayttooikeus-service.security-check"))
+                .build();
+
+        this.httpClient = new OphHttpClient.Builder(ConfigEnums.SUBSYSTEMCODE.value()).authenticator(authenticator).build();
     }
 
     @Override
     public Optional<KayttajaReadDto> getKayttajaByOid(String oid) {
         String url = urlConfiguration.url("kayttooikeus-service.henkilo.byOid", oid);
-        try {
-            KayttajaReadDto dto = cachingRestClient.get(url, KayttajaReadDto.class);
-            return Optional.of(dto);
-        } catch (CachingRestClient.HttpException ex) {
-            if (ex.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
-                return Optional.empty();
-            }
-            throw new RestClientException(ex.getMessage(), ex);
-        } catch (IOException ex) {
-            throw new RestClientException(ex.getMessage(), ex);
-        }
+        return httpClient.<KayttajaReadDto>execute(OphHttpRequest.Builder.get(url).build())
+                .expectedStatus(200)
+                .mapWith(json -> ioExceptionToRestClientException(() -> objectMapper.readValue(json, KayttajaReadDto.class)));
     }
 
     @Override
@@ -68,15 +66,16 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         permissionCheckDto.setExternalPermissionService(externalPermissionService);
         permissionCheckDto.setUserOid(userOid);
         String url = this.urlConfiguration.url("kayttooikeus-service.s2s-checkUserPermissionToUser");
-        Boolean content;
-        try {
-            content = this.objectMapper.readerFor(Boolean.class)
-                    .readValue(cachingRestClient.post(url, JSON, this.objectMapper.writeValueAsString(permissionCheckDto))
-                            .getEntity().getContent());
-        } catch (IOException e) {
-            throw new RestClientException(e.getMessage(), e);
-        }
-        return content;
+        OphHttpRequest request = OphHttpRequest.Builder.post(url)
+                .setEntity(new OphHttpEntity.Builder()
+                        .content(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(permissionCheckDto)))
+                        .contentType(ContentType.APPLICATION_JSON)
+                        .build())
+                .build();
+        return httpClient.<Boolean>execute(request)
+                .expectedStatus(200)
+                .mapWith(json -> ioExceptionToRestClientException(() -> objectMapper.readerFor(Boolean.class).readValue(json)))
+                .orElseThrow(() -> noContentOrNotFoundException(url));
     }
 
     @Override
@@ -89,25 +88,25 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         permissionCheckDto.setExternalPermissionService(externalPermissionService);
         permissionCheckDto.setUserOid(userOid);
         String url = this.urlConfiguration.url("kayttooikeus-service.s2s-checkUserPermissionToUser");
-        Boolean content;
-        try {
-            content = this.objectMapper.readerFor(Boolean.class)
-                    .readValue(cachingRestClient.post(url, JSON, this.objectMapper.writeValueAsString(permissionCheckDto))
-                            .getEntity().getContent());
-        } catch (IOException e) {
-            throw new RestClientException(e.getMessage(), e);
-        }
-        return content;
+        OphHttpRequest request = OphHttpRequest.Builder.post(url)
+                .setEntity(new OphHttpEntity.Builder()
+                        .content(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(permissionCheckDto)))
+                        .contentType(ContentType.APPLICATION_JSON)
+                        .build())
+                .build();
+        return httpClient.<Boolean>execute(request)
+                .expectedStatus(200)
+                .mapWith(json -> ioExceptionToRestClientException(() -> objectMapper.readerFor(Boolean.class).readValue(json)))
+                .orElseThrow(() -> noContentOrNotFoundException(url));
     }
 
     @Override
     public void passivoiHenkilo(String oidHenkilo, String kasittelijaOid) {
         String url = getPassivoiHenkiloUrl(oidHenkilo, kasittelijaOid);
-        try {
-            cachingRestClient.delete(url);
-        } catch (IOException e) {
-            throw new RestClientException(e.getMessage(), e);
-        }
+        httpClient.<String>execute(OphHttpRequest.Builder.delete(url).build())
+                .expectedStatus(200)
+                .mapWith(identity())
+                .orElseThrow(() -> noContentOrNotFoundException(url));
     }
 
     protected String getPassivoiHenkiloUrl(String oidHenkilo, String kasittelijaOid) {
@@ -123,30 +122,38 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
     }
 
     private KayttooikeudetDto getHenkiloKayttooikeudetByUrl(String url, OrganisaatioCriteria criteria) {
-        try {
-            String request = objectMapper.writeValueAsString(criteria);
-            try (InputStream response = cachingRestClient.post(url, JSON, request).getEntity().getContent()) {
-                KayttooikeudetDto kayttooikeudet = objectMapper.readValue(response, KayttooikeudetDto.class);
-                if (!kayttooikeudet.isAdmin() && kayttooikeudet.getOids() == null) {
-                    throw new DataInconsistencyException("Käyttöoikeuspalvelu palautti epäkonsistenttia tietoa");
-                }
-                return kayttooikeudet;
-            }
-        } catch (IOException e) {
-            throw new RestClientException(e.getMessage(), e);
+        String requestJson = ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(criteria));
+        OphHttpRequest request = OphHttpRequest.Builder.post(url)
+                .setEntity(new OphHttpEntity.Builder()
+                        .content(requestJson)
+                        .contentType(ContentType.APPLICATION_JSON)
+                        .build())
+                .build();
+        KayttooikeudetDto kayttooikeudet = httpClient.<KayttooikeudetDto>execute(request)
+                .expectedStatus(200)
+                .mapWith(responseJson -> ioExceptionToRestClientException(() -> objectMapper.readValue(responseJson, KayttooikeudetDto.class)))
+                .orElseThrow(() -> noContentOrNotFoundException(url));
+        if (!kayttooikeudet.isAdmin() && kayttooikeudet.getOids() == null) {
+            throw new DataInconsistencyException("Käyttöoikeuspalvelu palautti epäkonsistenttia tietoa");
         }
+        return kayttooikeudet;
     }
 
     @Override
     public void ldapSynkroniseHenkilo(String henkiloOid) {
-        try {
-            Map<String, String> queryParams = new HashMap<>();
-            queryParams.put("ldapSynchronization", "NORMAL");
-            String url = this.urlConfiguration.url("kayttooikeus-service.henkilo.ldap-synkronoi", henkiloOid, queryParams);
-            cachingRestClient.put(url, JSON, "{}");
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("ldapSynchronization", "NORMAL");
+        String url = this.urlConfiguration.url("kayttooikeus-service.henkilo.ldap-synkronoi", henkiloOid, queryParams);
+        OphHttpRequest request = OphHttpRequest.Builder.put(url)
+                .setEntity(new OphHttpEntity.Builder()
+                        .content("{}")
+                        .contentType(ContentType.APPLICATION_JSON)
+                        .build())
+                .build();
+        httpClient.<String>execute(request)
+                .expectedStatus(200)
+                .mapWith(identity())
+                .orElseThrow(() -> noContentOrNotFoundException(url));
     }
 
 }
