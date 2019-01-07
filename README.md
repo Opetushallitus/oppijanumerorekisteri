@@ -8,26 +8,16 @@
 ### oppijanumerorekisteri
 Main
 ### oppijanumerorekisteri-api
-Rajapintojen palauttamat luokat kuten DTO:t ja enumeraatiot
+Rajapintojen palauttamat luokat kuten DTO:t ja enumeraatiot. **Tänne ei riippuvuuksia muihin API-moduuleihin**
 ### oppijanumerorekisteri-domain
 Domain model
 ### oppijanumerorekisteri-service
 Palvelinpuoli
 
-## Ajaminen lokaalisti dev-moodissa
-1) Hae `oppijanumerorekisteri.yml`-tiedosto EC2-kontilta ja vie se haluamaasi hakemistoon.
-2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
-3) Aja projekti lokaalisti `mvn spring-boot:run "-Drun.jvmArguments=-Dspring.profiles.active=dev -Dspring.config.additional-location=<path/to/configfile>/oppijanumerorekisteri.yml"`
+## Ajaminen lokaalisti
+Ohjeet palvelun lokaaliin kehittämiseen. Ympäristöä vasten kehittäminen vaatii tietokannan ja alb osalta tunneloinnin AWS:n palvelimen kautta.
 
-IntelliJ ei osaa sulkea spring-boot:run ajettua tomcattia oikein. Kannattaa siis tehdä spring-boot ajokonfiguraatio `OppijanumerorekisteriServiceApplication.java`-tiedostolle seuraavilla VM Options:lla `-Dspring.profiles.active=dev -Dspring.config.additional-location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
-
-Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla olevan esimerkin tavoin suoraan javan kautta: 
-
-`java -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
-
-Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oidia kysyvät rajapinnat toimivat oikein.
-
-## Ajaminen ympäristön CAS-palvelimen kanssa
+### Ajaminen ympäristön CAS-palvelimen kanssa
 1) Hae `oppijanumerorekisteri.yml`-tiedosto EC2-kontilta ja vie se haluamaasi hakemistoon.
 2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
 3) Muuta seuraavat. AWS:n takia kanta ja authorisointi on putkitettava bastionin kautta ssh-tunnelilla
@@ -51,7 +41,7 @@ Nämä osoitteet löytyvät environment repositorystä.
 
 => Aja palvelu. Käytä rajapintoja valitsemasi ympäristön tunnuksilla.
 
-## Lokaalin CAS palvelimen kanssa
+### Lokaalin CAS palvelimen kanssa
 1) Hae EC2-kontilta `authentication`-projektin `common.properties`-tiedosto ja lisää se omaan oph-configuration-hakemistoosi nimellä `cas.properties`
 2) Käännä authentication projecti `mvn clean package`
 3) Kopioi `cas/target/cas-9.3-SNAPSHOT.war` tomcatin oletuskansioon `webapps` tai määrittämääsi kansioon ja uudelleennimeä se `cas.war`
@@ -66,6 +56,22 @@ server:
 => Aja oppijanumerorekisteri
 
 `java -Dcas.baseUrl=http://localhost:8080 -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
+
+### Ajaminen lokaalisti dev-moodissa
+
+_Tämä ei ole tällä hetkellä yleensä käytetty kehitystapa_
+
+1) Hae `oppijanumerorekisteri.yml`-tiedosto EC2-kontilta ja vie se haluamaasi hakemistoon.
+2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
+3) Aja projekti lokaalisti `mvn spring-boot:run "-Drun.jvmArguments=-Dspring.profiles.active=dev -Dspring.config.additional-location=<path/to/configfile>/oppijanumerorekisteri.yml"`
+
+IntelliJ ei osaa sulkea spring-boot:run ajettua tomcattia oikein. Kannattaa siis tehdä spring-boot ajokonfiguraatio `OppijanumerorekisteriServiceApplication.java`-tiedostolle seuraavilla VM Options:lla `-Dspring.profiles.active=dev -Dspring.config.additional-location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
+
+Vaihtoehtoisesti voidaan ajaa kohdan 3 tavalla suoraan komentorivillä tai alla olevan esimerkin tavoin suoraan javan kautta: 
+
+`java -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
+
+Huom! Valitse tunnukseksi jonkin luokalla olevan käyttäjän OID. Tällöin oidia kysyvät rajapinnat toimivat oikein.
 
 ## Lombok
 Käytössä on lombok joten IDE tarvitsee pluginin ymmärtääkseen tämän annotaatioita.
