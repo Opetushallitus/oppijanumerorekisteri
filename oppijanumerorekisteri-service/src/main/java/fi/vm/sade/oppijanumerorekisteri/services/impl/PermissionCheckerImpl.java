@@ -28,10 +28,10 @@ import static java.util.stream.Collectors.toSet;
 @Service("permissionChecker")
 @RequiredArgsConstructor
 public class PermissionCheckerImpl implements PermissionChecker {
-    private static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
+    public static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
     private static final String ORGANISAATIO_OID_PREFIX = "1.2.246.562.10";
-    private static final String ROOT_ORGANISATION_SUFFIX = String.format("_%s.00000000001", ORGANISAATIO_OID_PREFIX);
+    public static final String ROOT_ORGANISATION_SUFFIX = "_" + ORGANISAATIO_OID_PREFIX + ".00000000001";
     public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
     public static final String KAYTTOOIKEUS_OPPIJOIDENTUONTI = "OPPIJOIDENTUONTI";
     public static final String KAYTTOOIKEUS_HENKILON_RU = "HENKILON_RU";

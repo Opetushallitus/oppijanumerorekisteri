@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   jackson:
     serialization:
       write-dates-as-timestamps: true
@@ -22,3 +24,6 @@ oppijanumerorekisteri:
 cas:
   send-renew: false
   key: oppijanumerorekisteri-service
+dev:
+  username: username
+  password: password

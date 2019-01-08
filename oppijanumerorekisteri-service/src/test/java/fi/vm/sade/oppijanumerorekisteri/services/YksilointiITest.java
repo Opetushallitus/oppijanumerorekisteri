@@ -442,7 +442,7 @@ public class YksilointiITest {
         Henkilo henkilo = henkiloService.getEntityByOid(yksiloitavaOid);
         assertThat(henkilo)
                 .extracting(Henkilo::getHetu)
-                .contains("170498-993H");
+                .isEqualTo("170498-993H");
     }
 
     @Test
@@ -475,10 +475,10 @@ public class YksilointiITest {
 
         assertThat(henkiloService.getEntityByOid(duplikaattiOid))
                 .extracting(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
-                .contains(tuple("170498-993H", true));
+                .isEqualTo(tuple("170498-993H", true));
         assertThat(henkiloService.getEntityByOid(yksiloitavaOid))
                 .extracting(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
-                .contains(tuple(null, false));
+                .isEqualTo(tuple(null, false));
         assertThat(henkiloService.findSlavesByMasterOid(duplikaattiOid))
                 .hasSize(1)
                 .extracting(HenkiloReadDto::getHetu)
@@ -520,10 +520,10 @@ public class YksilointiITest {
 
         assertThat(henkiloService.getEntityByOid(duplikaattiOid))
                 .extracting(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
-                .contains(tuple("170498-993H", true));
+                .isEqualTo(tuple("170498-993H", true));
         assertThat(henkiloService.getEntityByOid(yksiloitavaOid))
                 .extracting(henkilo1 -> tuple(henkilo1.getHetu(), henkilo1.isYksiloityVTJ()))
-                .contains(tuple(null, false));
+                .isEqualTo(tuple(null, false));
         assertThat(henkiloService.findSlavesByMasterOid(duplikaattiOid))
                 .hasSize(1)
                 .extracting(HenkiloReadDto::getHetu)
