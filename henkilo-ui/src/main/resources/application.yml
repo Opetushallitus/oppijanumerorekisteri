@@ -1,6 +1,6 @@
 server:
-  context-path: /henkilo-ui
-management.security.roles: APP_HENKILONHALLINTA_OPHREKISTERI
+  servlet:
+    context-path: /henkilo-ui
 henkiloui:
   lokalisointi_synkronointi:
     aktiivinen: false
