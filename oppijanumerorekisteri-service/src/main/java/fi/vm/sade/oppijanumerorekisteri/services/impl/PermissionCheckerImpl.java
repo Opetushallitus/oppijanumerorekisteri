@@ -28,7 +28,6 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
-    private static final String ROLE_HENKILONHALLINTA_PREFIX = "ROLE_APP_HENKILONHALLINTA_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
     private static final String ORGANISAATIO_OID_PREFIX = "1.2.246.562.10";
     private static final String ROOT_ORGANISATION_SUFFIX = String.format("_%s.00000000001", ORGANISAATIO_OID_PREFIX);
@@ -45,7 +44,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private final OrganisaatioService organisaatioService;
 
-    public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, List<String> allowedRoles,
+    @Override
+    public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
         List<HenkiloDto> permissionCheckedPersons = new ArrayList<>();
 
@@ -62,7 +62,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
         return permissionCheckedPersons;
     }
 
-    public Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, List<String> allowedRoles,
+    @Override
+    public Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                          ExternalPermissionService permissionCheckService) throws IOException {
         if (persons == null || persons.isEmpty()) {
             return new HashMap<>();
@@ -75,15 +76,6 @@ public class PermissionCheckerImpl implements PermissionChecker {
             }
         }
         return permissionCheckedPersons;
-    }
-
-    @Override
-    @Deprecated
-    public boolean isAllowedToAccessPerson(String userOid, List<String> allowedRoles,
-                                           ExternalPermissionService externalPermissionService) throws IOException {
-        return isAllowedToAccessPerson(userOid, (callingUserOid, callingUserRoles)
-                -> kayttooikeusClient.checkUserPermissionToUser(callingUserOid, userOid, allowedRoles, externalPermissionService, callingUserRoles)
-        );
     }
 
     @Override
@@ -143,8 +135,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private boolean isSuperUser(Set<String> roles) {
         Set<String> rekisterinpitajaroolit = Stream.of(
-                ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX,
-                ROLE_HENKILONHALLINTA_PREFIX + "OPHREKISTERI" + ROOT_ORGANISATION_SUFFIX).collect(toSet());
+                ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX).collect(toSet());
         return roles.stream().anyMatch(rekisterinpitajaroolit::contains);
     }
 
