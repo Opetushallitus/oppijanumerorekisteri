@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
+
 
 @Api(tags = "Henkilot")
 @RestController
@@ -224,7 +226,7 @@ public class HenkiloController {
     public List<HenkiloDto> findHenkilotByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
                                                   @RequestHeader(value = "External-Permission-Service", required = false)
                                                           ExternalPermissionService permissionService) throws IOException {
-        return this.permissionChecker.getPermissionCheckedHenkilos(
+        return this.permissionChecker.filterUnpermittedHenkilo(
                 this.henkiloService.getHenkilosByOids(oids),
                 Collections.singletonMap("OPPIJANUMEROREKISTERI", Arrays.asList("READ", "HENKILON_RU")),
                 permissionService
@@ -239,9 +241,9 @@ public class HenkiloController {
     public Map<String, HenkiloDto> masterHenkilosByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
                                                            @RequestHeader(value = "External-Permission-Service", required = false)
                                                           ExternalPermissionService permissionService) throws IOException {
-        return this.permissionChecker.getPermissionCheckedHenkilos(
+        return this.permissionChecker.filterUnpermittedHenkilo(
                 this.henkiloService.getMastersByOids(Sets.newHashSet(oids)),
-                Collections.singletonMap("OPPIJANUMEROREKISTERI", Arrays.asList("READ", "HENKILON_RU")),
+                Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Arrays.asList(KAYTTOOIKEUS_READ, KAYTTOOIKEUS_HENKILON_RU)),
                 permissionService
         );
     }
@@ -465,7 +467,11 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloHetuList", method = RequestMethod.POST)
-    public List<HenkiloPerustietoDto> henkilotByHenkiloHetuList(@ApiParam("Format: [\"hetu1\", ...]") @RequestBody List<String> henkiloHetus) {
-        return this.henkiloService.getHenkiloPerustietoByHetus(henkiloHetus);
+    public List<HenkiloPerustietoDto> henkilotByHenkiloHetuList(@ApiParam("Format: [\"hetu1\", ...]") @RequestBody List<String> henkiloHetus,
+                                                                @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        List<HenkiloPerustietoDto> henkiloPerustietoDtos = this.henkiloService.getHenkiloPerustietoByHetus(henkiloHetus);
+        return this.permissionChecker.filterUnpermittedHenkiloPerustieto(henkiloPerustietoDtos,
+                Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Collections.singletonList(KAYTTOOIKEUS_HENKILON_RU)),
+                permissionService);
     }
 }
