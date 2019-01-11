@@ -227,12 +227,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloUpdateDto.setAidinkieli(null);
         }
         if (henkiloUpdateDto.getAsiointiKieli() != null && henkiloUpdateDto.getAsiointiKieli().getKieliKoodi() != null) {
-            // Request ldap sync only if asiointikieli not set or changes.
-            if (henkiloSaved.getAsiointiKieli() == null
-                    || StringUtils.isEmpty(henkiloSaved.getAsiointiKieli().getKieliKoodi())
-                    || !henkiloUpdateDto.getAsiointiKieli().getKieliKoodi().equals(henkiloSaved.getAsiointiKieli().getKieliKoodi())) {
-                this.kayttooikeusClient.ldapSynkroniseHenkilo(henkiloSaved.getOidHenkilo());
-            }
             henkiloSaved.setAsiointiKieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi()));
             henkiloUpdateDto.setAsiointiKieli(null);
         }
