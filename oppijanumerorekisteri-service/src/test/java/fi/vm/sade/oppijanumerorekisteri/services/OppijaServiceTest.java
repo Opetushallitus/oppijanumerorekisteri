@@ -482,7 +482,7 @@ public class OppijaServiceTest {
 
     @Test
     public void shouldFindByNameAsAdmin() {
-        given(this.permissionChecker.isSuperUser()).willReturn(true);
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
 
         Henkilo henkilo = Henkilo.builder()
                 .oidHenkilo("oid1")

@@ -252,7 +252,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<String> listPossibleHenkiloTypesAccessible() {
-        if (this.permissionChecker.isSuperUser()) {
+        if (this.permissionChecker.isSuperUserOrCanReadAll()) {
             return Arrays.stream(HenkiloTyyppi.values()).map(HenkiloTyyppi::toString).collect(Collectors.toList());
         }
         return Collections.singletonList(HenkiloTyyppi.VIRKAILIJA.toString());

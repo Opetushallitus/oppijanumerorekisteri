@@ -42,7 +42,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -50,7 +50,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonAsRekisterinpitaja() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -58,7 +58,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5")
     public void isAllowedToAccessPersonOwnData() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.5", new HashMap<>(), null);
+                .isAllowedToModifyPerson("1.2.3.4.5", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -69,7 +69,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -77,7 +77,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = {"USER"})
     public void isAllowedToAccessPersonNot() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", new HashMap<>(), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", new HashMap<>(), null);
         assertThat(hasAccess).isFalse();
     }
 
@@ -85,7 +85,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsAdmin() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -93,7 +93,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_1.2.246.562.10.00000000001")
     public void isAllowedToAccessPersonByPalveluRooliAsRekisterinpitaja() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -101,7 +101,7 @@ public class PermissionCheckerTest {
     @WithMockUser(value = "1.2.3.4.5")
     public void isAllowedToAccessPersonByPalveluRooliOwnData() throws Exception {
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.5", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.5", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -112,7 +112,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(true);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isTrue();
     }
 
@@ -123,7 +123,7 @@ public class PermissionCheckerTest {
                 anyMap(), eq(null), anySet()))
                 .willReturn(false);
         boolean hasAccess = this.permissionChecker
-                .isAllowedToAccessPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
+                .isAllowedToModifyPerson("1.2.3.4.0", Maps.newHashMap("JOKUPALVELU", Lists.newArrayList()), null);
         assertThat(hasAccess).isFalse();
     }
 
@@ -183,10 +183,10 @@ public class PermissionCheckerTest {
     })
     public void isAllowedToAccessPersonTODO1() throws IOException {
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", new HashMap<>(), null)).isTrue();
+        assertThat(permissionChecker.isAllowedToModifyPerson("henkiloOid", new HashMap<>(), null)).isTrue();
 
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.2"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", new HashMap<>(), null)).isFalse();
+        assertThat(permissionChecker.isAllowedToModifyPerson("henkiloOid", new HashMap<>(), null)).isFalse();
     }
 
     @Test
@@ -197,10 +197,10 @@ public class PermissionCheckerTest {
     })
     public void isAllowedToAccessPersonTODO2() throws IOException {
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isTrue();
+        assertThat(permissionChecker.isAllowedToModifyPerson("henkiloOid", emptyMap(), null)).isTrue();
 
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.2"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isFalse();
+        assertThat(permissionChecker.isAllowedToModifyPerson("henkiloOid", emptyMap(), null)).isFalse();
     }
 
     @Test
@@ -212,9 +212,9 @@ public class PermissionCheckerTest {
     public void isAllowedToAccessPersonOppijoidenTuontiAliorganisaatio() throws IOException {
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1.1"));
         when(organisaatioService.getChildOids(eq("1.2.246.562.10.1"), anyBoolean(), any())).thenReturn(singleton("1.2.246.562.10.1.1"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isTrue();
+        assertThat(permissionChecker.isAllowedToModifyPerson("henkiloOid", emptyMap(), null)).isTrue();
 
         when(organisaatioRepository.findOidByHenkiloOid(eq("henkiloOid"))).thenReturn(singletonList("1.2.246.562.10.1.2"));
-        assertThat(permissionChecker.isAllowedToAccessPerson("henkiloOid", emptyMap(), null)).isFalse();
+        assertThat(permissionChecker.isAllowedToModifyPerson("henkiloOid", emptyMap(), null)).isFalse();
     }
 }

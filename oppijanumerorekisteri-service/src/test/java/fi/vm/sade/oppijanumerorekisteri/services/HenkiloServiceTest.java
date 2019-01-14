@@ -325,7 +325,7 @@ public class HenkiloServiceTest {
 
     @Test
     public void listPossibleHenkiloTypesAccessibleSuperUser() {
-        given(this.permissionCheckerMock.isSuperUser()).willReturn(true);
+        given(this.permissionCheckerMock.isSuperUserOrCanReadAll()).willReturn(true);
         List<String> henkiloTyypit = this.service.listPossibleHenkiloTypesAccessible()
                 .stream().sorted(String::compareToIgnoreCase).collect(Collectors.toList());
         assertThat(henkiloTyypit.size()).isEqualTo(3);

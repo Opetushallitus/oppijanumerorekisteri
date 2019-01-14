@@ -31,9 +31,7 @@ import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -156,7 +154,7 @@ public class OppijaServiceImplTest {
 
     @Test
     public void listMastersByTest() {
-        when(permissionCheckerMock.isSuperUser()).thenReturn(true);
+        when(permissionCheckerMock.isSuperUserOrCanReadAll()).thenReturn(true);
         Henkilo henkilo1slave = new Henkilo();
         henkilo1slave.setOidHenkilo("oid1");
         Henkilo henkilo2 = new Henkilo();

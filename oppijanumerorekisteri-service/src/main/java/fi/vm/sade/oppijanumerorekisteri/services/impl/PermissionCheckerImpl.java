@@ -66,7 +66,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
             return new ArrayList<>();
         }
         return persons.stream()
-                .filter(person -> this.isAllowedToAccessPerson(getOid.apply(person), allowedRoles, permissionCheckService))
+                .filter(person -> this.isAllowedToReadPerson(getOid.apply(person), allowedRoles, permissionCheckService))
                 .collect(Collectors.toList());
     }
 
@@ -79,7 +79,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
         Map<String, HenkiloDto> permissionCheckedPersons = new HashMap<>();
         for (Map.Entry<String, HenkiloDto> person : persons.entrySet()) {
-            if (person.getValue() != null && this.isAllowedToAccessPerson(person.getValue().getOidHenkilo(), allowedRoles, permissionCheckService)) {
+            if (person.getValue() != null && this.isAllowedToReadPerson(person.getValue().getOidHenkilo(), allowedRoles, permissionCheckService)) {
                 permissionCheckedPersons.put(person.getKey(), person.getValue());
             }
         }
@@ -87,8 +87,22 @@ public class PermissionCheckerImpl implements PermissionChecker {
     }
 
     @Override
-    public boolean isAllowedToAccessPerson(String userOid, Map<String, List<String>> allowedPalveluRooli,
+    public boolean isAllowedToModifyPerson(String userOid, Map<String, List<String>> allowedPalveluRooli,
                                            ExternalPermissionService externalPermissionService) {
+        if (this.isSuperUser() || this.isOwnData(userOid)) {
+            return true;
+        }
+        return isAllowedToAccessPerson(userOid, (callingUserOid, callingUserRoles)
+                -> kayttooikeusClient.checkUserPermissionToUserByPalveluRooli(callingUserOid, userOid, allowedPalveluRooli, externalPermissionService, callingUserRoles)
+        );
+    }
+
+    @Override
+    public boolean isAllowedToReadPerson(String userOid, Map<String, List<String>> allowedPalveluRooli,
+                                         ExternalPermissionService externalPermissionService) {
+        if (this.isSuperUserOrCanReadAll() || this.isOwnData(userOid)) {
+            return true;
+        }
         return isAllowedToAccessPerson(userOid, (callingUserOid, callingUserRoles)
                 -> kayttooikeusClient.checkUserPermissionToUserByPalveluRooli(callingUserOid, userOid, allowedPalveluRooli, externalPermissionService, callingUserRoles)
         );
@@ -96,9 +110,6 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     private boolean isAllowedToAccessPerson(String userOid, BiFunction<String, Set<String>, Boolean> hasPermissionFunction) {
         Set<String> callingUserRoles = this.getCasRoles();
-        if (this.isSuperUser(callingUserRoles) || this.isOwnData(userOid)) {
-            return true;
-        }
         if (callingUserRoles.contains(ROLE_OPPIJOIDENTUONTI)) {
             // sallitaan tietojen käsittely jos virkailija ja oppija
             // ovat samassa organisaatiossa (ja virkailijalla on
@@ -141,10 +152,19 @@ public class PermissionCheckerImpl implements PermissionChecker {
         return this.isSuperUser(this.getCasRoles());
     }
 
+    @Override
+    public boolean isSuperUserOrCanReadAll() {
+        return this.isSuperUser() || this.isReadAllUser(this.getCasRoles());
+    }
+
     private boolean isSuperUser(Set<String> roles) {
-        Set<String> rekisterinpitajaroolit = Stream.of(
-                ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX).collect(toSet());
-        return roles.stream().anyMatch(rekisterinpitajaroolit::contains);
+        String rekisterinpitajaroolit = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX;
+        return roles.stream().anyMatch(rekisterinpitajaroolit::equals);
+    }
+
+    private boolean isReadAllUser(Set<String> roles) {
+        String readAllUserRoles = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA_READ" + ROOT_ORGANISATION_SUFFIX;
+        return roles.stream().anyMatch(readAllUserRoles::equals);
     }
 
     private boolean isOwnData(String dataHenkiloOid) {
