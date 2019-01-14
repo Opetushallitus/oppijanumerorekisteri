@@ -46,7 +46,8 @@ public class OppijaController {
     }
 
     @GetMapping("/tuonti={id}")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
@@ -64,7 +65,8 @@ public class OppijaController {
     }
 
     @GetMapping("/tuonti={id}/perustiedot")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',''," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
             notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
@@ -73,7 +75,8 @@ public class OppijaController {
     }
 
     @GetMapping("/yhteenveto")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin yhteenveto")
     public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
@@ -81,7 +84,8 @@ public class OppijaController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden haku")
     public Page<OppijaListDto> list(
@@ -94,7 +98,8 @@ public class OppijaController {
     }
 
     @GetMapping("/muuttuneet")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Muuttuneiden oppijoiden haku",
             notes = "Muuttuneet oppijat listataan vanhimmasta uusimpaan.")

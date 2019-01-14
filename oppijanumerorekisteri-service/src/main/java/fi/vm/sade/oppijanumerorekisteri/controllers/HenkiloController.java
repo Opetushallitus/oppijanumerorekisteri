@@ -43,6 +43,7 @@ public class HenkiloController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
             notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
@@ -57,6 +58,7 @@ public class HenkiloController {
     @GetMapping("/hakutermi={hakutermi}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @PostAuthorize("@permissionChecker.isAllowedToAccessPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
@@ -70,7 +72,8 @@ public class HenkiloController {
     }
 
     @GetMapping("/yhteystieto={arvo}/oid")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @ApiOperation(value = "Hakee henkilöiden OID:t yhteystiedon perusteella.")
     public Iterable<String> getByYhteystieto(@PathVariable String arvo) {
         return henkiloService.listOidByYhteystieto(arvo);
@@ -85,6 +88,7 @@ public class HenkiloController {
     }
 
     @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {
         // get oid from security context
@@ -92,7 +96,8 @@ public class HenkiloController {
     }
 
     @ApiOperation("Hakee henkilöiden OID:n, HeTu:n ja nimet nimen perusteella")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
     public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
@@ -111,7 +116,8 @@ public class HenkiloController {
     }
 
     @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
@@ -176,7 +182,7 @@ public class HenkiloController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', " +
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/{oid}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Passivoi henkilön mukaanlukien käyttöoikeudet ja organisaatiot.",
@@ -221,6 +227,7 @@ public class HenkiloController {
             notes = "Hakee henkilöiden tiedot annetun OID:ien pohjalta, sisältään kaikkien henkilön kaikki tiedot.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/henkilotByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloDto> findHenkilotByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
@@ -235,7 +242,8 @@ public class HenkiloController {
 
     @ApiOperation(value = "Henkilöiden master tietojen haku OID:ien perusteella max 5000 kerrallaan.",
             notes = "Hakee henkilöiden master tiedot annetun OID:ien pohjalta max 5000 kerrallaan.")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/masterHenkilosByOidList", method = RequestMethod.POST)
     public Map<String, HenkiloDto> masterHenkilosByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
@@ -260,7 +268,8 @@ public class HenkiloController {
 
     @GetMapping("/{oid}/identification")
     @ApiOperation("Henkilön tunnistetietojen haku.")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     public Iterable<IdentificationDto> getIdentifications(@PathVariable String oid) {
         return identificationService.listByHenkiloOid(oid);
     }
@@ -276,6 +285,7 @@ public class HenkiloController {
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.",
             notes = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
+            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/henkilotypes", method = RequestMethod.GET)
@@ -305,7 +315,7 @@ public class HenkiloController {
     }
 
 
-    @PreAuthorize("@permissionChecker.isAllowedToAccessPerson(#henkiloOid, {}, #permissionService)")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/{oid}/purayksilointi", method = RequestMethod.POST)
     @ApiOperation(value = "Henkilön yksilöinnin purku.",
             notes = "Purkaa hetuttoman henkilön yksilöinnin",
@@ -339,7 +349,8 @@ public class HenkiloController {
     }
 
     @GetMapping("/yksilointitiedot")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @ApiOperation("Hakee epäonnistuneet yksilöinnit")
     public Page<YksilointiVertailuDto> listYksilointitiedot(
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
@@ -348,7 +359,8 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/asiayhteys/palvelu/")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
     public Iterable<String> listPalvelutunnisteet(@PathVariable String oid) {
         return yksilointiService.listPalvelutunnisteet(oid);
@@ -407,7 +419,8 @@ public class HenkiloController {
     }
 
     @GetMapping("/duplikaatit")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation("Hakee duplikaatit nimeä vertailemalla")
     public List<HenkiloDuplicateDto> getDuplikaatit(
@@ -457,14 +470,16 @@ public class HenkiloController {
     }
 
     @ApiOperation("Hae käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/{oidHenkilo}/omattiedot", method = RequestMethod.GET)
     public HenkiloOmattiedotDto getUserOmatTiedot(@PathVariable String oidHenkilo) {
         return this.henkiloService.getOmatTiedot(oidHenkilo);
     }
 
     @ApiOperation("Hakee annetun henkilötunnus-listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloHetuList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloHetuList(@ApiParam("Format: [\"hetu1\", ...]") @RequestBody List<String> henkiloHetus,
