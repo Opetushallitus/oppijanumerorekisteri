@@ -66,9 +66,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
             return new ArrayList<>();
         }
         return persons.stream()
-                .map(person -> new AbstractMap.SimpleEntry<>(getOid.apply(person), person))
-                .filter(entry -> this.isAllowedToAccessPerson(entry.getKey(), allowedRoles, permissionCheckService))
-                .map(Map.Entry::getValue)
+                .filter(person -> this.isAllowedToAccessPerson(getOid.apply(person), allowedRoles, permissionCheckService))
                 .collect(Collectors.toList());
     }
 
