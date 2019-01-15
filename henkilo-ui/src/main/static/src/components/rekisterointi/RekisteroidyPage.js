@@ -5,8 +5,6 @@ import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot'
 import RekisteroidyOrganisaatiot from "./content/RekisteroidyOrganisaatiot";
 import StaticUtils from "../common/StaticUtils";
 import RekisteroidyHaka from "./content/RekisteroidyHaka";
-import Modal from "../common/modal/Modal";
-import LoadingBarTimer from "../common/loadingbar/LoadingBarTimer";
 import BottomNotificationButton from "../common/button/BottomNotificationButton";
 import {isValidPassword} from "../../validation/PasswordValidator";
 
@@ -98,13 +96,6 @@ class RekisteroidyPage extends React.Component {
                     />
                 </div>
             </div>
-            <Modal show={this.props.authToken !== ''} closeOnOuterClick={false} onClose={() => {}}>
-                <div className="rekisteroidy-modal">
-                    <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_ODOTTAA_SYNKRONOINTIA_OTSIKKO']}</p>
-                    <p className="oph-h6 oph-bold">{this.props.L['REKISTEROIDY_ODOTTAA_SYNKRONOINTIA_TEKSTI']}</p>
-                    <LoadingBarTimer timeInSeconds={60} restartAfterFinished={true} />
-                </div>
-            </Modal>
         </div>;
     }
 
