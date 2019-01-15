@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
@@ -15,9 +16,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,6 +34,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private static final String ROOT_ORGANISATION_SUFFIX = String.format("_%s.00000000001", ORGANISAATIO_OID_PREFIX);
     public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
     public static final String KAYTTOOIKEUS_OPPIJOIDENTUONTI = "OPPIJOIDENTUONTI";
+    public static final String KAYTTOOIKEUS_HENKILON_RU = "HENKILON_RU";
+    public static final String KAYTTOOIKEUS_READ = "READ";
 
     private final static Logger logger = LoggerFactory.getLogger(PermissionChecker.class);
 
@@ -45,26 +48,31 @@ public class PermissionCheckerImpl implements PermissionChecker {
     private final OrganisaatioService organisaatioService;
 
     @Override
-    public List<HenkiloDto> getPermissionCheckedHenkilos(List<HenkiloDto> persons, Map<String, List<String>> allowedRoles,
-                                                         ExternalPermissionService permissionCheckService) throws IOException {
-        List<HenkiloDto> permissionCheckedPersons = new ArrayList<>();
-
-        if (persons == null || persons.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        for (HenkiloDto person : persons) {
-            if (person != null && this.isAllowedToAccessPerson(person.getOidHenkilo(), allowedRoles, permissionCheckService)) {
-                permissionCheckedPersons.add(person);
-            }
-        }
-
-        return permissionCheckedPersons;
+    public List<HenkiloDto> filterUnpermittedHenkilo(Collection<HenkiloDto> persons,
+                                                     Map<String, List<String>> allowedRoles,
+                                                     ExternalPermissionService permissionCheckService) {
+        return this.filterUnPermitted(persons, HenkiloDto::getOidHenkilo, allowedRoles, permissionCheckService);
     }
 
     @Override
-    public Map<String, HenkiloDto> getPermissionCheckedHenkilos(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
-                                                         ExternalPermissionService permissionCheckService) throws IOException {
+    public List<HenkiloPerustietoDto> filterUnpermittedHenkiloPerustieto(Collection<HenkiloPerustietoDto> persons,
+                                                                         Map<String, List<String>> allowedRoles,
+                                                                         ExternalPermissionService permissionCheckService) {
+        return this.filterUnPermitted(persons, HenkiloPerustietoDto::getOidHenkilo, allowedRoles, permissionCheckService);
+    }
+
+    private <T> List<T> filterUnPermitted(Collection<T> persons, Function<T, String> getOid, Map<String, List<String>> allowedRoles, ExternalPermissionService permissionCheckService) {
+        if (persons == null) {
+            return new ArrayList<>();
+        }
+        return persons.stream()
+                .filter(person -> this.isAllowedToAccessPerson(getOid.apply(person), allowedRoles, permissionCheckService))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, HenkiloDto> filterUnpermittedHenkilo(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
+                                                            ExternalPermissionService permissionCheckService) {
         if (persons == null || persons.isEmpty()) {
             return new HashMap<>();
         }
@@ -80,7 +88,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     @Override
     public boolean isAllowedToAccessPerson(String userOid, Map<String, List<String>> allowedPalveluRooli,
-                                           ExternalPermissionService externalPermissionService) throws IOException {
+                                           ExternalPermissionService externalPermissionService) {
         return isAllowedToAccessPerson(userOid, (callingUserOid, callingUserRoles)
                 -> kayttooikeusClient.checkUserPermissionToUserByPalveluRooli(callingUserOid, userOid, allowedPalveluRooli, externalPermissionService, callingUserRoles)
         );

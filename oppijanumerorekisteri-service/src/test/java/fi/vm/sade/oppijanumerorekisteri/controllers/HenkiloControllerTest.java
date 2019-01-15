@@ -20,19 +20,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import java.util.Date;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -379,9 +380,12 @@ public class HenkiloControllerTest {
                 "]";
         given(this.henkiloService.getHenkiloPerustietoByHetus(Collections.singletonList("081296-967T")))
                 .willReturn(Collections.singletonList(henkiloPerustietoDto));
+        given(this.permissionChecker.filterUnpermittedHenkiloPerustieto(anyCollection(), anyMap(), isNull()))
+                .willAnswer(invocation -> new ArrayList<>(invocation.getArgument(0)));
         this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloHetuList").content(hetuList)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(returnContent));
+        verify(this.permissionChecker, times(1)).filterUnpermittedHenkiloPerustieto(anyCollection(), anyMap(), isNull());
     }
 }
