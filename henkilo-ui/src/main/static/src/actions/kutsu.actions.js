@@ -8,7 +8,6 @@ import {
 
 import {http} from "../http";
 import {urls} from 'oph-urls-js';
-import {fetchCasMe} from "./omattiedot.actions";
 import {addGlobalNotification} from "./notification.actions";
 import {localizeWithState} from "../utilities/localisation.util";
 import {NOTIFICATIONTYPES} from "../components/common/Notification/notificationtypes";
@@ -95,13 +94,6 @@ export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getS
                             dispatch({type: LOGIN_FAILED});
                         }
                         else {
-                            // Wait until user data has been synced to ldap
-                            do {
-                                if(!getState().omattiedot.omattiedotLoading) {
-                                    dispatch(fetchCasMe());
-                                }
-                                await new Promise(resolve => setTimeout(resolve, 4000));
-                            } while (!getState().omattiedot.casMeSuccess);
                             // Redirect to opintopolku root page
                             window.location = window.location.origin;
                         }
