@@ -100,6 +100,10 @@ public class DuplicateServiceImpl implements DuplicateService {
         this.henkiloDataRepository.findByHetu(hetu)
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(oidHenkilo))
                 .ifPresent((oppijaWithSameHetu) -> {
+                    String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[oppijaWithSameHetu.getKaikkiHetut().size()]);
+                    henkiloDataRepository.findByOidHenkilo(oidHenkilo)
+                            .ifPresent(master -> master.addHetu(oppijaWithSameHetuHetuhistoria));
+                    oppijaWithSameHetu.clearHetut();
                     oppijaWithSameHetu.setHetu(null);
                     oppijaWithSameHetu.setYksiloity(false);
                     oppijaWithSameHetu.setYksiloityVTJ(false);
