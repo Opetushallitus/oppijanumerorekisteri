@@ -2,9 +2,14 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
 import org.junit.Test;
@@ -14,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,23 +31,24 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROOT_ORGANISATION_SUFFIX;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = HenkiloController.class)
-@ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
+@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
 public class HenkiloControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -58,8 +65,11 @@ public class HenkiloControllerTest {
     @MockBean
     private IdentificationService identificationService;
 
-    @MockBean
+    @Autowired
     private PermissionChecker permissionChecker;
+
+    @MockBean
+    private KayttooikeusClient kayttooikeusClient;
 
     @MockBean
     private HenkiloUpdatePostValidator henkiloUpdatePostValidator;
@@ -68,14 +78,23 @@ public class HenkiloControllerTest {
     private YksilointiService yksilointiService;
 
     @Autowired
+    private DevProperties devProperties;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private OrganisaatioRepository organisaatioRepository;
+
+    @MockBean
+    private OrganisaatioService organisaatioService;
+
+
     @Test
-    @WithMockUser(username = "1.2.3.4.5")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void list() throws Exception {
         this.mvc.perform(get("/henkilo?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-
     }
 
     @Test
@@ -87,7 +106,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void henkiloOidHetuNimiByHetu() throws Exception {
         HenkiloOidHetuNimiDto henkiloOidHetuNimiDto = DtoUtils.createHenkiloOidHetuNimiDto("arpa", "arpa", "kuutio", "081296-967T",
                 "1.2.3.4.5");
@@ -102,7 +121,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void henkiloOidHetuNimiByHetuNotFound() throws Exception {
         given(this.henkiloService.getHenkiloOidHetuNimiByHetu("081296-967T")).willThrow(new NotFoundException());
         this.mvc.perform(get("/henkilo/henkiloPerusByHetu/081296-967T").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -141,7 +160,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "1.2.3.4.5")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{" +
                 "  \"yhteystietotyyppi1\": {" +
@@ -160,7 +179,7 @@ public class HenkiloControllerTest {
     }
     
     @Test
-    @WithMockUser(username = "1.2.3.4.5")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void getAllHenkiloYhteystiedot() throws Exception {
         String content = "{" +
                 "  \"sahkoposti\": \"testi@test.com\"" +
@@ -188,7 +207,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void henkiloOidHetuNimisByName() throws Exception {
         String returnContent = "[{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
@@ -205,7 +224,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkilo() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
@@ -218,7 +237,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloONRValidationException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
@@ -234,7 +253,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloNotFoundException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
@@ -250,7 +269,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloValidationException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
@@ -266,7 +285,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void findByOid() throws Exception {
         HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
@@ -278,7 +297,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void findByOidNotFound() throws Exception {
         given(this.henkiloService.getHenkilosByOids(Collections.singletonList("1.2.3.4.5")))
                 .willReturn(new ArrayList<>());
@@ -287,7 +306,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void createHenkiloFromHenkiloCreateDto() throws Exception {
         HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
@@ -301,7 +320,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void createHenkiloFromHenkiloCreateDtoInvalidInputHetu() throws Exception {
         HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "bad_hetu", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
@@ -312,7 +331,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void findByIdpAndIdentifier() throws Exception {
         HenkiloDto henkiloDto = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
@@ -322,7 +341,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void findByIdpAndIdentifierNotFound() throws Exception {
         given(this.henkiloService.getHenkiloByIDPAndIdentifier("email", "arpa@kuutio.fi")).willThrow(new NotFoundException());
         this.mvc.perform(get("/henkilo/identification").param("idp", "email").param("id", "arpa@kuutio.fi"))
@@ -330,7 +349,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void findPossibleHenkiloTypes() throws Exception {
         String resultContent = "[\"VIRKAILIJA\", \"PALVELU\", \"OPPIJA\"]";
         given(this.henkiloService.listPossibleHenkiloTypesAccessible())
@@ -340,7 +359,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void oidExists() throws Exception{
         given(this.henkiloService.getOidExists("1.2.3.4.5")).willReturn(true);
         this.mvc.perform(head("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -348,7 +367,7 @@ public class HenkiloControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void oidExistsNotFound() throws Exception{
         given(this.henkiloService.getOidExists("1.2.3.4.5")).willReturn(false);
         this.mvc.perform(head("/henkilo/1.2.3.4.5").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -380,12 +399,9 @@ public class HenkiloControllerTest {
                 "]";
         given(this.henkiloService.getHenkiloPerustietoByHetus(Collections.singletonList("081296-967T")))
                 .willReturn(Collections.singletonList(henkiloPerustietoDto));
-        given(this.permissionChecker.filterUnpermittedHenkiloPerustieto(anyCollection(), anyMap(), isNull()))
-                .willAnswer(invocation -> new ArrayList<>(invocation.getArgument(0)));
         this.mvc.perform(post("/henkilo/henkiloPerustietosByHenkiloHetuList").content(hetuList)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(returnContent));
-        verify(this.permissionChecker, times(1)).filterUnpermittedHenkiloPerustieto(anyCollection(), anyMap(), isNull());
     }
 }

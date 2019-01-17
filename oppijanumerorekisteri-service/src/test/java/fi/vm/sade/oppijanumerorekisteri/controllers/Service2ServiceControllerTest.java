@@ -3,11 +3,16 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,8 +31,9 @@ import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 
+import static fi.vm.sade.oppijanumerorekisteri.dto.FindOrCreateWrapper.created;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,9 +47,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
 @WebMvcTest(Service2ServiceController.class)
-@ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
+@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
 public class Service2ServiceControllerTest  {
     @Autowired
     private MockMvc mvc;
@@ -55,8 +63,18 @@ public class Service2ServiceControllerTest  {
     @MockBean
     private HenkiloModificationService henkiloModificationService;
 
+    @MockBean
+    private KayttooikeusClient kayttooikeusClient;
+
+    @MockBean
+    private OrganisaatioRepository organisaatioRepository;
+
+    @MockBean
+    private OrganisaatioService organisaatioService;
+
+
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getOidByHetuTest() throws Exception{
         given(this.henkiloService.getOidByHetu("123456-9999")).willReturn("1.2.3.4.5");
         this.mvc.perform(get("/s2s/oidByHetu/123456-9999").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -64,7 +82,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getHetusAndOidsTest() throws Exception{
         given(this.henkiloService.getHetusAndOids(null, 0, 100)).willReturn(Arrays.asList(
                 new HenkiloHetuAndOidDto("0.0.0.0.1", "111111-111", new Date(1420063200000L)),
@@ -93,7 +111,7 @@ public class Service2ServiceControllerTest  {
     }
     
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findDuplicateHenkilosTest() throws Exception {
         given(this.henkiloService.findHenkiloViittees(any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
         this.mvc.perform(post("/s2s/duplicateHenkilos")
@@ -112,7 +130,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findChangedPersonsGet() throws Exception {
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
         this.mvc.perform(get("/s2s/changedSince/2015-10-12T10:10:10")
@@ -129,7 +147,7 @@ public class Service2ServiceControllerTest  {
     }
     
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findChangedPersonsGetByTimestamp() throws Exception {
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(emptyList());
         DateTime dt = new DateTime(2015,10,12,0,0,0);
@@ -140,7 +158,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findChangedPersonsPost() throws Exception {
         HenkiloCriteria criteria = HenkiloCriteria.builder().henkiloOids(new HashSet<>(singletonList("1.2.3"))).build();
         given(this.henkiloService.findHenkiloOidsModifiedSince(any(), any(), any(), any())).willReturn(singletonList("1.2.3"));
@@ -154,7 +172,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findOrCreateNewHenkilo() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder().etunimet("arpa").kutsumanimi("arpa").sukunimi("kuutio")
@@ -175,7 +193,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findOrCreateHenkiloConstraintViolationExceptionBadHenkiloTyyppi() throws Exception {
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
@@ -191,7 +209,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findOrCreateHenkiloDataIntegrityViolationException() throws Exception {
         String content = "{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
@@ -208,7 +226,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findOrCreateHenkiloShouldWorkWithoutHetu() throws Exception {
         this.objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         HenkiloPerustietoDto henkiloPerustietoDto = HenkiloPerustietoDto.builder()
@@ -229,7 +247,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findOrCreateMultipleValid() throws Exception {
         String inputContent = "[{\"etunimet\": \"arpa\"," +
                 "\"kutsumanimi\": \"arpa\"," +
@@ -312,7 +330,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getHenkiloYhteystiedot() throws Exception {
         String content = "{\"yhteystietotyyppi2\":" +
                 "{\"sahkoposti\":\"testi@tyo.com\"}," +

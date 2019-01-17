@@ -2,34 +2,44 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import java.util.stream.Stream;
+import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
+import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.stream.Stream;
+
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
 @WebMvcTest(OppijaController.class)
-@ContextConfiguration(classes = OppijanumerorekisteriServiceApplication.class)
+@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
 public class OppijaControllerTest {
 
     @MockBean
@@ -40,6 +50,15 @@ public class OppijaControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private KayttooikeusClient kayttooikeusClient;
+
+    @MockBean
+    private OrganisaatioRepository organisaatioRepository;
+
+    @MockBean
+    private OrganisaatioService organisaatioService;
 
     private OppijaTuontiCreateDto getValidOppijatCreateDto() {
         return OppijaTuontiCreateDto.builder()
@@ -65,7 +84,7 @@ public class OppijaControllerTest {
     }
 
     @Test
-    @WithMockUser("user1")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void putOppijaShouldWork() throws Exception {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
 
@@ -80,7 +99,7 @@ public class OppijaControllerTest {
     }
 
     @Test
-    @WithMockUser("user1")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         dto.setSahkoposti(null);
@@ -183,7 +202,7 @@ public class OppijaControllerTest {
     }
 
     @Test
-    @WithMockUser("user1")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getOppijaShouldValidatePageParameter() throws Exception {
         mvc.perform(get("/oppija?page=1")
                 .accept(MediaType.APPLICATION_JSON)

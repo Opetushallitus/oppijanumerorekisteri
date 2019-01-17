@@ -356,7 +356,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .build();
 
         Henkilo huoltaja = henkiloModificationService.createHenkilo(huoltajaCreateDto);
-        assertThat(huoltaja).extracting(Henkilo::getHetu).containsExactly("271198-9197");
+        assertThat(huoltaja).extracting(Henkilo::getHetu).isEqualTo("271198-9197");
         assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
     }
 
@@ -388,7 +388,7 @@ public class HenkiloModificationServiceIntegrationTest {
 
         Henkilo huoltaja = henkiloModificationService.findOrCreateHuoltaja(huoltajaCreateDto, lapsi);
         assertThat(huoltaja)
-                .extracting(Henkilo::getHetu).containsExactly("111298-917M");
+                .extracting(Henkilo::getHetu).isEqualTo("111298-917M");
         assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
         assertThat(huoltaja.getYhteystiedotRyhma()).hasSize(1)
                 .flatExtracting(YhteystiedotRyhma::getYhteystieto)
