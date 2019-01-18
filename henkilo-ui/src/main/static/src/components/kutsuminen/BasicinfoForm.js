@@ -4,21 +4,17 @@ import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
 import type {Localisations} from "../../types/localisation.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
+import type {KutsuBasicInfo} from "../../types/KutsuBasicInfo.types";
 
-export type BasicinfoType = {
-    etunimi: string,
-    sukunimi: string,
-    email: string,
-    languageCode: string,
-}
+
 
 type Props = {
     disabled: boolean,
-    basicInfo: BasicinfoType,
+    basicInfo: KutsuBasicInfo,
     L: Localisations,
     setBasicInfo: () => void,
     locale: string,
-    setBasicInfo: (BasicinfoType) => void,
+    setBasicInfo: (KutsuBasicInfo) => void,
 }
 
 export default class BasicInfo extends React.Component<Props> {
@@ -72,6 +68,10 @@ export default class BasicInfo extends React.Component<Props> {
                         />
                     </li>
                     <li>
+                        <label>{this.props.L['VIRKAILIJAN_TIEDOT_SAATE']}</label>
+                        <textarea className="oph-input" style={{marginTop: '10px'}} placeholder="Valinnainen saate" onChange={this.updateSaate.bind(this)}></textarea>
+                    </li>
+                    <li>
                         <label>
                             &nbsp;
                         </label>
@@ -105,6 +105,12 @@ export default class BasicInfo extends React.Component<Props> {
     selectLanguage(selection: ReactSelectOption) {
         const { basicInfo } = this.props;
         basicInfo.languageCode = selection.value;
+        this.props.setBasicInfo(basicInfo);
+    }
+
+    updateSaate(event: SyntheticInputEvent<HTMLInputElement>) {
+        const { basicInfo } = this.props;
+        basicInfo.saate = event.target.value;
         this.props.setBasicInfo(basicInfo);
     }
 }

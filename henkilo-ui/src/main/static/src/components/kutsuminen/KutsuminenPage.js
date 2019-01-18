@@ -13,11 +13,11 @@ import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.typ
 import type {Localisations, L10n} from "../../types/localisation.type";
 import ValidationMessageButton from "../common/button/ValidationMessageButton";
 import type {ValidationMessage} from "../../types/validation.type";
-import type {BasicinfoType} from "./BasicinfoForm";
 import StaticUtils from "../common/StaticUtils";
 import { fetchHenkilo } from '../../actions/henkilo.actions'
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
+import type {KutsuBasicInfo} from "../../types/KutsuBasicInfo.types";
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
@@ -39,33 +39,24 @@ type Props = {
 
 type State = {
     confirmationModalOpen: boolean,
-    basicInfo: {
-        etunimi: string,
-        sukunimi: string,
-        email: string,
-        languageCode: string,
-    },
+    basicInfo: KutsuBasicInfo,
     validationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage},
 }
 
 class KutsuminenPage extends React.Component<Props, State>  {
-    initialBasicInfo: {
-        etunimi: string,
-        sukunimi: string,
-        email: string,
-        languageCode: string,
+
+    initialBasicInfo = {
+        etunimi: '',
+        sukunimi: '',
+        email: '',
+        languageCode: '',
+        saate: ''
     };
 
     initialValidationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage};
 
     constructor (props: Props) {
         super(props);
-        this.initialBasicInfo = {
-            etunimi: '',
-            sukunimi: '',
-            email: '',
-            languageCode: '',
-        };
 
         this.initialValidationMessages = {
             organisaatioKayttooikeus: {
@@ -120,7 +111,7 @@ class KutsuminenPage extends React.Component<Props, State>  {
             return (<div className="wrapper"><Loader /></div>);
         }
         else {
-            const disabled = this.isDisabled(this.props.henkilo)
+            const disabled = this.isDisabled(this.props.henkilo);
             return (
                 <div>
                     <form className="wrapper">
@@ -158,7 +149,7 @@ class KutsuminenPage extends React.Component<Props, State>  {
         return !henkilo.hetu || !henkilo.yksiloityVTJ
     }
 
-    static isValid(basicInfo: BasicinfoType): boolean {
+    static isValid(basicInfo: KutsuBasicInfo): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;
         return KutsuminenPage.isValidEmail(email) && !!etunimi && !!sukunimi && !!languageCode;
     }
