@@ -13,7 +13,7 @@ public class CookieConfiguration {
      * are not set causing infinite cas login loop.
      * Not enabled by default.
      */
-    @ConditionalOnProperty("oppijanumerorekisteri.dev.disable-same-site-cookie")
+    @ConditionalOnProperty("oppijanumerorekisteri.disable-same-site-cookie")
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
