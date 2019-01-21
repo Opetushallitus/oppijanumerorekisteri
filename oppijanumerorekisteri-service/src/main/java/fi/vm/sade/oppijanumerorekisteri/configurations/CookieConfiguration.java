@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri;
+package fi.vm.sade.oppijanumerorekisteri.configurations;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
