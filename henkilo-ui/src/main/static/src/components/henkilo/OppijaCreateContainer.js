@@ -6,7 +6,6 @@ import {urls} from 'oph-urls-js'
 import {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
-    fetchKansalaisuusKoodisto,
 } from '../../actions/koodisto.actions'
 import type {Locale} from '../../types/locale.type'
 import type {Koodisto} from '../../types/domain/koodisto/koodisto.types'
@@ -26,8 +25,6 @@ type Props = {
     sukupuoliKoodisto: Koodisto,
     fetchKieliKoodisto: () => void,
     kieliKoodisto: Koodisto,
-    fetchKansalaisuusKoodisto: () => void,
-    kansalaisuusKoodisto: Koodisto,
     addGlobalNotification: ({type: string, title: string}) => void,
 }
 
@@ -57,7 +54,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     componentDidMount() {
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto()
     }
 
     render() {
@@ -71,7 +67,6 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                         L={this.props.L}
                         sukupuoliKoodisto={this.props.sukupuoliKoodisto}
                         kieliKoodisto={this.props.kieliKoodisto}
-                        kansalaisuusKoodisto={this.props.kansalaisuusKoodisto}
                     />
                     : <OppijaCreateDuplikaatit
                         locale={this.props.locale}
@@ -130,13 +125,11 @@ const mapStateToProps = (state) => {
         L: state.l10n.localisations[state.locale],
         sukupuoliKoodisto: state.koodisto.sukupuoliKoodisto,
         kieliKoodisto: state.koodisto.kieliKoodisto,
-        kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
     }
 };
 
 export default connect(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
-    fetchKansalaisuusKoodisto,
     addGlobalNotification
 })(OppijaCreateContainer)

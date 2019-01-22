@@ -9,11 +9,13 @@ import moment from 'moment';
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker'
 import {validateEmail} from "../../../validation/EmailValidator";
 
+export type SelectValue = ?string | ?boolean;
+
 type Props = {
     readOnly: boolean,
     changeAction: (any) => any,
     inputValue: string,
-    selectValue?: string | boolean,
+    selectValue?: SelectValue | Array<SelectValue>,
     password?: boolean,
     isEmail?: boolean,
     className?: string,
@@ -25,6 +27,7 @@ type Props = {
     date?: any,
     children: any,
     clearable?: boolean,
+    multiselect?: boolean,
 }
 
 type State = {
@@ -80,6 +83,7 @@ class Field extends React.Component<Props, State> {
                 placeholder=""
                 disabled={this.props.disabled}
                 clearable={this.props.clearable}
+                multiselect={this.props.multiselect}
             />;
         }
         if (this.props.date) {
@@ -113,9 +117,13 @@ class Field extends React.Component<Props, State> {
 
     getReadOnlyValue() {
         if (this.props.data) {
-            const selected = this.props.data.find(item => item.value === this.props.selectValue)
-            return selected ? selected.label : null
-    }
+            const selected = (this.props.multiselect && Array.isArray(this.props.selectValue))
+                ? this.props.data.filter(item => Array.isArray(this.props.selectValue) && this.props.selectValue.some(selectValue => selectValue === item.value))
+                : this.props.data.find(item => item.value === this.props.selectValue);
+            return selected && (this.props.multiselect
+                ? <ul>{selected.map((selectValue, idx) => <li key={idx}>{selectValue.label}</li>)}</ul>
+                : selected.label);
+        }
         return this.props.date && this.props.children
             ? moment(this.props.children).format()
             : this.props.children;
