@@ -310,6 +310,15 @@ public class HenkiloControllerTest {
     public void createHenkiloFromHenkiloCreateDto() throws Exception {
         HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
+        henkiloDtoInput.setYhteystiedotRyhma(Collections.singleton(YhteystiedotRyhmaDto.builder()
+                .ryhmaAlkuperaTieto("alkupera1")
+                .ryhmaKuvaus("yhteystietotyyppi4")
+                .readOnly(true)
+                .yhteystieto(YhteystietoDto.builder()
+                        .yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI)
+                        .yhteystietoArvo("yhteystieto")
+                        .build())
+                .build()));
         HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
                 false, "fi", "suomi", "246", "1.2.3.4.1", "arpa@kuutio.fi");
         given(this.henkiloModificationService.createHenkilo(any(HenkiloCreateDto.class))).willReturn(henkiloDtoOutput);
@@ -324,6 +333,26 @@ public class HenkiloControllerTest {
     public void createHenkiloFromHenkiloCreateDtoInvalidInputHetu() throws Exception {
         HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "bad_hetu", null,
                 false, "fi", "suomi", "246", "arpa@kuutio.fi");
+        this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void createHenkiloShouldValidateYhteystietoTyyppi() throws Exception {
+        HenkiloCreateDto henkiloDtoInput = DtoUtils.createHenkiloCreateDto("arpa", "arpa", "kuutio", "081296-967T", null,
+                false, "fi", "suomi", "246", "arpa@kuutio.fi");
+        henkiloDtoInput.setYhteystiedotRyhma(Collections.singleton(YhteystiedotRyhmaDto.builder()
+                .ryhmaAlkuperaTieto("alkupera1")
+                .ryhmaKuvaus("yhteystietotyyppi4")
+                .readOnly(true)
+                .yhteystieto(YhteystietoDto.builder()
+                        .yhteystietoTyyppi(null)
+                        .yhteystietoArvo("yhteystieto")
+                        .build())
+                .build()));
         this.mvc.perform(post("/henkilo").content(this.objectMapper.writeValueAsString(henkiloDtoInput))
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
