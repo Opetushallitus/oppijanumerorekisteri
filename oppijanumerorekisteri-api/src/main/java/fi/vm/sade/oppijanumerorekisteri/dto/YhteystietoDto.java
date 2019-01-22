@@ -1,12 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import lombok.Builder;
 
 @Getter
 @Setter
@@ -16,6 +14,7 @@ import lombok.Builder;
 public class YhteystietoDto implements Serializable {
     private static final long serialVersionUID = 4785135498967497621L;
 
+    @NotNull
     private YhteystietoTyyppi yhteystietoTyyppi;
 
     private String yhteystietoArvo;

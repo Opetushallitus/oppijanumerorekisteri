@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -46,5 +47,6 @@ public class HenkiloUpdateDto {
 
     private Set<KansalaisuusDto> kansalaisuus = null;
 
+    @Valid
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = null;
 }

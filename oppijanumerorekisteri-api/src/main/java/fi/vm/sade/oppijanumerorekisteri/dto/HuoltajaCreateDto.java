@@ -1,9 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
-import lombok.*;
 import lombok.Setter;
+import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class HuoltajaCreateDto {
     @NotNull
     private String huoltajuustyyppiKoodi;
 
+    @Valid
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
     public String getKutsumanimi() {
