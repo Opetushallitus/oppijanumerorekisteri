@@ -41,9 +41,7 @@ import static java.util.Collections.*;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -140,7 +138,6 @@ public class HenkiloModificationServiceImplTest {
 
         this.service.updateHenkilo(henkiloUpdateDto);
         verify(this.henkiloDataRepositoryMock).save(argument.capture());
-        verify(this.kayttooikeusClient, times(1)).ldapSynkroniseHenkilo(eq("1.2.3.4.5"));
 
         assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("sv");
         assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("sv");

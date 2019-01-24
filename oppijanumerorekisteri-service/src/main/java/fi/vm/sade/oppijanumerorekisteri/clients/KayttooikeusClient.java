@@ -21,5 +21,4 @@ public interface KayttooikeusClient {
 
     KayttooikeudetDto getHenkiloKayttooikeudet(String henkiloOid, OrganisaatioCriteria criteria);
 
-    void ldapSynkroniseHenkilo(String henkiloOid);
 }

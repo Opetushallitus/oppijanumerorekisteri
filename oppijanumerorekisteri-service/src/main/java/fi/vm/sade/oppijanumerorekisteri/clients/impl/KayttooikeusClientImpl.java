@@ -116,21 +116,4 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
         return kayttooikeudet;
     }
 
-    @Override
-    public void ldapSynkroniseHenkilo(String henkiloOid) {
-        Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("ldapSynchronization", "NORMAL");
-        String url = this.urlConfiguration.url("kayttooikeus-service.henkilo.ldap-synkronoi", henkiloOid, queryParams);
-        OphHttpRequest request = OphHttpRequest.Builder.put(url)
-                .setEntity(new OphHttpEntity.Builder()
-                        .content("{}")
-                        .contentType(ContentType.APPLICATION_JSON)
-                        .build())
-                .build();
-        httpClient.<String>execute(request)
-                .expectedStatus(200)
-                .mapWith(identity())
-                .orElseThrow(() -> noContentOrNotFoundException(url));
-    }
-
 }
