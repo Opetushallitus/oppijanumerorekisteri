@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -67,6 +68,7 @@ public class HenkiloCreateDto implements Serializable {
 
     private Date vtjsynced;
 
+    @Valid
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma = new HashSet<>();
 
     private Set<String> passinumerot = new HashSet<>();

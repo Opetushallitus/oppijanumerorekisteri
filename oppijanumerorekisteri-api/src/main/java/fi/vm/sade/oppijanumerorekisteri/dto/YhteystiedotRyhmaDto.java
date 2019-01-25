@@ -1,18 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Builder;
-import lombok.Singular;
-
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -39,6 +35,7 @@ public class YhteystiedotRyhmaDto implements Serializable {
 
     private boolean readOnly;
 
+    @Valid
     @Singular(value = "yhteystieto")
     private Set<YhteystietoDto> yhteystieto = new HashSet<>();
 
