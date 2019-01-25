@@ -20,7 +20,10 @@ public interface PermissionChecker {
     Map<String, HenkiloDto> filterUnpermittedHenkilo(Map<String, HenkiloDto> persons, Map<String, List<String>> allowedRoles,
                                                      ExternalPermissionService permissionCheckService) throws IOException;
 
-    boolean isAllowedToAccessPerson(String userOid, Map<String, List<String>> allowedPalveluRooli, ExternalPermissionService externalPermissionService) throws IOException;
+    boolean isAllowedToModifyPerson(String userOid, Map<String, List<String>> allowedPalveluRooli, ExternalPermissionService externalPermissionService) throws IOException;
+
+    boolean isAllowedToReadPerson(String userOid, Map<String, List<String>> allowedPalveluRooli,
+                                  ExternalPermissionService externalPermissionService);
 
     /**
      * Palauttaa käyttäjän voimassaolevat organisaatiot
@@ -36,5 +39,15 @@ public interface PermissionChecker {
      */
     Set<String> getOrganisaatioOids(String palvelu, String kayttooikeus);
 
+    /**
+     * Rekisterinpitäjä, joka pystyy tekemään mitä tahansa
+     * @return Onko kirjautunut käyttäjä rekisterinpitäjä
+     */
     boolean isSuperUser();
+
+    /**
+     * Rekisterinpitäjä, joka pystyy tekemään mitä tahansa, tai rekisterinpitäjä luku, joka näkee kaikki tiedot
+     * @return Onko kirjautunut käyttäjä rekisterinpitäjä tai rekisterinpitäjä luku
+     */
+    boolean isSuperUserOrCanReadAll();
 }

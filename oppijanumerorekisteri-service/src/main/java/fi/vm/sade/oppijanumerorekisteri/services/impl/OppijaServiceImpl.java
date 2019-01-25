@@ -100,7 +100,7 @@ public class OppijaServiceImpl implements OppijaService {
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setTuontiId(id);
         criteria.setOrganisaatioOids(organisaatioOids);
-        List<TuontiRivi> rivit = tuontiRepository.findRiviBy(criteria, this.permissionChecker.isSuperUser());
+        List<TuontiRivi> rivit = tuontiRepository.findRiviBy(criteria, this.permissionChecker.isSuperUserOrCanReadAll());
         if (rivit.isEmpty()) {
             throw new ForbiddenException("Oppijoiden tuonnin tietoihin ei oikeuksia");
         }
@@ -218,9 +218,9 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private void prepare(OppijaTuontiCriteria criteria) {
-        // rekisterinpitäjä saa hakea kaikista organisaatioista oppijoita,
+        // rekisterinpitäjä ja rekisterinpitaja read saa hakea kaikista organisaatioista oppijoita,
         // muut käyttäjät ainoastaan omista organisaatioista
-        if (!permissionChecker.isSuperUser()) {
+        if (!permissionChecker.isSuperUserOrCanReadAll()) {
             String kayttajaOid = userDetailsHelper.getCurrentUserOid();
             Set<String> organisaatioOidsByKayttaja = oppijaTuontiService.getOrganisaatioOidsByKayttaja().stream()
                     .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid), organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.vainAktiiviset()).stream()))
