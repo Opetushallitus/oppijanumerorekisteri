@@ -50,7 +50,7 @@ export type PalveluJaKayttooikeusSelection = {
     kayttooikeus: ReactSelectOption
 }
 
-export type SallitutKayttajatyypit = 'PALVELU';
+export type SallitutKayttajatyypit = 'PALVELU' | 'VIRKAILIJA';
 
 export type KayttooikeusryhmaForm = {
     name: KayttooikeusryhmaNimi,

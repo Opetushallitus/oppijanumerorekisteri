@@ -30,7 +30,8 @@ type Props = {
     L: Localisations,
     locale: Locale,
     oidHenkilo: string,
-    addKayttooikeusToHenkilo: (string, string, Array<{id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string}>) => void;
+    addKayttooikeusToHenkilo: (string, string, Array<{id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string}>) => void,
+    isPalvelukayttaja: boolean,
 };
 
 type KayttooikeusModel = {
@@ -212,6 +213,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                                               kayttooikeusAction={this.kayttooikeudetAction}
                                               loading={this.props.kayttooikeus.allowedKayttooikeus.loading}
                                               selectedOrganisationOid={this.state.organisaatioSelection}
+                                              isPalvelukayttaja={this.props.isPalvelukayttaja}
                             />
                             <CKHaeButton L={this.props.L}
                                          validationMessages={this.state.validationMessages}

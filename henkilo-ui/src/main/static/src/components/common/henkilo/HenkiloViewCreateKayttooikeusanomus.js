@@ -160,6 +160,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                                 disabled={this.state.emailOptions.missingEmail}
                                 loading={this.props.organisaatioKayttooikeusryhmat.kayttooikeusryhmatLoading}
                                 isOrganisaatioSelected={!!this.state.organisaatioSelection || !!this.state.ryhmaSelection}
+                                sallittuKayttajatyyppi="VIRKAILIJA"
                             />
                         </div>
                     </div>

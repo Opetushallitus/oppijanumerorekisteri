@@ -4,6 +4,7 @@ import type {TextGroup} from "./textgroup.types";
 import type {PalveluRooliModify} from "./PalveluRooliModify.types";
 import type {OrganisaatioViite} from "./organisaatioviite.types";
 import type {KayttoOikeudenTila} from "./KayttoOikeudenTila.types";
+import type {SallitutKayttajatyypit} from "../../../components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage";
 
 export type Kayttooikeusryhma = {
     id: number,
@@ -13,7 +14,8 @@ export type Kayttooikeusryhma = {
     organisaatioViite: Array<OrganisaatioViite>,
     rooliRajoite?: string,
     passivoitu?: boolean,
-    ryhmaRestriction?: boolean
+    ryhmaRestriction?: boolean,
+    sallittuKayttajatyyppi: ?SallitutKayttajatyypit,
 }
 
 export type KayttooikeusRyhmaModify = {
@@ -44,5 +46,6 @@ export type MyonnettyKayttooikeusryhma = {
     tyyppi: string,
     removed: boolean,
     selected: boolean,
-    muutosSyy: string
+    muutosSyy: string,
+    sallittuKayttajatyyppi: ?SallitutKayttajatyypit,
 }

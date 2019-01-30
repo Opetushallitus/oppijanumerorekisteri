@@ -19,7 +19,7 @@ import {
     omattiedotOrganisaatiotToOrganisaatioSelectObject
 } from "../../utilities/organisaatio.util";
 import type {
-    KutsuOrganisaatio, Organisaatio,
+    KutsuOrganisaatio,
     OrganisaatioHenkilo
 } from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
 import type {Localisations} from "../../types/localisation.type";
@@ -30,6 +30,7 @@ import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal"
 import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import moment from 'moment';
 import {fetchAllowedKayttooikeusryhmasForOrganisation} from "../../actions/kayttooikeusryhma.actions";
+import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 
 type Props = {
     addedOrgs: Array<KutsuOrganisaatio>,
@@ -39,7 +40,7 @@ type Props = {
     omatOrganisaatios: Array<OrganisaatioHenkilo>,
     index: number,
     kutsuRemoveOrganisaatio: (string) => void,
-    kutsuSetOrganisaatio: (number, Organisaatio) => void,
+    kutsuSetOrganisaatio: (number, ?OrganisaatioSelectObject) => void,
     fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
     currentHenkiloOid: string,
     addOrganisaatioPermission: (string, ?MyonnettyKayttooikeusryhma) => void,
@@ -65,7 +66,7 @@ class AddedOrganization extends React.Component<Props, State> {
     render() {
         const addedOrg = this.props.addedOrg;
         const selectedOrganisaatioOid = this.props.addedOrg.organisation ? this.props.addedOrg.organisation.oid : '';
-        const selectablePermissions: Array<MyonnettyKayttooikeusryhma> | any = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
+        const selectablePermissions: Array<MyonnettyKayttooikeusryhma> = R.difference(addedOrg.selectablePermissions, addedOrg.selectedPermissions);
         const kayttooikeusryhmat = selectablePermissions.map(myonnettyToKayttooikeusryhma);
 
         return (
@@ -103,6 +104,7 @@ class AddedOrganization extends React.Component<Props, State> {
                             onSelect={this.addPermission.bind(this, selectablePermissions)}
                             isOrganisaatioSelected={!!addedOrg.oid}
                             loading={addedOrg.isPermissionsLoading}
+                            sallittuKayttajatyyppi="VIRKAILIJA"
                         />
                     </div>
 
@@ -162,13 +164,15 @@ class AddedOrganization extends React.Component<Props, State> {
         else {
             const isOrganisaatio = selection.hasOwnProperty('oid');
             const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
-            const organisaatio:any = isOrganisaatio ? selection : findOmattiedotOrganisatioOrRyhmaByOid(selectedOrganisaatioOid, this.props.omatOrganisaatios, this.props.locale);
-            if(isOrganisaatio) {
+            const organisaatio = isOrganisaatio ? selection : findOmattiedotOrganisatioOrRyhmaByOid(selectedOrganisaatioOid, this.props.omatOrganisaatios, this.props.locale);
+            if (isOrganisaatio && organisaatio) {
                 this.setState({organisaatioSelection: organisaatio.name});
             } else {
                 this.setState({organisaatioSelection: ''});
             }
-            this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
+            if (organisaatio) {
+                this.props.kutsuSetOrganisaatio(this.props.index, organisaatio);
+            }
             this.props.fetchAllowedKayttooikeusryhmasForOrganisation(this.props.currentHenkiloOid, selectedOrganisaatioOid);
         }
     }
