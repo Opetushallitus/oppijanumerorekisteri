@@ -22,7 +22,6 @@ const KayttooikeusryhmatSallittuKayttajatyyppi = ({kayttajaTyyppi, L, setSallitt
                    checked={kayttajaTyyppi === 'PALVELU'} />
             <span className="oph-checkable-text">{L['KAYTTOOIKEUSRYHMAT_KAYTTAJATYYPPI_VAIN_PALVELU']}</span>
         </label>
-
     </div>;
 };
 
