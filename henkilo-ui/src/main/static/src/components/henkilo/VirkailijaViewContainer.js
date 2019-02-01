@@ -8,7 +8,7 @@ import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto
 } from "../../actions/henkilo.actions";
 import {
-    fetchKansalaisuusKoodisto, fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
+    fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchYhteystietotyypitKoodisto,
 } from "../../actions/koodisto.actions";
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
@@ -35,7 +35,6 @@ type Props = {
     fetchHenkiloOrgs: (string) => void,
     fetchHenkiloSlaves: (string) => void,
     fetchKieliKoodisto: () => void,
-    fetchKansalaisuusKoodisto: () => void,
     fetchSukupuoliKoodisto: () => void,
     fetchKayttaja: (string) => void,
     fetchKayttajatieto: (string) => void,
@@ -68,7 +67,6 @@ class VirkailijaViewContainer extends React.Component<Props> {
         this.props.fetchHenkiloOrgs(oid);
         this.props.fetchHenkiloSlaves(oid);
         this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchKayttaja(oid);
         this.props.fetchKayttajatieto(oid);
@@ -102,7 +100,6 @@ export default connect(mapStateToProps, {
     fetchHenkiloSlaves,
     fetchHenkiloOrgs,
     fetchKieliKoodisto,
-    fetchKansalaisuusKoodisto,
     fetchSukupuoliKoodisto,
     fetchYhteystietotyypitKoodisto,
     fetchKayttaja,

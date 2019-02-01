@@ -4,7 +4,7 @@ import React from 'react'
 import {connect} from 'react-redux';
 import {fetchHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto} from "../../actions/henkilo.actions";
 import {
-    fetchKansalaisuusKoodisto, fetchKieliKoodisto,
+    fetchKieliKoodisto,
     fetchYhteystietotyypitKoodisto
 } from "../../actions/koodisto.actions";
 
@@ -23,7 +23,6 @@ type Props = {
     fetchHenkilo: (oid: string) => void,
     fetchYhteystietotyypitKoodisto: () => void,
     fetchKieliKoodisto: () => void,
-    fetchKansalaisuusKoodisto: () => void,
     fetchHenkiloYksilointitieto: (string) => void,
     externalPermissionService?: string,
     koodisto: KoodistoState,
@@ -51,7 +50,6 @@ class OppijaViewContainer extends React.Component<Props> {
         this.props.fetchHenkiloSlaves(oid);
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
-        this.props.fetchKansalaisuusKoodisto();
     }
 
     render() {
@@ -72,5 +70,4 @@ export default connect(mapStateToProps, {
     fetchYhteystietotyypitKoodisto,
     fetchHenkiloYksilointitieto,
     fetchKieliKoodisto,
-    fetchKansalaisuusKoodisto,
 })(OppijaViewContainer);
