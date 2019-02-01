@@ -29,6 +29,7 @@ type OppijaCreateFormProps = {
     L: Localisations,
     sukupuoliKoodisto: Koodisto,
     kieliKoodisto: Koodisto,
+    kansalaisuusKoodisto: Koodisto,
 }
 
 type State = {
@@ -155,6 +156,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                     <KansalaisuusMultiSelect
                         className={classNames({'oph-input-has-error': this.isSubmittedAndHasError('kansalaisuus')})}
                         placeholder={this.props.L['HENKILO_KANSALAISUUS']}
+                        koodisto={this.props.kansalaisuusKoodisto}
                         value={this.state.henkilo.kansalaisuus}
                         onChange={(value) => this.onHenkiloChange({name: 'kansalaisuus', value: value})}
                         />
