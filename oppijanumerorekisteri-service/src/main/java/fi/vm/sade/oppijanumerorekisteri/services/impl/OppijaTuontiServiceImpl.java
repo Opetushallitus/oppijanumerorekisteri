@@ -242,7 +242,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         Set<String> organisaatioOids = getOrganisaatioOidsByKayttaja();
         return organisaatioOids.stream()
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
-                .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
+                        .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
                 .collect(toSet());
     }
 
