@@ -21,6 +21,7 @@ type Props = {
     disabled?: boolean,
     clearable?: ?boolean,
     closeOnSelect?: boolean,
+    multiselect?: boolean,
 }
 
 const OphSelect = (props: Props) => {
@@ -37,6 +38,7 @@ const OphSelect = (props: Props) => {
         clearable={!!props.clearable}
         clearRenderer={clearRenderer}
         clearValueText={props.L['POISTA']}
+        multi={props.multiselect}
     />;
 };
 

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import Columns from 'react-columns';
 import Field from "../../field/Field";
 import type {Localisations} from "../../../../types/localisation.type";
+import type {SelectValue} from "../../field/Field";
 
 type Props = {
     values: {
@@ -16,7 +17,8 @@ type Props = {
         date?: string | boolean,
         showOnlyOnWrite?: boolean,
         readOnly?: boolean,
-        selectValue?: string | boolean
+        selectValue?: SelectValue | Array<SelectValue>,
+        multiselect?: boolean,
     },
     readOnly?: boolean,
     updateModelFieldAction?: (any) => void,

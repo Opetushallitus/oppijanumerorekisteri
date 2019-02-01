@@ -20,49 +20,32 @@ type Props = {
 }
 
 const Kansalaisuus = (props: Props) => {
-    const kansalaisuus = (props.henkiloUpdate && props.henkiloUpdate.kansalaisuus) || [];
+    const kansalaisuus = props.henkiloUpdate ? props.henkiloUpdate.kansalaisuus : [];
     const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
     return <div>
-        {kansalaisuus.map((values, idx) => <div key={idx}>
-                <LabelValue
-                readOnly={props.readOnly}
-                updateModelFieldAction={(newOption: any) => {
-                    if (newOption === null) {
-                        props.updateModelFieldAction({optionsName: 'kansalaisuus', value: kansalaisuus.filter(((kansalaisuus, kIdx) => kIdx !== idx))});
-                    }
-                    else {
-                        props.updateModelFieldAction({optionsName: newOption.optionsName, value: newOption.value});
-                    }
-                }}
-                values={{
-                    label: 'HENKILO_KANSALAISUUS',
-                    data: props.koodisto.kansalaisuus.map(koodi => ({
-                        value: koodi.value,
-                        label: koodi[props.locale],
-                        optionsName: 'kansalaisuus.' + idx + '.kansalaisuusKoodi',
-                    })),
-                    selectValue: props.henkiloUpdate.kansalaisuus[idx].kansalaisuusKoodi,
-                    disabled: disabled,
-                    clearable: true,
-                }}
-            />
-            </div>
-        )}
-
-        {!props.readOnly && <LabelValue
+        <LabelValue
             readOnly={props.readOnly}
-            updateModelFieldAction={props.updateModelFieldAction}
+            updateModelFieldAction={(newOption: Array<any>) => {
+                if (newOption === null) {
+                    props.updateModelFieldAction({optionsName: 'kansalaisuus', value: [kansalaisuus]});
+                }
+                else {
+                    props.updateModelFieldAction({optionsName: 'kansalaisuus', value: newOption.map(kansalaisuusOption => ({kansalaisuusKoodi: kansalaisuusOption.value}))});
+                }
+            }}
             values={{
                 label: 'HENKILO_KANSALAISUUS',
                 data: props.koodisto.kansalaisuus.map(koodi => ({
                     value: koodi.value,
                     label: koodi[props.locale],
-                    optionsName: 'kansalaisuus.' + (kansalaisuus.length) + '.kansalaisuusKoodi',
+                    optionsName: 'kansalaisuus',
                 })),
-                selectValue: props.henkiloUpdate.kansalaisuus[kansalaisuus.length] && props.henkiloUpdate.kansalaisuus[kansalaisuus.length].kansalaisuusKoodi,
+                selectValue: kansalaisuus.map(kansalaisuus => kansalaisuus.kansalaisuusKoodi),
                 disabled: disabled,
+                clearable: false,
+                multiselect: true,
             }}
-        />}
+        />
     </div>;
 };
 
