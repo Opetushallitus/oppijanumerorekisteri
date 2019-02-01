@@ -63,6 +63,7 @@ authentication:
 
 oppijanumerorekisteri:
   uses-ssl-proxy: true
+  disable-same-site-cookie: {{oppijanumerorekisteri_disable_same_site_cookie | default('false')}}
   scheduling:
     vtjsync:
       asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}
