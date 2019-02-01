@@ -6,7 +6,7 @@ import {
     fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo,
 } from "../../actions/henkilo.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo, fetchAllKayttooikeusAnomusForHenkilo, updateHaettuKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
-import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
+import { fetchSukupuoliKoodisto, fetchKieliKoodisto, fetchKansalaisuusKoodisto, fetchYhteystietotyypitKoodisto } from '../../actions/koodisto.actions';
 import {
     fetchAllHierarchialOrganisaatios, fetchAllOrganisaatios,
     fetchAllRyhmas
@@ -40,6 +40,7 @@ type OmattiedotPageContainerProps = {
     fetchHenkiloOrgs: (string) => void,
     fetchYhteystietotyypitKoodisto: () => void,
     fetchKieliKoodisto: () => void,
+    fetchKansalaisuusKoodisto: () => void,
     fetchSukupuoliKoodisto: () => void,
     fetchKayttajatieto: (string) => void,
     fetchAllKayttooikeusryhmasForHenkilo: () => void,
@@ -62,6 +63,7 @@ class OmattiedotPageContainer extends React.Component<OmattiedotPageContainerPro
 
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchKieliKoodisto();
+        this.props.fetchKansalaisuusKoodisto();
         this.props.fetchSukupuoliKoodisto();
         this.props.fetchAllOrganisaatios();
         this.props.fetchAllRyhmas();
@@ -104,6 +106,7 @@ export default connect(mapStateToProps, {
     fetchHenkiloOrgs,
     fetchYhteystietotyypitKoodisto,
     fetchKieliKoodisto,
+    fetchKansalaisuusKoodisto,
     fetchSukupuoliKoodisto,
     fetchKayttajatieto,
     fetchAllKayttooikeusryhmasForHenkilo,
