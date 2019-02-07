@@ -31,6 +31,7 @@ import {getLocalization} from "../../../utilities/localisation.util";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
+import KayttooikeusryhmatSallittuKayttajatyyppi from "./KayttooikeusryhmatSallittuKayttajatyyppi";
 
 export type KayttooikeusryhmaNimi = {
     fi: string,
@@ -49,6 +50,8 @@ export type PalveluJaKayttooikeusSelection = {
     kayttooikeus: ReactSelectOption
 }
 
+export type SallitutKayttajatyypit = 'PALVELU' | 'VIRKAILIJA';
+
 export type KayttooikeusryhmaForm = {
     name: KayttooikeusryhmaNimi,
     description: KayttooikeusryhmaKuvaus,
@@ -58,6 +61,7 @@ export type KayttooikeusryhmaForm = {
     organisaatiotyypitSelections: Array<string>,
     kayttooikeusryhmaSelections: Array<ReactSelectOption>,
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>,
+    sallittuKayttajatyyppi: ?SallitutKayttajatyypit,
 }
 
 type Props = {
@@ -99,6 +103,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             ryhmaRestriction: false,
             kayttooikeusryhmaSelections: [],
             palveluJaKayttooikeusSelections: [],
+            sallittuKayttajatyyppi: null,
         },
         palvelutSelection: undefined,
         palveluKayttooikeusSelection: undefined,
@@ -141,6 +146,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             <KayttooikeusryhmatKuvaus {...this.props}
                                       description={this.state.kayttooikeusryhmaForm.description}
                                       setDescription={this._setDescription}
+            />
+
+            <KayttooikeusryhmatSallittuKayttajatyyppi kayttajaTyyppi={this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi}
+                                                      setSallittuKayttajatyyppi={this._toggleSallittuKayttajatyyppiPalvelu}
             />
 
             <KayttooikeusryhmanOrganisaatiorajoite {...this.props}
@@ -232,6 +241,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             ryhmaRestriction: this._parseExistingRyhmaRestriction(kayttooikeusryhmaState),
             kayttooikeusryhmaSelections: this._parseExistingKayttooikeusryhmaSelections(kayttooikeusryhmaState.kayttooikeusryhmaSlaves),
             palveluJaKayttooikeusSelections: this._parseExistingPalvelutRoolitData(kayttooikeusryhmaState.palvelutRoolit),
+            sallittuKayttajatyyppi: R.path(['kayttooikeusryhma', 'sallittuKayttajatyyppi'], kayttooikeusryhmaState),
         };
     };
 
@@ -335,6 +345,15 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
                 ryhmaRestriction: !this.state.kayttooikeusryhmaForm.ryhmaRestriction
+            }
+        });
+    };
+
+    _toggleSallittuKayttajatyyppiPalvelu = () => {
+        this.setState({
+            kayttooikeusryhmaForm: {
+                ...this.state.kayttooikeusryhmaForm,
+                sallittuKayttajatyyppi: this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi === 'PALVELU' ? null : 'PALVELU',
             }
         });
     };
@@ -567,7 +586,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         rooliRajoite: null,
         ryhmaRestriction: this.state.kayttooikeusryhmaForm.ryhmaRestriction,
         organisaatioTyypit: this._parseOrganisaatioTyypit(),
-        slaveIds: this._parseSlaveIds()
+        slaveIds: this._parseSlaveIds(),
+        sallittuKayttajatyyppi: this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi,
     });
 
     async passivoiKayttooikeusryhma() {

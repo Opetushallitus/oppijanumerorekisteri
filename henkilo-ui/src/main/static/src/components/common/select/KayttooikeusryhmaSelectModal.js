@@ -6,6 +6,7 @@ import type {Kayttooikeusryhma} from '../../../types/domain/kayttooikeus/kayttoo
 import type {Localisations} from "../../../types/localisation.type";
 import SelectModal from "../modal/SelectModal";
 import type {ValidationMessage} from "../../../types/validation.type";
+import type {SallitutKayttajatyypit} from "../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage";
 
 type Props = {
     locale: Locale,
@@ -15,6 +16,7 @@ type Props = {
     disabled?: boolean,
     loading: boolean,
     isOrganisaatioSelected: boolean,
+    sallittuKayttajatyyppi: SallitutKayttajatyypit,
 }
 
 type State = {
@@ -50,6 +52,7 @@ class KayttooikeusryhmaSelectModal extends React.Component<Props, State> {
                     L={this.props.L}
                     kayttooikeusryhmat={this.props.kayttooikeusryhmat}
                     onSelect={this.props.onSelect}
+                    sallittuKayttajatyyppi={this.props.sallittuKayttajatyyppi}
                 />
             </SelectModal>
         );

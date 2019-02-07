@@ -66,11 +66,10 @@ const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean => organisaati
 /*
  * Apufunktio kutsumaan findOrganisaatioOrRyhmaByOid:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
  */
-export const findOmattiedotOrganisatioOrRyhmaByOid = (oid: string, organisaatiot: Array<any>, locale: Locale): OrganisaatioSelectObject => {
+export const findOmattiedotOrganisatioOrRyhmaByOid = (oid: string, organisaatiot: Array<any>, locale: Locale): ?OrganisaatioSelectObject => {
     const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
     const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> = organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
-    const organisaatio: any = R.find(R.propEq('oid', oid))(allOrganisaatioSelectObjects);
-    return organisaatio;
+    return R.find(R.propEq('oid', oid))(allOrganisaatioSelectObjects);
 };
 
 

@@ -130,6 +130,7 @@ class HenkiloViewPage extends React.Component<Props> {
                         {...this.props}
                         vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.kayttaja)}
                         existingKayttooikeusRef={this.existingKayttooikeusRef}
+                        isPalvelukayttaja={this.props.henkilo.kayttaja.kayttajaTyyppi === 'PALVELU'}
                     />
                 </div>}
                 {this.props.view === 'OMATTIEDOT' && <div className="wrapper">

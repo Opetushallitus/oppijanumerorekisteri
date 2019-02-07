@@ -21,9 +21,10 @@ type Props = {
     locale: Locale,
     loading: boolean,
     selectedOrganisationOid: string,
+    isPalvelukayttaja: boolean,
 }
 
-const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale, loading, selectedOrganisationOid}: Props) => {
+const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, close, L, locale, loading, selectedOrganisationOid, isPalvelukayttaja}: Props) => {
     const kayttooikeusryhmat = (kayttooikeusData && kayttooikeusData
         .filter(myonnetty => selectedList.every(selected => selected.value !== myonnetty.ryhmaId))
         .map(myonnettyToKayttooikeusryhma)) || [];
@@ -44,6 +45,7 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
                         })}
                         loading={loading}
                         isOrganisaatioSelected={!!selectedOrganisationOid}
+                        sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
                         />
                 </div>
             </div>

@@ -16,22 +16,28 @@ type Props = {
 }
 
 type State = {
-    filter: string
+    filter: string,
+    naytaVainPalvelulleSallitut: boolean,
 }
 
 export default class KayttooikeusryhmatHallintaPage extends React.Component<Props, State> {
 
     state = {
-        filter: ''
+        filter: '',
+        naytaVainPalvelulleSallitut: false,
     };
 
     render() {
         return <div className="kayttooikeusryhmat-hallinta">
             <h2 className="oph-h2 oph-bold">{this.props.L['KAYTTOOIKEUSRYHMAT_OTSIKKO_LISTA']}</h2>
-            <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}/>
+            <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}
+                                            naytaVainPalvelulleSallitut={this.state.naytaVainPalvelulleSallitut}
+                                            setNaytaVainSallitut={() => this.setState({naytaVainPalvelulleSallitut: !this.state.naytaVainPalvelulleSallitut,})}
+            />
             <KayttooikeusryhmaLista {...this.props}
                                     items={this.props.kayttooikeusryhmat}
                                     filter={this.state.filter}
+                                    naytaVainPalvelulleSallitut={this.state.naytaVainPalvelulleSallitut}
                                     labelPath={['name']}/>
         </div>
     }

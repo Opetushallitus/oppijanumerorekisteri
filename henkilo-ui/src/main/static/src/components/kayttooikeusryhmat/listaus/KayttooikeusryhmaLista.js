@@ -17,7 +17,8 @@ type Props = {
     locale: Locale,
     L: Localisations,
     router: any,
-    filter: string
+    filter: string,
+    naytaVainPalvelulleSallitut: boolean,
 }
 
 type State = {
@@ -40,14 +41,20 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
         return <div className="kayttooikeuryhma-lista">
             {
                 this.props.items
+                    // Näytetäänkö vain palvelukäyttäjille vai virkailijoille
+                    .filter(kayttooikeusryhma => {
+                        return this.props.naytaVainPalvelulleSallitut
+                            ? kayttooikeusryhma.sallittuKayttajatyyppi === 'PALVELU'
+                            : kayttooikeusryhma.sallittuKayttajatyyppi === null || kayttooikeusryhma.sallittuKayttajatyyppi === 'VIRKAILIJA';
+                    })
                     // filter by given string
                     .filter( (item: Kayttooikeusryhma) => {
-                        if(this.props.filter.length === 0) {
+                        if (this.props.filter.length === 0) {
                             return true;
                         }
                         const nimi: ?Text = R.find( (text: Text) => text.lang === this.props.locale.toUpperCase())(item.nimi.texts);
                         const text: string = nimi ? nimi.text : '';
-                        return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0 ? true : false;
+                        return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0;
                     })
                     // sort alphabetically
                     .sort( (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {

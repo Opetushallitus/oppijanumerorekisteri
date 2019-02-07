@@ -7,6 +7,7 @@ export function myonnettyToKayttooikeusryhma(myonnetty: MyonnettyKayttooikeusryh
         tunniste: myonnetty.ryhmaTunniste,
         nimi: myonnetty.ryhmaNames,
         kuvaus: myonnetty.ryhmaKuvaus,
-        organisaatioViite: []
-    }
+        organisaatioViite: [],
+        sallittuKayttajatyyppi: myonnetty.sallittuKayttajatyyppi,
+    };
 }
