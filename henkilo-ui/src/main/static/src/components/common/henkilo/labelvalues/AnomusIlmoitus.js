@@ -11,7 +11,7 @@ import {localizeTextGroup} from "../../../../utilities/localisation.util";
 import type {Locale} from "../../../../types/locale.type";
 
 type Props = {
-    updateModelFieldAction: (Array<number>) => void,
+    updateModelFieldAction: ({value: Array<number>, optionsName: string,}) => void,
     omattiedot: OmattiedotState,
     readOnly?: boolean,
     henkiloUpdate: any,
@@ -40,8 +40,11 @@ class AnomusIlmoitus extends React.Component<Props, State> {
 
     render() {
         return <LabelValue
-            updateModelFieldAction={(tilaukset: Array<{}>) => {
-                tilaukset && this.props.updateModelFieldAction({optionsName: 'anomusilmoitus', value: [...tilaukset.map(tilaus => tilaus.value)],});
+            updateModelFieldAction={(tilaukset: Array<{value: number}>) => {
+                tilaukset && this.props.updateModelFieldAction({
+                    optionsName: 'anomusilmoitus',
+                    value: [...tilaukset.map(tilaus => tilaus.value)],
+                });
             }}
             values={{
                 label: 'HENKILO_ANOMUSILMOITUKSET',
