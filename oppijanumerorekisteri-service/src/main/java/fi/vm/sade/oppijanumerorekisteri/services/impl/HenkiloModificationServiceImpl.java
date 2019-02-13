@@ -450,6 +450,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         return linked.getSlaveOids();
     }
 
+    @Override
     public void unlinkHenkilo(String oid, String slaveOid) {
         this.duplicateService.unlinkHenkilo(oid, slaveOid).forEachModified(this::update);
     }
