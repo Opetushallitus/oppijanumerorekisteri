@@ -166,6 +166,13 @@
                 <artifactId>db-scheduler</artifactId>
                 <version>2.3</version>
             </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>1.11.479</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- dev tools -->
             <dependency>

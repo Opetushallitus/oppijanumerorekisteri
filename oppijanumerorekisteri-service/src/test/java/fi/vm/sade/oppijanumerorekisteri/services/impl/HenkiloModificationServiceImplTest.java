@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
+import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -97,9 +98,11 @@ public class HenkiloModificationServiceImplTest {
     @Mock
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties;
 
-
     @MockBean
     private KansalaisuusRepository kansalaisuusRepository;
+
+    @Mock
+    private HenkiloModifiedTopic henkiloModifiedTopic;
 
     @Before
     public void setup() {
@@ -243,6 +246,11 @@ public class HenkiloModificationServiceImplTest {
                 .thenReturn(Optional.of(new Henkilo()));
         when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
                 .thenAnswer(returnsFirstArg());
+        when(duplicateService.removeDuplicateHetuAndLink(any(), eq("310817A983J")))
+                .thenAnswer(invocation -> {
+                    Henkilo h = invocation.getArgument(0);
+                    return new DuplicateService.LinkResult(h, Collections.singletonList(h), Collections.emptyList());
+                });
         HenkiloForceUpdateDto input = new HenkiloForceUpdateDto();
         input.setHetu("310817A983J");
         input.setSyntymaaika(LocalDate.of(2017, Month.OCTOBER, 6));

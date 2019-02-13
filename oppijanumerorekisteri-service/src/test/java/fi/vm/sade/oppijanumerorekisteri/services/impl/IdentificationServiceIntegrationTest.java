@@ -1,5 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.amazonaws.services.sns.AmazonSNS;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
@@ -30,11 +32,15 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
+import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 // Non-transactional in order to emulate how the real method call works. Thus db is not rolled back after tests.
 // See IdentificationServiceIntegrationTests if you want to add more tests.
@@ -48,6 +54,9 @@ public class IdentificationServiceIntegrationTest {
     private MockVtjClient mockVtjClient;
 
     @MockBean
+    private AmazonSNS amazonSNS;
+
+    @MockBean
     private KayttooikeusClient kayttooikeusClient;
 
     @MockBean
@@ -58,6 +67,9 @@ public class IdentificationServiceIntegrationTest {
 
     @Autowired
     private DatabaseService databaseService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -104,6 +116,7 @@ public class IdentificationServiceIntegrationTest {
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
 
+        assertPublished(objectMapper, amazonSNS, 1, everythingOkResult.getOidHenkilo());
     }
 
     @Test
@@ -125,7 +138,6 @@ public class IdentificationServiceIntegrationTest {
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_OIKEA),
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ),
                         Tuple.tuple(null, YksilointivirheTila.HETU_EI_VTJ));
-
     }
 
     @Test
@@ -145,5 +157,6 @@ public class IdentificationServiceIntegrationTest {
                             henkilo.getOidHenkilo(), yksilointivirhe.map(Yksilointivirhe::getViesti))
                     .isNotPresent();
         });
+        assertPublished(objectMapper, amazonSNS, 2, yksiloimattomat.stream().map(h -> h.getOidHenkilo()).toArray(String[]::new));
     }
 }

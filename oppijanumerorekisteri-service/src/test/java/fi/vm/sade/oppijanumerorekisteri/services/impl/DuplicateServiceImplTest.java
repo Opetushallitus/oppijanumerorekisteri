@@ -110,7 +110,7 @@ public class DuplicateServiceImplTest {
         given(this.henkiloRepository.findByOidHenkilo("1.2.3.4.5")).willReturn(Optional.of(existingDuplicateHenkilo));
         given(this.henkiloRepository.findByOidHenkilo("2.3.4.5.6")).willReturn(Optional.of(newStronglyIdentifiedHenkilo));
 
-        this.duplicateService.removeDuplicateHetuAndLink("2.3.4.5.6", "hetu");
+        this.duplicateService.removeDuplicateHetuAndLink(newStronglyIdentifiedHenkilo, "hetu");
 
         assertThat(existingDuplicateHenkilo.isYksiloityVTJ()).isFalse();
         assertThat(newStronglyIdentifiedHenkilo.getKaikkiHetut()).containsExactly("hetu1", "hetu2");

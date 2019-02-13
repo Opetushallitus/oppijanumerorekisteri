@@ -211,7 +211,10 @@
             <groupId>com.github.kagkarlsson</groupId>
             <artifactId>db-scheduler</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sns</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

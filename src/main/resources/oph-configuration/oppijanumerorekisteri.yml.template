@@ -67,3 +67,8 @@ oppijanumerorekisteri:
   scheduling:
     vtjsync:
       asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}
+aws:
+  region: {{aws_region}}
+  henkiloModifiedTopic:
+    enabled: {{oppijanumerorekisteri_henkilo_modified_topic_enabled}}
+    topicArn: '{{henkilo_modified_sns_topic_arn}}'

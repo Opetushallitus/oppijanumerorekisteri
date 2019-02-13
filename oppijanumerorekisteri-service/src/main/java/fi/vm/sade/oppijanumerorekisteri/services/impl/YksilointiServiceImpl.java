@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
@@ -13,6 +14,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
+import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService.LinkResult;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
@@ -180,14 +182,15 @@ public class YksilointiServiceImpl implements YksilointiService {
 
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
-            if (this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo)) {
+            LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+            if (linked.master.equals(henkilo)) {
                 henkilo.setYksiloityVTJ(true);
                 //OPHASPA-1820 kumotaan pärstäyksilöinti
                 henkilo.setYksiloity(false);
 
                 yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
-                return henkiloModificationService.update(henkilo);
             }
+            linked.forEachModified(henkiloModificationService::update);
         }
 
         return henkilo;
@@ -346,20 +349,13 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElse(yhteystietoS);
     }
 
-    private boolean paivitaHenkilonTiedotVTJnTiedoilla(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
-        final String nykyinenHetu = henkilo.getHetu();
+    private LinkResult paivitaHenkilonTiedotVTJnTiedoilla(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
         final String uusiHetu = yksiloityHenkilo.getHetu();
+        LinkResult linked = kasitteleHetuMuutos(henkilo, uusiHetu);
 
-        // Hetu has changed. If someone already has the new hetu remove it and link henkilos.
-        if (StringUtils.hasLength(uusiHetu) && !uusiHetu.equals(nykyinenHetu)) {
-            if (kasitteleHetuMuutos(henkilo, nykyinenHetu, uusiHetu)) {
-                return false;
-            }
-            henkilo.setHetu(uusiHetu);
-            henkilo.addHetu(uusiHetu);
+        if (!linked.master.equals(henkilo)) {
+            return linked;
         }
-
-        henkilo.addHetu(nykyinenHetu);
 
         updateIfYksiloityValueNotNull(henkilo.getEtunimet(), yksiloityHenkilo.getEtunimi(),henkilo::setEtunimet);
         updateIfYksiloityValueNotNull(henkilo.getSukunimi(), yksiloityHenkilo.getSukunimi(), henkilo::setSukunimi);
@@ -399,7 +395,9 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElseGet(HashSet::new);
         henkilo.setHuoltajat(huoltajat);
 
-        return true;
+        henkilo.setVtjsynced(new Date());
+
+        return linked;
     }
 
     /**
@@ -407,18 +405,25 @@ public class YksilointiServiceImpl implements YksilointiService {
      * henkilö, merkitään yksilöinnissä oleva henkilö uuden hetu omaavan henkilön duplikaatiksi. Muuten uusi hetu
      * poistetaan toiselta henkilöltä ja merkitään yksilöinnissä olevan henkilön duplikaatiksi.
      * @param henkilo yksilöinnissä oleva henkilö
-     * @param nykyinenHetu yksilöinnissä olevan henkilön nykyinen hetu
      * @param uusiHetu yksilöinnissä olevan henkilön uusi hetu
-     * @return true = yksilöinnissä oleva henkilö merkittiin duplikaatiksi (= yksilöinti ei tule tehdä tämän osalta)
+     * @return mahdollisen linkityksen tulos
      */
-    private boolean kasitteleHetuMuutos(Henkilo henkilo, String nykyinenHetu, String uusiHetu) {
-        Henkilo master = duplicateService.linkWithHetu(henkilo, uusiHetu);
-        if (!master.equals(henkilo)) {
-            henkilo.removeHetu(nykyinenHetu, uusiHetu);
-            master.addHetu(nykyinenHetu, uusiHetu);
-            return true;
+    private LinkResult kasitteleHetuMuutos(Henkilo henkilo, String uusiHetu) {
+        String nykyinenHetu = henkilo.getHetu();
+        if (StringUtils.hasLength(uusiHetu) && !uusiHetu.equals(nykyinenHetu)) {
+            LinkResult linked = duplicateService.linkWithHetu(henkilo, uusiHetu);
+            if (linked.master.equals(henkilo)) {
+                henkilo.setHetu(uusiHetu);
+                henkilo.addHetu(nykyinenHetu, uusiHetu);
+            } else {
+                henkilo.removeHetu(nykyinenHetu, uusiHetu);
+                linked.master.addHetu(nykyinenHetu, uusiHetu);
+            }
+            return linked;
+        } else {
+            henkilo.addHetu(nykyinenHetu);
+            return new LinkResult(henkilo, Collections.singletonList(henkilo), new ArrayList<>());
         }
-        return false;
     }
 
     private HuoltajaCreateDto huoltajaToHuoltajaCreateDto(Huoltaja huoltaja) {
@@ -485,10 +490,8 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + hetu));
 
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
-        if (this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo)) {
-            henkilo.setVtjsynced(new Date());
-            henkiloModificationService.update(henkilo);
-        }
+        LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
+        linked.forEachModified(henkiloModificationService::update);
     }
 
     @Override
@@ -506,18 +509,15 @@ public class YksilointiServiceImpl implements YksilointiService {
         Yksilointitieto yksilointitieto = yksilointitietoRepository.findByHenkilo(henkilo)
                 .orElseThrow(() -> new ValidationException("No VTJ-data found for henkilo"));
 
-        final String nykyinenHetu = henkilo.getHetu();
-        final String uusiHetu = yksilointitieto.getHetu();
-        if (StringUtils.hasLength(uusiHetu) && !uusiHetu.equals(nykyinenHetu)) {
-            if (kasitteleHetuMuutos(henkilo, nykyinenHetu, uusiHetu)) {
-                yksilointitietoRepository.delete(yksilointitieto);
-                return;
-            }
-            henkilo.setHetu(uusiHetu);
-            henkilo.addHetu(uusiHetu);
+        final String uusiHetu = henkilo.getHetu();
+        LinkResult linked = kasitteleHetuMuutos(henkilo, yksilointitieto.getHetu());
+
+        if (!linked.master.equals(henkilo)) {
+            yksilointitietoRepository.delete(yksilointitieto);
+            linked.forEachModified(henkiloModificationService::update);
+            return;
         }
 
-        henkilo.addHetu(nykyinenHetu);
         henkilo.setEtunimet(yksilointitieto.getEtunimet());
         henkilo.setSukunimi(yksilointitieto.getSukunimi());
         if (HetuUtils.hetuIsValid(uusiHetu)) {
@@ -550,7 +550,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         yksilointitietoRepository.delete(yksilointitieto);
-        henkiloModificationService.update(henkilo);
+        linked.forEachModified(henkiloModificationService::update);
     }
 
     @Override

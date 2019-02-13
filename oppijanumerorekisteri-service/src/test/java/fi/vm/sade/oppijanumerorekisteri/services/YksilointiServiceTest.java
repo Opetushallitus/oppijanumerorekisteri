@@ -84,7 +84,11 @@ public class YksilointiServiceTest {
         doAnswer(AdditionalAnswers.returnsFirstArg()).when(kielisyysRepository).save(any(Kielisyys.class));
         when(kansalaisuusRepository.findOrCreate(anyString()))
                 .thenReturn(EntityUtils.createKansalaisuus("246"));
-        when(duplicateService.linkWithHetu(any(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(duplicateService.linkWithHetu(any(), any()))
+                .thenAnswer(invocation -> {
+                    Henkilo henkilo = invocation.getArgument(0);
+                    return new DuplicateService.LinkResult(henkilo, Collections.singletonList(henkilo), Collections.emptyList());
+                });
 
         String hetu = "010101-123N";
         this.henkilo = EntityUtils.createHenkilo("Teppo Taneli", "Teppo", "Testaaja", hetu, this.henkiloOid,

@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.google.common.collect.Lists;
+import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
@@ -57,6 +58,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     private final PermissionChecker permissionChecker;
     private final HenkiloService henkiloService;
     private final DuplicateService duplicateService;
+
+    private final HenkiloModifiedTopic henkiloModifiedTopic;
 
     private final OrikaConfiguration mapper;
     private final UserDetailsHelper userDetailsHelper;
@@ -154,7 +157,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             throw new UnprocessableEntityException(errors);
         }
 
-        this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
+        DuplicateService.LinkResult linked = this.updateHetuAndLinkDuplicate(henkiloUpdateDto, henkiloSaved);
 
         henkiloUpdateSetReusableFields(henkiloUpdateDto, henkiloSaved, true);
 
@@ -171,7 +174,8 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 
-        return mapper.map(this.update(henkiloSaved), HenkiloReadDto.class);
+        linked.forEachModified(this::update);
+        return mapper.map(henkiloSaved, HenkiloReadDto.class);
     }
 
 
@@ -198,10 +202,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                     .map(this.henkiloDataRepository::save)
                     .findFirst();
         }
+        huoltaja.ifPresent(this::update);
         return huoltaja.orElseGet(() -> this.createHenkilo(huoltajaCreateDto, oppijanumerorekisteriProperties.getRootUserOid()));
     }
 
-    private void updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
+    private DuplicateService.LinkResult updateHetuAndLinkDuplicate(HenkiloForceUpdateDto henkiloUpdateDto, Henkilo henkiloSaved) {
         // Only if hetu has changed
         if (StringUtils.hasLength(henkiloUpdateDto.getHetu()) && !henkiloUpdateDto.getHetu().equals(henkiloSaved.getHetu())) {
             if (henkiloSaved.isYksiloityVTJ()) {
@@ -212,9 +217,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                 henkiloSaved.addHetu(henkiloUpdateDto.getHetu());
             }
             String newHetu = henkiloUpdateDto.getHetu();
-            this.duplicateService.removeDuplicateHetuAndLink(henkiloUpdateDto.getOidHenkilo(), newHetu);
+            DuplicateService.LinkResult linked = this.duplicateService.removeDuplicateHetuAndLink(henkiloSaved, newHetu);
             henkiloSaved.setHetu(newHetu);
             henkiloUpdateDto.setHetu(null);
+            return linked;
+        } else {
+            return new DuplicateService.LinkResult(henkiloSaved, Collections.singletonList(henkiloSaved), Collections.emptyList());
         }
     }
 
@@ -260,13 +268,16 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         // päivitettäessä henkilöä, päivitetään samalla kaikkien slave-henkilöiden
         // modified-aikaleima, jotta myös slavet näkyvät muutosrajapinnassa
-        henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).forEach(slave -> {
+        List<Henkilo> duplikaatit = henkiloDataRepository.findSlavesByMasterOid(tallennettu.getOidHenkilo()).stream().map(slave -> {
             slave.setModified(nyt);
             kayttajaOid.ifPresent(slave::setKasittelijaOid);
-            henkiloDataRepository.save(slave);
+            return henkiloDataRepository.save(slave);
             // rakenne ei ole rekursiivinen (vaikka kantarakenne mahdollistaakin)
             // joten päivitystä ei tarvitse tehdä rekursiivisesti
-        });
+        }).collect(toList());
+
+        henkiloModifiedTopic.publish(tallennettu);
+        duplikaatit.forEach(henkiloModifiedTopic::publish);
 
         return tallennettu;
     }
@@ -427,9 +438,22 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloCreate.setKansalaisuus(kansalaisuusSet);
         }
 
-        return this.henkiloDataRepository.save(henkiloCreate);
+        Henkilo tallennettu = this.henkiloDataRepository.save(henkiloCreate);
+        henkiloModifiedTopic.publish(tallennettu);
+        return tallennettu;
     }
 
+    @Override
+    public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
+        DuplicateService.LinkResult linked = this.duplicateService.linkHenkilos(henkiloOid, similarHenkiloOids);
+        linked.forEachModified(this::update);
+        return linked.getSlaveOids();
+    }
+
+    @Override
+    public void unlinkHenkilo(String oid, String slaveOid) {
+        this.duplicateService.unlinkHenkilo(oid, slaveOid).forEachModified(this::update);
+    }
 
     private String getFreePersonOid() {
         final String newOid = oidGenerator.generateOID();

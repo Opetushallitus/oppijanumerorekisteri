@@ -436,14 +436,14 @@ public class HenkiloController {
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.duplicateService.linkHenkilos(oid, slaveOids);
+        return this.henkiloModificationService.linkHenkilos(oid, slaveOids);
     }
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
     public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
-        this.duplicateService.unlinkHenkilo(oid, slaveOid);
+        this.henkiloModificationService.unlinkHenkilo(oid, slaveOid);
     }
 
     @ApiOperation("Hae käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")

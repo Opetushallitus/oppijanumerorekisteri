@@ -1,20 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.amazonaws.services.sns.AmazonSNS;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloVahvaTunnistusDto;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.IdentificationService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
-import static java.util.Collections.singletonList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import static java.util.stream.Collectors.toList;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
+import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -42,6 +44,9 @@ public class IdentificationServiceIntegrationTests {
     private KayttooikeusClient kayttooikeusClient;
 
     @MockBean
+    private AmazonSNS amazonSNS;
+
+    @MockBean
     private UserDetailsHelper userDetailsHelper;
 
     @Autowired
@@ -49,6 +54,9 @@ public class IdentificationServiceIntegrationTests {
 
     @Autowired
     private HenkiloRepository henkiloRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -64,6 +72,7 @@ public class IdentificationServiceIntegrationTests {
         Henkilo henkiloHetuUpdated = (Henkilo)this.entityManager
                 .createNativeQuery("SELECT * FROM henkilo WHERE oidhenkilo = 'NoHetu'", Henkilo.class).getSingleResult();
         assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("new hetu");
+        assertPublished(objectMapper, amazonSNS, 1, henkiloHetuUpdated.getOidHenkilo());
     }
 
     // Virkailija has no hetu and names match. Oppija has the provided hetu taken already.
@@ -82,6 +91,7 @@ public class IdentificationServiceIntegrationTests {
         assertThat(henkiloHetuUpdated.isPassivoitu()).isFalse();
         assertThat(henkiloOppijaPassivoitu.getHetu()).isNull();
         assertThat(henkiloOppijaPassivoitu.isPassivoitu()).isTrue();
+        assertPublished(objectMapper, amazonSNS, 2, henkiloHetuUpdated.getOidHenkilo(), henkiloOppijaPassivoitu.getOidHenkilo());
     }
 
     // Hetu matches to virkailija and names match.
@@ -95,6 +105,7 @@ public class IdentificationServiceIntegrationTests {
         Henkilo henkiloHetuUpdated = (Henkilo)this.entityManager
                 .createNativeQuery("SELECT * FROM henkilo WHERE oidhenkilo = 'EverythingOK'", Henkilo.class).getSingleResult();
         assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("010101-123N");
+        assertPublished(objectMapper, amazonSNS, 1, henkiloHetuUpdated.getOidHenkilo());
     }
 
     // Hetu already used by other virkailija
@@ -104,6 +115,7 @@ public class IdentificationServiceIntegrationTests {
                 new HenkiloVahvaTunnistusDto("111111-1235");
 
         this.identificationService.setStrongIdentifiedHetu("EverythingOK", henkiloVahvaTunnistusDto);
+        assertPublished(objectMapper, amazonSNS, 0);
     }
 
     @Test
@@ -113,11 +125,12 @@ public class IdentificationServiceIntegrationTests {
 
         identificationService.setStrongIdentifiedHetu("Tyoosoite", henkiloVahvaTunnistusDto);
 
-        Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloRepository.findByOidHenkilo("Tyoosoite").get().getYhteystiedotRyhma();
+        Henkilo henkilo = henkiloRepository.findByOidHenkilo("Tyoosoite").get();
+        Set<YhteystiedotRyhma> yhteystietoryhmat = henkilo.getYhteystiedotRyhma();
         assertThat(yhteystietoryhmat)
                 .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactly(tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera6"));
-
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -127,13 +140,15 @@ public class IdentificationServiceIntegrationTests {
 
         identificationService.setStrongIdentifiedHetu("TyoosoiteVainLuku", henkiloVahvaTunnistusDto);
 
-        Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloRepository.findByOidHenkilo("TyoosoiteVainLuku").get().getYhteystiedotRyhma();
+        Henkilo henkilo = henkiloRepository.findByOidHenkilo("TyoosoiteVainLuku").get();
+        Set<YhteystiedotRyhma> yhteystietoryhmat = henkilo.getYhteystiedotRyhma();
         assertThat(yhteystietoryhmat)
                 .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactlyInAnyOrder(
                         tuple("yhteystietotyyppi2", singletonList("tyoosoite@example.com"), "alkupera6"),
                         tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera2")
                 );
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -143,12 +158,14 @@ public class IdentificationServiceIntegrationTests {
 
         identificationService.setStrongIdentifiedHetu("Kotiosoite", henkiloVahvaTunnistusDto);
 
-        Set<YhteystiedotRyhma> yhteystietoryhmat = henkiloRepository.findByOidHenkilo("Kotiosoite").get().getYhteystiedotRyhma();
+        Henkilo henkilo = henkiloRepository.findByOidHenkilo("Kotiosoite").get();
+        Set<YhteystiedotRyhma> yhteystietoryhmat = henkilo.getYhteystiedotRyhma();
         assertThat(yhteystietoryhmat)
                 .extracting(YhteystiedotRyhma::getRyhmaKuvaus, YHTEYSTIETOARVOT, YhteystiedotRyhma::getRyhmaAlkuperaTieto)
                 .containsExactlyInAnyOrder(
                         tuple("yhteystietotyyppi1", singletonList("kotiosoite@example.com"), "alkupera6"),
                         tuple("yhteystietotyyppi2", singletonList("etu.suku@example.com"), "alkupera2")
                 );
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 }

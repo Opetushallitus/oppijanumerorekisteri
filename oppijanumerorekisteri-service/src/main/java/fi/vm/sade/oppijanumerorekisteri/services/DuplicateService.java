@@ -4,9 +4,11 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplikaattiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface DuplicateService {
     List<HenkiloDuplicateDto> findDuplicates(String oid);
@@ -15,11 +17,26 @@ public interface DuplicateService {
 
     List<HenkiloDuplicateDto> getDuplikaatit(HenkiloDuplikaattiCriteria criteria);
 
-    void removeDuplicateHetuAndLink(String oidHenkilo, String hetu);
+    LinkResult removeDuplicateHetuAndLink(Henkilo henkilo, String hetu);
 
-    Henkilo linkWithHetu(Henkilo henkilo, String hetu);
+    LinkResult linkWithHetu(Henkilo henkilo, String hetu);
 
-    List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
+    LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
-    void unlinkHenkilo(String oid, String slaveOid);
+    LinkResult unlinkHenkilo(String oid, String slaveOid);
+
+    @AllArgsConstructor
+    class LinkResult {
+        public final Henkilo master;
+        private final List<Henkilo> modified;
+        private final List<String> slaveOids;
+
+        public void forEachModified(Consumer<? super Henkilo> consumer) {
+            this.modified.forEach(consumer);
+        }
+
+        public List<String> getSlaveOids() {
+            return new ArrayList<>(slaveOids);
+        }
+    }
 }
