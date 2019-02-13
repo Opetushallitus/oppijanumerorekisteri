@@ -190,7 +190,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
                 yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
             }
-            linked.modified.forEach(henkiloModificationService::update);
+            linked.forEachModified(henkiloModificationService::update);
         }
 
         return henkilo;
@@ -491,7 +491,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
-        linked.modified.forEach(henkiloModificationService::update);
+        linked.forEachModified(henkiloModificationService::update);
     }
 
     @Override
@@ -514,7 +514,7 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         if (!linked.master.equals(henkilo)) {
             yksilointitietoRepository.delete(yksilointitieto);
-            linked.modified.forEach(henkiloModificationService::update);
+            linked.forEachModified(henkiloModificationService::update);
             return;
         }
 
@@ -550,7 +550,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         }
 
         yksilointitietoRepository.delete(yksilointitieto);
-        linked.modified.forEach(henkiloModificationService::update);
+        linked.forEachModified(henkiloModificationService::update);
     }
 
     @Override

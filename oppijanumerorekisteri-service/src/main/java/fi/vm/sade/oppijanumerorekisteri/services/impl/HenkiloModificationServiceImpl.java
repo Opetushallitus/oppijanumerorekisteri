@@ -173,7 +173,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
 
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 
-        linked.modified.forEach(this::update);
+        linked.forEachModified(this::update);
         return mapper.map(henkiloSaved, HenkiloReadDto.class);
     }
 
@@ -445,12 +445,12 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     @Override
     public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
         DuplicateService.LinkResult linked = this.duplicateService.linkHenkilos(henkiloOid, similarHenkiloOids);
-        linked.modified.forEach(this::update);
-        return linked.slaveOids;
+        linked.forEachModified(this::update);
+        return linked.getSlaveOids();
     }
 
     public void unlinkHenkilo(String oid, String slaveOid) {
-        this.duplicateService.unlinkHenkilo(oid, slaveOid).modified.forEach(this::update);
+        this.duplicateService.unlinkHenkilo(oid, slaveOid).forEachModified(this::update);
     }
 
     private String getFreePersonOid() {

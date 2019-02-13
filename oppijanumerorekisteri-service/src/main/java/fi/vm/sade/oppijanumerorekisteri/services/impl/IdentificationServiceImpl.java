@@ -116,7 +116,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             YhteystietoryhmaUtils.setTyosahkopostiosoite(henkiloToUpdate.getYhteystiedotRyhma(), henkiloVahvaTunnistusDto.getTyosahkopostiosoite(), alkupera);
         }
 
-        linked.modified.forEach(henkiloModificationService::update);
+        linked.forEachModified(henkiloModificationService::update);
     }
 
     private void setHetuIfMatchesToHenkilo(HenkiloVahvaTunnistusDto henkiloVahvaTunnistusDto, Henkilo henkilo) {

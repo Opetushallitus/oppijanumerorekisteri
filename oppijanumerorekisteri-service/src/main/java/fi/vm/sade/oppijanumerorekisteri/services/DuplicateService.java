@@ -4,9 +4,11 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplicateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplikaattiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface DuplicateService {
     List<HenkiloDuplicateDto> findDuplicates(String oid);
@@ -23,15 +25,18 @@ public interface DuplicateService {
 
     LinkResult unlinkHenkilo(String oid, String slaveOid);
 
+    @AllArgsConstructor
     class LinkResult {
         public final Henkilo master;
-        public final List<Henkilo> modified;
-        public final List<String> slaveOids;
+        private final List<Henkilo> modified;
+        private final List<String> slaveOids;
 
-        public LinkResult(Henkilo master, List<Henkilo> modified, List<String> slaveOids) {
-            this.master = master;
-            this.modified = modified;
-            this.slaveOids = slaveOids;
+        public void forEachModified(Consumer<? super Henkilo> consumer) {
+            this.modified.forEach(consumer);
+        }
+
+        public List<String> getSlaveOids() {
+            return new ArrayList<>(slaveOids);
         }
     }
 }
