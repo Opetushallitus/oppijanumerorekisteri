@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.services;
+package fi.vm.sade.oppijanumerorekisteri.clients;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 

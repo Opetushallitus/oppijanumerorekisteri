@@ -1,11 +1,11 @@
-package fi.vm.sade.oppijanumerorekisteri.services.impl;
+package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.configurations.AwsConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModifiedTopic;
+import fi.vm.sade.oppijanumerorekisteri.clients.HenkiloModifiedTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
