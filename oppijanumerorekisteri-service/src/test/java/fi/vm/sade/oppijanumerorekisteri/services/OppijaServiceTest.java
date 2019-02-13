@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
@@ -18,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,7 +38,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -53,6 +55,9 @@ public class OppijaServiceTest {
 
     @MockBean
     private KoodistoService koodistoService;
+
+    @MockBean
+    private OrganisaatioClient organisaatioClient;
 
     @Autowired
     private DatabaseService databaseService;
@@ -577,6 +582,19 @@ public class OppijaServiceTest {
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
         assertThat(result.iterator()).extracting(OppijaListDto::getOid).isEmpty();
 
+    }
+
+    @Test
+    public void passiivisetAliorganisaatiotTarkistetaan() {
+        given(this.permissionChecker.isSuperUserOrCanReadAll()).willReturn(false);
+        given(this.userDetailsHelper.getCurrentUserOid()).willReturn("1.2.3.4.5");
+        ArgumentCaptor<OrganisaatioTilat> organisaatioTilatArgumentCaptor = ArgumentCaptor.forClass(OrganisaatioTilat.class);
+        this.oppijaService.list(OppijaTuontiCriteria.builder().build(), 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
+        verify(this.organisaatioClient, times(1))
+                .getChildOids(eq("1.2.3.4"), eq(true), organisaatioTilatArgumentCaptor.capture());
+        assertThat(organisaatioTilatArgumentCaptor.getValue())
+                .extracting(OrganisaatioTilat::isAktiiviset, OrganisaatioTilat::isSuunnitellut, OrganisaatioTilat::isLakkautetut)
+                .containsExactly(true, false, true);
     }
 
 }

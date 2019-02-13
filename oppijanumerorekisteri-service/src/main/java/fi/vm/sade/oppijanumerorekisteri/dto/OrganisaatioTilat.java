@@ -20,6 +20,10 @@ public class OrganisaatioTilat {
         return new OrganisaatioTilat(true, false, false);
     }
 
+    public static OrganisaatioTilat aktiivisetJaLakkautetut() {
+        return new OrganisaatioTilat(true, false, true);
+    }
+
     public Map<String, Boolean> asMap() {
         Map<String, Boolean> map = new LinkedHashMap<>();
         map.put("aktiiviset", aktiiviset);
