@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.amazonaws.services.sns.AmazonSNS;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
@@ -14,7 +13,6 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,23 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
+import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -102,7 +95,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .flatExtracting(HenkiloViite::getMasterOid, HenkiloViite::getSlaveOid)
                 .containsExactly("VTJYKSILOITY1", "VTJYKSILOITY2");
 
-        assertPublished(2, "VTJYKSILOITY1", "VTJYKSILOITY2");
+        assertPublished(objectMapper, amazonSNS, 2, "VTJYKSILOITY1", "VTJYKSILOITY2");
     }
 
     @Test
@@ -117,7 +110,7 @@ public class HenkiloModificationServiceIntegrationTest {
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
-        assertPublished(1, updateDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, updateDto.getOidHenkilo());
     }
 
     @Test
@@ -136,7 +129,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("VTJYKSILOITY1", "111111-985K", false);
         assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -155,7 +148,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("VTJYKSILOITY1", "111111-985K", false);
         assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K");
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -174,7 +167,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("VTJYKSILOITY1", "170775-973B", false);
         assertThat(henkilo.getKaikkiHetut()).containsExactlyInAnyOrder("111111-985K", "170775-973B");
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -193,7 +186,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSAVIRHE", "170775-941A", false);
         assertThat(henkilo.getYksilointivirheet()).isEmpty();
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -212,7 +205,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSAVIRHE", null, false);
         assertThat(henkilo.getYksilointivirheet()).isEmpty();
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -231,7 +224,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSAVIRHE", "170798-9330", true);
         assertThat(henkilo.getYksilointivirheet()).hasSize(1);
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -250,7 +243,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSANIMIPIELESSA", "170775-989V", false);
         assertThat(yksilointitietoRepository.findByHenkilo(henkilo)).isEmpty();
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -269,7 +262,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSANIMIPIELESSA", null, false);
         assertThat(yksilointitietoRepository.findByHenkilo(henkilo)).isEmpty();
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -288,7 +281,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getHetu, Henkilo::isYksilointiYritetty)
                 .containsExactly("YKSILOINNISSANIMIPIELESSA", "170798-915D", true);
         assertThat(yksilointitietoRepository.findByHenkilo(henkilo)).isNotEmpty();
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -301,7 +294,7 @@ public class HenkiloModificationServiceIntegrationTest {
         Throwable throwable = catchThrowable(() -> henkiloModificationService.updateHenkilo(updateDto));
 
         assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
-        assertPublished(0);
+        assertPublished(objectMapper, amazonSNS, 0);
     }
 
     @Test
@@ -315,7 +308,7 @@ public class HenkiloModificationServiceIntegrationTest {
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
-        assertPublished(1, updateDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, updateDto.getOidHenkilo());
     }
 
     @Test
@@ -328,7 +321,7 @@ public class HenkiloModificationServiceIntegrationTest {
         Throwable throwable = catchThrowable(() -> henkiloModificationService.forceUpdateHenkilo(updateDto));
 
         assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
-        assertPublished(0);
+        assertPublished(objectMapper, amazonSNS, 0);
     }
 
     @Test
@@ -347,7 +340,7 @@ public class HenkiloModificationServiceIntegrationTest {
         Throwable throwable = catchThrowable(() -> henkiloModificationService.createHenkilo(huoltajaCreateDto));
 
         assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
-        assertPublished(0);
+        assertPublished(objectMapper, amazonSNS, 0);
     }
 
     @Test
@@ -369,7 +362,7 @@ public class HenkiloModificationServiceIntegrationTest {
         Throwable throwable = catchThrowable(() -> henkiloModificationService.createHenkilo(huoltajaCreateDto));
 
         assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
-        assertPublished(0);
+        assertPublished(objectMapper, amazonSNS, 0);
     }
 
     @Test
@@ -391,7 +384,7 @@ public class HenkiloModificationServiceIntegrationTest {
         Henkilo huoltaja = henkiloModificationService.createHenkilo(huoltajaCreateDto);
         assertThat(huoltaja).extracting(Henkilo::getHetu).isEqualTo("271198-9197");
         assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
-        assertPublished(1, huoltaja.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, huoltaja.getOidHenkilo());
     }
 
     @Test
@@ -428,7 +421,7 @@ public class HenkiloModificationServiceIntegrationTest {
                 .flatExtracting(YhteystiedotRyhma::getYhteystieto)
                 .extracting(Yhteystieto::getYhteystietoArvo)
                 .containsExactlyInAnyOrder("Y");
-        assertPublished(1, huoltaja.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, huoltaja.getOidHenkilo());
     }
 
     @Test
@@ -455,27 +448,6 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getKutsumanimi, Henkilo::getSukunimi, Henkilo::getSyntymaaika)
                 .containsExactly(null, "huoltaja", "huoltaja", "tyhjallahetulla", LocalDate.of(1950, 2, 2));
         assertThat(huoltaja.getKansalaisuus()).extracting(Kansalaisuus::getKansalaisuusKoodi).containsExactly("246");
-        assertPublished(1, huoltaja.getOidHenkilo());
-    }
-
-    private void assertPublished(int times, String... oids) {
-        if (times == 0) {
-            verifyZeroInteractions(amazonSNS);
-        } else {
-            ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-            verify(amazonSNS, times(times)).publish(anyString(), argumentCaptor.capture());
-            assertThat(argumentCaptor.getAllValues())
-                    .extracting(s -> fromJson(s, new TypeReference<Map<String, String>>() {
-                    }).get("oidHenkilo"))
-                    .containsOnly(oids);
-        }
-    }
-
-    private <T> T fromJson(String s, TypeReference<T> t) {
-        try {
-            return this.objectMapper.readValue(s, t);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        assertPublished(objectMapper, amazonSNS, 1, huoltaja.getOidHenkilo());
     }
 }

@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.amazonaws.services.sns.AmazonSNS;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
@@ -23,7 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
@@ -31,11 +29,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -119,7 +116,7 @@ public class IdentificationServiceIntegrationTest {
         assertThat(notFoundVtjResult.isYksiloityVTJ()).isFalse();
         assertThat(notFoundVtjResult.isYksilointiYritetty()).isTrue();
 
-        assertPublished(1, everythingOkResult.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, everythingOkResult.getOidHenkilo());
     }
 
     @Test
@@ -160,27 +157,6 @@ public class IdentificationServiceIntegrationTest {
                             henkilo.getOidHenkilo(), yksilointivirhe.map(Yksilointivirhe::getViesti))
                     .isNotPresent();
         });
-        assertPublished(2, yksiloimattomat.stream().map(h -> h.getOidHenkilo()).toArray(String[]::new));
-    }
-
-    private void assertPublished(int times, String... oids) {
-        if (times == 0) {
-            verifyZeroInteractions(amazonSNS);
-        } else {
-            ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-            verify(amazonSNS, times(times)).publish(anyString(), argumentCaptor.capture());
-            assertThat(argumentCaptor.getAllValues())
-                    .extracting(s -> fromJson(s, new TypeReference<Map<String, String>>() {
-                    }).get("oidHenkilo"))
-                    .containsOnly(oids);
-        }
-    }
-
-    private <T> T fromJson(String s, TypeReference<T> t) {
-        try {
-            return this.objectMapper.readValue(s, t);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        assertPublished(objectMapper, amazonSNS, 2, yksiloimattomat.stream().map(h -> h.getOidHenkilo()).toArray(String[]::new));
     }
 }

@@ -1,7 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services;
 
 import com.amazonaws.services.sns.AmazonSNS;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.DatabaseService;
 import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
@@ -22,7 +21,6 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -30,13 +28,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -110,7 +107,7 @@ public class YksilointiITest {
 
         yksilointiService.yksiloiAutomaattisesti(uusiOid);
 
-        assertPublished(1, uusiOid);
+        assertPublished(objectMapper, amazonSNS, 1, uusiOid);
 
         HenkiloCreateDto henkiloVanhaHetuCreateDto = new HenkiloCreateDto();
         henkiloVanhaHetuCreateDto.setHetu(vanhaHetu);
@@ -123,7 +120,7 @@ public class YksilointiITest {
 
         yksilointiService.yksiloiAutomaattisesti(vanhaOid);
 
-        assertPublished(2, uusiOid, vanhaOid);
+        assertPublished(objectMapper, amazonSNS, 2, uusiOid, vanhaOid);
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(null, Henkilo::getHetu)
@@ -177,13 +174,13 @@ public class YksilointiITest {
 
         yksilointiService.yksiloiAutomaattisesti(vanhaOid);
 
-        assertPublished(2, uusiOid, vanhaOid);
+        assertPublished(objectMapper, amazonSNS, 2, uusiOid, vanhaOid);
 
         reset(amazonSNS);
 
         yksilointiService.yksiloiAutomaattisesti(uusiOid);
 
-        assertPublished(0);
+        assertPublished(objectMapper, amazonSNS, 0);
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(uusiHetu, Henkilo::getHetu)
@@ -239,7 +236,7 @@ public class YksilointiITest {
 
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
                 .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
     }
 
     @Test
@@ -278,7 +275,7 @@ public class YksilointiITest {
                 .returns(true, from(HenkiloReadDto::getYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
                 .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
     }
 
     @Test
@@ -314,7 +311,7 @@ public class YksilointiITest {
 
         yksilointiService.yliajaHenkilonTiedot(vanhaOid);
 
-        assertPublished(2, uusiOid, vanhaOid);
+        assertPublished(objectMapper, amazonSNS, 2, uusiOid, vanhaOid);
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(null, Henkilo::getHetu)
@@ -371,13 +368,13 @@ public class YksilointiITest {
 
         yksilointiService.yliajaHenkilonTiedot(vanhaOid);
 
-        assertPublished(2, uusiOid, vanhaOid);
+        assertPublished(objectMapper, amazonSNS, 2, uusiOid, vanhaOid);
 
         reset(amazonSNS);
 
         yksilointiService.yliajaHenkilonTiedot(uusiOid);
 
-        assertPublished(2, uusiOid, vanhaOid);
+        assertPublished(objectMapper, amazonSNS, 2, uusiOid, vanhaOid);
         assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
             assertThat(henkiloByVanhaOid)
                     .returns(uusiHetu, Henkilo::getHetu)
@@ -419,7 +416,7 @@ public class YksilointiITest {
                 .returns(false, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
                 .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
 
         reset(amazonSNS);
 
@@ -431,7 +428,7 @@ public class YksilointiITest {
                 .returns(false, from(HenkiloDto::isYksiloityVTJ));
         assertThat(henkiloService.findHenkiloOidsModifiedSince(new HenkiloCriteria(), modifiedSince, 0, 2))
                 .containsExactly(henkiloReadDto.getOidHenkilo());
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
     }
 
     @Test
@@ -449,7 +446,7 @@ public class YksilointiITest {
 
         List<AsiayhteysHakemus> asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
         assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getHakemusOid).containsExactly("hakemusoid123");
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
 
         reset(amazonSNS);
 
@@ -457,7 +454,7 @@ public class YksilointiITest {
 
         asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
         assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getLoppupaivamaara).containsExactly(LocalDate.of(2018, Month.MARCH, 15));
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
 
         reset(amazonSNS);
 
@@ -465,7 +462,7 @@ public class YksilointiITest {
 
         asiayhteysHakemukset = asiayhteysHakemusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
         assertThat(asiayhteysHakemukset).extracting(AsiayhteysHakemus::getHakemusOid).containsExactlyInAnyOrder("hakemusoid123", "hakemusoid321");
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
     }
 
     @Test
@@ -483,7 +480,7 @@ public class YksilointiITest {
 
         Optional<AsiayhteysKayttooikeus> asiayhteysKayttooikeus = asiayhteysKayttooikeusRepository.findByHenkiloOid(henkiloReadDto.getOidHenkilo());
         assertThat(asiayhteysKayttooikeus).hasValueSatisfying(t -> assertThat(t.getLoppupaivamaara()).isEqualTo("2018-03-14"));
-        assertPublished(1, henkiloReadDto.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkiloReadDto.getOidHenkilo());
     }
 
     @Test
@@ -510,7 +507,7 @@ public class YksilointiITest {
         assertThat(henkilo)
                 .extracting(Henkilo::getHetu)
                 .isEqualTo("170498-993H");
-        assertPublished(1, henkilo.getOidHenkilo());
+        assertPublished(objectMapper, amazonSNS, 1, henkilo.getOidHenkilo());
     }
 
     @Test
@@ -554,7 +551,7 @@ public class YksilointiITest {
                 .containsNull();
         assertThat(henkiloService.findSlavesByMasterOid(yksiloitavaOid)).isEmpty();
         verify(kayttooikeusClientMock).passivoiHenkilo(anyString(), eq("1.2.3.4.5"));
-        assertPublished(2, duplikaattiOid, yksiloitavaOid);
+        assertPublished(objectMapper, amazonSNS, 2, duplikaattiOid, yksiloitavaOid);
     }
 
     @Test
@@ -601,27 +598,6 @@ public class YksilointiITest {
                 .containsNull();
         assertThat(henkiloService.findSlavesByMasterOid(yksiloitavaOid)).isEmpty();
         verify(kayttooikeusClientMock).passivoiHenkilo(anyString(), isNull());
-        assertPublished(2, duplikaattiOid, yksiloitavaOid);
-    }
-
-    private void assertPublished(int times, String... oids) {
-        if (times == 0) {
-            verifyZeroInteractions(amazonSNS);
-        } else {
-            ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-            verify(amazonSNS, times(times)).publish(anyString(), argumentCaptor.capture());
-            assertThat(argumentCaptor.getAllValues())
-                    .extracting(s -> fromJson(s, new TypeReference<Map<String, String>>() {
-                    }).get("oidHenkilo"))
-                    .containsOnly(oids);
-        }
-    }
-
-    private <T> T fromJson(String s, TypeReference<T> t) {
-        try {
-            return this.objectMapper.readValue(s, t);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        assertPublished(objectMapper, amazonSNS, 2, duplikaattiOid, yksiloitavaOid);
     }
 }
