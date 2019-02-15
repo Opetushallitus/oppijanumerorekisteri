@@ -113,7 +113,20 @@ public interface HenkiloJpaRepository {
 
     Collection<Henkilo> findByExternalIds(Collection<String> externalIds);
 
+    /**
+     * Hakee ensimmäisen tunnisteeseen liitetyn henkilön
+     * @param identification Tunnisteen tiedot
+     * @return Ensimmäinen henkilö johon tunniste on liitetty
+     */
     Optional<Henkilo> findByIdentification(IdentificationDto identification);
+
+    /**
+     * Hakee tunnisteeseen liitetyn henkilön
+     * @param oidHenkilo Tunnisteen liitetyn henkilön oid
+     * @param identification Tunnisteen tiedot
+     * @return Henkilö johon tunniste on liitetty
+     */
+    Optional<Henkilo> findByIdentification(String oidHenkilo, IdentificationDto identification);
 
     Collection<Henkilo> findByIdentifications(Collection<IdentificationDto> identifications);
 

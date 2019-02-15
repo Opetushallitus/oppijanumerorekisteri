@@ -57,7 +57,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     @Override
     @Transactional
     public Iterable<IdentificationDto> create(String oid, IdentificationDto dto) {
-        Henkilo henkilo = henkiloRepository.findByIdentification(dto)
+        Henkilo henkilo = henkiloRepository.findByIdentification(oid, dto)
                 .orElseGet(() -> save(oid, dto));
 
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);

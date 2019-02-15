@@ -408,15 +408,24 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
     @Override
     public Optional<Henkilo> findByIdentification(IdentificationDto identification) {
+        return this.findByIdentification(null, identification);
+    }
+
+    @Override
+    public Optional<Henkilo> findByIdentification(String oidHenkilo, IdentificationDto identification) {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QIdentification qIdentification = QIdentification.identification;
 
-        return Optional.ofNullable(jpa()
+        JPAQuery<Henkilo> query = jpa()
                 .from(qHenkilo)
                 .join(qHenkilo.identifications, qIdentification)
                 .where(qIdentification.idpEntityId.eq(identification.getIdpEntityId()))
                 .where(qIdentification.identifier.eq(identification.getIdentifier()))
-                .select(qHenkilo).fetchOne());
+                .select(qHenkilo);
+        if (oidHenkilo != null) {
+            query.where(qHenkilo.oidHenkilo.eq(oidHenkilo));
+        }
+        return Optional.ofNullable(query.fetchOne());
     }
 
     @Override
