@@ -2,12 +2,12 @@
 
 import React from 'react';
 import {connect} from "react-redux";
-import type {L} from "../../../../types/localisation.type";
+import type {Localisations} from "../../../../types/localisation.type";
 import PopupButton from "../../button/PopupButton";
 import SahkopostitunnistePopupContent from "../../button/SahkopostitunnistePopupContent";
 
 type Props = {
-    L: L,
+    L: Localisations,
     oidHenkilo: string,
     styles: any,
     disabled?: boolean

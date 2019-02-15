@@ -4,7 +4,7 @@ import React from 'react';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
 import './HakaPopupContent.css';
-import type {L} from "../../../types/localisation.type";
+import type {Localisations} from "../../../types/localisation.type";
 import Loader from "../icons/Loader";
 import {connect} from "react-redux";
 import {addGlobalNotification} from "../../../actions/notification.actions";
@@ -14,7 +14,7 @@ import type {Identification} from "../../../types/domain/oppijanumerorekisteri/I
 
 type Props = {
     henkiloOid: string,
-    L: L,
+    L: Localisations,
     addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
