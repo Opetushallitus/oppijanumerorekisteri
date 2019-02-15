@@ -1,0 +1,16 @@
+.sahkopostipopup .tunnisteinput {
+    margin-top: 15px;
+}
+
+.sahkopostipopup .tunnistetag {
+    padding: 5px 0 5px 5px;
+    background-color: #f4f4f4;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+}
+
+.sahkopostipopup .tunnistesave {
+    margin-top: 15px;
+    float: left;
+}

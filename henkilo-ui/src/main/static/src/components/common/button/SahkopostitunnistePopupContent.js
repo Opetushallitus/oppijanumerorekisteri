@@ -3,7 +3,7 @@
 import React from 'react';
 import {urls} from 'oph-urls-js';
 import {http} from '../../../http';
-import './HakaPopupContent.css';
+import './SahkopostitunnistePopupContent.css';
 import type {Localisations} from "../../../types/localisation.type";
 import Loader from "../icons/Loader";
 import {connect} from "react-redux";
@@ -19,7 +19,7 @@ type Props = {
 }
 
 type State = {
-    sahkopostitunnisteet: Array<string>,
+    tunnisteet: Array<Identification>,
     newTunniste: string,
     loading: boolean
 }
@@ -29,34 +29,44 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            sahkopostitunnisteet: [],
+            tunnisteet: [],
             newTunniste: '',
             loading: false
         }
     }
 
     async componentDidMount() {
-        this.getSahkopostitunnisteet();
+        await this.getTunnisteet();
     }
 
     render() {
-        return (<div className="hakapopupcontent">
+        return (<div className="sahkopostipopup">
             <ul>
                 {
-                    this.state.loading ? <Loader /> : this.state.sahkopostitunnisteet.length > 0 ? this.state.sahkopostitunnisteet.map(sahkopostitunniste =>
-                    (<li className="tag" key={sahkopostitunniste}><span>{sahkopostitunniste}</span> <a className="remove"
-                                                                                           onClick={ () => this.removeSahkopostitunniste(sahkopostitunniste)}>{this.props.L['POISTA']}</a>
-                    </li>)) : <span className="oph-h4 oph-strong hakapopup">{this.props.L['EI_SAHKOPOSTITUNNISTEITA']}</span> }
+                    this.state.loading ? <Loader /> : this.state.tunnisteet.length > 0
+                        ? this.state.tunnisteet
+                            .sort((a,b) => a.identifier.localeCompare(b.identifier))
+                            .map(tunniste =>
+                                (<li className="tunnistetag" key={tunniste.identifier}>
+                                    <span>{tunniste.identifier}</span>
+                                    {tunniste.idpEntityId === 'oppijaToken'
+                                    && <button className="oph-button"
+                                               onClick={ () => this.removeSahkopostitunniste(tunniste.identifier)}>
+                                        {this.props.L['POISTA']}
+                                    </button>}
+                                </li>))
+                        : <span className="oph-h4 oph-strong">{this.props.L['EI_SAHKOPOSTITUNNISTEITA']}</span>
+                }
             </ul>
             <div className="oph-field oph-field-is-required">
                 <input type="text"
-                       className="oph-input haka-input"
+                       className="oph-input tunnisteinput"
                        aria-required="true"
                        placeholder="Lisää uusi tunnus"
                        value={this.state.newTunniste}
                        onChange={this.handleChange.bind(this)}
                        onKeyPress={ (e) => e.key === 'Enter' ? this.addSahkopostitunniste() : null}/>
-                <button className="save oph-button oph-button-primary"
+                <button className="tunnistesave oph-button oph-button-primary"
                         onClick={() => this.addSahkopostitunniste()}>{this.props.L['TALLENNA_TUNNUS']}</button>
             </div>
         </div>);
@@ -73,7 +83,7 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
             try {
                 this.setState({loading: true});
                 const newTunnisteet = await http.post(url, this.stringToIdentification(this.state.newTunniste));
-                this.setState({newTunniste: '', sahkopostitunnisteet: this.identificationsToStrings(newTunnisteet), loading: false});
+                this.setState({newTunniste: '', tunnisteet: newTunnisteet, loading: false});
             } catch (error) {
                 this.setState({loading: false});
                 this.props.addGlobalNotification({
@@ -88,11 +98,11 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
     }
 
     async removeSahkopostitunniste(tunniste: string) {
-        const url = urls.url('oppijanumerorekisteri-service.henkilo.identification.remove', this.props.henkiloOid, 'email', tunniste );
+        const url = urls.url('oppijanumerorekisteri-service.henkilo.identification.remove', this.props.henkiloOid, 'oppijaToken', tunniste );
         try {
             this.setState({loading: true});
-            const sahkopostitunnisteet = await http.delete(url);
-            this.setState({loading: false, sahkopostitunnisteet: this.identificationsToStrings(sahkopostitunnisteet)});
+            const tunnisteet = await http.delete(url);
+            this.setState({loading: false, tunnisteet});
         } catch (error) {
             this.setState({loading: false});
             this.props.addGlobalNotification({
@@ -105,12 +115,11 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
         }
     }
 
-    async getSahkopostitunnisteet() {
+    async getTunnisteet() {
         const url = urls.url('oppijanumerorekisteri-service.henkilo.identification', this.props.henkiloOid);
         try {
             const tunnisteet: Array<Identification> = await http.get(url);
-            const sahkopostitunnisteet: Array<string> = this.identificationsToStrings(tunnisteet);
-            this.setState({loading: false, sahkopostitunnisteet});
+            this.setState({loading: false, tunnisteet});
         } catch (error) {
             this.setState({loading: false});
             this.props.addGlobalNotification({
@@ -123,13 +132,8 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
         }
     }
 
-    identificationsToStrings(tunnisteet: Array<Identification>): Array<string> {
-        return tunnisteet.filter( (tunniste: Identification) => tunniste.idpEntityId === 'email')
-            .map( (tunniste: Identification) => tunniste.identifier);
-    }
-
     stringToIdentification(tunniste: string): Identification {
-        return {identifier: tunniste, idpEntityId: 'email'};
+        return {identifier: tunniste, idpEntityId: 'oppijaToken'};
     }
 
 
