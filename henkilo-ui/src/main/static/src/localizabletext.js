@@ -11,7 +11,9 @@ const FORMATS = [
             const value: any = R.find(R.propEq('kieli', uiLang.toUpperCase()))(localizableText);
             return value ? value.nimi : value
         },
-        getFallbackValue: (localizableText) => localizableText[0]
+        getFallbackValue: (localizableText) => (typeof localizableText[0] === "object" && localizableText[0] !== null)
+            ? localizableText[0].nimi
+            : localizableText[0]
     },
     {
         // used (at least) in henkilöpalvelu
@@ -20,7 +22,9 @@ const FORMATS = [
             const value = R.find(R.propEq('lang', uiLang.toUpperCase()))(localizableText.texts);
             return value ? value.text : value
         },
-        getFallbackValue: (localizableText) => localizableText[0]
+        getFallbackValue: (localizableText) => (typeof localizableText[0] === "object" && localizableText[0] !== null)
+            ? localizableText[0].text
+            : localizableText[0]
     },
     {
         // used (at least) in organisaatiopalvelu
@@ -57,5 +61,5 @@ export function toLocalizedText(uiLang: Locale, localizableText: any, fallbackVa
         R.filter((format) => isValid(format, localizableText)),
         R.map((format) => getValue(format, localizableText, uiLang, fallbackValue)),
         R.find(hasValue)
-    )(FORMATS)
+    )(FORMATS);
 }
