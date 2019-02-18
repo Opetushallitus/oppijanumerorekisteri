@@ -6,7 +6,6 @@ import classNames from 'classnames/bind';
 import ophLogo from '../../img/logo_oph.svg';
 import okmLogo from '../../img/logo_okm.png';
 import type { Localisations } from '../../types/localisation.type'
-import type {NaviTab} from '../../types/navigation.type'
 import Script from 'react-load-script';
 import {urls} from 'oph-urls-js';
 
@@ -18,7 +17,6 @@ import AngleDownIcon from "../common/icons/AngleDownIcon";
 import PlaceholderIcon from "../common/icons/PlaceholderIcon";
 
 type Props = {
-    naviTabs: Array<NaviTab>,
     pathName: ?string,
     L: Localisations,
     isRekisterinpitaja: boolean,
