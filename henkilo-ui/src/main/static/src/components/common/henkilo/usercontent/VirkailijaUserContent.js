@@ -48,7 +48,6 @@ class VirkailijaUserContent extends React.Component<Props> {
         return this.props.henkilo.henkiloLoading
         || this.props.koodisto.kieliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading
-        || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.henkilo.kayttajatietoLoading
         || this.props.koodisto.yhteystietotyypitKoodistoLoading
             ? <Loader />
