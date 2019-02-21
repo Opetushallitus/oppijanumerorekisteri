@@ -282,6 +282,17 @@ public class HenkiloController {
         return identificationService.create(oid, identification);
     }
 
+    @DeleteMapping("/{oid}/identification/{idpEntityId}/{identifier}")
+    @ApiOperation("Henkilön tunnistetietojen poistaminen")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
+    public Iterable<IdentificationDto> removeIdentification(@PathVariable String oid,
+                                                            @PathVariable String idpEntityId,
+                                                            @PathVariable String identifier) {
+        return identificationService.remove(oid, IdentificationDto.of(idpEntityId, identifier));
+    }
+
+
+
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.",
             notes = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"

@@ -159,7 +159,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String kotikunta; // kunta-koodisto
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE }, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
     private Set<Identification> identifications = new HashSet<>();

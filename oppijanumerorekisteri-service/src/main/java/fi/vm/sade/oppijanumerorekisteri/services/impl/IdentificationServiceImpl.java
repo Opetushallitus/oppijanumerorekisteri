@@ -57,7 +57,7 @@ public class IdentificationServiceImpl implements IdentificationService {
     @Override
     @Transactional
     public Iterable<IdentificationDto> create(String oid, IdentificationDto dto) {
-        Henkilo henkilo = henkiloRepository.findByIdentification(dto)
+        Henkilo henkilo = henkiloRepository.findByIdentification(oid, dto)
                 .orElseGet(() -> save(oid, dto));
 
         return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
@@ -68,6 +68,18 @@ public class IdentificationServiceImpl implements IdentificationService {
         Identification identification = mapper.map(dto, Identification.class);
         henkilo.getIdentifications().add(identification);
         return henkiloModificationService.update(henkilo);
+    }
+
+    @Override
+    @Transactional
+    public Iterable<IdentificationDto> remove(String oid, IdentificationDto identificationDto) {
+        Henkilo henkilo = getHenkiloByOid(oid);
+        Identification identification = mapper.map(identificationDto, Identification.class);
+        henkilo.getIdentifications().removeIf(i ->
+                identification.getIdpEntityId().equals(i.getIdpEntityId()) &&
+                        identification.getIdentifier().equals(i.getIdentifier()));
+        this.henkiloModificationService.update(henkilo);
+        return mapper.mapAsList(henkilo.getIdentifications(), IdentificationDto.class);
     }
 
     @Override

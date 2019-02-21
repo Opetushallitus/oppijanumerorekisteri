@@ -25,6 +25,8 @@ public interface IdentificationService {
      */
     Iterable<IdentificationDto> create(String oid, IdentificationDto identification);
 
+    Iterable<IdentificationDto> remove(String oid, IdentificationDto identificationDto);
+
     /**
      * Käsittelee tunnistamattomat henkilöt liittämälle ne oikeisiin oideihin.
      *
