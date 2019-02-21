@@ -16,6 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
+import org.assertj.core.groups.Tuple;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,7 +98,7 @@ public class DuplicateServiceImplTest {
     }
 
     @Test
-    public void linkHenkiloseShouldMoveEmailIdentificationToNewMaster() {
+    public void linkHenkiloseShouldMoveAllIdentificationsToNewMaster() {
         Henkilo henkilo1 = EntityUtils.createHenkilo("arpa noppa", "arpa", "kuutio", null, "1.2.3.4.5", false, "fi", "FI", "2.3.34.5", new Date(), new Date(), "2.3.34.5", "arvo");
         Identification arpaIdentification1 = EntityUtils.createIdentification("email", "arpa@noppa.com");
         Identification arpaIdentification2 = EntityUtils.createIdentification("haka", "arpahaka");
@@ -130,15 +130,19 @@ public class DuplicateServiceImplTest {
         given(this.henkiloRepository.findByOidHenkilo(henkilo2.getOidHenkilo())).willReturn(Optional.of(henkilo2));
         given(this.henkiloRepository.findByOidHenkilo(henkilo3.getOidHenkilo())).willReturn(Optional.of(henkilo3));
 
-        assertThat(henkilo1.getIdentifications().size()).isEqualTo(2);
+        assertThat(henkilo1.getIdentifications())
+                .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
+                .containsExactlyInAnyOrder(Tuple.tuple("haka", "arpahaka"), Tuple.tuple("email", "arpa@noppa.com"));
         this.duplicateService.linkHenkilos(henkilo1.getOidHenkilo(), candidateOids);
-        assertThat(henkilo1.getIdentifications().size()).isEqualTo(4);
-        assertThat(henkilo1.getIdentifications().contains(arpa2Identification1)).isTrue();
-        assertThat(henkilo1.getIdentifications().contains(arpa3Identification1)).isTrue();
-        assertThat(henkilo2.getIdentifications().size()).isEqualTo(1);
-        assertThat(henkilo2.getIdentifications().contains(arpa2Identification1)).isFalse();
-        assertThat(henkilo3.getIdentifications().contains(arpa3Identification1)).isFalse();
-        assertThat(henkilo1.getIdentifications().stream().filter(i -> i.getIdpEntityId() == "haka").collect(Collectors.toList()).size()).isEqualTo(1);
+        assertThat(henkilo1.getIdentifications())
+                .extracting(Identification::getIdpEntityId, Identification::getIdentifier)
+                .containsExactlyInAnyOrder(Tuple.tuple("haka", "arpahaka"),
+                        Tuple.tuple("email", "arpa@noppa.com"),
+                        Tuple.tuple("email", "arpa2@noppa2.com"),
+                        Tuple.tuple("email", "arpa3@noppa3.com"),
+                        Tuple.tuple("haka", "arpa2haka"));
+        assertThat(henkilo2.getIdentifications()).isEmpty();
+        assertThat(henkilo3.getIdentifications()).isEmpty();
     }
 
     @Test

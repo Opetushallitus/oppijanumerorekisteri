@@ -217,26 +217,22 @@ public class DuplicateServiceImpl implements DuplicateService {
 
         // Siirretään sähköpostitunnisteet slavelta masterille, jos kummallakaan ei ole hetua
         if (!hasHetu(master) && !hasHetu(duplicateHenkilo)) {
-            moveEmailIdentificationsToMaster(master, duplicateHenkilo);
+            moveIdentificationsToMaster(master, duplicateHenkilo);
         }
 
         return previousMasters;
     }
 
-    private void moveEmailIdentificationsToMaster(Henkilo master, Henkilo slave) {
+    private void moveIdentificationsToMaster(Henkilo master, Henkilo slave) {
         Set<Identification> masterIdentifications = master.getIdentifications();
 
         Set<Identification> slaveIdentifications = slave.getIdentifications();
 
-        // Move slaves email identification to master
-        slaveIdentifications.forEach(slaveIdentification -> {
-            if("email".equals(slaveIdentification.getIdpEntityId())) {
-                masterIdentifications.add(slaveIdentification);
-            }
-        });
+        // Add slaves email identification to master
+        masterIdentifications.addAll(slaveIdentifications);
 
         // Remove email identification from slave
-        slaveIdentifications.removeIf(identification -> "email".equals(identification.getIdpEntityId()));
+        slaveIdentifications.clear();
         master.setIdentifications(masterIdentifications);
         slave.setIdentifications(slaveIdentifications);
     }
