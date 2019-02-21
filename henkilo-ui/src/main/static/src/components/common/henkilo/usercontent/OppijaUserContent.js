@@ -49,6 +49,7 @@ class OppijaUserContent extends React.Component<Props> {
     render() {
         return this.props.henkilo.henkiloLoading
         || this.props.koodisto.kieliKoodistoLoading
+        || this.props.koodisto.sukupuoliKoodistoLoading
         || this.props.koodisto.kansalaisuusKoodistoLoading
         || this.props.koodisto.yhteystietotyypitKoodistoLoading
             ? <Loader />

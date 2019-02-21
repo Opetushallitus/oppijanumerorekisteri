@@ -6,6 +6,7 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {ReactSelectOption} from "../../../../types/react-select.types";
 import type {Locale} from "../../../../types/locale.type";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
+import {fetchSukupuoliKoodisto} from "../../../../actions/koodisto.actions";
 
 type Props = {
     henkilo: HenkiloState,
@@ -16,19 +17,33 @@ type Props = {
     henkiloUpdate: Henkilo,
     readOnly: boolean,
     updateModelFieldAction: () => void,
+    fetchSukupuoliKoodisto: () => void,
 }
 
-const Sukupuoli = (props: Props) => <LabelValue
-    readOnly={props.readOnly}
-    updateModelFieldAction={props.updateModelFieldAction}
-    values={{
-        label: 'HENKILO_SUKUPUOLI',
-        data: props.koodisto.sukupuoli.map(koodi => ({value: koodi.value, label: koodi[props.locale],
-            optionsName: 'sukupuoli',})),
-        selectValue: props.henkiloUpdate.sukupuoli,
-        disabled: !!props.henkiloUpdate.hetu,
-    }}
-/>;
+class Sukupuoli extends React.Component<Props> {
+    constructor(props: Props) {
+        super(props);
+    }
+
+    componentDidMount(): void {
+        this.props.fetchSukupuoliKoodisto();
+    }
+
+    render() {
+        return <LabelValue
+            readOnly={this.props.readOnly}
+            updateModelFieldAction={this.props.updateModelFieldAction}
+            values={{
+                label: 'HENKILO_SUKUPUOLI',
+                data: this.props.koodisto.sukupuoli.map(koodi => ({value: koodi.value, label: koodi[this.props.locale],
+                    optionsName: 'sukupuoli',})),
+                selectValue: this.props.henkiloUpdate.sukupuoli,
+                disabled: !!this.props.henkiloUpdate.hetu,
+            }}
+        />;
+    }
+}
+
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,
@@ -36,4 +51,4 @@ const mapStateToProps = state => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {})(Sukupuoli);
+export default connect(mapStateToProps, {fetchSukupuoliKoodisto})(Sukupuoli);
