@@ -87,4 +87,9 @@ public class EntityUtils {
         return new Yksilointitieto(henkilo, null, etunimet, kutsumanimi, sukunimi, sukupuoli, null, false, null,
                 Sets.newHashSet(), Sets.newHashSet());
     }
+
+    static public Identification createIdentification(String idpEntityId, String identifier) {
+        return new Identification(idpEntityId, identifier, null, null, null);
+    }
+
 }

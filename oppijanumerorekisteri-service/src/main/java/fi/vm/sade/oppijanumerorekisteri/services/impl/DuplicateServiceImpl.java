@@ -14,6 +14,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
+import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
@@ -39,7 +40,6 @@ public class DuplicateServiceImpl implements DuplicateService {
     private final UserDetailsHelper userDetailsHelper;
     private final OrikaConfiguration mapper;
     private final KayttooikeusClient kayttooikeusClient;
-
 
     @Override
     @Transactional(readOnly = true)
@@ -215,7 +215,26 @@ public class DuplicateServiceImpl implements DuplicateService {
             }
         });
 
+        // Siirretään sähköpostitunnisteet slavelta masterille, jos kummallakaan ei ole hetua
+        if (!hasHetu(master) && !hasHetu(duplicateHenkilo)) {
+            moveIdentificationsToMaster(master, duplicateHenkilo);
+        }
+
         return previousMasters;
+    }
+
+    private void moveIdentificationsToMaster(Henkilo master, Henkilo slave) {
+        Set<Identification> masterIdentifications = master.getIdentifications();
+
+        Set<Identification> slaveIdentifications = slave.getIdentifications();
+
+        // Add slaves email identification to master
+        masterIdentifications.addAll(slaveIdentifications);
+
+        // Remove email identification from slave
+        slaveIdentifications.clear();
+        master.setIdentifications(masterIdentifications);
+        slave.setIdentifications(slaveIdentifications);
     }
 
     private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
@@ -239,12 +258,17 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .reduce( originalMaster, (currentMaster, candidate) -> isHenkiloIdentified(candidate) ? candidate : currentMaster );
     }
 
+
     private boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
         return henkilos.stream().filter(this::isHenkiloIdentified).count() > 1;
     }
 
     private boolean isHenkiloIdentified(Henkilo henkilo) {
-        return henkilo.isYksiloity() || henkilo.isYksiloityVTJ() || henkilo.getHetu() != null;
+        return henkilo.isYksiloity() || henkilo.isYksiloityVTJ() || hasHetu(henkilo);
+    }
+
+    private boolean hasHetu(Henkilo henkilo) {
+        return henkilo.getHetu() != null;
     }
 
     @Override
