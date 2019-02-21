@@ -21,10 +21,6 @@ type Props = {
 }
 
 class Sukupuoli extends React.Component<Props> {
-    constructor(props: Props) {
-        super(props);
-    }
-
     componentDidMount(): void {
         this.props.fetchSukupuoliKoodisto();
     }
