@@ -18,6 +18,7 @@ type Props = {
 type State = {
     filter: string,
     naytaVainPalvelulleSallitut: boolean,
+    naytaPassivoidut: boolean,
 }
 
 export default class KayttooikeusryhmatHallintaPage extends React.Component<Props, State> {
@@ -25,6 +26,7 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
     state = {
         filter: '',
         naytaVainPalvelulleSallitut: false,
+        naytaPassivoidut: false,
     };
 
     render() {
@@ -33,12 +35,16 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
             <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}
                                             naytaVainPalvelulleSallitut={this.state.naytaVainPalvelulleSallitut}
                                             setNaytaVainSallitut={() => this.setState({naytaVainPalvelulleSallitut: !this.state.naytaVainPalvelulleSallitut,})}
+                                            naytaPassivoidut={this.state.naytaPassivoidut}
+                                            toggleNaytaPassivoidut={() => this.setState({naytaPassivoidut: !this.state.naytaPassivoidut})}
             />
             <KayttooikeusryhmaLista {...this.props}
                                     items={this.props.kayttooikeusryhmat}
                                     filter={this.state.filter}
                                     naytaVainPalvelulleSallitut={this.state.naytaVainPalvelulleSallitut}
-                                    labelPath={['name']}/>
+                                    naytaPassivoidut={this.state.naytaPassivoidut}
+                                    labelPath={['name']}
+            />
         </div>
     }
 

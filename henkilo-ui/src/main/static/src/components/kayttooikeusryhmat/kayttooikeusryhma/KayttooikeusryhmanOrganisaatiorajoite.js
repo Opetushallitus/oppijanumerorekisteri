@@ -76,7 +76,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                                          .map(option => ({
                                              label: option.label,
                                              value: option.value,
-                                             checked: this.props.oppilaitostyypitSelections.indexOf(option.value) !== -1,
+                                             checked: this.props.oppilaitostyypitSelections && this.props.oppilaitostyypitSelections.indexOf(option.value) !== -1,
                                          }))}
                                          selectAction={this.props.oppilaitostyypitSelectAction}
                     />
@@ -87,7 +87,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                                              .map(option => ({
                                                  label: option.label,
                                                  value: option.value,
-                                                 checked: this.props.organisaatiotyypitSelections.indexOf(option.value) !== -1,
+                                                 checked: this.props.organisaatiotyypitSelections && this.props.organisaatiotyypitSelections.indexOf(option.value) !== -1,
                                              }))
                                         }
                                         selectAction={this.props.organisaatiotyypitSelectAction}

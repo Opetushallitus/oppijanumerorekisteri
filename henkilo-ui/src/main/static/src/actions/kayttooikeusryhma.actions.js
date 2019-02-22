@@ -212,7 +212,7 @@ export const fetchAllKayttooikeusryhma = (forceFetch = false) => async (dispatch
 
     if(forceFetch || (!getState().kayttooikeus.allKayttooikeusryhmas.length && !getState().kayttooikeus.allKayttooikeusryhmasLoading)) {
         dispatch(fetchAllKayttooikeusryhmaRequest());
-        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all');
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.all', {passiiviset: true});
         try {
             const data = await http.get(url);
             dispatch(fetchAllKayttooikeusryhmaSuccess(data))
@@ -229,7 +229,7 @@ const fetchKayttooikeusryhmaByIdSuccess = payload => ({type: FETCH_KAYTTOOIKEUSR
 const fetchKayttooikeusryhmaByIdFailure = error => ({type: FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE, error});
 
 export const fetchKayttooikeusryhmaById = id => async (dispatch) => {
-    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id', id);
+    const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id', id, {passiiviset: true});
     dispatch(fetchKayttooikeusryhmaByIdrequest());
     try {
         const data = await http.get(url);

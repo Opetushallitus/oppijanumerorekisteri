@@ -30,9 +30,11 @@ export default class MyonnettavatKayttooikeusryhmat extends React.Component<Prop
     componentWillMount() {
 
         const lang = this.props.locale.toUpperCase();
-        const kayttooikeusryhmaOptions: Array<ReactSelectOption> = this.props.kayttooikeus.allKayttooikeusryhmas.map(
+        const kayttooikeusryhmaOptions: Array<ReactSelectOption> = this.props.kayttooikeus.allKayttooikeusryhmas
+            .filter(kayttooikeusryhma => !kayttooikeusryhma.passivoitu)
+            .map(
             kayttooikeusryhma => {
-                const textObject = R.find(R.propEq('lang', lang))(kayttooikeusryhma.description.texts);
+                const textObject = R.find(R.propEq('lang', lang))(R.path(['description', 'texts'], kayttooikeusryhma) || []);
                 return {label: R.path(['text'], textObject), value: kayttooikeusryhma.id};
             });
         this.setState({kayttooikeusryhmaOptions});
@@ -46,10 +48,10 @@ export default class MyonnettavatKayttooikeusryhmat extends React.Component<Prop
                     <OphSelect id="kayttooikeusryhma-myontooikeudet"
                                options={this.state.kayttooikeusryhmaOptions}
                                placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUSRYHMA']}
-                               onChange={this.props.kayttooikeusryhmaSelectAction}></OphSelect>
+                               onChange={this.props.kayttooikeusryhmaSelectAction}/>
                     <ItemList items={this.props.kayttooikeusryhmaSelections}
                               labelPath={['label']}
-                              removeAction={this.props.removeKayttooikeusryhmaSelectAction}></ItemList>
+                              removeAction={this.props.removeKayttooikeusryhmaSelectAction}/>
                 </div>
                 <div className="flex-item-1">
 
