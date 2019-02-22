@@ -50,6 +50,8 @@ export type KayttooikeusRyhmaState = {
     +kayttooikeusryhma: ?Kayttooikeusryhma,
     +kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>,
     +palvelutRoolit: Array<PalveluRooli>,
+    +allKayttooikeusryhmas: Array<Kayttooikeusryhma>,
+    +allKayttooikeusryhmasLoading: boolean,
 }
 
 export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {

@@ -8,12 +8,13 @@ import type {Locale} from "../../../types/locale.type";
 import type {Localisations} from "../../../types/localisation.type";
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util'
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
+import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
 
 type Props = {
     updateNavigation: (Array<any>, ?string, ?string) => any,
     muokkausoikeus: boolean,
-    kayttooikeusryhmat: any,
+    kayttooikeusryhmat: KayttooikeusRyhmaState,
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
     L: Localisations,
@@ -28,11 +29,15 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
     }
 
     render() {
-        const kayttooikeusryhmat: any = this.props.kayttooikeusryhmat.allKayttooikeusryhmas;
         return <div className="wrapper">
             {this.props.kayttooikeusryhmat.allKayttooikeusryhmasLoading ? <Loader/> :
-                <KayttooikeusryhmatHallintaPage {...this.props}
-                                                kayttooikeusryhmat={kayttooikeusryhmat}/>
+                <KayttooikeusryhmatHallintaPage muokkausoikeus={this.props.muokkausoikeus}
+                                                locale={this.props.locale}
+                                                L={this.props.L}
+                                                router={this.props.router}
+                                                omattiedot={this.props.omattiedot}
+                                                kayttooikeusryhmat={this.props.kayttooikeusryhmat.allKayttooikeusryhmas}
+                />
             }
         </div>
     }

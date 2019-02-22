@@ -14,7 +14,6 @@ import {path} from 'ramda';
 
 type Props = {
     L: Localisations,
-    closeModalAction: () => void,
     router: any,
     kayttooikeusryhmaId: ?string,
     addGlobalNotification: GlobalNotificationConfig => void,
@@ -24,8 +23,12 @@ type Props = {
 type State = {
     isWaitingRequest: boolean,
     isPassivoitu: boolean,
+    showPassivoiModal: boolean,
 }
 
+/**
+ * Napit ja modal käyttöoikeusryhmän tilan muuttamiseen passiiviseksi ja aktiiviseksi.
+ */
 class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -33,6 +36,7 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
         this.state = {
             isWaitingRequest: false,
             isPassivoitu: !!path(['passivoitu'], props.valittuKayttooikeusryhma),
+            showPassivoiModal: false,
         };
     }
 
@@ -44,18 +48,32 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
     }
 
     render() {
-        return <OphModal title={this.state.isPassivoitu ? this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_AKTIVOI_VARMISTUS'] : this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']}
-                         onClose={() => this.props.closeModalAction()}>
-            <div className="passivoi-modal">
-                <button className="oph-button oph-button-primary"
-                        onClick={this.state.isPassivoitu ? this.aktivoiKayttooikeusryhma.bind(this) : this.passivoiKayttooikeusryhma.bind(this)}>
-                    <SpinnerInButton show={this.state.isWaitingRequest}/>  {this.state.isPassivoitu ? this.props.L['KAYTTOOIKEUSRYHMAT_AKTIVOI'] : this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}
-                </button>
-                <button className="oph-button oph-button-cancel" onClick={() => this.props.closeModalAction()}>
-                    {this.props.L['PERUUTA']}
-                </button>
-            </div>
-        </OphModal>;
+        return <React.Fragment>
+            {
+                this.props.kayttooikeusryhmaId && !this.state.isPassivoitu
+                    ? <button className="oph-button oph-button-cancel"
+                              onClick={() => {this.setState({ showPassivoiModal: true })}}>
+                        {this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}
+                    </button>
+                    : <button className="oph-button oph-button-primary" onClick={() => {this.setState({ showPassivoiModal: true })}}>
+                        {this.props.L['KAYTTOOIKEUSRYHMAT_AKTIVOI']}
+                    </button>
+            }
+            {
+                this.state.showPassivoiModal 
+                && <OphModal title={this.state.isPassivoitu ? this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_AKTIVOI_VARMISTUS'] : this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI_VARMISTUS']}
+                             onClose={() => this.closeModalAction()}>
+                    <div className="passivoi-modal">
+                        <button className="oph-button oph-button-primary"
+                                onClick={this.state.isPassivoitu ? this.aktivoiKayttooikeusryhma.bind(this) : this.passivoiKayttooikeusryhma.bind(this)}>
+                            <SpinnerInButton show={this.state.isWaitingRequest}/>  {this.state.isPassivoitu ? this.props.L['KAYTTOOIKEUSRYHMAT_AKTIVOI'] : this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}
+                        </button>
+                        <button className="oph-button oph-button-cancel" onClick={() => this.closeModalAction()}>
+                            {this.props.L['PERUUTA']}
+                        </button>
+                    </div>
+                </OphModal>}
+        </React.Fragment>;
     }
 
     async passivoiKayttooikeusryhma() {
@@ -84,9 +102,11 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
             });
             throw error;
         } finally {
-            this.props.closeModalAction();
+            this.closeModalAction();
         }
     }
+    
+    closeModalAction = () => this.setState({showPassivoiModal: false});
 
 }
 

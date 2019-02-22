@@ -85,7 +85,6 @@ type State = {
     kayttooikeusryhmaForm: KayttooikeusryhmaForm,
     palvelutSelection: ReactSelectOption | void,
     palveluKayttooikeusSelection: ReactSelectOption | void,
-    showPassivoiModal: boolean,
     ryhmaRestrictionViite: any,
     toggleTallenna: boolean,
     organisaatios: Array<OrganisaatioSelectObject>,
@@ -108,7 +107,6 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         },
         palvelutSelection: undefined,
         palveluKayttooikeusSelection: undefined,
-        showPassivoiModal: false,
         isPassivoitu: false,
         ryhmaRestrictionViite: undefined,
         toggleTallenna: false,
@@ -195,17 +193,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                 <button className="oph-button oph-button-cancel" onClick={() => {this.cancel()}}>
                     {this.props.L['PERUUTA']}
                 </button>
-                {
-                    this.props.kayttooikeusryhmaId && !this.state.isPassivoitu
-                        ? <button className="oph-button oph-button-cancel"
-                                  onClick={() => {this.setState({ showPassivoiModal: true })}}>
-                            {this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PASSIVOI']}
-                        </button>
-                        : <button className="oph-button oph-button-primary" onClick={() => {this.setState({ showPassivoiModal: true })}}>
-                            {this.props.L['KAYTTOOIKEUSRYHMAT_AKTIVOI']}
-                        </button>
-                }
-
+                <ToggleKayttooikeusryhmaStateModal
+                    router={this.props.router}
+                    kayttooikeusryhmaId={this.props.kayttooikeusryhmaId}
+                />
             </div>
 
             <LocalNotification toggle={!this._validateKayttooikeusryhmaInputs()} type={'info'} title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO']}>
@@ -217,18 +208,11 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             </LocalNotification>
 
 
-            <LocalNotification toggle={this._hasPassiveOrganisaatioRajoite.call(this)} type={NOTIFICATIONTYPES.WARNING} title={this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS']}></LocalNotification>
-            {this.state.showPassivoiModal && <ToggleKayttooikeusryhmaStateModal
-                closeModalAction={this._hideToggleModal}
-                router={this.props.router}
-                kayttooikeusryhmaId={this.props.kayttooikeusryhmaId}
-            /> }
+            <LocalNotification toggle={this._hasPassiveOrganisaatioRajoite.call(this)}
+                               type={NOTIFICATIONTYPES.WARNING}
+                               title={this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS']}/>
         </div>
     }
-
-    _hideToggleModal = (): void => {
-        this.setState( { showPassivoiModal: false});
-    };
 
     _parseExistingKayttooikeusryhmaData = (kayttooikeusryhmaState: KayttooikeusRyhmaState): KayttooikeusryhmaForm => {
         const organisaatioviiteData = R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState);
