@@ -12,7 +12,6 @@ import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.r
 
 
 type Props = {
-    updateNavigation: (Array<any>, ?string, ?string) => any,
     muokkausoikeus: boolean,
     kayttooikeusryhmat: KayttooikeusRyhmaState,
     fetchAllKayttooikeusryhma: (boolean) => void,
