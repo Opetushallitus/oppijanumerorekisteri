@@ -15,6 +15,7 @@ type Props = {
     setNaytaVainSallitut: () => void,
     naytaPassivoidut: boolean,
     toggleNaytaPassivoidut: () => void,
+    isAdmin: boolean,
 }
 
 export default class KayttooikeusryhmaListaSuodatin extends React.Component<Props> {
@@ -31,7 +32,8 @@ export default class KayttooikeusryhmaListaSuodatin extends React.Component<Prop
                     />
                     <Link className="oph-button oph-button-primary lisaa-kayttooikeusryhma-button" to={'/kayttooikeusryhmat/lisaa'} disabled={!this.props.muokkausoikeus}>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA']}</Link>
                 </div>
-                <div className="oph-input-container flex-horizontal">
+                { this.props.isAdmin
+                && <div className="oph-input-container flex-horizontal">
                     <OphInline>
                         <label className="oph-checkable" htmlFor="kayttooikeusryhmaNaytaPassivoidut">
                             <input id="kayttooikeusryhmaNaytaPassivoidut" type="checkbox" className="oph-checkable-input"
@@ -40,6 +42,7 @@ export default class KayttooikeusryhmaListaSuodatin extends React.Component<Prop
                         </label>
                     </OphInline>
                 </div>
+                }
             </div>
         </div>
     }

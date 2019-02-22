@@ -5,6 +5,7 @@ import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import KayttooikeusryhmaListaSuodatin from "./KayttooikeusryhmaListaSuodatin";
 import type {Localisations} from "../../../types/localisation.type";
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 
 type Props = {
@@ -12,7 +13,8 @@ type Props = {
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     locale: Locale,
     L: Localisations,
-    router: any
+    router: any,
+    omattiedot: OmattiedotState,
 }
 
 type State = {
@@ -37,6 +39,7 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
                                             setNaytaVainSallitut={() => this.setState({naytaVainPalvelulleSallitut: !this.state.naytaVainPalvelulleSallitut,})}
                                             naytaPassivoidut={this.state.naytaPassivoidut}
                                             toggleNaytaPassivoidut={() => this.setState({naytaPassivoidut: !this.state.naytaPassivoidut})}
+                                            isAdmin={this.props.omattiedot.isAdmin}
             />
             <KayttooikeusryhmaLista {...this.props}
                                     items={this.props.kayttooikeusryhmat}

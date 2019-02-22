@@ -7,6 +7,7 @@ import KayttooikeusryhmatHallintaPage from "./KayttooikeusryhmatHallintaPage";
 import type {Locale} from "../../../types/locale.type";
 import type {Localisations} from "../../../types/localisation.type";
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util'
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
     locale: Locale,
     L: Localisations,
     router: any,
+    omattiedot: OmattiedotState,
 }
 
 class KayttooikeusryhmatContainer extends React.Component<Props> {
@@ -41,7 +43,8 @@ const mapStateToProps = (state) => ({
     muokkausoikeus: hasAnyPalveluRooli(state.omattiedot.organisaatiot, ['KOOSTEROOLIENHALLINTA_CRUD', 'HENKILONHALLINTA_OPHREKISTERI', 'KAYTTOOIKEUS_REKISTERINPITAJA']),
     kayttooikeusryhmat: state.kayttooikeus,
     locale: state.locale,
-    L: state.l10n.localisations[state.locale]
+    L: state.l10n.localisations[state.locale],
+    omattiedot: state.omattiedot,
 });
 
 export default connect(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)

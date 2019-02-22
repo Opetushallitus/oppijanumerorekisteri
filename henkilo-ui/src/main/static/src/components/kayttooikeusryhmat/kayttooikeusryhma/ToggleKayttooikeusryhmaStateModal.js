@@ -73,7 +73,7 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
             this.setState({isWaitingRequest: true});
             await http.put(url);
             this.setState({isWaitingRequest: false}, () => {
-                this.props.router.push(`/kayttooikeusryhmat/${this.props.kayttooikeusryhmaId || ''}`);
+                this.props.router.push('/kayttooikeusryhmat/');
             });
         } catch (error) {
             this.props.addGlobalNotification({
