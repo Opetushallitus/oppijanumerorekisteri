@@ -22,6 +22,7 @@ import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 import type {KayttooikeusOrganisaatiot} from "../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
+import type {Kayttooikeusryhma} from "../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 
 type Props = {
     L: Localisations,
@@ -38,12 +39,7 @@ type Props = {
     clearOrganisaatioSelection: () => void,
     kayttooikeusSelectionAction: ({value: ?string}) => void,
     initialValues: HenkilohakuCriteria,
-    kayttooikeusryhmas: Array<{
-        id: number,
-        description: {
-            texts: Array<{text: string, lang: string,}>,
-        }
-    }>,
+    kayttooikeusryhmas: Array<Kayttooikeusryhma>,
     ryhmas: {ryhmas: Array<{}>},
     fetchAllRyhmas: () => any,
     fetchAllKayttooikeusryhma: () => void,
@@ -123,13 +119,15 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                         <div className="henkilohaku-select">
                             <span className="flex-item-1">
                                 <OphSelect id="kayttooikeusryhmaFilter"
-                                           options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({
-                                               value: kayttooikeusryhma.id,
-                                               label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
-                                           }))}
+                                           options={this.props.kayttooikeusryhmas.filter(kayttooikeusryhma => !kayttooikeusryhma.passivoitu)
+                                               .map(kayttooikeusryhma => ({
+                                                   value: kayttooikeusryhma.id,
+                                                   label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, this.props.locale)
+                                               }))}
                                            value={this.props.selectedKayttooikeus}
                                            placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                                           onChange={this.props.kayttooikeusSelectionAction}/>
+                                           onChange={this.props.kayttooikeusSelectionAction}
+                                />
                             </span>
                             <span className="henkilohaku-clear-select">
                                 <CloseButton

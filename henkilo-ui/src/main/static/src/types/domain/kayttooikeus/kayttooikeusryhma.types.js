@@ -16,6 +16,7 @@ export type Kayttooikeusryhma = {
     passivoitu?: boolean,
     ryhmaRestriction?: boolean,
     sallittuKayttajatyyppi: ?SallitutKayttajatyypit,
+    description: ?TextGroup, // Tämä puuttuu MyonnettyKayttooikeusryhma tyypistä
 }
 
 export type KayttooikeusRyhmaModify = {

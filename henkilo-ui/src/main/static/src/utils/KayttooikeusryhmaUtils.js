@@ -9,5 +9,6 @@ export function myonnettyToKayttooikeusryhma(myonnetty: MyonnettyKayttooikeusryh
         kuvaus: myonnetty.ryhmaKuvaus,
         organisaatioViite: [],
         sallittuKayttajatyyppi: myonnetty.sallittuKayttajatyyppi,
+        description: null,
     };
 }

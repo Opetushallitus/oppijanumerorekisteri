@@ -5,12 +5,13 @@ import OphSelect from "./OphSelect";
 import StaticUtils from "../StaticUtils";
 import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.actions';
 import type {Localisations} from "../../../types/localisation.type";
+import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 
 type Props = {
     L: Localisations,
     locale: string,
     fetchAllKayttooikeusryhma: (boolean) => void,
-    kayttooikeusRyhmas: Array<{id: number, description: {texts: Array<{lang: string, text: string}>}}>,
+    kayttooikeusRyhmas: Array<Kayttooikeusryhma>,
     kayttooikeusSelectionAction: (number) => void,
     kayttooikeusSelection: ?number,
     kayttooikeusLoading: boolean
@@ -38,13 +39,15 @@ class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
     render() {
         return !this.props.kayttooikeusLoading && this.props.kayttooikeusRyhmas && this.props.kayttooikeusRyhmas.length
             ? <OphSelect id="kayttooikeusryhmaFilter"
-                         options={this.props.kayttooikeusRyhmas.map(kayttooikeusryhma => ({
-                             value: kayttooikeusryhma.id,
-                             label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
-                         }))}
+                         options={this.props.kayttooikeusRyhmas.filter(kayttooikeusryhma => !kayttooikeusryhma.passivoitu)
+                             .map(kayttooikeusryhma => ({
+                                 value: kayttooikeusryhma.id,
+                                 label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, this.props.locale)
+                             }))}
                          value={this.props.kayttooikeusSelection}
                          placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                         onChange={(event) => this.props.kayttooikeusSelectionAction(event.value)}/>
+                         onChange={(event) => this.props.kayttooikeusSelectionAction(event.value)}
+            />
             : null;
     }
 

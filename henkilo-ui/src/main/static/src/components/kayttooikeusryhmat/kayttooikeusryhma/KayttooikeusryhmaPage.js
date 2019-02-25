@@ -10,7 +10,7 @@ import type {Locale} from '../../../types/locale.type';
 import type {ReactSelectOption} from '../../../types/react-select.types';
 import type {PalvelutState} from "../../../reducers/palvelut.reducer";
 import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
-import type {TextGroup} from "../../../types/domain/kayttooikeus/textgroup.types";
+import type {TextGroupModify} from "../../../types/domain/kayttooikeus/textgroup.types";
 import type {PalveluRooliModify} from "../../../types/domain/kayttooikeus/PalveluRooliModify.types";
 import {http} from '../../../http';
 import {urls} from 'oph-urls-js';
@@ -35,15 +35,15 @@ import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.r
 import ToggleKayttooikeusryhmaStateModal from "./ToggleKayttooikeusryhmaStateModal";
 
 export type KayttooikeusryhmaNimi = {
-    fi: string,
-    sv: string,
-    en: string
+    FI: string,
+    SV: string,
+    EN: string
 }
 
 export type KayttooikeusryhmaKuvaus = {
-    fi: string,
-    sv: string,
-    en: string
+    FI: string,
+    SV: string,
+    EN: string
 }
 
 export type PalveluJaKayttooikeusSelection = {
@@ -95,8 +95,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     state = {
         kayttooikeusryhmaForm: {
-            name: {fi: '', sv: '', en: ''},
-            description: {fi: '', sv: '', en: ''},
+            name: {FI: '', SV: '', EN: ''},
+            description: {FI: '', SV: '', EN: ''},
             organisaatioSelections: [],
             oppilaitostyypitSelections: [],
             organisaatiotyypitSelections: [],
@@ -508,26 +508,26 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _validateKayttooikeusryhmaDescriptions = (): boolean => {
         const description = this.state.kayttooikeusryhmaForm.description;
-        return description.fi.length > 0 && description.sv.length > 0 && description.en.length > 0;
+        return description.FI.length > 0 && description.SV.length > 0 && description.EN.length > 0;
     };
 
     _validateKayttooikeusryhmaNimet = (): boolean => {
         const name = this.state.kayttooikeusryhmaForm.name;
-        return name.fi.length > 0 && name.sv.length > 0 && name.en.length > 0;
+        return name.FI.length > 0 && name.SV.length > 0 && name.EN.length > 0;
     };
 
-    _parseNameData = (): TextGroup => {
+    _parseNameData = (): TextGroupModify => {
         const name = this.state.kayttooikeusryhmaForm.name;
-        const texts: any = Object.keys(name).map(
-            (key: string) => ({lang: key.toUpperCase(), text: name[key]})
+        const texts: Array<Text> = Object.keys(name).map(
+            (key) => ({lang: key, text: name[key]})
         );
         return {texts};
     };
 
-    _parseDescriptionData = (): TextGroup => {
+    _parseDescriptionData = (): TextGroupModify => {
         const description = this.state.kayttooikeusryhmaForm.description;
-        const texts: any = Object.keys(description).map(
-            (key: string) => ({lang: key.toUpperCase(), text: description[key]})
+        const texts: Array<Text> = Object.keys(description).map(
+            (key) => ({lang: key, text: description[key]})
         );
         return {texts};
     };
