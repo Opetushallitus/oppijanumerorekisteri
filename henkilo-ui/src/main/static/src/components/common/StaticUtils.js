@@ -7,7 +7,6 @@ import type {Locale} from "../../types/locale.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
 import type { Kayttaja } from "../../types/domain/kayttooikeus/kayttaja.types";
 import type {TextGroup} from "../../types/domain/kayttooikeus/textgroup.types";
-import type {Text} from "../../types/domain/kayttooikeus/text.types";
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {
