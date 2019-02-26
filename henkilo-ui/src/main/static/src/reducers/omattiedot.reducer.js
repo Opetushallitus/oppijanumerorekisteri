@@ -26,8 +26,6 @@ export type OmattiedotState = {|
     +isAdmin: boolean,
     +anomusilmoitus: boolean,
     +isOphVirkailija: boolean,
-    +organisaatioOptions: Array<any>,
-    +organisaatioOptionsFilter: Array<any>,
     +organisaatioRyhmaOptions: Array<any>,
     +organisaatioRyhmaFilter: Array<any>,
     +organisaatiot: Array<KayttooikeusOrganisaatiot>,
@@ -45,8 +43,6 @@ const initialState: OmattiedotState = {
     omattiedotOrganisaatiosLoading: false,
     organisaatios: [],
     casMeSuccess: false,
-    organisaatioOptions: [],
-    organisaatioOptionsFilter: [],
     organisaatioRyhmaOptions: [],
     organisaatioRyhmaFilter: [],
     organisaatiot: [],
@@ -73,13 +69,10 @@ export const omattiedot = (state: OmattiedotState = initialState, action: any) =
         case FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST:
             return Object.assign({}, state, { omattiedotOrganisaatiosLoading: true});
         case FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS:
-            const newOrganisaatioOptions = getOrganisaatioOptionsAndFilter(action.organisaatios, action.locale, false);
             const newRyhmaOptions = getOrganisaatioOptionsAndFilter(action.organisaatios, action.locale, true);
             return {...state,
                 organisaatios: action.organisaatios,
                 omattiedotOrganisaatiosLoading: false,
-                organisaatioOptions: newOrganisaatioOptions.options,
-                organisaatioOptionsFilter: newOrganisaatioOptions.filterOptions,
                 organisaatioRyhmaOptions: newRyhmaOptions.options,
                 organisaatioRyhmaFilter: newRyhmaOptions.filterOptions,
             };

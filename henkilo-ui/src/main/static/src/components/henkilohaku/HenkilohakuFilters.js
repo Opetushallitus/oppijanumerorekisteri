@@ -126,7 +126,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                            options={this.props.kayttooikeusryhmas.map(kayttooikeusryhma => ({
                                                value: kayttooikeusryhma.id,
                                                label: StaticUtils.getLocalisedText(kayttooikeusryhma.description.texts, this.props.locale)
-                                           }))}
+                                           })).sort((a,b) => a.label.localeCompare(b.label))}
                                            value={this.props.selectedKayttooikeus}
                                            placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                                            onChange={this.props.kayttooikeusSelectionAction}/>
@@ -178,7 +178,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
         return ryhmat ? ryhmat.map(ryhma => ({
             label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
             value: ryhma.oid
-        })) : [];
+        })).sort((a,b) => a.label.localeCompare(b.label)) : [];
     };
 }
 

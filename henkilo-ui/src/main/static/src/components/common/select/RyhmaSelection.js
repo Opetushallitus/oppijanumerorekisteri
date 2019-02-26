@@ -22,12 +22,7 @@ type Props = {
     clearable?: boolean,
 }
 
-type State = {
-    options: Array<Option>,
-    filterOptions: any,
-}
-
-class RyhmaSelection extends React.Component<Props, State> {
+class RyhmaSelection extends React.Component<Props> {
     placeholder: string;
 
     constructor(props: Props) {
@@ -36,8 +31,9 @@ class RyhmaSelection extends React.Component<Props, State> {
     }
 
     render() {
+        const options = this.props.ryhmaOptions;//.sort((a,b) => a.label.props.children.localeCompare(b.label.props.children));
         return <OphSelect className={'organisaatioSelection'}
-                          options={this.props.ryhmaOptions}
+                          options={options}
                           filterOptions={this.props.ryhmaFilter}
                           placeholder={this.placeholder}
                           onChange={this.props.selectOrganisaatio}

@@ -117,7 +117,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         return ryhmat ? ryhmat.map(ryhma => ({
             label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
             value: ryhma.oid
-        })) : [];
+        })).sort((a,b) => a.label.localeCompare(b.label)) : [];
     }
 
     onHakutermiChange = (event) => {

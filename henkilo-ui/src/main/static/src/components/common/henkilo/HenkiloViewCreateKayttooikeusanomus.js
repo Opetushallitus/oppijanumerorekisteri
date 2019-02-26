@@ -126,7 +126,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                         <label className="oph-label otph-bold oph-label-long" aria-describedby="field-text"/>
                         <div className="oph-input-container">
                             <OphSelect onChange={this._changeRyhmaSelection.bind(this)}
-                                       options={this.props.ryhmaOptions}
+                                       options={this.props.ryhmaOptions.sort((a,b) => a.label.localeCompare(b.label))}
                                        value={this.state.ryhmaSelection}
                                        placeholder={L['OMATTIEDOT_ANOMINEN_RYHMA']}
                                        disabled={this.state.emailOptions.missingEmail} />
