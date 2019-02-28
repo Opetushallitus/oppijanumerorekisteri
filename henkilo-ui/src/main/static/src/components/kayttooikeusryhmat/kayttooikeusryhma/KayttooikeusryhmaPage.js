@@ -247,7 +247,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     };
 
     _parseExistingTextsData = (texts: any): any => {
-        const result: any = {fi: '', sv: '', en: ''};
+        const result: any = {FI: '', SV: '', EN: ''};
         if (texts === undefined) {
             return result;
         }
