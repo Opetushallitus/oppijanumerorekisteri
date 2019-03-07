@@ -37,7 +37,7 @@ export type KoodistoState = {
     maatjavaltiot1: any
 }
 
-export const koodisto = (state: KoodistoState = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: true,
+export const koodisto = (state: KoodistoState = {kieliKoodistoLoading: true, kansalaisuusKoodistoLoading: true, sukupuoliKoodistoLoading: false,
                              yhteystietotyypitKoodistoLoading: true, kieli: [], kieliKoodisto: [], kansalaisuus: [], kansalaisuusKoodisto: [], sukupuoli: [], sukupuoliKoodisto: [],
                              yhteystietotyypit: [], maatjavaltiot1KoodistoLoading: true, maatjavaltiot1: [],
                             oppilaitostyypitLoading: false, oppilaitostyypit: [], organisaatiotyyppiKoodistoLoading: false, organisaatiotyyppiKoodisto: []}, action: any): KoodistoState => {
