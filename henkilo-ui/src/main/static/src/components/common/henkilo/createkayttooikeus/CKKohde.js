@@ -27,10 +27,8 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
 
             <div className="kohdeRyhma">
                 <RyhmaSelection L={L}
-                                organisaatios={organisationData}
                                 selectOrganisaatio={organisationAction}
                                 selectedOrganisaatioOid={organisationValue}
-                                locale={locale}
                 />
             </div>
         </td>

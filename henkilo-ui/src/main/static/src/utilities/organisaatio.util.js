@@ -169,13 +169,14 @@ export const getOrganisationsOrRyhmas = (organisaatios: Array<Organisaatio>, isR
 export const getOrganisaatioOptionsAndFilter = (newOrganisaatios: Array<OrganisaatioHenkilo>, locale: Locale, isRyhma: boolean): {options: any, filterOptions: any,} => {
     const newOptions = getOrganisationsOrRyhmas(getOrganisaatios(newOrganisaatios, locale), isRyhma)
         .map((organisaatio) => mapOrganisaatio(organisaatio, locale, !isRyhma));
-    // update index
+    // update index (raskas operaatio)
     const index = createFilterOptions({options: newOptions});
     return {
-        options: newOptions.map((option: { value: string, level: number, label: string }): any => ({
-            value: option.value,
-            label: <span className={`organisaatio-level-${option.level}`}>{option.label}</span>
-        })),
+        options: newOptions.sort((a,b) => a.label.localeCompare(b.label))
+            .map((option: { value: string, level: number, label: string }): any => ({
+                value: option.value,
+                label: <span className={`organisaatio-level-${option.level}`}>{option.label}</span>
+            })),
         filterOptions: index,
     };
 };
