@@ -31,8 +31,8 @@ type Props = {
 
 const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}: Props) => !values.showOnlyOnWrite || !readOnly
     ? <div id={values.label}>
-        <Columns columns={2} className="labelValue" rootStyles={{marginRight: '25%'}}>
-            {!hideLabel && values.label ? <span className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span> : <span>&nbsp;</span>}
+        <Columns columns={readOnly ? 2 : 1 } className="labelValue" rootStyles={{marginRight: '25%', marginBottom: '2%'}}>
+            {!hideLabel && values.label ? <span style={{marginRight: 40}} className="oph-bold">{L[values.label] + (required ? ' *' : '')}</span> : <span>&nbsp;</span>}
             <Field {...values}
                    autofocus={autofocus}
                    disabled={values.disabled}
@@ -46,6 +46,7 @@ const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAc
         </Columns>
     </div>
     : null;
+
 
 const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],

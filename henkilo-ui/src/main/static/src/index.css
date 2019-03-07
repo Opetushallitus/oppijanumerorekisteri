@@ -1,3 +1,9 @@
+
+/* Allow react-datepicker dimensions to be affected */
+.react-datepicker-wrapper, .react-datepicker__input-container {
+    display: block !important;
+}
+
 fieldset {
     margin: .5em;
     padding: .5em;

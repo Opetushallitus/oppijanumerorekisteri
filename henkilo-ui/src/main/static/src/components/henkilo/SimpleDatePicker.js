@@ -32,7 +32,7 @@ class SimpleDatePicker extends React.Component<SimpleDatePickerProps> {
                 dropdownMode="select"
                 disabled={this.props.disabled}
                 filterDate={this.props.filterDate}
-                />
+            />
         )
     }
 
