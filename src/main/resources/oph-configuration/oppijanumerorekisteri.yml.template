@@ -8,21 +8,10 @@
 # Aseta vähintään nämä ympäristökohtaiset arvot
 
 spring:
-  main:
-    banner-mode: "off"
   jpa:
-    hibernate:
-      naming:
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-      ddl-auto: validate
-      use-new-id-generator-mappings: true
-    show-sql: false
-    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
     properties:
       hibernate.integration.envers.enabled: {{oppijanumerorekisteri_versiointi_kaytossa | default('true')}}
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/{{postgresql_oppijanumerorekisteri_db | default('authentication')}}?ApplicationName=oppijanumerorekisteri-service
     username: {{postgresql_oppijanumerorekisteri_user}}
     password: {{postgresql_oppijanumerorekisteri_password}}
@@ -30,13 +19,8 @@ spring:
       maximum-pool-size: {{postgresql_oppijanumerorekisteri_maximum_pool_size | default('20')}}
       connection-timeout: {{postgresql_oppijanumerorekisteri_connection_timeout | default('10000')}}
       max-lifetime: {{postgresql_oppijanumerorekisteri_max_lifetime | default('900000')}}
-dev:
-  username: user
-  password: password
 cas:
   service: https://{{host_virkailija}}/oppijanumerorekisteri-service
-  send-renew: false
-  key: oppijanumerorekisteri-service
 host:
   host-virkailija: {{host_virkailija}}
   host-cas: {{host_cas}}

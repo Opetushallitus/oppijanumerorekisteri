@@ -14,48 +14,43 @@ Domain model
 ### oppijanumerorekisteri-service
 Palvelinpuoli
 
-## Ajaminen lokaalisti
-Ohjeet palvelun lokaaliin kehittämiseen. Ympäristöä vasten kehittäminen vaatii tietokannan ja alb osalta tunneloinnin AWS:n palvelimen kautta.
+## Kääntäminen
 
-### Ajaminen ympäristön CAS-palvelimen kanssa
-1) Hae `oppijanumerorekisteri.yml`-tiedosto EC2-kontilta ja vie se haluamaasi hakemistoon.
-2) Käännä projekti komennolla `mvn clean install` projektin juurihakemistossa (voi käyttää myös projektin mukana tullutta `mvnw.cmd/mvnw clean install`)
-3) Muuta seuraavat. AWS:n takia kanta ja authorisointi on putkitettava bastionin kautta ssh-tunnelilla
+    mvn clean install
+
+## Ajaminen
+
+    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-0.1.2-SNAPSHOT.jar
+
+Ilman parametreja sovellus käyttää [application.yml](oppijanumerorekisteri-service/src/main/resources/application.yml)
+-tiedoston mukaisia oletuskonfiguraatioita.
+
+Konfiguraatioiden muuttaminen komentoriviparametreilla (baseUrl-parametrilla määritellään missä osoitteessa muut
+sovelluksen käyttämät palvelut sijaitsevat):
+
+    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-0.1.2-SNAPSHOT.jar \
+        -DbaseUrl=http://localhost:8081 \
+        -Dspring.datasource.username=<tietokannan_tunnus> \
+        -Dspring.datasource.password=<tietokannan_salasana> \
+        -Dauthentication.default.username=<oma_virkailija_tunnus> \
+        -Dauthentication.default.password=<oma_virkailija_salasana>
+
+Kaikki paitsi baseUrl-konfiguraatio on myös mahdollista laittaa erilliseen tiedostoon:
+
 ```yaml
-cas:
-  service: http://localhost:8180/oppijanumerorekisteri-service
-server:
-  port: 8180
-host:
-  host-alb: http://localhost:18087
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:18085/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service-local
+spring.datasource.username: <tietokannan_tunnus>
+spring.datasource.password: <tietokannan_salasana>
+authentication.default.username: <oma_virkailija_tunnus>
+authentication.default.password: <oma_virkailija_salasana>
 ```
-Esimerkki tunnelista:
-```
-L18087 <host_alb_virkailija-osoite>:80
-L18085 <postgresql_oppijanumerorekisteri_host-osoite>:5432
-```
-Nämä osoitteet löytyvät environment repositorystä.
 
-=> Aja palvelu. Käytä rajapintoja valitsemasi ympäristön tunnuksilla.
+...jolloin ajaminen:
 
-### Lokaalin CAS palvelimen kanssa
-1) Hae EC2-kontilta `authentication`-projektin `common.properties`-tiedosto ja lisää se omaan oph-configuration-hakemistoosi nimellä `cas.properties`
-2) Käännä authentication projecti `mvn clean package`
-3) Kopioi `cas/target/cas-9.3-SNAPSHOT.war` tomcatin oletuskansioon `webapps` tai määrittämääsi kansioon ja uudelleennimeä se `cas.war`
-4) Aja tomcat `startup.bat` / `startup.sh`
-5) Muuta oppijanumerorekisterin lokaali konfiguraatiosi alla olevat kentät
-```yaml
-cas:
-  service: http://localhost:8180/oppijanumerorekisteri-service
-server:
-  port: 8180
-```
-=> Aja oppijanumerorekisteri
+    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-0.1.2-SNAPSHOT.jar \
+        -DbaseUrl=http://localhost:8081 \
+        -Dspring.config.additional-location=<path/to/configfile>/oppijanumerorekisteri.yml
 
-`java -Dcas.baseUrl=http://localhost:8080 -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml`
+Palvelu löytyy käynnistymisen jälkeen osoitteesta <http://localhost:8080/oppijanumerorekisteri-service>.
 
 ### Ajaminen lokaalisti dev-moodissa
 

@@ -4,7 +4,10 @@ server:
     session:
       cookie:
         name: JSESSIONID
+  port: 8080
 spring:
+  main:
+    banner-mode: "off"
   session:
     store-type: jdbc
     jdbc:
@@ -15,6 +18,16 @@ spring:
       write-dates-as-timestamps: true
   cache:
     type: EHCACHE
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/oppijanumerorekisteri?ApplicationName=oppijanumerorekisteri-service
+    username: oph
+    password: oph
+    hikari:
+      maximum-pool-size: 2
+      connection-timeout: 10000
+      max-lifetime: 900000
   flyway:
     enabled: true
     table: schema_table_onr
@@ -24,7 +37,15 @@ spring:
     baseline-version: 20180423104403142
     out-of-order: true
   jpa:
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+      ddl-auto: validate
+      use-new-id-generator-mappings: true
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
     properties:
+      hibernate.integration.envers.enabled: true
       # https://hibernate.atlassian.net/browse/HHH-12368
       hibernate.jdbc.lob.non_contextual_creation: true
 logging:
@@ -38,3 +59,47 @@ logging:
     fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter: warn
     org.apache.http.client.protocol.ResponseProcessCookies: error
     io.swagger.models.parameters.AbstractSerializableParameter: error
+dev:
+  username: user
+  password: password
+cas:
+  service: http://localhost:${server.port}/oppijanumerorekisteri-service
+  send-renew: false
+  key: oppijanumerorekisteri-service
+host:
+  host-virkailija: localhost:${server.port}
+  host-cas: localhost:${server.port}
+  host-alb: http://localhost:${server.port}
+authentication:
+  default:
+    username: oppijanumerorekisteri
+    password: oppijanumerorekisteri
+  kayttooikeus:
+    username: ${authentication.default.username}
+    password: ${authentication.default.password}
+  vtj:
+    username: ${authentication.default.username}
+    password: ${authentication.default.password}
+  hakuapp:
+    username: ${authentication.default.username}
+    password: ${authentication.default.password}
+  ataru:
+    username: ${authentication.default.username}
+    password: ${authentication.default.password}
+  henkilotietomuutos:
+    username: ${authentication.default.username}
+    password: ${authentication.default.password}
+  viestintapalvelu:
+    username: ${authentication.default.username}
+    password: ${authentication.default.password}
+oppijanumerorekisteri:
+  uses-ssl-proxy: false
+  disable-same-site-cookie: false
+  scheduling:
+    vtjsync:
+      asiayhteysKaytossa: false
+aws:
+  region: eu-west-1
+  henkiloModifiedTopic:
+    enabled: false
+    topicArn: disabled
