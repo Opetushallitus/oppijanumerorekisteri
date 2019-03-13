@@ -75,7 +75,7 @@ class OmattiedotUserContent extends React.Component<Props> {
             omattiedot: this.props.omattiedot
         };
 
-        const showAnomusIlmoitus = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['HENKILONHALLINTA_OPHREKISTERI', 'KAYTTOOIKEUS_REKISTERINPITAJA']);
+        const showAnomusIlmoitus = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, ['KAYTTOOIKEUS_REKISTERINPITAJA']);
 
         // Basic info box content
         return [

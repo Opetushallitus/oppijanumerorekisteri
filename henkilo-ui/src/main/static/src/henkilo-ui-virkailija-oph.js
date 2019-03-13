@@ -49,6 +49,7 @@ export default {
     "kayttooikeus-service.kayttooikeusryhma.henkilo.current": "kayttooikeus-service/kayttooikeusryhma/henkilo/current",
     "kayttooikeus-service.kayttooikeusryhma.organisaatio": "kayttooikeus-service/kayttooikeusryhma/organisaatio/$1",
     "kayttooikeus-service.kayttooikeusryhma.palvelurooli": "kayttooikeus-service/kayttooikeusryhma/$1/kayttooikeus",
+    "kayttooikeus-service.kayttooikeusryhma.by-kayttooiokeus": "kayttooikeus-service/kayttooikeusryhma/ryhmasByKayttooikeus",
     "kayttooikeus-service.virkailija-ui.basePath": "kayttooikeus-service/virkailija",
     "kayttooikeus-service.prequel": "kayttooikeus-service/cas/prequel",
     "kayttooikeus-service.palvelu.listaus": "kayttooikeus-service/palvelu",
