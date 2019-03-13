@@ -10,9 +10,6 @@ spring:
     banner-mode: "off"
   session:
     store-type: jdbc
-    jdbc:
-      schema: classpath:org/springframework/session/jdbc/schema-postgresql.sql
-      initialize-schema: always
   jackson:
     serialization:
       write-dates-as-timestamps: true
