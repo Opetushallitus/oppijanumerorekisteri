@@ -1,21 +1,23 @@
-//flow
-import React from 'react';
+// @flow
+import * as React from 'react';
 import {connect} from 'react-redux';
 import {fetchFrontProperties} from '../actions/frontProperties.actions';
 import TopNavigation from '../components/navigation/TopNavigation'
 import Loader from "../components/common/icons/Loader";
-import moment from 'moment'
-import 'moment/locale/fi'
-import 'moment/locale/sv'
+import moment from 'moment';
+import 'moment/locale/fi';
+import 'moment/locale/sv';
 import {fetchPrequels} from "../actions/prequel.actions";
 import PropertySingleton from "../globals/PropertySingleton";
-import {removeGlobalNotification} from "../actions/notification.actions";
+import {addGlobalNotification, removeGlobalNotification} from "../actions/notification.actions";
 import { GlobalNotifications } from "../components/common/Notification/GlobalNotifications";
-import {LocalisationState} from "../reducers/l10n.reducer";
+import type {LocalisationState} from "../reducers/l10n.reducer";
 import {ophLightGray} from "../components/navigation/navigation.utils";
 import type {Locale} from "../types/locale.type";
 import background from '../img/unauthenticated_background.jpg';
 import type {RouteType} from "../routes";
+import {NOTIFICATIONTYPES} from "../components/common/Notification/notificationtypes";
+import type {GlobalNotificationConfig} from "../types/notification.types";
 
 type AppProps = {
     children: React.Node,
@@ -27,11 +29,21 @@ type AppProps = {
     locale: Locale,
     routes: Array<RouteType>,
     pathName: string,
+    notificationList: Array<GlobalNotificationConfig>,
+    removeGlobalNotification: (key: string) => void,
+    pathName: string,
+    params: {[string]: string},
+    omattiedotLoaded: boolean,
+    prequelsNotLoadedCount: number,
+    fetchFrontProperties: () => void,
+    fetchPrequels: () => void,
+    addGlobalNotification: (GlobalNotificationConfig) => void,
 }
 
 type AppState = {
-    lastPath: string,
+    lastPath: ?string,
     route: RouteType,
+    lastLocale: ?string,
 }
 
 const fetchPrequelsIntervalInMillis = 30 * 1000;
@@ -41,14 +53,17 @@ class App extends React.Component<AppProps, AppState> {
         super(props);
 
         this.state = {
-
+            lastPath: null,
+            route: props.routes[props.routes.length - 1],
+            lastLocale: null,
         }
     }
 
     render() {
         if (this.isInitialized()) {
             moment.locale(this.props.locale);
-            moment.defaultFormat = PropertySingleton.state.PVM_FORMAATTI;
+            // flow-typed fails to generate this for some reason
+            (moment: any).defaultFormat = PropertySingleton.getState().PVM_FORMAATTI;
         }
         return (
             this.isInitialized()
@@ -84,7 +99,9 @@ class App extends React.Component<AppProps, AppState> {
             this.setBackGround(route);
             this.setState({lastPath: props.pathName, route});
         }
-        this.setTitle(props.l10n.localisations[props.locale], route);
+        const L = props.l10n.localisations[props.locale];
+        this.setTitle(L, route);
+        this.warnOnUnsupportedLocale(L, props.locale);
     }
 
     setBackGround = function (route) {
@@ -98,7 +115,7 @@ class App extends React.Component<AppProps, AppState> {
         }
         else {
             // If bgColor is not provided guess by if component has updated navibar on mount
-            window.document.body.bgColor = route.bgColor || ophLightGray;
+            window.document.body.bgColor = ophLightGray;
         }
     };
 
@@ -109,6 +126,20 @@ class App extends React.Component<AppProps, AppState> {
             if (title) {
                 window.document.title = title;
             }
+        }
+    };
+
+    warnOnUnsupportedLocale(L, locale) {
+        if (!!L && !!locale && (!this.state.lastLocale || this.state.lastLocale !== locale)) {
+            this.setState({lastLocale: locale}, () => {
+                if (locale.toLowerCase() !== 'fi' && locale.toLowerCase() !== 'sv') {
+                    this.props.addGlobalNotification({
+                        key: 'EN_LOCALE_KEY',
+                        type: NOTIFICATIONTYPES.WARNING,
+                        title: L['HENKILO_YHTEISET_ASIOINTIKIELI_EN_VAROITUS']
+                    });
+                }
+            });
         }
     }
 }
@@ -127,4 +158,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchFrontProperties, fetchPrequels, removeGlobalNotification })(App)
+export default connect(mapStateToProps, {fetchFrontProperties, fetchPrequels, removeGlobalNotification, addGlobalNotification })(App)
