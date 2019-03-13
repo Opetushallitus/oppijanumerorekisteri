@@ -4,6 +4,7 @@ import './KayttooikeusryhmaListaSuodatin.css';
 import type {Localisations} from "../../../types/localisation.type";
 import { Link } from 'react-router';
 import BooleanRadioButtonGroup from '../../common/radiobuttongroup/BooleanRadioButtonGroup';
+import OphInline from "../../common/forms/OphInline";
 
 type Props = {
     L: Localisations,
@@ -12,6 +13,9 @@ type Props = {
     router: any,
     naytaVainPalvelulleSallitut: boolean,
     setNaytaVainSallitut: () => void,
+    naytaPassivoidut: boolean,
+    toggleNaytaPassivoidut: () => void,
+    isAdmin: boolean,
 }
 
 export default class KayttooikeusryhmaListaSuodatin extends React.Component<Props> {
@@ -28,6 +32,17 @@ export default class KayttooikeusryhmaListaSuodatin extends React.Component<Prop
                     />
                     <Link className="oph-button oph-button-primary lisaa-kayttooikeusryhma-button" to={'/kayttooikeusryhmat/lisaa'} disabled={!this.props.muokkausoikeus}>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA']}</Link>
                 </div>
+                { this.props.isAdmin
+                && <div className="oph-input-container flex-horizontal">
+                    <OphInline>
+                        <label className="oph-checkable" htmlFor="kayttooikeusryhmaNaytaPassivoidut">
+                            <input id="kayttooikeusryhmaNaytaPassivoidut" type="checkbox" className="oph-checkable-input"
+                                   onChange={this.props.toggleNaytaPassivoidut} checked={this.props.naytaPassivoidut} />
+                            <span className="oph-checkable-text"> {this.props.L['KAYTTOOIKEUSRYHMAT_HALLINTA_NAYTA_PASSIVOIDUT']}</span>
+                        </label>
+                    </OphInline>
+                </div>
+                }
             </div>
         </div>
     }

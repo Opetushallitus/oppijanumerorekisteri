@@ -6,6 +6,7 @@ import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.typ
 import type {Locale} from "../../types/locale.type";
 import type {ReactSelectOption} from "../../types/react-select.types";
 import type { Kayttaja } from "../../types/domain/kayttooikeus/kayttaja.types";
+import type {TextGroup} from "../../types/domain/kayttooikeus/textgroup.types";
 
 class StaticUtils {
     static ddmmyyyyToDate(date: string) {
@@ -121,8 +122,8 @@ class StaticUtils {
         tyypit: [],
     });
 
-    static getLocalisedText(texts: Array<{lang: string, text: string}>, locale: Locale) {
-        return texts.filter(text => text.lang.toLowerCase() === locale)[0].text;
+    static getLocalisedText(description: ?TextGroup, locale: Locale) {
+        return description ? description.texts.filter(text => text.lang.toLowerCase() === locale)[0].text : '';
     };
 
     static stringIsNotEmpty(entity: ?string) {

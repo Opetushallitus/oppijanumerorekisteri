@@ -51,7 +51,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
             <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_ORGANISAATIORAJOITE_OTSIKKO']}</h4>
             <label className="oph-checkable" htmlFor="ryhmarestriction">
                 <input id="ryhmarestriction" className="oph-checkable-input" type="checkbox" onChange={this.props.toggleRyhmaRestriction} checked={this.props.ryhmaRestriction} />
-                <span className="oph-checkable-text">Käyttöoikeusryhmän saa myöntää ryhmälle</span>
+                <span className="oph-checkable-text">{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_RYHMA']}</span>
             </label>
 
             <div className="flex-horizontal">
@@ -76,7 +76,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                                          .map(option => ({
                                              label: option.label,
                                              value: option.value,
-                                             checked: this.props.oppilaitostyypitSelections.indexOf(option.value) !== -1,
+                                             checked: this.props.oppilaitostyypitSelections && this.props.oppilaitostyypitSelections.indexOf(option.value) !== -1,
                                          }))}
                                          selectAction={this.props.oppilaitostyypitSelectAction}
                     />
@@ -87,7 +87,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                                              .map(option => ({
                                                  label: option.label,
                                                  value: option.value,
-                                                 checked: this.props.organisaatiotyypitSelections.indexOf(option.value) !== -1,
+                                                 checked: this.props.organisaatiotyypitSelections && this.props.organisaatiotyypitSelections.indexOf(option.value) !== -1,
                                              }))
                                         }
                                         selectAction={this.props.organisaatiotyypitSelectAction}

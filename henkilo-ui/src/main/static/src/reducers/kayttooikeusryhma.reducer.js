@@ -22,7 +22,8 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST, FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE
 } from "../actions/actiontypes";
-import type {MyonnettyKayttooikeusryhma} from "../types/domain/kayttooikeus/kayttooikeusryhma.types";
+import type {Kayttooikeusryhma, MyonnettyKayttooikeusryhma} from "../types/domain/kayttooikeus/kayttooikeusryhma.types";
+import type {PalveluRooli} from "../types/domain/kayttooikeus/PalveluRooli.types";
 
 export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
 
@@ -46,6 +47,11 @@ export type KayttooikeusRyhmaState = {
     +grantableKayttooikeus: {},
     +grantableKayttooikeusLoading: boolean,
     +allowedKayttooikeus: {[string]: AllowedKayttooikeus, loading: boolean},
+    +kayttooikeusryhma: ?Kayttooikeusryhma,
+    +kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>,
+    +palvelutRoolit: Array<PalveluRooli>,
+    +allKayttooikeusryhmas: Array<Kayttooikeusryhma>,
+    +allKayttooikeusryhmasLoading: boolean,
 }
 
 export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
@@ -59,7 +65,7 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
         grantableKayttooikeusLoading: true,
         allKayttooikeusryhmas: [],
         allKayttooikeusryhmasLoading: false,
-        kayttooikeusryhma: {},
+        kayttooikeusryhma: null,
         kayttooikeusryhmaLoading: false,
         palvelutRoolit: [],
         palvelutRoolitLoading: true,

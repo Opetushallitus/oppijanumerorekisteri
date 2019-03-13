@@ -19,6 +19,7 @@ type Props = {
     router: any,
     filter: string,
     naytaVainPalvelulleSallitut: boolean,
+    naytaPassivoidut: boolean,
 }
 
 type State = {
@@ -42,40 +43,20 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
             {
                 this.props.items
                     // Näytetäänkö vain palvelukäyttäjille vai virkailijoille
-                    .filter(kayttooikeusryhma => {
-                        return this.props.naytaVainPalvelulleSallitut
-                            ? kayttooikeusryhma.sallittuKayttajatyyppi === 'PALVELU'
-                            : kayttooikeusryhma.sallittuKayttajatyyppi === null || kayttooikeusryhma.sallittuKayttajatyyppi === 'VIRKAILIJA';
-                    })
+                    .filter(this.naytaSallitutFilter)
+                    .filter(this.naytaPassivoidutFilter)
                     // filter by given string
-                    .filter( (item: Kayttooikeusryhma) => {
-                        if (this.props.filter.length === 0) {
-                            return true;
-                        }
-                        const nimi: ?Text = R.find( (text: Text) => text.lang === this.props.locale.toUpperCase())(item.nimi.texts);
-                        const text: string = nimi ? nimi.text : '';
-                        return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0;
-                    })
+                    .filter(this.nimiFilter)
                     // sort alphabetically
-                    .sort( (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
-                        const nameA = (localizeTextGroup(a.nimi.texts, this.props.locale) || '').toLowerCase();
-                        const nameB = (localizeTextGroup(b.nimi.texts, this.props.locale) || '').toLowerCase();
-                        if(nameA < nameB) {
-                            return -1;
-                        }
-                        if(nameB < nameA) { 
-                            return 1;
-                        }
-                        return 0;
-                    })
+                    .sort(this.nimiSort)
                     // map käyttöoikeus to html
-                    .map( (item: Kayttooikeusryhma, index: number) => {
+                    .map((item: Kayttooikeusryhma, index: number) => {
                         const texts: any = R.path(['nimi', 'texts'], item);
                         return <div key={item.id} className="kayttooikeuryhma-lista-item">
                             <div className="kayttooikeusryhma-tiedot-header" onClick={() => { this._onToggle(index) }}>
-                                <span><LocalizedTextGroup locale={this.props.locale} texts={texts}></LocalizedTextGroup></span>
+                                <span><LocalizedTextGroup locale={this.props.locale} texts={texts}/> {this.getStatusString(item)}</span>
                             </div>
-                            <KayttooikeusryhmaTiedot {...this.props} show={this.state.showItems[index]} item={item}></KayttooikeusryhmaTiedot>
+                            <KayttooikeusryhmaTiedot {...this.props} show={this.state.showItems[index]} item={item}/>
                         </div>
                 })
             }
@@ -84,6 +65,40 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
 
     _onToggle = (index: number): void => {
         this.setState({showItems: R.update(index, !this.state.showItems[index], this.state.showItems)});
-    }
+    };
 
+    naytaSallitutFilter = (kayttooikeusryhma: Kayttooikeusryhma) => {
+        return this.props.naytaVainPalvelulleSallitut
+            ? kayttooikeusryhma.sallittuKayttajatyyppi === 'PALVELU'
+            : kayttooikeusryhma.sallittuKayttajatyyppi === null || kayttooikeusryhma.sallittuKayttajatyyppi === 'VIRKAILIJA';
+    };
+
+    naytaPassivoidutFilter = (kayttooikeusryhma: Kayttooikeusryhma) => {
+        return !kayttooikeusryhma.passivoitu || this.props.naytaPassivoidut;
+    };
+
+    nimiFilter = (item: Kayttooikeusryhma) => {
+        if (this.props.filter.length === 0) {
+            return true;
+        }
+        const nimi: ?Text = R.find( (text: Text) => text.lang === this.props.locale.toUpperCase())(R.path(['nimi', 'texts'], item) || []);
+        const text: string = nimi ? nimi.text : '';
+        return text.toLowerCase().indexOf(this.props.filter.toLowerCase()) >= 0;
+    };
+
+    nimiSort = (a: Kayttooikeusryhma, b: Kayttooikeusryhma) => {
+        const nameA = (localizeTextGroup(R.path(['nimi', 'texts'], a)|| [], this.props.locale) || '').toLowerCase();
+        const nameB = (localizeTextGroup(R.path(['nimi', 'texts'], b) || [], this.props.locale) || '').toLowerCase();
+        if (nameA < nameB) {
+            return -1;
+        }
+        if (nameB < nameA) {
+            return 1;
+        }
+        return 0;
+    };
+
+    getStatusString = (kayttooikeusryhma: Kayttooikeusryhma) => {
+        return kayttooikeusryhma.passivoitu ? ` (${this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})` : '';
+    };
 }

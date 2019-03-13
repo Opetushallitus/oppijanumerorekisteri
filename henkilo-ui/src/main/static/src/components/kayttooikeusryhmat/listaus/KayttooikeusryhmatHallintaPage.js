@@ -5,6 +5,7 @@ import type {Locale} from "../../../types/locale.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import KayttooikeusryhmaListaSuodatin from "./KayttooikeusryhmaListaSuodatin";
 import type {Localisations} from "../../../types/localisation.type";
+import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 
 
 type Props = {
@@ -12,12 +13,14 @@ type Props = {
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
     locale: Locale,
     L: Localisations,
-    router: any
+    router: any,
+    omattiedot: OmattiedotState,
 }
 
 type State = {
     filter: string,
     naytaVainPalvelulleSallitut: boolean,
+    naytaPassivoidut: boolean,
 }
 
 export default class KayttooikeusryhmatHallintaPage extends React.Component<Props, State> {
@@ -25,6 +28,7 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
     state = {
         filter: '',
         naytaVainPalvelulleSallitut: false,
+        naytaPassivoidut: false,
     };
 
     render() {
@@ -33,12 +37,17 @@ export default class KayttooikeusryhmatHallintaPage extends React.Component<Prop
             <KayttooikeusryhmaListaSuodatin onFilterEvent={this._onFilterChange} {...this.props}
                                             naytaVainPalvelulleSallitut={this.state.naytaVainPalvelulleSallitut}
                                             setNaytaVainSallitut={() => this.setState({naytaVainPalvelulleSallitut: !this.state.naytaVainPalvelulleSallitut,})}
+                                            naytaPassivoidut={this.state.naytaPassivoidut}
+                                            toggleNaytaPassivoidut={() => this.setState({naytaPassivoidut: !this.state.naytaPassivoidut})}
+                                            isAdmin={this.props.omattiedot.isAdmin}
             />
             <KayttooikeusryhmaLista {...this.props}
                                     items={this.props.kayttooikeusryhmat}
                                     filter={this.state.filter}
                                     naytaVainPalvelulleSallitut={this.state.naytaVainPalvelulleSallitut}
-                                    labelPath={['name']}/>
+                                    naytaPassivoidut={this.state.naytaPassivoidut}
+                                    labelPath={['name']}
+            />
         </div>
     }
 
