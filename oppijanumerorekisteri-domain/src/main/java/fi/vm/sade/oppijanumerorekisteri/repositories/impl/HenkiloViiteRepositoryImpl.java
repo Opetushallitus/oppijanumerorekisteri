@@ -62,7 +62,7 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
                     .fetch();
         }
 
-
+        // Make sure all henkilos exist
         JPAQuery<String> query = jpa().select(henkilo.oidHenkilo)
                 .from(henkilo)
                 .where(henkilo.oidHenkilo.in(result.stream().flatMap(henkiloViiteDto ->
@@ -76,6 +76,7 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         int resultsize = existingHenkilos.size();
         int index = 1;
 
+        // Processing query 'henkilo exists' query in batches if needed, 'postgreSqlMaxQuerySize'
         while(resultsize == postgreSqlMaxQuerySize){
 
             query.offset(postgreSqlMaxQuerySize * index);
