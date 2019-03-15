@@ -500,4 +500,11 @@ public class HenkiloController {
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Collections.singletonList(KAYTTOOIKEUS_HENKILON_RU)),
                 permissionService);
     }
+
+    @ApiOperation("Hae käyttäjän huoltajat oidin perusteella")
+    @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @RequestMapping(value = "/{oid}/huoltajat", method = RequestMethod.GET)
+    public List<HuoltajaDto> getHenkiloHuoltajat(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        return this.henkiloService.getHenkiloHuoltajat(oid);
+    }
 }
