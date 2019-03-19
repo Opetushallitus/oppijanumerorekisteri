@@ -21,6 +21,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -97,7 +98,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult removeDuplicateHetuAndLink(Henkilo henkilo, String hetu) {
         return this.henkiloDataRepository.findByHetu(hetu)
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(henkilo.getOidHenkilo()))
@@ -116,7 +117,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult linkWithHetu(Henkilo henkilo, String hetu) {
         return this.henkiloDataRepository.findByHetu(hetu)
                 .filter(henkiloByHetu -> !henkiloByHetu.equals(henkilo))
@@ -139,7 +140,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
         similarHenkiloOids = similarHenkiloOids.stream().filter( oid -> !henkiloOid.equals(oid)).distinct().collect(toList());
 
@@ -272,7 +273,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public LinkResult unlinkHenkilo(String oid, String slaveOid) {
         Henkilo master = this.henkiloDataRepository.findByOidHenkilo(oid)
                 .orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found"));

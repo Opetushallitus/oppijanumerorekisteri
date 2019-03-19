@@ -253,6 +253,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         }
     }
 
+    @Transactional
     @Override
     public Henkilo update(Henkilo henkilo) {
         setSyntymaaikaAndSukupuoliFromHetu(henkilo);
@@ -444,6 +445,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     @Override
+    @Transactional
     public List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids) {
         DuplicateService.LinkResult linked = this.duplicateService.linkHenkilos(henkiloOid, similarHenkiloOids);
         linked.forEachModified(this::update);
@@ -451,6 +453,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     @Override
+    @Transactional
     public void unlinkHenkilo(String oid, String slaveOid) {
         this.duplicateService.unlinkHenkilo(oid, slaveOid).forEachModified(this::update);
     }

@@ -1,6 +1,7 @@
 # Oppijanumerorekisteri
 
 ## Vaatimukset
+- PostgreSQL 10.6
 - Java 1.8.0_92 (ei toiminut 1.8.0_60)
 - Maven 3.3
 
@@ -17,6 +18,10 @@ Palvelinpuoli
 ## Kääntäminen
 
     mvn clean install
+
+## Tietokanta
+
+    docker run --name oppijanumerorekisteri-db -p 5432:5432 -e POSTGRES_USER=oph -e POSTGRES_PASSWORD=oph -e POSTGRES_DB=oppijanumerorekisteri -d postgres:10.6
 
 ## Ajaminen
 
