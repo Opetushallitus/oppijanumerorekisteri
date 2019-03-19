@@ -230,12 +230,15 @@ public class DuplicateServiceImpl implements DuplicateService {
         Set<Identification> slaveIdentifications = slave.getIdentifications();
 
         // Add slaves email identification to master
-        masterIdentifications.addAll(slaveIdentifications);
+        masterIdentifications.addAll(slaveIdentifications.stream()
+                .map(original -> {
+                    Identification copy = mapper.map(original, Identification.class);
+                    copy.setId(null);
+                    return copy;
+                }).collect(toSet()));
 
         // Remove email identification from slave
         slaveIdentifications.clear();
-        master.setIdentifications(masterIdentifications);
-        slave.setIdentifications(slaveIdentifications);
     }
 
     private Henkilo determineMasterHenkilo(String henkiloOid, List<String> similarHenkiloOids) {
