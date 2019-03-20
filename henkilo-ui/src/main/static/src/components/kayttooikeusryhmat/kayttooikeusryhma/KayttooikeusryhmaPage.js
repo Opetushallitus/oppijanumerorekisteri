@@ -252,7 +252,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             return result;
         }
         texts.forEach((text: Text) => {
-            result[text.lang.toLowerCase()] = text.text;
+            result[text.lang] = text.text;
         });
         return result;
     };
