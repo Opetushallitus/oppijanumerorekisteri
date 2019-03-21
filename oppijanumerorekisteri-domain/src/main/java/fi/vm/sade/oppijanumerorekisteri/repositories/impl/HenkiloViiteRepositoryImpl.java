@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.repositories.impl;
 
 import com.google.common.collect.Sets;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
@@ -17,6 +18,8 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite.henkiloViite
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 
 public class HenkiloViiteRepositoryImpl extends AbstractRepository implements HenkiloViiteRepositoryCustom {
+
+    final long postgreSqlMaxQuerySize = 20000;
 
     @Override
     public List<HenkiloViiteDto> findBy(HenkiloCriteria criteria) {
@@ -60,11 +63,31 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
         }
 
         // Make sure all henkilos exist
-        List<String> existingHenkilos = jpa().select(henkilo.oidHenkilo)
+        JPAQuery<String> query = jpa().select(henkilo.oidHenkilo)
                 .from(henkilo)
                 .where(henkilo.oidHenkilo.in(result.stream().flatMap(henkiloViiteDto ->
-                        Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())))
-                .fetch();
+                        Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())));
+
+        query.limit(postgreSqlMaxQuerySize);
+        query.offset(0);
+
+        List<String> existingHenkilos = query.fetch();
+
+        int resultsize = existingHenkilos.size();
+        int index = 1;
+
+        // Processing query 'henkilo exists' query in batches if needed, 'postgreSqlMaxQuerySize'
+        while(resultsize == postgreSqlMaxQuerySize){
+
+            query.offset(postgreSqlMaxQuerySize * index);
+
+            List<String> batchExistingHenkilos = query.fetch();
+            existingHenkilos.addAll(batchExistingHenkilos);
+
+            resultsize = batchExistingHenkilos.size();
+
+            index++;
+        }
 
         return result.stream().filter(henkiloViiteDto ->
                 existingHenkilos.containsAll(Sets.newHashSet(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())))
