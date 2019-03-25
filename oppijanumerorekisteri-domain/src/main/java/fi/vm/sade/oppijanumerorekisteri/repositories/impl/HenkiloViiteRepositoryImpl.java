@@ -6,7 +6,11 @@ import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,7 +23,8 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 
 public class HenkiloViiteRepositoryImpl extends AbstractRepository implements HenkiloViiteRepositoryCustom {
 
-    final long postgreSqlMaxQuerySize = 20000;
+    // Real max: 32767 / 2 = max
+    final int postgreSqlMaxBindVariables = 15000;
 
     @Override
     public List<HenkiloViiteDto> findBy(HenkiloCriteria criteria) {
@@ -62,31 +67,21 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
                     .fetch();
         }
 
-        // Make sure all henkilos exist
-        JPAQuery<String> query = jpa().select(henkilo.oidHenkilo)
-                .from(henkilo)
-                .where(henkilo.oidHenkilo.in(result.stream().flatMap(henkiloViiteDto ->
-                        Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())));
+        Set<String> existingHenkilos = new HashSet<>();
+        int batch = postgreSqlMaxBindVariables;
 
-        query.limit(postgreSqlMaxQuerySize);
-        query.offset(0);
+        // Splitting 'existingHenkilos' query to batches based on 'result' size because PostgreSql allows
+        // only limited amount of binded variables for one query 'postgreSqlMaxBindVariables'.
 
-        List<String> existingHenkilos = query.fetch();
+        for (int i = 0; i < result.size(); i += batch) {
+            List<HenkiloViiteDto> resultbatch = result.subList(i, Math.min(result.size(), i + batch));
 
-        int resultsize = existingHenkilos.size();
-        int index = 1;
+            JPAQuery<String> query = jpa().select(henkilo.oidHenkilo)
+                    .from(henkilo)
+                    .where(henkilo.oidHenkilo.in(resultbatch.stream().flatMap(henkiloViiteDto ->
+                            Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())));
 
-        // Processing query 'henkilo exists' query in batches if needed, 'postgreSqlMaxQuerySize'
-        while(resultsize == postgreSqlMaxQuerySize){
-
-            query.offset(postgreSqlMaxQuerySize * index);
-
-            List<String> batchExistingHenkilos = query.fetch();
-            existingHenkilos.addAll(batchExistingHenkilos);
-
-            resultsize = batchExistingHenkilos.size();
-
-            index++;
+            existingHenkilos.addAll(query.fetch());
         }
 
         return result.stream().filter(henkiloViiteDto ->
