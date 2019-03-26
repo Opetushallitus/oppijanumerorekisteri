@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepositoryCustom;
+import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
+import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import org.hibernate.Session;
 import org.springframework.util.CollectionUtils;
 
@@ -22,9 +24,6 @@ import static fi.vm.sade.oppijanumerorekisteri.models.QHenkiloViite.henkiloViite
 import static fi.vm.sade.oppijanumerorekisteri.models.QHenkilo.henkilo;
 
 public class HenkiloViiteRepositoryImpl extends AbstractRepository implements HenkiloViiteRepositoryCustom {
-
-    // Real max: 32767 / 2 = max
-    final int postgreSqlMaxBindVariables = 15000;
 
     @Override
     public List<HenkiloViiteDto> findBy(HenkiloCriteria criteria) {
@@ -67,22 +66,17 @@ public class HenkiloViiteRepositoryImpl extends AbstractRepository implements He
                     .fetch();
         }
 
-        Set<String> existingHenkilos = new HashSet<>();
-        int batch = postgreSqlMaxBindVariables;
+        Set<String> existingHenkilos;
 
         // Splitting 'existingHenkilos' query to batches based on 'result' size because PostgreSql allows
         // only limited amount of binded variables for one query 'postgreSqlMaxBindVariables'.
 
-        for (int i = 0; i < result.size(); i += batch) {
-            List<HenkiloViiteDto> resultbatch = result.subList(i, Math.min(result.size(), i + batch));
+        BatchingProcess<HenkiloViiteDto, String> process = (batch) -> jpa().select(henkilo.oidHenkilo)
+                .from(henkilo)
+                .where(henkilo.oidHenkilo.in(batch.stream().flatMap(henkiloViiteDto ->
+                        Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet()))).fetch();
 
-            JPAQuery<String> query = jpa().select(henkilo.oidHenkilo)
-                    .from(henkilo)
-                    .where(henkilo.oidHenkilo.in(resultbatch.stream().flatMap(henkiloViiteDto ->
-                            Stream.of(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())).collect(Collectors.toSet())));
-
-            existingHenkilos.addAll(query.fetch());
-        }
+        existingHenkilos = new HashSet<>(BatchProcessor.execute(result, BatchProcessor.postgreSqlMaxBindVariables, process));
 
         return result.stream().filter(henkiloViiteDto ->
                 existingHenkilos.containsAll(Sets.newHashSet(henkiloViiteDto.getHenkiloOid(), henkiloViiteDto.getMasterOid())))

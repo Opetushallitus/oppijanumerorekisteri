@@ -20,7 +20,9 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
+import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
@@ -196,7 +198,8 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HenkiloDto> getHenkilosByOids(List<String> oids) {
-        return this.mapper.mapAsList(this.henkiloDataRepository.findByOidHenkiloIsIn(oids), HenkiloDto.class);
+        BatchingProcess<String, Henkilo> process = (batch) -> this.henkiloDataRepository.findByOidHenkiloIsIn(batch);
+        return this.mapper.mapAsList(BatchProcessor.execute(oids, BatchProcessor.postgreSqlMaxBindVariables, process), HenkiloDto.class);
     }
 
 
