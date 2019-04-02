@@ -44,20 +44,20 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisat
     render() {
         return (
             <div>
-                {this.props.form.metadata.salasana.visible &&
-                    <OphField required={this.props.form.metadata.salasana.required}>
-                        <OphLabel for="salasana" inline={true}>
+                {this.props.form.metadata.password.visible &&
+                    <OphField required={this.props.form.metadata.password.required}>
+                        <OphLabel for="password" inline={true}>
                             {this.props.L['UUDELLEENREKISTEROINTI_UUSI_SALASANA']}
                         </OphLabel>
-                        <Salasana disabled={this.props.form.metadata.salasana.disabled}
-                                  isError={this.hasError('salasana')}
+                        <Salasana disabled={this.props.form.metadata.password.disabled}
+                                  isError={this.hasError('password')}
                                   L={this.props.L}
                                   updateModelFieldAction={this.onInputChange.bind(this)}
                         />
-                        <LocalNotification type="error" title={this.props.L['LOMAKE_KENTTA_SISALTAA_VIRHEITA']} toggle={this.hasError('salasana')}>
+                        <LocalNotification type="error" title={this.props.L['LOMAKE_KENTTA_SISALTAA_VIRHEITA']} toggle={this.hasError('password')}>
                             <ul>
                                 {this.props.form.errors
-                                    .filter(error => error.name === 'salasana')
+                                    .filter(error => error.name === 'password')
                                     .map((error, index) => <li key={index}>{error.text}</li>)}
                             </ul>
                         </LocalNotification>

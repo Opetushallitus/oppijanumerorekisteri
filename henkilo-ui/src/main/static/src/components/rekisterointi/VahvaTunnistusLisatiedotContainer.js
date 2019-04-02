@@ -29,7 +29,7 @@ const getInitialValues = (): Values => ({
 });
 
 const getInitialMetadata = (props: Props): Metadata => ({
-    salasana: {
+    password: {
         visible: props.salasana,
         disabled: false,
         required: true,
@@ -48,6 +48,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         const values = getInitialValues();
         const metadata = getInitialMetadata(props);
         const errors = this.getErrors(values, metadata, props.L);
+
         this.state = {
             form: {
                 values: values,
@@ -73,31 +74,44 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
 
     onChange = (name: string, value: any) => {
         const values = { ...this.state.form.values, [name]: value };
-        const errors = this.getErrors(values, this.state.form.metadata, this.props.L);
+        this.refreshForm(values);
+    };
+
+    refreshForm = (values, optionalErrors: Errors) => {
+        let errors = this.getErrors(values, this.state.form.metadata, this.props.L);
+
+        if(optionalErrors){
+            errors = errors.concat([...optionalErrors]);
+        }
+
         const form = { ...this.state.form, values: values, errors: errors };
         this.setState({ ...this.state, form: form })
     };
 
     getErrors = (values: Values, metadata: Metadata, L: Localisations): Errors => {
         let errors: Errors = [];
+
         // tarkistetaan pakollisuudet
         Object.entries(values).forEach(([name, value]) => {
             if (!value && metadata[name] && metadata[name].visible && metadata[name].required) {
                 errors.push({ name: name, text: L['LOMAKE_PAKOLLINEN_TIETO'] })
             }
         });
+
         if (values.password) {
-            if (!isValidPassword(values.password)) {
-                errors.push({ name: 'salasana', text: L['SALASANA_OHJE'] })
+            if (values.password && !isValidPassword(values.password)) {
+                errors.push({ name: 'password', text: L['SALASANA_OHJE_UUDELLEENREKISTEROINTI'] })
             }
             if (values.password !== values.passwordAgain) {
-                errors.push({name: 'salasana', text: L['REKISTEROIDY_ERROR_PASSWORD_MATCH']})
+                errors.push({name: 'password', text: L['REKISTEROIDY_ERROR_PASSWORD_MATCH']})
             }
         }
         return errors
     };
 
     onSubmit = async () => {
+        this.refreshForm({ ...this.state.form.values});
+
         try {
             const form = { ...this.state.form, submitted: true };
             this.setState({ ...this.state, form: form });
@@ -109,10 +123,23 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
                 window.location.replace(loginUrl)
             }
         } catch (error) {
-            this.props.router.push(`/vahvatunnistusinfo/virhe/${this.props.locale}/${this.props.loginToken}`)
+            this.onServerError(error);
+        }
+    };
+
+    onServerError = (error) => {
+        const L =  this.props.L;
+
+        if(error && error.errorType == "PasswordException") {
+            this.refreshForm
+            (
+                { ...this.state.form.values},
+                [{name: 'password', text: L['SALASANA_VANHA_UUDELLEENREKISTEROINTI']}]
+            );
+        }else{
+            this.props.router.push(`/vahvatunnistusinfo/virhe/${this.props.locale}/${this.props.loginToken}`);
         }
     }
-
 }
 
 const mapStateToProps = (state, ownProps) => ({
