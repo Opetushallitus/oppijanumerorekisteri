@@ -18,7 +18,7 @@ export type Field = {
     required: boolean,
 }
 export type Metadata = {
-    salasana: Field,
+    password: Field,
     tyosahkopostiosoite: Field,
 }
 export type Error = {

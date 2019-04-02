@@ -77,7 +77,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         this.refreshForm(values);
     };
 
-    refreshForm = (values, optionalErrors: Errors) => {
+    refreshForm = (values, optionalErrors: Errors = []) => {
         let errors = this.getErrors(values, this.state.form.metadata, this.props.L);
 
         if(optionalErrors){
