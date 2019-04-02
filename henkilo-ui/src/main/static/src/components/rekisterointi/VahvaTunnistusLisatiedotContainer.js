@@ -99,7 +99,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         });
 
         if (values.password) {
-            if (values.password && !isValidPassword(values.password)) {
+            if (!isValidPassword(values.password)) {
                 errors.push({ name: 'password', text: L['SALASANA_OHJE_UUDELLEENREKISTEROINTI'] })
             }
             if (values.password !== values.passwordAgain) {
