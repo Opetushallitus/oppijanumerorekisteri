@@ -130,9 +130,8 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
     onServerError = (error) => {
         const L =  this.props.L;
 
-        if(error && error.errorType == "PasswordException") {
-            this.refreshForm
-            (
+        if(error && error.errorType === "PasswordException") {
+            this.refreshForm(
                 { ...this.state.form.values},
                 [{name: 'password', text: L['SALASANA_VANHA_UUDELLEENREKISTEROINTI']}]
             );
