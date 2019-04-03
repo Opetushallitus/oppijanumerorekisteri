@@ -6,7 +6,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 public enum Koodisto {
 
     SUKUPUOLI("sukupuoli", 1),
-    MAAT_JA_VALTIOT_2("maatjavaltiot2", 1),
+    MAAT_JA_VALTIOT_2("maatjavaltiot2", 0),
     YHTEYSTIETOTYYPIT("yhteystietotyypit", 1),
     YHTEYSTIETOJEN_ALKUPERA("yhteystietojenalkupera", 1),
     KUNTA("kunta", 2),
