@@ -88,8 +88,10 @@ public class IdentificationServiceIntegrationTests {
         Henkilo henkiloOppijaPassivoitu = (Henkilo)this.entityManager
                 .createNativeQuery("SELECT * FROM henkilo WHERE oidhenkilo = 'EverythingOkOppija'", Henkilo.class).getSingleResult();
         assertThat(henkiloHetuUpdated.getHetu()).isEqualTo("010101-234R");
+        assertThat(henkiloHetuUpdated.getKaikkiHetut()).containsExactly("010101-234R");
         assertThat(henkiloHetuUpdated.isPassivoitu()).isFalse();
         assertThat(henkiloOppijaPassivoitu.getHetu()).isNull();
+        assertThat(henkiloOppijaPassivoitu.getKaikkiHetut()).isEmpty();
         assertThat(henkiloOppijaPassivoitu.isPassivoitu()).isTrue();
         assertPublished(objectMapper, amazonSNS, 2, henkiloHetuUpdated.getOidHenkilo(), henkiloOppijaPassivoitu.getOidHenkilo());
     }

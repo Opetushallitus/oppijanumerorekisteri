@@ -104,13 +104,13 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .filter((henkiloWithSameHetu) -> !henkiloWithSameHetu.getOidHenkilo().equals(henkilo.getOidHenkilo()))
                 .map(oppijaWithSameHetu -> {
                     String[] oppijaWithSameHetuHetuhistoria = oppijaWithSameHetu.getKaikkiHetut().toArray(new String[oppijaWithSameHetu.getKaikkiHetut().size()]);
-                    henkilo.addHetu(oppijaWithSameHetuHetuhistoria);
                     oppijaWithSameHetu.clearHetut();
                     oppijaWithSameHetu.setHetu(null);
                     oppijaWithSameHetu.setYksiloity(false);
                     oppijaWithSameHetu.setYksiloityVTJ(false);
                     // Hetu is unique so we need to flush when moving it
                     this.henkiloDataRepository.saveAndFlush(oppijaWithSameHetu);
+                    henkilo.addHetu(oppijaWithSameHetuHetuhistoria);
                     return this.linkHenkilos(henkilo.getOidHenkilo(), Lists.newArrayList(oppijaWithSameHetu.getOidHenkilo()));
                 })
                 .orElse(new LinkResult(henkilo, Collections.singletonList(henkilo), Collections.emptyList()));
