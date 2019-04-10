@@ -47,8 +47,15 @@ public class DuplicateServiceImpl implements DuplicateService {
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
-        List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream().filter(duplicate -> !duplicate.getOidHenkilo().equals(oid)).collect(toList());
+        List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream().filter(duplicate -> filterDuplicate(henkilo, duplicate)).collect(toList());
         return getHenkiloDuplicateDtoList(candidates);
+    }
+
+    public boolean filterDuplicate(Henkilo henkilo, Henkilo duplicate){
+        boolean notSameOid =  !duplicate.getOidHenkilo().equals(henkilo.getOidHenkilo());
+        boolean ytjIdentifiedfilter = henkilo.isYksiloityVTJ() && hasHetu(henkilo) ? !duplicate.isYksiloityVTJ() : true;
+
+        return notSameOid && ytjIdentifiedfilter;
     }
 
     @Override
@@ -261,7 +268,6 @@ public class DuplicateServiceImpl implements DuplicateService {
                 .stream()
                 .reduce( originalMaster, (currentMaster, candidate) -> isHenkiloIdentified(candidate) ? candidate : currentMaster );
     }
-
 
     private boolean hasMoreThanOneIdentifiedHenkilo(List<Henkilo> henkilos) {
         return henkilos.stream().filter(this::isHenkiloIdentified).count() > 1;
