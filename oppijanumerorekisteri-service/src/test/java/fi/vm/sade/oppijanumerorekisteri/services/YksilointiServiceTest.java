@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
+import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
 import org.junit.Test;
@@ -406,5 +407,13 @@ public class YksilointiServiceTest {
         Yksilointivirhe yksilointivirhe = yksilointivirheArgumentCaptor.getValue();
         assertThat(yksilointivirhe.getUudelleenyritysMaara()).isEqualTo(6);
         assertThat(yksilointivirhe.getUudelleenyritysAikaleima()).isAfter(date);
+    }
+
+    @Test
+    public void yksilointiVTJNimienNormalisointiToimii(){
+        String fromSpecial = TextUtils.normalize("Éva Nõmm Noël Hélène Ðông Bùi");
+        String fromNormal  = TextUtils.normalize("Eva Nomm Noel Helene Dong Bui");
+
+        assertThat(fromSpecial).isEqualTo(fromNormal);
     }
 }

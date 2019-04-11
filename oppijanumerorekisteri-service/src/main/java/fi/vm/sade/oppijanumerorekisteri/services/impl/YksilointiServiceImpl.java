@@ -15,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService.LinkResult;
+import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
@@ -224,16 +225,16 @@ public class YksilointiServiceImpl implements YksilointiService {
         JaroWinklerDistance stringEvaluator = new JaroWinklerDistance();
 
         boolean sukunimiMatch = kaikkiSukunimet.stream()
-                .map(sukunimi -> stringEvaluator.getDistance(henkilo.getSukunimi().toLowerCase(), sukunimi.toLowerCase()))
+                .map(sukunimi -> stringEvaluator.getDistance(TextUtils.normalize(henkilo.getSukunimi().toLowerCase()), TextUtils.normalize(sukunimi.toLowerCase())))
                 .anyMatch(distance -> distance >= oppijanumerorekisteriProperties.getSukunimiThreshold());
 
-        if (yksiloityHenkilo.getEtunimi().toLowerCase().contains(henkilo.getKutsumanimi().toLowerCase())) {
+        if (TextUtils.normalize(yksiloityHenkilo.getEtunimi()).toLowerCase().contains(TextUtils.normalize(henkilo.getKutsumanimi()).toLowerCase())) {
             etunimiMatch = true;
         }
         else {
             String[] etunimet = yksiloityHenkilo.getEtunimi().toLowerCase().split(" ");
             for (String etunimi : etunimet) {
-                if (stringEvaluator.getDistance(henkilo.getKutsumanimi().toLowerCase(), etunimi)
+                if (stringEvaluator.getDistance(TextUtils.normalize(henkilo.getKutsumanimi()).toLowerCase(), TextUtils.normalize(etunimi))
                         > oppijanumerorekisteriProperties.getEtunimiThreshold()) {
                     etunimiMatch = true;
                     break;

@@ -311,7 +311,8 @@ public class HenkiloController {
             authorizations = {@Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiManuaalisesti(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
                                      @RequestHeader(value = "External-Permission-Service", required = false)
-                                             ExternalPermissionService permissionService) {
+                                             ExternalPermissionService permissionService){
+
         this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
     }
 
