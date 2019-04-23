@@ -12,6 +12,7 @@ type Props = {
     locale: Locale,
     L: Localisations,
     kayttooikeusryhmat: Array<Kayttooikeusryhma>,
+    kayttooikeusryhmaValittu: boolean,
     onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void,
     disabled?: boolean,
     loading: boolean,
@@ -35,7 +36,7 @@ class KayttooikeusryhmaSelectModal extends React.Component<Props, State> {
     }
 
     render() {
-        const isValid = !this.props.isOrganisaatioSelected || !!this.props.kayttooikeusryhmat.length;
+        const isValid = !this.props.isOrganisaatioSelected || !!this.props.kayttooikeusryhmat.length || this.props.kayttooikeusryhmaValittu;
         const validationMessage: ValidationMessage = {
             id: 'KAYTTOOIKEUSRYHMA_VALINTA_EI_SALLITTUJA',
             isValid,
