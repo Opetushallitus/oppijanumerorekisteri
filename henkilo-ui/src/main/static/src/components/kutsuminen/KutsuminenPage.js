@@ -18,6 +18,7 @@ import { fetchHenkilo } from '../../actions/henkilo.actions'
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 import type {KutsuBasicInfo} from "../../types/KutsuBasicInfo.types";
+import { validateEmail } from '../../validation/EmailValidator';
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
@@ -176,7 +177,7 @@ class KutsuminenPage extends React.Component<Props, State>  {
                 },
                 sahkoposti: {
                     ...this.state.validationMessages.sahkoposti,
-                    isValid: !basicInfo.email || KutsuminenPage.isValidEmail(basicInfo.email),
+                    isValid: !basicInfo.email || validateEmail(basicInfo.email),
                 },
             },
         });
@@ -196,10 +197,6 @@ class KutsuminenPage extends React.Component<Props, State>  {
 
     clearBasicInfo() {
         this.setBasicInfo({...this.initialBasicInfo});
-    }
-
-    static isValidEmail(email: string): boolean {
-        return email !== null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
     }
 
     openConfirmationModal(e: Event) {
