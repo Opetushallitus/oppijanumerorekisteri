@@ -105,7 +105,7 @@ class AdminUserContent extends React.Component<Props, State> {
             ],
             [
                 <Kayttajanimi {...props}
-                              disabled={!this.props.isAdmin}
+                              disabled={!this.props.isAdmin || !this.props.henkilo.kayttajatieto.username}
                 />,
                 <LinkitetytHenkilot />,
                 <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />
