@@ -67,6 +67,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
     }
 
     render() {
+        const ryhmaOptions = this._parseRyhmaOptions(this.props.henkilohakuOrganisaatiot);
         return <div>
             <div className="henkilohakufilters-wrapper">
                 <OphCheckboxInline text={this.props.L['HENKILOHAKU_FILTERS_HAEMYOS']}>
@@ -133,12 +134,14 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                     </div>
 
                 </div>
+                {
+                    ryhmaOptions.length > 0 ?
                         <div className="flex-horizontal flex-align-center henkilohaku-suodata">
                             <div className="flex-item-1">
                                 <div className="henkilohaku-select">
                                     <span className="flex-item-1">
                                         <OphSelect id="ryhmaFilter"
-                                                   options={this._parseRyhmaOptions(this.props.henkilohakuOrganisaatiot)}
+                                                   options={ryhmaOptions}
                                                    value={this.props.selectedRyhma}
                                                    placeholder={this.props.L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
                                                    onChange={this.props.ryhmaSelectionAction}/>
@@ -150,6 +153,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                             </div>
                             <div className="flex-item-1"/>
                         </div>
+                : null}
             </div>
         </div>;
     };
