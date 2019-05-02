@@ -9,6 +9,7 @@ import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
+import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
 import org.junit.After;
@@ -145,6 +146,80 @@ public class HenkiloModificationServiceTest {
             assertThat(henkiloRepository.findByOidHenkilo(slave2oid).get().getKansalaisuus())
                     .extracting(Kansalaisuus::getKansalaisuusKoodi)
                     .containsExactlyInAnyOrder("kansalaisuus2", "kansalaisuus3");
+        });
+    }
+
+    @Test
+    @WithMockUser
+    public void linkHenkilosWithAidinkieli() {
+        when(koodistoClient.getKoodisForKoodisto(eq("kieli"), anyInt(), anyBoolean()))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI)
+                        .koodi("fi").koodi("sv").koodi("en")
+                        .build());
+
+        Henkilo master = Henkilo.builder().etunimet("etu1").kutsumanimi("etu1").sukunimi("suku1")
+                .sukupuoli(null)
+                .aidinkieli(new Kielisyys("fi"))
+                .build();
+        final String masterOid = henkiloModificationService.createHenkilo(master).getOidHenkilo();
+        Henkilo slave1 = Henkilo.builder().etunimet("etu2").kutsumanimi("etu2").sukunimi("suku2")
+                .sukupuoli(null)
+                .aidinkieli(new Kielisyys("sv"))
+                .build();
+        final String slave1oid = henkiloModificationService.createHenkilo(slave1).getOidHenkilo();
+        Henkilo slave2 = Henkilo.builder().etunimet("etu2").kutsumanimi("etu2").sukunimi("suku2")
+                .sukupuoli(null)
+                .aidinkieli(new Kielisyys("en"))
+                .build();
+        final String slave2oid = henkiloModificationService.createHenkilo(slave2).getOidHenkilo();
+
+        List<String> slaves = henkiloModificationService.linkHenkilos(masterOid, asList(slave1oid, slave2oid));
+
+        assertThat(slaves).containsExactlyInAnyOrder(slave1.getOidHenkilo(), slave2.getOidHenkilo());
+        databaseService.runInTransaction(() -> {
+            assertThat(henkiloRepository.findByOidHenkilo(masterOid).get().getAidinkieli())
+                    .returns("fi", Kielisyys::getKieliKoodi);
+            assertThat(henkiloRepository.findByOidHenkilo(slave1oid).get().getAidinkieli())
+                    .returns("sv", Kielisyys::getKieliKoodi);
+            assertThat(henkiloRepository.findByOidHenkilo(slave2oid).get().getAidinkieli())
+                    .returns("en", Kielisyys::getKieliKoodi);
+        });
+    }
+
+    @Test
+    @WithMockUser
+    public void linkHenkilosWithoutAidinkieli() {
+        when(koodistoClient.getKoodisForKoodisto(eq("kieli"), anyInt(), anyBoolean()))
+                .thenReturn(new KoodiTypeListBuilder(Koodisto.KIELI)
+                        .koodi("fi").koodi("sv").koodi("en")
+                        .build());
+
+        Henkilo master = Henkilo.builder().etunimet("etu1").kutsumanimi("etu1").sukunimi("suku1")
+                .sukupuoli(null)
+                .aidinkieli(null)
+                .build();
+        final String masterOid = henkiloModificationService.createHenkilo(master).getOidHenkilo();
+        Henkilo slave1 = Henkilo.builder().etunimet("etu2").kutsumanimi("etu2").sukunimi("suku2")
+                .sukupuoli(null)
+                .aidinkieli(new Kielisyys("sv"))
+                .build();
+        final String slave1oid = henkiloModificationService.createHenkilo(slave1).getOidHenkilo();
+        Henkilo slave2 = Henkilo.builder().etunimet("etu2").kutsumanimi("etu2").sukunimi("suku2")
+                .sukupuoli(null)
+                .aidinkieli(new Kielisyys("en"))
+                .build();
+        final String slave2oid = henkiloModificationService.createHenkilo(slave2).getOidHenkilo();
+
+        List<String> slaves = henkiloModificationService.linkHenkilos(masterOid, asList(slave1oid, slave2oid));
+
+        assertThat(slaves).containsExactlyInAnyOrder(slave1.getOidHenkilo(), slave2.getOidHenkilo());
+        databaseService.runInTransaction(() -> {
+            assertThat(henkiloRepository.findByOidHenkilo(masterOid).get().getAidinkieli())
+                    .returns("sv", Kielisyys::getKieliKoodi);
+            assertThat(henkiloRepository.findByOidHenkilo(slave1oid).get().getAidinkieli())
+                    .returns("sv", Kielisyys::getKieliKoodi);
+            assertThat(henkiloRepository.findByOidHenkilo(slave2oid).get().getAidinkieli())
+                    .returns("en", Kielisyys::getKieliKoodi);
         });
     }
 

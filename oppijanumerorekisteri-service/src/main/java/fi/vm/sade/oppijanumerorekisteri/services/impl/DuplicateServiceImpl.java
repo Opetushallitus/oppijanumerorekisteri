@@ -227,6 +227,9 @@ public class DuplicateServiceImpl implements DuplicateService {
         if (!hasHetu(master) && !hasHetu(duplicateHenkilo)) {
             moveIdentificationsToMaster(master, duplicateHenkilo);
             master.getKansalaisuus().addAll(duplicateHenkilo.getKansalaisuus());
+            if (master.getAidinkieli() == null) {
+                master.setAidinkieli(duplicateHenkilo.getAidinkieli());
+            }
         }
 
         return previousMasters;
