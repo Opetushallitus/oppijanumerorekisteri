@@ -363,6 +363,11 @@ public class YksilointiServiceImpl implements YksilointiService {
         // Sometimes this might null or empty in VTJ data, in that case the original value is kept
         updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
+        KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkilo.getEtunimet());
+        if (!kutsumanimiValidator.isValid(henkilo.getKutsumanimi())) {
+            henkilo.setKutsumanimi(henkilo.getEtunimet());
+        }
+
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
                 .filter(koodi -> KoodiValidator.isValid(koodistoService, Koodisto.KIELI, String::toLowerCase, koodi))
                 .ifPresent(kieliKoodi -> henkilo.setAidinkieli(kielisyysRepository.findOrCreateByKoodi(kieliKoodi)));
