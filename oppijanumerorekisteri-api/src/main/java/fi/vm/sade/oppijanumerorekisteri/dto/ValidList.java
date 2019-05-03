@@ -10,8 +10,8 @@ import java.util.ListIterator;
 /**
  * {@link List}-toteutus jossa on määriteltynä "Bean Validation".
  *
- * Tarvitaan jos rajapinnassa käytetään "@Valid @RequestBody List<Dto>"
- * (muutettava muotoon "@Valid @RequestBody ValidList<Dto>").
+ * Tarvitaan jos rajapinnassa käytetään "@Valid @RequestBody List&lt;Dto&gt;"
+ * (muutettava muotoon "@Valid @RequestBody ValidList&lt;Dto&gt;").
  *
  * @param <E> listan alkioiden tyyppi
  */
