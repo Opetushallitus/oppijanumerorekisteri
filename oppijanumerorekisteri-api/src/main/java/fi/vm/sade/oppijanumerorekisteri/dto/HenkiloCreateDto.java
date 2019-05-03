@@ -42,8 +42,6 @@ public class HenkiloCreateDto implements Serializable {
     @ValidateAsiointikieli
     private KielisyysDto asiointiKieli;
 
-    private Set<KielisyysDto> kielisyys = new HashSet<>();
-
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
 
     private LocalDate syntymaaika;

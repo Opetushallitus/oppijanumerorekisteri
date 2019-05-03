@@ -238,11 +238,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkiloSaved.setAsiointiKieli(this.kielisyysRepository.findOrCreateByKoodi(henkiloUpdateDto.getAsiointiKieli().getKieliKoodi()));
             henkiloUpdateDto.setAsiointiKieli(null);
         }
-        if (henkiloUpdateDto.getKielisyys() != null) {
-            henkiloSaved.clearKielisyys();
-            henkiloUpdateDto.getKielisyys().forEach(kielisyysDto -> henkiloSaved.addKielisyys(this.kielisyysRepository.findOrCreateByKoodi(kielisyysDto.getKieliKoodi())));
-            henkiloUpdateDto.setKielisyys(null);
-        }
 
         if (henkiloUpdateDto.getKansalaisuus() != null) {
             Set<Kansalaisuus> kansalaisuusSet = henkiloUpdateDto.getKansalaisuus().stream()

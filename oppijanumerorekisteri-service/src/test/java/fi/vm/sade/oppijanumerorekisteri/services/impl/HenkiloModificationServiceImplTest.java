@@ -145,9 +145,6 @@ public class HenkiloModificationServiceImplTest {
         assertThat(argument.getValue().getAidinkieli().getKieliKoodi()).isEqualTo("sv");
         assertThat(argument.getValue().getAsiointiKieli().getKieliKoodi()).isEqualTo("sv");
 
-        assertThat(argument.getValue().getKielisyys().size()).isEqualTo(1);
-        assertThat(argument.getValue().getKielisyys().iterator().next().getKieliKoodi()).isEqualTo("sv");
-
         assertThat(argument.getValue().getKansalaisuus().size()).isEqualTo(1);
         assertThat(argument.getValue().getKansalaisuus().iterator().next().getKansalaisuusKoodi()).isEqualTo("246");
 

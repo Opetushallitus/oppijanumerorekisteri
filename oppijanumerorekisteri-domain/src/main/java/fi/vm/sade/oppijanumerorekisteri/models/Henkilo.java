@@ -31,7 +31,6 @@ import static java.util.Arrays.asList;
                 attributeNodes = {
                         @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
-                        @NamedAttributeNode("kielisyys"),
                         @NamedAttributeNode("yksilointivirheet"),
                 }
         )
@@ -123,14 +122,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private boolean eiSuomalaistaHetua;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "henkilo_kielisyys", joinColumns = @JoinColumn(name = "henkilo_id",
-            referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "kielisyys_id",
-            referencedColumnName = "id"))
-    @BatchSize(size = 1000)
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private Set<Kielisyys> kielisyys = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "henkilo_kansalaisuus", joinColumns = @JoinColumn(name = "henkilo_id",
             referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(
             name = "kansalaisuus_id", referencedColumnName = "id"))
@@ -218,14 +209,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public void addYhteystiedotRyhma(YhteystiedotRyhma yhteystiedotRyhma) {
         this.yhteystiedotRyhma.add(yhteystiedotRyhma);
-    }
-
-    public void clearKielisyys() {
-        this.kielisyys.clear();
-    }
-
-    public void addKielisyys(Kielisyys kielisyys) {
-        this.kielisyys.add(kielisyys);
     }
 
     public Boolean isTurvakielto() {

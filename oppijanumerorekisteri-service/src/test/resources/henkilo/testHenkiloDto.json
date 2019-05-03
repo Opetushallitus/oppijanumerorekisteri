@@ -3,12 +3,7 @@
     "kieliKoodi": "fi",
     "kieliTyyppi": "suomi"
   },
-  "kielisyys": [
-    {
-      "kieliKoodi": "fi",
-      "kieliTyyppi": "suomi"
-    }
-  ],
+  "kielisyys": [],
   "kansalaisuus": [
     {
       "kansalaisuusKoodi": "246"

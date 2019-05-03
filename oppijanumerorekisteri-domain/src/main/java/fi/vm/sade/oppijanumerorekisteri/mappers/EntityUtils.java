@@ -61,7 +61,6 @@ public class EntityUtils {
                 .modified(luontiMuokkausSyncedPvm)
                 .vtjsynced(lastVtjSynced)
                 .passivoitu(passivoitu)
-                .kielisyys(Sets.newHashSet(aidinkieli))
                 .kansalaisuus(Sets.newHashSet(kansalaisuus))
                 .yhteystiedotRyhma(Sets.newHashSet(EntityUtils.createYhteystiedotRyhma(yhteystietoArvo)))
                 .kasittelijaOid(kasittelija)

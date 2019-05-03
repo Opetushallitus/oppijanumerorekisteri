@@ -4,12 +4,13 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 
 import java.time.LocalDate;
 import java.time.Month;
-import static java.util.Arrays.asList;
 import java.util.Collections;
-import static java.util.Collections.emptySet;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 
 public class DtoUtils {
     public static KielisyysDto createKielisyysDto(String kielikoodi, String kielityyppi) {
@@ -61,7 +62,7 @@ public class DtoUtils {
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
         return new HenkiloDto(oidHenkilo, hetu, null, passivoitu, etunimet, kutsumanimi, sukunimi,
-                 aidinkieli, aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), kasittelija,
+                 aidinkieli, aidinkieli, Collections.singleton(kansalaisuus), kasittelija,
                 syntymaAika, "1", null, "1.2.3.4.5", null, false, false, false, false, false, createdModified,
                 createdModified, null, Collections.singleton(yhteystiedotRyhmaDto), new HashSet<>());
     }
@@ -78,7 +79,7 @@ public class DtoUtils {
         YhteystiedotRyhmaDto yhteystiedotRyhmaDto = createYhteystiedotRyhmaDto(yhteystietoArvo);
 
         return new HenkiloCreateDto(hetu, passivoitu, etunimet, kutsumanimi, sukunimi, aidinkieli,
-                aidinkieli, Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), syntymaAika, "1",
+                aidinkieli, Collections.singleton(kansalaisuus), syntymaAika, "1",
                 null, "1.2.3.4.5", null, false, false,
                 false, false, false, null, Collections.singleton(yhteystiedotRyhmaDto), emptySet());
     }
@@ -102,7 +103,7 @@ public class DtoUtils {
 
         return new HenkiloUpdateDto(oidHenkilo, null, etunimet, kutsumanimi, sukunimi, hetu,
                 syntymaAika, null, "1", null, asiointikieli, aidinkieli,
-                Collections.singleton(aidinkieli), Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
+                Collections.singleton(kansalaisuus), new HashSet<>(asList(yhteystiedotRyhma)));
     }
 
     public static YhteystiedotRyhmaDto createYhteystiedotRyhmaDto(String yhteystietoArvo) {

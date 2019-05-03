@@ -90,8 +90,6 @@ public class HenkiloMapperTest {
         assertThat(henkiloDto.getAsiointiKieli()).isEqualToIgnoringGivenFields(henkilo.getAsiointiKieli(), "serialVersionUID");
         assertThat(henkiloDto.getKansalaisuus()).usingElementComparatorIgnoringFields("serialVersionUID")
                 .isEqualTo(henkilo.getKansalaisuus());
-        assertThat(henkiloDto.getKielisyys()).usingElementComparatorIgnoringFields("serialVersionUID")
-                .isEqualTo(henkilo.getKielisyys());
 
         assertThat(henkiloDto.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
         assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())
@@ -115,8 +113,6 @@ public class HenkiloMapperTest {
         assertThat(henkilo.getAidinkieli()).isEqualToIgnoringGivenFields(henkiloDto.getAidinkieli(), "serialVersionUID", "henkilos", "id", "version");
         assertThat(henkilo.getKansalaisuus()).usingElementComparatorIgnoringFields("serialVersionUID", "henkilos", "id", "version")
                 .isEqualTo(henkiloDto.getKansalaisuus());
-        assertThat(henkilo.getKielisyys()).usingElementComparatorIgnoringFields("serialVersionUID", "henkilos", "id", "version")
-                .isEqualTo(henkiloDto.getKielisyys());
 
         assertThat(henkilo.getYhteystiedotRyhma().size()).isEqualTo(henkiloDto.getYhteystiedotRyhma().size()).isEqualTo(1);
         assertThat(henkilo.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())

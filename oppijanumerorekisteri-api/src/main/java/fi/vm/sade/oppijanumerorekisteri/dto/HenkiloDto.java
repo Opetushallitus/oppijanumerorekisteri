@@ -1,16 +1,13 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Builder;
 
 @Getter
 @Setter
@@ -37,8 +34,6 @@ public class HenkiloDto implements Serializable {
     private KielisyysDto aidinkieli;
 
     private KielisyysDto asiointiKieli;
-
-    private Set<KielisyysDto> kielisyys = new HashSet<>();
 
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
 
@@ -77,5 +72,10 @@ public class HenkiloDto implements Serializable {
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {
         return HenkiloTyyppi.OPPIJA;
+    }
+
+    @Deprecated
+    public Set<KielisyysDto> getKielisyys() {
+        return new HashSet<>();
     }
 }
