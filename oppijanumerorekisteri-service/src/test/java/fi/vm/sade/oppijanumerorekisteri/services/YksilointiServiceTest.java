@@ -307,7 +307,7 @@ public class YksilointiServiceTest {
     @Test
     public void yliajaHenkiloTiedotOnnistuuPerustietojenOsalta() {
         Yksilointitieto yksilointitieto = new Yksilointitieto();
-        yksilointitieto.setEtunimet("testi");
+        yksilointitieto.setEtunimet("testi kutsumanimi");
         yksilointitieto.setSukunimi("sukunimi");
         yksilointitieto.setKutsumanimi("kutsumanimi");
 
@@ -317,7 +317,7 @@ public class YksilointiServiceTest {
         when(yksilointitietoRepository.findByHenkilo(any())).thenReturn(Optional.of(yksilointitieto));
         yksilointiService.yliajaHenkilonTiedot("");
 
-        assertThat(henkilo.getEtunimet()).isEqualTo("testi");
+        assertThat(henkilo.getEtunimet()).isEqualTo("testi kutsumanimi");
         assertThat(henkilo.getSukunimi()).isEqualTo("sukunimi");
         assertThat(henkilo.getKutsumanimi()).isEqualTo("kutsumanimi");
         assertThat(henkilo.isYksiloityVTJ()).isTrue();
@@ -329,6 +329,8 @@ public class YksilointiServiceTest {
     @Test
     public void yliajaHenkiloTiedotOnnistuuYhteystietoRyhmienOsalta() {
         Yksilointitieto yksilointitieto = new Yksilointitieto();
+        yksilointitieto.setEtunimet("etunimet");
+        yksilointitieto.setKutsumanimi("kutsumanimi");
         Henkilo henkilo = new Henkilo();
 
         YhteystiedotRyhma yhteystiedotRyhma1 = new YhteystiedotRyhma();
