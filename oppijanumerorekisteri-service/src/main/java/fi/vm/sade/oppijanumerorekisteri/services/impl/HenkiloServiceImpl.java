@@ -10,10 +10,11 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HuoltajasuhdeRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
@@ -24,6 +25,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
+
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
@@ -33,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import java.time.LocalDate;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -54,7 +58,7 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     private final KayttooikeusClient kayttooikeusClient;
 
-
+    private final HuoltajasuhdeRepository huoltajasuhdeRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -383,7 +387,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     public List<HuoltajaDto> getHenkiloHuoltajat(String oidHenkilo){
 
         Henkilo henkilo =  this.henkiloDataRepository.findByOidHenkilo(oidHenkilo)
-              .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " +  oidHenkilo));
+                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " +  oidHenkilo));
 
         Set<HenkiloHuoltajaSuhde> huoltajaSuhteet = henkilo.getHuoltajat();
 
@@ -391,16 +395,28 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new NotFoundException("Henkilo parents not found with oid " + oidHenkilo);
 
         return huoltajaSuhteet
-            .stream()
-            .map( hs -> {
-                Henkilo huoltaja = hs.getHuoltaja();
-                HuoltajaDto huoltajaDto = mapper.map( huoltaja, HuoltajaDto.class );
+                .stream()
+                .map( hs -> {
+                    Henkilo huoltaja = hs.getHuoltaja();
+                    HuoltajaDto huoltajaDto = mapper.map( huoltaja, HuoltajaDto.class );
 
-                if(huoltaja.isTurvakielto())
-                    huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
+                    if(huoltaja.isTurvakielto())
+                        huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
 
-                return huoltajaDto;
-            })
-            .collect(Collectors.toList());
+                    return huoltajaDto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<String> getHuoltajaSuhdeMuutokset(LocalDate start, LocalDate end) {
+        List<HenkiloHuoltajaSuhde> suhteet = huoltajasuhdeRepository.changesBetween(start, end);
+
+        return suhteet.stream()
+                .map( hs -> {
+                    return hs.getLapsi().getOidHenkilo();
+                })
+                .collect(Collectors.toSet());
     }
 }

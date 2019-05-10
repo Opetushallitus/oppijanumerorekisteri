@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import java.time.LocalDate;
+
 public interface HenkiloService {
 
     Iterable<HenkiloHakuDto> list(HenkiloHakuCriteria criteria, Long offset, Long limit);
@@ -65,6 +67,8 @@ public interface HenkiloService {
     List<HenkiloReadDto> findSlavesByMasterOid(String masterOid);
 
     List<HuoltajaDto> getHenkiloHuoltajat(String oidHenkilo);
+
+    Set<String> getHuoltajaSuhdeMuutokset(LocalDate start, LocalDate end);
 
     String getAsiointikieli(String oidHenkilo);
 
