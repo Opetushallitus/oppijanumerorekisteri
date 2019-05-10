@@ -10,6 +10,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
@@ -375,5 +376,31 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new IllegalArgumentException("Maximum amount of henkilös to be fetched is " + MAX_FETCH_PERSONS + ". Tried to fetch:" + hetus.size());
         }
         return this.henkiloDataRepository.findPerustiedotByHetuIn(hetus);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<HuoltajaDto> getHenkiloHuoltajat(String oidHenkilo){
+
+        Henkilo henkilo =  this.henkiloDataRepository.findByOidHenkilo(oidHenkilo)
+              .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " +  oidHenkilo));
+
+        Set<HenkiloHuoltajaSuhde> huoltajaSuhteet = henkilo.getHuoltajat();
+
+        if(huoltajaSuhteet.size() == 0)
+            throw new NotFoundException("Henkilo parents not found with oid " + oidHenkilo);
+
+        return huoltajaSuhteet
+            .stream()
+            .map( hs -> {
+                Henkilo huoltaja = hs.getHuoltaja();
+                HuoltajaDto huoltajaDto = mapper.map( huoltaja, HuoltajaDto.class );
+
+                if(huoltaja.isTurvakielto())
+                    huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
+
+                return huoltajaDto;
+            })
+            .collect(Collectors.toList());
     }
 }

@@ -303,6 +303,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         this.huoltajat.addAll(huoltajat);
     }
 
+    public Set<HenkiloHuoltajaSuhde> getHuoltajat(){
+        return this.huoltajat;
+    }
+
     public void clearHuoltajat() {
         if (this.huoltajat != null) {
             this.huoltajat.clear();

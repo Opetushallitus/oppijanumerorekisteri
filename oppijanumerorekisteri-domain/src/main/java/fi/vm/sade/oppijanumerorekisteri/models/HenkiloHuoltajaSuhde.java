@@ -21,4 +21,8 @@ public class HenkiloHuoltajaSuhde extends IdentifiableAndVersionedEntity {
     private Henkilo huoltaja;
 
     private String huoltajuustyyppiKoodi;
+
+    public Henkilo getHuoltaja(){
+        return this.huoltaja;
+    }
 }

@@ -64,6 +64,8 @@ public interface HenkiloService {
 
     List<HenkiloReadDto> findSlavesByMasterOid(String masterOid);
 
+    List<HuoltajaDto> getHenkiloHuoltajat(String oidHenkilo);
+
     String getAsiointikieli(String oidHenkilo);
 
     String getCurrentUserAsiointikieli();
