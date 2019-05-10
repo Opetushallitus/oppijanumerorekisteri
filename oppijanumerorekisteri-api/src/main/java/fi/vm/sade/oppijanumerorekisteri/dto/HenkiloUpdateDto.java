@@ -43,8 +43,6 @@ public class HenkiloUpdateDto {
 
     private KielisyysDto aidinkieli;
 
-    private Set<KielisyysDto> kielisyys = null;
-
     private Set<KansalaisuusDto> kansalaisuus = null;
 
     @Valid

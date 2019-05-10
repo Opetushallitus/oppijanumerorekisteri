@@ -1,0 +1,2 @@
+drop table henkilo_kielisyys;
+drop table henkilo_kielisyys_aud;

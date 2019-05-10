@@ -1,10 +1,12 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,13 +37,17 @@ public class HenkiloReadDto {
     private String kasittelijaOid;
     private KielisyysReadDto asiointiKieli;
     private KielisyysReadDto aidinkieli;
-    private Set<KielisyysReadDto> kielisyys;
     private Set<KansalaisuusReadDto> kansalaisuus;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
 
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {
         return HenkiloTyyppi.OPPIJA;
+    }
+
+    @Deprecated
+    public Set<KielisyysReadDto> getKielisyys() {
+        return new HashSet<>();
     }
 
 }
