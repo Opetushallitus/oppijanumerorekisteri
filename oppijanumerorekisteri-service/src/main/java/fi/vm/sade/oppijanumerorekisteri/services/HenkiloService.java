@@ -5,6 +5,8 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
 
+import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,6 +65,8 @@ public interface HenkiloService {
     List<String> findHenkiloOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount);
 
     List<HenkiloReadDto> findSlavesByMasterOid(String masterOid);
+
+    Set<String> getHuoltajaSuhdeMuutokset(LocalDate start, LocalDate end);
 
     String getAsiointikieli(String oidHenkilo);
 

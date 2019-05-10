@@ -18,10 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
 
@@ -500,5 +499,21 @@ public class HenkiloController {
         return this.permissionChecker.filterUnpermittedHenkiloPerustieto(henkiloPerustietoDtos,
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Collections.singletonList(KAYTTOOIKEUS_HENKILON_RU)),
                 permissionService);
+    }
+
+    @ApiOperation("Hae huoltajasuhteiden muutokset tietyltä aikaväliltä")
+    @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @RequestMapping(value = "/huoltajasuhdemuutokset", method = RequestMethod.GET)
+    public Set<String> getHuoltajaSuhdeMuutokset(
+            @ApiParam(value = "pp-kk-vvvv", required = true) @RequestParam("startdate")  String start,
+            @ApiParam(value = "pp-kk-vvvv", required = true) @RequestParam("enddate")    String end,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        return this.henkiloService.getHuoltajaSuhdeMuutokset(
+                LocalDate.parse(start, formatter),
+                LocalDate.parse(end,   formatter)
+        );
     }
 }
