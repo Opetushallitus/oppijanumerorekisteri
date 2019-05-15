@@ -33,7 +33,7 @@ public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {
         AuditQuery henkiloHuoltajaSuhteet = AuditReaderFactory.get(entityManager).createQuery()
                 .forRevisionsOfEntity(HenkiloHuoltajaSuhde.class, true, false)
                 .add(AuditEntity.revisionProperty("timestamp").ge(Timestamp.valueOf(LocalDateTime.of(start, LocalTime.MIN)).getTime()))
-                .add(AuditEntity.revisionProperty("timestamp").lt(Timestamp.valueOf(LocalDateTime.of(end,   LocalTime.MIN)).getTime()));
+                .add(AuditEntity.revisionProperty("timestamp").le(Timestamp.valueOf(LocalDateTime.of(end,   LocalTime.MIN)).getTime()));
 
         return henkiloHuoltajaSuhteet.getResultList();
     }

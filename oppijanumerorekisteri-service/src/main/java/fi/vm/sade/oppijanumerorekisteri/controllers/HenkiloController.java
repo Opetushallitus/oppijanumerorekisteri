@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -505,15 +506,13 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/huoltajasuhdemuutokset", method = RequestMethod.GET)
     public Set<String> getHuoltajaSuhdeMuutokset(
-            @ApiParam(value = "pp-kk-vvvv", required = true) @RequestParam("startdate")  String start,
-            @ApiParam(value = "pp-kk-vvvv", required = true) @RequestParam("enddate")    String end,
+            @ApiParam(value = "vvvv-kk-pp", required = true) @RequestParam("startdate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @ApiParam(value = "vvvv-kk-pp", required = true) @RequestParam("enddate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
         return this.henkiloService.getHuoltajaSuhdeMuutokset(
-                LocalDate.parse(start, formatter),
-                LocalDate.parse(end,   formatter)
+                start,
+                end
         );
     }
 }
