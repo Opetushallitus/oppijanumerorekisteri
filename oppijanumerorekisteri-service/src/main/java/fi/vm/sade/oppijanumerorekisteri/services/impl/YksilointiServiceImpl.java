@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import com.google.common.collect.Lists;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
@@ -18,6 +17,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService.LinkResult;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import fi.vm.sade.oppijanumerorekisteri.validation.HetuUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.KoodiValidator;
+import fi.vm.sade.oppijanumerorekisteri.validators.KutsumanimiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
@@ -363,6 +363,11 @@ public class YksilointiServiceImpl implements YksilointiService {
         // Sometimes this might null or empty in VTJ data, in that case the original value is kept
         updateIfYksiloityValueNotNull(henkilo.getKutsumanimi(), yksiloityHenkilo.getKutsumanimi(), henkilo::setKutsumanimi);
 
+        KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkilo.getEtunimet());
+        if (!kutsumanimiValidator.isValid(henkilo.getKutsumanimi())) {
+            henkilo.setKutsumanimi(henkilo.getEtunimet());
+        }
+
         Optional.ofNullable(yksiloityHenkilo.getAidinkieliKoodi()).filter(stringNotEmpty)
                 .filter(koodi -> KoodiValidator.isValid(koodistoService, Koodisto.KIELI, String::toLowerCase, koodi))
                 .ifPresent(kieliKoodi -> henkilo.setAidinkieli(kielisyysRepository.findOrCreateByKoodi(kieliKoodi)));
@@ -533,6 +538,11 @@ public class YksilointiServiceImpl implements YksilointiService {
 
         if(!StringUtils.isEmpty(yksilointitieto.getKutsumanimi())) {
             henkilo.setKutsumanimi(yksilointitieto.getKutsumanimi());
+        }
+
+        KutsumanimiValidator kutsumanimiValidator = new KutsumanimiValidator(henkilo.getEtunimet());
+        if (!kutsumanimiValidator.isValid(henkilo.getKutsumanimi())) {
+            henkilo.setKutsumanimi(henkilo.getEtunimet());
         }
 
         if (yksilointitieto.getAidinkieli() != null) {
