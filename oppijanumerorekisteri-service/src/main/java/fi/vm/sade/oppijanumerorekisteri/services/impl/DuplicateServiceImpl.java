@@ -226,6 +226,10 @@ public class DuplicateServiceImpl implements DuplicateService {
         // Siirretään sähköpostitunnisteet slavelta masterille, jos kummallakaan ei ole hetua
         if (!hasHetu(master) && !hasHetu(duplicateHenkilo)) {
             moveIdentificationsToMaster(master, duplicateHenkilo);
+            master.getKansalaisuus().addAll(duplicateHenkilo.getKansalaisuus());
+            if (master.getAidinkieli() == null) {
+                master.setAidinkieli(duplicateHenkilo.getAidinkieli());
+            }
         }
 
         return previousMasters;
