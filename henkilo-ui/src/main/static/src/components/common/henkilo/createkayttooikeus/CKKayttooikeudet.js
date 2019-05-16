@@ -39,6 +39,7 @@ const CKKayttooikeudet = ({kayttooikeusData, selectedList, kayttooikeusAction, c
                         locale={locale}
                         L={L}
                         kayttooikeusryhmat={kayttooikeusryhmat}
+                        kayttooikeusryhmaValittu={selectedList.length > 0}
                         onSelect={(kayttooikeusryhma) => kayttooikeusAction({
                             value: kayttooikeusryhma.id,
                             label: toLocalizedText(locale, kayttooikeusryhma.nimi)

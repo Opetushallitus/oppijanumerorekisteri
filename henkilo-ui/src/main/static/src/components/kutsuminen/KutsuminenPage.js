@@ -18,6 +18,7 @@ import { fetchHenkilo } from '../../actions/henkilo.actions'
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 import type {KutsuBasicInfo} from "../../types/KutsuBasicInfo.types";
+import { validateEmail } from '../../validation/EmailValidator';
 
 type Props = {
     fetchOmattiedotOrganisaatios: () => void,
@@ -40,7 +41,7 @@ type Props = {
 type State = {
     confirmationModalOpen: boolean,
     basicInfo: KutsuBasicInfo,
-    validationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage},
+    validationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage, sahkoposti: ValidationMessage},
 }
 
 class KutsuminenPage extends React.Component<Props, State>  {
@@ -53,7 +54,7 @@ class KutsuminenPage extends React.Component<Props, State>  {
         saate: ''
     };
 
-    initialValidationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage};
+    initialValidationMessages: {organisaatioKayttooikeus: ValidationMessage, allFilled: ValidationMessage, sahkoposti: ValidationMessage};
 
     constructor (props: Props) {
         super(props);
@@ -68,6 +69,11 @@ class KutsuminenPage extends React.Component<Props, State>  {
                 id: 'allFilled',
                 labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_TAYTA_KAIKKI_KENTAT'],
                 isValid: false,
+            },
+            sahkoposti: {
+                id: 'sahkoposti',
+                labelLocalised: this.props.L['VIRKAILIJAN_LISAYS_SAHKOPOSTI_VIRHEELLINEN'],
+                isValid: true,
             },
         };
 
@@ -151,7 +157,7 @@ class KutsuminenPage extends React.Component<Props, State>  {
 
     static isValid(basicInfo: KutsuBasicInfo): boolean {
         const { email, etunimi, sukunimi, languageCode } = basicInfo;
-        return KutsuminenPage.isValidEmail(email) && !!etunimi && !!sukunimi && !!languageCode;
+        return !!email && !!etunimi && !!sukunimi && !!languageCode;
     }
 
     isOrganizationsValid(newAddedOrgs): boolean {
@@ -168,6 +174,10 @@ class KutsuminenPage extends React.Component<Props, State>  {
                 allFilled: {
                     ...this.state.validationMessages.allFilled,
                     isValid: KutsuminenPage.isValid(basicInfo),
+                },
+                sahkoposti: {
+                    ...this.state.validationMessages.sahkoposti,
+                    isValid: !basicInfo.email || validateEmail(basicInfo.email),
                 },
             },
         });
@@ -187,10 +197,6 @@ class KutsuminenPage extends React.Component<Props, State>  {
 
     clearBasicInfo() {
         this.setBasicInfo({...this.initialBasicInfo});
-    }
-
-    static isValidEmail(email: string): boolean {
-        return email !== null && email.indexOf('@') > 2 && email.indexOf('@') < email.length-3;
     }
 
     openConfirmationModal(e: Event) {
