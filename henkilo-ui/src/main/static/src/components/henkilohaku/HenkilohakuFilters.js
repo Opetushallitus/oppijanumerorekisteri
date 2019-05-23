@@ -10,19 +10,18 @@ import DuplikaatitOrganisationCheckbox from "./criterias/DuplikaatitOrganisation
 import OphInline from "../common/forms/OphInline";
 import OphSelect from "../common/select/OphSelect";
 import {fetchOmatHenkiloHakuOrganisaatios} from "../../actions/omattiedot.actions";
-import {fetchAllRyhmas} from "../../actions/organisaatio.actions";
 import {fetchAllKayttooikeusryhma} from "../../actions/kayttooikeusryhma.actions";
 import StaticUtils from "../common/StaticUtils";
 import CloseButton from "../common/button/CloseButton";
-import * as R from 'ramda';
 import type {Localisations} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {HenkilohakuCriteria} from "../../types/domain/kayttooikeus/HenkilohakuCriteria.types";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
-import type {KayttooikeusOrganisaatiot} from "../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
 import type {Kayttooikeusryhma} from "../../types/domain/kayttooikeus/kayttooikeusryhma.types";
+import type {OrganisaatioHenkilo} from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types'
+import type {ReactSelectOption} from '../../types/react-select.types'
 
 type Props = {
     L: Localisations,
@@ -40,11 +39,9 @@ type Props = {
     kayttooikeusSelectionAction: ({value: ?string}) => void,
     initialValues: HenkilohakuCriteria,
     kayttooikeusryhmas: Array<Kayttooikeusryhma>,
-    ryhmas: {ryhmas: Array<{}>},
-    fetchAllRyhmas: () => any,
     fetchAllKayttooikeusryhma: () => void,
     henkilohakuOrganisaatiotLoading: boolean,
-    henkilohakuOrganisaatiot: Array<KayttooikeusOrganisaatiot>,
+    henkilohakuOrganisaatiot: Array<OrganisaatioHenkilo>,
     isAdmin: boolean,
     isOphVirkailija: boolean,
     fetchOmatHenkiloHakuOrganisaatios: () => any
@@ -66,11 +63,11 @@ class HenkilohakuFilters extends React.Component<Props, State> {
 
     componentDidMount() {
         this.props.fetchOmatHenkiloHakuOrganisaatios();
-        this.props.fetchAllRyhmas();
         this.props.fetchAllKayttooikeusryhma();
     }
 
     render() {
+        const ryhmaOptions = this._parseRyhmaOptions(this.props.henkilohakuOrganisaatiot);
         return <div>
             <div className="henkilohakufilters-wrapper">
                 <OphCheckboxInline text={this.props.L['HENKILOHAKU_FILTERS_HAEMYOS']}>
@@ -138,13 +135,13 @@ class HenkilohakuFilters extends React.Component<Props, State> {
 
                 </div>
                 {
-                    this.props.isAdmin || this.props.isOphVirkailija ?
+                    ryhmaOptions.length > 0 ?
                         <div className="flex-horizontal flex-align-center henkilohaku-suodata">
                             <div className="flex-item-1">
                                 <div className="henkilohaku-select">
                                     <span className="flex-item-1">
                                         <OphSelect id="ryhmaFilter"
-                                                   options={this._parseRyhmaOptions(this.props.ryhmas)}
+                                                   options={ryhmaOptions}
                                                    value={this.props.selectedRyhma}
                                                    placeholder={this.props.L['HENKILOHAKU_FILTERS_RYHMA_PLACEHOLDER']}
                                                    onChange={this.props.ryhmaSelectionAction}/>
@@ -171,12 +168,15 @@ class HenkilohakuFilters extends React.Component<Props, State> {
         this.props.organisaatioSelectAction(organisaatio);
     };
 
-    _parseRyhmaOptions(ryhmatState) {
-        const ryhmat = R.path(['ryhmas'], ryhmatState);
-        return ryhmat ? ryhmat.map(ryhma => ({
-            label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
-            value: ryhma.oid
-        })).sort((a,b) => a.label.localeCompare(b.label)) : [];
+    _parseRyhmaOptions(organisaatiot: Array<OrganisaatioHenkilo>): Array<ReactSelectOption> {
+        return organisaatiot
+            .reduce((acc, organisaatio) => acc.concat([organisaatio.organisaatio], organisaatio.organisaatio.children), [])
+            .filter(organisaatio => organisaatio.tyypit.some(tyyppi => tyyppi === 'Ryhma'))
+            .map(ryhma => ({
+                label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
+                value: ryhma.oid
+            }))
+            .sort((a,b) => a.label.localeCompare(b.label));
     };
 }
 
@@ -186,7 +186,6 @@ const mapStateToProps = (state) => {
         locale: state.locale,
         isAdmin: state.omattiedot.isAdmin,
         isOphVirkailija: state.omattiedot.isOphVirkailija,
-        ryhmas: state.ryhmatState,
         organisaatioList: state.omattiedot.organisaatios,
         kayttooikeusryhmas: state.kayttooikeus.allKayttooikeusryhmas,
         henkilohakuOrganisaatiotLoading: state.omattiedot.henkilohakuOrganisaatiotLoading,
@@ -196,6 +195,5 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
     fetchOmatHenkiloHakuOrganisaatios,
-    fetchAllRyhmas,
     fetchAllKayttooikeusryhma
 })(HenkilohakuFilters);
