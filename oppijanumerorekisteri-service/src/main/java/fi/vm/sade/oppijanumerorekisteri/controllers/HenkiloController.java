@@ -94,16 +94,6 @@ public class HenkiloController {
         return henkiloService.getHasHetu();
     }
 
-    @ApiOperation("Hakee henkilöiden OID:n, HeTu:n ja nimet nimen perusteella")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
-    @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
-    public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
-                                                                 @RequestParam(value = "sukunimi") String sukunimi) {
-        return this.henkiloService.getHenkiloOidHetuNimiByName(etunimet, sukunimi);
-    }
-
     @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"

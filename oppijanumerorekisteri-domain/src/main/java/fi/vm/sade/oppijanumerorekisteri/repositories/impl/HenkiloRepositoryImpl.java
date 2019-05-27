@@ -203,19 +203,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     }
 
     @Override
-    public List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi) {
-        JPAQuery<Henkilo> query = jpa().select(Projections.bean(Henkilo.class, henkilo.oidHenkilo, henkilo.etunimet,
-                henkilo.kutsumanimi, henkilo.sukunimi, henkilo.hetu))
-                .from(henkilo);
-        BooleanBuilder builder = new BooleanBuilder();
-        etunimet.forEach(etunimi -> builder.or(henkilo.etunimet.containsIgnoreCase(etunimi)));
-
-        builder.and(henkilo.sukunimi.containsIgnoreCase(sukunimi));
-        query = query.where(builder);
-        return query.fetch();
-    }
-
-    @Override
     public List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria) {
         return jpa().from(henkilo)
                 .innerJoin(henkilo.yhteystiedotRyhma, yhteystiedotRyhma)
