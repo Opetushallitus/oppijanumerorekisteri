@@ -1,9 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.scheduling;
 
 import com.github.kagkarlsson.scheduler.task.ExecutionContext;
-import com.github.kagkarlsson.scheduler.task.FixedDelay;
-import com.github.kagkarlsson.scheduler.task.RecurringTask;
 import com.github.kagkarlsson.scheduler.task.TaskInstance;
+import com.github.kagkarlsson.scheduler.task.helper.RecurringTask;
+import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
@@ -34,7 +34,7 @@ public class YksilointiTask extends RecurringTask {
                           HenkiloRepository henkiloRepository,
                           IdentificationService identificationService,
                           OppijaTuontiService oppijaTuontiService) {
-        super("yksilointi task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getYksilointi().getFixedDelayInMillis())));
+        super("yksilointi task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getYksilointi().getFixedDelayInMillis())), Void.class, null);
         this.properties = properties;
         this.henkiloRepository = henkiloRepository;
         this.identificationService = identificationService;
@@ -42,7 +42,7 @@ public class YksilointiTask extends RecurringTask {
     }
 
     @Override
-    public void execute(TaskInstance<Void> taskInstance, ExecutionContext executionContext) {
+    public void executeRecurringly(TaskInstance taskInstance, ExecutionContext executionContext) {
         if (properties.getScheduling().getYksilointi().getEnabled()) {
             log.info("Identification started...");
             long start = System.currentTimeMillis();

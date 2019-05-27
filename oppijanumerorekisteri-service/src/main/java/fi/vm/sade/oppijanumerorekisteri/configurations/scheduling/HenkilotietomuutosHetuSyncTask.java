@@ -1,6 +1,8 @@
 package fi.vm.sade.oppijanumerorekisteri.configurations.scheduling;
 
 import com.github.kagkarlsson.scheduler.task.*;
+import com.github.kagkarlsson.scheduler.task.helper.RecurringTask;
+import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay;
 import fi.vm.sade.oppijanumerorekisteri.clients.MuutostietoClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.MuutostietoHetus;
@@ -39,7 +41,7 @@ public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
     public HenkilotietomuutosHetuSyncTask(OppijanumerorekisteriProperties properties,
                                           AsiayhteysRepository asiayhteysRepository,
                                           MuutostietoClient muutostietoClient) {
-        super("henkilotietomuutos hetu sync task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getVtjsync().getFixedDelayInMillis())));
+        super("henkilotietomuutos hetu sync task", FixedDelay.of(Duration.ofMillis(properties.getScheduling().getVtjsync().getFixedDelayInMillis())), Void.class, null);
         this.properties = properties;
         this.asiayhteysRepository = asiayhteysRepository;
         this.muutostietoClient = muutostietoClient;
@@ -47,7 +49,7 @@ public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
 
     @Override
     @Transactional
-    public void execute(TaskInstance<Void> taskInstance, ExecutionContext executionContext) {
+    public void executeRecurringly(TaskInstance taskInstance, ExecutionContext executionContext) {
         if (properties.getScheduling().getVtjsync().getEnabled()) {
             log.info("Started syncing hetus to VTJ...");
             long start = System.currentTimeMillis();
@@ -79,6 +81,5 @@ public class HenkilotietomuutosHetuSyncTask extends RecurringTask {
             long duration = System.currentTimeMillis() - start;
             log.info("Hetu sync completed, duration: " + duration + "ms");
         }
-
     }
 }
