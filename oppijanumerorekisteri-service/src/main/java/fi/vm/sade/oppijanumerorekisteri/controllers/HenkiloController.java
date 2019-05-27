@@ -96,9 +96,7 @@ public class HenkiloController {
 
     @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
+    @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
     public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
