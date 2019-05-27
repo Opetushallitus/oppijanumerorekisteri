@@ -172,8 +172,7 @@ public class HenkiloController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/{oid}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Passivoi henkilön mukaanlukien käyttöoikeudet ja organisaatiot.",
             notes = "Asettaa henkilön passivoiduksi, henkilön tietoja ei poisteta.",
