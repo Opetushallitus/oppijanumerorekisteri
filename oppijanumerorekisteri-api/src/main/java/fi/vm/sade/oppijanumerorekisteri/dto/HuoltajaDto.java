@@ -16,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class HuoltajaDto {
     private String hetu;
+    private String oidHenkilo;
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;

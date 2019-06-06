@@ -395,17 +395,22 @@ public class HenkiloServiceImpl implements HenkiloService {
             throw new NotFoundException("Henkilo parents not found with oid " + oidHenkilo);
 
         return huoltajaSuhteet
-                .stream()
-                .map( hs -> {
-                    Henkilo huoltaja = hs.getHuoltaja();
-                    HuoltajaDto huoltajaDto = mapper.map( huoltaja, HuoltajaDto.class );
+            .stream()
+            .map( hs -> {
+                Henkilo huoltaja = hs.getHuoltaja();
+                HuoltajaDto huoltajaDto = mapper.map( huoltaja, HuoltajaDto.class );
 
-                    if(huoltaja.isTurvakielto())
-                        huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
+                if(huoltaja.isTurvakielto()) {
+                    huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
+                }
 
-                    return huoltajaDto;
-                })
-                .collect(Collectors.toList());
+                if(!(henkilo.getHetu() != null && huoltaja.getHetu() == null)) {
+                    huoltajaDto.setOidHenkilo(null);
+                }
+
+                return huoltajaDto;
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
