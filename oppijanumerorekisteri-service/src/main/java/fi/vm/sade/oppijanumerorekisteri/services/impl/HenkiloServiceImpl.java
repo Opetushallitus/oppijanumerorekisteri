@@ -404,10 +404,6 @@ public class HenkiloServiceImpl implements HenkiloService {
                     huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
                 }
 
-                if(!(henkilo.getHetu() != null && huoltaja.getHetu() == null)) {
-                    huoltajaDto.setOidHenkilo(null);
-                }
-
                 return huoltajaDto;
             })
             .collect(Collectors.toList());
