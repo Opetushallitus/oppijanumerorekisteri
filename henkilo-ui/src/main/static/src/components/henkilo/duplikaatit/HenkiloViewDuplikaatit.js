@@ -112,7 +112,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
             </div>
             {!this.props.vainLuku && this.props.oidHenkilo &&
             <FloatingBar>
-                <Button disabled={this.state.selectedDuplicates.length === 0 || !enabledDuplikaattiView(this.props.oidHenkilo, this.props.henkilo.masterLoading, this.props.henkilo.master.oidHenkilo) || (this.props.oidHenkilo === this.props.ownOid)}
+                <Button disabled={this.state.selectedDuplicates.length === 0 || !enabledDuplikaattiView(this.props.oidHenkilo, this.props.henkilo.kayttaja, this.props.henkilo.masterLoading, this.props.henkilo.master.oidHenkilo) || (this.props.oidHenkilo === this.props.ownOid)}
                         action={this._link.bind(this)}>{this.props.L['DUPLIKAATIT_YHDISTA']}</Button>
             </FloatingBar>
             }

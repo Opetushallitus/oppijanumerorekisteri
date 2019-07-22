@@ -2,7 +2,7 @@
 import DuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import {connect} from 'react-redux';
-import {fetchHenkilo, fetchHenkiloDuplicates, fetchHenkiloMaster, fetchHenkiloHakemukset} from '../../../actions/henkilo.actions';
+import {fetchHenkilo, fetchKayttaja, fetchHenkiloDuplicates, fetchHenkiloMaster, fetchHenkiloHakemukset} from '../../../actions/henkilo.actions';
 import {fetchOmattiedot} from '../../../actions/omattiedot.actions';
 import {fetchKansalaisuusKoodisto,
         fetchMaatJaValtiotKoodisto,
@@ -22,6 +22,7 @@ type Props = {
     koodisto: KoodistoState,
     henkiloType: string,
     fetchHenkilo: string => void,
+    fetchKayttaja: string => void,
     fetchOmattiedot: () => void,
     fetchHenkiloMaster: string => void,
     fetchHenkiloHakemukset: string => void,
@@ -39,6 +40,7 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
             PropertySingleton.setState({externalPermissionService: this.props.externalPermissionService});
         }
         this.props.fetchHenkilo(this.props.oidHenkilo);
+        this.props.fetchKayttaja(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
         this.props.fetchKansalaisuusKoodisto();
         this.props.fetchMaatJaValtiotKoodisto();
@@ -69,6 +71,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect(mapStateToProps, {
     fetchHenkilo,
+    fetchKayttaja,
     fetchOmattiedot,
     fetchHenkiloDuplicates,
     fetchHenkiloMaster,
