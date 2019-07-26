@@ -231,7 +231,10 @@ public class YksilointiServiceImpl implements YksilointiService {
         String vtjEtunimi = TextUtils.normalize(vtjHenkilo.getEtunimi()).toLowerCase();
 
         return vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrSukunimi, vtjSukunimi))
-                && tarkistaEtunimi(onrKutsumanimi, vtjEtunimi);
+                && tarkistaEtunimi(onrKutsumanimi, vtjEtunimi)
+                // joistakin järjestelmistä tulee etunimi ja sukunimi väärissä kentissä
+                || vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrKutsumanimi, vtjSukunimi))
+                && tarkistaEtunimi(onrSukunimi, vtjEtunimi);
     }
 
     private boolean tarkistaSukunimi(String henkilo1sukunimi, String henkilo2sukunimi) {
