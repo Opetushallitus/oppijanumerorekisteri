@@ -22,6 +22,7 @@ import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
+import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -198,7 +199,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     // Palauttaa tiedon ovatko henkilön nimet epävastaavia VTJ-datan kanssa.
-    private Boolean yhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
+    private boolean yhtenevyysTarkistus(@NotNull Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo) {
         if (StringUtils.hasLength(henkilo.getHetu()) && StringUtils.isEmpty(henkilo.getSukunimi()) && StringUtils.isEmpty(henkilo.getEtunimet())) {
             return false;
         }
@@ -209,8 +210,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                         .map(YksiloityHenkilo.EntinenNimi::getArvo))
                 .filter(Objects::nonNull)
                 .collect(toCollection(LinkedHashSet::new));
-        NimienYhtenevyys nimienYhtenevyys = tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
-        boolean nimetEivatVastaa = !nimienYhtenevyys.etunimimatch || !nimienYhtenevyys.sukunimimatch;
+        boolean nimetEivatVastaa = !tarkistaNimet(henkilo, yksiloityHenkilo, kaikkiSukunimet);
         if (nimetEivatVastaa) {
             logger.info("Henkilön tiedot eivät täsmää VTJ-tietoon\n--OID: " + henkilo.getOidHenkilo() + "\n"
                     + "--Annetut etunimet: " + henkilo.getEtunimet() + ", VTJ: " + yksiloityHenkilo.getEtunimi() + "\n"
@@ -220,40 +220,34 @@ public class YksilointiServiceImpl implements YksilointiService {
         return nimetEivatVastaa;
     }
 
-    private NimienYhtenevyys tarkistaNimet(Henkilo henkilo, YksiloityHenkilo yksiloityHenkilo, Set<String> kaikkiSukunimet) {
-        boolean etunimiMatch = false;
-        JaroWinklerDistance stringEvaluator = new JaroWinklerDistance();
+    private boolean tarkistaNimet(Henkilo onrHenkilo, YksiloityHenkilo vtjHenkilo, Set<String> kaikkiSukunimet) {
+        String onrSukunimi = TextUtils.normalize(onrHenkilo.getSukunimi()).toLowerCase();
+        String onrKutsumanimi = TextUtils.normalize(onrHenkilo.getKutsumanimi()).toLowerCase();
 
-        boolean sukunimiMatch = kaikkiSukunimet.stream()
-                .map(sukunimi -> stringEvaluator.getDistance(TextUtils.normalize(henkilo.getSukunimi().toLowerCase()), TextUtils.normalize(sukunimi.toLowerCase())))
-                .anyMatch(distance -> distance >= oppijanumerorekisteriProperties.getSukunimiThreshold());
+        Set<String> vtjSukunimet = kaikkiSukunimet.stream()
+                .map(TextUtils::normalize)
+                .map(String::toLowerCase)
+                .collect(toCollection(LinkedHashSet::new));
+        String vtjEtunimi = TextUtils.normalize(vtjHenkilo.getEtunimi()).toLowerCase();
 
-        if (TextUtils.normalize(yksiloityHenkilo.getEtunimi()).toLowerCase().contains(TextUtils.normalize(henkilo.getKutsumanimi()).toLowerCase())) {
-            etunimiMatch = true;
-        }
-        else {
-            String[] etunimet = yksiloityHenkilo.getEtunimi().toLowerCase().split(" ");
-            for (String etunimi : etunimet) {
-                if (stringEvaluator.getDistance(TextUtils.normalize(henkilo.getKutsumanimi()).toLowerCase(), TextUtils.normalize(etunimi))
-                        > oppijanumerorekisteriProperties.getEtunimiThreshold()) {
-                    etunimiMatch = true;
-                    break;
-                }
-            }
-        }
-
-        return new NimienYhtenevyys(etunimiMatch, sukunimiMatch);
+        return vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrSukunimi, vtjSukunimi))
+                && tarkistaEtunimi(onrKutsumanimi, vtjEtunimi);
     }
 
-    private static class NimienYhtenevyys {
-        final boolean etunimimatch;
-        final boolean sukunimimatch;
+    private boolean tarkistaSukunimi(String henkilo1sukunimi, String henkilo2sukunimi) {
+        StringDistance stringDistance = new JaroWinklerDistance();
+        float distance = stringDistance.getDistance(henkilo1sukunimi, henkilo2sukunimi);
+        return distance >= oppijanumerorekisteriProperties.getSukunimiThreshold();
+    }
 
-        private NimienYhtenevyys(boolean etunimimatch, boolean sukunimimatch) {
-            this.etunimimatch = etunimimatch;
-            this.sukunimimatch = sukunimimatch;
+    private boolean tarkistaEtunimi(String henkilo1kutsumanimi, String henkilo2etunimet) {
+        StringDistance stringDistance = new JaroWinklerDistance();
+        if (henkilo2etunimet.contains(henkilo1kutsumanimi)) {
+            return true;
         }
-
+        return Arrays.stream(henkilo2etunimet.split(" "))
+                .map(henkilo2etunimi -> stringDistance.getDistance(henkilo1kutsumanimi, henkilo2etunimi))
+                .anyMatch(distance -> distance > oppijanumerorekisteriProperties.getEtunimiThreshold());
     }
 
     private void addYksilointitietosWhenNamesDoNotMatch(final Henkilo henkilo, final YksiloityHenkilo yksiloityHenkilo) {
