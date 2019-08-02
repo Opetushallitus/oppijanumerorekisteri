@@ -44,7 +44,7 @@ public class KayttooikeusClientImpl implements KayttooikeusClient {
                 .casServiceUrl(urlConfiguration.url("kayttooikeus-service.security-check"))
                 .build();
 
-        this.httpClient = new OphHttpClient.Builder(ConfigEnums.SUBSYSTEMCODE.value()).authenticator(authenticator).build();
+        this.httpClient = new OphHttpClient.Builder(ConfigEnums.CALLER_ID.value()).authenticator(authenticator).build();
     }
 
     @Override

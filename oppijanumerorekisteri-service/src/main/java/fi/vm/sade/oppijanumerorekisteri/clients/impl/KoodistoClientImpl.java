@@ -5,6 +5,7 @@ import fi.vm.sade.javautils.httpclient.OphHttpClient;
 import fi.vm.sade.javautils.httpclient.apache.ApacheOphHttpClient;
 import fi.vm.sade.koodisto.service.types.common.KoodiType;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class KoodistoClientImpl implements KoodistoClient {
 
     @PostConstruct
     public void setup() {
-        this.httpClient = ApacheOphHttpClient.createDefaultOphClient("oppijanumerorekisteri.oppijanumerorekisteri-service", null, 10000, 60);
+        this.httpClient = ApacheOphHttpClient.createDefaultOphClient(ConfigEnums.CALLER_ID.value(), null, 10000, 60);
     }
 
     @Override

@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.configurations.security;
 
 import fi.vm.sade.java_utils.security.OpintopolkuCasAuthenticationFilter;
 import fi.vm.sade.javautils.kayttooikeusclient.OphUserDetailsServiceImpl;
+import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.CasProperties;
 import fi.vm.sade.properties.OphProperties;
 import org.jasig.cas.client.session.SessionMappingStorage;
@@ -59,7 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public CasAuthenticationProvider casAuthenticationProvider() {
         CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
         String host = environment.getProperty("host.host-alb", "https://" + environment.getRequiredProperty("host.host-virkailija"));
-        casAuthenticationProvider.setUserDetailsService(new OphUserDetailsServiceImpl(host, "oppijanumerorekisteri"));
+        casAuthenticationProvider.setUserDetailsService(new OphUserDetailsServiceImpl(host, ConfigEnums.CALLER_ID.value()));
         casAuthenticationProvider.setServiceProperties(serviceProperties());
         casAuthenticationProvider.setTicketValidator(ticketValidator());
         casAuthenticationProvider.setKey(casProperties.getKey());

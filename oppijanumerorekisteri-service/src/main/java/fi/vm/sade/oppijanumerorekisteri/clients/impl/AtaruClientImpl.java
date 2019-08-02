@@ -82,6 +82,6 @@ public class AtaruClientImpl implements AtaruClient{
                 .addSpringSecSuffix(false)
                 .build();
 
-        return new OphHttpClient.Builder(ConfigEnums.SUBSYSTEMCODE.value()).authenticator(authenticator).build();
+        return new OphHttpClient.Builder(ConfigEnums.CALLER_ID.value()).authenticator(authenticator).build();
     }
 }
