@@ -23,6 +23,8 @@ const browserHistory = useRouterHistory(createHistory)({
 });
 const history = syncHistoryWithStore(browserHistory, store);
 
+window.opintopolku_caller_id = '1.2.246.562.10.00000000001.henkilo-ui';
+
 render(
     <Provider store={store}>
         <div>
