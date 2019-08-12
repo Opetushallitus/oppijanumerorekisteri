@@ -21,6 +21,6 @@ public class ClientConfiguration {
         int timeOut = 10000;
         long connectionLives = 600;
         return ApacheOphHttpClient
-                .createDefaultOphClient(ConfigEnums.SUBSYSTEMCODE.value(), this.urlConfiguration, timeOut, connectionLives);
+                .createDefaultOphClient(ConfigEnums.CALLER_ID.value(), this.urlConfiguration, timeOut, connectionLives);
     }
 }

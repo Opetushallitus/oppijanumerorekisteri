@@ -44,7 +44,7 @@ public class HakuappClientImpl implements HakuappClient {
                 .casServiceUrl(urlConfiguration.url("cas.service.haku-app"))
                 .build();
 
-        this.httpClient = new OphHttpClient.Builder(ConfigEnums.SUBSYSTEMCODE.value()).authenticator(authenticator).build();
+        this.httpClient = new OphHttpClient.Builder(ConfigEnums.CALLER_ID.value()).authenticator(authenticator).build();
     }
 
     @Override
