@@ -79,8 +79,6 @@ public interface HenkiloJpaRepository {
 
     Optional<String> findOidByKaikkiHetut(String hetu);
 
-    List<Henkilo> findHenkiloOidHetuNimisByEtunimetOrSukunimi(List<String> etunimet, String sukunimi);
-
     List<YhteystietoHakuDto> findYhteystiedot(YhteystietoCriteria criteria);
 
     List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit);

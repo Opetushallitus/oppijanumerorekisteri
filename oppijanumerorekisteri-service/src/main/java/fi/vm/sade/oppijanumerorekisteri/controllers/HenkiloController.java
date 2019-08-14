@@ -8,20 +8,18 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.io.IOException;
-
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
@@ -96,21 +94,9 @@ public class HenkiloController {
         return henkiloService.getHasHetu();
     }
 
-    @ApiOperation("Hakee henkilöiden OID:n, HeTu:n ja nimet nimen perusteella")
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
-    @RequestMapping(value = "/henkiloPerusByName", method = RequestMethod.GET)
-    public List<HenkiloOidHetuNimiDto> henkiloOidHetuNimisByName(@RequestParam(value = "etunimet") String etunimet,
-                                                                 @RequestParam(value = "sukunimi") String sukunimi) {
-        return this.henkiloService.getHenkiloOidHetuNimiByName(etunimet, sukunimi);
-    }
-
     @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
+    @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
     public HenkiloOidHetuNimiDto henkiloOidHetuNimiByHetu(@PathVariable String hetu) {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
@@ -122,7 +108,10 @@ public class HenkiloController {
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
     @RequestMapping(value = "/henkiloPerustietosByHenkiloOidList", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> henkilotByHenkiloOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> henkiloOids) {
-        return this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
+        List<HenkiloPerustietoDto> henkiloPerustietoDtos = this.henkiloService.getHenkiloPerustietoByOids(henkiloOids);
+        return this.permissionChecker.filterUnpermittedHenkiloPerustieto(henkiloPerustietoDtos,
+                Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Collections.singletonList(KAYTTOOIKEUS_HENKILON_RU)),
+                null);
     }
 
     @ApiOperation(value = "Henkilötietojen päivitys",

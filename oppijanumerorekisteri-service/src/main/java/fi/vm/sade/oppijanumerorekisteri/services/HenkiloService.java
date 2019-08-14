@@ -5,12 +5,11 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import org.joda.time.DateTime;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import java.time.LocalDate;
 
 public interface HenkiloService {
 
@@ -37,8 +36,6 @@ public interface HenkiloService {
     List<HenkiloPerustietoDto> getHenkiloPerustietoByOids(List<String> oids);
 
     List<HenkiloDto> getHenkilosByOids(List<String> oids);
-
-    List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi);
 
     HenkiloOidHetuNimiDto getHenkiloOidHetuNimiByHetu(String hetu);
 

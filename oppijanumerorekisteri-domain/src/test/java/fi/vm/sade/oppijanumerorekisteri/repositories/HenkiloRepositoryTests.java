@@ -163,22 +163,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     }
 
     @Test
-    public void findHenkiloOidHetuNimisByEtunimetOrSukunimi() {
-        Date luontiMuokkausPvm = new Date();
-        Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        Henkilo persistedHenkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
-                "fi", "suomi", "246", luontiMuokkausPvm, new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
-        this.testEntityManager.persistAndFlush(persistedHenkilo.getAidinkieli());
-        persistedHenkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persistAndFlush(kansalaisuus));
-        this.testEntityManager.persistAndFlush(persistedHenkilo);
-        List<Henkilo> persistedHenkiloList = this.dataRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(Collections.singletonList("arpa"), "kuutio");
-        persistedHenkilo = persistedHenkiloList.get(0);
-        assertThat(persistedHenkilo).isEqualToComparingOnlyGivenFields(henkilo, "etunimet", "kutsumanimi", "sukunimi",
-                "oidHenkilo", "hetu");
-    }
-
-    @Test
     public void findYhteystiedot() {
         populate(henkilo("1.2.3.4.5")
             .withYhteystieto(ryhma("yhteystietotyyppi1")

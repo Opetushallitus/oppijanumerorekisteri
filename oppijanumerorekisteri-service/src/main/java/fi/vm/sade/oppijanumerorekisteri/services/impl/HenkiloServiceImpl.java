@@ -10,8 +10,8 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
+import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HuoltajasuhdeRepository;
@@ -22,10 +22,9 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.services.convert.YhteystietoConverter;
+import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
 import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchingProcess;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
-import fi.vm.sade.oppijanumerorekisteri.util.batchprocessing.BatchProcessor;
-
 import lombok.RequiredArgsConstructor;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.joda.time.DateTime;
@@ -33,10 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import java.time.LocalDate;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -209,15 +207,6 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         BatchingProcess<String, Henkilo> process = (batch) -> this.henkiloDataRepository.findByOidHenkiloIsIn(batch);
         return this.mapper.mapAsList(BatchProcessor.execute(oids, BatchProcessor.postgreSqlMaxBindVariables, process), HenkiloDto.class);
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<HenkiloOidHetuNimiDto> getHenkiloOidHetuNimiByName(String etunimet, String sukunimi) {
-        List<String> etunimetList = Arrays.stream(etunimet.split(" ")).collect(Collectors.toList());
-        List<Henkilo> henkilos = this.henkiloDataRepository.findHenkiloOidHetuNimisByEtunimetOrSukunimi(etunimetList, sukunimi);
-        return this.mapper.mapAsList(henkilos, HenkiloOidHetuNimiDto.class);
     }
 
     @Override
