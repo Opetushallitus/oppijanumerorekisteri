@@ -170,6 +170,18 @@ public class YksilointiServiceTest {
     }
 
     @Test
+    public void yksiloiNimetVaarissaKentissa() {
+        vtjClient.setUsedFixture("/vtj-testdata/vtj-response-vaarat-kentat.json");
+        when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
+        Henkilo yksiloity = yksilointiService.yksiloiManuaalisesti(henkiloOid);
+
+        verify(henkiloModificationService).update(eq(yksiloity));
+        assertThat(yksiloity).returns(true, Henkilo::isYksiloityVTJ);
+        verify(yksilointitietoRepository, never()).save(any());
+    }
+
+    @Test
     public void oppijalleTallentuuVtjYhteystiedot() {
         final String henkiloOid = "yksiloimatonOppija";
         this.henkilo.setOidHenkilo(henkiloOid);
