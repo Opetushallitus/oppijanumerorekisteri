@@ -89,14 +89,7 @@ export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getS
                 dispatch(createHenkiloByTokenSuccess(authToken));
                 const casUrl = urls.url('cas.login', {authToken,});
                 http.get(casUrl).then(async loginPage => {
-                        // Login failed
-                        if (loginPage.indexOf('Log In Successful') === -1) {
-                            dispatch({type: LOGIN_FAILED});
-                        }
-                        else {
-                            // Redirect to opintopolku root page
-                            window.location = window.location.origin;
-                        }
+                        window.location = casUrl;
                     },
                     () => dispatch({type: LOGIN_FAILED}));
             },
