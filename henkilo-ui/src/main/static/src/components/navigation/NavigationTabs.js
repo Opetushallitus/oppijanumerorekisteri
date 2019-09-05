@@ -3,12 +3,13 @@
 import {path, isNil} from 'ramda';
 import {oppijaNavi, virkailijaNavi} from "./navigationconfigurations";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
+import type {Kayttaja} from "../../types/domain/kayttooikeus/kayttaja.types";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {Yksilointitieto} from "../../types/domain/oppijanumerorekisteri/yksilointitieto.types";
 import type {NaviTab} from "../../types/navigation.type";
 
 
-export const enabledDuplikaattiView = (oidHenkilo: string, masterLoading: boolean, masterHenkiloOid: string): boolean => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo);
+export const enabledDuplikaattiView = (oidHenkilo: string, kayttaja: ?Kayttaja, masterLoading: boolean, masterHenkiloOid: string): boolean => !masterLoading && (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo) && (!kayttaja || kayttaja.kayttajaTyyppi !== 'PALVELU');
 export const enabledVtjVertailuView = (henkilo: Henkilo): boolean => henkilo && henkilo.yksilointiYritetty && !henkilo.yksiloityVTJ && !henkilo.duplicate;
 export const vtjDataAvailable = (yksilointitieto: ?Yksilointitieto): boolean => !isNil(yksilointitieto) && ( !isNil(yksilointitieto.etunimet) || !isNil(yksilointitieto.sukunimi) || !isNil(yksilointitieto.kutsumanimi) || !isNil(yksilointitieto.yhteystiedot) || !isNil(yksilointitieto.sukupuoli));
 
@@ -28,13 +29,14 @@ export const henkiloViewTabs = (oidHenkilo: string, henkilo: HenkiloState, henki
 
     // Wait until all needed and correct data has been fetched before enabling tabs to prevent them switching on/off
     if ((henkilo && henkilo.masterLoading && henkilo.master.oidHenkilo !== oidHenkilo)
-        || (henkilo && henkilo.henkiloLoading && henkilo.henkilo.oidHenkilo !== oidHenkilo)) {
+        || (henkilo && henkilo.henkiloLoading && henkilo.henkilo.oidHenkilo !== oidHenkilo)
+        || (henkilo && henkilo.kayttajaLoading)) {
         return tabs;
     }
 
     return tabs.map( tab => {
         if (tab.label === 'NAVI_HAE_DUPLIKAATIT'
-            && enabledDuplikaattiView(oidHenkilo, henkilo && henkilo.masterLoading, masterHenkiloOid)) {
+            && enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo && henkilo.masterLoading, masterHenkiloOid)) {
             tab.disabled = false;
         }
         if (tab.label === 'NAVI_VTJ_VERTAILU'

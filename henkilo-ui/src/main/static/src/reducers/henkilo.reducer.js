@@ -26,6 +26,7 @@ import type {Yksilointitieto} from "../types/domain/oppijanumerorekisteri/yksilo
 
 export type HenkiloState = {
     +henkiloLoading: boolean,
+    +kayttajaLoading: boolean,
     +henkiloOrgsLoading: boolean,
     +kayttajatietoLoading: boolean,
     +henkiloKayttoEstetty: boolean,
@@ -54,6 +55,7 @@ export type HenkiloState = {
 
 const initialState: HenkiloState = {
     henkiloLoading: true,
+    kayttajaLoading: true,
     henkiloOrgsLoading: true,
     kayttajatietoLoading: false,
     henkiloKayttoEstetty: false,
@@ -112,10 +114,11 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case UPDATE_HENKILO_FAILURE:
             return Object.assign({}, state, {henkiloLoading: false});
         case FETCH_KAYTTAJA_REQUEST:
+            return { ...state, kayttajaLoading: true }
         case FETCH_KAYTTAJA_FAILURE:
-            return state
+            return { ...state, kayttajaLoading: false }
         case FETCH_KAYTTAJA_SUCCESS:
-            return { ...state, kayttaja: action.kayttaja }
+            return { ...state, kayttajaLoading: false, kayttaja: action.kayttaja }
         case FETCH_KAYTTAJATIETO_REQUEST:
             return Object.assign({}, state, {kayttajatietoLoading: true});
         case FETCH_KAYTTAJATIETO_SUCCESS:
