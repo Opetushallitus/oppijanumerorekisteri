@@ -123,11 +123,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
             this.setState({loading: false, sent: true});
         } catch (error) {
             const notifications = [];
-            if (error && error.message === 'kutsu_with_sahkoposti_already_sent') {
-                notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_ON_JO_LAHETETTY'])
-            } else {
-                notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'])
-            }
+            notifications.push(L['KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE'])
             this.setState({loading: false, notifications: notifications});
             throw error;
         }
