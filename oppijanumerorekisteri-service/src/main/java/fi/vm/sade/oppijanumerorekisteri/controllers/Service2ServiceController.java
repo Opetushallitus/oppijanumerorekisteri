@@ -148,11 +148,18 @@ public class Service2ServiceController {
         return this.henkiloService.list(criteria, offset, limit);
     }
 
+    @GetMapping("/henkilo/hetu={hetu}")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
+    @ApiOperation("Palauttaa henkilön tiedot muutostietopalvelua varten")
+    public HenkiloForceReadDto getByHetuForMuutostieto(@PathVariable String hetu) {
+        return henkiloService.getByHetuForMuutostieto(hetu);
+    }
+
     @ApiOperation(value = "Päivittää henkilön tietoja muutostietopalvelun antamilla muutoksilla.",
             notes = "Päivittää kutsussa annettuun OID:n täsmäävän henkilön tiedot")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
     @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public HenkiloReadDto forceUpdateHenkilo(@Validated @RequestBody HenkiloForceUpdateDto henkiloUpdateDto) {
+    public HenkiloForceReadDto forceUpdateHenkilo(@Validated @RequestBody HenkiloForceUpdateDto henkiloUpdateDto) {
         return this.henkiloModificationService.forceUpdateHenkilo(henkiloUpdateDto);
     }
 }

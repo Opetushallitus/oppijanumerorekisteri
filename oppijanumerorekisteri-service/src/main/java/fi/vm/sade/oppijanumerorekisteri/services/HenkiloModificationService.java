@@ -9,7 +9,7 @@ import java.util.List;
 public interface HenkiloModificationService {
     HenkiloUpdateDto updateHenkilo(HenkiloUpdateDto henkiloUpdateDto);
 
-    HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto);
+    HenkiloForceReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto);
 
     Henkilo findOrCreateHuoltaja(HuoltajaCreateDto huoltajaCreateDto, Henkilo lapsi);
 

@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.mappers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HuoltajaCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
@@ -47,4 +48,18 @@ public class HuoltajaCreateDtoMapper {
                 })
                 .toClassMap();
     }
+
+    @Bean
+    public ClassMap<HenkiloHuoltajaSuhde, HuoltajaCreateDto> henkiloHuoltajaSuhdeHuoltajaCreateDtoClassMap(MapperFactory mapperFactory) {
+        return mapperFactory.classMap(HenkiloHuoltajaSuhde.class, HuoltajaCreateDto.class)
+                .byDefault()
+                .customize(new CustomMapper<HenkiloHuoltajaSuhde, HuoltajaCreateDto>() {
+                    @Override
+                    public void mapAtoB(HenkiloHuoltajaSuhde henkiloHuoltajaSuhde, HuoltajaCreateDto huoltajaCreateDto, MappingContext context) {
+                        mapperFacade.map(henkiloHuoltajaSuhde.getHuoltaja(), huoltajaCreateDto);
+                    }
+                })
+                .toClassMap();
+    }
+
 }

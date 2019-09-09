@@ -134,7 +134,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     // Values can be saved overwritten and Hetu can be changed even if isYksiloityVTJ() is true.
     @Override
     @Transactional
-    public HenkiloReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
+    public HenkiloForceReadDto forceUpdateHenkilo(HenkiloForceUpdateDto henkiloUpdateDto) {
         final Henkilo henkiloSaved = this.henkiloDataRepository.findByOidHenkilo(henkiloUpdateDto.getOidHenkilo())
                 .orElseThrow(() -> new NotFoundException("Could not find henkilo " + henkiloUpdateDto.getOidHenkilo()));
 
@@ -175,7 +175,7 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         this.mapper.map(henkiloUpdateDto, henkiloSaved);
 
         linked.forEachModified(this::update);
-        return mapper.map(henkiloSaved, HenkiloReadDto.class);
+        return mapper.map(henkiloSaved, HenkiloForceReadDto.class);
     }
 
 

@@ -87,4 +87,6 @@ public interface HenkiloService {
     HenkiloOmattiedotDto getOmatTiedot(String oidHenkilo);
 
     List<HenkiloPerustietoDto> getHenkiloPerustietoByHetus(List<String> hetus);
+
+    HenkiloForceReadDto getByHetuForMuutostieto(String hetu);
 }

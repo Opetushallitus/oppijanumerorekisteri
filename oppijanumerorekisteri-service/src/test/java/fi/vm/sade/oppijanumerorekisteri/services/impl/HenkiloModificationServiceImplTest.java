@@ -253,7 +253,7 @@ public class HenkiloModificationServiceImplTest {
         input.setSyntymaaika(LocalDate.of(2017, Month.OCTOBER, 6));
         input.setSukunimi("2");
 
-        HenkiloReadDto output = service.forceUpdateHenkilo(input);
+        HenkiloForceReadDto output = service.forceUpdateHenkilo(input);
 
         assertThat(output.getHetu()).isEqualTo("310817A983J");
         ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
