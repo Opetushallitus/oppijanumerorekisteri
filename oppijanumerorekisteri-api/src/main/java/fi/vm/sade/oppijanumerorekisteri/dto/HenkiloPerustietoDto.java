@@ -3,9 +3,10 @@ package fi.vm.sade.oppijanumerorekisteri.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAsiointikieli;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
-import lombok.*;
 import lombok.Setter;
+import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,8 +16,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import javax.validation.Valid;
-import static org.springframework.util.StringUtils.isEmpty;
+
+import static fi.vm.sade.oppijanumerorekisteri.utils.StringUtils.isEmpty;
 
 @Getter
 @Setter

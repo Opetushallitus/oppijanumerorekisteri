@@ -1,6 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
-import org.springframework.util.StringUtils;
+import fi.vm.sade.oppijanumerorekisteri.utils.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
