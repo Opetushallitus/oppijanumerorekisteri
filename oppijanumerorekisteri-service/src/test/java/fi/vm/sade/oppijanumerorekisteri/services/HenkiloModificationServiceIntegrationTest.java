@@ -23,14 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
@@ -354,6 +351,18 @@ public class HenkiloModificationServiceIntegrationTest {
                 .extracting(HuoltajaCreateDto::getHuoltajuustyyppiKoodi, HuoltajaCreateDto::getHetu)
                 .containsExactly(tuple("03", huoltaja1.getHetu()));
         assertPublished(objectMapper, amazonSNS, 2, "YKSILOINNISSANIMIPIELESSA", "HUOLTAJA");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void getByHetuForMuutostietoPalauttaaHuoltajan() {
+        String hetu = "170798-915D";
+
+        HenkiloForceReadDto readDto = henkiloService.getByHetuForMuutostieto(hetu);
+
+        assertThat(readDto.getHuoltajat())
+                .extracting(HuoltajaCreateDto::getHuoltajuustyyppiKoodi, HuoltajaCreateDto::getHetu)
+                .containsExactly(tuple("03", "111298-917M"));
     }
 
     @Test
