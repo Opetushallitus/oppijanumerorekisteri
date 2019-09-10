@@ -29,11 +29,15 @@ import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -78,10 +82,10 @@ public class HenkiloModificationServiceIntegrationTest {
         henkiloForceUpdateDto.setHetu("111111-1234");
         henkiloForceUpdateDto.setKaikkiHetut(Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
-        HenkiloReadDto henkiloReadDto = this.henkiloModificationService.forceUpdateHenkilo(henkiloForceUpdateDto);
+        HenkiloForceReadDto henkiloReadDto = this.henkiloModificationService.forceUpdateHenkilo(henkiloForceUpdateDto);
 
         assertThat(henkiloReadDto)
-                .extracting(HenkiloReadDto::getOidHenkilo, HenkiloReadDto::getHetu, HenkiloReadDto::getYksiloityVTJ, HenkiloReadDto::getKaikkiHetut)
+                .extracting(HenkiloForceReadDto::getOidHenkilo, HenkiloForceReadDto::getHetu, HenkiloForceReadDto::isYksiloityVTJ, HenkiloForceReadDto::getKaikkiHetut)
                 .containsExactly("VTJYKSILOITY1", "111111-1234", true, Stream.of("111111-1234", "111111-1233").collect(toSet()));
 
         Henkilo henkilo = this.henkiloRepository.findByOidHenkilo("VTJYKSILOITY2")
@@ -304,7 +308,7 @@ public class HenkiloModificationServiceIntegrationTest {
         updateDto.setOidHenkilo("VTJYKSILOITY1");
         updateDto.setKutsumanimi("Taneli");
 
-        HenkiloReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
+        HenkiloForceReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
 
         assertThat(readDto.getEtunimet()).isEqualTo("Teppo Taneli");
         assertThat(readDto.getKutsumanimi()).isEqualTo("Taneli");
@@ -322,6 +326,43 @@ public class HenkiloModificationServiceIntegrationTest {
 
         assertThat(throwable).isInstanceOf(UnprocessableEntityException.class);
         assertPublished(objectMapper, amazonSNS, 0);
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void forceUpdateHenkiloPalauttaaHuoltajan() {
+        when(koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).thenReturn(Stream.of("03", "04")
+                .map(koodi -> new KoodiType() {{ setKoodiArvo(koodi); }}).collect(toList()));
+        when(koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).thenReturn(Stream.of("246")
+                .map(koodi -> new KoodiType() {{ setKoodiArvo(koodi); }}).collect(toList()));
+        HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
+        updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
+        HuoltajaCreateDto huoltaja1 = henkiloRepository.findByOidHenkilo("HUOLTAJA")
+                .map(huoltaja -> new HuoltajaCreateDto(huoltaja.getHetu(), huoltaja.getEtunimet(),
+                        huoltaja.getSukunimi(), huoltaja.getSyntymaaika(), huoltaja.isYksiloityVTJ(),
+                        huoltaja.getKansalaisuus().stream().map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet()),
+                        "03", emptySet()))
+                .get();
+        updateDto.setHuoltajat(singleton(huoltaja1));
+
+        HenkiloForceReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
+
+        assertThat(readDto.getHuoltajat())
+                .extracting(HuoltajaCreateDto::getHuoltajuustyyppiKoodi, HuoltajaCreateDto::getHetu)
+                .containsExactly(tuple("03", huoltaja1.getHetu()));
+        assertPublished(objectMapper, amazonSNS, 2, "YKSILOINNISSANIMIPIELESSA", "HUOLTAJA");
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void getByHetuForMuutostietoPalauttaaHuoltajan() {
+        String hetu = "170798-915D";
+
+        HenkiloForceReadDto readDto = henkiloService.getByHetuForMuutostieto(hetu);
+
+        assertThat(readDto.getHuoltajat())
+                .extracting(HuoltajaCreateDto::getHuoltajuustyyppiKoodi, HuoltajaCreateDto::getHetu)
+                .containsExactly(tuple("03", "111298-917M"));
     }
 
     @Test

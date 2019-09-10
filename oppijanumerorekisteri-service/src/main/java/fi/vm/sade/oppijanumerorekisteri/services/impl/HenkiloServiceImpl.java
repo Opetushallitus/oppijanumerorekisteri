@@ -319,8 +319,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public HenkiloReadDto getByHetu(String hetu) {
-        Henkilo henkilo = OptionalUtils.or(henkiloDataRepository.findByHetu(hetu),
-                () -> henkiloDataRepository.findByKaikkiHetut(hetu))
+        Henkilo henkilo = findByHetu(hetu)
                 .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
         return mapper.map(henkilo, HenkiloReadDto.class);
     }
@@ -408,5 +407,17 @@ public class HenkiloServiceImpl implements HenkiloService {
                     return hs.getLapsi().getOidHenkilo();
                 })
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public HenkiloForceReadDto getByHetuForMuutostieto(String hetu) {
+        return findByHetu(hetu)
+                .map(henkilo -> mapper.map(henkilo, HenkiloForceReadDto.class))
+                .orElseThrow(() -> new NotFoundException(hetu));
+    }
+
+    private Optional<Henkilo> findByHetu(String hetu) {
+        return OptionalUtils.or(henkiloDataRepository.findByHetu(hetu),
+                () -> henkiloDataRepository.findByKaikkiHetut(hetu));
     }
 }
