@@ -28,7 +28,7 @@ Palvelinpuoli
     java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-0.1.2-SNAPSHOT.jar
 
 Ilman parametreja sovellus käyttää [application.yml](oppijanumerorekisteri-service/src/main/resources/application.yml)
--tiedoston mukaisia oletuskonfiguraatioita.
+-tiedoston mukaisia oletuskonfiguraatioita. Tavallisesti tämä ei toimi, koska yhteyttä vaadittuihin palveluihin ei saada, joten palveluiden sijainti tulee uudelleenmääritellä.
 
 Konfiguraatioiden muuttaminen komentoriviparametreilla (baseUrl-parametrilla määritellään missä osoitteessa muut
 sovelluksen käyttämät palvelut sijaitsevat):
@@ -39,6 +39,8 @@ sovelluksen käyttämät palvelut sijaitsevat):
         -Dspring.datasource.password=<tietokannan_salasana> \
         -Dauthentication.default.username=<oma_virkailija_tunnus> \
         -Dauthentication.default.password=<oma_virkailija_salasana>
+
+Helpointa on osoittaa `oppijanumerorekisteri-service` käyttämään palveluita esim. dev- tai test-ympäristöstä (esim. `https://virkailija.untuvaopintopolku.fi`). Huomaa, että palveluita varten tulee määritellä myös tunnus ja salasana (ks. yllä).
 
 Kaikki paitsi baseUrl-konfiguraatio on myös mahdollista laittaa erilliseen tiedostoon:
 
