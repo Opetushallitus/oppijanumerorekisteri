@@ -13,6 +13,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
@@ -348,5 +349,32 @@ public class HenkiloServiceTest {
         HenkiloCriteria criteria = new HenkiloCriteria() {{setHenkiloOids(Sets.newHashSet("OID1", "OID2"));}};
         results = this.service.findHenkiloViittees(criteria);
         assertThat(results).size().isEqualTo(2);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getHenkiloHuoltajatThrowsWhenHenkiloNotFound() {
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(anyString())).willReturn(Optional.empty());
+        this.service.getHenkiloHuoltajat("invalidOid");
+    }
+
+    @Test
+    public void getHenkiloHuoltajatReturnsGuardians() {
+        String oid = "validOid";
+        HenkiloHuoltajaSuhde huoltajaSuhde = mock(HenkiloHuoltajaSuhde.class);
+        Henkilo henkilo = new Henkilo();
+        henkilo.setHuoltajat(Collections.singleton(huoltajaSuhde));
+        given(huoltajaSuhde.getHuoltaja()).willReturn(mock(Henkilo.class));
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(oid)).willReturn(Optional.of(henkilo));
+        List huoltajat = this.service.getHenkiloHuoltajat(oid);
+        assertThat(huoltajat).size().isEqualTo(1);
+    }
+
+    @Test
+    public void getHenkiloHuoltajatReturnsEmptyWhenNoGuardiansFound() {
+        String oid = "validOid";
+        Henkilo henkilo = new Henkilo();
+        given(this.henkiloDataRepositoryMock.findByOidHenkilo(oid)).willReturn(Optional.of(henkilo));
+        List huoltajat = this.service.getHenkiloHuoltajat(oid);
+        assertThat(huoltajat).isEmpty();
     }
 }
