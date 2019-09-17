@@ -379,8 +379,9 @@ public class HenkiloServiceImpl implements HenkiloService {
 
         Set<HenkiloHuoltajaSuhde> huoltajaSuhteet = henkilo.getHuoltajat();
 
-        if(huoltajaSuhteet.size() == 0)
-            throw new NotFoundException("Henkilo parents not found with oid " + oidHenkilo);
+        if (huoltajaSuhteet.size() == 0) {
+            return Collections.emptyList();
+        }
 
         return huoltajaSuhteet
             .stream()
