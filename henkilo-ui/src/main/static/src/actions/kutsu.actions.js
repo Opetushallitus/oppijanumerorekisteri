@@ -88,10 +88,7 @@ export const createHenkiloByToken = (temporaryToken, payload) => (dispatch, getS
         .then(authToken => {
                 dispatch(createHenkiloByTokenSuccess(authToken));
                 const casUrl = urls.url('cas.login', {authToken,});
-                http.get(casUrl).then(async loginPage => {
-                        window.location = casUrl;
-                    },
-                    () => dispatch({type: LOGIN_FAILED}));
+                window.location = casUrl;
             },
             error => dispatch(createHenkiloByTokenFailure(error)))
 };
