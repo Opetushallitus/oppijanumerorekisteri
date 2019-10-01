@@ -23,9 +23,6 @@ class RekisteroidyContainer extends React.Component {
         if (this.props.koodistoLoading || this.props.tokenLoading) {
             return <Loader />;
         }
-        else if (this.props.loginFailed) {
-            return <VirhePage text={'REKISTEROIDY_LOGIN_FAILED'} buttonText={'REKISTEROIDY_KIRJAUTUMISSIVULLE'} />;
-        }
         else if (this.loggedIn !== undefined) {
             return <VirhePage text={'REKISTEROIDY_KIRJAUTUNUT'} />;
         }
