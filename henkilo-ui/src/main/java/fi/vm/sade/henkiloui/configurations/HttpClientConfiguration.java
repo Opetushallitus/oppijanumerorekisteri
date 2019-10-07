@@ -12,12 +12,12 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class HttpClientConfiguration {
 
-    private static final String CLIENT_SUB_SYSTEM_CODE = "henkilo-ui";
+    private static final String CALLER_ID = "1.2.246.562.10.00000000001.henkilo-ui";
 
     @Bean
     @Primary
     public OphHttpClient ophHttpClient() {
-        return new OphHttpClient.Builder(CLIENT_SUB_SYSTEM_CODE)
+        return new OphHttpClient.Builder(CALLER_ID)
                 .build();
     }
 
@@ -30,7 +30,7 @@ public class HttpClientConfiguration {
                 .username(environment.getRequiredProperty("henkiloui.palvelukayttajat.lokalisointi.kayttajatunnus"))
                 .password(environment.getRequiredProperty("henkiloui.palvelukayttajat.lokalisointi.salasana"))
                 .build();
-        return new OphHttpClient.Builder(CLIENT_SUB_SYSTEM_CODE)
+        return new OphHttpClient.Builder(CALLER_ID)
                 .authenticator(authenticator)
                 .build();
     }
