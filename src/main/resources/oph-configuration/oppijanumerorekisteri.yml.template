@@ -13,8 +13,8 @@ spring:
       hibernate.integration.envers.enabled: {{oppijanumerorekisteri_versiointi_kaytossa | default('true')}}
   datasource:
     url: jdbc:postgresql://{{postgresql_oppijanumerorekisteri_host}}:{{port_postgresql}}/{{postgresql_oppijanumerorekisteri_db | default('authentication')}}?ApplicationName=oppijanumerorekisteri-service
-    username: {{postgresql_oppijanumerorekisteri_user}}
-    password: {{postgresql_oppijanumerorekisteri_password}}
+    username: {{postgres_app_user}}
+    password: {{postgresql_oppijanumerorekisteri_app_password}}
     hikari:
       maximum-pool-size: {{postgresql_oppijanumerorekisteri_maximum_pool_size | default('20')}}
       connection-timeout: {{postgresql_oppijanumerorekisteri_connection_timeout | default('10000')}}
