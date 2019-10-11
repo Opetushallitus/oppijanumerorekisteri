@@ -25,7 +25,6 @@
         <springfox.version>2.7.0</springfox.version>
         <frontend-plugin.version>1.6</frontend-plugin.version>
         <nodejs.version>v10.13.0</nodejs.version>
-        <git-commit-id-plugin.version>2.2.3</git-commit-id-plugin.version>
 
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
