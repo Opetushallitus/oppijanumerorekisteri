@@ -10,11 +10,15 @@ import type {Kayttooikeusryhma} from "../../../../types/domain/kayttooikeus/kayt
 import {localizeTextGroup} from "../../../../utilities/localisation.util";
 import type {Locale} from "../../../../types/locale.type";
 
-type Props = {
+type OwnProps = {
     updateModelFieldAction: ({value: Array<number>, optionsName: string,}) => void,
     omattiedot: OmattiedotState,
     readOnly?: boolean,
     henkiloUpdate: any,
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations,
     locale: Locale,
 }
@@ -74,4 +78,4 @@ const mapStateToProps = (state) => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {})(AnomusIlmoitus)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(AnomusIlmoitus)

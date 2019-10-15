@@ -8,12 +8,17 @@ import {urls} from 'oph-urls-js';
 import Button from "../common/button/Button";
 import {http} from "../../http";
 
+type OwnProps = {
+    params: any,
+    router: any
+}
+
 type Props = {
+    ...OwnProps,
     virhekoodi: string,
     L: Localisations,
     locale: Locale,
     loginToken: string,
-    router: any
 }
 
 class EmailVerificationErrorContainer extends React.Component<Props> {
@@ -74,4 +79,4 @@ const mapStateToProps = (state, ownProps) => ({
     loginToken: ownProps.params['loginToken']
 });
 
-export default connect(mapStateToProps, {})(EmailVerificationErrorContainer);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(EmailVerificationErrorContainer);

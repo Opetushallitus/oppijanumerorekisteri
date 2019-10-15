@@ -9,7 +9,12 @@ import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
 import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 
+type OwnProps = {
+    location: any,
+}
+
 type Props = {
+    ...OwnProps,
     path: string,
     kutsus: {result: Array<KutsuRead>},
     l10n: L10n,
@@ -45,4 +50,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchKutsus, deleteKutsu, fetchOmattiedotOrganisaatios, clearKutsuList})(KutsututPageContainer)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchKutsus, deleteKutsu, fetchOmattiedotOrganisaatios, clearKutsuList})(KutsututPageContainer)

@@ -5,10 +5,14 @@ import './ItemList.css';
 import * as R from 'ramda';
 import type {Localisations} from "../../../types/localisation.type";
 
-type Props = {
+type OwnProps = {
     items: Array<any>,
     removeAction: (any) => void,
     labelPath: Array<string>,
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations
 }
 
@@ -35,4 +39,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale]
 });
 
-export default connect(mapStateToProps, {})(ItemList);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(ItemList);

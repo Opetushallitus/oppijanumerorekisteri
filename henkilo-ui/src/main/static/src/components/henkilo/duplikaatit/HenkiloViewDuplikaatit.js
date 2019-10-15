@@ -15,20 +15,24 @@ import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import {LocalNotification} from "../../common/Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import { linkHenkilos } from "../../../actions/henkilo.actions";
-  
-type Props = {
+
+type OwnProps = {
     router?: any,
-    locale: Locale,
-    L: Localisations,
     oidHenkilo?: string,
     henkilo: any, // HenkiloState | HenkiloCreate
     henkiloType: string,
-    koodisto: KoodistoState,
     notifications?: Array<Notification>,
     removeNotification?: (string, string, ?string) => void,
+    vainLuku: boolean,
+}
+
+type Props = {
+    ...OwnProps,
+    locale: Locale,
+    L: Localisations,
+    koodisto: KoodistoState,
     linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void,
     ownOid: string,
-    vainLuku: boolean,
 }
 
 type State = {
@@ -129,7 +133,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
         }
     }
 
-    setSelection(oid) {
+    setSelection(oid: string) {
         const selectedDuplicates = R.contains(oid, this.state.selectedDuplicates) ?
             R.reject(duplicateOid => duplicateOid === oid, this.state.selectedDuplicates) :
             R.append(oid, this.state.selectedDuplicates);
@@ -145,4 +149,4 @@ const mapStateToProps = (state) => ({
     koodisto: state.koodisto
 });
 
-export default connect(mapStateToProps, {linkHenkilos})(HenkiloViewDuplikaatit);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {linkHenkilos})(HenkiloViewDuplikaatit);

@@ -11,15 +11,19 @@ type Option = {
     label: string,
 }
 
-type Props = {
-    L: Localisations,
+type OwnProps = {
     selectOrganisaatio: () => any,
-    locale: Locale,
     selectedOrganisaatioOid: string,
     placeholder?: string,
+    clearable?: boolean,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
+    locale: Locale,
     ryhmaOptions:  Array<Option>,
     ryhmaFilter: any,
-    clearable?: boolean,
 }
 
 class RyhmaSelection extends React.Component<Props> {
@@ -52,4 +56,4 @@ const mapStateToProps = (state) => ({
     ryhmaFilter: state.omattiedot.organisaatioRyhmaFilter,
 });
 
-export default connect(mapStateToProps, {})(RyhmaSelection);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(RyhmaSelection);

@@ -15,16 +15,19 @@ import {addGlobalNotification} from "../../actions/notification.actions";
 import type {Locale} from "../../types/locale.type";
 import PopupButton from "../common/button/PopupButton";
 
-type Props = {
+type OwnProps = {
     kutsus: Array<any>,
-    cancelInvitation: () => any,
     isLoading: boolean,
     allFetched: boolean,
+    fetchKutsus: (any, ?boolean) => void,
+    cancelInvitation: (any) => any,
+}
+
+type Props = {
+    ...OwnProps,
     addGlobalNotification: (GlobalNotificationConfig) => any,
     renewKutsu: (number) => void,
     L: Localisations,
-    fetchKutsus: (any, ?boolean) => void,
-    cancelInvitation: (any) => any,
     locale: Locale
 }
 
@@ -34,7 +37,7 @@ type State = {
 
 class KutsututTable extends React.Component<Props, State> {
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -80,21 +83,21 @@ class KutsututTable extends React.Component<Props, State> {
         </div>;
     }
 
-    createNimiCell(kutsu) {
+    createNimiCell(kutsu: any) {
         return `${kutsu.etunimi} ${kutsu.sukunimi}`;
     }
 
-    createSahkopostiCell(kutsu) {
+    createSahkopostiCell(kutsu: any) {
         return kutsu.sahkoposti;
     }
 
-    createOrganisaatiotCell(kutsu) {
+    createOrganisaatiotCell(kutsu: any) {
         return (<div>
                 { kutsu.organisaatiot.map(org => <div key={org.organisaatioOid}>{toLocalizedText(this.props.locale, org.nimi) || org.organisaatioOid}</div>)}
                 </div>);
     }
 
-    createSaateCell(kutsu) {
+    createSaateCell(kutsu: any) {
         return kutsu.saate ? <PopupButton
             popupClass={'oph-popup-default oph-popup-bottom'}
             popupButtonWrapperPositioning={'absolute'}
@@ -107,12 +110,12 @@ class KutsututTable extends React.Component<Props, State> {
 
     }
 
-    createKutsuLahetettyCell(kutsu) {
+    createKutsuLahetettyCell(kutsu: any) {
         const sent = moment(new Date(kutsu.aikaleima));
         return (<span>{sent.format('DD/MM/YYYY H:mm')} {sent.add(1, 'months').isBefore(moment()) ? <span className="oph-red">{this.props.L['KUTSUTUT_VIRKAILIJAT_KUTSU_VANHENTUNUT']}</span> : null}</span>);
     }
 
-    createResendCell(kutsu) {
+    createResendCell(kutsu: any) {
         const resendAction = async () => {
             await this.props.renewKutsu(kutsu.id);
             this.props.addGlobalNotification({
@@ -130,7 +133,7 @@ class KutsututTable extends React.Component<Props, State> {
             </Button>
     }
 
-    createPeruutaCell(kutsu) {
+    createPeruutaCell(kutsu: any) {
         return kutsu.tila === 'AVOIN' &&
             <Button cancel
                     action={this.props.cancelInvitation(kutsu)}>
@@ -138,7 +141,7 @@ class KutsututTable extends React.Component<Props, State> {
             </Button>
     }
 
-    onTableFetch(tableState, instance) {
+    onTableFetch(tableState: any, instance: any) {
         const newSort = tableState.sorted[0];
         const stateSort = this.state.sorted[0];
         // Update sort state
@@ -165,4 +168,4 @@ const mapStateToProps = (state, ownProps) => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {renewKutsu, addGlobalNotification})(KutsututTable);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {renewKutsu, addGlobalNotification})(KutsututTable);

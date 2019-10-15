@@ -7,13 +7,17 @@ import {fetchAllKayttooikeusryhma} from '../../../actions/kayttooikeusryhma.acti
 import type {Localisations} from "../../../types/localisation.type";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 
+type OwnProps = {
+    kayttooikeusSelectionAction: (number) => void,
+    kayttooikeusSelection: ?number,
+}
+
 type Props = {
+    ...OwnProps,
     L: Localisations,
     locale: string,
     fetchAllKayttooikeusryhma: (boolean) => void,
     kayttooikeusRyhmas: Array<Kayttooikeusryhma>,
-    kayttooikeusSelectionAction: (number) => void,
-    kayttooikeusSelection: ?number,
     kayttooikeusLoading: boolean
 };
 
@@ -60,4 +64,4 @@ const mapStateToProps = (state, ownProps) => ({
     kayttooikeusRyhmas: state.kayttooikeus.allKayttooikeusryhmas,
 });
 
-export default connect(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmaSingleSelect);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmaSingleSelect);

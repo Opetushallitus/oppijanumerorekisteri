@@ -8,8 +8,12 @@ import type { PalvelukayttajaCreate, PalvelukayttajaRead } from '../../types/dom
 import WideRedNotification from '../../components/common/notifications/WideRedNotification'
 import type {Localisations} from "../../types/localisation.type";
 
-type Props = {
+type OwnProps = {
     router: any,
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations,
 }
 
@@ -37,7 +41,7 @@ class PalveluCreateContainer extends React.Component<Props, State> {
         )
     }
 
-    setError = (error) => {
+    setError = (error?: string) => {
         this.setState({error: error});
     };
 
@@ -56,7 +60,7 @@ class PalveluCreateContainer extends React.Component<Props, State> {
         return await http.post(url, palvelukayttaja);
     };
 
-    navigateToVirkailija = (oid) => {
+    navigateToVirkailija = (oid: string) => {
         this.props.router.push(`/virkailija/${oid}`);
     }
 
@@ -68,4 +72,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {})(PalveluCreateContainer);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(PalveluCreateContainer);

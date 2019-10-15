@@ -4,10 +4,14 @@ import {connect} from 'react-redux';
 import LabelValue from "./LabelValue";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-type Props = {
-    henkilo: HenkiloState,
+type OwnProps = {
     readOnly: boolean,
     updateModelFieldAction: () => void,
+}
+
+type Props = {
+    ...OwnProps,
+    henkilo: HenkiloState,
 }
 
 const Oid = (props: Props) => <LabelValue
@@ -25,4 +29,4 @@ const mapStateToProps = state => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {})(Oid);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(Oid);

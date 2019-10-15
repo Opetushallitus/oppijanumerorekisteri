@@ -8,13 +8,17 @@ import type {Koodisto, Koodi} from '../../../types/domain/koodisto/koodisto.type
 import {toLocalizedText} from '../../../localizabletext'
 import './KoodistoSelect.css'
 
-type Props = {
+type OwnProps = {
     className?: string,
-    locale: Locale,
     placeholder: string,
     koodisto: Koodisto,
     value: ?string,
     onChange: (?string) => void,
+}
+
+type Props = {
+    ...OwnProps,
+    locale: Locale,
 }
 
 /**
@@ -62,4 +66,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, {})(KoodistoSelect)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(KoodistoSelect)

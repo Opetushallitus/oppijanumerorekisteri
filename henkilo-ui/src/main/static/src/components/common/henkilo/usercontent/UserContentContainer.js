@@ -24,7 +24,16 @@ import moment from 'moment';
 import PropertySingleton from "../../../../globals/PropertySingleton";
 import {clone} from 'ramda';
 
+type OwnProps = {
+    readOnly?: boolean,
+    basicInfo?: (boolean, (any) => void, (any) => void, any) => any,
+    readOnlyButtons?: ((any) => void) => any,
+    oidHenkilo: string,
+    view: string,
+}
+
 type Props = {
+    ...OwnProps,
     L: Localisations,
     henkilo: {
         henkilo: Henkilo,
@@ -38,13 +47,8 @@ type Props = {
         sukupuoliKoodistoLoading: boolean,
         yhteystietotyypitKoodistoLoading: boolean,
     },
-    readOnly?: boolean,
-    basicInfo?: (boolean, (any) => void, (any) => void, any) => any,
-    readOnlyButtons?: ((any) => void) => any,
     updateHenkiloAndRefetch: (any, boolean) => void,
     updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void,
-    oidHenkilo: string,
-    view: string,
     aktivoiHenkilo: (oid: string) => void,
     omattiedot: OmattiedotState,
     ownOid: string,
@@ -193,7 +197,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
 
-    async anomus(henkiloUpdate) {
+    async anomus(henkiloUpdate: any) {
         if(this.props.view === 'OMATTIEDOT' && this.props.omattiedot.isAdmin) {
             const initialAnomusilmoitusValue = this.props.omattiedot.anomusilmoitus;
             const url = urls.url('kayttooikeus-service.henkilo.anomusilmoitus', henkiloUpdate.oidHenkilo);
@@ -267,4 +271,4 @@ const mapStateToProps = (state) => ({
     ownOid: state.omattiedot.data.oid
 });
 
-export default connect(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto, aktivoiHenkilo, fetchOmattiedot, updateAnomusilmoitus})(UserContentContainer);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {updateHenkiloAndRefetch, updateAndRefetchKayttajatieto, aktivoiHenkilo, fetchOmattiedot, updateAnomusilmoitus})(UserContentContainer);

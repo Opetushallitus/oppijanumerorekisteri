@@ -1,8 +1,6 @@
 // @flow
 import React from 'react';
-import {connect} from 'react-redux';
 import './InfoPage.css';
-
 
 type InfoPageProps = {
     children: any,
@@ -18,4 +16,4 @@ class InfoPage extends React.Component<InfoPageProps> {
     }
 }
 
-export default connect( () => ({}), {})(InfoPage);
+export default InfoPage;

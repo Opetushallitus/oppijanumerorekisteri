@@ -50,7 +50,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
         this.setState({kaikki: kaikki, naytettavat: naytettavat});
     }
 
-    filterEiSallitutKayttooikeusryhmat = (kayttooikeusryhmat: Array<Kayttooikeusryhma>, sallittuKayttajatyyppi: ?SallitutKayttajatyypit) => kayttooikeusryhmat.filter(kayttooikeusRyhma => !kayttooikeusRyhma.sallittuKayttajatyyppi || kayttooikeusRyhma.sallittuKayttajatyyppi === sallittuKayttajatyyppi);
+    filterEiSallitutKayttooikeusryhmat = (kayttooikeusryhmat: Array<Kayttooikeusryhma>, sallittuKayttajatyyppi: ?SallitutKayttajatyypit): Array<Kayttooikeusryhma> => kayttooikeusryhmat.filter(kayttooikeusRyhma => !kayttooikeusRyhma.sallittuKayttajatyyppi || kayttooikeusRyhma.sallittuKayttajatyyppi === sallittuKayttajatyyppi);
     getKielistetyt = (kayttooikeusryhmat: Array<Kayttooikeusryhma>): Array<KielistettyKayttooikeusryhma> => {
         return kayttooikeusryhmat
             .map(this.getKielistetty)

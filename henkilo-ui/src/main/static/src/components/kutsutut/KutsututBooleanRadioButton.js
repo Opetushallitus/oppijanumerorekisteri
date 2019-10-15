@@ -4,10 +4,14 @@ import {connect} from 'react-redux';
 import BooleanRadioButtonGroup from "../common/radiobuttongroup/BooleanRadioButtonGroup";
 import KutsuViews from "./KutsuViews";
 
-type Props = {
+type OwnProps = {
     view: string | null | void,
-    L: {[key: string]: string},
     setView: (newView: string) => void,
+}
+
+type Props = {
+    ...OwnProps,
+    L: {[key: string]: string},
     isAdmin: boolean,
     isOphVirkailija: boolean,
 }
@@ -82,4 +86,4 @@ const mapStateToProps = (state, ownProps) => ({
     isOphVirkailija: state.omattiedot.isOphVirkailija,
 });
 
-export default connect(mapStateToProps, {})(KutsututBooleanRadioButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(KutsututBooleanRadioButton);

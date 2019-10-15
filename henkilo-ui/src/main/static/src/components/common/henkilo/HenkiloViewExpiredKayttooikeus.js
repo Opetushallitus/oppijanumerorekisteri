@@ -1,6 +1,6 @@
 // @flow
 import './HenkiloViewExistingKayttooikeus.css'
-import React from 'react'
+import * as React from 'react'
 import {connect} from 'react-redux';
 import Table from '../table/Table'
 import moment from 'moment'
@@ -23,7 +23,7 @@ import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeu
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
 
-type Props = {
+type OwnProps = {
     l10n: L10n,
     locale: Locale,
     organisaatioCache: any,
@@ -31,6 +31,11 @@ type Props = {
     isOmattiedot: boolean,
     henkilo: HenkiloState,
     oidHenkilo: string,
+    omattiedot: OmattiedotState,
+}
+
+type Props = {
+    ...OwnProps,
     createKayttooikeusanomus: ({
         organisaatioOrRyhmaOid: string,
         email: ?string,
@@ -39,7 +44,7 @@ type Props = {
         anojaOid: string,
     }) => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
-    omattiedot: OmattiedotState,
+    
 
 }
 
@@ -124,7 +129,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         );
     };
 
-    createEmailSelectionIfMoreThanOne(idx: number) {
+    createEmailSelectionIfMoreThanOne(idx: number): React.Node {
         return this.state.emailOptions.length > 1
             ? this.state.emailOptions.map((email, idx2) => <div key={idx2}>
                 <input type="radio"
@@ -140,7 +145,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         return kayttooikeus.tila === KAYTTOOIKEUDENTILA.SULJETTU || kayttooikeus.tila === KAYTTOOIKEUDENTILA.VANHENTUNUT;
     }
 
-    async _createKayttooikeusAnomus(kayttooikeusryhma: MyonnettyKayttooikeusryhma, idx) {
+    async _createKayttooikeusAnomus(kayttooikeusryhma: MyonnettyKayttooikeusryhma, idx: number) {
         const kayttooikeusRyhmaIds = [kayttooikeusryhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: kayttooikeusryhma.organisaatioOid,
@@ -171,4 +176,4 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-export default connect(() => ({}), {createKayttooikeusanomus, fetchAllKayttooikeusAnomusForHenkilo})(HenkiloViewExpiredKayttooikeus);
+export default connect<Props, OwnProps, _, _, _, _>(() => ({}), {createKayttooikeusanomus, fetchAllKayttooikeusAnomusForHenkilo})(HenkiloViewExpiredKayttooikeus);

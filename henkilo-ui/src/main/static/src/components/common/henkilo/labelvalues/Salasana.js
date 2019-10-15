@@ -4,11 +4,15 @@ import {connect} from 'react-redux'
 import LabelValue from "./LabelValue";
 import type {Localisations} from "../../../../types/localisation.type";
 
-type Props = {
+type OwnProps = {
     disabled: boolean,
     isError: boolean,
-    L: Localisations,
     updateModelFieldAction: (any) => void,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 const Salasana = (props: Props) => <div>
@@ -44,4 +48,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(Salasana);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(Salasana);

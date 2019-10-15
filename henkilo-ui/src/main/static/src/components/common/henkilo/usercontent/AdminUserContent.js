@@ -35,7 +35,7 @@ import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 import Sukupuoli from "../labelvalues/Sukupuoli";
 import SahkopostitunnisteButton from "../buttons/SahkopostitunnisteButton";
 
-type Props = {
+type OwnProps = {
     readOnly: boolean,
     discardAction: () => void,
     updateAction: () => void,
@@ -43,15 +43,19 @@ type Props = {
     updateDateAction: () => void,
     edit: () => void,
     henkiloUpdate: Henkilo,
+    aktivoiHenkilo: (oid: string) => void,
+    oidHenkilo: string,
+    isValidForm: boolean,
+}
+
+type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: any,
     L: Localisations,
     locale: Locale,
-    aktivoiHenkilo: (oid: string) => void,
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
-    oidHenkilo: string,
-    isValidForm: boolean,
     omattiedot: OmattiedotState
 }
 
@@ -156,5 +160,5 @@ const mapStateToProps = state => ({
     omattiedot: state.omattiedot
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(AdminUserContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(AdminUserContent);
 

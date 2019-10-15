@@ -12,10 +12,14 @@ import OphModal from "../../common/modal/OphModal";
 import type {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import {path} from 'ramda';
 
-type Props = {
-    L: Localisations,
+type OwnProps = {
     router: any,
     kayttooikeusryhmaId: ?string,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
     addGlobalNotification: GlobalNotificationConfig => void,
     valittuKayttooikeusryhma: ?Kayttooikeusryhma,
 }
@@ -86,7 +90,7 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
         await this.toggleKayttooikeusryhmaState(url);
     }
 
-    async toggleKayttooikeusryhmaState(url) {
+    async toggleKayttooikeusryhmaState(url: string) {
         try {
             this.setState({isWaitingRequest: true});
             await http.put(url);
@@ -115,4 +119,4 @@ const mapStateToProps = state => ({
     valittuKayttooikeusryhma: state.kayttooikeus.kayttooikeusryhma,
 });
 
-export default connect(mapStateToProps, {addGlobalNotification})(ToggleKayttooikeusryhmaStateModal);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {addGlobalNotification})(ToggleKayttooikeusryhmaStateModal);

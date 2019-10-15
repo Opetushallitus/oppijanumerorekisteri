@@ -14,7 +14,14 @@ import type {Locale} from "../../../types/locale.type";
 import PropertySingleton from '../../../globals/PropertySingleton';
 import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 
+type OwnProps = {
+    params: any,
+    location: any,
+    route: any,
+}
+
 type Props = {
+    ...OwnProps,
     l10n: L10n,
     locale: Locale,
     oidHenkilo: string,
@@ -69,7 +76,7 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchHenkilo,
     fetchKayttaja,
     fetchOmattiedot,

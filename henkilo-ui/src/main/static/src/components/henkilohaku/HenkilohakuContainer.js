@@ -19,8 +19,12 @@ import type {HenkilohakuState} from "../../reducers/henkilohaku.reducer";
 import type {OmattiedotState} from "../../reducers/omattiedot.reducer";
 import { parsePalveluRoolit, hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
 
-type Props = {
+type OwnProps = {
     router: any,
+}
+
+type Props = {
+    ...OwnProps,
     l10n: L10n,
     locale: Locale,
     fetchOmattiedotOrganisaatios: () => void,
@@ -97,6 +101,5 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-
-export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, fetchAllKayttooikeusryhma,
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchOmattiedotOrganisaatios, fetchAllKayttooikeusryhma,
     henkilohaku, updateFilters, clearHenkilohaku, fetchAllRyhmas, henkilohakuCount})(HenkilohakuContainer);

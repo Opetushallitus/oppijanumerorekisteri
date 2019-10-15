@@ -23,9 +23,7 @@ import type {Kayttooikeusryhma} from "../../types/domain/kayttooikeus/kayttooike
 import type {OrganisaatioHenkilo} from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types'
 import type {ReactSelectOption} from '../../types/react-select.types'
 
-type Props = {
-    L: Localisations,
-    locale: Locale,
+type OwnProps = {
     ryhmaSelectionAction: ({value: ?number}) => void,
     selectedRyhma: ?string,
     selectedOrganisation?: Array<string> | string,
@@ -38,6 +36,12 @@ type Props = {
     clearOrganisaatioSelection: () => void,
     kayttooikeusSelectionAction: ({value: ?string}) => void,
     initialValues: HenkilohakuCriteria,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
+    locale: Locale,
     kayttooikeusryhmas: Array<Kayttooikeusryhma>,
     fetchAllKayttooikeusryhma: () => void,
     henkilohakuOrganisaatiotLoading: boolean,
@@ -193,7 +197,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchOmatHenkiloHakuOrganisaatios,
     fetchAllKayttooikeusryhma
 })(HenkilohakuFilters);

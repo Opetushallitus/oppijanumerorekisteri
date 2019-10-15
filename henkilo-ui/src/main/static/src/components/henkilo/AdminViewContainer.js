@@ -23,12 +23,18 @@ import type {KoodistoState} from "../../reducers/koodisto.reducer";
 import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
-type Props = {
+type OwnProps = {
     oidHenkilo: string, // tarkasteltava
     ownOid: string, // tarkastelija
     henkiloType: string,
-    clearHenkilo: () => void,
     router: any,
+    l10n: L10n,
+    locale: Locale,
+}
+
+type Props = {
+    ...OwnProps,
+    clearHenkilo: () => void,
     fetchHenkilo: (string) => void,
     fetchHenkiloOrgs: (string) => void,
     fetchHenkiloSlaves: (string) => void,
@@ -41,8 +47,6 @@ type Props = {
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
     fetchHenkiloYksilointitieto: (string) => void,
     fetchOmattiedotOrganisaatios: () => any,
-    l10n: L10n,
-    locale: Locale,
     henkilo: HenkiloState,
     kayttooikeus: KayttooikeusRyhmaState,
     koodisto: KoodistoState,
@@ -60,7 +64,7 @@ class AdminViewContainer extends React.Component<Props> {
         }
     }
 
-    async fetchHenkiloViewData(oid) {
+    async fetchHenkiloViewData(oid: string) {
         this.props.clearHenkilo();
         await this.props.fetchHenkilo(oid);
         this.props.fetchHenkiloOrgs(oid);
@@ -92,7 +96,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloOrgs,
     fetchKieliKoodisto,

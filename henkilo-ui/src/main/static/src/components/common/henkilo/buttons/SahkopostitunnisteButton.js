@@ -6,11 +6,15 @@ import type {Localisations} from "../../../../types/localisation.type";
 import PopupButton from "../../button/PopupButton";
 import SahkopostitunnistePopupContent from "../../button/SahkopostitunnistePopupContent";
 
-type Props = {
-    L: Localisations,
+type OwnProps = {
     oidHenkilo: string,
     styles: any,
     disabled?: boolean
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 const SahkopostitunnisteButton = (props: Props) => (
@@ -27,4 +31,4 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(SahkopostitunnisteButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(SahkopostitunnisteButton);

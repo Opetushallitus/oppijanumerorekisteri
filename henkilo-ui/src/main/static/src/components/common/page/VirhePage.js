@@ -5,11 +5,15 @@ import {connect} from 'react-redux';
 import Button from "../button/Button";
 import type {Localisations} from "../../../types/localisation.type";
 
-type Props = {
+type OwnProps = {
     topic: string,
     text: string,
     buttonText: string,
     theme: string,
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations,
 }
 
@@ -33,4 +37,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations['fi'],
 });
 
-export default connect(mapStateToProps, {})(VirhePage);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps)(VirhePage);

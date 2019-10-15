@@ -22,7 +22,12 @@ import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes";
 import {addGlobalNotification} from "../../../actions/notification.actions";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 
+type OwnProps = {
+    params: any,
+}
+
 type Props = {
+    ...OwnProps,
     oidHenkilo: string,
     henkiloType: string,
     henkilo: HenkiloState,
@@ -104,7 +109,7 @@ const mapStateToProps = (state, ownProps) => {
     }
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
     fetchHenkiloMaster,

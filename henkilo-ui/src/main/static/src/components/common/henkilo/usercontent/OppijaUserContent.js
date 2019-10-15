@@ -26,7 +26,7 @@ import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
 import MasterHenkilo from '../labelvalues/MasterHenkilo';
 import Sukupuoli from "../labelvalues/Sukupuoli";
 
-type Props = {
+type OwnProps = {
     readOnly: boolean,
     discardAction: () => void,
     updateAction: () => void,
@@ -34,13 +34,17 @@ type Props = {
     updateDateAction: () => void,
     edit: () => void,
     henkiloUpdate: Henkilo,
+    oidHenkilo: string,
+    isValidForm: boolean,
+}
+
+type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: any,
     L: Localisations,
     locale: Locale,
     yksiloiHenkilo: () => void,
-    oidHenkilo: string,
-    isValidForm: boolean,
     omattiedot: OmattiedotState
 }
 
@@ -123,5 +127,5 @@ const mapStateToProps = state => ({
     omattiedot: state.omattiedot
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo})(OppijaUserContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {yksiloiHenkilo})(OppijaUserContent);
 

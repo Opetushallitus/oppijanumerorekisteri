@@ -7,11 +7,15 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import {passivoiHenkilo} from "../../../../actions/henkilo.actions";
 import type {Localisations} from "../../../../types/localisation.type";
 
+type OwnProps = {
+    disabled?: boolean
+}
+
 type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     L: Localisations,
     passivoiHenkilo: (string) => void,
-    disabled?: boolean
 }
 
 const PassivoiButton = (props: Props) => props.henkilo.henkilo.passivoitu
@@ -30,4 +34,4 @@ const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {passivoiHenkilo})(PassivoiButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {passivoiHenkilo})(PassivoiButton);

@@ -2,7 +2,6 @@
 
 import './Field.css';
 import React from 'react';
-import {connect} from 'react-redux';
 import classNames from 'classnames/bind';
 import OphSelect from '../select/OphSelect'
 import moment from 'moment';
@@ -37,7 +36,7 @@ type State = {
 
 class Field extends React.Component<Props, State> {
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -60,7 +59,7 @@ class Field extends React.Component<Props, State> {
         return <span>{this.createField(className)}</span>;
     }
 
-    createField(className) {
+    createField(className: string) {
         let type = 'text';
 
         if(this.props.password) {
@@ -130,8 +129,4 @@ class Field extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
-    L: state.l10n.localisations[state.locale],
-});
-
-export default connect(mapStateToProps)(Field);
+export default Field;

@@ -16,14 +16,18 @@ import type {RouteType} from "../../routes";
 import AngleDownIcon from "../common/icons/AngleDownIcon";
 import PlaceholderIcon from "../common/icons/PlaceholderIcon";
 
-type Props = {
+type OwnProps = {
     pathName: ?string,
+    route: RouteType,
+    params?: {[string]: string},
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations,
     isRekisterinpitaja: boolean,
     organisaatiot: Array<any>,
-    route: RouteType,
     henkilo?: HenkiloState,
-    params?: {[string]: string},
 }
 
 const TopNavigation = ({pathName, L, isRekisterinpitaja, organisaatiot, route, params, henkilo}: Props) => {
@@ -75,4 +79,4 @@ const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {})(TopNavigation);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(TopNavigation);

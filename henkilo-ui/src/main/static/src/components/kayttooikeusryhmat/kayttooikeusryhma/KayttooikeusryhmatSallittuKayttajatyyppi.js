@@ -5,10 +5,14 @@ import {connect} from 'react-redux'
 import type {SallitutKayttajatyypit} from "./KayttooikeusryhmaPage";
 import type {Localisations} from "../../../types/localisation.type";
 
-type KayttooikeusryhmatSallittuKayttajatyyppiProps = {
-    L: Localisations,
+type OwnProps = {
     kayttajaTyyppi: ?SallitutKayttajatyypit,
     setSallittuKayttajatyyppi: () => void,
+}
+
+type KayttooikeusryhmatSallittuKayttajatyyppiProps = {
+    ...OwnProps,
+    L: Localisations,
 };
 
 const KayttooikeusryhmatSallittuKayttajatyyppi = ({kayttajaTyyppi, L, setSallittuKayttajatyyppi}: KayttooikeusryhmatSallittuKayttajatyyppiProps) => {
@@ -29,4 +33,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(KayttooikeusryhmatSallittuKayttajatyyppi);
+export default connect<KayttooikeusryhmatSallittuKayttajatyyppiProps, OwnProps, _, _, _, _>(mapStateToProps, {})(KayttooikeusryhmatSallittuKayttajatyyppi);

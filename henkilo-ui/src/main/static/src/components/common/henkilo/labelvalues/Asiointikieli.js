@@ -6,15 +6,19 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {ReactSelectOption} from "../../../../types/react-select.types";
 import type {Locale} from "../../../../types/locale.type";
 
+type OwnProps = {
+    henkiloUpdate: any,
+    readOnly?: boolean,
+    updateModelFieldAction: (string) => void,
+}
+
 type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: {
         kieli: Array<ReactSelectOption>,
     },
-    henkiloUpdate: any,
-    readOnly?: boolean,
     locale: Locale,
-    updateModelFieldAction: (string) => void,
 }
 
 const Asiointikieli = (props: Props) => <LabelValue
@@ -39,4 +43,4 @@ const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {})(Asiointikieli);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(Asiointikieli);

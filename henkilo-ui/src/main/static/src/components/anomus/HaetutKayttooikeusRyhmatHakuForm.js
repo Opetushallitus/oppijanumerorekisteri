@@ -17,10 +17,14 @@ import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal"
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 
+type OwnProps = {
+    onSubmit: ({}) => void,
+}
+
 type Props = {
+    ...OwnProps,
     L: Localisations,
     locale: Locale,
-    onSubmit: ({}) => void,
     organisaatios: Array<{}>,
     isAdmin: boolean,
     isOphVirkailija: boolean,
@@ -34,11 +38,11 @@ type State = {
     searchTerm: string,
     naytaKaikki: boolean,
     selectedOrganisaatio: ?OrganisaatioSelectObject,
-    selectedRyhma: ?number,
+    selectedRyhma: ?string,
 }
 
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -112,7 +116,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         );
     }
 
-    _parseRyhmas(ryhmatState) {
+    _parseRyhmas(ryhmatState: {ryhmas: Array<{}>}): Array<{label: string, value: string}> {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat ? ryhmat.map(ryhma => ({
             label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
@@ -120,7 +124,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         })).sort((a,b) => a.label.localeCompare(b.label)) : [];
     }
 
-    onHakutermiChange = (event) => {
+    onHakutermiChange = (event: HTMLInputElement) => {
         const hakutermi = event.value;
         this.setState({searchTerm: hakutermi});
         if (hakutermi.length === 0 || hakutermi.length >= 3) {
@@ -138,13 +142,13 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         this.props.onSubmit({organisaatioOids: organisaatio.oid});
     };
 
-    onRyhmaChange = (ryhma) => {
+    onRyhmaChange = (ryhma: ?{label: string, value: string}) => {
         const ryhmaOid = ryhma ? ryhma.value : undefined;
         this.setState({selectedRyhma: ryhmaOid, selectedOrganisaatio: null});
         this.props.onSubmit({organisaatioOids: ryhmaOid});
     };
 
-    onNaytaKaikkiChange = (naytaKaikki) => {
+    onNaytaKaikkiChange = (naytaKaikki: boolean) => {
         this.setState({selectedOrganisaatio: null, naytaKaikki: naytaKaikki});
         this.props.onSubmit({adminView: !naytaKaikki});
     };
@@ -161,4 +165,4 @@ const mapStateToProps = (state, ownProps) => ({
     ryhmat: state.ryhmatState,
 });
 
-export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios})(HaetutKayttooikeusRyhmatHakuForm);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchOmattiedotOrganisaatios})(HaetutKayttooikeusRyhmatHakuForm);

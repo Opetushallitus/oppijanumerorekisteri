@@ -63,7 +63,7 @@ type State = {
 
 class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> {
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -76,7 +76,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         this.setState({emailOptions: this.createEmailOptions(nextProps.henkilo)});
     }
 
@@ -242,7 +242,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
             </div>);
     }
 
-    createEmailOptions(henkilo) {
+    createEmailOptions(henkilo: HenkiloState) {
         const emailOptions = this._parseEmailOptions(henkilo);
         if (emailOptions.length === 1) {
             return {
@@ -262,7 +262,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return {missingEmail: true, showMissingEmailNotification: true};
     }
 
-    _changeEmail(value) {
+    _changeEmail(value: string) {
         this.setState({
             emailOptions: {
                 ...this.state.emailOptions,
@@ -271,7 +271,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         });
     }
 
-    _changePerustelut(event) {
+    _changePerustelut(event: any) {
         this.setState({perustelut: event.target.value});
     }
 
@@ -280,7 +280,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         this.props.fetchOrganisaatioKayttooikeusryhmat(organisaatio.oid);
     }
 
-    _changeRyhmaSelection(selection) {
+    _changeRyhmaSelection(selection: {label: string, value: string}) {
         this.setState({ryhmaSelection: selection.value, organisaatioSelection: '', kayttooikeusryhmaSelections: [], organisaatioSelectionName: ''});
         this.props.fetchOrganisaatioKayttooikeusryhmat(selection.value);
     }
@@ -308,7 +308,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return this.state.perustelut === undefined || this.state.perustelut.length <= 255;
     }
 
-    _parseOrganisaatioSelectOptions(organisaatioState) {
+    _parseOrganisaatioSelectOptions(organisaatioState: OrganisaatioState) {
         return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia && organisaatioState.organisaatioHierarkia.organisaatiot.length > 0 ?
             organisaatioHierarkiaToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia.organisaatiot, this.props.locale) : [];
     }
@@ -324,7 +324,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         });
     }
 
-    _parseEmailOptions(henkilo): Array<{value: string, label: string}> {
+    _parseEmailOptions(henkilo: HenkiloState): Array<{value: string, label: string}> {
         let emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
@@ -338,7 +338,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return emails.map(email => ({value: email || '', label: email || ''}));
     };
 
-    _addKayttooikeusryhmaSelection(kayttooikeusryhma) {
+    _addKayttooikeusryhmaSelection(kayttooikeusryhma: any) {
         const locale = this.props.locale.toUpperCase();
         const kayttooikeusryhmaSelection = {
             value: kayttooikeusryhma.id,
@@ -351,7 +351,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         this.setState({kayttooikeusryhmaSelections: kayttooikeusryhmaSelections});
     }
 
-    _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection) {
+    _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection: any) {
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter(selection => selection.value !== kayttooikeusryhmaSelection.value);
         this.setState({kayttooikeusryhmaSelections});
     }
@@ -382,6 +382,5 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 
 }
 
-
-
+// $FlowFixMe
 export default connect(() => ({}), {fetchOrganisaatioKayttooikeusryhmat, createKayttooikeusanomus, addGlobalNotification})(HenkiloViewCreateKayttooikeusanomus);

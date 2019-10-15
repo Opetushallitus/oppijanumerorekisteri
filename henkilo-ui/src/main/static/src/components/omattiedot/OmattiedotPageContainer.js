@@ -22,7 +22,12 @@ import type {OrganisaatioCache, OrganisaatioState} from "../../reducers/organisa
 import type {RyhmatState} from "../../reducers/ryhmat.reducer";
 import type {OrganisaatioKayttooikeusryhmatState} from "../../reducers/organisaatiokayttooikeusryhmat.reducer";
 
+type OwnProps = {
+    location: any;
+}
+
 type OmattiedotPageContainerProps = {
+    ...OwnProps,
     path: string,
     omattiedot: OmattiedotState,
     henkilo: HenkiloState,
@@ -98,7 +103,7 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<OmattiedotPageContainerProps, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchOmattiedot,
     fetchHenkilo,
     fetchHenkiloOrgs,

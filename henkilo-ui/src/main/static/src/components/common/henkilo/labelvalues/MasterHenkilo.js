@@ -10,15 +10,19 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types'
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util'
 
-type Props = {
-    kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
+type OwnProps = {
     oidHenkilo: string,
+    oppija?: boolean,
+}
+
+type Props = {
+    ...OwnProps,
+    kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     henkilo: HenkiloState,
     L: Localisations,
     fetchHenkiloMaster: (string) => void,
     fetchHenkilo: (string) => void,
     unlinkHenkilo: (string, string) => void,
-    oppija?: boolean,
     isLoading: boolean
 }
 
@@ -58,12 +62,12 @@ class MasterHenkilo extends React.Component<Props> {
             </div>;
     }
 
-    getLinkHref(oid) {
+    getLinkHref(oid: string) {
         const url = this.props.oppija ? 'oppija' : 'virkailija';
         return `/${url}/${oid}`
     }
 
-    async removeLink(masterOid, slaveOid) {
+    async removeLink(masterOid: string, slaveOid: string) {
         await this.props.unlinkHenkilo(masterOid, slaveOid);
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
         this.props.fetchHenkilo(this.props.oidHenkilo)
@@ -82,4 +86,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchHenkiloMaster, unlinkHenkilo, fetchHenkilo})(MasterHenkilo);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchHenkiloMaster, unlinkHenkilo, fetchHenkilo})(MasterHenkilo);

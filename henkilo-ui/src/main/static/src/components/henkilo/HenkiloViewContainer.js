@@ -16,7 +16,15 @@ import {fetchHenkilo} from "../../actions/henkilo.actions";
 import {fetchOmattiedot} from "../../actions/omattiedot.actions";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
 
+type OwnProps = {
+    router: any,
+    location: any,
+    params: any,
+    henkilo: HenkiloState
+}
+
 type Props = {
+    ...OwnProps,
     path: string,
     omattiedot: OmattiedotState,
     oidHenkilo: string,
@@ -25,10 +33,9 @@ type Props = {
     router: any,
     l10n: L10n,
     locale: Locale,
-    externalPermissionService?: string,
+    externalPermissionService?: string | null,
     fetchHenkilo: (string) => Promise<any>,
     fetchOmattiedot: () => Promise<any>,
-    henkilo: HenkiloState
 }
 
 
@@ -73,5 +80,5 @@ const mapStateToProps = (state, ownProps) => ({
     externalPermissionService: path(['location', 'query', 'permissionCheckService'], ownProps)
 });
 
-export default connect(mapStateToProps, {fetchHenkilo, fetchOmattiedot})(HenkiloViewContainer)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchHenkilo, fetchOmattiedot})(HenkiloViewContainer)
 

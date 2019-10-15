@@ -20,18 +20,22 @@ import type { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooike
 import type {OrganisaatioState} from "../../../reducers/organisaatio.reducer";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
-type Props = {
-    organisaatios: OrganisaatioState,
+type OwnProps = {
     vuosia: number,
     kayttooikeus: KayttooikeusRyhmaState,
     existingKayttooikeusRef: {},
     oidHenkilo: string,
+    isPalvelukayttaja: boolean,
+}
+
+type Props = {
+    ...OwnProps,
+    organisaatios: OrganisaatioState,
     fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
     L: Localisations,
     locale: Locale,
     oidHenkilo: string,
     addKayttooikeusToHenkilo: (string, string, Array<{id: number, kayttoOikeudenTila: string, alkupvm: string, loppupvm: string}>) => void,
-    isPalvelukayttaja: boolean,
 };
 
 type KayttooikeusModel = {
@@ -233,7 +237,7 @@ const mapStateToProps = (state, ownProps) => ({
     organisaatios: state.omattiedot.organisaatios,
 });
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchAllowedKayttooikeusryhmasForOrganisation,
     addKayttooikeusToHenkilo,
 })(HenkiloViewCreateKayttooikeus);

@@ -6,11 +6,15 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Localisations} from "../../../../types/localisation.type";
 import {puraYksilointi} from "../../../../actions/henkilo.actions";
 
+type OwnProps = {
+    disabled?: boolean
+}
+
 type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     L: Localisations,
     puraYksilointi: (string) => void,
-    disabled?: boolean
 }
 
 const PuraHetuttomanYksilointiButton = (props: Props) =>
@@ -28,4 +32,4 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {puraYksilointi})(PuraHetuttomanYksilointiButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {puraYksilointi})(PuraHetuttomanYksilointiButton);

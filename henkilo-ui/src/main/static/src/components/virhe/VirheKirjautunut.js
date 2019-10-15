@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import { connect } from 'react-redux'
 import sad from '../../img/sad.png'
 import './VirheKirjautunut.css'
 
@@ -28,4 +27,4 @@ class VirheKirjautunut extends React.Component<Props> {
 
 }
 
-export default connect(() => ({}), { })(VirheKirjautunut)
+export default VirheKirjautunut

@@ -5,11 +5,15 @@ import PopupButton from "../../button/PopupButton";
 import HakatunnistePopupContent from "../../button/HakaPopupContent";
 import type {Localisations} from "../../../../types/localisation.type";
 
-type Props = {
-    L: Localisations,
+type OwnProps = {
     oidHenkilo: string,
     styles: any,
     disabled?: boolean
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 const HakaButton = (props: Props) => (
@@ -26,4 +30,4 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(HakaButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(HakaButton);

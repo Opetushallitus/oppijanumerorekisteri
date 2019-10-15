@@ -10,14 +10,17 @@ import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util'
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
+type OwnProps = {
+    router: any,
+}
 
 type Props = {
+    ...OwnProps,
     muokkausoikeus: boolean,
     kayttooikeusryhmat: KayttooikeusRyhmaState,
     fetchAllKayttooikeusryhma: (boolean) => void,
     locale: Locale,
     L: Localisations,
-    router: any,
     omattiedot: OmattiedotState,
 }
 
@@ -51,4 +54,4 @@ const mapStateToProps = (state) => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchAllKayttooikeusryhma})(KayttooikeusryhmatContainer)

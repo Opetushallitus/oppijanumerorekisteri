@@ -5,11 +5,15 @@ import LabelValue from './LabelValue';
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 
-type Props = {
-    henkilo: HenkiloState,
+type OwnProps = {
     readOnly: boolean,
     henkiloUpdate: Henkilo,
     updateDateFieldAction: () => void,
+}
+
+type Props = {
+    ...OwnProps,
+    henkilo: HenkiloState,
 }
 
 const Syntymaaika = (props: Props) => {
@@ -30,4 +34,4 @@ const mapStateToProps = state => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {})(Syntymaaika);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(Syntymaaika);

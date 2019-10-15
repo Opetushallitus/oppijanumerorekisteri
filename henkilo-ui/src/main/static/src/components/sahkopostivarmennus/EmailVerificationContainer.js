@@ -10,11 +10,16 @@ import {http} from "../../http";
 import Loader from "../common/icons/Loader";
 import type {Henkilo} from "../../types/domain/oppijanumerorekisteri/henkilo.types";
 
+type OwnProps = {
+    params: any,
+    router: any
+}
+
 type Props = {
+    ...OwnProps,
     loginToken: string,
     locale: Locale,
     L:Localisations,
-    router: any
 }
 
 type State = {
@@ -63,4 +68,4 @@ const mapStateToProps = (state, ownProps) => ({
     locale: ownProps.params['locale']
 });
 
-export default connect(mapStateToProps, {})(EmailVerificationContainer)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(EmailVerificationContainer)

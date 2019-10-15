@@ -24,7 +24,11 @@ type SearchCriteria = {
     nimiHaku: ?string,
 }
 
+type OwnProps = {
+}
+
 type Props = {
+    ...OwnProps,
     fetchOppijoidenTuontiYhteenveto: () => any,
     fetchOppijoidenTuontiListaus: (SearchCriteria) => any,
     yhteenveto: OppijaTuontiYhteenveto | {},
@@ -42,7 +46,7 @@ type State = {
  */
 class OppijoidenTuontiContainer extends React.Component<Props, State> {
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             // oletushakukriteerit
@@ -98,7 +102,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
         this.props.fetchOppijoidenTuontiYhteenveto();
     }
 
-    onVainVirheetChange = (value) => {
+    onVainVirheetChange = (value: boolean) => {
         const criteria: SearchCriteria = {...this.state.criteria, vainVirheet: value, };
         this.setState({criteria: criteria});
         this.props.fetchOppijoidenTuontiListaus(criteria);
@@ -116,7 +120,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
         this.setState( { criteria: criteria }, () => this.onFetchData(criteria.page, criteria.count));
     };
 
-    onFetchData = (page, count) => {
+    onFetchData = (page: number, count: number) => {
         const criteria: SearchCriteria = {...this.state.criteria, page: page, count: count};
         this.setState({criteria: criteria});
         this.props.fetchOppijoidenTuontiListaus(criteria);
@@ -133,7 +137,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
         fetchOppijoidenTuontiYhteenveto,
         fetchOppijoidenTuontiListaus,
 })(OppijoidenTuontiContainer);

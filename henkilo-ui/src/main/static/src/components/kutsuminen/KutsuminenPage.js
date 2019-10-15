@@ -20,7 +20,13 @@ import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
 import type {KutsuBasicInfo} from "../../types/KutsuBasicInfo.types";
 import { validateEmail } from '../../validation/EmailValidator';
 
+type OwnProps = {
+    ryhmaState: any,
+    location: any,
+}
+
 type Props = {
+    ...OwnProps,
     fetchOmattiedotOrganisaatios: () => void,
     fetchAllRyhmas: () => void,
     L: Localisations,
@@ -32,7 +38,6 @@ type Props = {
     fetchHenkilo: (oid: string) => Promise<*>,
     henkilo: Henkilo,
     organisaatioState: OrganisaatioState,
-    ryhmaState: any,
     omattiedotLoading: boolean,
     henkiloLoading: boolean,
     ryhmasLoading: boolean
@@ -160,13 +165,13 @@ class KutsuminenPage extends React.Component<Props, State>  {
         return !!email && !!etunimi && !!sukunimi && !!languageCode;
     }
 
-    isOrganizationsValid(newAddedOrgs): boolean {
+    isOrganizationsValid(newAddedOrgs: Array<KutsuOrganisaatio>): boolean {
         return newAddedOrgs.length > 0
             && newAddedOrgs
                 .every(org => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0);
     }
 
-    setBasicInfo(basicInfo) {
+    setBasicInfo(basicInfo: KutsuBasicInfo) {
         this.setState({
             basicInfo,
             validationMessages: {
@@ -183,7 +188,7 @@ class KutsuminenPage extends React.Component<Props, State>  {
         });
     }
 
-    updateOrganisaatioValidation(newAddedOrgs) {
+    updateOrganisaatioValidation(newAddedOrgs: Array<KutsuOrganisaatio>) {
         this.setState({
             validationMessages: {
                 ...this.state.validationMessages,
@@ -230,4 +235,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo, fetchAllRyhmas})(KutsuminenPage);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchOmattiedotOrganisaatios, kutsuAddOrganisaatio, fetchHenkilo, fetchAllRyhmas})(KutsuminenPage);

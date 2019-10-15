@@ -27,7 +27,7 @@ import AnomusIlmoitus from "../labelvalues/AnomusIlmoitus";
 import type {OmattiedotState} from "../../../../reducers/omattiedot.reducer";
 import HenkiloVarmentajaSuhde from "../labelvalues/HenkiloVarmentajaSuhde";
 
-type Props = {
+type OwnProps = {
     readOnly: boolean,
     discardAction: () => void,
     updateAction: () => void,
@@ -35,14 +35,18 @@ type Props = {
     updateDateAction: () => void,
     edit: () => void,
     henkiloUpdate: any,
+    oidHenkilo: string,
+    isValidForm: boolean,
+}
+
+type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: any,
     L: Localisations,
     locale: Locale,
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
-    oidHenkilo: string,
-    isValidForm: boolean,
     omattiedot: OmattiedotState
 }
 
@@ -137,5 +141,5 @@ const mapStateToProps = state => ({
     omattiedot: state.omattiedot
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(OmattiedotUserContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves})(OmattiedotUserContent);
 

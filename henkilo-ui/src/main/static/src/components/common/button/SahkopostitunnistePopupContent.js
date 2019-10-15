@@ -12,9 +12,13 @@ import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
 import type {Identification} from "../../../types/domain/oppijanumerorekisteri/Identification.types";
 
-type Props = {
+type OwnProps = {
     henkiloOid: string,
     L: Localisations,
+}
+
+type Props = {
+    ...OwnProps,
     addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
@@ -139,4 +143,4 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
 
 }
 
-export default connect(() => ({}), {addGlobalNotification})(SahkopostitunnistePopupContent)
+export default connect<Props, OwnProps, _, _, _, _>(() => ({}), {addGlobalNotification})(SahkopostitunnistePopupContent)

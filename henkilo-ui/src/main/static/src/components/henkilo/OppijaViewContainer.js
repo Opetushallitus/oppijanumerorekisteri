@@ -16,8 +16,15 @@ import type {Locale} from "../../types/locale.type";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
 import {getEmptyKayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
-type Props = {
+type OwnProps = {
     oidHenkilo: string,
+    externalPermissionService?: string | null,
+    l10n: L10n,
+    locale: Locale
+}
+
+type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     fetchHenkiloSlaves: (oid: string) => void,
     fetchHenkilo: (oid: string) => void,
@@ -25,10 +32,7 @@ type Props = {
     fetchKieliKoodisto: () => void,
     fetchKansalaisuusKoodisto: () => void,
     fetchHenkiloYksilointitieto: (string) => void,
-    externalPermissionService?: string,
     koodisto: KoodistoState,
-    l10n: L10n,
-    locale: Locale
 }
 
 class OppijaViewContainer extends React.Component<Props> {
@@ -39,13 +43,13 @@ class OppijaViewContainer extends React.Component<Props> {
         await this.fetchOppijaViewData(this.props.oidHenkilo);
     }
 
-    async componentWillReceiveProps(nextProps) {
+    async componentWillReceiveProps(nextProps: Props) {
         if (nextProps.oidHenkilo !== this.props.oidHenkilo) {
             await this.fetchOppijaViewData(nextProps.oidHenkilo);
         }
     }
 
-    async fetchOppijaViewData(oid) {
+    async fetchOppijaViewData(oid: string) {
         await this.props.fetchHenkilo(oid);
         this.props.fetchHenkiloYksilointitieto(oid);
         this.props.fetchHenkiloSlaves(oid);
@@ -66,7 +70,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloSlaves,
     fetchYhteystietotyypitKoodisto,

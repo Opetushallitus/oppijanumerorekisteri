@@ -5,10 +5,14 @@ import LabelValue from './LabelValue';
 import StaticUtils from "../../StaticUtils";
 import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 
-type Props = {
-    henkilo: HenkiloState,
+type OwnProps = {
     readOnly: boolean,
     updateModelFieldAction: () => void,
+}
+
+type Props = {
+    ...OwnProps,
+    henkilo: HenkiloState,
 }
 
 const Hetu = (props: Props) => <LabelValue
@@ -26,4 +30,4 @@ const mapStateToProps = state => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {})(Hetu);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(Hetu);

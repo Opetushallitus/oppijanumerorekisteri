@@ -6,11 +6,15 @@ import PasswordPopupContent from "../../button/PasswordPopupContent";
 import {removeNotification} from "../../../../actions/notifications.actions";
 import type {Localisations} from "../../../../types/localisation.type";
 
-type Props = {
-    L: Localisations,
+type OwnProps = {
     styles: any,
     disabled?: boolean,
     oidHenkilo: string,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 class PasswordButton extends React.Component<Props> {
@@ -35,4 +39,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {removeNotification})(PasswordButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {removeNotification})(PasswordButton);

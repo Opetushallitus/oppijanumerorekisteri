@@ -31,14 +31,19 @@ import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import moment from 'moment';
 import {fetchAllowedKayttooikeusryhmasForOrganisation} from "../../actions/kayttooikeusryhma.actions";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
+import type {Kayttooikeusryhma} from '../../types/domain/kayttooikeus/kayttooikeusryhma.types'
 
-type Props = {
+type OwnProps = {
     addedOrgs: Array<KutsuOrganisaatio>,
     addedOrg: KutsuOrganisaatio,
+    index: number,
+}
+
+type Props = {
+    ...OwnProps,
     locale: string,
     L: Localisations,
     omatOrganisaatios: Array<OrganisaatioHenkilo>,
-    index: number,
     kutsuRemoveOrganisaatio: (string) => void,
     kutsuSetOrganisaatio: (number, ?OrganisaatioSelectObject) => void,
     fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
@@ -140,7 +145,7 @@ class AddedOrganization extends React.Component<Props, State> {
         )
     }
 
-    removeOrganisaatio(oid) {
+    removeOrganisaatio(oid: string) {
         this.props.kutsuRemoveOrganisaatio(oid);
     }
 
@@ -148,12 +153,12 @@ class AddedOrganization extends React.Component<Props, State> {
         this.props.kutsuOrganisaatioSetProperties(this.props.index, { voimassaLoppuPvm: voimassaLoppuPvm })
     }
 
-    addPermission(selectablePermissions, kayttooikeusryhma) {
+    addPermission(selectablePermissions: Array<MyonnettyKayttooikeusryhma>, kayttooikeusryhma: Kayttooikeusryhma) {
         const selectedPermission = R.find(R.propEq('ryhmaId', kayttooikeusryhma.id))(selectablePermissions);
         this.props.addOrganisaatioPermission(this.props.addedOrg.oid, selectedPermission);
     }
 
-    removePermission(permission, e) {
+    removePermission(permission: MyonnettyKayttooikeusryhma, e: SyntheticEvent<>) {
         e.preventDefault();
         this.props.removeOrganisaatioPermission(this.props.addedOrg.oid, permission);
     }
@@ -187,7 +192,7 @@ const mapStateToProps = (state) => ({
     ryhmatState: state.ryhmatState
 });
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     kutsuAddOrganisaatio,
     kutsuSetOrganisaatio,
     kutsuRemoveOrganisaatio,

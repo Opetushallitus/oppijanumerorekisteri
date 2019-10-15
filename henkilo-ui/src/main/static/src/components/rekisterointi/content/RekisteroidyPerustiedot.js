@@ -9,7 +9,7 @@ import Salasana from "../../common/henkilo/labelvalues/Salasana";
 import Asiointikieli from "../../common/henkilo/labelvalues/Asiointikieli";
 import type {Localisations} from "../../../types/localisation.type";
 
-type Props = {
+type OwnProps = {
     henkilo: {
         henkilo: {
             etunimet: string,
@@ -27,11 +27,15 @@ type Props = {
     koodisto: {
         kieli: Array<{}>,
     },
-    notifications: Array<{id: string, type: string, errorType: string,}>,
     isUsernameError: boolean,
     isPasswordError: boolean,
     isLanguageError: boolean,
     isKutsumanimiError: boolean,
+}
+
+type Props = {
+    ...OwnProps,
+    notifications: Array<{id: string, type: string, errorType: string,}>,
     L: Localisations,
 }
 
@@ -91,4 +95,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(RekisteroidyPerustiedot);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(RekisteroidyPerustiedot);

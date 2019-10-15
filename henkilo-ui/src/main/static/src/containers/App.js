@@ -18,21 +18,26 @@ import background from '../img/unauthenticated_background.jpg';
 import type {RouteType} from "../routes";
 import {NOTIFICATIONTYPES} from "../components/common/Notification/notificationtypes";
 import type {GlobalNotificationConfig} from "../types/notification.types";
+import type {Localisations} from '../types/localisation.type'
+
+type OwnProps = {
+    children: React.Node,
+    location: any,
+    routes: Array<RouteType>,
+    params: {[string]: string},
+}
 
 type AppProps = {
-    children: React.Node,
+    ...OwnProps,
     frontProperties: {
         initialized: boolean,
         properties: Array<any>,
     },
     l10n: LocalisationState,
     locale: Locale,
-    routes: Array<RouteType>,
     pathName: string,
     notificationList: Array<GlobalNotificationConfig>,
     removeGlobalNotification: (key: string) => void,
-    pathName: string,
-    params: {[string]: string},
     omattiedotLoaded: boolean,
     prequelsNotLoadedCount: number,
     fetchFrontProperties: () => void,
@@ -104,7 +109,7 @@ class App extends React.Component<AppProps, AppState> {
         this.warnOnUnsupportedLocale(L, props.locale);
     }
 
-    setBackGround = function (route) {
+    setBackGround = function (route: RouteType) {
         if (route.isUnauthenticated) {
             window.document.body.style.backgroundImage = `url('${background}')`;
             window.document.body.style.backgroundRepeat = 'no-repeat';
@@ -119,7 +124,7 @@ class App extends React.Component<AppProps, AppState> {
         }
     };
 
-    setTitle = function (L, route) {
+    setTitle = function (L: Localisations, route: RouteType) {
         if (L) {
             // Change document title
             const title = L[route.title] || L['TITLE_DEFAULT'];
@@ -129,7 +134,7 @@ class App extends React.Component<AppProps, AppState> {
         }
     };
 
-    warnOnUnsupportedLocale(L, locale) {
+    warnOnUnsupportedLocale(L: Localisations, locale: Locale) {
         if (!!L && !!locale && (!this.state.lastLocale || this.state.lastLocale !== locale)) {
             this.setState({lastLocale: locale}, () => {
                 if (locale.toLowerCase() !== 'fi' && locale.toLowerCase() !== 'sv') {
@@ -158,4 +163,4 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, {fetchFrontProperties, fetchPrequels, removeGlobalNotification, addGlobalNotification })(App)
+export default connect<AppProps, OwnProps, _, _, _, _>(mapStateToProps, {fetchFrontProperties, fetchPrequels, removeGlobalNotification, addGlobalNotification })(App)

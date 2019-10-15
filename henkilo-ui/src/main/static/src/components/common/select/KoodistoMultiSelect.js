@@ -8,13 +8,17 @@ import type {Koodisto, Koodi} from '../../../types/domain/koodisto/koodisto.type
 import {toLocalizedText} from '../../../localizabletext'
 import './KoodistoMultiSelect.css'
 
-type Props = {
+type OwnProps = {
     className?: string,
-    locale: Locale,
     placeholder: string,
     koodisto: Koodisto,
     value: any,
     onChange: (?Array<string>) => void,
+}
+
+type Props = {
+    ...OwnProps,
+    locale: Locale,
 }
 
 /**
@@ -63,4 +67,4 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps, {})(KoodistoMultiSelect)
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(KoodistoMultiSelect)

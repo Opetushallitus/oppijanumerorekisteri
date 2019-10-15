@@ -12,10 +12,14 @@ import {passivoiHenkiloOrg} from '../../../actions/henkilo.actions';
 import type {HenkiloState} from "../../../reducers/henkilo.reducer";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 
+type OwnProps = {
+    readOnly: boolean,
+}
+
 type Props = {
+    ...OwnProps,
     L: Localisations,
     locale: Locale,
-    readOnly: boolean,
     henkilo: HenkiloState,
     kayttooikeus: KayttooikeusRyhmaState,
     passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void,
@@ -120,4 +124,4 @@ const mapStateToProps = state => ({
     kayttooikeus: state.kayttooikeus,
 });
 
-export default connect(mapStateToProps, {passivoiHenkiloOrg})(HenkiloViewOrganisationContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {passivoiHenkiloOrg})(HenkiloViewOrganisationContent);

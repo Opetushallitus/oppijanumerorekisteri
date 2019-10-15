@@ -6,7 +6,7 @@ import Field from "../../field/Field";
 import type {Localisations} from "../../../../types/localisation.type";
 import type {SelectValue} from "../../field/Field";
 
-type Props = {
+type OwnProps = {
     values: {
         value?: any,
         label?: string,
@@ -23,10 +23,14 @@ type Props = {
     readOnly?: boolean,
     updateModelFieldAction?: (any) => void,
     updateDateFieldAction?: (SyntheticInputEvent<HTMLInputElement>) => void,
-    L: Localisations,
     autofocus?: boolean,
     required?: boolean,
     hideLabel?: boolean,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 const LabelValue = ({values, readOnly, updateModelFieldAction, updateDateFieldAction, L, autofocus, required, hideLabel}: Props) => !values.showOnlyOnWrite || !readOnly
@@ -52,4 +56,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 }) ;
 
-export default connect(mapStateToProps, {})(LabelValue);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(LabelValue);

@@ -278,11 +278,11 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
 
     hasError = (name: string): boolean => this.state.errors.findIndex(error => error.name === name) !== -1;
 
-    renderErrors = (name: string) => {
+    renderErrors = (name: string): any => {
         return this.state.errors.filter(error => error.name === name).map(this.renderError)
     };
 
-    renderError = (error: Error, index: number) => {
+    renderError = (error: Error, index: number): any => {
         return <div key={index} className="oph-field-text oph-error">{error.value}</div>
     };
 

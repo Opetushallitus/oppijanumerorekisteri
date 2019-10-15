@@ -19,7 +19,13 @@ import type {Localisations} from "../../../types/localisation.type";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import {addGlobalNotification} from '../../../actions/notification.actions';
 
+type OwnProps = {
+    router: any,
+    routeParams: any,
+}
+
 type Props = {
+    ...OwnProps,
     L: Localisations,
     fetchKayttooikeusryhmaById: (id: string) => Promise<any>,
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => Promise<any>,
@@ -38,7 +44,6 @@ type Props = {
     kayttooikeus: any,
     kayttooikeusState: KayttooikeusState,
     palvelutState: PalvelutState,
-    router: any,
     omattiedotOrganisaatiosLoading: boolean,
     kayttooikeusryhmaId?: string,
     addGlobalNotification: (payload: GlobalNotificationConfig) => void
@@ -90,7 +95,7 @@ const mapStateToProps = (state, ownProps) => {
     }
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     fetchKayttooikeusryhmaById,
     fetchPalveluRooliByKayttooikeusryhmaId,

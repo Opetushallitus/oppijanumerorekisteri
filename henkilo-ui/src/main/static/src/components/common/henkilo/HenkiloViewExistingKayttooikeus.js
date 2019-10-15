@@ -1,6 +1,6 @@
 // @flow
 import './HenkiloViewExpiredKayttooikeus.css';
-import React from 'react';
+import * as React from 'react'
 import {connect} from 'react-redux';
 import Table from '../table/Table';
 import moment from 'moment';
@@ -27,25 +27,29 @@ import {createEmailOptions} from "../../../utilities/henkilo.util";
 import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
 
-type Props = {
-    l10n: L10n,
-    locale: Locale,
+type OwnProps = {
     oidHenkilo: string,
     omattiedot: OmattiedotState,
-    henkilo: HenkiloState,
-    kayttooikeus: KayttooikeusRyhmaState,
     organisaatioCache: {[string]: {
             nimi: {},
             tyypit: Array<string>,
         }},
+    isOmattiedot: boolean,
+    vuosia: number,
+}
+
+type Props = {
+    ...OwnProps,
+    l10n: L10n,
+    locale: Locale,
+    henkilo: HenkiloState,
+    kayttooikeus: KayttooikeusRyhmaState,
     notifications: {
         existingKayttooikeus: Array<any>,
     },
     removeNotification: (string, string, ?string) => void,
     removePrivilege: (string, string, number) => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
-    isOmattiedot: boolean,
-    vuosia: number,
     addKayttooikeusToHenkilo: (string, string, Array<{
         id: number,
         kayttooikeudenTila: string,
@@ -121,7 +125,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         });
     }
 
-    loppupvmAction(value, idx) {
+    loppupvmAction(value: moment, idx: number) {
         const dates = [...this.state.dates];
         dates[idx].loppupvm = value;
         this.setState({
@@ -180,7 +184,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             });
     }
 
-    updateKayttooikeusryhma(id, kayttooikeudenTila, idx, organisaatioOid) {
+    updateKayttooikeusryhma(id: number, kayttooikeudenTila: string, idx: number, organisaatioOid: string) {
         this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [{
             id,
             kayttooikeudenTila,
@@ -189,14 +193,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         }]);
     }
 
-    isHaeJatkoaikaaButtonDisabled(idx, uusittavaKayttooikeusRyhma) {
+    isHaeJatkoaikaaButtonDisabled(idx: number, uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus
             .filter(haettuKayttooikeusRyhma => haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId
                 && uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid)[0];
         return this.state.emailSelection[idx].value === '' || this.state.emailOptions.length === 0 || anomusAlreadyExists;
     }
 
-    createEmailSelectionIfMoreThanOne(idx) {
+    createEmailSelectionIfMoreThanOne(idx: number): React.Node {
         return this.state.emailOptions.length > 1
             ? this.state.emailOptions.map((email, idx2) => <div key={idx2}>
                 <input type="radio"
@@ -209,7 +213,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     }
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
-    hasNoPermission(organisaatioOid, kayttooikeusryhmaId) {
+    hasNoPermission(organisaatioOid: string, kayttooikeusryhmaId: number) {
         return !this.props.kayttooikeus.grantableKayttooikeusLoading
             && !(this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
                 && this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid].includes(kayttooikeusryhmaId));
@@ -244,7 +248,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         );
     }
 
-    async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma, idx) {
+    async _createKayttooikeusAnomus(uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma, idx: number) {
         const kayttooikeusRyhmaIds = [uusittavaKayttooikeusRyhma.ryhmaId];
         const anomusData = {
             organisaatioOrRyhmaOid: uusittavaKayttooikeusRyhma.organisaatioOid,
@@ -272,7 +276,7 @@ const mapStateToProps = state => ({
     notifications: state.notifications,
 });
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     addKayttooikeusToHenkilo,
     removePrivilege,
     removeNotification,

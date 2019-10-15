@@ -8,15 +8,19 @@ import type {ReactSelectOption} from "../../../../types/react-select.types";
 import type {Locale} from "../../../../types/locale.type";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 
+type OwnProps = {
+    henkiloUpdate: Henkilo,
+    readOnly: boolean,
+    updateModelFieldAction: () => void,
+}
+
 type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: {
         kieli: Array<ReactSelectOption>,
     },
     locale: Locale,
-    henkiloUpdate: Henkilo,
-    readOnly: boolean,
-    updateModelFieldAction: () => void,
 }
 
 const Aidinkieli = (props: Props) => <LabelValue
@@ -37,4 +41,4 @@ const mapStateToProps = state => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {})(Aidinkieli);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(Aidinkieli);

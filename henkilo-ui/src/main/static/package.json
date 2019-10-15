@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "homepage": "/henkilo-ui",
   "dependencies": {
-    "@babel/polyfill": "7.0.0",
+    "babel-polyfill": "6.26.0",
     "classnames": "2.2.5",
     "history": "3.3.0",
     "isomorphic-fetch": "2.2.1",
@@ -34,14 +34,14 @@
     "shallow-equal-fuzzy": "0.0.2"
   },
   "devDependencies": {
-    "flow-bin": "0.84.0",
-    "flow-typed": "2.5.1",
+    "flow-bin": "0.109.0",
+    "flow-typed": "2.6.1",
+    "jest-resolve": "^23.6.0",
     "react-scripts": "2.1.4",
     "redux-devtools": "3.4.1",
     "redux-devtools-dock-monitor": "1.1.2",
     "redux-devtools-log-monitor": "1.4.0",
     "redux-logger": "3.0.6",
-    "jest-resolve": "^23.6.0",
     "request": "^2.88.0"
   },
   "scripts": {

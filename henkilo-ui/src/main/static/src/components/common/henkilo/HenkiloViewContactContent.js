@@ -1,6 +1,6 @@
 // @flow
 import './HenkiloViewContactContent.css';
-import React from 'react';
+import * as React from 'react';
 import {connect} from 'react-redux';
 import Columns from 'react-columns';
 import Field from '../field/Field';
@@ -21,16 +21,21 @@ import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import {hasAnyPalveluRooli} from "../../../utilities/palvelurooli.util";
 import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import {validateEmail} from "../../../validation/EmailValidator";
+import type {ReactSelectOption} from "../../../types/react-select.types";
 
-type Props = {
-    L: Localisations,
-    locale: Locale,
+type OwnProps = {
     henkilo: HenkiloState,
     readOnly: boolean,
     koodisto: KoodistoState,
+    view: string
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
+    locale: Locale,
     updateHenkiloAndRefetch: (Henkilo, ?GlobalNotificationConfig) => void,
     omattiedot: OmattiedotState,
-    view: string
 }
 
 type ContactInfo = {
@@ -56,7 +61,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     contactInfoTemplate: Array<{label: string, value: ?string, inputValue: ?string}>;
     _preEditData: {contactInfo: Array<ContactInfo>};
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.henkiloUpdate = JSON.parse(JSON.stringify(this.props.henkilo.henkilo)); // deep copy
@@ -83,7 +88,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     createContent() {
         const isEmail = (label: string) => label === PropertySingleton.state.SAHKOPOSTI;
         
-        const content = this.state.contactInfo
+        const content: Array<React.Node> = this.state.contactInfo
             .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1)
             .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.henkiloUiId) === -1)
             .map((yhteystiedotRyhmaFlat, idx) =>
@@ -200,7 +205,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     };
 
-    _updateModelField(contactInfo, event) {
+    _updateModelField(contactInfo: any, event: ReactSelectOption & SyntheticInputEvent<HTMLInputElement>) {
         const isContactInfoValid = this.validateContactInfo(contactInfo.label, event.currentTarget.value);
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);
         let contactInfoErrorFields = this.state.contactInfoErrorFields;
@@ -213,7 +218,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         this.setState({ modified: true, contactInfoErrorFields});
     };
 
-    _createYhteystiedotRyhma(yhteystietoryhmaTyyppi) {
+    _createYhteystiedotRyhma(yhteystietoryhmaTyyppi: string) {
         const henkiloUiId = 'henkilo_ui_id_' + PropertySingleton.getNewId();
         const newYhteystiedotRyhma = {
             readOnly: false,
@@ -234,7 +239,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         });
     };
 
-    _initialiseYhteystiedot = (henkiloUpdate, contactInfoTemplate, yhteystietotyypit, locale, yhteystietoRemoveList) =>
+    _initialiseYhteystiedot = (henkiloUpdate: Henkilo, contactInfoTemplate: Array<{label: string, value: ?string, inputValue: ?string}>, yhteystietotyypit: Array<any>, locale: string, yhteystietoRemoveList: Array<any>): Array<any> =>
         henkiloUpdate.yhteystiedotRyhma
             .map((yhteystiedotRyhma, idx) => {
                 const yhteystietoFlatList = this.createFlatYhteystieto(contactInfoTemplate, yhteystiedotRyhma.yhteystieto,
@@ -248,7 +253,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 return yhteystietoFlatList;
             });
 
-    createFlatYhteystieto(contactInfoTemplate, yhteystietoList, idx, yhteystiedotRyhma, yhteystietotyypit, locale, henkiloUiId): ContactInfo {
+    createFlatYhteystieto(contactInfoTemplate: Array<{label: string, value: ?string, inputValue: ?string}>, yhteystietoList: Array<any>, idx: number, yhteystiedotRyhma: any, yhteystietotyypit: Array<any>, locale: string, henkiloUiId?: string): ContactInfo {
         return {
             value: contactInfoTemplate.map((template, idx2) => (
                 {
@@ -280,4 +285,4 @@ const mapStateToProps = state => ({
     omattiedot: state.omattiedot
 });
 
-export default connect(mapStateToProps, {updateHenkiloAndRefetch})(HenkiloViewContactContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {updateHenkiloAndRefetch})(HenkiloViewContactContent);

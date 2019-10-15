@@ -10,7 +10,11 @@ import type { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reduc
 import type { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types'
 import type {Locale} from "../../types/locale.type";
 
+type OwnProps = {
+}
+
 type Props = {
+    ...OwnProps,
     L: Localisations,
     locale: Locale,
     palvelukayttajat: PalvelukayttajatState,
@@ -55,7 +59,7 @@ const mapStateToProps = (state) => ({
     omatOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading
 });
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     setPalvelukayttajatCriteria,
     fetchPalvelukayttajat,

@@ -11,9 +11,13 @@ import {addGlobalNotification} from "../../../actions/notification.actions";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import {NOTIFICATIONTYPES} from "../Notification/notificationtypes";
 
-type Props = {
+type OwnProps = {
     henkiloOid: string,
     L: Localisations,
+}
+
+type Props = {
+    ...OwnProps,
     addGlobalNotification: (GlobalNotificationConfig) => any
 }
 
@@ -115,4 +119,4 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
 
 }
 
-export default connect(() => ({}), {addGlobalNotification})(HakatunnistePopupContent)
+export default connect<Props, OwnProps, _, _, _, _>(() => ({}), {addGlobalNotification})(HakatunnistePopupContent)

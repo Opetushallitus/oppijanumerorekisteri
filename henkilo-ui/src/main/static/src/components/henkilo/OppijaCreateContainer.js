@@ -17,9 +17,14 @@ import type {Localisations} from "../../types/localisation.type";
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit'
 import {addGlobalNotification} from "../../actions/notification.actions";
 import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
+import type {GlobalNotificationConfig} from '../../types/notification.types';
+
+type OwnProps = {
+    router: any,
+}
 
 type Props = {
-    router: any,
+    ...OwnProps,
     locale: Locale,
     L: Localisations,
     fetchSukupuoliKoodisto: () => void,
@@ -28,7 +33,7 @@ type Props = {
     kieliKoodisto: Koodisto,
     fetchKansalaisuusKoodisto: () => void,
     kansalaisuusKoodisto: Koodisto,
-    addGlobalNotification: ({type: string, title: string}) => void,
+    addGlobalNotification: (payload: GlobalNotificationConfig) => void,
 }
 
 type State = {
@@ -98,7 +103,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 this.luoOppijaJaNavigoi(oppija)
             }
         } catch (error) {
-            this.props.addGlobalNotification({type: NOTIFICATIONTYPES.ERROR, title: this.props.L['HENKILON_LUONTI_EPAONNISTUI']});
+            this.props.addGlobalNotification({key: 'HENKILON_LUONTI_VIRHE', type: NOTIFICATIONTYPES.ERROR, title: this.props.L['HENKILON_LUONTI_EPAONNISTUI']});
             throw error
         }
     };
@@ -134,7 +139,7 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,

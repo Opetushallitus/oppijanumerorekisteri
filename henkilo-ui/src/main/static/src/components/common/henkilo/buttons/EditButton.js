@@ -4,10 +4,14 @@ import {connect} from 'react-redux';
 import Button from "../../button/Button";
 import type {Localisations} from "../../../../types/localisation.type";
 
-type Props = {
+type OwnProps = {
     editAction: () => any,
-    L: Localisations,
     disabled?: boolean
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 const EditButton = (props: Props) => <Button key="edit"
@@ -17,4 +21,4 @@ const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(EditButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(EditButton);

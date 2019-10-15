@@ -12,8 +12,12 @@ import {urls} from "oph-urls-js";
 import {http} from "../../../http";
 import PropertySingleton from "../../../globals/PropertySingleton";
 
-type Props = {
+type OwnProps = {
     oidHenkilo: string,
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations,
     addGlobalNotification: (GlobalNotificationConfig) => any
 }
@@ -117,4 +121,4 @@ const mapStateToProps = state => ({
     notifications: state.notifications,
 });
 
-export default connect(mapStateToProps, {addGlobalNotification})(PasswordPopupContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {addGlobalNotification})(PasswordPopupContent);

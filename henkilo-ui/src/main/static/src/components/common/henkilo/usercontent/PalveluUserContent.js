@@ -17,7 +17,7 @@ import * as R from 'ramda';
 import PassivoiButton from "../buttons/PassivoiButton";
 import AktivoiButton from '../buttons/AktivoiButton';
 
-type Props = {
+type OwnProps = {
     readOnly: boolean,
     discardAction: () => void,
     updateAction: () => void,
@@ -25,16 +25,20 @@ type Props = {
     updateDateAction: () => void,
     edit: () => void,
     henkiloUpdate: Henkilo,
+    aktivoiHenkilo: (oid: string) => void,
+    oidHenkilo: string,
+    isValidForm: boolean
+}
+
+type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: any,
     L: Localisations,
     locale: Locale,
-    aktivoiHenkilo: (oid: string) => void,
     yksiloiHenkilo: () => void,
     isAdmin: boolean,
-    oidHenkilo: string,
     fetchKayttajatieto: (string) => void,
-    isValidForm: boolean
 }
 
 type State = {
@@ -120,5 +124,5 @@ const mapStateToProps = state => ({
     isAdmin: state.omattiedot.isAdmin,
 });
 
-export default connect(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves, fetchKayttajatieto})(PalveluUserContent);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {yksiloiHenkilo, fetchHenkiloSlaves, fetchKayttajatieto})(PalveluUserContent);
 

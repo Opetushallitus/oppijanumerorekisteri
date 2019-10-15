@@ -6,11 +6,15 @@ import type {HenkiloState} from "../../../../reducers/henkilo.reducer";
 import type {Localisations} from "../../../../types/localisation.type";
 import {overrideHenkiloVtjData} from "../../../../actions/henkilo.actions";
 
+type OwnProps = {
+    disabled?: boolean
+}
+
 type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     L: Localisations,
     overrideHenkiloVtjData: (string) => void,
-    disabled?: boolean
 }
 
 const VtjOverrideButton = (props: Props) =>{
@@ -29,4 +33,4 @@ const mapStateToProps = state => ({
     henkilo: state.henkilo,
 });
 
-export default connect(mapStateToProps, {overrideHenkiloVtjData})(VtjOverrideButton);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {overrideHenkiloVtjData})(VtjOverrideButton);

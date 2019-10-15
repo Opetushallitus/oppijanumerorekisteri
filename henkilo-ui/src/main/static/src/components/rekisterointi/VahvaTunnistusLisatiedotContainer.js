@@ -9,8 +9,13 @@ import { urls } from 'oph-urls-js'
 import { http } from '../../http'
 import { isValidPassword } from '../../validation/PasswordValidator'
 
-type Props = {
+type OwnProps = {
+    params: any,
     router: any,
+}
+
+type Props = {
+    ...OwnProps,
     locale: Locale,
     L: Localisations,
     loginToken: string,
@@ -77,7 +82,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         this.refreshForm(values);
     };
 
-    refreshForm = (values, optionalErrors: Errors = []) => {
+    refreshForm = (values: Values, optionalErrors: Errors = []) => {
         let errors = this.getErrors(values, this.state.form.metadata, this.props.L);
 
         if(optionalErrors){
@@ -127,7 +132,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
         }
     };
 
-    onServerError = (error) => {
+    onServerError = (error: any) => {
         const L =  this.props.L;
 
         if(error && error.errorType === "PasswordException") {
@@ -149,6 +154,6 @@ const mapStateToProps = (state, ownProps) => ({
     tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
 });
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
 
 })(VahvaTunnistusLisatiedotContainer)

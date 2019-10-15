@@ -6,9 +6,13 @@ import LabelValueGroup from "./LabelValueGroup";
 import {fetchHenkiloLinkitykset} from "../../../../actions/henkiloLinkitys.actions";
 import type {HenkiloLinkitysState} from "../../../../reducers/henkiloLinkitys.reducer";
 
-type HenkiloVarmentajaSuhdeProps = {
+type OwnProps = {
     oidHenkilo: string,
     type: 'henkiloVarmentajas' | 'henkiloVarmennettavas',
+}
+
+type HenkiloVarmentajaSuhdeProps = {
+    ...OwnProps,
     fetchHenkiloLinkitykset: (string) => () => Promise<void>,
     linkitetyt: HenkiloLinkitysState,
 }
@@ -24,7 +28,7 @@ class HenkiloVarmentajaSuhde extends React.Component<HenkiloVarmentajaSuhdeProps
         this.props.fetchHenkiloLinkitykset(this.props.oidHenkilo);
     }
 
-    constructor(props) {
+    constructor(props: HenkiloVarmentajaSuhdeProps) {
         super(props);
 
         this.typeToL10nKeyMap = {
@@ -44,7 +48,7 @@ class HenkiloVarmentajaSuhde extends React.Component<HenkiloVarmentajaSuhdeProps
         </div>;
     }
 
-    linkitetytGroup(varmentajas) {
+    linkitetytGroup(varmentajas: Array<string>) {
         return <React.Fragment>
             {
                 varmentajas.map((varmentajaOid, index) =>
@@ -56,7 +60,7 @@ class HenkiloVarmentajaSuhde extends React.Component<HenkiloVarmentajaSuhdeProps
         </React.Fragment>;
     }
 
-    static getVirkailijaLink(oid) {
+    static getVirkailijaLink(oid: string) {
         return `/virkailija/${oid}`;
     }
 
@@ -66,4 +70,4 @@ const mapStateToProps = (state) => ({
     linkitetyt: state.linkitykset,
 });
 
-export default connect(mapStateToProps, {fetchHenkiloLinkitykset})(HenkiloVarmentajaSuhde);
+export default connect<HenkiloVarmentajaSuhdeProps, OwnProps, _, _, _, _>(mapStateToProps, {fetchHenkiloLinkitykset})(HenkiloVarmentajaSuhde);

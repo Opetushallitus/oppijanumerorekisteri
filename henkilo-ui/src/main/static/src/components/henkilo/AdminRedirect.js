@@ -4,9 +4,13 @@ import {connect} from 'react-redux';
 import {LocalNotification} from "../common/Notification/LocalNotification";
 import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes";
 
+type OwnProps = {
+    router: any,
+    params: any,
+}
 
 type Props = {
-    router: any,
+    ...OwnProps,
     oidHenkilo: string
 }
 
@@ -26,4 +30,4 @@ const mapStateToProps = (state, ownProps) => ({
     oidHenkilo: ownProps.params['oid']
 });
 
-export default connect(mapStateToProps, {})(AdminRedirect);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(AdminRedirect);

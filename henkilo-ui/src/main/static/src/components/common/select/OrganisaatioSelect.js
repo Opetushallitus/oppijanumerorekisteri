@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import type {Locale} from "../../../types/locale.type";
 import type {Localisations} from "../../../types/localisation.type";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
@@ -80,7 +80,7 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
         return organisaatio.organisaatiotyypit && organisaatio.organisaatiotyypit.length > 0 ? `(${organisaatio.organisaatiotyypit.toString()})` : null;
     };
 
-    _renderParents = (organisaatio: OrganisaatioSelectObject) => {
+    _renderParents = (organisaatio: OrganisaatioSelectObject): React.Node => {
         return organisaatio.parentNames.map((parent: string, index: number) =>
             <span key={index} className="parent">{parent} > </span>);
     };

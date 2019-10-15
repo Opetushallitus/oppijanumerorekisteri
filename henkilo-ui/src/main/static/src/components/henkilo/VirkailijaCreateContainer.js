@@ -11,8 +11,12 @@ import { isValidPassword } from '../../validation/PasswordValidator'
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 
-type Props = {
+type OwnProps = {
     router: any,
+}
+
+type Props = {
+    ...OwnProps,
     L: Localisations,
 }
 
@@ -136,4 +140,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, { })(VirkailijaCreateContainer);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, { })(VirkailijaCreateContainer);

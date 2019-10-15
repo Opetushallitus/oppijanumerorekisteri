@@ -12,13 +12,17 @@ import type { KayttooikeusOrganisaatiot } from '../../../../types/domain/kayttoo
 import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util'
 import HenkiloVarmentajaSuhde from "./HenkiloVarmentajaSuhde";
 
+type OwnProps = {
+    oppija?: boolean,
+}
+
 type LinkitetytHenkilotProps = {
+    ...OwnProps,
     kayttooikeudet: Array<KayttooikeusOrganisaatiot>,
     henkilo: HenkiloState,
     L: Localisations,
     unlinkHenkilo: (string, string) => void,
     fetchHenkiloSlaves: (string) => void,
-    oppija?: boolean,
 }
 
 /**
@@ -63,12 +67,12 @@ class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
             : null;
     }
 
-    getLinkHref(oid) {
+    getLinkHref(oid: string) {
         const url = this.props.oppija ? 'oppija' : 'virkailija';
         return `/${url}/${oid}`;
     }
 
-    async removeLink(masterOid, slaveOid) {
+    async removeLink(masterOid: string, slaveOid: string) {
         await this.props.unlinkHenkilo(masterOid, slaveOid);
         this.props.fetchHenkiloSlaves(masterOid);
     }
@@ -80,4 +84,4 @@ const mapStateToProps = state => ({
     kayttooikeudet: state.omattiedot.organisaatiot,
 });
 
-export default connect(mapStateToProps, {unlinkHenkilo, fetchHenkiloSlaves})(LinkitetytHenkilot);
+export default connect<LinkitetytHenkilotProps, OwnProps, _, _, _, _>(mapStateToProps, {unlinkHenkilo, fetchHenkiloSlaves})(LinkitetytHenkilot);

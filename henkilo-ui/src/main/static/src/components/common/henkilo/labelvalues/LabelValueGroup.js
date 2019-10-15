@@ -4,10 +4,14 @@ import {connect} from 'react-redux';
 import Columns from 'react-columns';
 import type {Localisations} from "../../../../types/localisation.type";
 
-type Props = {
-    L: Localisations,
+type OwnProps = {
     label: string,
     valueGroup: any,
+}
+
+type Props = {
+    ...OwnProps,
+    L: Localisations,
 }
 
 const LabelValueGroup = ({label, L, valueGroup}: Props) => <div id={label}>
@@ -21,4 +25,4 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps, {})(LabelValueGroup);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {})(LabelValueGroup);

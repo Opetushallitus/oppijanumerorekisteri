@@ -23,8 +23,12 @@ import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
-type Props = {
+type OwnProps = {
     oidHenkilo: string,
+}
+
+type Props = {
+    ...OwnProps,
     clearHenkilo: () => void,
     henkilo: HenkiloState,
     organisaatioCache: OrganisaatioCache,
@@ -61,7 +65,7 @@ class VirkailijaViewContainer extends React.Component<Props> {
         }
     }
 
-    async fetchVirkailijaViewData(oid) {
+    async fetchVirkailijaViewData(oid: string) {
         await this.props.fetchHenkilo(oid);
         this.props.fetchHenkiloYksilointitieto(oid);
         this.props.fetchHenkiloOrgs(oid);
@@ -95,7 +99,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloSlaves,
     fetchHenkiloOrgs,

@@ -8,15 +8,19 @@ import type {Locale} from "../../../../types/locale.type";
 import type {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types";
 import {fetchSukupuoliKoodisto} from "../../../../actions/koodisto.actions";
 
+type OwnProps = {
+    henkiloUpdate: Henkilo,
+    readOnly: boolean,
+    updateModelFieldAction: () => void,
+}
+
 type Props = {
+    ...OwnProps,
     henkilo: HenkiloState,
     koodisto: {
         sukupuoli: Array<ReactSelectOption>,
     },
     locale: Locale,
-    henkiloUpdate: Henkilo,
-    readOnly: boolean,
-    updateModelFieldAction: () => void,
     fetchSukupuoliKoodisto: () => void,
 }
 
@@ -47,4 +51,4 @@ const mapStateToProps = state => ({
     locale: state.locale,
 });
 
-export default connect(mapStateToProps, {fetchSukupuoliKoodisto})(Sukupuoli);
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {fetchSukupuoliKoodisto})(Sukupuoli);
