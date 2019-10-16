@@ -250,5 +250,36 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <!-- Run Flyway DB migrations to confirm they work -->
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>6.0.6</version>
+                        <executions>
+                            <execution>
+                                <id>validate-migrations</id>
+                                <goals>
+                                    <goal>migrate</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <driver>org.postgresql.Driver</driver>
+                            <url>jdbc:postgresql://localhost:5432/oppijanumerorekisteri</url>
+                            <user>oph</user>
+                            <password>oph</password>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>
