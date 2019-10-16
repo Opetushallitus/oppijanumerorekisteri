@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -36,10 +37,7 @@ import java.util.Optional;
 import static fi.vm.sade.oppijanumerorekisteri.AssertPublished.assertPublished;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -75,8 +73,8 @@ public class YksilointiITest {
     private AsiayhteysHakemusRepository asiayhteysHakemusRepository;
     @Autowired
     private AsiayhteysKayttooikeusRepository asiayhteysKayttooikeusRepository;
-
-
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @After
     public void cleanup() {
@@ -306,6 +304,68 @@ public class YksilointiITest {
         henkiloVanhaHetuCreateDto.setSukunimi("Testaaja");
         String vanhaOid = henkiloModificationService.createHenkilo(henkiloVanhaHetuCreateDto).getOidHenkilo();
         yksilointiService.yksiloiAutomaattisesti(vanhaOid);
+
+        reset(amazonSNS);
+
+        yksilointiService.yliajaHenkilonTiedot(vanhaOid);
+
+        assertPublished(objectMapper, amazonSNS, 2, uusiOid, vanhaOid);
+        assertThat(henkiloRepository.findByOidHenkilo(vanhaOid)).hasValueSatisfying(henkiloByVanhaOid -> {
+            assertThat(henkiloByVanhaOid)
+                    .returns(null, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 19), Henkilo::getSyntymaaika)
+                    .returns("1", Henkilo::getSukupuoli)
+                    .returns(null, Henkilo::getOppijanumero)
+                    .returns(true, Henkilo::isYksilointiYritetty)
+                    .returns(false, Henkilo::isYksiloityVTJ);
+        });
+        assertThat(hetuRepository.findByHenkiloOid(vanhaOid)).isEmpty();
+        assertThat(henkiloRepository.findByOidHenkilo(uusiOid)).hasValueSatisfying(henkiloByUusiOid -> {
+            assertThat(henkiloByUusiOid)
+                    .returns(uusiHetu, Henkilo::getHetu)
+                    .returns(LocalDate.of(1998, Month.JANUARY, 20), Henkilo::getSyntymaaika)
+                    .returns("2", Henkilo::getSukupuoli)
+                    .returns(uusiOid, Henkilo::getOppijanumero)
+                    .returns(true, Henkilo::isYksilointiYritetty)
+                    .returns(true, Henkilo::isYksiloityVTJ);
+        });
+        assertThat(hetuRepository.findByHenkiloOid(uusiOid)).containsExactlyInAnyOrder(vanhaHetu, uusiHetu);
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void yliajaHenkilonTiedotVanhaHetuLisattyYksilointiYrityksenJalkeen() {
+        String uusiHetu = "200198-7484";
+        YksiloityHenkilo uusiYksiloityHenkilo = new YksiloityHenkilo();
+        uusiYksiloityHenkilo.setHetu(uusiHetu);
+        uusiYksiloityHenkilo.setKutsumanimi("Teppo");
+        uusiYksiloityHenkilo.setEtunimi("Teppo");
+        uusiYksiloityHenkilo.setSukunimi("Testaaja");
+        when(vtjClientMock.fetchHenkilo(eq(uusiHetu))).thenReturn(Optional.of(uusiYksiloityHenkilo));
+        HenkiloCreateDto henkiloUusiHetuCreateDto = new HenkiloCreateDto();
+        henkiloUusiHetuCreateDto.setHetu(uusiHetu);
+        henkiloUusiHetuCreateDto.setKutsumanimi("Teppo");
+        henkiloUusiHetuCreateDto.setEtunimet("Teppo");
+        henkiloUusiHetuCreateDto.setSukunimi("Testaaja");
+        String uusiOid = henkiloModificationService.createHenkilo(henkiloUusiHetuCreateDto).getOidHenkilo();
+        yksilointiService.yksiloiAutomaattisesti(uusiOid);
+
+        String vanhaHetu = "190198-5259";
+        YksiloityHenkilo vanhaYksiloityHenkilo = new YksiloityHenkilo();
+        vanhaYksiloityHenkilo.setHetu(vanhaHetu);
+        vanhaYksiloityHenkilo.setKutsumanimi("Teppo");
+        vanhaYksiloityHenkilo.setEtunimi("Teppo");
+        vanhaYksiloityHenkilo.setSukunimi("Testaaja");
+        when(vtjClientMock.fetchHenkilo(eq(vanhaHetu))).thenReturn(Optional.of(vanhaYksiloityHenkilo));
+        HenkiloCreateDto henkiloVanhaHetuCreateDto = new HenkiloCreateDto();
+        henkiloVanhaHetuCreateDto.setHetu(vanhaHetu);
+        henkiloVanhaHetuCreateDto.setKutsumanimi("Tiina");
+        henkiloVanhaHetuCreateDto.setEtunimet("Tiina");
+        henkiloVanhaHetuCreateDto.setSukunimi("Testaaja");
+        String vanhaOid = henkiloModificationService.createHenkilo(henkiloVanhaHetuCreateDto).getOidHenkilo();
+        yksilointiService.yksiloiAutomaattisesti(vanhaOid);
+
+        jdbcTemplate.update("INSERT INTO henkilo_hetu SELECT id, ? FROM henkilo WHERE oidhenkilo = ?", vanhaHetu, uusiOid);
 
         reset(amazonSNS);
 
