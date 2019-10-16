@@ -25,6 +25,7 @@ import './HenkiloViewOpenKayttooikeusanomus.css';
 import type {TableHeading} from "../../../types/react-table.types";
 import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
+import type {OrganisaatioCache} from '../../../reducers/organisaatio.reducer';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: any,
@@ -53,9 +54,7 @@ type Props = {
     isOmattiedot?: boolean,
     omattiedot?: OmattiedotState,
     kayttooikeus: KayttooikeusRyhmaState,
-    organisaatioCache: {
-        nimi: string
-    },
+    organisaatioCache: OrganisaatioCache,
     isAnomusView?: boolean,
     manualSortSettings?: {
         manual: boolean,
@@ -287,7 +286,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     _parseOrganisaatioNimi = (myonnettyKayttooikeusryhma: MyonnettyKayttooikeusryhma): string => {
         const organisaatio = this.props.organisaatioCache[myonnettyKayttooikeusryhma.organisaatioOid];
         return organisaatio && organisaatio.nimi ?
-            organisaatio.nimi[this.props.locale] || organisaatio.nimi['fi'] || organisaatio.nimi['en'] || organisaatio.nimi['sv']:
+            organisaatio.nimi[this.props.locale] || organisaatio.nimi['fi'] || organisaatio.nimi['en'] || organisaatio.nimi['sv'] || organisaatio.oid:
             localize('HENKILO_AVOIMET_KAYTTOOIKEUDET_ORGANISAATIOTA_EI_LOYDY', this.props.l10n, this.props.locale);
     };
 

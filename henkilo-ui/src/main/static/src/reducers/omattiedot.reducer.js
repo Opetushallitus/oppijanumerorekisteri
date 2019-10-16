@@ -14,6 +14,7 @@ import {
 } from '../actions/actiontypes';
 import {getOrganisaatioOptionsAndFilter} from "../utilities/organisaatio.util";
 import type {KayttooikeusOrganisaatiot} from "../types/domain/kayttooikeus/KayttooikeusPerustiedot.types";
+import type {OrganisaatioHenkilo} from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 
 export type OmattiedotState = {|
@@ -21,7 +22,7 @@ export type OmattiedotState = {|
     +data: any,
     +initialized: boolean,
     +omattiedotOrganisaatiosLoading: boolean,
-    +organisaatios: Array<any>,
+    +organisaatios: Array<OrganisaatioHenkilo>,
     +casMeSuccess: boolean,
     +isAdmin: boolean,
     +anomusilmoitus: boolean,

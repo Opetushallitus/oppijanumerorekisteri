@@ -10,12 +10,13 @@ import KutsututBooleanRadioButton from "./KutsututBooleanRadioButton";
 import KayttooikeusryhmaSingleSelect from "../common/select/KayttooikeusryhmaSingleSelect";
 import type {Localisations, L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
-import type {Organisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types";
+import type {OrganisaatioWithChildren} from "../../types/domain/organisaatio/organisaatio.types";
 import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
 import CloseButton from "../common/button/CloseButton";
+import type {OrganisaatioHenkilo} from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type Payload = {
     searchTerm: string,
@@ -35,7 +36,7 @@ type Props = {
     deleteKutsu: (number) => void,
     fetchKutsus: (Payload, number, number) => void,
     kutsuListLoading: boolean,
-    organisaatiot: Array<Organisaatio>,
+    organisaatiot: Array<OrganisaatioHenkilo>,
     clearKutsuList: () => void,
     fetchOmattiedotOrganisaatios: () => void,
     omattiedotOrganisaatiosLoading: boolean,
@@ -48,7 +49,7 @@ type Kutsu = {
     etunimi?: string,
     sukunimi?: string,
     sahkoposti?: string,
-    organisaatiot: Array<Organisaatio>,
+    organisaatiot: Array<OrganisaatioWithChildren>,
     aikaleima: string,
 }
 
@@ -252,7 +253,7 @@ export default class KutsututPage extends React.Component<Props, State> {
         }
     }
 
-    parseOrganisaatioSelectObjects(organisaatiot: Array<any>): Array<OrganisaatioSelectObject> {
+    parseOrganisaatioSelectObjects(organisaatiot: Array<OrganisaatioHenkilo>): Array<OrganisaatioSelectObject> {
         return omattiedotOrganisaatiotToOrganisaatioSelectObject(organisaatiot, this.props.locale);
     };
 

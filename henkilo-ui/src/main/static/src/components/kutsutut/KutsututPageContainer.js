@@ -8,6 +8,7 @@ import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions';
 import type {KutsuRead} from "../../types/domain/kayttooikeus/Kutsu.types";
 import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
+import type {OrganisaatioHenkilo} from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type OwnProps = {
     location: any,
@@ -20,7 +21,7 @@ type Props = {
     l10n: L10n,
     locale: Locale,
     kutsuListLoading: boolean,
-    organisaatiot: Array<any>,
+    organisaatiot: Array<OrganisaatioHenkilo>,
     isAdmin: boolean,
     isOphVirkailija: boolean,
     fetchKutsus: (any) => void,

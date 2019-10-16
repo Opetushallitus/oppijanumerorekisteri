@@ -1,13 +1,25 @@
+// @flow
 import './CKKohde.css'
 import React from 'react'
-import PropTypes from 'prop-types'
 import RyhmaSelection from "../../select/RyhmaSelection";
 import {OrganisaatioSelectModal} from "../../select/OrganisaatioSelectModal";
 import {
     omattiedotOrganisaatiotToOrganisaatioSelectObject,
 } from "../../../../utilities/organisaatio.util";
+import type {OrganisaatioHenkilo} from '../../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import type {Localisations} from '../../../../types/localisation.type';
+import type {Locale} from '../../../../types/locale.type';
 
-const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale, selection}) =>
+type Props = {
+    organisationData: Array<OrganisaatioHenkilo>,
+    organisationAction: (any) => void,
+    organisationValue: string,
+    L: Localisations,
+    locale: Locale,
+    selection: string,
+}
+
+const CKKohde = ({organisationData, organisationAction, organisationValue, L, locale, selection}: Props) =>
      <tr key="kayttokohdeField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
@@ -36,15 +48,5 @@ const CKKohde = ({organisationData, organisationAction, organisationValue, L, lo
             <span className="oph-bold">{' ' + L['HENKILO_LISAA_KAYTTOOIKEUDET_TAI']}</span>
         </td>
     </tr>;
-
-
-
-CKKohde.propTypes = {
-    organisationData: PropTypes.array,
-    L: PropTypes.object,
-    organisationAction: PropTypes.func,
-    organisationValue: PropTypes.string,
-    locale: PropTypes.string,
-};
 
 export default CKKohde;

@@ -1,3 +1,4 @@
+// @flow
 import {
     FETCH_ORGANISATIONS_SUCCESS, FETCH_ALL_ORGANISAATIOS_REQUEST, FETCH_ALL_ORGANISAATIOS_SUCCESS,
     FETCH_ALL_ORGANISAATIOS_FAILURE, FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,
@@ -5,7 +6,7 @@ import {
 } from '../actions/actiontypes';
 
 import StaticUtils from '../components/common/StaticUtils'
-import type {OrganisaatioHakuTulos} from "../types/domain/organisaatio/organisaatio.types";
+import type {Organisaatio, OrganisaatioWithChildren} from "../types/domain/organisaatio/organisaatio.types";
 
 export type OrganisaatioCache = {
     [string]: Organisaatio
@@ -13,39 +14,29 @@ export type OrganisaatioCache = {
 
 export type OrganisaatioState = {
     organisaatioLoading: boolean,
-    organisaatiot: OrganisaatioHakuTulos,
+    organisaatioLoaded: boolean,
     cached: OrganisaatioCache,
     organisaatioHierarkiaLoading: boolean,
-    organisaatioHierarkia: OrganisaatioHakuTulos
+    organisaatioHierarkia?: OrganisaatioWithChildren
 }
 
 const initialState = {
     organisaatioLoading: false,
-    organisaatiot: {
-        numHits: 0,
-        organisaatiot: []
-    },
+    organisaatioLoaded: false,
     cached: {},
-    organisaatioHierarkia: {
-        numHits: 0,
-        organisaatiot: []
-    },
-    organisaatioHierarkiaLoading: false
+    organisaatioHierarkiaLoading: false,
 };
 
-export const organisaatio = (state = initialState, action) => {
+export const organisaatio = (state: OrganisaatioState = initialState, action: any) => {
     switch(action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
-            return Object.assign({ ...state, organisaatioLoading: true });
+            return { ...state, organisaatioLoading: true };
         case FETCH_ALL_ORGANISAATIOS_SUCCESS:
-            return Object.assign({}, state, {
-                organisaatioLoading: false,
-                organisaatiot: action.organisaatios,
-            });
+            return { ...state, organisaatioLoading: false, organisaatioLoaded: true };
         case FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST:
             return { ...state, organisaatioHierarkiaLoading: true};
         case FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS:
-            return { ...state, organisaatioHierarkia: action.organisaatios, organisaatioHierarkiaLoading: false};
+            return { ...state, organisaatioHierarkia: action.root, organisaatioHierarkiaLoading: false};
         case FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE:
             return { ...state, organisaatioHierarkiaLoading: false};
         case FETCH_ALL_ORGANISAATIOS_FAILURE:

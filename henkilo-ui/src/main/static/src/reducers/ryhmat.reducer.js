@@ -1,9 +1,9 @@
 // @flow
 import { FETCH_ALL_RYHMAT_REQUEST, FETCH_ALL_RYHMAT_SUCCESS, FETCH_ALL_RYHMAT_FAILURE } from '../actions/actiontypes';
-import type {Ryhma} from "../types/domain/organisaatio/organisaatio.types";
+import type {OrganisaatioWithChildren} from "../types/domain/organisaatio/organisaatio.types";
 
 export type RyhmatState = {|
-    +ryhmas: Array<Ryhma>,
+    +ryhmas: Array<OrganisaatioWithChildren>,
     +ryhmasLoading: boolean
 |}
 

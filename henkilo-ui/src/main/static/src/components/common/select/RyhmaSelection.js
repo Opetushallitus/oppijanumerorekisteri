@@ -1,5 +1,4 @@
 // @flow
-import './RyhmaSelection.css';
 import React from 'react';
 import OphSelect from './OphSelect';
 import {connect} from 'react-redux';
