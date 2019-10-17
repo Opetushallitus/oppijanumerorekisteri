@@ -4,6 +4,7 @@ jdk:
   - openjdk8
 services:
   - docker
+  - postgresql
 cache:
   directories:
     - $HOME/.m2
@@ -23,8 +24,14 @@ install:
   - source ci-tools/common/setup-tools.sh
   - export ARTIFACT_NAME="oppijanumerorekisteri"
 
+before_script:
+  - psql -c "CREATE USER \"oph\" PASSWORD 'oph';" -U postgres
+  - psql -c "CREATE DATABASE \"oppijanumerorekisteri\" OWNER 'oph';" -U postgres
+  # regrettably, migrations require extensive rights:
+  - psql -c "ALTER ROLE \"oph\" WITH superuser;" -U postgres
+
 script:
-  - mvn clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER}
+  - mvn -P ci clean install -B -Dbranch=${TRAVIS_BRANCH} -Drevision=${TRAVIS_COMMIT} -DbuildNumber=${TRAVIS_BUILD_NUMBER}
 
   - mv oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-*SNAPSHOT.jar $DOCKER_BUILD_DIR/artifact/${ARTIFACT_NAME}.jar
   - cp -vr src/main/resources/oph-configuration $DOCKER_BUILD_DIR/config/
