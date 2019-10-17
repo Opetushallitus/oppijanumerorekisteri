@@ -273,6 +273,7 @@
                             <url>jdbc:postgresql://localhost:5432/oppijanumerorekisteri</url>
                             <user>oph</user>
                             <password>oph</password>
+                            <table>schema_table_onr</table>
                         </configuration>
                     </plugin>
                 </plugins>
