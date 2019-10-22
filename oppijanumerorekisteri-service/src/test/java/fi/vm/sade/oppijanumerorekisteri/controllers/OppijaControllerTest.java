@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
+import fi.vm.sade.oppijanumerorekisteri.dto.KoodiUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
@@ -27,7 +28,9 @@ import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -80,6 +83,7 @@ public class OppijaControllerTest {
                 .etunimet("etu")
                 .kutsumanimi("etu")
                 .sukunimi("suku")
+                .kansalaisuus(Stream.of("kansalaisuus1").map(KoodiUpdateDto::new).collect(toSet()))
                 .build();
     }
 
@@ -168,6 +172,78 @@ public class OppijaControllerTest {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
         oppijaCreateDto.getHenkilo().setHetu("hetu1");
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+
+        mvc.perform(put("/oppija")
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(oppijaServiceMock);
+    }
+
+    @Test
+    @WithMockUser("user1")
+    public void putOppijaShouldRequireKansalaisuusFromNull() throws Exception {
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        oppijaCreateDto.getHenkilo().setKansalaisuus(null);
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+
+        mvc.perform(put("/oppija")
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(oppijaServiceMock);
+    }
+
+    @Test
+    @WithMockUser("user1")
+    public void putOppijaShouldRequireKansalaisuusFromEmpty() throws Exception {
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        oppijaCreateDto.getHenkilo().setKansalaisuus(emptySet());
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+
+        mvc.perform(put("/oppija")
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(oppijaServiceMock);
+    }
+
+    @Test
+    @WithMockUser("user1")
+    public void putOppijaShouldRequireKansalaisuusFromNullDto() throws Exception {
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((KoodiUpdateDto) null).collect(toSet()));
+        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+
+        mvc.perform(put("/oppija")
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(oppijaServiceMock);
+    }
+
+    @Test
+    @WithMockUser("user1")
+    public void putOppijaShouldRequireKansalaisuusFromNullKoodi() throws Exception {
+        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((String) null).map(KoodiUpdateDto::new).collect(toSet()));
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")

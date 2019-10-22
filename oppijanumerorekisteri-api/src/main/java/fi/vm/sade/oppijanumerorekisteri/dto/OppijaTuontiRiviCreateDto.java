@@ -1,17 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Setter;
+import lombok.*;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
-
 import java.time.LocalDate;
 import java.util.Collection;
 
@@ -65,7 +63,8 @@ public class OppijaTuontiRiviCreateDto {
         private KoodiUpdateDto aidinkieli;
 
         @ApiModelProperty("Koodisto 'maatjavaltiot2'")
-        private Collection<KoodiUpdateDto> kansalaisuus;
+        @NotEmpty
+        private Collection<@Valid @NotNull KoodiUpdateDto> kansalaisuus;
 
     }
 
