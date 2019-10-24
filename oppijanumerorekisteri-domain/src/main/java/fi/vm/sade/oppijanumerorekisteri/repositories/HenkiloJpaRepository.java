@@ -184,4 +184,12 @@ public interface HenkiloJpaRepository {
     long countByYksilointiKeskeneraiset(OppijaTuontiCriteria criteria);
 
     List<HenkiloPerustietoDto> findPerustiedotByHetuIn(List<String> hetut);
+
+    /**
+     * Etsii henkilön kaikista hetuista.
+     *
+     * @param hetu henkilötunnus, jolla etsitään
+     * @return hetulla löytynyt henkilö, tai tyhjä
+     */
+    Optional<Henkilo> findByKaikkiHetut(String hetu);
 }

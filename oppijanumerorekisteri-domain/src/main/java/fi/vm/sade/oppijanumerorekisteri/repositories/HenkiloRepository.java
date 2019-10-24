@@ -21,9 +21,6 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor, JpaReposit
 
     Optional<Henkilo> findByHetu(String hetu);
 
-    @Query("select h from Henkilo h where :hetu member of h.kaikkiHetut")
-    Optional<Henkilo> findByKaikkiHetut(@Param("hetu") String hetu);
-
     List<Henkilo> findByHetuIn(Set<String> hetut);
 
 }
