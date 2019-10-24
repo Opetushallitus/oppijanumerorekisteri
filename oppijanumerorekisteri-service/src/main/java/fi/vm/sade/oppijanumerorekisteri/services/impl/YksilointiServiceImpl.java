@@ -288,6 +288,9 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     private String maaritaSukupuoli(YksiloityHenkilo yksiloityHenkilo) {
         if(StringUtils.isEmpty(yksiloityHenkilo.getSukupuoli())) {
+            if (yksiloityHenkilo.getHetu() == null) {
+                return null;
+            }
             return HetuUtils.sukupuoliFromHetu(yksiloityHenkilo.getHetu());
         } else {
             return yksiloityHenkilo.getSukupuoli();
@@ -413,9 +416,9 @@ public class YksilointiServiceImpl implements YksilointiService {
      */
     private LinkResult kasitteleHetuMuutos(Henkilo henkilo, String uusiHetu) {
         String nykyinenHetu = henkilo.getHetu();
-        if (StringUtils.hasLength(uusiHetu) && !uusiHetu.equals(nykyinenHetu)
+        if (StringUtils.hasLength(uusiHetu) && (!uusiHetu.equals(nykyinenHetu)
                 || henkiloRepository.findByKaikkiHetut(uusiHetu)
-                .map(henkiloByHetu -> !henkiloByHetu.equals(henkilo)).orElse(false)) {
+                .map(henkiloByHetu -> !henkiloByHetu.equals(henkilo)).orElse(false))) {
             LinkResult linked = duplicateService.linkWithHetu(henkilo, uusiHetu);
             if (linked.master.equals(henkilo)) {
                 henkilo.setHetu(uusiHetu);
