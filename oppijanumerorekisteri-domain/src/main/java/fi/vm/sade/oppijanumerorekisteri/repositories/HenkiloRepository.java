@@ -3,7 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +20,6 @@ public interface HenkiloRepository extends QuerydslPredicateExecutor, JpaReposit
     Optional<Henkilo> findByOidHenkilo(String henkiloOid);
 
     Optional<Henkilo> findByHetu(String hetu);
-
-    Optional<Henkilo> findByKaikkiHetut(String hetu);
 
     List<Henkilo> findByHetuIn(Set<String> hetut);
 

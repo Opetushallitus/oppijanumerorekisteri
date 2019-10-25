@@ -669,4 +669,17 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         });
         return henkiloDtoList;
     }
+
+    @Override
+    public Optional<Henkilo> findByKaikkiHetut(String hetu) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        StringPath kaikkiHetutPath = Expressions.stringPath("kaikkiHetut");
+
+        return Optional.ofNullable(jpa()
+                .from(qHenkilo)
+                .join(qHenkilo.kaikkiHetut, kaikkiHetutPath)
+                .where(kaikkiHetutPath.eq(hetu))
+                .select(qHenkilo)
+                .fetchOne());
+    }
 }

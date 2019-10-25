@@ -37,11 +37,16 @@ import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.Yhteystied
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Transactional
 public class HenkiloRepositoryTests extends AbstractRepositoryTest {
+
+    private static final String TESTI_HETU = "111111-1119";
+    private static final String TOINEN_HETU = "121212-1219";
 
     @Autowired
     private HenkiloRepository dataRepository;
@@ -441,5 +446,43 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
             henkilo.getKansalaisuus().forEach(kansalaisuus -> this.testEntityManager.persistAndFlush(kansalaisuus));
         }
         this.testEntityManager.persistAndFlush(henkilo);
+    }
+
+    @Test
+    public void findByKaikkiHetutReturnsEmpty() {
+        String hetu = "111111-1239";
+        Henkilo testiHenkilo = createTestHenkilo(hetu);
+        dataRepository.saveAndFlush(testiHenkilo);
+        Henkilo toinenHenkilo = createTestHenkilo(TOINEN_HETU);
+        dataRepository.saveAndFlush(toinenHenkilo);
+
+        Optional<Henkilo> optHenkilo = dataRepository.findByKaikkiHetut(TESTI_HETU);
+        assertFalse(optHenkilo.isPresent());
+    }
+
+    @Test
+    public void findByKaikkiHetutReturnsMatch() {
+        Henkilo toinenHenkilo = createTestHenkilo(TOINEN_HETU);
+        dataRepository.saveAndFlush(toinenHenkilo);
+
+        String toinenHetu = "111111-1239";
+        Henkilo testiHenkilo = createTestHenkilo(TESTI_HETU);
+        testiHenkilo.addHetu(toinenHetu);
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Optional<Henkilo> optHenkilo = dataRepository.findByKaikkiHetut(toinenHetu);
+        assertTrue(optHenkilo.isPresent());
+    }
+
+    private Henkilo createTestHenkilo(String hetu) {
+        Date now = new Date();
+        return Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Testi Henkilö")
+                .sukunimi("Testinovic")
+                .hetu(hetu)
+                .created(now)
+                .modified(now)
+                .build();
     }
 }

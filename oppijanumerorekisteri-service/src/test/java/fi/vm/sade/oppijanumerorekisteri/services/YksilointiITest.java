@@ -278,6 +278,36 @@ public class YksilointiITest {
 
     @Test
     @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void yliajaHenkilonTiedotUusiHetuNull() {
+        HenkiloCreateDto henkiloCreateDto = new HenkiloCreateDto();
+        henkiloCreateDto.setKutsumanimi("teppo");
+        henkiloCreateDto.setEtunimet("teppo");
+        henkiloCreateDto.setSukunimi("testaaja");
+        henkiloModificationService.createHenkilo(henkiloCreateDto);
+        henkiloCreateDto.setHetu("190198-727T");
+        HenkiloDto henkiloReadDto = henkiloModificationService.createHenkilo(henkiloCreateDto);
+        YksiloityHenkilo yksiloityHenkilo = new YksiloityHenkilo();
+        yksiloityHenkilo.setHetu(null);
+        yksiloityHenkilo.setKutsumanimi("Esa");
+        yksiloityHenkilo.setEtunimi("Esa");
+        yksiloityHenkilo.setSukunimi("Testaaja");
+        when(vtjClientMock.fetchHenkilo(any())).thenReturn(Optional.of(yksiloityHenkilo));
+
+        yksilointiService.yksiloiAutomaattisesti(henkiloReadDto.getOidHenkilo());
+
+        assertThat(henkiloService.getByHetu(henkiloReadDto.getHetu()))
+                .returns("teppo", from(HenkiloReadDto::getEtunimet))
+                .returns(false, from(HenkiloReadDto::getYksiloityVTJ));
+
+        yksilointiService.yliajaHenkilonTiedot(henkiloReadDto.getOidHenkilo());
+
+        assertThat(henkiloService.getByHetu(henkiloReadDto.getHetu()))
+                .returns("Esa", from(HenkiloReadDto::getEtunimet))
+                .returns(true, from(HenkiloReadDto::getYksiloityVTJ));
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void yliajaHenkilonTiedotHetuMuutosUusiHetuYksiloityEnsin() {
         String uusiHetu = "200198-7484";
         String vanhaHetu = "190198-5259";
