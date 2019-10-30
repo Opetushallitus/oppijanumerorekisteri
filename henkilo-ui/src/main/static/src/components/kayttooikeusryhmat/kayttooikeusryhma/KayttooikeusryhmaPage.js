@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import moment from 'moment';
 import './KayttooikeusryhmaPage.css';
 import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
 import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
@@ -33,6 +34,7 @@ import type {KoodistoState} from "../../../reducers/koodisto.reducer";
 import KayttooikeusryhmatSallittuKayttajatyyppi from "./KayttooikeusryhmatSallittuKayttajatyyppi";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
 import ToggleKayttooikeusryhmaStateModal from "./ToggleKayttooikeusryhmaStateModal";
+import PropertySingleton from '../../../globals/PropertySingleton';
 
 export type KayttooikeusryhmaNimi = {
     FI: string,
@@ -197,6 +199,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
                     router={this.props.router}
                     kayttooikeusryhmaId={this.props.kayttooikeusryhmaId}
                 />
+                <span>{this.props.L['MUOKATTU']}: {this.renderKayttooikeusryhmaMuokattu()}</span>
             </div>
 
             <LocalNotification toggle={!this._validateKayttooikeusryhmaInputs()} type={'info'} title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO']}>
@@ -615,5 +618,18 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     getStatusString() {
         return this.state.isPassivoitu ? ` (${this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})` : '';
+    }
+
+    renderKayttooikeusryhmaMuokattu() {
+        const kayttooikeusryhma = this.props.kayttooikeus.kayttooikeusryhma;
+        if (kayttooikeusryhma) {
+            const muokattu = kayttooikeusryhma.muokattu ? moment(kayttooikeusryhma.muokattu).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI) : null;
+            const muokkaaja = kayttooikeusryhma.muokkaaja ? kayttooikeusryhma.muokkaaja : null;
+            if (muokattu && muokkaaja) {
+                return `${muokattu} (${muokkaaja})`;
+            }
+            return this.props.L['EI_TIEDOSSA'];
+        }
+        return '';
     }
 }
