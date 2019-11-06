@@ -31,7 +31,8 @@
     "react-visibility-sensor": "3.11.0",
     "redux": "3.7.2",
     "redux-thunk": "2.2.0",
-    "shallow-equal-fuzzy": "0.0.2"
+    "shallow-equal-fuzzy": "0.0.2",
+    "universal-cookie": "4.0.2"
   },
   "devDependencies": {
     "flow-bin": "0.109.0",
