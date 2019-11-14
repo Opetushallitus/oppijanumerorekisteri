@@ -1,5 +1,8 @@
 import fetch from 'isomorphic-fetch'
 import PropertySingleton from './globals/PropertySingleton'
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 const parseResponseBody = (response) => {
     return new Promise((resolve) => ((response.headers.get('content-type')
@@ -26,6 +29,7 @@ const getCommonOptions = () => ({
     headers: {
         "Caller-Id": '1.2.246.562.10.00000000001.henkilo-ui',
         "External-Permission-Service": PropertySingleton.getState().externalPermissionService || '',
+        "CSRF": cookies.get('CSRF'),
     },
     credentials: 'include',
 });
