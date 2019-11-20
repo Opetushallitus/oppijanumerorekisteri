@@ -180,6 +180,7 @@ export const removePrivilege = (oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId
     http.delete(url)
         .then(() => {
             dispatch(removePrivilegeSuccess(data));
+            dispatch(fetchHenkiloOrgs(oidHenkilo));
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(oidHenkilo));
         })
         .catch(error => dispatch(removePrivilegeFailure(error, data)));
