@@ -46,7 +46,7 @@ const requestAllHierarchialOrganisaatiosFailure = (error) => ({type: FETCH_ALL_O
 
 export const fetchAllHierarchialOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     if (typeof getState().organisaatio.organisaatioHierarkia === 'undefined' && !getState().organisaatio.organisaatioHierarkiaLoading) {
-        const criteria: OrganisaatioCriteria = { tila: ['AKTIIVINEN', 'SUUNNITELTU'] };
+        const criteria: OrganisaatioCriteria = { tyyppi: 'ORGANISAATIO', tila: ['AKTIIVINEN', 'SUUNNITELTU'] };
         const url = urls.url('kayttooikeus-service.organisaatio.root', criteria);
         dispatch(requestAllHierarchialOrganisaatios());
         try {
