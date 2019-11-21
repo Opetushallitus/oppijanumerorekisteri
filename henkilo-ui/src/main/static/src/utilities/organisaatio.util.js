@@ -24,7 +24,7 @@ export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (organisaatiot:
  * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a
  */
 export const organisaatioToOrganisaatioSelectObject = (organisaatio: OrganisaatioWithChildren, locale: Locale): Array<OrganisaatioSelectObject> => {
-    return organisaatioHierarkiaToOrganisaatioSelectObject([organisaatio, ...organisaatio.children], locale);
+    return organisaatioHierarkiaToOrganisaatioSelectObject([organisaatio], locale);
 }
 
 /*
