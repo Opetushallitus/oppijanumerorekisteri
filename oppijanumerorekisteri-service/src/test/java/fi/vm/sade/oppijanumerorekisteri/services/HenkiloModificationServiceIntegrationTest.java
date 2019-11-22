@@ -339,6 +339,7 @@ public class HenkiloModificationServiceIntegrationTest {
         updateDto.setOidHenkilo("YKSILOINNISSANIMIPIELESSA");
         HuoltajaCreateDto huoltaja1 = henkiloRepository.findByOidHenkilo("HUOLTAJA")
                 .map(huoltaja -> new HuoltajaCreateDto(huoltaja.getHetu(), huoltaja.getEtunimet(),
+                        huoltaja.getKutsumanimi(),
                         huoltaja.getSukunimi(), huoltaja.getSyntymaaika(), huoltaja.isYksiloityVTJ(),
                         huoltaja.getKansalaisuus().stream().map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet()),
                         "03", emptySet()))
@@ -478,6 +479,7 @@ public class HenkiloModificationServiceIntegrationTest {
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("")
                 .etunimet("huoltaja")
+                .kutsumanimi("huoltaja")
                 .sukunimi("tyhjallahetulla")
                 .syntymaaika(LocalDate.of(1950, 2, 2))
                 .huoltajuustyyppiKoodi("03")

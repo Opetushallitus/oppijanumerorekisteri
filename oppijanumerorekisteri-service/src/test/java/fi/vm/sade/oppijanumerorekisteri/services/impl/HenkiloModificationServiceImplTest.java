@@ -588,6 +588,7 @@ public class HenkiloModificationServiceImplTest {
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("271198-9197")
                 .etunimet("etunimi")
+                .kutsumanimi("etunimi")
                 .sukunimi("sukunimi")
                 .yksiloityVTJ(true)
                 .build();
