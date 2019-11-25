@@ -7,7 +7,6 @@ import lombok.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -24,6 +23,8 @@ public class HuoltajaCreateDto {
 
     private String etunimet;
 
+    private String kutsumanimi;
+
     private String sukunimi;
 
     private LocalDate syntymaaika;
@@ -39,12 +40,4 @@ public class HuoltajaCreateDto {
 
     @Valid
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
-
-    public String getKutsumanimi() {
-        return etunimet == null
-                ? null
-                : Arrays.stream(etunimet.split(" "))
-                .findFirst()
-                .orElse(null);
-    }
 }
