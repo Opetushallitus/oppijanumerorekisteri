@@ -21,6 +21,7 @@ import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.redu
 import type {OrganisaatioCache, OrganisaatioState} from "../../reducers/organisaatio.reducer";
 import type {RyhmatState} from "../../reducers/ryhmat.reducer";
 import type {OrganisaatioKayttooikeusryhmatState} from "../../reducers/organisaatiokayttooikeusryhmat.reducer";
+import type {OrganisaatioCriteria} from '../../types/domain/organisaatio/organisaatio.types';
 
 type OwnProps = {
     location: any;
@@ -50,7 +51,7 @@ type OmattiedotPageContainerProps = {
     fetchAllKayttooikeusryhmasForHenkilo: () => void,
     fetchAllKayttooikeusAnomusForHenkilo: (string) => void,
     updateHaettuKayttooikeusryhma: () => void,
-    fetchAllOrganisaatios: () => void,
+    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void,
     fetchAllRyhmas: () => void,
     fetchAllHierarchialOrganisaatios: () => void,
     clearHenkilo: () => void,

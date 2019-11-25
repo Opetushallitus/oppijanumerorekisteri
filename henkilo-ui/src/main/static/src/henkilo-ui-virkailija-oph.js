@@ -62,6 +62,9 @@ export default {
     "kayttooikeus-service.cas.emailverification.loginToken.validation": "kayttooikeus-service/cas/emailverification/loginTokenValidation/$1",
     "kayttooikeus-service.cas.logintoken.redirectToFrontpage": "kayttooikeus-service/cas/emailverification/redirectByLoginToken/$1",
     "kayttooikeus-service.henkilo.linkitykset": "kayttooikeus-service/henkilo/$1/linkitykset",
+    "kayttooikeus-service.organisaatio": "kayttooikeus-service/organisaatio",
+    "kayttooikeus-service.organisaatio.root": "kayttooikeus-service/organisaatio/root",
+    "kayttooikeus-service.organisaatio.by-oid": "kayttooikeus-service/organisaatio/$1",
 
     "oppijanumerorekisteri-service.baseUrl": "/",
     "oppijanumerorekisteri-service.henkilo.oid": "oppijanumerorekisteri-service/henkilo/$1",
@@ -85,12 +88,6 @@ export default {
     "oppijanumerorekisteri-service.oppija.yhteenveto": "oppijanumerorekisteri-service/oppija/yhteenveto",
     "oppijanumerorekisteri-service.oppija": "oppijanumerorekisteri-service/oppija",
     "oppijanumerorekisteri-service.prequel": "oppijanumerorekisteri-service/cas/prequel",
-
-    "organisaatio-service.baseUrl": "/",
-    "organisaatio-service.organisaatiot": "organisaatio-service/rest/organisaatio/v2/hae",
-    "organisaatio-service.organisaatio.ByOid": "organisaatio-service/rest/organisaatio/$1",
-    "organisaatio-service.organisaatiot.hierarkia": "organisaatio-service/rest/organisaatio/v2/hierarkia/hae",
-    "organisaatio-service.ryhmat": "organisaatio-service/rest/organisaatio/v2/ryhmat",
 
     "koodisto-service.baseUrl": "/",
     "koodisto-service.koodisto.kieli": "koodisto-service/rest/json/kieli/koodi",

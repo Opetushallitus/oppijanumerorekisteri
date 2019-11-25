@@ -10,6 +10,8 @@ import type {GlobalNotificationConfig} from "../../types/notification.types";
 import { NOTIFICATIONTYPES } from "../common/Notification/notificationtypes";
 import {KAYTTOOIKEUDENTILA} from "../../globals/KayttooikeudenTila";
 import {getEmptyKayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
+import type {OrganisaatioCache} from '../../reducers/organisaatio.reducer';
+import type {OrganisaatioCriteria} from '../../types/domain/organisaatio/organisaatio.types';
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
@@ -28,9 +30,9 @@ type Props = {
     l10n: any,
     locale: Locale,
     kayttooikeusAnomus: any,
-    organisaatioCache: any,
+    organisaatioCache: OrganisaatioCache,
     clearHaetutKayttooikeusryhmat: () => void,
-    fetchAllOrganisaatios: () => void,
+    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void,
     fetchHaetutKayttooikeusryhmat: (FetchHaetutKayttooikeusryhmatParameters) => void,
     haetutKayttooikeusryhmatLoading: boolean,
     fetchAllRyhmas: () => void,

@@ -26,14 +26,12 @@ import type {OmattiedotState} from "../../../reducers/omattiedot.reducer";
 import {createEmailOptions} from "../../../utilities/henkilo.util";
 import type {MyonnettyKayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types";
 import {KAYTTOOIKEUDENTILA} from "../../../globals/KayttooikeudenTila";
+import type {OrganisaatioCache} from '../../../reducers/organisaatio.reducer';
 
 type OwnProps = {
     oidHenkilo: string,
     omattiedot: OmattiedotState,
-    organisaatioCache: {[string]: {
-            nimi: {},
-            tyypit: Array<string>,
-        }},
+    organisaatioCache: OrganisaatioCache,
     isOmattiedot: boolean,
     vuosia: number,
 }

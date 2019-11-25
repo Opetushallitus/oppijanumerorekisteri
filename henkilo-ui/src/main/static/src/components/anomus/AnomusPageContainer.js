@@ -1,14 +1,45 @@
+// @flow
 import React from 'react'
 import {connect} from 'react-redux'
 import AnomusPage from './AnomusPage'
+import type {FetchHaetutKayttooikeusryhmatParameters} from './AnomusPage';
 import {clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat} from '../../actions/anomus.actions'
 import {fetchAllOrganisaatios, fetchAllRyhmas} from '../../actions/organisaatio.actions'
 import {updateHaettuKayttooikeusryhmaInAnomukset, clearHaettuKayttooikeusryhma} from '../../actions/kayttooikeusryhma.actions'
 import PropertySingleton from '../../globals/PropertySingleton'
 import {fetchOmattiedotOrganisaatios} from '../../actions/omattiedot.actions'
 import { addGlobalNotification } from "../../actions/notification.actions";
+import type {L10n} from '../../types/localisation.type';
+import type {Locale} from '../../types/locale.type';
+import type {OrganisaatioCache} from '../../reducers/organisaatio.reducer';
+import type {HaettuKayttooikeusryhma} from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types'
+import type {GlobalNotificationConfig} from '../../types/notification.types';
+import type {OrganisaatioCriteria} from '../../types/domain/organisaatio/organisaatio.types';
 
-class AnomusPageContainer extends React.Component {
+type OwnProps = {
+}
+
+type Props = {
+    ...OwnProps,
+    l10n: L10n,
+    locale: Locale,
+    kayttooikeusAnomus: Array<HaettuKayttooikeusryhma>,
+    kayttooikeusAnomusLoading: boolean,
+    organisaatioCache: OrganisaatioCache,
+    haetutKayttooikeusryhmatLoading: boolean,
+    rootOrganisaatioOid: string,
+    isAdmin: boolean,
+    fetchHaetutKayttooikeusryhmat: (FetchHaetutKayttooikeusryhmatParameters) => void,
+    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void,
+    fetchAllRyhmas: () => void,
+    updateHaettuKayttooikeusryhmaInAnomukset: (number, string, string, string, ?string) => Promise<any>,
+    clearHaettuKayttooikeusryhma: (number) => void,
+    clearHaetutKayttooikeusryhmat: () => void,
+    fetchOmattiedotOrganisaatios: () => void,
+    addGlobalNotification: (GlobalNotificationConfig) => void,
+}
+
+class AnomusPageContainer extends React.Component<Props> {
     render() {
         const L = this.props.l10n[this.props.locale];
         return (
@@ -28,13 +59,12 @@ const mapStateToProps = (state) => {
         kayttooikeusAnomusLoading: state.haetutKayttooikeusryhmat.isLoading,
         organisaatioCache: state.organisaatio.cached,
         haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.isLoading,
-        organisaatiot: state.organisaatio.organisaatiot.organisaatiot,
         rootOrganisaatioOid: PropertySingleton.getState().rootOrganisaatioOid,
         isAdmin: state.omattiedot.isAdmin,
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
     fetchHaetutKayttooikeusryhmat,
     fetchAllOrganisaatios,
     fetchAllRyhmas,

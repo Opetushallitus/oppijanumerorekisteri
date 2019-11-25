@@ -19,7 +19,7 @@ import {
 import {addGlobalNotification} from "../../../actions/notification.actions";
 import {OrganisaatioSelectModal} from "../select/OrganisaatioSelectModal";
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
-import {organisaatioHierarkiaToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
+import {organisaatioToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util";
 import {LocalNotification} from "../Notification/LocalNotification";
 import type {L10n} from "../../../types/localisation.type";
 import type {Locale} from "../../../types/locale.type";
@@ -309,8 +309,8 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 
     _parseOrganisaatioSelectOptions(organisaatioState: OrganisaatioState) {
-        return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia && organisaatioState.organisaatioHierarkia.organisaatiot.length > 0 ?
-            organisaatioHierarkiaToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia.organisaatiot, this.props.locale) : [];
+        return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia ?
+            organisaatioToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia, this.props.locale) : [];
     }
 
     _resetAnomusFormFields() {

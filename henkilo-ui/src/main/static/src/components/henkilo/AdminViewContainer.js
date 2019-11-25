@@ -20,7 +20,7 @@ import type {L10n} from "../../types/localisation.type";
 import type {Locale} from "../../types/locale.type";
 import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {KoodistoState} from "../../reducers/koodisto.reducer";
-import type {OrganisaatioState} from "../../reducers/organisaatio.reducer";
+import type {OrganisaatioCache} from "../../reducers/organisaatio.reducer";
 import type {KayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer";
 
 type OwnProps = {
@@ -50,7 +50,7 @@ type Props = {
     henkilo: HenkiloState,
     kayttooikeus: KayttooikeusRyhmaState,
     koodisto: KoodistoState,
-    organisaatioCache: OrganisaatioState,
+    organisaatioCache: OrganisaatioCache,
 }
 
 class AdminViewContainer extends React.Component<Props> {

@@ -17,8 +17,8 @@ import type {Locale} from "../../../types/locale.type";
 import type {ValidationMessage} from "../../../types/validation.type";
 import PropertySingleton from "../../../globals/PropertySingleton";
 import type { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet'
-import type {OrganisaatioState} from "../../../reducers/organisaatio.reducer";
 import type {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer";
+import type {OrganisaatioHenkilo} from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type OwnProps = {
     vuosia: number,
@@ -30,7 +30,7 @@ type OwnProps = {
 
 type Props = {
     ...OwnProps,
-    organisaatios: OrganisaatioState,
+    organisaatios: Array<OrganisaatioHenkilo>,
     fetchAllowedKayttooikeusryhmasForOrganisation: (string, string) => void,
     L: Localisations,
     locale: Locale,

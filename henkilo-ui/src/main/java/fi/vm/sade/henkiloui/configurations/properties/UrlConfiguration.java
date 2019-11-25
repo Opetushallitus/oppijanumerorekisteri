@@ -21,7 +21,6 @@ public class UrlConfiguration extends OphProperties {
         this.frontProperties.put("shibboleth.baseUrl", environment.getRequiredProperty("host.host-shibboleth"));
         // Optional, default to localhost
         this.addUrlIfConfigured("front.lokalisointi.baseUrl", "lokalisointi.baseUrl");
-        this.addUrlIfConfigured("front.organisaatio.baseUrl", "organisaatio-service.baseUrl");
         this.addUrlIfConfigured("front.koodisto.baseUrl", "koodisto-service.baseUrl");
         this.addUrlIfConfigured("front.kayttooikeus.baseUrl", "kayttooikeus-service.baseUrl");
         this.addUrlIfConfigured("front.oppijanumerorekisteri.baseUrl", "oppijanumerorekisteri-service.baseUrl");

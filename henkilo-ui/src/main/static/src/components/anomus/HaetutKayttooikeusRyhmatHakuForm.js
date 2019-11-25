@@ -16,6 +16,7 @@ import type {Locale} from "../../types/locale.type";
 import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal";
 import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../utilities/organisaatio.util";
 import type {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types";
+import type {OrganisaatioHenkilo} from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type OwnProps = {
     onSubmit: ({}) => void,
@@ -25,7 +26,7 @@ type Props = {
     ...OwnProps,
     L: Localisations,
     locale: Locale,
-    organisaatios: Array<{}>,
+    organisaatios: Array<OrganisaatioHenkilo>,
     isAdmin: boolean,
     isOphVirkailija: boolean,
     haetutKayttooikeusryhmatLoading: boolean,

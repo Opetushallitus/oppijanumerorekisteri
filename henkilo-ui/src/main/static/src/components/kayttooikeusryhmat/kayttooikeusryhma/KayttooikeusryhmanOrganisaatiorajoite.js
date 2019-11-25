@@ -10,10 +10,11 @@ import {OrganisaatioSelectModal} from "../../common/select/OrganisaatioSelectMod
 import type {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types";
 import OphCheckboxFieldset from "../../common/forms/OphCheckboxFieldset";
 import { toLocalizedText } from '../../../localizabletext';
+import type {OrganisaatioHenkilo} from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type Props = {
     L: Localisations,
-    organisaatios: Array<any>,
+    organisaatios: Array<OrganisaatioHenkilo>,
     koodisto: any,
     locale: Locale,
     ryhmaRestriction: boolean,

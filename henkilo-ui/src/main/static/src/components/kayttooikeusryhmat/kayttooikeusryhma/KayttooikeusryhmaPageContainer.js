@@ -18,6 +18,9 @@ import type {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer";
 import type {Localisations} from "../../../types/localisation.type";
 import type {GlobalNotificationConfig} from "../../../types/notification.types";
 import {addGlobalNotification} from '../../../actions/notification.actions';
+import type {OrganisaatioCache} from '../../../reducers/organisaatio.reducer';
+import type {OrganisaatioHenkilo} from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import type {OrganisaatioCriteria} from '../../../types/domain/organisaatio/organisaatio.types';
 
 type OwnProps = {
     router: any,
@@ -34,11 +37,11 @@ type Props = {
     fetchOrganisaatiotyypit: () => void,
     fetchAllKayttooikeusryhma: () => void,
     fetchAllPalvelut: () => void,
-    fetchAllOrganisaatios: (any) => void,
+    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void,
     fetchKayttooikeusryhmaSlaves: (id: string) => Promise<any>,
     fetchPalveluKayttooikeus: (palveluName: string) => void,
-    organisaatios: any,
-    organisaatioCache: {[string]: any},
+    organisaatios: Array<OrganisaatioHenkilo>,
+    organisaatioCache: OrganisaatioCache,
     koodisto: any,
     locale: Locale,
     kayttooikeus: any,
@@ -58,7 +61,7 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
         this.props.fetchOppilaitostyypit();
         this.props.fetchOrganisaatiotyypit();
         this.props.fetchAllPalvelut();
-        this.props.fetchAllOrganisaatios({aktiiviset: true, lakkautetut: true, suunnitellut: false});
+        this.props.fetchAllOrganisaatios({ tyyppi: 'ORGANISAATIO', tila: ['AKTIIVINEN', 'PASSIIVINEN'] });
         if (kayttooikeusryhmaId) {
             this.props.fetchKayttooikeusryhmaById(kayttooikeusryhmaId);
             this.props.fetchPalveluRooliByKayttooikeusryhmaId(kayttooikeusryhmaId);

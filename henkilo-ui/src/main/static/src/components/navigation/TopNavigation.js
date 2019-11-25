@@ -15,6 +15,7 @@ import type {HenkiloState} from "../../reducers/henkilo.reducer";
 import type {RouteType} from "../../routes";
 import AngleDownIcon from "../common/icons/AngleDownIcon";
 import PlaceholderIcon from "../common/icons/PlaceholderIcon";
+import type {KayttooikeusOrganisaatiot} from '../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 
 type OwnProps = {
     pathName: ?string,
@@ -26,7 +27,7 @@ type Props = {
     ...OwnProps,
     L: Localisations,
     isRekisterinpitaja: boolean,
-    organisaatiot: Array<any>,
+    organisaatiot: Array<KayttooikeusOrganisaatiot>,
     henkilo?: HenkiloState,
 }
 
