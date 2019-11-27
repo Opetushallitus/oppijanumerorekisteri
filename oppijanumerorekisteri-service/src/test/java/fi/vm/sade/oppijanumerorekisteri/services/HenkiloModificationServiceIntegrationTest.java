@@ -34,7 +34,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.groups.Tuple.tuple;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
@@ -331,8 +330,6 @@ public class HenkiloModificationServiceIntegrationTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void forceUpdateHenkiloPalauttaaHuoltajan() {
-        when(koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).thenReturn(Stream.of("03", "04")
-                .map(koodi -> new KoodiType() {{ setKoodiArvo(koodi); }}).collect(toList()));
         when(koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).thenReturn(Stream.of("246")
                 .map(koodi -> new KoodiType() {{ setKoodiArvo(koodi); }}).collect(toList()));
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
@@ -342,15 +339,15 @@ public class HenkiloModificationServiceIntegrationTest {
                         huoltaja.getKutsumanimi(),
                         huoltaja.getSukunimi(), huoltaja.getSyntymaaika(), huoltaja.isYksiloityVTJ(),
                         huoltaja.getKansalaisuus().stream().map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet()),
-                        "03", emptySet()))
+                        emptySet()))
                 .get();
         updateDto.setHuoltajat(singleton(huoltaja1));
 
         HenkiloForceReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
 
         assertThat(readDto.getHuoltajat())
-                .extracting(HuoltajaCreateDto::getHuoltajuustyyppiKoodi, HuoltajaCreateDto::getHetu)
-                .containsExactly(tuple("03", huoltaja1.getHetu()));
+                .extracting(HuoltajaCreateDto::getHetu)
+                .containsExactly(huoltaja1.getHetu());
         assertPublished(objectMapper, amazonSNS, 2, "YKSILOINNISSANIMIPIELESSA", "HUOLTAJA");
     }
 
@@ -362,20 +359,15 @@ public class HenkiloModificationServiceIntegrationTest {
         HenkiloForceReadDto readDto = henkiloService.getByHetuForMuutostieto(hetu);
 
         assertThat(readDto.getHuoltajat())
-                .extracting(HuoltajaCreateDto::getHuoltajuustyyppiKoodi, HuoltajaCreateDto::getHetu)
-                .containsExactly(tuple("03", "111298-917M"));
+                .extracting(HuoltajaCreateDto::getHetu)
+                .containsExactly("111298-917M");
     }
 
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateValidoiHuoltajanHuoltajatyyppi() {
-        KoodiType koodiType = new KoodiType();
-        koodiType.setKoodiArvo("03");
-        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(koodiType));
-
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("hetu")
-                .huoltajuustyyppiKoodi("VÄÄRÄ TYYPPI")
                 .kansalaisuusKoodi(Collections.singleton("246"))
                 .build();
 
@@ -388,16 +380,12 @@ public class HenkiloModificationServiceIntegrationTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateValidoiHuoltajanKansalaisuus() {
-        KoodiType huoltajuustyyppi = new KoodiType();
-        huoltajuustyyppi.setKoodiArvo("03");
         KoodiType kansalaisuustyyppi = new KoodiType();
         kansalaisuustyyppi.setKoodiArvo("246");
-        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
         given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("hetu")
-                .huoltajuustyyppiKoodi("03")
                 .kansalaisuusKoodi(Collections.singleton("VÄÄRÄ TYYPPI"))
                 .build();
 
@@ -410,16 +398,12 @@ public class HenkiloModificationServiceIntegrationTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreate() {
-        KoodiType huoltajuustyyppi = new KoodiType();
-        huoltajuustyyppi.setKoodiArvo("03");
         KoodiType kansalaisuustyyppi = new KoodiType();
         kansalaisuustyyppi.setKoodiArvo("246");
-        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
         given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("271198-9197")
-                .huoltajuustyyppiKoodi("03")
                 .kansalaisuusKoodi(Collections.singleton("246"))
                 .build();
 
@@ -432,16 +416,12 @@ public class HenkiloModificationServiceIntegrationTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaUpdateExisting() {
-        KoodiType huoltajuustyyppi = new KoodiType();
-        huoltajuustyyppi.setKoodiArvo("03");
         KoodiType kansalaisuustyyppi = new KoodiType();
         kansalaisuustyyppi.setKoodiArvo("246");
-        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
         given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
                 .hetu("111298-917M")
-                .huoltajuustyyppiKoodi("03")
                 .kansalaisuusKoodi(Collections.singleton("246"))
                 .yksiloityVTJ(true)
                 .yhteystiedotRyhma(Collections.singleton(YhteystiedotRyhmaDto.builder()
@@ -469,11 +449,8 @@ public class HenkiloModificationServiceIntegrationTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void huoltajaCreateWithEmptyHetu() {
-        KoodiType huoltajuustyyppi = new KoodiType();
-        huoltajuustyyppi.setKoodiArvo("03");
         KoodiType kansalaisuustyyppi = new KoodiType();
         kansalaisuustyyppi.setKoodiArvo("246");
-        given(this.koodistoService.list(eq(Koodisto.HUOLTAJUUSTYYPPI))).willReturn(Collections.singleton(huoltajuustyyppi));
         given(this.koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).willReturn(Collections.singleton(kansalaisuustyyppi));
 
         HuoltajaCreateDto huoltajaCreateDto = HuoltajaCreateDto.builder()
@@ -482,7 +459,6 @@ public class HenkiloModificationServiceIntegrationTest {
                 .kutsumanimi("huoltaja")
                 .sukunimi("tyhjallahetulla")
                 .syntymaaika(LocalDate.of(1950, 2, 2))
-                .huoltajuustyyppiKoodi("03")
                 .kansalaisuusKoodi(Collections.singleton("246"))
                 .build();
 

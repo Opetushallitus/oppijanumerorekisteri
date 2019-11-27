@@ -258,7 +258,6 @@ public class YksilointiServiceTest {
         this.henkilo.setHuoltajat(Collections.singleton(HenkiloHuoltajaSuhde.builder()
                 .huoltaja(Henkilo.builder().oidHenkilo("vanhahuoltaja").build())
                 .lapsi(this.henkilo)
-                .huoltajuustyyppiKoodi("")
                 .build()));
         vtjClient.setUsedFixture("/vtj-testdata/vtj-response-huoltajat.json");
         when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
@@ -272,9 +271,7 @@ public class YksilointiServiceTest {
         assertThat(yksiloity.getHuoltajat().stream().map(HenkiloHuoltajaSuhde::getHuoltaja))
                 .extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getSukunimi)
                 .containsExactlyInAnyOrder(Tuple.tuple("200998-9237", null, null), Tuple.tuple(null, "Tappi Topio", "Testaaja"));
-        assertThat(yksiloity.getHuoltajat())
-                .extracting(HenkiloHuoltajaSuhde::getHuoltajuustyyppiKoodi)
-                .containsExactly("03", "03");
+        assertThat(yksiloity.getHuoltajat()).hasSize(2);
         verify(henkiloModificationService).update(eq(yksiloity));
     }
 

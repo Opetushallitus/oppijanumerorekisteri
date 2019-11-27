@@ -32,14 +32,12 @@
   ],
   "huoltajat": [
     {
-      "hetu": "200998-9237",
-      "huoltajuustyyppiKoodi": "03"
+      "hetu": "200998-9237"
     },
     {
       "etunimi": "Tappi Topio",
       "kutsumanimi": "Tappi",
-      "sukunimi": "Testaaja",
-      "huoltajuustyyppiKoodi": "03"
+      "sukunimi": "Testaaja"
     }
   ]
 }

@@ -20,8 +20,8 @@ INSERT INTO yksilointivirhe (id, version, aikaleima, poikkeus, henkilo_id) VALUE
 INSERT INTO yksilointitieto (id, version, henkiloid, turvakielto) VALUES
 (-1, 0, -4, FALSE);
 
-INSERT INTO henkilo_huoltaja_suhde (id, version, lapsi_id, huoltaja_id, huoltajuustyyppi_koodi) VALUES
-(-1, 0, -4, -5, '03')
+INSERT INTO henkilo_huoltaja_suhde (id, version, lapsi_id, huoltaja_id) VALUES
+(-1, 0, -4, -5)
 ;
 
 INSERT INTO yhteystiedotryhma (id, version, ryhmakuvaus, henkilo_id, ryhma_alkuperatieto, read_only, yksilointitieto_id) VALUES
