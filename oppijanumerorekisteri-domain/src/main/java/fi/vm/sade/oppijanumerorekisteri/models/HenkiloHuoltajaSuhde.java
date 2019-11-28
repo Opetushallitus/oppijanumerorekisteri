@@ -1,10 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 import lombok.*;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-
-import org.hibernate.envers.Audited;
 
 @Entity
 @Getter
@@ -22,10 +21,4 @@ public class HenkiloHuoltajaSuhde extends IdentifiableAndVersionedEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn
     private Henkilo huoltaja;
-
-    private String huoltajuustyyppiKoodi;
-
-    public Henkilo getHuoltaja(){
-        return this.huoltaja;
-    }
 }

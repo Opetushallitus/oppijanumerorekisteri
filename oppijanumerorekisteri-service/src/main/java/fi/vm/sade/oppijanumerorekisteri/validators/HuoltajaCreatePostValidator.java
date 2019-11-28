@@ -24,10 +24,6 @@ public class HuoltajaCreatePostValidator implements Validator {
         HuoltajaCreateDto henkilo = (HuoltajaCreateDto) o;
         KoodiValidator koodiValidator = new KoodiValidator(koodistoService, errors);
 
-        koodiValidator.validate(Koodisto.HUOLTAJUUSTYYPPI,
-                henkilo.getHuoltajuustyyppiKoodi(),
-                "huoltajuustyyppiKoodi",
-                "invalid.huoltajuustyyppiKoodi");
         koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2,
                 henkilo.getKansalaisuusKoodi(),
                 "kansalaisuusKoodi",

@@ -166,7 +166,6 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
                         .map(huoltajaCreateDto -> HenkiloHuoltajaSuhde.builder()
                                 .lapsi(henkiloSaved)
                                 .huoltaja(this.findOrCreateHuoltaja(huoltajaCreateDto, henkiloSaved))
-                                .huoltajuustyyppiKoodi(huoltajaCreateDto.getHuoltajuustyyppiKoodi())
                                 .build())
                         .collect(Collectors.toSet()))
                 .ifPresent(henkiloSaved::setHuoltajat);

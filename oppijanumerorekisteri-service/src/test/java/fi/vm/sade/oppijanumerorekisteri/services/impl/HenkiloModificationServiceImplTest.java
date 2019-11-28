@@ -628,7 +628,6 @@ public class HenkiloModificationServiceImplTest {
                         .etunimet("etunimi")
                         .sukunimi("sukunimi")
                         .build())
-                .huoltajuustyyppiKoodi("03")
                 .build()));
         given(this.henkiloDataRepositoryMock.findByOidHenkilo(any())).willReturn(Optional.of(henkiloResult));
         doReturn(Henkilo.builder().etunimet("etunimi").sukunimi("sukunimi").build()).when(this.service).createHenkilo(any(HuoltajaCreateDto.class));

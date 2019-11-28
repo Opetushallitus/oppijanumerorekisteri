@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -33,10 +32,6 @@ public class HuoltajaCreateDto {
 
     // Valtiot ja maat 2 koodisto
     private Set<String> kansalaisuusKoodi;
-
-    // Huoltajuustyyppi koodisto
-    @NotNull
-    private String huoltajuustyyppiKoodi;
 
     @Valid
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
