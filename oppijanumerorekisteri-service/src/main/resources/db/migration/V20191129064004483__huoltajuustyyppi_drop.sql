@@ -1,0 +1,1 @@
+alter table henkilo_huoltaja_suhde drop column huoltajuustyyppi_koodi;
