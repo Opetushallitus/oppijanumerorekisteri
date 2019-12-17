@@ -61,10 +61,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @NotAudited
     private Set<String> kaikkiHetut;
 
+    @Column(nullable = false)
     private String etunimet;
 
+    @Column(nullable = false)
     private String kutsumanimi;
 
+    @Column(nullable = false)
     private String sukunimi;
 
     @ManyToOne(fetch = FetchType.LAZY)

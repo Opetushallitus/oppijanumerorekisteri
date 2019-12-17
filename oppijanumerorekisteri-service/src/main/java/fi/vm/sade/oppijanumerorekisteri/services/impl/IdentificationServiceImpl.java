@@ -170,6 +170,7 @@ public class IdentificationServiceImpl implements IdentificationService {
             this.yksilointiService.yksiloiAutomaattisesti(oid);
             log.debug("Henkilo {} successfully identified.", oid);
         } catch (Exception e) {
+            log.error("Henkilo {} unsuccessfully identified.", oid, e);
             yksilointiService.tallennaYksilointivirhe(oid, e);
         }
     }

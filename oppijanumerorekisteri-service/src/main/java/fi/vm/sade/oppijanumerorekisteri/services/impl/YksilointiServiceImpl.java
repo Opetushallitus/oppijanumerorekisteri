@@ -180,8 +180,6 @@ public class YksilointiServiceImpl implements YksilointiService {
             return henkiloModificationService.update(henkilo);
         }
         else {
-            logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
-
             // If VTJ data differs from the user's data, VTJ must overwrite
             // those values since VTJ's data is considered more reliable
             LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
@@ -193,6 +191,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
             }
             linked.forEachModified(henkiloModificationService::update);
+            logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
         }
 
         return henkilo;
@@ -438,6 +437,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         return HuoltajaCreateDto.builder()
                 .hetu(huoltaja.getHetu())
                 .etunimet(huoltaja.getEtunimi())
+                .kutsumanimi(huoltaja.getEtunimi())
                 .sukunimi(huoltaja.getSukunimi())
                 .build();
     }
