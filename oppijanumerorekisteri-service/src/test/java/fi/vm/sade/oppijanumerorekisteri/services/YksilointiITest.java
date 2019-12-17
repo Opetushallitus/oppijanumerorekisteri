@@ -16,6 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysKayttooikeusRepos
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HetuRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
+import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -199,6 +200,40 @@ public class YksilointiITest {
                     .returns(false, Henkilo::isYksiloityVTJ);
         });
         assertThat(hetuRepository.findByHenkiloOid(uusiOid)).isEmpty();
+    }
+
+    @Test
+    @WithMockUser(value = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void yksiloiAutomaattisestiLisaaUudenHuoltajan() {
+        String huoltajaHetu = "190198-5259";
+        String huollettavaHetu = "200198-7484";
+
+        HenkiloCreateDto onrHuollettava = new HenkiloCreateDto();
+        onrHuollettava.setHetu(huollettavaHetu);
+        onrHuollettava.setEtunimet("Teppo Huollettava");
+        onrHuollettava.setKutsumanimi("Teppo Huollettava");
+        onrHuollettava.setSukunimi("Testaaja");
+        String huollettavaOid = henkiloModificationService.createHenkilo(onrHuollettava).getOidHenkilo();
+
+        YksiloityHenkilo vtjHuollettava = new YksiloityHenkilo();
+        vtjHuollettava.setHetu(huollettavaHetu);
+        vtjHuollettava.setEtunimi("Teppo Huollettava");
+        vtjHuollettava.setKutsumanimi("Huollettava");
+        vtjHuollettava.setSukunimi("Testaaja");
+        vtjHuollettava.setHuoltajat(singletonList(new Huoltaja() {{
+            setHetu(huoltajaHetu);
+            setEtunimi("Seppo Huoltaja");
+            setSukunimi("Testaaja");
+        }}));
+        when(vtjClientMock.fetchHenkilo(anyString())).thenReturn(Optional.of(vtjHuollettava));
+
+        yksilointiService.yksiloiAutomaattisesti(huollettavaOid);
+
+        assertThat(henkiloRepository.findAll())
+                .extracting(Henkilo::getHetu, Henkilo::getEtunimet, Henkilo::getKutsumanimi, Henkilo::getSukunimi, Henkilo::isYksiloityVTJ)
+                .containsExactlyInAnyOrder(
+                        tuple(huollettavaHetu, "Teppo Huollettava", "Huollettava", "Testaaja", true),
+                        tuple(huoltajaHetu, "Seppo Huoltaja", "Seppo Huoltaja", "Testaaja", false));
     }
 
     @Test

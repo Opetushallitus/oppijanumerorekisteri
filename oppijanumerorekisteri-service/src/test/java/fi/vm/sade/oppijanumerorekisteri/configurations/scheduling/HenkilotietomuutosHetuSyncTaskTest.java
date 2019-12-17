@@ -46,6 +46,9 @@ public class HenkilotietomuutosHetuSyncTaskTest {
             henkilo.setModified(henkilo.getCreated());
             henkilo.setOidHenkilo("oid1");
             henkilo.setHetu("hetu1");
+            henkilo.setEtunimet("etunimet1 kutsumanimi1");
+            henkilo.setKutsumanimi("kutsumanimi1");
+            henkilo.setSukunimi("sukunimi1");
             henkilo.setYksiloityVTJ(true);
             henkilo.setVtjRegister(false);
             henkiloRepository.save(henkilo);

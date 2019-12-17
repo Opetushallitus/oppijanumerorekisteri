@@ -479,6 +479,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         return Henkilo.builder()
                 .oidHenkilo(UUID.randomUUID().toString())
                 .etunimet("Testi Henkilö")
+                .kutsumanimi("Henkilö")
                 .sukunimi("Testinovic")
                 .hetu(hetu)
                 .created(now)

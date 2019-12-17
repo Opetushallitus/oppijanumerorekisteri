@@ -17,6 +17,9 @@ public class HenkiloPopulator implements Populator<Henkilo> {
     private final String oid;
     private final List<Populator<YhteystiedotRyhma>> yhteystietoRyhmas = new ArrayList<>();
     private String hetu;
+    private String etunimet = "";
+    private String kutsumanimi = "";
+    private String sukunimi = "";
     private Populator<Henkilo> master;
     private DateTime created;
     private DateTime modified;
@@ -36,6 +39,21 @@ public class HenkiloPopulator implements Populator<Henkilo> {
     
     public HenkiloPopulator hetu(String hetu) {
         this.hetu = hetu;
+        return this;
+    }
+
+    public HenkiloPopulator etunimet(String etunimet) {
+        this.etunimet = etunimet;
+        return this;
+    }
+
+    public HenkiloPopulator kutsumanimi(String kutsumanimi) {
+        this.kutsumanimi = kutsumanimi;
+        return this;
+    }
+
+    public HenkiloPopulator sukunimi(String sukunimi) {
+        this.sukunimi = sukunimi;
         return this;
     }
     
@@ -92,6 +110,9 @@ public class HenkiloPopulator implements Populator<Henkilo> {
             Henkilo henkilo = new Henkilo();
             henkilo.setOidHenkilo(oid);
             henkilo.setHetu(hetu);
+            henkilo.setEtunimet(etunimet);
+            henkilo.setKutsumanimi(kutsumanimi);
+            henkilo.setSukunimi(sukunimi);
             henkilo.setCreated(created == null ? new Date() : created.toDate());
             henkilo.setModified(modified != null ? modified.toDate() : henkilo.getCreated());
             henkilo.setPassivoitu(passivoitu);

@@ -438,6 +438,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         return HuoltajaCreateDto.builder()
                 .hetu(huoltaja.getHetu())
                 .etunimet(huoltaja.getEtunimi())
+                .kutsumanimi(huoltaja.getEtunimi())
                 .sukunimi(huoltaja.getSukunimi())
                 .build();
     }
