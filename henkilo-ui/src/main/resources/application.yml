@@ -1,6 +1,10 @@
 server:
   servlet:
     context-path: /henkilo-ui
+management:
+  health:
+    diskspace:
+      enabled: false
 henkiloui:
   lokalisointi_synkronointi:
     aktiivinen: false
