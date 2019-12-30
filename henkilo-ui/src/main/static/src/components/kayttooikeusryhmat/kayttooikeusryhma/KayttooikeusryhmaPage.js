@@ -511,7 +511,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _validateKayttooikeusryhmaDescriptions = (): boolean => {
         const description = this.state.kayttooikeusryhmaForm.description;
-        return description.FI.length > 0 && description.SV.length > 0 && description.EN.length > 0;
+        return description.FI.length > 0 && description.SV.length > 0;
     };
 
     _validateKayttooikeusryhmaNimet = (): boolean => {
