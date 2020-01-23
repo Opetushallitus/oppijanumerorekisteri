@@ -1,11 +1,11 @@
-INSERT INTO henkilo (id, version, hetu, oidhenkilo, created, modified, duplicate, eisuomalaistahetua, passivoitu, yksilointi_yritetty, yksiloity, yksiloityvtj, etunimet, kutsumanimi, sukunimi) VALUES
-(-1, 0, '111111-1235', 'SomeOtherVirkailija', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
-(-2, 0, '010101-123N', 'EverythingOK', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
-(-3, 0, '010101-123M', 'Tyoosoite', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
-(-4, 0, '010101-123L', 'TyoosoiteVainLuku', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
-(-5, 0, '010101-123K', 'Kotiosoite', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
-(-6, 0, '010101-234R', 'EverythingOkOppija', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
-(-7, 0, NULL, 'NoHetu', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 'Teppo Taneli', 'Teppo', 'Testaaja');
+INSERT INTO henkilo (id, version, hetu, oidhenkilo, created, modified, duplicate, eisuomalaistahetua, turvakielto, passivoitu, yksilointi_yritetty, yksiloity, yksiloityvtj, etunimet, kutsumanimi, sukunimi) VALUES
+(-1, 0, '111111-1235', 'SomeOtherVirkailija', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
+(-2, 0, '010101-123N', 'EverythingOK', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
+(-3, 0, '010101-123M', 'Tyoosoite', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
+(-4, 0, '010101-123L', 'TyoosoiteVainLuku', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
+(-5, 0, '010101-123K', 'Kotiosoite', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
+(-6, 0, '010101-234R', 'EverythingOkOppija', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 'Teppo Taneli', 'Teppo', 'Testaaja'),
+(-7, 0, NULL, 'NoHetu', NOW(), NOW(), FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 'Teppo Taneli', 'Teppo', 'Testaaja');
 
 INSERT INTO henkilo_hetu (henkilo_id, hetu) SELECT id, hetu FROM henkilo WHERE hetu IS NOT NULL AND yksiloityvtj = TRUE;
 

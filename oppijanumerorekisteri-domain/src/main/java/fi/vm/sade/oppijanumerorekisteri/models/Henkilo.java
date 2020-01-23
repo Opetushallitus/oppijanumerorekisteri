@@ -163,7 +163,8 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @NotAudited
     private Set<ExternalId> externalIds = new HashSet<>();
 
-    private Boolean turvakielto = false;
+    @Column(nullable = false)
+    private Boolean turvakielto = Boolean.FALSE;
 
     /**
      * Oppijan organisaatiot. Huom! virkailijan organisaatiot ovat
