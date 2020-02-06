@@ -329,7 +329,7 @@ public class HenkiloModificationServiceIntegrationTest {
 
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
-    public void forceUpdateHenkiloPalauttaaHuoltajan() {
+    public void forceUpdateHenkiloPalauttaaHuoltajanJaPaivittaaSuhteen() {
         when(koodistoService.list(eq(Koodisto.MAAT_JA_VALTIOT_2))).thenReturn(Stream.of("246")
                 .map(koodi -> new KoodiType() {{ setKoodiArvo(koodi); }}).collect(toList()));
         HenkiloForceUpdateDto updateDto = new HenkiloForceUpdateDto();
@@ -344,10 +344,14 @@ public class HenkiloModificationServiceIntegrationTest {
         updateDto.setHuoltajat(singleton(huoltaja1));
 
         HenkiloForceReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
-
+        HenkiloHuoltajaSuhde suhde = this.entityManager
+                .createQuery("SELECT s FROM HenkiloHuoltajaSuhde s JOIN s.lapsi h WHERE h.oidHenkilo='YKSILOINNISSANIMIPIELESSA'", HenkiloHuoltajaSuhde.class)
+                .getSingleResult();
         assertThat(readDto.getHuoltajat())
                 .extracting(HuoltajaCreateDto::getHetu)
                 .containsExactly(huoltaja1.getHetu());
+        assertThat(suhde.getUpdated())
+                .isNotNull();
         assertPublished(objectMapper, amazonSNS, 2, "YKSILOINNISSANIMIPIELESSA", "HUOLTAJA");
     }
 

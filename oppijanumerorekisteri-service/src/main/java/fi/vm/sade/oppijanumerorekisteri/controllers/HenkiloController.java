@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -519,4 +520,22 @@ public class HenkiloController {
                 end
         );
     }
+
+    @ApiOperation(value = "Hakee huoltajasuhteiden muutokset annetusta päivämäärästä aikajärjestyksessä",
+            notes = "Sivutusta käytettäessä OID:t eivät välttämättä ole aikajärjestyksessä. Palauttaa maksimissaan 10000 OID:a.")
+    @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
+    @RequestMapping(value = "/huoltajasuhdemuutokset/alkaen/{at}", method = RequestMethod.GET)
+    public List<String> getHuoltajaSuhdeMuutokset(
+            @PathVariable DateTime at,
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer amount,
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
+    {
+        return this.henkiloService.getHuoltajaSuhdeMuutokset(
+                at,
+                amount,
+                offset
+        );
+    }
+
 }

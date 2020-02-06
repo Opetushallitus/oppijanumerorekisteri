@@ -411,6 +411,13 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<String> getHuoltajaSuhdeMuutokset(DateTime modifiedSince, Integer amount, Integer offset) {
+        return huoltajasuhdeRepository.changesSince(modifiedSince, amount, offset);
+
+    }
+
+    @Override
     public HenkiloForceReadDto getByHetuForMuutostieto(String hetu) {
         return findByHetu(hetu)
                 .map(henkilo -> mapper.map(henkilo, HenkiloForceReadDto.class))

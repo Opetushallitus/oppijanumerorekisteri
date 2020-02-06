@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -21,4 +22,23 @@ public class HenkiloHuoltajaSuhde extends IdentifiableAndVersionedEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn
     private Henkilo huoltaja;
+
+    @Column(name = "created")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
+    @Column(name = "updated")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
+
+    @PrePersist
+    protected void onCreate() {
+        created = new Date();
+        updated = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updated = new Date();
+    }
 }

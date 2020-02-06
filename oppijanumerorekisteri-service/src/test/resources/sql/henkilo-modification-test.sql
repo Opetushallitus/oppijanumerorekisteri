@@ -20,8 +20,8 @@ INSERT INTO yksilointivirhe (id, version, aikaleima, poikkeus, henkilo_id) VALUE
 INSERT INTO yksilointitieto (id, version, henkiloid, turvakielto) VALUES
 (-1, 0, -4, FALSE);
 
-INSERT INTO henkilo_huoltaja_suhde (id, version, lapsi_id, huoltaja_id) VALUES
-(-1, 0, -4, -5)
+INSERT INTO henkilo_huoltaja_suhde (id, version, lapsi_id, huoltaja_id, created, updated) VALUES
+(-1, 0, -4, -5, '2020-02-02T16:00:00Z', '2020-02-02T16:00:00Z')
 ;
 
 INSERT INTO yhteystiedotryhma (id, version, ryhmakuvaus, henkilo_id, ryhma_alkuperatieto, read_only, yksilointitieto_id) VALUES
