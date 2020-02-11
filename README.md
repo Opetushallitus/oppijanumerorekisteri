@@ -25,7 +25,7 @@ Palvelinpuoli
 
 ## Ajaminen
 
-    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-0.1.2-SNAPSHOT.jar
+    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-<versio>.jar
 
 Ilman parametreja sovellus käyttää [application.yml](oppijanumerorekisteri-service/src/main/resources/application.yml)
 -tiedoston mukaisia oletuskonfiguraatioita. Tavallisesti tämä ei toimi, koska yhteyttä vaadittuihin palveluihin ei saada, joten palveluiden sijainti tulee uudelleenmääritellä.
@@ -33,12 +33,12 @@ Ilman parametreja sovellus käyttää [application.yml](oppijanumerorekisteri-se
 Konfiguraatioiden muuttaminen komentoriviparametreilla (baseUrl-parametrilla määritellään missä osoitteessa muut
 sovelluksen käyttämät palvelut sijaitsevat):
 
-    java -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-0.1.2-SNAPSHOT.jar \
-        -DbaseUrl=https://<testiympäristö_host> \
+    java -DbaseUrl=https://<testiympäristö_host> \
         -Dspring.datasource.username=<tietokannan_tunnus> \
         -Dspring.datasource.password=<tietokannan_salasana> \
         -Dauthentication.default.username=<oma_virkailija_tunnus> \
-        -Dauthentication.default.password=<oma_virkailija_salasana>
+        -Dauthentication.default.password=<oma_virkailija_salasana> \
+        -jar oppijanumerorekisteri-service/target/oppijanumerorekisteri-service-<versio>.jar
 
 Helpointa on osoittaa `oppijanumerorekisteri-service` käyttämään palveluita esim. dev- tai test-ympäristöstä (esim. `https://virkailija.untuvaopintopolku.fi`). Huomaa, että palveluita varten tulee määritellä myös tunnus ja salasana (ks. yllä).
 
@@ -96,7 +96,7 @@ https://github.com/Opetushallitus/auditlogger/tree/master/src/main/java/fi/vm/sa
 
 ## Lokitus
 Normaalissa kehityskäytössä lokitetaan vain konsoliin. Jos kehitysympäristössä tai muissa ympäristöissä halutaan lokittaa tiedostoon on sovellukselle annettava polku `logback.xml`-tiedostoon. Tällöin ajokomento voi näyttää esimerkiksi seuraavanlaiselta: 
-`java -jar oppijanumerorekisteri-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml -Dlogging.config=file:C:\Users\username\oph-configuration\logback.xml`
+`java -jar oppijanumerorekisteri-service-<versio>.jar --spring.profiles.active=dev --spring.config.additional-location=C:\Users\username\oph-configuration\oppijanumerorekisteri.yml -Dlogging.config=file:C:\Users\username\oph-configuration\logback.xml`
 
 ## Apidokumentaatio
 Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta https://virkailija.opintopolku.fi/oppijanumerorekisteri-service/swagger-ui.html
