@@ -112,7 +112,17 @@ public class Service2ServiceControllerTest  {
     
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
-    public void findDuplicateHenkilosTest() throws Exception {
+    public void findDuplicateHenkilosAllowedForRekisterinpitaja() throws Exception {
+        findDuplicateHenkilosTest();
+    }
+
+    @Test
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "DUPLICATE_READ")
+    public void findDuplicateHenkilosAllowedWithCorrespondingPrivilege() throws Exception {
+        findDuplicateHenkilosTest();
+    }
+
+    private void findDuplicateHenkilosTest() throws Exception {
         given(this.henkiloService.findHenkiloViittees(any())).willReturn(singletonList(new HenkiloViiteDto("CHILD","MASTER")));
         this.mvc.perform(post("/s2s/duplicateHenkilos")
                 .with(csrf())
