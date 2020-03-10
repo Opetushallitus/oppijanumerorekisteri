@@ -7,6 +7,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import org.joda.time.DateTime;
 
 import java.util.*;
 
@@ -36,5 +38,28 @@ public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {
                 .add(AuditEntity.revisionProperty("timestamp").le(Timestamp.valueOf(LocalDateTime.of(end,   LocalTime.MAX)).getTime()));
 
         return henkiloHuoltajaSuhteet.getResultList();
+    }
+
+    @Override
+    public List<String> changesSince(DateTime modifiedSince, Integer amount, Integer offset) {
+        QHenkiloHuoltajaSuhde qHenkiloHuoltajaSuhde = QHenkiloHuoltajaSuhde.henkiloHuoltajaSuhde;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+
+        JPAQuery query = new JPAQuery<>(entityManager)
+                .from(qHenkiloHuoltajaSuhde)
+                .join(qHenkiloHuoltajaSuhde.lapsi, qHenkilo)
+                .where(qHenkiloHuoltajaSuhde.updated.goe(modifiedSince.toDate()))
+                .select(qHenkilo.oidHenkilo)
+                .distinct();
+
+        if(offset != null) {
+            query.offset(offset);
+        }
+        if(amount != null) {
+            query.limit(amount);
+        } else {
+            query.limit(10000);
+        }
+        return query.fetch();
     }
 }

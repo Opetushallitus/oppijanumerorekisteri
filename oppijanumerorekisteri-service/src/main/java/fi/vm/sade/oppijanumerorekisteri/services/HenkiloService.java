@@ -67,6 +67,8 @@ public interface HenkiloService {
 
     Set<String> getHuoltajaSuhdeMuutokset(LocalDate start, LocalDate end);
 
+    List<String> getHuoltajaSuhdeMuutokset(DateTime modifiedSince, Integer amount, Integer offset);
+
     String getAsiointikieli(String oidHenkilo);
 
     String getCurrentUserAsiointikieli();
