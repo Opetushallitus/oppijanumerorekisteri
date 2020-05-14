@@ -148,7 +148,7 @@
             <dependency>
                 <groupId>org.jresearch.orika</groupId>
                 <artifactId>org.jresearch.orika.spring</artifactId>
-                <version>1.0.12</version>
+                <version>1.0.13</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -209,7 +209,7 @@
                             </goals>
                             <configuration>
                                 <target>
-                                    <echo message="writing target/public/classes/buildversion.txt" />
+                                    <echo message="writing target/public/classes/buildversion.txt"/>
                                     <echo file="target/classes/public/buildversion.txt">
                                         <![CDATA[artifactId=${project.artifactId}
 version=${project.version}
