@@ -158,7 +158,7 @@
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-suggest</artifactId>
-                <version>6.4.2</version>
+                <version>6.6.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -209,7 +209,7 @@
                             </goals>
                             <configuration>
                                 <target>
-                                    <echo message="writing target/public/classes/buildversion.txt" />
+                                    <echo message="writing target/public/classes/buildversion.txt"/>
                                     <echo file="target/classes/public/buildversion.txt">
                                         <![CDATA[artifactId=${project.artifactId}
 version=${project.version}
