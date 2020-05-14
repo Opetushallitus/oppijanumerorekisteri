@@ -173,7 +173,7 @@
             <dependency>
                 <groupId>com.github.kagkarlsson</groupId>
                 <artifactId>db-scheduler</artifactId>
-                <version>5.1</version>
+                <version>5.2</version>
             </dependency>
             <dependency>
                 <groupId>com.amazonaws</groupId>
@@ -209,7 +209,7 @@
                             </goals>
                             <configuration>
                                 <target>
-                                    <echo message="writing target/public/classes/buildversion.txt" />
+                                    <echo message="writing target/public/classes/buildversion.txt"/>
                                     <echo file="target/classes/public/buildversion.txt">
                                         <![CDATA[artifactId=${project.artifactId}
 version=${project.version}
