@@ -56,6 +56,9 @@ import {
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
     VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
     FETCH_HENKILO_HAKEMUKSET,
+    POISTA_KAYTTAJATUNNUS_REQUEST,
+    POISTA_KAYTTAJATUNNUS_SUCCESS,
+    POISTA_KAYTTAJATUNNUS_FAILURE,
 } from "./actiontypes";
 import {fetchOrganisations} from "./organisaatio.actions";
 import {fetchAllKayttooikeusryhmasForHenkilo} from "./kayttooikeusryhma.actions";
@@ -177,6 +180,22 @@ export const passivoiHenkilo = (oid) => (dispatch => {
         dispatch(receivePassivoiHenkilo());
         dispatch(fetchHenkilo(oid));
     }).catch(e => dispatch(errorPassivoiHenkilo(e)));
+});
+
+const requestPoistaKayttajatunnus = (oid) => ({type: POISTA_KAYTTAJATUNNUS_REQUEST, oid, });
+const receivePoistaKayttajatunnus = () => ({type: POISTA_KAYTTAJATUNNUS_SUCCESS, receivedAt: Date.now(), });
+const errorPoistaKayttajatunnus = (e) => ({type: POISTA_KAYTTAJATUNNUS_FAILURE,
+    buttonNotification: {position: 'poistaKayttajatunnus', notL10nMessage: 'POISTA_KAYTTAJATUNNUS_ERROR_TOPIC', notL10nText: 'POISTA_KAYTTAJATUNNUS_ERROR_TEXT'},
+    receivedAt: Date.now(), });
+export const poistaKayttajatunnus = (oid) => (dispatch => {
+    dispatch(requestPoistaKayttajatunnus(oid));
+    const url = urls.url('kayttooikeus-service.henkilo.poista-kayttajatunnus', oid);
+    http.delete(url).then(() => {
+        dispatch(receivePoistaKayttajatunnus());
+        dispatch(fetchKayttajatieto(oid));
+        dispatch(fetchHenkiloOrgs(oid));
+        dispatch(fetchAllKayttooikeusryhmasForHenkilo(oid));
+    }).catch(e => dispatch(errorPoistaKayttajatunnus(e)));
 });
 
 export const aktivoiHenkilo = (oid) => async (dispatch, getState) => {
