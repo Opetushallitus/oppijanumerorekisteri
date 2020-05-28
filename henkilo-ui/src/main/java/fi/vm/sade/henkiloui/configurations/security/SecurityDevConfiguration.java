@@ -2,6 +2,7 @@ package fi.vm.sade.henkiloui.configurations.security;
 
 import fi.vm.sade.henkiloui.configurations.properties.DevProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Profile("dev")
 @Configuration
@@ -17,6 +19,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
     private DevProperties devProperties;
 
+    @SuppressWarnings("deprecation")
+    @Bean
+    public static NoOpPasswordEncoder passwordEncoder() {
+        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    }
     @Autowired
     public SecurityDevConfiguration(DevProperties devProperties) {
         this.devProperties = devProperties;

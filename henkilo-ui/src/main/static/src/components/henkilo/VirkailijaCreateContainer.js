@@ -129,7 +129,7 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
     };
 
     navigateToVirkailija = (oid: string) => {
-        this.props.router.push(`/virkailija/${oid}`);
+        window.location.href = `/henkilo-ui/virkailija/${oid}`;
     }
 
 }

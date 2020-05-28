@@ -16,6 +16,7 @@ import PasswordButton from "../buttons/PasswordButton";
 import * as R from 'ramda';
 import PassivoiButton from "../buttons/PassivoiButton";
 import AktivoiButton from '../buttons/AktivoiButton';
+import PoistaKayttajatunnusButton from "../buttons/PoistaKayttajatunnusButton";
 
 type OwnProps = {
     readOnly: boolean,
@@ -95,7 +96,7 @@ class PalveluUserContent extends React.Component<Props, State> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo)
+        const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo);
         return [
             <EditButton
                 editAction={this.props.edit}
@@ -106,6 +107,8 @@ class PalveluUserContent extends React.Component<Props, State> {
                 L={this.props.L}
                 oid={this.props.henkilo.henkilo.oidHenkilo}
                 onClick={this.props.aktivoiHenkilo} /> : null,
+            !kayttajatunnukseton && this.props.isAdmin ?
+              <PoistaKayttajatunnusButton /> : null,
             <PasswordButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={{top: '3rem', left: '0', width: '18rem'}}
