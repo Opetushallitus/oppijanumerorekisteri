@@ -9,7 +9,7 @@
     "isomorphic-fetch": "2.2.1",
     "moment": "2.24.0",
     "normalizr": "3.0.0",
-    "oph-urls-js": "github:Opetushallitus/oph-urls-js#KJHH-1854_tuki_caller_idlle",
+    "oph-urls-js": "github:Opetushallitus/oph-urls-js#master",
     "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
     "prop-types": "15.6.0",
     "ramda": "0.25.0",
