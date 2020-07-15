@@ -5,6 +5,7 @@ type State = {
     specialCharacterRegex?: RegExp,
     numberRegex?: RegExp,
     characterRegex?: RegExp,
+    opintopolkuCallerId?: string,
     [string]: string,
     KOTIOSOITE?: string,
     TYOOSOITE?: string,
@@ -18,6 +19,7 @@ class PropertySingleton {
         this.state = {
             externalPermissionService: '',
             rootOrganisaatioOid: '1.2.246.562.10.00000000001',
+            opintopolkuCallerId: '1.2.246.562.10.00000000001.henkilo-ui',
             idRunner: 0,
             KOTIOSOITE: 'yhteystietotyyppi1',
             TYOOSOITE: 'yhteystietotyyppi2',
