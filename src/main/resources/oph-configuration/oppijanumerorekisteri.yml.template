@@ -19,6 +19,9 @@ spring:
       maximum-pool-size: {{postgresql_oppijanumerorekisteri_maximum_pool_size | default('20')}}
       connection-timeout: {{postgresql_oppijanumerorekisteri_connection_timeout | default('10000')}}
       max-lifetime: {{postgresql_oppijanumerorekisteri_max_lifetime | default('900000')}}
+server:
+  jetty:
+    connection-idle-timeout: {{oppijanumerorekisteri_connection_idle_timeout | default('30000')}}
 cas:
   service: https://{{host_virkailija}}/oppijanumerorekisteri-service
 host:
