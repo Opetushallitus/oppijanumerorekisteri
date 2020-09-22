@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -16,5 +18,6 @@ public class HenkiloDuplikaattiCriteria {
     private String etunimet;
     private String kutsumanimi;
     private String sukunimi;
+    private LocalDate syntymaaika;
 
 }

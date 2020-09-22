@@ -437,7 +437,7 @@ public class HenkiloController {
             @RequestParam String etunimet,
             @RequestParam String kutsumanimi,
             @RequestParam String sukunimi) {
-        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi);
+        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi, null);
         return this.duplicateService.getDuplikaatit(criteria);
     }
 

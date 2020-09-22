@@ -47,7 +47,7 @@ public class DuplicateServiceImpl implements DuplicateService {
     @Transactional(readOnly = true)
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
-        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
+        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), henkilo.getSyntymaaika());
         List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream().filter(duplicate -> filterDuplicate(henkilo, duplicate)).collect(toList());
         return getHenkiloDuplicateDtoList(candidates);
     }

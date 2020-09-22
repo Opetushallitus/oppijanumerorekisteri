@@ -27,7 +27,7 @@ import static java.util.Arrays.asList;
 @Audited
 @NamedEntityGraphs({
         @NamedEntityGraph(
-                name = "henkiloDto",
+                name = Henkilo.DTO_ENTITY_GRAPH,
                 attributeNodes = {
                         @NamedAttributeNode("asiointiKieli"),
                         @NamedAttributeNode("aidinkieli"),
@@ -35,9 +35,17 @@ import static java.util.Arrays.asList;
                 }
         )
 })
+@SqlResultSetMapping(
+        name = Henkilo.NAME_SIMILARITY_MAPPING,
+        entities = @EntityResult(entityClass = Henkilo.class),
+        columns = @ColumnResult(name = "nameSimilarity", type = Float.class)
+)
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
+
+    public static final String DTO_ENTITY_GRAPH = "henkiloDto";
+    public static final String NAME_SIMILARITY_MAPPING = "henkiloNameSimilarityMapping";
 
     @Column(name = "oidhenkilo", nullable = false)
     private String oidHenkilo;
