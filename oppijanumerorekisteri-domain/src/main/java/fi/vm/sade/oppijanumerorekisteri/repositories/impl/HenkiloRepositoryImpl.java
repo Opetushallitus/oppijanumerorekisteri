@@ -45,8 +45,9 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
-    private static final float DUPLICATE_QUERY_CONSIDER_THRESHOLD = 0.4f;
-    private static final float DUPLICATE_QUERY_ACCEPT_THRESHOLD = 0.6f;
+    static final float DUPLICATE_QUERY_CONSIDER_THRESHOLD = 0.4f;
+    static final float DUPLICATE_QUERY_ACCEPT_THRESHOLD = 0.6f;
+
     private final EntityManager entityManager;
 
     public HenkiloRepositoryImpl(JpaContext jpaContext) {
@@ -482,22 +483,22 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
-        Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT h1.*, " +
-                "similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) as nameSimilarity \n" +
-                "FROM henkilo h1 \n" +
-                "WHERE nameSimilarity >= :threshold \n" +
+        Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT " +
+                "h1.*, similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) AS nimetsimilarity \n" +
+                "FROM henkilo AS h1 \n" +
+                "WHERE similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) >= :threshold \n" +
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
-                "ORDER BY nameSimilarity DESC \n",
-                Henkilo.NAME_SIMILARITY_MAPPING)
+                "ORDER BY nimetsimilarity DESC \n",
+                Henkilo.DUPLICATE_RESULT_MAPPING)
                 .setParameter("nimet", getAllNames(criteria))
                 .setParameter("threshold", DUPLICATE_QUERY_CONSIDER_THRESHOLD);
         List<Object[]> results = henkiloTypedQuery.getResultList();
         return results.stream().filter(result -> {
-            Henkilo henkilo = (Henkilo) result[0];
             float similarity = (float) result[1];
+            Henkilo henkilo = (Henkilo) result[0];
             return similarity >= DUPLICATE_QUERY_ACCEPT_THRESHOLD
-                    || Objects.equals(criteria.getSyntymaaika(), henkilo.getSyntymaaika());
+                    || (criteria.getSyntymaaika() != null && criteria.getSyntymaaika().equals(henkilo.getSyntymaaika()));
         }).map(result -> (Henkilo) result[0]).collect(toList());
     }
 

@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
@@ -36,16 +35,16 @@ import static java.util.Arrays.asList;
         )
 })
 @SqlResultSetMapping(
-        name = Henkilo.NAME_SIMILARITY_MAPPING,
+        name = Henkilo.DUPLICATE_RESULT_MAPPING,
         entities = @EntityResult(entityClass = Henkilo.class),
-        columns = @ColumnResult(name = "nameSimilarity", type = Float.class)
+        columns = @ColumnResult(name = "nimetsimilarity", type = float.class)
 )
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1428444306553070016L;
 
     public static final String DTO_ENTITY_GRAPH = "henkiloDto";
-    public static final String NAME_SIMILARITY_MAPPING = "henkiloNameSimilarityMapping";
+    public static final String DUPLICATE_RESULT_MAPPING = "henkiloDuplicateMapping";
 
     @Column(name = "oidhenkilo", nullable = false)
     private String oidHenkilo;

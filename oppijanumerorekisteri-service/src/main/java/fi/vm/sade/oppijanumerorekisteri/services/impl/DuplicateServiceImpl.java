@@ -54,7 +54,7 @@ public class DuplicateServiceImpl implements DuplicateService {
 
     public boolean filterDuplicate(Henkilo henkilo, Henkilo duplicate){
         boolean notSameOid =  !duplicate.getOidHenkilo().equals(henkilo.getOidHenkilo());
-        boolean ytjIdentifiedfilter = henkilo.isYksiloityVTJ() && hasHetu(henkilo) ? !duplicate.isYksiloityVTJ() : true;
+        boolean ytjIdentifiedfilter = !henkilo.isYksiloityVTJ() || henkilo.getHetu() == null || !duplicate.isYksiloityVTJ();
 
         return notSameOid && ytjIdentifiedfilter;
     }
