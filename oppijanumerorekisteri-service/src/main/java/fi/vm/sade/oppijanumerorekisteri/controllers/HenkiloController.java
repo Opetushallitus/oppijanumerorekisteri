@@ -438,7 +438,7 @@ public class HenkiloController {
             @RequestParam String etunimet,
             @RequestParam String kutsumanimi,
             @RequestParam String sukunimi,
-            @RequestParam(required = false) LocalDate syntymaaika) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate syntymaaika) {
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi, syntymaaika);
         return this.duplicateService.getDuplikaatit(criteria);
     }
