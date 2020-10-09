@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -436,8 +437,9 @@ public class HenkiloController {
     public List<HenkiloDuplicateDto> getDuplikaatit(
             @RequestParam String etunimet,
             @RequestParam String kutsumanimi,
-            @RequestParam String sukunimi) {
-        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi);
+            @RequestParam String sukunimi,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate syntymaaika) {
+        HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(etunimet, kutsumanimi, sukunimi, syntymaaika);
         return this.duplicateService.getDuplikaatit(criteria);
     }
 
