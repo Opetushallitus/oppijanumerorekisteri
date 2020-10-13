@@ -35,4 +35,8 @@ public class HuoltajaCreateDto {
 
     @Valid
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
+
+    private LocalDate huoltajuusAlku;
+
+    private LocalDate huoltajuusLoppu;
 }

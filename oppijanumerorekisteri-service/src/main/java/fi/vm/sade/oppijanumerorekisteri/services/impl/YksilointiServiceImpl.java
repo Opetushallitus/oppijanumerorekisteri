@@ -394,6 +394,8 @@ public class YksilointiServiceImpl implements YksilointiService {
                         .map(huoltaja -> HenkiloHuoltajaSuhde.builder()
                                 .lapsi(henkilo)
                                 .huoltaja(this.henkiloModificationService.findOrCreateHuoltaja(huoltaja, henkilo))
+                                .alkuPvm(huoltaja.getHuoltajuusAlku())
+                                .loppuPvm(huoltaja.getHuoltajuusLoppu())
                                 .build())
                         .collect(Collectors.toSet()))
                 .orElseGet(HashSet::new);

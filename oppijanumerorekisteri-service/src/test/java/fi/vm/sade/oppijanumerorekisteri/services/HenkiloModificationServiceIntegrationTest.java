@@ -339,8 +339,8 @@ public class HenkiloModificationServiceIntegrationTest {
                         huoltaja.getKutsumanimi(),
                         huoltaja.getSukunimi(), huoltaja.getSyntymaaika(), huoltaja.isYksiloityVTJ(),
                         huoltaja.getKansalaisuus().stream().map(Kansalaisuus::getKansalaisuusKoodi).collect(toSet()),
-                        emptySet()))
-                .get();
+                        emptySet(), LocalDate.now(), LocalDate.of(2038, 1, 1)))
+                .orElseThrow(IllegalArgumentException::new);
         updateDto.setHuoltajat(singleton(huoltaja1));
 
         HenkiloForceReadDto readDto = henkiloModificationService.forceUpdateHenkilo(updateDto);
