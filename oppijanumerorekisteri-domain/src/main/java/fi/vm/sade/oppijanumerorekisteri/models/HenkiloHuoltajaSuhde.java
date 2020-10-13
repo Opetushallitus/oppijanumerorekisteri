@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -22,6 +23,12 @@ public class HenkiloHuoltajaSuhde extends IdentifiableAndVersionedEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn
     private Henkilo huoltaja;
+
+    @Column(name = "alkupvm")
+    private LocalDate alkuPvm;
+
+    @Column(name = "loppupvm")
+    private LocalDate loppuPvm;
 
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
