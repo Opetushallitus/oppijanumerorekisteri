@@ -12,4 +12,6 @@ public interface HuoltajasuhdeRepository {
 
     List<String> changesSince(DateTime modifiedSince, Integer amount, Integer offset);
 
+    List<HenkiloHuoltajaSuhde> findCurrentHuoltajatByHenkilo(String oid);
+
 }

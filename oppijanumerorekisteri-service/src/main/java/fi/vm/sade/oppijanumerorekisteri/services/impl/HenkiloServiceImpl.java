@@ -373,11 +373,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Override
     @Transactional(readOnly = true)
     public List<HuoltajaDto> getHenkiloHuoltajat(String oidHenkilo){
-
-        Henkilo henkilo =  this.henkiloDataRepository.findByOidHenkilo(oidHenkilo)
-                .orElseThrow(() -> new NotFoundException("Henkilo not found with oid " +  oidHenkilo));
-
-        Set<HenkiloHuoltajaSuhde> huoltajaSuhteet = henkilo.getHuoltajat();
+        List<HenkiloHuoltajaSuhde> huoltajaSuhteet = huoltajasuhdeRepository.findCurrentHuoltajatByHenkilo(oidHenkilo);
 
         if (huoltajaSuhteet.size() == 0) {
             return Collections.emptyList();
@@ -389,7 +385,7 @@ public class HenkiloServiceImpl implements HenkiloService {
                 Henkilo huoltaja = hs.getHuoltaja();
                 HuoltajaDto huoltajaDto = mapper.map( huoltaja, HuoltajaDto.class );
 
-                if(huoltaja.isTurvakielto()) {
+                if (huoltaja.isTurvakielto()) {
                     huoltajaDto.setYhteystiedotRyhma(new HashSet<>());
                 }
 

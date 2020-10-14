@@ -14,10 +14,7 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloHuoltajaSuhde;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
@@ -68,6 +65,8 @@ public class HenkiloServiceTest {
     private HenkiloViiteRepository henkiloViiteRepositoryMock;
     @Mock
     private HenkiloRepository henkiloDataRepositoryMock;
+    @Mock
+    private HuoltajasuhdeRepository huoltajasuhdeRepository;
     @Mock
     private UserDetailsHelper userDetailsHelperMock;
     @Mock
@@ -351,30 +350,22 @@ public class HenkiloServiceTest {
         assertThat(results).size().isEqualTo(2);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void getHenkiloHuoltajatThrowsWhenHenkiloNotFound() {
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(anyString())).willReturn(Optional.empty());
-        this.service.getHenkiloHuoltajat("invalidOid");
-    }
-
     @Test
     public void getHenkiloHuoltajatReturnsGuardians() {
         String oid = "validOid";
         HenkiloHuoltajaSuhde huoltajaSuhde = mock(HenkiloHuoltajaSuhde.class);
-        Henkilo henkilo = new Henkilo();
-        henkilo.setHuoltajat(Collections.singleton(huoltajaSuhde));
         given(huoltajaSuhde.getHuoltaja()).willReturn(mock(Henkilo.class));
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(oid)).willReturn(Optional.of(henkilo));
-        List huoltajat = this.service.getHenkiloHuoltajat(oid);
+        given(this.huoltajasuhdeRepository.findCurrentHuoltajatByHenkilo(oid))
+                .willReturn(Collections.singletonList(huoltajaSuhde));
+        List<HuoltajaDto> huoltajat = this.service.getHenkiloHuoltajat(oid);
         assertThat(huoltajat).size().isEqualTo(1);
     }
 
     @Test
     public void getHenkiloHuoltajatReturnsEmptyWhenNoGuardiansFound() {
         String oid = "validOid";
-        Henkilo henkilo = new Henkilo();
-        given(this.henkiloDataRepositoryMock.findByOidHenkilo(oid)).willReturn(Optional.of(henkilo));
-        List huoltajat = this.service.getHenkiloHuoltajat(oid);
+        given(this.huoltajasuhdeRepository.findCurrentHuoltajatByHenkilo(oid)).willReturn(Collections.emptyList());
+        List<HuoltajaDto> huoltajat = this.service.getHenkiloHuoltajat(oid);
         assertThat(huoltajat).isEmpty();
     }
 }
