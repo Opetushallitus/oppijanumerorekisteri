@@ -62,4 +62,21 @@ public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {
         }
         return query.fetch();
     }
+
+    @Override
+    public List<HenkiloHuoltajaSuhde> findCurrentHuoltajatByHenkilo(String oid) {
+        QHenkiloHuoltajaSuhde qHenkiloHuoltajaSuhde = QHenkiloHuoltajaSuhde.henkiloHuoltajaSuhde;
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        LocalDate now = LocalDate.now();
+
+        JPAQuery<HenkiloHuoltajaSuhde> query = new JPAQuery<>(entityManager)
+                .from(qHenkiloHuoltajaSuhde)
+                .join(qHenkiloHuoltajaSuhde.lapsi, qHenkilo)
+                .where(
+                        qHenkilo.oidHenkilo.eq(oid),
+                        qHenkiloHuoltajaSuhde.alkuPvm.isNull().or(qHenkiloHuoltajaSuhde.alkuPvm.before(now)),
+                        qHenkiloHuoltajaSuhde.loppuPvm.isNull().or(qHenkiloHuoltajaSuhde.alkuPvm.after(now))
+                ).select(qHenkiloHuoltajaSuhde);
+        return query.fetch();
+    }
 }
