@@ -71,11 +71,10 @@ public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {
 
         JPAQuery<HenkiloHuoltajaSuhde> query = new JPAQuery<>(entityManager)
                 .from(qHenkiloHuoltajaSuhde)
-                .join(qHenkiloHuoltajaSuhde.lapsi, qHenkilo)
+                .join(qHenkiloHuoltajaSuhde.lapsi, qHenkilo).on(qHenkilo.oidHenkilo.eq(oid))
                 .where(
-                        qHenkilo.oidHenkilo.eq(oid),
                         qHenkiloHuoltajaSuhde.alkuPvm.isNull().or(qHenkiloHuoltajaSuhde.alkuPvm.before(now)),
-                        qHenkiloHuoltajaSuhde.loppuPvm.isNull().or(qHenkiloHuoltajaSuhde.alkuPvm.after(now))
+                        qHenkiloHuoltajaSuhde.loppuPvm.isNull().or(qHenkiloHuoltajaSuhde.loppuPvm.after(now))
                 ).select(qHenkiloHuoltajaSuhde);
         return query.fetch();
     }
