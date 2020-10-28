@@ -45,6 +45,7 @@ spring:
       hibernate.integration.envers.enabled: true
       # https://hibernate.atlassian.net/browse/HHH-12368
       hibernate.jdbc.lob.non_contextual_creation: true
+      org.hibernate.envers.store_data_at_delete: true
 management:
   health:
     diskspace:
