@@ -14,7 +14,7 @@ type KutsuOrganisaatio = {
     nimi: TextGroupMap,
     organisaatioOid: string,
     voimassaLoppuPvm: ?string,
-    kayttooikeusryhmat: Array<KayttooikeusRyhma>
+    kayttoOikeusRyhmat: Array<KayttooikeusRyhma>
 }
 
 export type KutsuRead = {

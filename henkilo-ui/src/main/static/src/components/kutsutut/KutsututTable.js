@@ -14,6 +14,7 @@ import type {GlobalNotificationConfig} from "../../types/notification.types";
 import {addGlobalNotification} from "../../actions/notification.actions";
 import type {Locale} from "../../types/locale.type";
 import PopupButton from "../common/button/PopupButton";
+import KutsuDetails from './KutsuDetails';
 
 type OwnProps = {
     kutsus: Array<any>,
@@ -55,8 +56,9 @@ class KutsututTable extends React.Component<Props, State> {
             { key: 'KUTSUTUT_LAHETA_UUDELLEEN', label: L['KUTSUTUT_LAHETA_UUDELLEEN'], notSortable: true},
             { key: 'KUTSU_PERUUTA', label: L['KUTSUTUT_PERUUTA_KUTSU'], notSortable: true},
         ];
-        
+
         const data = this.props.kutsus.map( kutsu => ({
+            id: kutsu.id,
             KUTSUT_NIMI_OTSIKKO: this.createNimiCell(kutsu),
             KUTSUT_SAHKOPOSTI_OTSIKKO: this.createSahkopostiCell(kutsu),
             KUTSUTUT_ORGANISAATIO_OTSIKKO: this.createOrganisaatiotCell(kutsu),
@@ -65,7 +67,7 @@ class KutsututTable extends React.Component<Props, State> {
             KUTSUTUT_LAHETA_UUDELLEEN: this.createResendCell(kutsu),
             KUTSU_PERUUTA: this.createPeruutaCell(kutsu)
         }));
-        
+
         return <div className="kutsututTableWrapper">
             <Table headings={headings}
                    noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
@@ -79,6 +81,7 @@ class KutsututTable extends React.Component<Props, State> {
                        fetchMoreAction: this.onSubmitWithoutClear.bind(this),
                    }}
                    tableLoading={this.props.isLoading}
+                   subComponent={(row: any) => <KutsuDetails kutsu={this.props.kutsus.find(kutsu => kutsu.id === row.original.id)} L={this.props.L} locale={this.props.locale} />}
             />
         </div>;
     }
@@ -120,7 +123,7 @@ class KutsututTable extends React.Component<Props, State> {
             await this.props.renewKutsu(kutsu.id);
             this.props.addGlobalNotification({
                 key: 'KUTSU_CONFIRMATION_SUCCESS',
-                type: NOTIFICATIONTYPES.SUCCESS, 
+                type: NOTIFICATIONTYPES.SUCCESS,
                 autoClose: 10000,
                 title: this.props.L['KUTSU_LUONTI_ONNISTUI']
             });
