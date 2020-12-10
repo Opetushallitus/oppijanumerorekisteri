@@ -68,7 +68,7 @@ class KutsututTable extends React.Component<Props, State> {
             KUTSU_PERUUTA: this.createPeruutaCell(kutsu)
         }));
 
-        return <div className="kutsututTableWrapper">
+        return <div className="kutsututTableWrapper oph-table">
             <Table headings={headings}
                    noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
                    data={data}
