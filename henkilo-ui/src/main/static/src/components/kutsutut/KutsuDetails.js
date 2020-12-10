@@ -27,16 +27,24 @@ const getLocalizedColumns = (L: Localisations) => [
     {
         Header:
             L[
-                'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'
+                'KUTSU_KAYTTOOIKEUSRYHMAT_MAIN_HEADER'
             ],
-        accessor: 'organisaatio'
-    },
-    {
-        Header:
-            L[
-                'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'
-            ],
-        accessor: 'ryhma'
+        columns: [
+            {
+                Header:
+                    L[
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_ORGANISAATIO_HEADER'
+                    ],
+                accessor: 'organisaatio'
+            },
+            {
+                Header:
+                    L[
+                        'HENKILO_KAYTTOOIKEUSANOMUS_KAYTTOOIKEUSRYHMAT_KAYTTOOIKEUS_HEADER'
+                    ],
+                accessor: 'ryhma'
+            }
+        ]
     }
 ];
 
