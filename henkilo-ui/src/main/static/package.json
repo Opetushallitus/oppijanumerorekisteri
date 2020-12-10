@@ -54,7 +54,7 @@
     "flowrun": "flow && flow stop",
     "test:debug": "react-scripts --inspect-brk test --runInBand"
   },
-  "proxy": "http://localhost:8280",
+  "proxy": "http://localhost:8080",
   "browserslist": [
     "last 1 version",
     "> 1%",
