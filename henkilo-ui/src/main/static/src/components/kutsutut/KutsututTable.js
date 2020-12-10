@@ -73,6 +73,7 @@ class KutsututTable extends React.Component<Props, State> {
                    noDataText={this.props.L['KUTSUTUT_VIRKAILIJAT_TYHJA']}
                    data={data}
                    striped
+                   resizable
                    manual={true}
                    defaultSorted={this.state.sorted}
                    onFetchData={this.onTableFetch.bind(this)}

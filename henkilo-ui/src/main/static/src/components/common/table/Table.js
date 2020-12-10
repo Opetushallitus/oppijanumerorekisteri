@@ -19,6 +19,7 @@ type Props = {
     striped?: boolean,
     highlight?: boolean,
     manual?: boolean,
+    resizable?: boolean,
     onFetchData?: (any) => void,
     getTdProps?: () => void,
     subComponent?: (any) => React.Node,
@@ -34,6 +35,7 @@ class Table extends React.Component<Props> {
 
     static defaultProps = {
         fetchMoreSettings: {},
+        resizable: false,
     };
 
     render() {
@@ -46,7 +48,7 @@ class Table extends React.Component<Props> {
             <div>
                 <ReactTable className={classname}
                             showPagination={false}
-                            resizable={false}
+                            resizable={this.props.resizable}
                             manual={this.props.manual}
                             pageSize={this.props.data.length}
                             defaultSorted={this.props.defaultSorted || []}
