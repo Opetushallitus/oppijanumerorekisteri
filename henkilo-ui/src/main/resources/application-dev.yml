@@ -1,3 +1,5 @@
+server:
+  port: 8081
 host:
   host-cas: virkailija.untuvaopintopolku.fi
   host-virkailija: virkailija.untuvaopintopolku.fi

@@ -27,10 +27,17 @@ Want:
 * nginx proxy divide requests to local backend or selected dev environment (utilize existing services @ untuva)
 * spring-boot is run with minimal configuration settings (default settings hit local nginx proxy)  
 
+### Setup
+
+Components are run in following ports
+* spring-boot: 8081
+* nginx: 8080
+* webpack: 3000
+
 ## Steps
 
 1. Compile application `mvn clean install`
-2. Run spring boot application with minimal configuration `java -Dserver.port=8081 -Dspring.profiles.active=dev -jar target/henkiloui-0.0.1-SNAPSHOT.jar`
+2. Run spring boot application with minimal configuration `java -Dspring.profiles.active=dev -jar target/henkiloui-0.0.1-SNAPSHOT.jar`
 3. Start local nginx with `cd nginx && docker-compose up`
 4. Start webpack-dev-server `cd src/main/static && npm start`
 5. Access nginx proxy to login http://localhost:8080
