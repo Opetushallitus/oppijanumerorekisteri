@@ -27,13 +27,22 @@ Want:
 * nginx proxy divide requests to local backend or selected dev environment (utilize existing services @ untuva)
 * spring-boot is run with minimal configuration settings (default settings hit local nginx proxy)  
 
-## Steps
+## Spring-boot configuration
 
-1. Run spring boot application with minimal configuration
+One needs to build runnable jar before trying to start up the application:
+```
+mvn install
+```
+
+Setup expects spring-boot application to be run on port 8081.
 ```
 -Dserver.port=8081
-```    
-Following needs to be found from environment      
+```
+Spring-boot needs to use **dev** profile
+```
+-Dspring.profiles.active=dev
+```
+Following config is required by application and needs to be found from environment
 ```
 host.host-cas=virkailija.untuvaopintopolku.fi
 host.host-virkailija=virkailija.untuvaopintopolku.fi
@@ -41,6 +50,24 @@ host.host-shibboleth=*whatever*
 henkiloui.palvelukayttajat.lokalisointi.kayttajatunnus=*proper username*
 henkiloui.palvelukayttajat.lokalisointi.salasana=*proper passwd*
 ```
+Thus example command line would be:
+```
+java
+    -Dserver.port=8081
+    -Dspring.profiles.active=dev
+    -Dhost.host-cas=virkailija.untuvaopintopolku.fi
+    -Dhost.host-virkailija=virkailija.untuvaopintopolku.fi
+    -Dhost.host-shibboleth=''
+    -Dhenkiloui.palvelukayttajat.lokalisointi.kayttajatunnus=user
+    -Dhenkiloui.palvelukayttajat.lokalisointi.salasana=pass
+    -jar target/henkiloui-0.0.1-SNAPSHOT.jar
+```
+
+Of course this is probably easier to manage via IDE of choice, good luck setting that up.
+
+## Steps
+
+1. Run spring boot application with minimal configuration
 2. Start local nginx with `cd nginx && docker-compose up`
 3. Start webpack-dev-server `cd src/main/static && npm start`
 4. Access nginx proxy to login http://localhost:8080
