@@ -24,7 +24,7 @@
         <java.version>1.8</java.version>
         <springfox.version>2.7.0</springfox.version>
         <frontend-plugin.version>1.6</frontend-plugin.version>
-        <nodejs.version>v10.16.3</nodejs.version>
+        <nodejs.version>v14.15.1</nodejs.version>
 
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
