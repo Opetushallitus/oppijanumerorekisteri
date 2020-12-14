@@ -39,10 +39,6 @@
     "flow-typed": "2.6.1",
     "jest-resolve": "^23.6.0",
     "react-scripts": "2.1.4",
-    "redux-devtools": "3.4.1",
-    "redux-devtools-dock-monitor": "1.1.2",
-    "redux-devtools-log-monitor": "1.4.0",
-    "redux-logger": "3.0.6",
     "request": "^2.88.0"
   },
   "scripts": {
