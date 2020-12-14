@@ -1,0 +1,52 @@
+import React from "react"
+import {connect} from "react-redux"
+import LabelValue from "./LabelValue"
+import StaticUtils from "../../StaticUtils"
+import {HenkiloState} from "../../../../reducers/henkilo.reducer"
+import {ReactSelectOption} from "../../../../types/react-select.types"
+import {Locale} from "../../../../types/locale.type"
+import {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types"
+
+type OwnProps = {
+    henkiloUpdate: Henkilo
+    readOnly: boolean
+    updateModelFieldAction: () => void
+}
+
+type Props = OwnProps & {
+    henkilo: HenkiloState
+    koodisto: {
+        kieli: Array<ReactSelectOption>
+    }
+    locale: Locale
+}
+
+const Aidinkieli = (props: Props) => (
+    <LabelValue
+        readOnly={props.readOnly}
+        updateModelFieldAction={props.updateModelFieldAction}
+        values={{
+            label: "HENKILO_AIDINKIELI",
+            data: props.koodisto.kieli.map(koodi => ({
+                value: koodi.value,
+                label: koodi[props.locale],
+                optionsName: "aidinkieli.kieliKoodi",
+            })),
+            selectValue:
+                props.henkiloUpdate.aidinkieli &&
+                props.henkiloUpdate.aidinkieli.kieliKoodi,
+            disabled: StaticUtils.hasHetuAndIsYksiloity(props.henkilo),
+        }}
+    />
+)
+
+const mapStateToProps = state => ({
+    henkilo: state.henkilo,
+    koodisto: state.koodisto,
+    locale: state.locale,
+})
+
+export default connect<Props, OwnProps, _, _, _, _>(
+    mapStateToProps,
+    {},
+)(Aidinkieli)
