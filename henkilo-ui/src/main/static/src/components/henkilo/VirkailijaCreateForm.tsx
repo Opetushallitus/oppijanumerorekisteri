@@ -1,18 +1,18 @@
-import React from "react"
-import {VirkailijaCreate} from "../../types/domain/kayttooikeus/virkailija.types"
-import {Localisations} from "../../types/localisation.type"
-import OphField from "../common/forms/OphField"
-import OphLabel from "../common/forms/OphLabel"
-import OphInput from "../common/forms/OphInput"
-import OphFieldText from "../common/forms/OphFieldText"
+import React from 'react';
+import { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types';
+import { Localisations } from '../../types/localisation.type';
+import OphField from '../common/forms/OphField';
+import OphLabel from '../common/forms/OphLabel';
+import OphInput from '../common/forms/OphInput';
+import OphFieldText from '../common/forms/OphFieldText';
 
 type VirkailijaCreateFormProps = {
-    virkailija: VirkailijaCreate
-    disabled: boolean
-    onChange: (arg0: VirkailijaCreate) => void
-    onSubmit: (arg0: VirkailijaCreate) => Promise<void>
-    L: Localisations
-}
+    virkailija: VirkailijaCreate;
+    disabled: boolean;
+    onChange: (arg0: VirkailijaCreate) => void;
+    onSubmit: (arg0: VirkailijaCreate) => Promise<void>;
+    L: Localisations;
+};
 
 /**
  * Virkailijan luonti -lomake.
@@ -22,10 +22,9 @@ class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
         return (
             <form onSubmit={this.onSubmit}>
                 <OphField required={true}>
-                    <OphLabel>{this.props.L["HENKILO_ETUNIMET"]}</OphLabel>
+                    <OphLabel>{this.props.L['HENKILO_ETUNIMET']}</OphLabel>
                     <OphInput
-                        className="oph-input"
-                        placeholder={this.props.L["HENKILO_ETUNIMET"]}
+                        placeholder={this.props.L['HENKILO_ETUNIMET']}
                         type="text"
                         name="etunimet"
                         value={this.props.virkailija.etunimet}
@@ -33,10 +32,9 @@ class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
                     />
                 </OphField>
                 <OphField required={true}>
-                    <OphLabel>{this.props.L["HENKILO_KUTSUMANIMI"]}</OphLabel>
+                    <OphLabel>{this.props.L['HENKILO_KUTSUMANIMI']}</OphLabel>
                     <OphInput
-                        className="oph-input"
-                        placeholder={this.props.L["HENKILO_KUTSUMANIMI"]}
+                        placeholder={this.props.L['HENKILO_KUTSUMANIMI']}
                         type="text"
                         name="kutsumanimi"
                         value={this.props.virkailija.kutsumanimi}
@@ -44,10 +42,9 @@ class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
                     />
                 </OphField>
                 <OphField required={true}>
-                    <OphLabel>{this.props.L["HENKILO_SUKUNIMI"]}</OphLabel>
+                    <OphLabel>{this.props.L['HENKILO_SUKUNIMI']}</OphLabel>
                     <OphInput
-                        className="oph-input"
-                        placeholder={this.props.L["HENKILO_SUKUNIMI"]}
+                        placeholder={this.props.L['HENKILO_SUKUNIMI']}
                         type="text"
                         name="sukunimi"
                         value={this.props.virkailija.sukunimi}
@@ -55,10 +52,9 @@ class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
                     />
                 </OphField>
                 <OphField required={true}>
-                    <OphLabel>{this.props.L["HENKILO_KAYTTAJANIMI"]}</OphLabel>
+                    <OphLabel>{this.props.L['HENKILO_KAYTTAJANIMI']}</OphLabel>
                     <OphInput
-                        className="oph-input"
-                        placeholder={this.props.L["HENKILO_KAYTTAJANIMI"]}
+                        placeholder={this.props.L['HENKILO_KAYTTAJANIMI']}
                         type="text"
                         name="kayttajatunnus"
                         value={this.props.virkailija.kayttajatunnus}
@@ -66,22 +62,20 @@ class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
                     />
                 </OphField>
                 <OphField required={true}>
-                    <OphLabel>{this.props.L["HENKILO_PASSWORD"]}</OphLabel>
+                    <OphLabel>{this.props.L['HENKILO_PASSWORD']}</OphLabel>
                     <OphInput
-                        className="oph-input"
-                        placeholder={this.props.L["HENKILO_PASSWORD"]}
+                        placeholder={this.props.L['HENKILO_PASSWORD']}
                         type="password"
                         name="salasana"
                         value={this.props.virkailija.salasana}
                         onChange={this.onInputChange}
                     />
-                    <OphFieldText>{this.props.L["SALASANA_OHJE"]}</OphFieldText>
+                    <OphFieldText>{this.props.L['SALASANA_OHJE']}</OphFieldText>
                 </OphField>
                 <OphField required={true}>
-                    <OphLabel>{this.props.L["HENKILO_PASSWORDAGAIN"]}</OphLabel>
+                    <OphLabel>{this.props.L['HENKILO_PASSWORDAGAIN']}</OphLabel>
                     <OphInput
-                        className="oph-input"
-                        placeholder={this.props.L["HENKILO_PASSWORDAGAIN"]}
+                        placeholder={this.props.L['HENKILO_PASSWORDAGAIN']}
                         type="password"
                         name="salasanaUudestaan"
                         value={this.props.virkailija.salasanaUudestaan}
@@ -89,29 +83,25 @@ class VirkailijaCreateForm extends React.Component<VirkailijaCreateFormProps> {
                     />
                 </OphField>
                 <OphField>
-                    <button
-                        type="submit"
-                        className="oph-button oph-button-primary"
-                        disabled={this.props.disabled}
-                    >
-                        {this.props.L["TALLENNA_LINKKI"]}
+                    <button type="submit" className="oph-button oph-button-primary" disabled={this.props.disabled}>
+                        {this.props.L['TALLENNA_LINKKI']}
                     </button>
                 </OphField>
             </form>
-        )
+        );
     }
 
     onInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const muutokset = {
             [event.currentTarget.name]: event.currentTarget.value,
-        }
-        this.props.onChange({...this.props.virkailija, ...muutokset})
-    }
+        };
+        this.props.onChange({ ...this.props.virkailija, ...muutokset });
+    };
 
-    onSubmit = (event: React.SyntheticEvent<HTMLButtonElement>) => {
-        event.preventDefault()
-        this.props.onSubmit(this.props.virkailija)
-    }
+    onSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        this.props.onSubmit(this.props.virkailija);
+    };
 }
 
-export default VirkailijaCreateForm
+export default VirkailijaCreateForm;

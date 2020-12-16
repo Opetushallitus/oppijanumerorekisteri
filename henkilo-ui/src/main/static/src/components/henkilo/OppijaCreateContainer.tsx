@@ -1,73 +1,67 @@
-import React from "react"
-import {connect} from "react-redux"
-import {http} from "../../http"
-import {urls} from "oph-urls-js"
-import {
-    fetchKieliKoodisto,
-    fetchSukupuoliKoodisto,
-    fetchKansalaisuusKoodisto,
-} from "../../actions/koodisto.actions"
-import {Locale} from "../../types/locale.type"
-import {Koodisto} from "../../types/domain/koodisto/koodisto.types"
-import OppijaCreateForm from "./OppijaCreateForm"
-import {HenkiloCreate} from "../../types/domain/oppijanumerorekisteri/henkilo.types"
-import {HenkiloDuplicate} from "../../types/domain/oppijanumerorekisteri/HenkiloDuplicate"
-import {Localisations} from "../../types/localisation.type"
-import OppijaCreateDuplikaatit from "./OppijaCreateDuplikaatit"
-import {addGlobalNotification} from "../../actions/notification.actions"
-import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes"
-import {GlobalNotificationConfig} from "../../types/notification.types"
+import React from 'react';
+import { connect } from 'react-redux';
+import { http } from '../../http';
+import { urls } from 'oph-urls-js';
+import { fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchKansalaisuusKoodisto } from '../../actions/koodisto.actions';
+import { Locale } from '../../types/locale.type';
+import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
+import OppijaCreateForm from './OppijaCreateForm';
+import { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import { Localisations } from '../../types/localisation.type';
+import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
+import { addGlobalNotification } from '../../actions/notification.actions';
+import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
+import { GlobalNotificationConfig } from '../../types/notification.types';
 
 type OwnProps = {
-    router: any
-}
+    router: any;
+};
 
 type Props = OwnProps & {
-    locale: Locale
-    L: Localisations
-    fetchSukupuoliKoodisto: () => void
-    sukupuoliKoodisto: Koodisto
-    fetchKieliKoodisto: () => void
-    kieliKoodisto: Koodisto
-    fetchKansalaisuusKoodisto: () => void
-    kansalaisuusKoodisto: Koodisto
-    addGlobalNotification: (payload: GlobalNotificationConfig) => void
-}
+    locale: Locale;
+    L: Localisations;
+    fetchSukupuoliKoodisto: () => void;
+    sukupuoliKoodisto: Koodisto;
+    fetchKieliKoodisto: () => void;
+    kieliKoodisto: Koodisto;
+    fetchKansalaisuusKoodisto: () => void;
+    kansalaisuusKoodisto: Koodisto;
+    addGlobalNotification: (payload: GlobalNotificationConfig) => void;
+};
 
 type State = {
-    oppija: HenkiloCreate
-    naytaDuplikaatit: boolean
-    duplikaatit: Array<HenkiloDuplicate>
-    loading: boolean
-}
+    oppija: HenkiloCreate;
+    naytaDuplikaatit: boolean;
+    duplikaatit: Array<HenkiloDuplicate>;
+    loading: boolean;
+};
 
 /**
  * Oppijan luonti -näkymä.
  */
 class OppijaCreateContainer extends React.Component<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             oppija: {},
             naytaDuplikaatit: false,
             duplikaatit: [],
             loading: false,
-        }
+        };
     }
 
     componentDidMount() {
-        this.props.fetchSukupuoliKoodisto()
-        this.props.fetchKieliKoodisto()
-        this.props.fetchKansalaisuusKoodisto()
+        this.props.fetchSukupuoliKoodisto();
+        this.props.fetchKieliKoodisto();
+        this.props.fetchKansalaisuusKoodisto();
     }
 
     render() {
         return (
             <div className="wrapper">
-                <span className="oph-h2 oph-bold">
-                    {this.props.L["OPPIJAN_LUONTI_OTSIKKO"]}
-                </span>
+                <span className="oph-h2 oph-bold">{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</span>
                 {this.state.naytaDuplikaatit === false ? (
                     <OppijaCreateForm
                         tallenna={this.tallenna}
@@ -88,58 +82,56 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                     />
                 )}
             </div>
-        )
+        );
     }
 
     tallenna = async (oppija: HenkiloCreate) => {
         try {
             // tarkistetaan ennen luontia duplikaatit
-            const duplikaatit = await this.haeDuplikaatit(oppija)
+            const duplikaatit = await this.haeDuplikaatit(oppija);
             if (duplikaatit.length > 0) {
                 this.setState({
                     oppija: oppija,
                     naytaDuplikaatit: true,
                     duplikaatit: duplikaatit,
-                })
+                });
             } else {
                 // luodaan oppija
-                this.luoOppijaJaNavigoi(oppija)
+                this.luoOppijaJaNavigoi(oppija);
             }
         } catch (error) {
             this.props.addGlobalNotification({
-                key: "HENKILON_LUONTI_VIRHE",
+                key: 'HENKILON_LUONTI_VIRHE',
                 type: NOTIFICATIONTYPES.ERROR,
-                title: this.props.L["HENKILON_LUONTI_EPAONNISTUI"],
-            })
-            throw error
+                title: this.props.L['HENKILON_LUONTI_EPAONNISTUI'],
+            });
+            throw error;
         }
-    }
+    };
 
     luoOppijaJaNavigoi = async (oppija: HenkiloCreate): Promise<void> => {
-        const oid = await this.luoOppija(oppija)
-        this.props.router.push(`/oppija/${oid}`)
-    }
+        const oid = await this.luoOppija(oppija);
+        this.props.router.push(`/oppija/${oid}`);
+    };
 
     peruuta = () => {
-        window.location.reload()
-    }
+        window.location.reload();
+    };
 
-    haeDuplikaatit = async (
-        oppija: HenkiloCreate,
-    ): Promise<Array<HenkiloDuplicate>> => {
+    haeDuplikaatit = async (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
         const url = urls.url(
-            "oppijanumerorekisteri-service.henkilo.duplikaatit",
+            'oppijanumerorekisteri-service.henkilo.duplikaatit',
             oppija.etunimet,
             oppija.kutsumanimi,
-            oppija.sukunimi,
-        )
-        return await http.get(url)
-    }
+            oppija.sukunimi
+        );
+        return await http.get(url);
+    };
 
     luoOppija = async (oppija: HenkiloCreate): Promise<string> => {
-        const url = urls.url("oppijanumerorekisteri-service.oppija")
-        return await http.post(url, oppija) // palauttaa oid
-    }
+        const url = urls.url('oppijanumerorekisteri-service.oppija');
+        return await http.post(url, oppija); // palauttaa oid
+    };
 }
 
 const mapStateToProps = state => {
@@ -149,12 +141,12 @@ const mapStateToProps = state => {
         sukupuoliKoodisto: state.koodisto.sukupuoliKoodisto,
         kieliKoodisto: state.koodisto.kieliKoodisto,
         kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
-    }
-}
+    };
+};
 
-export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
+export default connect<Props, OwnProps>(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
     addGlobalNotification,
-})(OppijaCreateContainer)
+})(OppijaCreateContainer);

@@ -1,30 +1,19 @@
-import {
-    FETCH_LOCALISATIONS_SUCCESS,
-    FETCH_LOCALISATIONS_REQUEST,
-} from "../actions/actiontypes"
-import {L10n} from "../types/localisation.type"
-import * as R from "ramda"
+import { FETCH_LOCALISATIONS_SUCCESS, FETCH_LOCALISATIONS_REQUEST } from '../actions/actiontypes';
+import { L10n } from '../types/localisation.type';
+import * as R from 'ramda';
 
 // Return localisations by priority data (data1 before data2) and language (fi, sv, en). Use key if nothing is found.
-const localisationFromAllKeys = (
-    priorityLang: string,
-    allKeys: Array<string>,
-    data1: L10n,
-    data2: L10n,
-) => {
-    const priority = [priorityLang].concat(
-        ["fi", "sv", "en"].filter(priority => priority !== priorityLang),
-    )
+const localisationFromAllKeys = (priorityLang: string, allKeys: Array<string>, data1: L10n, data2: L10n) => {
+    const priority = [priorityLang].concat(['fi', 'sv', 'en'].filter(priority => priority !== priorityLang));
     return allKeys
         .map(key => ({
             [key]:
                 priority
                     .map(lang => data1[lang][key] || data2[lang][key])
-                    .filter(localisation => localisation !== undefined)[0] ||
-                key,
+                    .filter(localisation => localisation !== undefined)[0] || key,
         }))
-        .reduce((acc, current) => R.merge(acc, current), {})
-}
+        .reduce((acc, current) => R.merge(acc, current), {});
+};
 
 const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
     const allKeys = [].concat(
@@ -33,50 +22,44 @@ const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
         Object.keys(data.en),
         Object.keys(localisationData.fi),
         Object.keys(localisationData.sv),
-        Object.keys(localisationData.en),
-    )
-    const allKeysWithoutDuplicates = [...new Set(allKeys)]
+        Object.keys(localisationData.en)
+    );
+    const allKeysWithoutDuplicates = [...new Set(allKeys)];
     const localisationByPriority = priorityLang =>
-        localisationFromAllKeys(
-            priorityLang,
-            allKeysWithoutDuplicates,
-            localisationData,
-            data,
-        )
+        localisationFromAllKeys(priorityLang, allKeysWithoutDuplicates, localisationData, data);
 
     return {
-        fi: localisationByPriority("fi"),
-        sv: localisationByPriority("sv"),
-        en: localisationByPriority("en"),
-    }
-}
+        fi: localisationByPriority('fi'),
+        sv: localisationByPriority('sv'),
+        en: localisationByPriority('en'),
+    };
+};
 
 export type LocalisationState = {
-    localisationsInitialized: boolean
-    localisations: L10n
-}
+    localisationsInitialized: boolean;
+    localisations: L10n;
+};
 
-const localisations: L10n = {fi: {}, sv: {}, en: {}}
+const localisations: L10n = { fi: {}, sv: {}, en: {} };
 
-export const l10n = (
+const l10n = (
     state: LocalisationState = {
         localisationsInitialized: false,
         localisations: localisations,
     },
-    action: any,
+    action: any
 ) => {
     switch (action.type) {
         case FETCH_LOCALISATIONS_REQUEST:
-            return {...state, localisationsInitialized: false}
+            return { ...state, localisationsInitialized: false };
         case FETCH_LOCALISATIONS_SUCCESS:
             return Object.assign({}, state, {
-                localisations: mapLocalisations(
-                    state.localisations,
-                    action.localisations,
-                ),
+                localisations: mapLocalisations(state.localisations, action.localisations),
                 localisationsInitialized: true,
-            })
+            });
         default:
-            return state
+            return state;
     }
-}
+};
+
+export default l10n;

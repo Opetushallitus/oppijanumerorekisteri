@@ -1,47 +1,47 @@
-import React from "react"
-import {connect} from "react-redux"
-import {http} from "../../http"
-import {urls} from "oph-urls-js"
-import {VirkailijaCreate} from "../../types/domain/kayttooikeus/virkailija.types"
-import {Localisations} from "../../types/localisation.type"
-import VirkailijaCreateForm from "./VirkailijaCreateForm"
-import {isValidKutsumanimi} from "../../validation/KutsumanimiValidator"
-import {isValidPassword} from "../../validation/PasswordValidator"
-import {LocalNotification} from "../common/Notification/LocalNotification"
-import {isValidKayttajatunnus} from "../../validation/KayttajatunnusValidator"
+import React from 'react';
+import { connect } from 'react-redux';
+import { http } from '../../http';
+import { urls } from 'oph-urls-js';
+import { VirkailijaCreate } from '../../types/domain/kayttooikeus/virkailija.types';
+import { Localisations } from '../../types/localisation.type';
+import VirkailijaCreateForm from './VirkailijaCreateForm';
+import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
+import { isValidPassword } from '../../validation/PasswordValidator';
+import { LocalNotification } from '../common/Notification/LocalNotification';
+import { isValidKayttajatunnus } from '../../validation/KayttajatunnusValidator';
 
 type OwnProps = {
-    router: any
-}
+    router: any;
+};
 
 type Props = OwnProps & {
-    L: Localisations
-}
+    L: Localisations;
+};
 
 type State = {
-    virkailija: VirkailijaCreate
-    virheet: Array<string>
-}
+    virkailija: VirkailijaCreate;
+    virheet: Array<string>;
+};
 
 /**
  * Virkailijan luonti -näkymä.
  */
 class VirkailijaCreateContainer extends React.Component<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             virkailija: {
-                etunimet: "",
-                kutsumanimi: "",
-                sukunimi: "",
-                kayttajatunnus: "",
-                salasana: "",
-                salasanaUudestaan: "",
+                etunimet: '',
+                kutsumanimi: '',
+                sukunimi: '',
+                kayttajatunnus: '',
+                salasana: '',
+                salasanaUudestaan: '',
                 vahvastiTunnistettu: true,
             },
             virheet: [],
-        }
+        };
     }
 
     render() {
@@ -52,12 +52,10 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
             !this.state.virkailija.sukunimi ||
             !this.state.virkailija.kayttajatunnus ||
             !this.state.virkailija.salasana ||
-            !this.state.virkailija.salasanaUudestaan
+            !this.state.virkailija.salasanaUudestaan;
         return (
             <div className="wrapper">
-                <span className="oph-h2 oph-bold">
-                    {this.props.L["VIRKAILIJAN_LUONTI_OTSIKKO"]}
-                </span>
+                <span className="oph-h2 oph-bold">{this.props.L['VIRKAILIJAN_LUONTI_OTSIKKO']}</span>
                 <VirkailijaCreateForm
                     virkailija={this.state.virkailija}
                     disabled={disabled}
@@ -66,9 +64,7 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
                     L={this.props.L}
                 />
                 <LocalNotification
-                    title={
-                        this.props.L["NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO"]
-                    }
+                    title={this.props.L['NOTIFICATION_HENKILOTIEDOT_VIRHE_OTSIKKO']}
                     toggle={this.state.virheet.length > 0}
                     type="error"
                 >
@@ -79,99 +75,77 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
                     </ul>
                 </LocalNotification>
             </div>
-        )
+        );
     }
 
     onChange = (virkailija: VirkailijaCreate): void => {
-        const virheet = this.validate(virkailija)
-        this.setState({virkailija: virkailija, virheet: virheet})
-    }
+        const virheet = this.validate(virkailija);
+        this.setState({ virkailija: virkailija, virheet: virheet });
+    };
 
     validate = (virkailija: VirkailijaCreate): Array<string> => {
-        const virheet = []
+        const virheet = [];
         if (virkailija.kutsumanimi) {
-            if (
-                !isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)
-            ) {
-                virheet.push(this.props.L["REKISTEROIDY_ERROR_KUTSUMANIMI"])
+            if (!isValidKutsumanimi(virkailija.etunimet, virkailija.kutsumanimi)) {
+                virheet.push(this.props.L['REKISTEROIDY_ERROR_KUTSUMANIMI']);
             }
         }
         if (virkailija.kayttajatunnus) {
             if (!isValidKayttajatunnus(virkailija.kayttajatunnus)) {
-                virheet.push(
-                    this.props.L[
-                        "NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE"
-                    ],
-                )
+                virheet.push(this.props.L['NOTIFICATION_HENKILOTIEDOT_KAYTTAJATUNNUS_VIRHE']);
             }
         }
         if (virkailija.salasana) {
             if (!isValidPassword(virkailija.salasana)) {
-                virheet.push(
-                    this.props.L["REKISTEROIDY_ERROR_PASSWORD_INVALID"],
-                )
+                virheet.push(this.props.L['REKISTEROIDY_ERROR_PASSWORD_INVALID']);
             }
             if (virkailija.salasana !== virkailija.salasanaUudestaan) {
-                virheet.push(this.props.L["REKISTEROIDY_ERROR_PASSWORD_MATCH"])
+                virheet.push(this.props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH']);
             }
         }
-        return virheet
-    }
+        return virheet;
+    };
 
     onSubmit = async (virkailijaCreate: VirkailijaCreate): Promise<void> => {
         try {
-            const oid = await this.createVirkailija(virkailijaCreate)
-            this.navigateToVirkailija(oid)
+            const oid = await this.createVirkailija(virkailijaCreate);
+            this.navigateToVirkailija(oid);
         } catch (error) {
-            this.handleError(error)
-            throw error
+            this.handleError(error);
+            throw error;
         }
-    }
+    };
 
     handleError = (error: any): void => {
-        if (error.errorType === "AccessDeniedException") {
+        if (error.errorType === 'AccessDeniedException') {
             this.setState({
-                virheet: [
-                    ...this.state.virheet,
-                    this.props.L["VIRKAILIJAN_LUONTI_EI_OIKEUKSIA"],
-                ],
-            })
-        } else if (error.errorType === "UsernameAlreadyExistsException") {
+                virheet: [...this.state.virheet, this.props.L['VIRKAILIJAN_LUONTI_EI_OIKEUKSIA']],
+            });
+        } else if (error.errorType === 'UsernameAlreadyExistsException') {
             this.setState({
-                virheet: [
-                    ...this.state.virheet,
-                    this.props.L["REKISTEROIDY_USERNAMEEXISTS_OTSIKKO"],
-                ],
-            })
+                virheet: [...this.state.virheet, this.props.L['REKISTEROIDY_USERNAMEEXISTS_OTSIKKO']],
+            });
         } else {
             this.setState({
-                virheet: [
-                    ...this.state.virheet,
-                    this.props.L["HENKILON_LUONTI_EPAONNISTUI"],
-                ],
-            })
+                virheet: [...this.state.virheet, this.props.L['HENKILON_LUONTI_EPAONNISTUI']],
+            });
         }
-    }
+    };
 
-    createVirkailija = async (
-        virkailija: VirkailijaCreate,
-    ): Promise<string> => {
-        const url = urls.url("kayttooikeus-service.virkailija")
-        return await http.post(url, virkailija)
-    }
+    createVirkailija = async (virkailija: VirkailijaCreate): Promise<string> => {
+        const url = urls.url('kayttooikeus-service.virkailija');
+        return await http.post(url, virkailija);
+    };
 
     navigateToVirkailija = (oid: string) => {
-        window.location.href = `/henkilo-ui/virkailija/${oid}`
-    }
+        window.location.href = `/henkilo-ui/virkailija/${oid}`;
+    };
 }
 
 const mapStateToProps = state => {
     return {
         L: state.l10n.localisations[state.locale],
-    }
-}
+    };
+};
 
-export default connect<Props, OwnProps, _, _, _, _>(
-    mapStateToProps,
-    {},
-)(VirkailijaCreateContainer)
+export default connect<Props, OwnProps>(mapStateToProps, {})(VirkailijaCreateContainer);

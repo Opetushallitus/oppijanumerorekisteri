@@ -1,6 +1,9 @@
-import React from "react"
-import PropTypes from "prop-types"
-import Loader from "./Loader"
+import React from 'react';
+import Loader from './Loader';
+
+type Props = {
+    loading: boolean;
+};
 
 /**
  * Loading-komponentti react-table -komponentille.
@@ -14,14 +17,10 @@ import Loader from "./Loader"
  *             LoadingComponent={TableLoader}>
  * </ReactTable>
  */
-class TableLoader extends React.Component {
+class TableLoader extends React.Component<Props> {
     render() {
-        return <div>{this.props.loading && <Loader />}</div>
+        return <div>{this.props.loading && <Loader />}</div>;
     }
 }
 
-TableLoader.propTypes = {
-    loading: PropTypes.bool.isRequired,
-}
-
-export default TableLoader
+export default TableLoader;

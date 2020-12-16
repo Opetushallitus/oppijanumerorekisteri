@@ -1,25 +1,25 @@
-import React from "react"
-import PropTypes from "prop-types"
+import React from 'react';
+import CSS from 'csstype';
 
-const wrapperStyles = {
-    position: "fixed",
+type Props = {
+    show: boolean;
+    onClose: (e: React.SyntheticEvent<EventTarget>) => void;
+    closeOnOuterClick: boolean;
+};
+
+const wrapperStyles: Partial<CSS.Properties> = {
+    position: 'fixed',
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
-    background: "rgba(0, 0, 0, 0.8)",
+    background: 'rgba(0, 0, 0, 0.8)',
     zIndex: 99999,
-    pointerEvents: "auto",
-    overflowY: "auto",
-}
+    pointerEvents: 'auto',
+    overflowY: 'auto',
+};
 
-export default class Modal extends React.Component {
-    static propTypes = {
-        show: PropTypes.bool.isRequired,
-        onClose: PropTypes.func.isRequired,
-        closeOnOuterClick: PropTypes.bool.isRequired,
-    }
-
+export default class Modal extends React.Component<Props> {
     render() {
         if (this.props.show) {
             return (
@@ -31,15 +31,15 @@ export default class Modal extends React.Component {
                 >
                     {this.props.children}
                 </div>
-            )
+            );
         } else {
-            return null
+            return null;
         }
     }
 
-    hideOnOuterClick(e) {
-        if (e.target.dataset.modal && this.props.closeOnOuterClick) {
-            this.props.onClose(e)
+    hideOnOuterClick(e: React.SyntheticEvent<EventTarget>) {
+        if (e.target instanceof HTMLElement && e.target.dataset.modal && this.props.closeOnOuterClick) {
+            this.props.onClose(e);
         }
     }
 }

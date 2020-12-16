@@ -1,99 +1,81 @@
-import React from "react"
-import "./KayttooikeusryhmatPalvelutJaKayttooikeudet.css"
-import {ReactSelectOption} from "../../../types/react-select.types"
-import OphSelect from "../../common/select/OphSelect"
-import {Locale} from "../../../types/locale.type"
-import {PalvelutState} from "../../../reducers/palvelut.reducer"
-import * as R from "ramda"
-import {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer"
-import {PalveluKayttooikeus} from "../../../types/domain/kayttooikeus/palvelukayttooikeus.types"
-import {PalveluJaKayttooikeusSelection} from "./KayttooikeusryhmaPage"
-import PalveluJaKayttooikeusSelections from "./PalveluJaKayttooikeusSelections"
-import {Localisations} from "../../../types/localisation.type"
-import {Text} from "../../../types/domain/kayttooikeus/text.types"
+import React from 'react';
+import './KayttooikeusryhmatPalvelutJaKayttooikeudet.css';
+import { ReactSelectOption } from '../../../types/react-select.types';
+import OphSelect from '../../common/select/OphSelect';
+import { Locale } from '../../../types/locale.type';
+import { PalvelutState } from '../../../reducers/palvelut.reducer';
+import * as R from 'ramda';
+import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
+import { PalveluKayttooikeus } from '../../../types/domain/kayttooikeus/palvelukayttooikeus.types';
+import { PalveluJaKayttooikeusSelection } from './KayttooikeusryhmaPage';
+import PalveluJaKayttooikeusSelections from './PalveluJaKayttooikeusSelections';
+import { Localisations } from '../../../types/localisation.type';
+import { Text } from '../../../types/domain/kayttooikeus/text.types';
 
 type Props = {
-    L: Localisations
-    locale: Locale
-    palvelutState: PalvelutState
-    kayttooikeusState: KayttooikeusState
-    palvelutSelectAction: (selection: ReactSelectOption) => void
-    palvelutSelection: ReactSelectOption
-    palveluKayttooikeusSelectAction: (selection: ReactSelectOption) => void
-    palveluKayttooikeusSelection: ReactSelectOption
-    lisaaPalveluJaKayttooikeusAction: () => void
-    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>
-    removePalveluJaKayttooikeus: (arg0: PalveluJaKayttooikeusSelection) => void
-}
+    L: Localisations;
+    locale: Locale;
+    palvelutState: PalvelutState;
+    kayttooikeusState: KayttooikeusState;
+    palvelutSelectAction: (selection: ReactSelectOption) => void;
+    palvelutSelection: ReactSelectOption;
+    palveluKayttooikeusSelectAction: (selection: ReactSelectOption) => void;
+    palveluKayttooikeusSelection: ReactSelectOption;
+    lisaaPalveluJaKayttooikeusAction: () => void;
+    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
+    removePalveluJaKayttooikeus: (arg0: PalveluJaKayttooikeusSelection) => void;
+};
 
 type State = {
-    palvelutOptions: Array<ReactSelectOption>
-    palveluKayttooikeusOptions: Array<ReactSelectOption>
-}
+    palvelutOptions: Array<ReactSelectOption>;
+    palveluKayttooikeusOptions: Array<ReactSelectOption>;
+};
 
-export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Component<
-    Props,
-    State
-> {
+export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Component<Props, State> {
     state = {
         palvelutOptions: [],
         palveluKayttooikeusOptions: [],
-    }
+    };
 
     componentWillMount() {
-        const lang = this.props.locale.toUpperCase()
-        const palvelutOptions: Array<any> = this.props.palvelutState.palvelut.map(
-            palvelu => {
-                const textObject = R.find(R.propEq("lang", lang))(
-                    palvelu.description.texts,
-                )
-                return {
-                    label: R.path(["text"], textObject),
-                    value: palvelu.name,
-                }
-            },
-        )
-        this.setState({palvelutOptions})
+        const lang = this.props.locale.toUpperCase();
+        const palvelutOptions: Array<any> = this.props.palvelutState.palvelut.map(palvelu => {
+            const textObject = R.find(R.propEq('lang', lang))(palvelu.description.texts);
+            return {
+                label: R.path(['text'], textObject),
+                value: palvelu.name,
+            };
+        });
+        this.setState({ palvelutOptions });
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        const lang = this.props.locale.toUpperCase()
+        const lang = this.props.locale.toUpperCase();
         const palveluKayttooikeusOptions: Array<any> = nextProps.kayttooikeusState.palveluKayttooikeus.map(
             (palveluKayttooikeus: PalveluKayttooikeus) => {
-                const textObject: Text | null | undefined = R.find(
-                    R.propEq("lang", lang),
-                )(palveluKayttooikeus.oikeusLangs)
+                const textObject: Text | null | undefined = R.find(R.propEq('lang', lang))(
+                    palveluKayttooikeus.oikeusLangs
+                );
                 return {
-                    label: R.path(["text"], textObject),
+                    label: R.path(['text'], textObject),
                     value: palveluKayttooikeus.rooli,
-                }
-            },
-        )
-        this.setState({palveluKayttooikeusOptions})
+                };
+            }
+        );
+        this.setState({ palveluKayttooikeusOptions });
     }
 
     render() {
         return (
             <div className="kayttooikeusryhmat-palvelu-ja-kayttooikeudet">
-                <h4>
-                    {
-                        this.props.L[
-                            "KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET"
-                        ]
-                    }{" "}
-                    *
-                </h4>
+                <h4>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PALVELUT_JA_OIKEUDET']} *</h4>
                 <div className="flex-horizontal">
                     <div className="flex-item-1">
                         <OphSelect
                             id="kayttooikeusryhmat-palvelut"
                             options={this.state.palvelutOptions}
                             value={this.props.palvelutSelection}
-                            placeholder={
-                                this.props.L[
-                                    "KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU"
-                                ]
-                            }
+                            placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
                             onChange={this.props.palvelutSelectAction}
                         ></OphSelect>
                     </div>
@@ -103,37 +85,22 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                             <div className="flex-item-1">
                                 <OphSelect
                                     id="kayttooikeusryhmat-palvelu-kayttooikeudet"
-                                    options={
-                                        this.state.palveluKayttooikeusOptions
-                                    }
+                                    options={this.state.palveluKayttooikeusOptions}
                                     disabled={!this.props.palvelutSelection}
-                                    value={
-                                        this.props.palveluKayttooikeusSelection
-                                    }
-                                    placeholder={
-                                        this.props.L[
-                                            "KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS"
-                                        ]
-                                    }
-                                    onChange={
-                                        this.props
-                                            .palveluKayttooikeusSelectAction
-                                    }
+                                    value={this.props.palveluKayttooikeusSelection}
+                                    placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
+                                    onChange={this.props.palveluKayttooikeusSelectAction}
                                 ></OphSelect>
                             </div>
                             <button
                                 className="oph-button add-button oph-button-primary"
                                 disabled={
-                                    this.props.palvelutSelection ===
-                                        undefined ||
-                                    this.props.palveluKayttooikeusSelection ===
-                                        undefined
+                                    this.props.palvelutSelection === undefined ||
+                                    this.props.palveluKayttooikeusSelection === undefined
                                 }
-                                onClick={() =>
-                                    this.props.lisaaPalveluJaKayttooikeusAction()
-                                }
+                                onClick={() => this.props.lisaaPalveluJaKayttooikeusAction()}
                             >
-                                {this.props.L["LISAA"]}
+                                {this.props.L['LISAA']}
                             </button>
                         </div>
                     </div>
@@ -144,6 +111,6 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                     L={this.props.L}
                 ></PalveluJaKayttooikeusSelections>
             </div>
-        )
+        );
     }
 }

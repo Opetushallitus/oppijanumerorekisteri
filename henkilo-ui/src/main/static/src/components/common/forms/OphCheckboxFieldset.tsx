@@ -1,26 +1,26 @@
-import React from "react"
-import OphCheckboxButtonInput from "./OphCheckboxButtonInput"
+import React from 'react';
+import OphCheckboxButtonInput from './OphCheckboxButtonInput';
 
 type Option = {
-    label: string
-    value: string
-    checked: boolean
-    disabled?: boolean
-}
+    label: string;
+    value: string;
+    checked: boolean;
+    disabled?: boolean;
+};
 
 type OphCheckboxListProps = {
-    legendText: string
-    options: Array<Option>
-    selectAction: (arg0: React.SyntheticEvent<HTMLInputElement>) => void
-}
+    legendText: string;
+    options: Array<Option>;
+    selectAction: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
+};
 
 class OphCheckboxFieldset extends React.Component<OphCheckboxListProps> {
-    random
+    random;
 
-    constructor(props: Props) {
-        super(props)
+    constructor(props: OphCheckboxListProps) {
+        super(props);
 
-        this.random = Math.random()
+        this.random = Math.random();
     }
 
     render() {
@@ -30,7 +30,7 @@ class OphCheckboxFieldset extends React.Component<OphCheckboxListProps> {
                 {this.props.options.map((option, idx) => (
                     <OphCheckboxButtonInput
                         key={this.random + idx}
-                        idName={"label" + this.random + idx}
+                        idName={'label' + this.random + idx}
                         value={option.value}
                         label={option.label}
                         checked={option.checked}
@@ -39,8 +39,8 @@ class OphCheckboxFieldset extends React.Component<OphCheckboxListProps> {
                     />
                 ))}
             </fieldset>
-        )
+        );
     }
 }
 
-export default OphCheckboxFieldset
+export default OphCheckboxFieldset;

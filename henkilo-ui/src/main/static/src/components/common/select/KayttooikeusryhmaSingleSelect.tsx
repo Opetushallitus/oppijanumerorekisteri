@@ -1,40 +1,40 @@
-import React from "react"
-import {connect} from "react-redux"
-import OphSelect from "./OphSelect"
-import StaticUtils from "../StaticUtils"
-import {fetchAllKayttooikeusryhma} from "../../../actions/kayttooikeusryhma.actions"
-import {Localisations} from "../../../types/localisation.type"
-import {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types"
+import React from 'react';
+import { connect } from 'react-redux';
+import OphSelect from './OphSelect';
+import StaticUtils from '../StaticUtils';
+import { fetchAllKayttooikeusryhma } from '../../../actions/kayttooikeusryhma.actions';
+import { Localisations } from '../../../types/localisation.type';
+import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 type OwnProps = {
-    kayttooikeusSelectionAction: (arg0: number) => void
-    kayttooikeusSelection: number | null | undefined
-}
+    kayttooikeusSelectionAction: (arg0: number) => void;
+    kayttooikeusSelection: number | null | undefined;
+};
 
 type Props = OwnProps & {
-    L: Localisations
-    locale: string
-    fetchAllKayttooikeusryhma: (arg0: boolean) => void
-    kayttooikeusRyhmas: Array<Kayttooikeusryhma>
-    kayttooikeusLoading: boolean
-}
+    L: Localisations;
+    locale: string;
+    fetchAllKayttooikeusryhma: (arg0: boolean) => void;
+    kayttooikeusRyhmas: Array<Kayttooikeusryhma>;
+    kayttooikeusLoading: boolean;
+};
 
 type State = {
-    selectedKayttooikeus: number | null | undefined
-}
+    selectedKayttooikeus: number | null | undefined;
+};
 
 class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
     componentDidMount() {
         // Fetches only if not already fetched
-        this.props.fetchAllKayttooikeusryhma(false)
+        this.props.fetchAllKayttooikeusryhma(false);
     }
 
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             selectedKayttooikeus: null,
-        }
+        };
     }
 
     render() {
@@ -47,23 +47,14 @@ class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
                     .filter(kayttooikeusryhma => !kayttooikeusryhma.passivoitu)
                     .map(kayttooikeusryhma => ({
                         value: kayttooikeusryhma.id,
-                        label: StaticUtils.getLocalisedText(
-                            kayttooikeusryhma.description,
-                            this.props.locale,
-                        ),
+                        label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, this.props.locale),
                     }))
                     .sort((a, b) => a.label.localeCompare(b.label))}
                 value={this.props.kayttooikeusSelection}
-                placeholder={
-                    this.props.L[
-                        "HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER"
-                    ]
-                }
-                onChange={event =>
-                    this.props.kayttooikeusSelectionAction(event.value)
-                }
+                placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                onChange={event => this.props.kayttooikeusSelectionAction(event.value)}
             />
-        ) : null
+        ) : null;
     }
 }
 
@@ -72,8 +63,8 @@ const mapStateToProps = (state, ownProps) => ({
     locale: state.locale,
     kayttooikeusLoading: state.kayttooikeus.allKayttooikeusryhmasLoading,
     kayttooikeusRyhmas: state.kayttooikeus.allKayttooikeusryhmas,
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
+export default connect<Props, OwnProps>(mapStateToProps, {
     fetchAllKayttooikeusryhma,
-})(KayttooikeusryhmaSingleSelect)
+})(KayttooikeusryhmaSingleSelect);

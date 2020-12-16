@@ -1,35 +1,28 @@
-import React from "react"
-import {connect} from "react-redux"
-import Columns from "react-columns"
-import {Localisations} from "../../../../types/localisation.type"
+import React from 'react';
+import { connect } from 'react-redux';
+import Columns from 'react-columns';
+import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
-    label: string
-    valueGroup: any
-}
+    label: string;
+    valueGroup: any;
+};
 
 type Props = OwnProps & {
-    L: Localisations
-}
+    L: Localisations;
+};
 
-const LabelValueGroup = ({label, L, valueGroup}: Props) => (
+const LabelValueGroup = ({ label, L, valueGroup }: Props) => (
     <div id={label}>
-        <Columns
-            columns={2}
-            className="labelValue"
-            rootStyles={{marginRight: "25%"}}
-        >
+        <Columns columns={2} className="labelValue" rootStyles={{ marginRight: '25%' }}>
             <span className="oph-bold">{L[label]}</span>
             {valueGroup}
         </Columns>
     </div>
-)
+);
 
 const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(
-    mapStateToProps,
-    {},
-)(LabelValueGroup)
+export default connect<Props, OwnProps>(mapStateToProps, {})(LabelValueGroup);

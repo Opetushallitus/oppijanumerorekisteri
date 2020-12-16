@@ -1,22 +1,22 @@
-import React from "react"
-import classNames from "classnames"
+import React from 'react';
+import classNames from 'classnames';
 
 type OphInputProps = {
-    type: string
-    name: string
-    value: string
-    onChange: (event: React.SyntheticEvent<HTMLInputElement>) => void
-    hasError?: boolean
-    placeholder?: string
-    disabled?: boolean
-}
+    type: string;
+    name: string;
+    value: string;
+    onChange: (event: React.SyntheticEvent<HTMLInputElement>) => void;
+    hasError?: boolean;
+    placeholder?: string;
+    disabled?: boolean;
+};
 
 class OphInput extends React.Component<OphInputProps> {
     render() {
         const classes = classNames({
-            "oph-input": true,
-            "oph-input-has-error": this.props.hasError,
-        })
+            'oph-input': true,
+            'oph-input-has-error': this.props.hasError,
+        });
         return (
             <input
                 type={this.props.type}
@@ -28,8 +28,8 @@ class OphInput extends React.Component<OphInputProps> {
                 placeholder={this.props.placeholder}
                 disabled={this.props.disabled}
             />
-        )
+        );
     }
 }
 
-export default OphInput
+export default OphInput;

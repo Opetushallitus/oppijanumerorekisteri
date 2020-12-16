@@ -1,10 +1,16 @@
-import React from "react"
-import PropTypes from "prop-types"
+import React from 'react';
+
+type Props = {
+    value: boolean;
+    onChange: (event: any) => void;
+    trueLabel: string;
+    falseLabel: string;
+};
 
 /**
  * Tyylioppaan mukainen "Radio button group" -komponentti totuusarvoille.
  */
-class BooleanRadioButtonGroup extends React.Component {
+class BooleanRadioButtonGroup extends React.Component<Props> {
     render() {
         return (
             <fieldset className="oph-fieldset">
@@ -13,41 +19,30 @@ class BooleanRadioButtonGroup extends React.Component {
                         <input
                             className="oph-radio-button-input"
                             type="radio"
-                            value={false}
+                            value="false"
                             checked={this.props.value === false}
                             onChange={this.onChange}
                         />
-                        <span className="oph-radio-button-text">
-                            {this.props.falseLabel}
-                        </span>
+                        <span className="oph-radio-button-text">{this.props.falseLabel}</span>
                     </label>
                     <label>
                         <input
                             className="oph-radio-button-input"
                             type="radio"
-                            value={true}
+                            value="true"
                             checked={this.props.value === true}
                             onChange={this.onChange}
                         />
-                        <span className="oph-radio-button-text">
-                            {this.props.trueLabel}
-                        </span>
+                        <span className="oph-radio-button-text">{this.props.trueLabel}</span>
                     </label>
                 </div>
             </fieldset>
-        )
+        );
     }
 
     onChange = event => {
-        this.props.onChange(event.target.value === "true")
-    }
+        this.props.onChange(event.target.value === 'true');
+    };
 }
 
-BooleanRadioButtonGroup.propTypes = {
-    value: PropTypes.bool,
-    onChange: PropTypes.func.isRequired,
-    trueLabel: PropTypes.string.isRequired,
-    falseLabel: PropTypes.string.isRequired,
-}
-
-export default BooleanRadioButtonGroup
+export default BooleanRadioButtonGroup;

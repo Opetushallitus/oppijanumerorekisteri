@@ -1,67 +1,64 @@
-import React from "react"
-import {connect} from "react-redux"
-import * as R from "ramda"
-import AbstractUserContent from "./AbstractUserContent"
-import Sukunimi from "../labelvalues/Sukunimi"
-import Etunimet from "../labelvalues/Etunimet"
-import Syntymaaika from "../labelvalues/Syntymaaika"
-import Hetu from "../labelvalues/Hetu"
-import Kutsumanimi from "../labelvalues/Kutsumanimi"
-import Kansalaisuus from "../labelvalues/Kansalaisuus"
-import Aidinkieli from "../labelvalues/Aidinkieli"
-import Oid from "../labelvalues/Oid"
-import Oppijanumero from "../labelvalues/Oppijanumero"
-import Asiointikieli from "../labelvalues/Asiointikieli"
-import EditButton from "../buttons/EditButton"
-import YksiloiHetutonButton from "../buttons/YksiloiHetutonButton"
-import PassivoiButton from "../buttons/PassivoiButton"
-import {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types"
-import {HenkiloState} from "../../../../reducers/henkilo.reducer"
-import {Localisations} from "../../../../types/localisation.type"
-import {Locale} from "../../../../types/locale.type"
-import {
-    fetchHenkiloSlaves,
-    yksiloiHenkilo,
-} from "../../../../actions/henkilo.actions"
-import Loader from "../../icons/Loader"
-import Kayttajanimi from "../labelvalues/Kayttajanimi"
-import LinkitetytHenkilot from "../labelvalues/LinkitetytHenkilot"
-import MasterHenkilo from "../labelvalues/MasterHenkilo"
-import PuraHetuttomanYksilointiButton from "../buttons/PuraHetuttomanYksilointi"
-import HakaButton from "../buttons/HakaButton"
-import VtjOverrideButton from "../buttons/VtjOverrideButton"
-import PasswordButton from "../buttons/PasswordButton"
-import AktivoiButton from "../buttons/AktivoiButton"
-import {hasAnyPalveluRooli} from "../../../../utilities/palvelurooli.util"
-import {OmattiedotState} from "../../../../reducers/omattiedot.reducer"
-import Sukupuoli from "../labelvalues/Sukupuoli"
-import SahkopostitunnisteButton from "../buttons/SahkopostitunnisteButton"
-import PoistaKayttajatunnusButton from "../buttons/PoistaKayttajatunnusButton"
+import React from 'react';
+import { connect } from 'react-redux';
+import * as R from 'ramda';
+import AbstractUserContent from './AbstractUserContent';
+import Sukunimi from '../labelvalues/Sukunimi';
+import Etunimet from '../labelvalues/Etunimet';
+import Syntymaaika from '../labelvalues/Syntymaaika';
+import Hetu from '../labelvalues/Hetu';
+import Kutsumanimi from '../labelvalues/Kutsumanimi';
+import Kansalaisuus from '../labelvalues/Kansalaisuus';
+import Aidinkieli from '../labelvalues/Aidinkieli';
+import Oid from '../labelvalues/Oid';
+import Oppijanumero from '../labelvalues/Oppijanumero';
+import Asiointikieli from '../labelvalues/Asiointikieli';
+import EditButton from '../buttons/EditButton';
+import YksiloiHetutonButton from '../buttons/YksiloiHetutonButton';
+import PassivoiButton from '../buttons/PassivoiButton';
+import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { Localisations } from '../../../../types/localisation.type';
+import { Locale } from '../../../../types/locale.type';
+import { fetchHenkiloSlaves, yksiloiHenkilo } from '../../../../actions/henkilo.actions';
+import Loader from '../../icons/Loader';
+import Kayttajanimi from '../labelvalues/Kayttajanimi';
+import LinkitetytHenkilot from '../labelvalues/LinkitetytHenkilot';
+import MasterHenkilo from '../labelvalues/MasterHenkilo';
+import PuraHetuttomanYksilointiButton from '../buttons/PuraHetuttomanYksilointi';
+import HakaButton from '../buttons/HakaButton';
+import VtjOverrideButton from '../buttons/VtjOverrideButton';
+import PasswordButton from '../buttons/PasswordButton';
+import AktivoiButton from '../buttons/AktivoiButton';
+import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
+import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
+import Sukupuoli from '../labelvalues/Sukupuoli';
+import SahkopostitunnisteButton from '../buttons/SahkopostitunnisteButton';
+import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 
 type OwnProps = {
-    readOnly: boolean
-    discardAction: () => void
-    updateAction: () => void
-    updateModelAction: () => void
-    updateDateAction: () => void
-    edit: () => void
-    henkiloUpdate: Henkilo
-    aktivoiHenkilo: (oid: string) => void
-    oidHenkilo: string
-    isValidForm: boolean
-}
+    readOnly: boolean;
+    discardAction: () => void;
+    updateAction: () => void;
+    updateModelAction: () => void;
+    updateDateAction: () => void;
+    edit: () => void;
+    henkiloUpdate: Henkilo;
+    aktivoiHenkilo: (oid: string) => void;
+    oidHenkilo: string;
+    isValidForm: boolean;
+};
 
 type Props = OwnProps & {
-    henkilo: HenkiloState
-    koodisto: any
-    L: Localisations
-    locale: Locale
-    yksiloiHenkilo: () => void
-    isAdmin: boolean
-    omattiedot: OmattiedotState
-}
+    henkilo: HenkiloState;
+    koodisto: any;
+    L: Localisations;
+    locale: Locale;
+    yksiloiHenkilo: () => void;
+    isAdmin: boolean;
+    omattiedot: OmattiedotState;
+};
 
-type State = {}
+type State = {};
 
 class AdminUserContent extends React.Component<Props, State> {
     render() {
@@ -81,7 +78,7 @@ class AdminUserContent extends React.Component<Props, State> {
                 readOnlyButtons={this.createReadOnlyButtons()}
                 isValidForm={this.props.isValidForm}
             />
-        )
+        );
     }
 
     createBasicInfo = () => {
@@ -90,7 +87,7 @@ class AdminUserContent extends React.Component<Props, State> {
             updateModelFieldAction: this.props.updateModelAction,
             updateDateFieldAction: this.props.updateDateAction,
             henkiloUpdate: this.props.henkiloUpdate,
-        }
+        };
 
         // Basic info box content
         return [
@@ -112,67 +109,42 @@ class AdminUserContent extends React.Component<Props, State> {
             [
                 <Kayttajanimi
                     {...props}
-                    disabled={
-                        !this.props.isAdmin ||
-                        !this.props.henkilo.kayttajatieto.username
-                    }
+                    disabled={!this.props.isAdmin || !this.props.henkilo.kayttajatieto.username}
                 />,
                 <LinkitetytHenkilot />,
                 <MasterHenkilo oidHenkilo={this.props.oidHenkilo} />,
             ],
-        ]
-    }
+        ];
+    };
 
     // Basic info default buttons
     createReadOnlyButtons = () => {
         const buttonPopupStyles = {
-            left: "0px",
-            top: "3rem",
-            width: "15rem",
-            padding: "30px",
-        }
-        const duplicate = this.props.henkilo.henkilo.duplicate
-        const passivoitu = this.props.henkilo.henkilo.passivoitu
-        const kayttajatunnukseton = !R.path(
-            ["kayttajatieto", "username"],
-            this.props.henkilo,
-        )
-        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(
-            this.props.omattiedot.organisaatiot,
-            [
-                "OPPIJANUMEROREKISTERI_HENKILON_RU",
-                "OPPIJANUMEROREKISTERI_REKISTERINPITAJA",
-            ],
-        )
-        const isOnrRekisterinpitaja: boolean = hasAnyPalveluRooli(
-            this.props.omattiedot.organisaatiot,
-            [
-                "OPPIJANUMEROREKISTERI_REKISTERINPITAJA",
-                "HENKILONHALLINTA_OPHREKISTERI",
-            ],
-        )
+            left: '0px',
+            top: '3rem',
+            width: '15rem',
+            padding: '30px',
+        };
+        const duplicate = this.props.henkilo.henkilo.duplicate;
+        const passivoitu = this.props.henkilo.henkilo.passivoitu;
+        const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo);
+        const hasHenkiloReadUpdateRights: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+        ]);
+        const isOnrRekisterinpitaja: boolean = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+            'HENKILONHALLINTA_OPHREKISTERI',
+        ]);
         const editButton = hasHenkiloReadUpdateRights ? (
-            <EditButton
-                editAction={this.props.edit}
-                disabled={duplicate || passivoitu}
-            />
-        ) : null
-        const yksiloiHetutonButton = (
-            <YksiloiHetutonButton disabled={duplicate || passivoitu} />
-        )
-        const puraHetuttomanYksilointiButton = (
-            <PuraHetuttomanYksilointiButton
-                disabled={duplicate || passivoitu}
-            />
-        )
+            <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />
+        ) : null;
+        const yksiloiHetutonButton = <YksiloiHetutonButton disabled={duplicate || passivoitu} />;
+        const puraHetuttomanYksilointiButton = <PuraHetuttomanYksilointiButton disabled={duplicate || passivoitu} />;
         const passivoiButton =
-            !passivoitu && hasHenkiloReadUpdateRights ? (
-                <PassivoiButton disabled={duplicate || passivoitu} />
-            ) : null
+            !passivoitu && hasHenkiloReadUpdateRights ? <PassivoiButton disabled={duplicate || passivoitu} /> : null;
         const poistaKayttajatunnusBtn =
-            isOnrRekisterinpitaja && !kayttajatunnukseton ? (
-                <PoistaKayttajatunnusButton />
-            ) : null
+            isOnrRekisterinpitaja && !kayttajatunnukseton ? <PoistaKayttajatunnusButton /> : null;
         const aktivoiButton =
             passivoitu && hasHenkiloReadUpdateRights ? (
                 <AktivoiButton
@@ -180,30 +152,28 @@ class AdminUserContent extends React.Component<Props, State> {
                     oid={this.props.henkilo.henkilo.oidHenkilo}
                     onClick={this.props.aktivoiHenkilo}
                 />
-            ) : null
+            ) : null;
         const hakaButton = (
             <HakaButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={buttonPopupStyles}
                 disabled={duplicate || passivoitu}
             />
-        )
+        );
         const sahkopostiTunnisteButton = isOnrRekisterinpitaja ? (
             <SahkopostitunnisteButton
                 oidHenkilo={this.props.oidHenkilo}
                 styles={buttonPopupStyles}
             ></SahkopostitunnisteButton>
-        ) : null
-        const vtjOverrideButton = (
-            <VtjOverrideButton disabled={duplicate || passivoitu} />
-        )
+        ) : null;
+        const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
         const passwordButton = (
             <PasswordButton
                 oidHenkilo={this.props.oidHenkilo}
-                styles={{top: "3rem", left: "0", width: "18rem"}}
+                styles={{ top: '3rem', left: '0', width: '18rem' }}
                 disabled={duplicate || passivoitu || kayttajatunnukseton}
             />
-        )
+        );
 
         return [
             editButton,
@@ -216,8 +186,8 @@ class AdminUserContent extends React.Component<Props, State> {
             sahkopostiTunnisteButton,
             vtjOverrideButton,
             passwordButton,
-        ]
-    }
+        ];
+    };
 }
 
 const mapStateToProps = state => ({
@@ -227,9 +197,9 @@ const mapStateToProps = state => ({
     locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
     omattiedot: state.omattiedot,
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
+export default connect<Props, OwnProps>(mapStateToProps, {
     yksiloiHenkilo,
     fetchHenkiloSlaves,
-})(AdminUserContent)
+})(AdminUserContent);

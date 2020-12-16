@@ -1,32 +1,27 @@
-import "./LoaderWithText.css"
-import React from "react"
-import {connect} from "react-redux"
-import {Localisations} from "../../../types/localisation.type"
-import Loader from "../icons/Loader"
+import './LoaderWithText.css';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Localisations } from '../../../types/localisation.type';
+import Loader from '../icons/Loader';
 
 type OwnProps = {
-    label?: string
-    labelkey: string | null | undefined
-}
+    label?: string;
+    labelkey: string | null | undefined;
+};
 
 type Props = OwnProps & {
-    L: Localisations
-}
+    L: Localisations;
+};
 
 const LoaderWithText = (props: Props) => (
     <div className="loader-with-text">
         <Loader />
-        <span>
-            {props.labelkey ? props.L[props.labelkey] : props.label || ""}
-        </span>
+        <span>{props.labelkey ? props.L[props.labelkey] : props.label || ''}</span>
     </div>
-)
+);
 
 const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(
-    mapStateToProps,
-    {},
-)(LoaderWithText)
+export default connect<Props, OwnProps>(mapStateToProps, {})(LoaderWithText);

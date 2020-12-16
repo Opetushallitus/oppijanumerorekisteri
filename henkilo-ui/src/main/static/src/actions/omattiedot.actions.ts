@@ -1,6 +1,6 @@
-import {http} from "../http"
-import {urls} from "oph-urls-js"
-import * as R from "ramda"
+import { http } from '../http';
+import { urls } from 'oph-urls-js';
+import * as R from 'ramda';
 import {
     FETCH_OMATTIEDOT_REQUEST,
     FETCH_OMATTIEDOT_SUCCESS,
@@ -19,178 +19,144 @@ import {
     FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
     FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
     FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
-} from "./actiontypes"
-import {Dispatch} from "../types/dispatch.type"
-import {Omattiedot} from "../types/domain/kayttooikeus/Omattiedot.types"
-import {OmattiedotState} from "../reducers/omattiedot.reducer"
+} from './actiontypes';
+import { Dispatch } from '../types/dispatch.type';
+import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
+import { OmattiedotState } from '../reducers/omattiedot.reducer';
 
 type GetState = () => {
-    omattiedot: OmattiedotState
-    locale: string
-}
+    omattiedot: OmattiedotState;
+    locale: string;
+};
 
-export const fetchLocale = () => async (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
-    const url = urls.url(
-        "oppijanumerorekisteri-service.henkilo.current.asiointikieli",
-    )
-    dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST})
+export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) => {
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
+    dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST });
     try {
-        const lang = await http.get(url)
+        const lang = await http.get<string>(url);
         if (lang.length === 2) {
-            dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang})
-            dispatch({type: LOCATION_CHANGE}) // Dispatch to trigger title change
+            dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_SUCCESS, lang });
+            dispatch({ type: LOCATION_CHANGE }); // Dispatch to trigger title change
         }
     } catch (error) {
-        dispatch({type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE})
-        throw error
+        dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_FAILURE });
+        throw error;
     }
-}
+};
 
 const updateAnomusilmoitusState = (value: boolean) => ({
     type: UPDATE_ANOMUSILMOITUS,
     value,
-})
-export const updateAnomusilmoitus = (value: boolean) => (
-    dispatch: Dispatch,
-) => {
-    dispatch(updateAnomusilmoitusState(value))
-}
+});
+export const updateAnomusilmoitus = (value: boolean) => (dispatch: Dispatch) => {
+    dispatch(updateAnomusilmoitusState(value));
+};
 
-const requestOmattiedot = (): {type: string} => ({
+const requestOmattiedot = (): { type: string } => ({
     type: FETCH_OMATTIEDOT_REQUEST,
-})
+});
 const receiveOmattiedotSuccess = (json: Omattiedot) => ({
     type: FETCH_OMATTIEDOT_SUCCESS,
     omattiedot: json,
-})
+});
 const receiveOmattiedotFailure = error => ({
     type: FETCH_OMATTIEDOT_FAILURE,
     error,
-})
-export const fetchOmattiedot = () => async (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
+});
+export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetState) => {
     if (!getState().omattiedot.data) {
-        dispatch(requestOmattiedot())
-        const url = urls.url("kayttooikeus-service.henkilo.current.omattiedot")
+        dispatch(requestOmattiedot());
+        const url = urls.url('kayttooikeus-service.henkilo.current.omattiedot');
         try {
-            const omattiedot: Omattiedot = await http.get(url)
-            dispatch(receiveOmattiedotSuccess(omattiedot))
+            const omattiedot: Omattiedot = await http.get(url);
+            dispatch(receiveOmattiedotSuccess(omattiedot));
         } catch (error) {
-            dispatch(receiveOmattiedotFailure(error))
-            throw error
+            dispatch(receiveOmattiedotFailure(error));
+            throw error;
         }
     }
-}
+};
 
 // Used only to determine if user has been synced to dlap
 export const fetchCasMe = () => async (dispatch: Dispatch) => {
-    dispatch({type: FETCH_CASME_REQUEST})
+    dispatch({ type: FETCH_CASME_REQUEST });
     try {
-        const url = urls.url("cas.me")
-        await http.get(url)
-        dispatch({type: FETCH_CASME_SUCCESS})
+        const url = urls.url('cas.me');
+        await http.get(url);
+        dispatch({ type: FETCH_CASME_SUCCESS });
     } catch (error) {
-        dispatch({type: FETCH_CASME_FAILURE})
-        throw error
+        dispatch({ type: FETCH_CASME_FAILURE });
+        throw error;
     }
-}
+};
 
 const requestOmattiedotOrganisaatios = () => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_REQUEST,
-})
+});
 const receiveOmattiedotOrganisaatiosSuccess = (json, locale) => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS,
     organisaatios: json,
     locale,
-})
+});
 const receiveOmattiedotOrganisaatiosFailure = error => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
     error,
-})
-export const fetchOmattiedotOrganisaatios = () => async (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
+});
+export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only with the first call
     if (
         getState().omattiedot.organisaatios &&
         !getState().omattiedot.organisaatios.length &&
         !getState().omattiedot.omattiedotOrganisaatiosLoading
     ) {
-        const oid = R.path(["omattiedot", "data", "oid"], getState())
-        const omattiedotLoading = getState().omattiedot.omattiedotLoading
+        const oid = R.path(['omattiedot', 'data', 'oid'], getState());
+        const omattiedotLoading = getState().omattiedot.omattiedotLoading;
         if (!oid && !omattiedotLoading) {
             try {
-                await dispatch(fetchOmattiedot())
+                await dispatch(fetchOmattiedot());
             } catch (error) {
-                throw error
+                throw error;
             }
         }
-        const userOid = getState().omattiedot.data.oid
-        dispatch(requestOmattiedotOrganisaatios())
-        const url = urls.url(
-            "kayttooikeus-service.henkilo.organisaatios",
-            userOid,
-            {piilotaOikeudettomat: true},
-        )
+        const userOid = getState().omattiedot.data.oid;
+        dispatch(requestOmattiedotOrganisaatios());
+        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', userOid, { piilotaOikeudettomat: true });
         try {
-            const omattiedotOrganisaatios = await http.get(url)
-            dispatch(
-                receiveOmattiedotOrganisaatiosSuccess(
-                    omattiedotOrganisaatios,
-                    getState().locale,
-                ),
-            )
+            const omattiedotOrganisaatios = await http.get(url);
+            dispatch(receiveOmattiedotOrganisaatiosSuccess(omattiedotOrganisaatios, getState().locale));
         } catch (error) {
-            dispatch(receiveOmattiedotOrganisaatiosFailure(error))
-            throw error
+            dispatch(receiveOmattiedotOrganisaatiosFailure(error));
+            throw error;
         }
     }
-}
+};
 
 const requestOmatHenkilohakuOrganisaatiot = () => ({
     type: FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
-})
+});
 const receiveOmatHenkilohakuOrganisaatiotSuccess = (organisaatiot, locale) => ({
     type: FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
     organisaatiot,
     locale,
-})
+});
 const receiveOmatHenkilohakuOrganisaatiotFailure = () => ({
     type: FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
-})
-export const fetchOmatHenkiloHakuOrganisaatios = () => async (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
+});
+export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only once
     if (
         getState().omattiedot.henkilohakuOrganisaatiot.length === 0 &&
         !getState().omattiedot.henkilohakuOrganisaatiotLoading
     ) {
-        const oid = R.path(["omattiedot", "data", "oid"], getState())
-        dispatch(requestOmatHenkilohakuOrganisaatiot())
-        const url = urls.url(
-            "kayttooikeus-service.henkilo.organisaatios",
-            oid,
-            {requiredRoles: "HENKILOHAKU"},
-        )
+        const oid = R.path(['omattiedot', 'data', 'oid'], getState());
+        dispatch(requestOmatHenkilohakuOrganisaatiot());
+        const url = urls.url('kayttooikeus-service.henkilo.organisaatios', oid, { requiredRoles: 'HENKILOHAKU' });
         try {
-            const omatHenkilohakuOrganisaatiot = await http.get(url)
-            dispatch(
-                receiveOmatHenkilohakuOrganisaatiotSuccess(
-                    omatHenkilohakuOrganisaatiot,
-                    getState().locale,
-                ),
-            )
+            const omatHenkilohakuOrganisaatiot = await http.get(url);
+            dispatch(receiveOmatHenkilohakuOrganisaatiotSuccess(omatHenkilohakuOrganisaatiot, getState().locale));
         } catch (error) {
-            dispatch(receiveOmatHenkilohakuOrganisaatiotFailure())
-            throw error
+            dispatch(receiveOmatHenkilohakuOrganisaatiotFailure());
+            throw error;
         }
     }
-}
+};

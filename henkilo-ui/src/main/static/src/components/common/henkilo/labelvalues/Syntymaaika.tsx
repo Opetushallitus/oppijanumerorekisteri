@@ -1,18 +1,18 @@
-import React from "react"
-import {connect} from "react-redux"
-import LabelValue from "./LabelValue"
-import {HenkiloState} from "../../../../reducers/henkilo.reducer"
-import {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types"
+import React from 'react';
+import { connect } from 'react-redux';
+import LabelValue from './LabelValue';
+import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type OwnProps = {
-    readOnly: boolean
-    henkiloUpdate: Henkilo
-    updateDateFieldAction: () => void
-}
+    readOnly: boolean;
+    henkiloUpdate: Henkilo;
+    updateDateFieldAction: () => void;
+};
 
 type Props = OwnProps & {
-    henkilo: HenkiloState
-}
+    henkilo: HenkiloState;
+};
 
 const Syntymaaika = (props: Props) => {
     return (
@@ -20,21 +20,18 @@ const Syntymaaika = (props: Props) => {
             readOnly={props.readOnly}
             updateDateFieldAction={props.updateDateFieldAction}
             values={{
-                label: "HENKILO_SYNTYMAAIKA",
-                inputValue: "syntymaaika",
+                label: 'HENKILO_SYNTYMAAIKA',
+                inputValue: 'syntymaaika',
                 date: true,
                 value: props.henkiloUpdate.syntymaaika,
                 disabled: !!props.henkiloUpdate.hetu,
             }}
         />
-    )
-}
+    );
+};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(
-    mapStateToProps,
-    {},
-)(Syntymaaika)
+export default connect<Props, OwnProps>(mapStateToProps, {})(Syntymaaika);

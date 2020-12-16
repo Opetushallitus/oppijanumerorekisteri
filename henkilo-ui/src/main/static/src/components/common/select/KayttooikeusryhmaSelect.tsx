@@ -1,33 +1,33 @@
-import React from "react"
-import classNames from "classnames"
-import {Locale} from "../../../types/locale.type"
-import {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types"
-import "./KayttooikeusryhmaSelect.css"
-import {toLocalizedText} from "../../../localizabletext"
-import {SallitutKayttajatyypit} from "../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage"
+import React from 'react';
+import classNames from 'classnames';
+import { Locale } from '../../../types/locale.type';
+import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import './KayttooikeusryhmaSelect.css';
+import { toLocalizedText } from '../../../localizabletext';
+import { SallitutKayttajatyypit } from '../../kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPage';
 
 type KielistettyKayttooikeusryhma = {
-    id: number
-    nimi: string
-    kuvaus: string
-}
+    id: number;
+    nimi: string;
+    kuvaus: string;
+};
 
 type Props = {
-    locale: Locale
+    locale: Locale;
     L: {
-        [key: string]: string
-    }
-    kayttooikeusryhmat: Array<Kayttooikeusryhma>
-    onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void
-    sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined
-}
+        [key: string]: string;
+    };
+    kayttooikeusryhmat: Array<Kayttooikeusryhma>;
+    onSelect: (kayttooikeusryhma: Kayttooikeusryhma) => void;
+    sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined;
+};
 
 type State = {
-    kaikki: Array<KielistettyKayttooikeusryhma>
-    naytettavat: Array<KielistettyKayttooikeusryhma>
-    valittu: KielistettyKayttooikeusryhma | null | undefined
-    hakutermi: string
-}
+    kaikki: Array<KielistettyKayttooikeusryhma>;
+    naytettavat: Array<KielistettyKayttooikeusryhma>;
+    valittu: KielistettyKayttooikeusryhma | null | undefined;
+    hakutermi: string;
+};
 
 /**
  * Käyttöoikeusryhmän valintakomponentti.
@@ -36,81 +36,70 @@ type State = {
  */
 class KayttooikeusryhmaSelect extends React.Component<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         const sallitut = this.filterEiSallitutKayttooikeusryhmat(
             props.kayttooikeusryhmat,
-            props.sallittuKayttajatyyppi,
-        )
-        const kaikki = this.getKielistetyt(sallitut)
+            props.sallittuKayttajatyyppi
+        );
+        const kaikki = this.getKielistetyt(sallitut);
         this.state = {
             kaikki: kaikki,
             naytettavat: kaikki,
             valittu: null,
-            hakutermi: "",
-        }
+            hakutermi: '',
+        };
     }
 
     componentWillReceiveProps(props: Props) {
         const sallitut = this.filterEiSallitutKayttooikeusryhmat(
             props.kayttooikeusryhmat,
-            props.sallittuKayttajatyyppi,
-        )
-        const kaikki = this.getKielistetyt(sallitut)
-        const naytettavat = this.getNaytettavat(kaikki, this.state.hakutermi)
-        this.setState({kaikki: kaikki, naytettavat: naytettavat})
+            props.sallittuKayttajatyyppi
+        );
+        const kaikki = this.getKielistetyt(sallitut);
+        const naytettavat = this.getNaytettavat(kaikki, this.state.hakutermi);
+        this.setState({ kaikki: kaikki, naytettavat: naytettavat });
     }
 
     filterEiSallitutKayttooikeusryhmat = (
         kayttooikeusryhmat: Array<Kayttooikeusryhma>,
-        sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined,
+        sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined
     ): Array<Kayttooikeusryhma> =>
         kayttooikeusryhmat.filter(
             kayttooikeusRyhma =>
                 !kayttooikeusRyhma.sallittuKayttajatyyppi ||
-                kayttooikeusRyhma.sallittuKayttajatyyppi ===
-                    sallittuKayttajatyyppi,
-        )
-    getKielistetyt = (
-        kayttooikeusryhmat: Array<Kayttooikeusryhma>,
-    ): Array<KielistettyKayttooikeusryhma> => {
-        return kayttooikeusryhmat
-            .map(this.getKielistetty)
-            .sort((a, b) => a.nimi.localeCompare(b.nimi))
-    }
+                kayttooikeusRyhma.sallittuKayttajatyyppi === sallittuKayttajatyyppi
+        );
+    getKielistetyt = (kayttooikeusryhmat: Array<Kayttooikeusryhma>): Array<KielistettyKayttooikeusryhma> => {
+        return kayttooikeusryhmat.map(this.getKielistetty).sort((a, b) => a.nimi.localeCompare(b.nimi));
+    };
 
-    getKielistetty = (
-        kayttooikeusryhma: Kayttooikeusryhma,
-    ): KielistettyKayttooikeusryhma => {
-        const locale = this.props.locale.toUpperCase()
+    getKielistetty = (kayttooikeusryhma: Kayttooikeusryhma): KielistettyKayttooikeusryhma => {
+        const locale = this.props.locale.toUpperCase();
         return {
             id: kayttooikeusryhma.id,
-            nimi: toLocalizedText(locale, kayttooikeusryhma.nimi, ""),
-            kuvaus: toLocalizedText(locale, kayttooikeusryhma.kuvaus, ""),
-        }
-    }
+            nimi: toLocalizedText(locale, kayttooikeusryhma.nimi, ''),
+            kuvaus: toLocalizedText(locale, kayttooikeusryhma.kuvaus, ''),
+        };
+    };
 
     getNaytettavat = (
         kayttooikeusryhmat: Array<KielistettyKayttooikeusryhma>,
-        hakutermi: string,
+        hakutermi: string
     ): Array<KielistettyKayttooikeusryhma> => {
         return kayttooikeusryhmat.filter(kayttooikeusryhma => {
-            return (
-                kayttooikeusryhma.nimi
-                    .toLowerCase()
-                    .indexOf(hakutermi.toLowerCase()) !== -1
-            )
-        })
-    }
+            return kayttooikeusryhma.nimi.toLowerCase().indexOf(hakutermi.toLowerCase()) !== -1;
+        });
+    };
 
     render() {
-        const invalid = !this.state.valittu
+        const invalid = !this.state.valittu;
         return (
             <div className="flex-horizontal KayttooikeusryhmaSelect">
                 <div className="flex-1 flex-same-size">
                     <input
                         className="oph-input"
-                        placeholder={this.props.L["OMATTIEDOT_RAJAA_LISTAUSTA"]}
+                        placeholder={this.props.L['OMATTIEDOT_RAJAA_LISTAUSTA']}
                         type="text"
                         value={this.state.hakutermi}
                         onChange={this.onFilter}
@@ -125,33 +114,21 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
                         onClick={this.onSubmit}
                         disabled={invalid}
                     >
-                        {
-                            this.props.L[
-                                "OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN"
-                            ]
-                        }
+                        {this.props.L['OMATTIEDOT_LISAA_HAETTAVIIN_KAYTTOOIKEUSRYHMIIN']}
                     </button>
                 </div>
             </div>
-        )
+        );
     }
 
-    renderKayttooikeusryhmat = (
-        kayttooikeusryhmat: Array<KielistettyKayttooikeusryhma>,
-    ) => {
+    renderKayttooikeusryhmat = (kayttooikeusryhmat: Array<KielistettyKayttooikeusryhma>) => {
         if (kayttooikeusryhmat.length === 0) {
-            return <div className="valittavat-tyhja"></div>
+            return <div className="valittavat-tyhja"></div>;
         }
-        return (
-            <div className="valittavat">
-                {kayttooikeusryhmat.map(this.renderKayttooikeusryhma)}
-            </div>
-        )
-    }
+        return <div className="valittavat">{kayttooikeusryhmat.map(this.renderKayttooikeusryhma)}</div>;
+    };
 
-    renderKayttooikeusryhma = (
-        kayttooikeusryhma: KielistettyKayttooikeusryhma,
-    ) => {
+    renderKayttooikeusryhma = (kayttooikeusryhma: KielistettyKayttooikeusryhma) => {
         return (
             <div
                 key={kayttooikeusryhma.id}
@@ -163,59 +140,50 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
             >
                 {kayttooikeusryhma.nimi}
             </div>
-        )
-    }
+        );
+    };
 
-    renderValittuKayttooikeusryhma = (
-        kayttooikeusryhma: KielistettyKayttooikeusryhma | null | undefined,
-    ) => {
+    renderValittuKayttooikeusryhma = (kayttooikeusryhma: KielistettyKayttooikeusryhma | null | undefined) => {
         if (kayttooikeusryhma) {
             return (
                 <div>
                     <div className="oph-bold">{kayttooikeusryhma.nimi}</div>
                     <div>{kayttooikeusryhma.kuvaus}</div>
                 </div>
-            )
+            );
         }
-    }
+    };
 
     onFilter = (event: React.SyntheticEvent<HTMLInputElement>) => {
-        const hakutermi = event.currentTarget.value
-        const naytettavat = this.getNaytettavat(this.state.kaikki, hakutermi)
-        const valittuId = this.state.valittu ? this.state.valittu.id : null
-        const valittu = valittuId
-            ? naytettavat.find(naytettava => naytettava.id === valittuId)
-            : null
+        const hakutermi = event.currentTarget.value;
+        const naytettavat = this.getNaytettavat(this.state.kaikki, hakutermi);
+        const valittuId = this.state.valittu ? this.state.valittu.id : null;
+        const valittu = valittuId ? naytettavat.find(naytettava => naytettava.id === valittuId) : null;
         this.setState({
             naytettavat: naytettavat,
             hakutermi: hakutermi,
             valittu: valittu,
-        })
-    }
+        });
+    };
 
-    onSelect = (
-        event: React.SyntheticEvent<>,
-        valittu: KielistettyKayttooikeusryhma,
-    ) => {
-        event.preventDefault()
-        this.setState({valittu: valittu})
-    }
+    onSelect = (event: React.SyntheticEvent, valittu: KielistettyKayttooikeusryhma) => {
+        event.preventDefault();
+        this.setState({ valittu: valittu });
+    };
 
     onSubmit = (event: React.SyntheticEvent<HTMLButtonElement>) => {
-        event.preventDefault()
-        const valittuId = this.state.valittu ? this.state.valittu.id : null
+        event.preventDefault();
+        const valittuId = this.state.valittu ? this.state.valittu.id : null;
         const sallitut = this.filterEiSallitutKayttooikeusryhmat(
             this.props.kayttooikeusryhmat,
-            this.props.sallittuKayttajatyyppi,
-        )
-        const valittu = sallitut.find(
-            kayttooikeusryhma => kayttooikeusryhma.id === valittuId,
-        )
+            this.props.sallittuKayttajatyyppi
+        );
+        const valittu = sallitut.find(kayttooikeusryhma => kayttooikeusryhma.id === valittuId);
         if (valittu) {
-            this.props.onSelect(valittu)
-            this.setState({valittu: null})
+            this.props.onSelect(valittu);
+            this.setState({ valittu: null });
         }
-    }
+    };
 }
 
-export default KayttooikeusryhmaSelect
+export default KayttooikeusryhmaSelect;

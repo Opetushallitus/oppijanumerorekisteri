@@ -1,103 +1,92 @@
-import React from "react"
-import moment from "moment"
-import "./KayttooikeusryhmaPage.css"
-import KayttooikeusryhmanOrganisaatiorajoite from "./KayttooikeusryhmanOrganisaatiorajoite"
-import KayttooikeusryhmatNimi from "./KayttooikeusryhmatNimi"
-import KayttooikeusryhmatKuvaus from "./KayttooikeusryhmatKuvaus"
-import MyonnettavatKayttooikeusryhmat from "./MyonnettavatKayttooikeusryhmat"
-import KayttooikeusryhmatPalvelutJaKayttooikeudet from "./KayttooikeusryhmatPalvelutJaKayttooikeudet"
-import {Locale} from "../../../types/locale.type"
-import {ReactSelectOption} from "../../../types/react-select.types"
-import {PalvelutState} from "../../../reducers/palvelut.reducer"
-import {KayttooikeusState} from "../../../reducers/kayttooikeus.reducer"
-import {TextGroupModify} from "../../../types/domain/kayttooikeus/textgroup.types"
-import {PalveluRooliModify} from "../../../types/domain/kayttooikeus/PalveluRooliModify.types"
-import {http} from "../../../http"
-import {urls} from "oph-urls-js"
-import {Kayttooikeusryhma} from "../../../types/domain/kayttooikeus/kayttooikeusryhma.types"
-import * as R from "ramda"
-import {Text} from "../../../types/domain/kayttooikeus/text.types"
-import {PalveluRooli} from "../../../types/domain/kayttooikeus/PalveluRooli.types"
-import {omattiedotOrganisaatiotToOrganisaatioSelectObject} from "../../../utilities/organisaatio.util"
-import {SpinnerInButton} from "../../common/icons/SpinnerInButton"
-import {Localisations} from "../../../types/localisation.type"
-import {OrganisaatioHenkilo} from "../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types"
-import {LocalNotification} from "../../common/Notification/LocalNotification"
-import {OrganisaatioSelectObject} from "../../../types/organisaatioselectobject.types"
-import {getLocalization} from "../../../utilities/localisation.util"
-import {NOTIFICATIONTYPES} from "../../common/Notification/notificationtypes"
-import {GlobalNotificationConfig} from "../../../types/notification.types"
-import {KoodistoState} from "../../../reducers/koodisto.reducer"
-import KayttooikeusryhmatSallittuKayttajatyyppi from "./KayttooikeusryhmatSallittuKayttajatyyppi"
-import {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer"
-import ToggleKayttooikeusryhmaStateModal from "./ToggleKayttooikeusryhmaStateModal"
-import PropertySingleton from "../../../globals/PropertySingleton"
+import React from 'react';
+import moment from 'moment';
+import './KayttooikeusryhmaPage.css';
+import KayttooikeusryhmanOrganisaatiorajoite from './KayttooikeusryhmanOrganisaatiorajoite';
+import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
+import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
+import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
+import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
+import { Locale } from '../../../types/locale.type';
+import { ReactSelectOption } from '../../../types/react-select.types';
+import { PalvelutState } from '../../../reducers/palvelut.reducer';
+import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
+import { TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
+import { PalveluRooliModify } from '../../../types/domain/kayttooikeus/PalveluRooliModify.types';
+import { http } from '../../../http';
+import { urls } from 'oph-urls-js';
+import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import * as R from 'ramda';
+import { Text } from '../../../types/domain/kayttooikeus/text.types';
+import { PalveluRooli } from '../../../types/domain/kayttooikeus/PalveluRooli.types';
+import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
+import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
+import { Localisations } from '../../../types/localisation.type';
+import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { LocalNotification } from '../../common/Notification/LocalNotification';
+import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
+import { getLocalization } from '../../../utilities/localisation.util';
+import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
+import { GlobalNotificationConfig } from '../../../types/notification.types';
+import { KoodistoState } from '../../../reducers/koodisto.reducer';
+import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallittuKayttajatyyppi';
+import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
+import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
+import PropertySingleton from '../../../globals/PropertySingleton';
 
-export type KayttooikeusryhmaNimi = {
-    FI: string
-    SV: string
-    EN: string
-}
+type Locales = 'FI' | 'SV' | 'EN';
 
-export type KayttooikeusryhmaKuvaus = {
-    FI: string
-    SV: string
-    EN: string
-}
+export type LocalizableField = Record<Locales, string>;
 
 export type PalveluJaKayttooikeusSelection = {
-    palvelu: ReactSelectOption
-    kayttooikeus: ReactSelectOption
-}
+    palvelu: ReactSelectOption;
+    kayttooikeus: ReactSelectOption;
+};
 
-export type SallitutKayttajatyypit = "PALVELU" | "VIRKAILIJA"
+export type SallitutKayttajatyypit = 'PALVELU' | 'VIRKAILIJA';
 
 export type KayttooikeusryhmaForm = {
-    name: KayttooikeusryhmaNimi
-    description: KayttooikeusryhmaKuvaus
-    ryhmaRestriction: boolean
-    organisaatioSelections: Array<OrganisaatioSelectObject>
-    oppilaitostyypitSelections: Array<string>
-    organisaatiotyypitSelections: Array<string>
-    kayttooikeusryhmaSelections: Array<ReactSelectOption>
-    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>
-    sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined
-}
+    name: LocalizableField;
+    description: LocalizableField;
+    ryhmaRestriction: boolean;
+    organisaatioSelections: Array<OrganisaatioSelectObject>;
+    oppilaitostyypitSelections: Array<string>;
+    organisaatiotyypitSelections: Array<string>;
+    kayttooikeusryhmaSelections: Array<ReactSelectOption>;
+    palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
+    sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined;
+};
 
 type Props = {
-    L: Localisations
-    router: any
-    organisaatios: Array<OrganisaatioHenkilo>
-    koodisto: KoodistoState
-    kayttooikeus: KayttooikeusRyhmaState
-    kayttooikeusState: KayttooikeusState
-    palvelutState: PalvelutState
-    locale: Locale
-    fetchPalveluKayttooikeus: (palveluName: string) => void
-    omattiedotOrganisaatiosLoading: boolean
-    kayttooikeusryhmaId?: string
-    organisaatioCache: any
-    addGlobalNotification: (payload: GlobalNotificationConfig) => void
-}
+    L: Localisations;
+    router: any;
+    organisaatios: Array<OrganisaatioHenkilo>;
+    koodisto: KoodistoState;
+    kayttooikeus: KayttooikeusRyhmaState;
+    kayttooikeusState: KayttooikeusState;
+    palvelutState: PalvelutState;
+    locale: Locale;
+    fetchPalveluKayttooikeus: (palveluName: string) => void;
+    omattiedotOrganisaatiosLoading: boolean;
+    kayttooikeusryhmaId?: string;
+    organisaatioCache: any;
+    addGlobalNotification: (payload: GlobalNotificationConfig) => void;
+};
 
 type State = {
-    kayttooikeusryhmaForm: KayttooikeusryhmaForm
-    palvelutSelection: ReactSelectOption | void
-    palveluKayttooikeusSelection: ReactSelectOption | void
-    ryhmaRestrictionViite: any
-    toggleTallenna: boolean
-    organisaatios: Array<OrganisaatioSelectObject>
-    isPassivoitu: boolean
-}
+    kayttooikeusryhmaForm: KayttooikeusryhmaForm;
+    palvelutSelection: ReactSelectOption;
+    palveluKayttooikeusSelection: ReactSelectOption;
+    ryhmaRestrictionViite: any;
+    toggleTallenna: boolean;
+    organisaatios: Array<OrganisaatioSelectObject>;
+    isPassivoitu: boolean;
+};
 
-export default class KayttooikeusryhmaPage extends React.Component<
-    Props,
-    State
-> {
-    state = {
+export default class KayttooikeusryhmaPage extends React.Component<Props, State> {
+    state: State = {
         kayttooikeusryhmaForm: {
-            name: {FI: "", SV: "", EN: ""},
-            description: {FI: "", SV: "", EN: ""},
+            name: { FI: '', SV: '', EN: '' },
+            description: { FI: '', SV: '', EN: '' },
             organisaatioSelections: [],
             oppilaitostyypitSelections: [],
             organisaatiotyypitSelections: [],
@@ -112,72 +101,55 @@ export default class KayttooikeusryhmaPage extends React.Component<
         ryhmaRestrictionViite: undefined,
         toggleTallenna: false,
         organisaatios: [],
-    }
+    };
 
     componentDidMount() {
         if (this.props.kayttooikeusryhmaId) {
             const kayttooikeusryhmaForm: KayttooikeusryhmaForm = this._parseExistingKayttooikeusryhmaData(
-                this.props.kayttooikeus,
-            )
+                this.props.kayttooikeus
+            );
             const organisaatioViitteet =
-                R.path(
-                    ["kayttooikeusryhma", "organisaatioViite"],
-                    this.props.kayttooikeus,
-                ) || []
-            const ryhmaRestrictionViite = this._parseExistingRyhmaRestrictionViite(
-                organisaatioViitteet,
-            )
+                R.path(['kayttooikeusryhma', 'organisaatioViite'], this.props.kayttooikeus) || [];
+            const ryhmaRestrictionViite = this._parseExistingRyhmaRestrictionViite(organisaatioViitteet);
             const organisaatios = omattiedotOrganisaatiotToOrganisaatioSelectObject(
                 this.props.organisaatios,
-                this.props.locale,
-            )
-            const isPassivoitu = !!R.path(
-                ["kayttooikeusryhma", "passivoitu"],
-                this.props.kayttooikeus,
-            )
+                this.props.locale
+            );
+            const isPassivoitu = !!R.path(['kayttooikeusryhma', 'passivoitu'], this.props.kayttooikeus);
             const newState = {
                 kayttooikeusryhmaForm,
                 ryhmaRestrictionViite,
                 organisaatios,
                 isPassivoitu,
-            }
-            this.setState(newState)
+            };
+            this.setState(newState);
         }
     }
 
     componentWillReceiveProps(nextProps: Props): void {
-        if (
-            this.state.organisaatios.length === 0 &&
-            Object.keys(nextProps.organisaatioCache).length > 0
-        ) {
+        if (this.state.organisaatios.length === 0 && Object.keys(nextProps.organisaatioCache).length > 0) {
             const organisaatioSelections: Array<OrganisaatioSelectObject> = this._parseExistingOrganisaatioData(
-                R.path(
-                    ["kayttooikeusryhma", "organisaatioViite"],
-                    this.props.kayttooikeus,
-                ),
-                nextProps.organisaatioCache,
-            )
+                R.path(['kayttooikeusryhma', 'organisaatioViite'], this.props.kayttooikeus),
+                nextProps.organisaatioCache
+            );
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
                     organisaatioSelections,
                 },
-            })
+            });
         }
     }
 
     _parseExistingRyhmaRestrictionViite = (organisaatioViitteet: any): any => {
-        return R.find(viite => this._isRyhmaOid(viite.organisaatioTyyppi))(
-            organisaatioViitteet,
-        )
-    }
+        return R.find(viite => this._isRyhmaOid(viite.organisaatioTyyppi))(organisaatioViitteet);
+    };
 
     render() {
         return (
             <div className="wrapper">
                 <span className="oph-h2 oph-bold kayttooikeusryhma-header">
-                    {this.props.L["KAYTTOOIKEUSRYHMAT_OTSIKKO"] +
-                        this.getStatusString()}
+                    {this.props.L['KAYTTOOIKEUSRYHMAT_OTSIKKO'] + this.getStatusString()}
                 </span>
                 <KayttooikeusryhmatNimi
                     {...this.props}
@@ -192,77 +164,39 @@ export default class KayttooikeusryhmaPage extends React.Component<
                 />
 
                 <KayttooikeusryhmatSallittuKayttajatyyppi
-                    kayttajaTyyppi={
-                        this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi
-                    }
-                    setSallittuKayttajatyyppi={
-                        this._toggleSallittuKayttajatyyppiPalvelu
-                    }
+                    kayttajaTyyppi={this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi}
+                    setSallittuKayttajatyyppi={this._toggleSallittuKayttajatyyppiPalvelu}
                 />
 
                 <KayttooikeusryhmanOrganisaatiorajoite
                     {...this.props}
-                    ryhmaRestriction={
-                        this.state.kayttooikeusryhmaForm.ryhmaRestriction
-                    }
+                    ryhmaRestriction={this.state.kayttooikeusryhmaForm.ryhmaRestriction}
                     toggleRyhmaRestriction={this._toggleRyhmaRestriction}
                     organisaatioSelectAction={this._onOrganisaatioSelection}
-                    organisaatioSelections={
-                        this.state.kayttooikeusryhmaForm.organisaatioSelections
-                    }
-                    removeOrganisaatioSelectAction={
-                        this._onRemoveOrganisaatioSelect
-                    }
-                    oppilaitostyypitSelectAction={
-                        this._onOppilaitostyypitSelection
-                    }
-                    oppilaitostyypitSelections={
-                        this.state.kayttooikeusryhmaForm
-                            .oppilaitostyypitSelections
-                    }
-                    organisaatiotyypitSelectAction={
-                        this._onOrganisaatiotyypitSelection
-                    }
-                    organisaatiotyypitSelections={
-                        this.state.kayttooikeusryhmaForm
-                            .organisaatiotyypitSelections
-                    }
+                    organisaatioSelections={this.state.kayttooikeusryhmaForm.organisaatioSelections}
+                    removeOrganisaatioSelectAction={this._onRemoveOrganisaatioSelect}
+                    oppilaitostyypitSelectAction={this._onOppilaitostyypitSelection}
+                    oppilaitostyypitSelections={this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections}
+                    organisaatiotyypitSelectAction={this._onOrganisaatiotyypitSelection}
+                    organisaatiotyypitSelections={this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections}
                 />
 
                 <MyonnettavatKayttooikeusryhmat
                     {...this.props}
-                    kayttooikeusryhmaSelectAction={
-                        this._onKayttooikeusryhmaSelection
-                    }
-                    kayttooikeusryhmaSelections={
-                        this.state.kayttooikeusryhmaForm
-                            .kayttooikeusryhmaSelections
-                    }
-                    removeKayttooikeusryhmaSelectAction={
-                        this._onRemoveKayttooikeusryhmaSelect
-                    }
+                    kayttooikeusryhmaSelectAction={this._onKayttooikeusryhmaSelection}
+                    kayttooikeusryhmaSelections={this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections}
+                    removeKayttooikeusryhmaSelectAction={this._onRemoveKayttooikeusryhmaSelect}
                 />
 
                 <KayttooikeusryhmatPalvelutJaKayttooikeudet
                     {...this.props}
                     palvelutSelection={this.state.palvelutSelection}
                     palvelutSelectAction={this._onPalvelutSelection}
-                    palveluKayttooikeusSelectAction={
-                        this._onPalveluKayttooikeusSelection
-                    }
-                    palveluKayttooikeusSelection={
-                        this.state.palveluKayttooikeusSelection
-                    }
-                    lisaaPalveluJaKayttooikeusAction={
-                        this._onLisaaPalveluJaKayttooikeus
-                    }
-                    palveluJaKayttooikeusSelections={
-                        this.state.kayttooikeusryhmaForm
-                            .palveluJaKayttooikeusSelections
-                    }
-                    removePalveluJaKayttooikeus={
-                        this._onRemovePalveluJaKayttooikeus
-                    }
+                    palveluKayttooikeusSelectAction={this._onPalveluKayttooikeusSelection}
+                    palveluKayttooikeusSelection={this.state.palveluKayttooikeusSelection}
+                    lisaaPalveluJaKayttooikeusAction={this._onLisaaPalveluJaKayttooikeus}
+                    palveluJaKayttooikeusSelections={this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections}
+                    removePalveluJaKayttooikeus={this._onRemovePalveluJaKayttooikeus}
                 />
 
                 <div className="kayttooikeusryhmat-lisaa-page-buttons">
@@ -272,68 +206,42 @@ export default class KayttooikeusryhmaPage extends React.Component<
                         onClick={() => {
                             this.props.kayttooikeusryhmaId
                                 ? this.updateKayttooikeusryhma()
-                                : this.createNewKayttooikeusryhma()
+                                : this.createNewKayttooikeusryhma();
                         }}
                     >
-                        <SpinnerInButton
-                            show={this.state.toggleTallenna}
-                        ></SpinnerInButton>{" "}
-                        {this.props.L["TALLENNA"]}
+                        <SpinnerInButton show={this.state.toggleTallenna}></SpinnerInButton> {this.props.L['TALLENNA']}
                     </button>
                     <button
                         className="oph-button oph-button-cancel"
                         onClick={() => {
-                            this.cancel()
+                            this.cancel();
                         }}
                     >
-                        {this.props.L["PERUUTA"]}
+                        {this.props.L['PERUUTA']}
                     </button>
                     <ToggleKayttooikeusryhmaStateModal
                         router={this.props.router}
                         kayttooikeusryhmaId={this.props.kayttooikeusryhmaId}
                     />
                     <span>
-                        {this.props.L["MUOKATTU"]}:{" "}
-                        {this.renderKayttooikeusryhmaMuokattu()}
+                        {this.props.L['MUOKATTU']}: {this.renderKayttooikeusryhmaMuokattu()}
                     </span>
                 </div>
 
                 <LocalNotification
                     toggle={!this._validateKayttooikeusryhmaInputs()}
-                    type={"info"}
-                    title={
-                        this.props.L[
-                            "KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO"
-                        ]
-                    }
+                    type={'info'}
+                    title={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVA_TIETO_OTSIKKO']}
                 >
                     <ul>
                         {this._validateKayttooikeusryhmaNimet() ? null : (
-                            <li>
-                                {
-                                    this.props.L[
-                                        "KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI"
-                                    ]
-                                }
-                            </li>
+                            <li>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_NIMI']}</li>
                         )}
                         {this._validateKayttooikeusryhmaDescriptions() ? null : (
-                            <li>
-                                {
-                                    this.props.L[
-                                        "KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS"
-                                    ]
-                                }
-                            </li>
+                            <li>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_KUVAUS']}</li>
                         )}
                         {this._validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections() ? null : (
-                            <li>
-                                {
-                                    this.props.L[
-                                        "KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS"
-                                    ]
-                                }
-                            </li>
+                            <li>{this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_PUUTTUVAT_TIETO_PALVELUKAYTTOOIKEUS']}</li>
                         )}
                     </ul>
                 </LocalNotification>
@@ -341,219 +249,147 @@ export default class KayttooikeusryhmaPage extends React.Component<
                 <LocalNotification
                     toggle={this._hasPassiveOrganisaatioRajoite.call(this)}
                     type={NOTIFICATIONTYPES.WARNING}
-                    title={
-                        this.props.L["KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS"]
-                    }
+                    title={this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU_VAROITUS']}
                 />
             </div>
-        )
+        );
     }
 
-    _parseExistingKayttooikeusryhmaData = (
-        kayttooikeusryhmaState: KayttooikeusRyhmaState,
-    ): KayttooikeusryhmaForm => {
-        const organisaatioviiteData = R.path(
-            ["kayttooikeusryhma", "organisaatioViite"],
-            kayttooikeusryhmaState,
-        )
+    _parseExistingKayttooikeusryhmaData = (kayttooikeusryhmaState: KayttooikeusRyhmaState): KayttooikeusryhmaForm => {
+        const organisaatioviiteData = R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState);
         return {
-            name: this._parseExistingTextsData(
-                R.path(
-                    ["kayttooikeusryhma", "nimi", "texts"],
-                    kayttooikeusryhmaState,
-                ),
-            ),
+            name: this._parseExistingTextsData(R.path(['kayttooikeusryhma', 'nimi', 'texts'], kayttooikeusryhmaState)),
             description: this._parseExistingTextsData(
-                R.path(
-                    ["kayttooikeusryhma", "kuvaus", "texts"],
-                    kayttooikeusryhmaState,
-                ),
+                R.path(['kayttooikeusryhma', 'kuvaus', 'texts'], kayttooikeusryhmaState)
             ),
             organisaatioSelections: organisaatioviiteData
-                ? this._parseExistingOrganisaatioData(
-                      organisaatioviiteData,
-                      this.props.organisaatioCache,
-                  )
+                ? this._parseExistingOrganisaatioData(organisaatioviiteData, this.props.organisaatioCache)
                 : [],
             oppilaitostyypitSelections: organisaatioviiteData
                 ? this._parseExistingOppilaitostyyppiData(organisaatioviiteData)
                 : [],
             organisaatiotyypitSelections: organisaatioviiteData
-                ? this._parseExistingOrganisaatiotyyppiData(
-                      organisaatioviiteData,
-                  )
+                ? this._parseExistingOrganisaatiotyyppiData(organisaatioviiteData)
                 : [],
-            ryhmaRestriction: this._parseExistingRyhmaRestriction(
-                kayttooikeusryhmaState,
-            ),
+            ryhmaRestriction: this._parseExistingRyhmaRestriction(kayttooikeusryhmaState),
             kayttooikeusryhmaSelections: this._parseExistingKayttooikeusryhmaSelections(
-                kayttooikeusryhmaState.kayttooikeusryhmaSlaves,
+                kayttooikeusryhmaState.kayttooikeusryhmaSlaves
             ),
             palveluJaKayttooikeusSelections: this._parseExistingPalvelutRoolitData(
-                kayttooikeusryhmaState.palvelutRoolit,
+                kayttooikeusryhmaState.palvelutRoolit
             ),
-            sallittuKayttajatyyppi: R.path(
-                ["kayttooikeusryhma", "sallittuKayttajatyyppi"],
-                kayttooikeusryhmaState,
-            ),
-        }
-    }
+            sallittuKayttajatyyppi: R.path(['kayttooikeusryhma', 'sallittuKayttajatyyppi'], kayttooikeusryhmaState),
+        };
+    };
 
-    _parseExistingRyhmaRestriction = (
-        kayttooikeusryhmaState: KayttooikeusRyhmaState,
-    ): boolean => {
-        const organisaatioViitteet =
-            R.path(
-                ["kayttooikeusryhma", "organisaatioViite"],
-                kayttooikeusryhmaState,
-            ) || []
+    _parseExistingRyhmaRestriction = (kayttooikeusryhmaState: KayttooikeusRyhmaState): boolean => {
+        const organisaatioViitteet = R.path(['kayttooikeusryhma', 'organisaatioViite'], kayttooikeusryhmaState) || [];
         const organisaatioViiteRyhmaRestriction: boolean =
             organisaatioViitteet.length > 0
                 ? organisaatioViitteet.some((organisaatioviite: any) =>
-                      this._isRyhmaOid(organisaatioviite.organisaatioTyyppi),
+                      this._isRyhmaOid(organisaatioviite.organisaatioTyyppi)
                   )
-                : false
-        const ryhmaRestriction: any = R.path(
-            ["kayttooikeusryhma", "ryhmaRestriction"],
-            kayttooikeusryhmaState,
-        )
-        return organisaatioViiteRyhmaRestriction || ryhmaRestriction
-    }
+                : false;
+        const ryhmaRestriction: any = R.path(['kayttooikeusryhma', 'ryhmaRestriction'], kayttooikeusryhmaState);
+        return organisaatioViiteRyhmaRestriction || ryhmaRestriction;
+    };
 
-    _parseExistingKayttooikeusryhmaSelections = (
-        slaves: any,
-    ): Array<ReactSelectOption> => {
+    _parseExistingKayttooikeusryhmaSelections = (slaves: any): Array<ReactSelectOption> => {
         return slaves.map((slave: Kayttooikeusryhma) => {
-            const text: any = R.find(
-                (text: any) => text.lang.toLowerCase() === this.props.locale,
-            )(slave.nimi.texts)
+            const text: any = R.find((text: any) => text.lang.toLowerCase() === this.props.locale)(slave.nimi.texts);
             return {
                 value: slave.id,
                 label: text.text,
-            }
-        })
-    }
+            };
+        });
+    };
 
     _parseExistingTextsData = (texts: any): any => {
-        const result: any = {FI: "", SV: "", EN: ""}
+        const result: any = { FI: '', SV: '', EN: '' };
         if (texts === undefined) {
-            return result
+            return result;
         }
         texts.forEach((text: Text) => {
-            result[text.lang] = text.text
-        })
-        return result
-    }
+            result[text.lang] = text.text;
+        });
+        return result;
+    };
 
     _parseExistingOrganisaatioData = (
         organisaatioViitteet: any,
         organisaatioCache: {
-            [key: string]: any
-        },
-    ): Array<OrganisaatioSelectObject> => {
-        if (
-            Object.keys(organisaatioCache).length === 0 ||
-            !organisaatioViitteet
-        ) {
-            return []
+            [key: string]: any;
         }
-        const organisaatioViittees = organisaatioViitteet.filter(
-            (organisaatioViite: any) =>
-                this._isOrganisaatioOid(organisaatioViite.organisaatioTyyppi),
-        )
+    ): Array<OrganisaatioSelectObject> => {
+        if (Object.keys(organisaatioCache).length === 0 || !organisaatioViitteet) {
+            return [];
+        }
+        const organisaatioViittees = organisaatioViitteet.filter((organisaatioViite: any) =>
+            this._isOrganisaatioOid(organisaatioViite.organisaatioTyyppi)
+        );
         const organisaatioOids = organisaatioViittees.map(
-            (organisaatioViite: any) => organisaatioViite.organisaatioTyyppi,
-        )
+            (organisaatioViite: any) => organisaatioViite.organisaatioTyyppi
+        );
         return organisaatioOids
             .map((oid: string) => organisaatioCache[oid])
             .map((organisaatio: any) => {
-                const localizedName = getLocalization(
-                    organisaatio.nimi,
-                    this.props.locale,
-                )
+                const localizedName = getLocalization(organisaatio.nimi, this.props.locale);
                 const name =
-                    organisaatio.status === "AKTIIVINEN"
+                    organisaatio.status === 'AKTIIVINEN'
                         ? localizedName
-                        : `${localizedName} (${this.props.L["KAYTTOOIKEUSRYHMAT_PASSIVOITU"]})`
+                        : `${localizedName} (${this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})`;
                 return {
                     oid: organisaatio.oid,
                     name,
                     parentNames: [],
                     organisaatioTyypit: [],
-                }
-            })
-    }
+                };
+            });
+    };
 
     _isOrganisaatioOid = (input: string): boolean => {
-        return input.split(".")[4] !== undefined && input.split(".")[4] === "10"
-    }
+        return input.split('.')[4] !== undefined && input.split('.')[4] === '10';
+    };
 
     _isOppilaitosId = (input: string): boolean => {
-        return (
-            !this._isOrganisaatioOid(input) &&
-            !this._isOrganisaatiotyyppi(input) &&
-            !this._isRyhmaOid(input)
-        )
-    }
+        return !this._isOrganisaatioOid(input) && !this._isOrganisaatiotyyppi(input) && !this._isRyhmaOid(input);
+    };
 
     _isOrganisaatiotyyppi = (input: string): boolean => {
-        return input.startsWith("organisaatiotyyppi_")
-    }
+        return input.startsWith('organisaatiotyyppi_');
+    };
 
     _isRyhmaOid = (input: string): boolean => {
-        return input.split(".")[4] !== undefined && input.split(".")[4] !== "10"
-    }
+        return input.split('.')[4] !== undefined && input.split('.')[4] !== '10';
+    };
 
-    _parseExistingOppilaitostyyppiData = (
-        organisaatioViitteet: any,
-    ): Array<string> => {
+    _parseExistingOppilaitostyyppiData = (organisaatioViitteet: any): Array<string> => {
         const oppilaitostyypit: Array<string> = this.props.koodisto.oppilaitostyypit.map(
-            oppilaitostyyppiKoodi => oppilaitostyyppiKoodi.value,
-        )
-        const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter(
-            (organisaatioViite: any) =>
-                this._isOppilaitosId(organisaatioViite.organisaatioTyyppi),
-        )
-        const ids = oppilaitosOrganisaatioViiteet.map(
-            (item: any) => item.organisaatioTyyppi,
-        )
-        return oppilaitostyypit.filter((oppilaitostyyppi: string) =>
-            R.contains(oppilaitostyyppi, ids),
-        )
-    }
+            oppilaitostyyppiKoodi => oppilaitostyyppiKoodi.value
+        );
+        const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite: any) =>
+            this._isOppilaitosId(organisaatioViite.organisaatioTyyppi)
+        );
+        const ids = oppilaitosOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
+        return oppilaitostyypit.filter((oppilaitostyyppi: string) => R.contains(oppilaitostyyppi, ids));
+    };
 
-    _parseExistingOrganisaatiotyyppiData = (
-        organisaatioViitteet: any,
-    ): Array<string> => {
+    _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: any): Array<string> => {
         const organisaatiotyypit: Array<string> = this.props.koodisto.organisaatiotyyppiKoodisto.map(
-            organisaatiotyyppiKoodi => organisaatiotyyppiKoodi.koodiUri,
-        )
-        const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter(
-            (organisaatioViite: any) =>
-                this._isOrganisaatiotyyppi(
-                    organisaatioViite.organisaatioTyyppi,
-                ),
-        )
-        const ids = organisaatiotyyppiOrganisaatioViiteet.map(
-            (item: any) => item.organisaatioTyyppi,
-        )
-        return organisaatiotyypit.filter((organisaatiotyyppi: string) =>
-            R.contains(organisaatiotyyppi, ids),
-        )
-    }
+            organisaatiotyyppiKoodi => organisaatiotyyppiKoodi.koodiUri
+        );
+        const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite: any) =>
+            this._isOrganisaatiotyyppi(organisaatioViite.organisaatioTyyppi)
+        );
+        const ids = organisaatiotyyppiOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
+        return organisaatiotyypit.filter((organisaatiotyyppi: string) => R.contains(organisaatiotyyppi, ids));
+    };
 
-    _parseExistingPalvelutRoolitData = (
-        palvelutRoolit: Array<PalveluRooli>,
-    ): Array<any> => {
+    _parseExistingPalvelutRoolitData = (palvelutRoolit: Array<PalveluRooli>): Array<any> => {
         return palvelutRoolit.map((palveluRooli: any) => {
-            const matchLocale = (text: any) =>
-                text.lang.toLowerCase() === this.props.locale
-            const palveluLabel: any = R.find(matchLocale)(
-                palveluRooli.palveluTexts,
-            )
-            const kayttooikeusLabel: any = R.find(matchLocale)(
-                palveluRooli.rooliTexts,
-            )
+            const matchLocale = (text: any) => text.lang.toLowerCase() === this.props.locale;
+            const palveluLabel: any = R.find(matchLocale)(palveluRooli.palveluTexts);
+            const kayttooikeusLabel: any = R.find(matchLocale)(palveluRooli.rooliTexts);
             return {
                 palvelu: {
                     value: palveluRooli.palveluName,
@@ -563,138 +399,111 @@ export default class KayttooikeusryhmaPage extends React.Component<
                     value: palveluRooli.rooli,
                     label: kayttooikeusLabel.text,
                 },
-            }
-        })
-    }
+            };
+        });
+    };
 
     _toggleRyhmaRestriction = () => {
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
-                ryhmaRestriction: !this.state.kayttooikeusryhmaForm
-                    .ryhmaRestriction,
+                ryhmaRestriction: !this.state.kayttooikeusryhmaForm.ryhmaRestriction,
             },
-        })
-    }
+        });
+    };
 
     _toggleSallittuKayttajatyyppiPalvelu = () => {
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
                 sallittuKayttajatyyppi:
-                    this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi ===
-                    "PALVELU"
-                        ? null
-                        : "PALVELU",
+                    this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi === 'PALVELU' ? null : 'PALVELU',
             },
-        })
-    }
+        });
+    };
 
     _onOrganisaatioSelection = (selection: OrganisaatioSelectObject): void => {
-        const currentOrganisaatioSelections: Array<OrganisaatioSelectObject> = this
-            .state.kayttooikeusryhmaForm.organisaatioSelections
-        if (
-            !currentOrganisaatioSelections.some(
-                organisaatio => organisaatio.oid === selection.oid,
-            )
-        ) {
+        const currentOrganisaatioSelections: Array<OrganisaatioSelectObject> = this.state.kayttooikeusryhmaForm
+            .organisaatioSelections;
+        if (!currentOrganisaatioSelections.some(organisaatio => organisaatio.oid === selection.oid)) {
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
-                    organisaatioSelections: [
-                        ...currentOrganisaatioSelections,
-                        selection,
-                    ],
+                    organisaatioSelections: [...currentOrganisaatioSelections, selection],
                 },
-            })
+            });
         }
-    }
+    };
 
-    _onRemoveOrganisaatioSelect = (
-        selection: OrganisaatioSelectObject,
-    ): void => {
+    _onRemoveOrganisaatioSelect = (selection: OrganisaatioSelectObject): void => {
         const newOrganisaatioSelections: Array<OrganisaatioSelectObject> = this.state.kayttooikeusryhmaForm.organisaatioSelections.filter(
-            organisaatio => selection.oid !== organisaatio.oid,
-        )
+            organisaatio => selection.oid !== organisaatio.oid
+        );
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
                 organisaatioSelections: newOrganisaatioSelections,
             },
-        })
-    }
+        });
+    };
 
-    _onOppilaitostyypitSelection = (
-        selection: React.SyntheticEvent<HTMLInputElement>,
-    ): void => {
+    _onOppilaitostyypitSelection = (selection: React.ChangeEvent<HTMLInputElement>): void => {
         if (selection.target.checked) {
-            const currentOppilaitostyypitSelections: Array<string> = this.state
-                .kayttooikeusryhmaForm.oppilaitostyypitSelections
+            const currentOppilaitostyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm
+                .oppilaitostyypitSelections;
             if (
                 !currentOppilaitostyypitSelections.some(
-                    (oppilaitostyyppi: string) =>
-                        oppilaitostyyppi === selection.target.value,
+                    (oppilaitostyyppi: string) => oppilaitostyyppi === selection.target.value
                 )
             ) {
                 this.setState({
                     kayttooikeusryhmaForm: {
                         ...this.state.kayttooikeusryhmaForm,
-                        oppilaitostyypitSelections: [
-                            ...currentOppilaitostyypitSelections,
-                            selection.target.value,
-                        ],
+                        oppilaitostyypitSelections: [...currentOppilaitostyypitSelections, selection.target.value],
                     },
-                })
+                });
             }
         } else {
             const newOppilaitostyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections.filter(
-                (oppilaitostyyppi: string) =>
-                    selection.target.value !== oppilaitostyyppi,
-            )
+                (oppilaitostyyppi: string) => selection.target.value !== oppilaitostyyppi
+            );
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
                     oppilaitostyypitSelections: newOppilaitostyypitSelections,
                 },
-            })
+            });
         }
-    }
+    };
 
-    _onOrganisaatiotyypitSelection = (
-        selection: React.SyntheticEvent<HTMLInputElement>,
-    ): void => {
+    _onOrganisaatiotyypitSelection = (selection: React.ChangeEvent<HTMLInputElement>): void => {
         if (selection.target.checked) {
-            const currentOrganisaatiotyypitSelections: Array<string> = this
-                .state.kayttooikeusryhmaForm.organisaatiotyypitSelections
+            const currentOrganisaatiotyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm
+                .organisaatiotyypitSelections;
             if (
                 !currentOrganisaatiotyypitSelections.some(
-                    (organisaatiotyyppi: string) =>
-                        organisaatiotyyppi === selection.target.value,
+                    (organisaatiotyyppi: string) => organisaatiotyyppi === selection.target.value
                 )
             ) {
                 this.setState({
                     kayttooikeusryhmaForm: {
                         ...this.state.kayttooikeusryhmaForm,
-                        organisaatiotyypitSelections: [
-                            ...currentOrganisaatiotyypitSelections,
-                            selection.target.value,
-                        ],
+                        organisaatiotyypitSelections: [...currentOrganisaatiotyypitSelections, selection.target.value],
                     },
-                })
+                });
             }
         } else {
             const newOrganisaatiotyypitSelections: Array<string> = this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections.filter(
-                (organisaatiotyyppi: string) =>
-                    selection.target.value !== organisaatiotyyppi,
-            )
+                (organisaatiotyyppi: string) => selection.target.value !== organisaatiotyyppi
+            );
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
                     organisaatiotyypitSelections: newOrganisaatiotyypitSelections,
                 },
-            })
+            });
         }
-    }
+    };
 
     _setName = (languageCode: string, value: string): void => {
         this.setState({
@@ -705,8 +514,8 @@ export default class KayttooikeusryhmaPage extends React.Component<
                     [languageCode]: value,
                 },
             },
-        })
-    }
+        });
+    };
 
     _setDescription = (languageCode: string, value: string): void => {
         this.setState({
@@ -717,197 +526,172 @@ export default class KayttooikeusryhmaPage extends React.Component<
                     [languageCode]: value,
                 },
             },
-        })
-    }
+        });
+    };
 
     _onKayttooikeusryhmaSelection = (selection: ReactSelectOption): void => {
-        const currentKayttooikeusryhmaSelections: Array<ReactSelectOption> = this
-            .state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections
+        const currentKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.kayttooikeusryhmaForm
+            .kayttooikeusryhmaSelections;
         if (
             !currentKayttooikeusryhmaSelections.some(
-                (kayttooikeusryhma: ReactSelectOption) =>
-                    kayttooikeusryhma.value === selection.value,
+                (kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value === selection.value
             )
         ) {
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
-                    kayttooikeusryhmaSelections: [
-                        ...currentKayttooikeusryhmaSelections,
-                        selection,
-                    ],
+                    kayttooikeusryhmaSelections: [...currentKayttooikeusryhmaSelections, selection],
                 },
-            })
+            });
         }
-    }
+    };
 
     _onRemoveKayttooikeusryhmaSelect = (selection: ReactSelectOption): void => {
         const newKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.filter(
-            (kayttooikeusryhma: ReactSelectOption) =>
-                kayttooikeusryhma.value !== selection.value,
-        )
+            (kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value !== selection.value
+        );
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
                 kayttooikeusryhmaSelections: newKayttooikeusryhmaSelections,
             },
-        })
-    }
+        });
+    };
 
     _onPalvelutSelection = (selection: ReactSelectOption): void => {
         this.setState({
             palvelutSelection: selection,
             palveluKayttooikeusSelection: undefined,
-        })
-        this.props.fetchPalveluKayttooikeus(selection.value)
-    }
+        });
+        this.props.fetchPalveluKayttooikeus(selection.value);
+    };
 
     _onPalveluKayttooikeusSelection = (selection: ReactSelectOption): void => {
-        this.setState({palveluKayttooikeusSelection: selection})
-    }
+        this.setState({ palveluKayttooikeusSelection: selection });
+    };
 
     _onLisaaPalveluJaKayttooikeus = (): void => {
-        const {
-            palvelutSelection,
-            palveluKayttooikeusSelection,
-        }: any = this.state
+        const { palvelutSelection, palveluKayttooikeusSelection }: any = this.state;
         const newKayttoikeusSelection: PalveluJaKayttooikeusSelection = {
             palvelu: palvelutSelection,
             kayttooikeus: palveluKayttooikeusSelection,
-        }
-        const currentKayttooikeusSelections = this.state.kayttooikeusryhmaForm
-            .palveluJaKayttooikeusSelections
+        };
+        const currentKayttooikeusSelections = this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections;
         if (
             !currentKayttooikeusSelections.some(
                 (kayttooikeusSelection: PalveluJaKayttooikeusSelection) =>
-                    kayttooikeusSelection.palvelu.value ===
-                        newKayttoikeusSelection.palvelu.value &&
-                    kayttooikeusSelection.kayttooikeus.value ===
-                        newKayttoikeusSelection.kayttooikeus.value,
+                    kayttooikeusSelection.palvelu.value === newKayttoikeusSelection.palvelu.value &&
+                    kayttooikeusSelection.kayttooikeus.value === newKayttoikeusSelection.kayttooikeus.value
             )
         ) {
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
-                    palveluJaKayttooikeusSelections: [
-                        ...currentKayttooikeusSelections,
-                        newKayttoikeusSelection,
-                    ],
+                    palveluJaKayttooikeusSelections: [...currentKayttooikeusSelections, newKayttoikeusSelection],
                 },
                 palveluKayttooikeusSelection: undefined,
-            })
+            });
         }
-    }
+    };
 
-    _onRemovePalveluJaKayttooikeus = (
-        removeItem: PalveluJaKayttooikeusSelection,
-    ): void => {
+    _onRemovePalveluJaKayttooikeus = (removeItem: PalveluJaKayttooikeusSelection): void => {
         const newPalveluJaKayttooikeusSelections = this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.filter(
             (currentItem: PalveluJaKayttooikeusSelection) =>
                 !(
-                    removeItem.kayttooikeus.value ===
-                        currentItem.kayttooikeus.value &&
+                    removeItem.kayttooikeus.value === currentItem.kayttooikeus.value &&
                     removeItem.palvelu.value === currentItem.palvelu.value
-                ),
-        )
+                )
+        );
         this.setState({
             kayttooikeusryhmaForm: {
                 ...this.state.kayttooikeusryhmaForm,
                 palveluJaKayttooikeusSelections: newPalveluJaKayttooikeusSelections,
             },
-        })
-    }
+        });
+    };
 
     _validateKayttooikeusryhmaInputs = (): boolean => {
         return (
             this._validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections() &&
             this._validateKayttooikeusryhmaDescriptions() &&
             this._validateKayttooikeusryhmaNimet()
-        )
-    }
+        );
+    };
 
     _validateKayttooikeusryhmaPalveluKayttooikeusryhmaSelections = (): boolean => {
-        return (
-            this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections
-                .length > 0
-        )
-    }
+        return this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.length > 0;
+    };
 
     _validateKayttooikeusryhmaDescriptions = (): boolean => {
-        const description = this.state.kayttooikeusryhmaForm.description
-        return description.FI.length > 0 && description.SV.length > 0
-    }
+        const description = this.state.kayttooikeusryhmaForm.description;
+        return description.FI.length > 0 && description.SV.length > 0;
+    };
 
     _validateKayttooikeusryhmaNimet = (): boolean => {
-        const name = this.state.kayttooikeusryhmaForm.name
-        return name.FI.length > 0 && name.SV.length > 0 && name.EN.length > 0
-    }
+        const name = this.state.kayttooikeusryhmaForm.name;
+        return name.FI.length > 0 && name.SV.length > 0 && name.EN.length > 0;
+    };
 
     _parseNameData = (): TextGroupModify => {
-        const name = this.state.kayttooikeusryhmaForm.name
-        const texts: Array<Text> = Object.keys(name).map(key => ({
-            lang: key,
-            text: name[key],
-        }))
-        return {texts}
-    }
+        const name = this.state.kayttooikeusryhmaForm.name;
+        const texts: Text[] = Object.keys(name).map(key => ({
+            lang: key as Locales,
+            text: name[key] as string,
+        }));
+        return { texts };
+    };
 
     _parseDescriptionData = (): TextGroupModify => {
-        const description = this.state.kayttooikeusryhmaForm.description
-        const texts: Array<Text> = Object.keys(description).map(key => ({
-            lang: key,
-            text: description[key],
-        }))
-        return {texts}
-    }
+        const description = this.state.kayttooikeusryhmaForm.description;
+        const texts: Text[] = Object.keys(description).map(key => ({
+            lang: key as Locales,
+            text: description[key] as string,
+        }));
+        return { texts };
+    };
 
     _parsePalvelutRoolit = (): Array<PalveluRooliModify> => {
         return this.state.kayttooikeusryhmaForm.palveluJaKayttooikeusSelections.map(
             (item: PalveluJaKayttooikeusSelection) => ({
                 palveluName: item.palvelu.value,
                 rooli: item.kayttooikeus.value,
-            }),
-        )
-    }
+            })
+        );
+    };
 
     _parseSlaveIds = (): Array<number> => {
-        return this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.map(
-            (selection: ReactSelectOption) => parseInt(selection.value, 10),
-        )
-    }
+        return this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.map((selection: ReactSelectOption) =>
+            parseInt(selection.value, 10)
+        );
+    };
 
     _parseOrganisaatioTyypit = (): Array<string> => {
-        const oppilaitostyypit = this.state.kayttooikeusryhmaForm
-            .oppilaitostyypitSelections
-        const organisaatiotyypit = this.state.kayttooikeusryhmaForm
-            .organisaatiotyypitSelections
-        const tyypit = oppilaitostyypit.concat(organisaatiotyypit)
+        const oppilaitostyypit = this.state.kayttooikeusryhmaForm.oppilaitostyypitSelections;
+        const organisaatiotyypit = this.state.kayttooikeusryhmaForm.organisaatiotyypitSelections;
+        const tyypit = oppilaitostyypit.concat(organisaatiotyypit);
         const organisaatiot = this.state.kayttooikeusryhmaForm.organisaatioSelections.map(
-            (item: OrganisaatioSelectObject) => item.oid,
-        )
+            (item: OrganisaatioSelectObject) => item.oid
+        );
         const ryhmaRestrictionviite = this.state.ryhmaRestrictionViite
             ? [this.state.ryhmaRestrictionViite.organisaatioTyyppi]
-            : []
+            : [];
         return this.state.ryhmaRestrictionViite
             ? tyypit.concat(organisaatiot).concat(ryhmaRestrictionviite)
-            : tyypit.concat(organisaatiot)
-    }
+            : tyypit.concat(organisaatiot);
+    };
 
     _hasPassiveOrganisaatioRajoite = (): boolean => {
-        const passivoitu = this.props.L["KAYTTOOIKEUSRYHMAT_PASSIVOITU"]
-        const organisaatioSelections = this.state.kayttooikeusryhmaForm
-            .organisaatioSelections
+        const passivoitu = this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU'];
+        const organisaatioSelections = this.state.kayttooikeusryhmaForm.organisaatioSelections;
         return (
             organisaatioSelections &&
-            organisaatioSelections.some((selection: OrganisaatioSelectObject) =>
-                selection.name.includes(passivoitu),
-            )
-        )
-    }
+            organisaatioSelections.some((selection: OrganisaatioSelectObject) => selection.name.includes(passivoitu))
+        );
+    };
 
     cancel = (): void => {
-        this.props.router.push("/kayttooikeusryhmat")
-    }
+        this.props.router.push('/kayttooikeusryhmat');
+    };
 
     parsePayload = () => ({
         nimi: this._parseNameData(),
@@ -917,73 +701,63 @@ export default class KayttooikeusryhmaPage extends React.Component<
         ryhmaRestriction: this.state.kayttooikeusryhmaForm.ryhmaRestriction,
         organisaatioTyypit: this._parseOrganisaatioTyypit(),
         slaveIds: this._parseSlaveIds(),
-        sallittuKayttajatyyppi: this.state.kayttooikeusryhmaForm
-            .sallittuKayttajatyyppi,
-    })
+        sallittuKayttajatyyppi: this.state.kayttooikeusryhmaForm.sallittuKayttajatyyppi,
+    });
 
     async createNewKayttooikeusryhma() {
-        const url = urls.url("kayttooikeus-service.kayttooikeusryhma")
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma');
         try {
-            this.setState({toggleTallenna: true})
-            await http.post(url, this.parsePayload())
-            this.setState({toggleTallenna: false}, () => {
-                this.props.router.push("/kayttooikeusryhmat")
-            })
+            this.setState({ toggleTallenna: true });
+            await http.post(url, this.parsePayload());
+            this.setState({ toggleTallenna: false }, () => {
+                this.props.router.push('/kayttooikeusryhmat');
+            });
         } catch (error) {
             this.props.addGlobalNotification({
-                key: "UUDENKAYTTOIKEUSRYHMANLUONTIVIRHE",
-                title: this.props.L["KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE"],
+                key: 'UUDENKAYTTOIKEUSRYHMANLUONTIVIRHE',
+                title: this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
                 type: NOTIFICATIONTYPES.ERROR,
                 autoClose: 10000,
-            })
-            throw error
+            });
+            throw error;
         }
     }
 
     async updateKayttooikeusryhma() {
-        const url = urls.url(
-            "kayttooikeus-service.kayttooikeusryhma.id",
-            this.props.kayttooikeusryhmaId,
-        )
+        const url = urls.url('kayttooikeus-service.kayttooikeusryhma.id', this.props.kayttooikeusryhmaId);
         try {
-            this.setState({toggleTallenna: true})
-            await http.put(url, this.parsePayload())
-            this.setState({toggleTallenna: false}, () => {
-                this.props.router.push("/kayttooikeusryhmat")
-            })
+            this.setState({ toggleTallenna: true });
+            await http.put(url, this.parsePayload());
+            this.setState({ toggleTallenna: false }, () => {
+                this.props.router.push('/kayttooikeusryhmat');
+            });
         } catch (error) {
             this.props.addGlobalNotification({
-                key: "KAYTTOOIKEUSRYHMANPAIVITYSVIRHE",
-                title: this.props.L["KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE"],
+                key: 'KAYTTOOIKEUSRYHMANPAIVITYSVIRHE',
+                title: this.props.L['KAYTTOOIKEUSRYHMAT_ODOTTAMATON_VIRHE'],
                 type: NOTIFICATIONTYPES.ERROR,
                 autoClose: 10000,
-            })
-            throw error
+            });
+            throw error;
         }
     }
 
     getStatusString() {
-        return this.state.isPassivoitu
-            ? ` (${this.props.L["KAYTTOOIKEUSRYHMAT_PASSIVOITU"]})`
-            : ""
+        return this.state.isPassivoitu ? ` (${this.props.L['KAYTTOOIKEUSRYHMAT_PASSIVOITU']})` : '';
     }
 
     renderKayttooikeusryhmaMuokattu() {
-        const kayttooikeusryhma = this.props.kayttooikeus.kayttooikeusryhma
+        const kayttooikeusryhma = this.props.kayttooikeus.kayttooikeusryhma;
         if (kayttooikeusryhma) {
             const muokattu = kayttooikeusryhma.muokattu
-                ? moment(kayttooikeusryhma.muokattu).format(
-                      PropertySingleton.state.PVM_DATE_TIME_FORMAATTI,
-                  )
-                : null
-            const muokkaaja = kayttooikeusryhma.muokkaaja
-                ? kayttooikeusryhma.muokkaaja
-                : null
+                ? moment(kayttooikeusryhma.muokattu).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI)
+                : null;
+            const muokkaaja = kayttooikeusryhma.muokkaaja ? kayttooikeusryhma.muokkaaja : null;
             if (muokattu && muokkaaja) {
-                return `${muokattu} (${muokkaaja})`
+                return `${muokattu} (${muokkaaja})`;
             }
-            return this.props.L["EI_TIEDOSSA"]
+            return this.props.L['EI_TIEDOSSA'];
         }
-        return ""
+        return '';
     }
 }

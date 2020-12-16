@@ -6,47 +6,49 @@ import {
     FETCH_KUTSUBYTOKEN_FAILURE,
     CLEAR_KUTSU_LIST,
     FETCH_KUTSU_FAILURE,
-} from "../actions/actiontypes"
-import {KutsuRead} from "../types/domain/kayttooikeus/Kutsu.types"
+} from '../actions/actiontypes';
+import { KutsuRead } from '../types/domain/kayttooikeus/Kutsu.types';
 
 export type KutsuListState = {
-    loaded: boolean
-    result: Array<KutsuRead>
-    kutsuByToken: any
-    kutsuByTokenLoading: boolean
-}
+    loaded: boolean;
+    result: Array<KutsuRead>;
+    kutsuByToken: KutsuRead | {};
+    kutsuByTokenLoading: boolean;
+};
 
-export const kutsuList = (
+const kutsuList = (
     state: KutsuListState = {
         loaded: false,
         result: [],
         kutsuByToken: {},
         kutsuByTokenLoading: true,
     },
-    action: any,
+    action: any
 ) => {
     switch (action.type) {
         case FETCH_KUTSU_REQUEST:
-            return Object.assign({}, state, {loaded: false})
+            return Object.assign({}, state, { loaded: false });
         case FETCH_KUTSU_SUCCESS:
             return Object.assign({}, state, {
                 result: [...state.result, ...action.kutsus],
                 loaded: true,
-            })
+            });
         case FETCH_KUTSU_FAILURE:
-            return {...state, loaded: false}
+            return { ...state, loaded: false };
         case FETCH_KUTSUBYTOKEN_REQUEST:
-            return Object.assign({}, state, {kutsuByTokenLoading: true})
+            return Object.assign({}, state, { kutsuByTokenLoading: true });
         case FETCH_KUTSUBYTOKEN_SUCCESS:
             return Object.assign({}, state, {
                 kutsuByTokenLoading: false,
                 kutsuByToken: action.kutsu,
-            })
+            });
         case FETCH_KUTSUBYTOKEN_FAILURE:
-            return Object.assign({}, state, {kutsuByTokenLoading: false})
+            return Object.assign({}, state, { kutsuByTokenLoading: false });
         case CLEAR_KUTSU_LIST:
-            return Object.assign({}, state, {result: []})
+            return Object.assign({}, state, { result: [] });
         default:
-            return state
+            return state;
     }
-}
+};
+
+export default kutsuList;

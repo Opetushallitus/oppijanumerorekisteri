@@ -9,8 +9,38 @@ import {
 } from "../../actions/kutsu.actions"
 import {removeNotification} from "../../actions/notifications.actions"
 import VirhePage from "../common/page/VirhePage"
+import type { Location } from 'history';
+import type { RootState } from '../../reducers';
+import type { KoodistoState } from '../../reducers/koodisto.reducer';
 
-class RekisteroidyContainer extends React.Component {
+type OwnProps = {
+    location: Location;
+    fetchKieliKoodisto: () => void;
+    fetchKutsuByToken: (arg: string) => void;
+}
+
+type StateProps = {
+    l10n: Record<string, Record<string, string>>,
+    koodistoLoading: boolean,
+    koodisto: KoodistoState,
+    temporaryToken: string,
+    tokenLoading: boolean,
+    kutsu: any,
+    loginFailed: any,
+    loggedIn: string,
+    omattiedotLoading: boolean,
+    authToken: string,
+    temporaryTokenInvalid: boolean,
+    removeNotification: (status: string, group: string, id: string) => any
+    createHenkiloByToken: (temporaryToken: string, payload: any) => any
+}
+
+type Props = OwnProps & StateProps
+
+class RekisteroidyContainer extends React.Component<Props> {
+
+    loggedIn
+
     componentWillMount() {
         this.props.fetchKieliKoodisto()
         this.props.fetchKutsuByToken(this.props.temporaryToken)
@@ -40,7 +70,7 @@ class RekisteroidyContainer extends React.Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state: RootState, ownProps: OwnProps) => {
     return {
         l10n: state.l10n.localisations,
         koodistoLoading: state.koodisto.kieliKoodistoLoading,

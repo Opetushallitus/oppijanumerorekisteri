@@ -1,28 +1,28 @@
-import {TextGroupMap} from "./textgroup.types"
+import { TextGroupMap } from './textgroup.types';
 
-export type Asiointikieli = "fi" | "sv" | "en"
-export type KutsunTila = "AVOIN" | "KAYTETTY" | "POISTETTU"
+export type Asiointikieli = 'fi' | 'sv' | 'en';
+export type KutsunTila = 'AVOIN' | 'KAYTETTY' | 'POISTETTU';
 
 type KayttooikeusRyhma = {
-    id: number
-    nimi: TextGroupMap
-}
+    id: number;
+    nimi: TextGroupMap;
+};
 
-type KutsuOrganisaatio = {
-    nimi: TextGroupMap
-    organisaatioOid: string
-    voimassaLoppuPvm: string | null | undefined
-    kayttoOikeusRyhmat: Array<KayttooikeusRyhma>
-}
+export type KutsuOrganisaatio = {
+    nimi: TextGroupMap;
+    organisaatioOid: string;
+    voimassaLoppuPvm: string | null | undefined;
+    kayttoOikeusRyhmat: Array<KayttooikeusRyhma>;
+};
 
 export type KutsuRead = {
-    id: number
-    tila: KutsunTila
-    etunimi: string
-    sukunimi: string
-    sahkoposti: string
-    aikaleima: string
-    asiointikieli: Asiointikieli
-    organisaatiot: Array<KutsuOrganisaatio>
-    hakaIdentifier: boolean
-}
+    id: number;
+    tila: KutsunTila;
+    etunimi: string;
+    sukunimi: string;
+    sahkoposti: string;
+    aikaleima: string;
+    asiointikieli: Asiointikieli;
+    organisaatiot: Array<KutsuOrganisaatio>;
+    hakaIdentifier: boolean;
+};

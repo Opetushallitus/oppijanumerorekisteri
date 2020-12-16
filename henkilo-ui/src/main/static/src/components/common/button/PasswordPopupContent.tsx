@@ -1,76 +1,76 @@
-import React from "react"
-import {connect} from "react-redux"
-import classNames from "classnames/bind"
-import "./PasswordPopupContent.css"
-import {Localisations} from "../../../types/localisation.type"
-import {isValidPassword} from "../../../validation/PasswordValidator"
-import {addGlobalNotification} from "../../../actions/notification.actions"
-import {GlobalNotificationConfig} from "../../../types/notification.types"
-import {NOTIFICATIONTYPES} from "../Notification/notificationtypes"
-import {urls} from "oph-urls-js"
-import {http} from "../../../http"
-import PropertySingleton from "../../../globals/PropertySingleton"
+import React from 'react';
+import { connect } from 'react-redux';
+import classNames from 'classnames/bind';
+import './PasswordPopupContent.css';
+import { Localisations } from '../../../types/localisation.type';
+import { isValidPassword } from '../../../validation/PasswordValidator';
+import { addGlobalNotification } from '../../../actions/notification.actions';
+import { GlobalNotificationConfig } from '../../../types/notification.types';
+import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
+import { urls } from 'oph-urls-js';
+import { http } from '../../../http';
+import PropertySingleton from '../../../globals/PropertySingleton';
 
 type OwnProps = {
-    oidHenkilo: string
-}
+    oidHenkilo: string;
+};
 
 type Props = OwnProps & {
-    L: Localisations
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => any
-}
+    L: Localisations;
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
+};
 
 type State = {
-    password: string
-    passwordValid: boolean | null | undefined
-    passwordConfirmed: string
-    passwordConfirmedValid: boolean | null | undefined
-}
+    password: string;
+    passwordValid: boolean | null | undefined;
+    passwordConfirmed: string;
+    passwordConfirmedValid: boolean | null | undefined;
+};
 
 class PasswordPopupContent extends React.Component<Props, State> {
-    passwordInput: any
+    passwordInput: any;
 
     constructor(props: Props) {
-        super(props)
+        super(props);
         this.state = {
-            password: "",
+            password: '',
             passwordValid: null,
-            passwordConfirmed: "",
+            passwordConfirmed: '',
             passwordConfirmedValid: null,
-        }
+        };
     }
 
     componentDidMount() {
-        this.passwordInput.focus()
+        this.passwordInput.focus();
     }
 
     render() {
-        const passwordClass = classNames("oph-input haka-input", {
-            "password-invalid": this.state.passwordValid === false,
-        })
+        const passwordClass = classNames('oph-input haka-input', {
+            'password-invalid': this.state.passwordValid === false,
+        });
 
-        const passwordConfirmedClass = classNames("oph-input haka-input", {
-            "password-invalid": this.state.passwordConfirmedValid === false,
-        })
+        const passwordConfirmedClass = classNames('oph-input haka-input', {
+            'password-invalid': this.state.passwordConfirmedValid === false,
+        });
 
-        const L = this.props.L
+        const L = this.props.L;
         return (
             <div id="password-popup-form">
                 <div className="password-controls">
-                    <label>{L["SALASANA_UUSI"]}</label>
+                    <label>{L['SALASANA_UUSI']}</label>
                     <input
                         className={passwordClass}
                         type="password"
                         aria-required="true"
                         ref={input => {
-                            this.passwordInput = input
+                            this.passwordInput = input;
                         }}
                         value={this.state.password}
                         onChange={this.handlePasswordChange.bind(this)}
                     />
                 </div>
                 <div className="password-controls">
-                    <label>{L["SALASANA_VAHVISTA"]}</label>
+                    <label>{L['SALASANA_VAHVISTA']}</label>
                     <input
                         className={passwordConfirmedClass}
                         type="password"
@@ -79,79 +79,69 @@ class PasswordPopupContent extends React.Component<Props, State> {
                         onChange={this.handlePasswordConfirmedChange.bind(this)}
                     />
                 </div>
-                <p>{L["SALASANA_SAANTO"]}</p>
+                <p>{L['SALASANA_SAANTO']}</p>
                 <button
                     className="oph-button oph-button-primary"
-                    disabled={
-                        this.state.passwordValid !== true ||
-                        this.state.passwordConfirmedValid !== true
-                    }
+                    disabled={this.state.passwordValid !== true || this.state.passwordConfirmedValid !== true}
                     onClick={() => this.changePassword()}
                 >
-                    {L["SALASANA_ASETA"]}
+                    {L['SALASANA_ASETA']}
                 </button>
                 <div className="clear" />
             </div>
-        )
+        );
     }
 
-    handlePasswordChange(event: React.SyntheticEvent<HTMLInputElement>) {
+    handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({
             password: event.target.value,
             passwordValid: this._checkPasswordRules(event.target.value),
             passwordConfirmedValid: false,
-        })
+        });
     }
 
-    handlePasswordConfirmedChange(
-        event: React.SyntheticEvent<HTMLInputElement>,
-    ) {
+    handlePasswordConfirmedChange(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({
             passwordConfirmed: event.target.value,
-            passwordConfirmedValid: this.validateConfirmedPassword(
-                event.target.value,
-            ),
-        })
+            passwordConfirmedValid: this.validateConfirmedPassword(event.target.value),
+        });
     }
 
     validateConfirmedPassword(password: string) {
-        return this.state.password === password
+        return this.state.password === password;
     }
 
     async changePassword() {
-        const url = urls.url(
-            "kayttooikeus-service.henkilo.password",
-            this.props.oidHenkilo,
-        )
+        const url = urls.url('kayttooikeus-service.henkilo.password', this.props.oidHenkilo);
         try {
-            await http.post(url, this.state.password)
+            await http.post(url, this.state.password);
             this.props.addGlobalNotification({
                 key: `Password_update_${PropertySingleton.getNewId()}`,
                 type: NOTIFICATIONTYPES.SUCCESS,
-                title: this.props.L["NOTIFICATION_SALASANA_OK_TOPIC"],
+                title: this.props.L['NOTIFICATION_SALASANA_OK_TOPIC'],
                 autoClose: 10000,
-            })
+            });
         } catch (error) {
             this.props.addGlobalNotification({
                 key: `Password_update_${PropertySingleton.getNewId()}`,
                 type: NOTIFICATIONTYPES.ERROR,
-                title: this.props.L["NOTIFICATION_SALASANA_ERROR_TOPIC"],
+                title: this.props.L['NOTIFICATION_SALASANA_ERROR_TOPIC'],
                 autoClose: 10000,
-            })
-            throw error
+            });
+            throw error;
         }
     }
 
     _checkPasswordRules(password: string) {
-        return isValidPassword(password)
+        return isValidPassword(password);
     }
 }
 
 const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     notifications: state.notifications,
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
+export default connect<Props, OwnProps>(mapStateToProps, {
     addGlobalNotification,
-})(PasswordPopupContent)
+})(PasswordPopupContent);

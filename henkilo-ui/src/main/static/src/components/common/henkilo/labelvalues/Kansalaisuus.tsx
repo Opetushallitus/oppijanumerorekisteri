@@ -1,31 +1,29 @@
-import React from "react"
-import {connect} from "react-redux"
-import LabelValue from "./LabelValue"
-import StaticUtils from "../../StaticUtils"
-import {HenkiloState} from "../../../../reducers/henkilo.reducer"
-import {Locale} from "../../../../types/locale.type"
-import {Henkilo} from "../../../../types/domain/oppijanumerorekisteri/henkilo.types"
-import {ReactSelectOption} from "../../../../types/react-select.types"
+import React from 'react';
+import { connect } from 'react-redux';
+import LabelValue from './LabelValue';
+import StaticUtils from '../../StaticUtils';
+import { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import { Locale } from '../../../../types/locale.type';
+import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { ReactSelectOption } from '../../../../types/react-select.types';
 
 type OwnProps = {
-    henkiloUpdate: Henkilo
-    readOnly: boolean
-    updateModelFieldAction: (arg0: any) => void
-}
+    henkiloUpdate: Henkilo;
+    readOnly: boolean;
+    updateModelFieldAction: (arg0: any) => void;
+};
 
 type Props = OwnProps & {
-    henkilo: HenkiloState
+    henkilo: HenkiloState;
     koodisto: {
-        kansalaisuus: Array<ReactSelectOption>
-    }
-    locale: Locale
-}
+        kansalaisuus: Array<ReactSelectOption>;
+    };
+    locale: Locale;
+};
 
 const Kansalaisuus = (props: Props) => {
-    const kansalaisuus = props.henkiloUpdate
-        ? props.henkiloUpdate.kansalaisuus
-        : []
-    const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo)
+    const kansalaisuus = props.henkiloUpdate ? props.henkiloUpdate.kansalaisuus : [];
+    const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
     return (
         <div>
             <LabelValue
@@ -33,44 +31,39 @@ const Kansalaisuus = (props: Props) => {
                 updateModelFieldAction={(newOption: Array<any>) => {
                     if (newOption === null) {
                         props.updateModelFieldAction({
-                            optionsName: "kansalaisuus",
+                            optionsName: 'kansalaisuus',
                             value: [kansalaisuus],
-                        })
+                        });
                     } else {
                         props.updateModelFieldAction({
-                            optionsName: "kansalaisuus",
+                            optionsName: 'kansalaisuus',
                             value: newOption.map(kansalaisuusOption => ({
                                 kansalaisuusKoodi: kansalaisuusOption.value,
                             })),
-                        })
+                        });
                     }
                 }}
                 values={{
-                    label: "HENKILO_KANSALAISUUS",
+                    label: 'HENKILO_KANSALAISUUS',
                     data: props.koodisto.kansalaisuus.map(koodi => ({
                         value: koodi.value,
                         label: koodi[props.locale],
-                        optionsName: "kansalaisuus",
+                        optionsName: 'kansalaisuus',
                     })),
-                    selectValue: kansalaisuus.map(
-                        kansalaisuus => kansalaisuus.kansalaisuusKoodi,
-                    ),
+                    selectValue: kansalaisuus.map(kansalaisuus => kansalaisuus.kansalaisuusKoodi),
                     disabled: disabled,
                     clearable: false,
                     multiselect: true,
                 }}
             />
         </div>
-    )
-}
+    );
+};
 
 const mapStateToProps = state => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(
-    mapStateToProps,
-    {},
-)(Kansalaisuus)
+export default connect<Props, OwnProps>(mapStateToProps, {})(Kansalaisuus);

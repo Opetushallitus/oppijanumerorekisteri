@@ -21,44 +21,42 @@ import {
     FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST,
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST,
     FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE,
-} from "../actions/actiontypes"
-import {
-    Kayttooikeusryhma,
-    MyonnettyKayttooikeusryhma,
-} from "../types/domain/kayttooikeus/kayttooikeusryhma.types"
-import {PalveluRooli} from "../types/domain/kayttooikeus/PalveluRooli.types"
+} from '../actions/actiontypes';
+import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { PalveluRooli } from '../types/domain/kayttooikeus/PalveluRooli.types';
 
-export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>
+export type AllowedKayttooikeus = Array<MyonnettyKayttooikeusryhma>;
 
 export type KayttooikeusAnomus = {
     kayttoOikeusRyhma: {
-        id: number
-    }
+        id: number;
+    };
     anomus: {
-        organisaatioOid: string
+        organisaatioOid: string;
         henkilo: {
-            oid: string
-        }
-    }
-}
+            oid: string;
+        };
+    };
+};
 
 export type KayttooikeusRyhmaState = {
-    readonly kayttooikeusAnomus: Array<KayttooikeusAnomus>
-    readonly kayttooikeusAnomusLoading: boolean
-    readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>
-    readonly kayttooikeusLoading: boolean
-    readonly grantableKayttooikeus: {}
-    readonly grantableKayttooikeusLoading: boolean
-    readonly allowedKayttooikeus: {
-        loading: boolean
-        [key: string]: AllowedKayttooikeus
-    }
-    readonly kayttooikeusryhma: Kayttooikeusryhma | null | undefined
-    readonly kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>
-    readonly palvelutRoolit: Array<PalveluRooli>
-    readonly allKayttooikeusryhmas: Array<Kayttooikeusryhma>
-    readonly allKayttooikeusryhmasLoading: boolean
-}
+    readonly kayttooikeusAnomus: Array<KayttooikeusAnomus>;
+    readonly kayttooikeusAnomusLoading: boolean;
+    readonly kayttooikeus: Array<MyonnettyKayttooikeusryhma>;
+    readonly kayttooikeusLoading: boolean;
+    readonly grantableKayttooikeus: {};
+    readonly grantableKayttooikeusLoading: boolean;
+    readonly allowedKayttooikeus: Record<string, AllowedKayttooikeus>;
+    readonly allowedKayttooikeusLoading: boolean;
+    readonly kayttooikeusryhma: Kayttooikeusryhma | null | undefined;
+    readonly kayttooikeusryhmaLoading: boolean;
+    readonly kayttooikeusryhmaSlaves: Array<Kayttooikeusryhma>;
+    readonly kayttooikeusryhmaSlavesLoading: boolean;
+    readonly palvelutRoolit: Array<PalveluRooli>;
+    readonly palvelutRoolitLoading: boolean;
+    readonly allKayttooikeusryhmas: Array<Kayttooikeusryhma>;
+    readonly allKayttooikeusryhmasLoading: boolean;
+};
 
 export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
     return {
@@ -66,7 +64,8 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
         kayttooikeus: [],
         kayttooikeusAnomusLoading: true,
         kayttooikeusAnomus: [],
-        allowedKayttooikeus: {loading: false},
+        allowedKayttooikeus: {},
+        allowedKayttooikeusLoading: false,
         grantableKayttooikeus: {},
         grantableKayttooikeusLoading: true,
         allKayttooikeusryhmas: [],
@@ -77,107 +76,107 @@ export const getEmptyKayttooikeusRyhmaState = (): KayttooikeusRyhmaState => {
         palvelutRoolitLoading: true,
         kayttooikeusryhmaSlaves: [],
         kayttooikeusryhmaSlavesLoading: false,
-    }
-}
+    };
+};
 
 export const kayttooikeus = (
     state: KayttooikeusRyhmaState = getEmptyKayttooikeusRyhmaState(),
-    action: any,
+    action: any
 ): KayttooikeusRyhmaState => {
     switch (action.type) {
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST:
-            return Object.assign({}, state, {kayttooikeusLoading: true})
+            return Object.assign({}, state, { kayttooikeusLoading: true });
         case FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_SUCCESS:
             return Object.assign({}, state, {
                 kayttooikeusLoading: false,
                 kayttooikeus: action.kayttooikeus,
-            })
+            });
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_REQUEST:
-            return Object.assign({}, state, {kayttooikeusAnomusLoading: true})
+            return Object.assign({}, state, { kayttooikeusAnomusLoading: true });
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_SUCCESS:
             return Object.assign({}, state, {
                 kayttooikeusAnomusLoading: false,
                 kayttooikeusAnomus: action.kayttooikeusAnomus,
-            })
+            });
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_ANOMUS_FOR_HENKILO_FAILURE:
             return Object.assign({}, state, {
                 kayttooikeusAnomusLoading: false,
                 kayttooikeusAnomus: [],
-            })
+            });
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST:
             return {
                 ...state,
                 allowedKayttooikeus: {
                     ...state.allowedKayttooikeus,
-                    loading: true,
                 },
-            }
+                allowedKayttooikeusLoading: true,
+            };
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS:
             return Object.assign({}, state, {
                 allowedKayttooikeus: {
                     ...state.allowedKayttooikeus,
                     [action.oidHenkilo]: [...action.allowedKayttooikeus],
-                    loading: false,
                 },
-            })
+                allowedKayttooikeusLoading: false,
+            });
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_FAILURE:
             return {
                 ...state,
                 allowedKayttooikeus: {
                     ...state.allowedKayttooikeus,
-                    loading: false,
                 },
-            }
+                allowedKayttooikeusLoading: false,
+            };
         case FETCH_GRANTABLE_REQUEST:
             return Object.assign({}, state, {
                 grantableKayttooikeusLoading: true,
-            })
+            });
         case FETCH_GRANTABLE_SUCCESS:
             return Object.assign({}, state, {
                 grantableKayttooikeusLoading: false,
                 grantableKayttooikeus: action.data,
-            })
+            });
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_REQUEST:
-            return {...state, allKayttooikeusryhmasLoading: true}
+            return { ...state, allKayttooikeusryhmasLoading: true };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_SUCCESS:
             return {
                 ...state,
                 allKayttooikeusryhmas: action.data,
                 allKayttooikeusryhmasLoading: false,
-            }
+            };
         case FETCH_ALL_KAYTTOOIKEUSRYHMA_FAILURE:
-            return {...state, allKayttooikeusryhmasLoading: false}
+            return { ...state, allKayttooikeusryhmasLoading: false };
         case FETCH_KAYTTOOIKEUSRYHMA_BY_ID_REQUEST:
-            return {...state, kayttooikeusryhmaLoading: true}
+            return { ...state, kayttooikeusryhmaLoading: true };
         case FETCH_KAYTTOOIKEUSRYHMA_BY_ID_SUCCESS:
             return {
                 ...state,
                 kayttooikeusryhmaLoading: false,
                 kayttooikeusryhma: action.payload,
-            }
+            };
         case FETCH_KAYTTOOIKEUSRYHMA_BY_ID_FAILURE:
-            return {...state, kayttooikeusryhmaLoading: false}
+            return { ...state, kayttooikeusryhmaLoading: false };
         case FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_REQUEST:
-            return {...state, palvelutRoolitLoading: true}
+            return { ...state, palvelutRoolitLoading: true };
         case FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_SUCCESS:
             return {
                 ...state,
                 palvelutRoolitLoading: false,
                 palvelutRoolit: action.payload,
-            }
+            };
         case FETCH_PALVELUROOLI_BY_KAYTTOOIKEUSRYHMA_ID_FAILURE:
-            return {...state, palvelutRoolitLoading: false}
+            return { ...state, palvelutRoolitLoading: false };
         case FETCH_KAYTTOOIKEUSRYHMA_SLAVES_REQUEST:
-            return {...state, kayttooikeusryhmaSlavesLoading: true}
+            return { ...state, kayttooikeusryhmaSlavesLoading: true };
         case FETCH_KAYTTOOIKEUSRYHMA_SLAVES_SUCCESS:
             return {
                 ...state,
                 kayttooikeusryhmaSlavesLoading: false,
                 kayttooikeusryhmaSlaves: action.payload,
-            }
+            };
         case FETCH_KAYTTOOIKEUSRYHMA_SLAVES_FAILURE:
-            return {...state, kayttooikeusryhmaSlavesLoading: false}
+            return { ...state, kayttooikeusryhmaSlavesLoading: false };
         default:
-            return state
+            return state;
     }
-}
+};

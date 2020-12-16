@@ -1,11 +1,11 @@
 import React from "react"
-import {KayttooikeusryhmaNimi} from "./KayttooikeusryhmaPage"
+import type {LocalizableField} from "./KayttooikeusryhmaPage"
 import "./KayttooikeusryhmatNimi.css"
 import {Localisations} from "../../../types/localisation.type"
 
 type Props = {
     L: Localisations
-    name: KayttooikeusryhmaNimi
+    name: LocalizableField
     setName: (arg0: string, arg1: string) => void
 }
 

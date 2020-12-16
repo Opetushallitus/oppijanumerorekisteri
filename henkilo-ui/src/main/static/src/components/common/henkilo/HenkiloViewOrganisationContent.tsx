@@ -1,48 +1,48 @@
-import "./HenkiloViewOrganisationContent.css"
-import React from "react"
-import {connect} from "react-redux"
-import Columns from "react-columns"
-import {Locale} from "../../../types/locale.type"
-import PassivoiOrganisaatioButton from "./buttons/PassivoiOrganisaatioButton"
-import StaticUtils from "../StaticUtils"
-import {Localisations} from "../../../types/localisation.type"
-import {toLocalizedText} from "../../../localizabletext"
-import {passivoiHenkiloOrg} from "../../../actions/henkilo.actions"
-import {HenkiloState} from "../../../reducers/henkilo.reducer"
-import {KayttooikeusRyhmaState} from "../../../reducers/kayttooikeusryhma.reducer"
+import './HenkiloViewOrganisationContent.css';
+import React from 'react';
+import { connect } from 'react-redux';
+import Columns from 'react-columns';
+import { Locale } from '../../../types/locale.type';
+import PassivoiOrganisaatioButton from './buttons/PassivoiOrganisaatioButton';
+import StaticUtils from '../StaticUtils';
+import { Localisations } from '../../../types/localisation.type';
+import { toLocalizedText } from '../../../localizabletext';
+import { passivoiHenkiloOrg } from '../../../actions/henkilo.actions';
+import { HenkiloState } from '../../../reducers/henkilo.reducer';
+import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 
 type OwnProps = {
-    readOnly: boolean
-}
+    readOnly: boolean;
+};
 
 type Props = OwnProps & {
-    L: Localisations
-    locale: Locale
-    henkilo: HenkiloState
-    kayttooikeus: KayttooikeusRyhmaState
-    passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void
-}
+    L: Localisations;
+    locale: Locale;
+    henkilo: HenkiloState;
+    kayttooikeus: KayttooikeusRyhmaState;
+    passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void;
+};
 
 type State = {
-    readOnly: boolean
-    showPassive: boolean
-}
+    readOnly: boolean;
+    showPassive: boolean;
+};
 
 type OrganisaatioFlat = {
-    name: string
-    typesFlat: string
-    passive: boolean
-    id: string
-}
+    name: string;
+    typesFlat: string;
+    passive: boolean;
+    id: string;
+};
 
 class HenkiloViewOrganisationContent extends React.Component<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             readOnly: this.props.readOnly,
             showPassive: false,
-        }
+        };
     }
 
     render() {
@@ -50,9 +50,7 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
             <div className="henkiloViewUserContentWrapper">
                 <div>
                     <div className="header">
-                        <p className="oph-h2 oph-bold">
-                            {this.props.L["HENKILO_ORGANISAATIOT_OTSIKKO"]}
-                        </p>
+                        <p className="oph-h2 oph-bold">{this.props.L['HENKILO_ORGANISAATIOT_OTSIKKO']}</p>
                     </div>
                     <label className="oph-checkable" htmlFor="showPassive">
                         <input
@@ -65,19 +63,11 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                                 })
                             }
                         />
-                        <span className="oph-checkable-text">
-                            {" "}
-                            {this.props.L["HENKILO_NAYTA_PASSIIVISET_TEKSTI"]}
-                        </span>
+                        <span className="oph-checkable-text"> {this.props.L['HENKILO_NAYTA_PASSIIVISET_TEKSTI']}</span>
                     </label>
                     <div className="organisationContentWrapper">
-                        <Columns
-                            queries={[{columns: 3, query: "min-width: 200px"}]}
-                            gap="10px"
-                        >
-                            {this.flatOrganisations(
-                                this.props.henkilo.henkiloOrgs,
-                            ).map((values, idx) =>
+                        <Columns queries={[{ columns: 3, query: 'min-width: 200px' }]} gap="10px">
+                            {this.flatOrganisations(this.props.henkilo.henkiloOrgs).map((values, idx) =>
                                 !values.passive || this.state.showPassive ? (
                                     <div key={idx}>
                                         <div>
@@ -86,14 +76,7 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                                             </span>
                                         </div>
                                         <div className="labelValue">
-                                            <span className="oph-bold">
-                                                {
-                                                    this.props.L[
-                                                        "HENKILO_ORGTUNNISTE"
-                                                    ]
-                                                }
-                                                :
-                                            </span>
+                                            <span className="oph-bold">{this.props.L['HENKILO_ORGTUNNISTE']}:</span>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <span>{values.id}</span>
                                         </div>
@@ -102,22 +85,18 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                                                 passive={values.passive}
                                                 id={values.id}
                                                 L={this.props.L}
-                                                passivoiOrgAction={this.passivoiHenkiloOrganisation.bind(
-                                                    this,
-                                                )}
-                                                disabled={this.hasNoPermission(
-                                                    values.id,
-                                                )}
+                                                passivoiOrgAction={this.passivoiHenkiloOrganisation.bind(this)}
+                                                disabled={this.hasNoPermission(values.id)}
                                             />
                                         </div>
                                     </div>
-                                ) : null,
+                                ) : null
                             )}
                         </Columns>
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 
     // If grantableKayttooikeus not loaded allow all. Otherwise require it to be in list.
@@ -125,14 +104,11 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
         return (
             !this.props.kayttooikeus.grantableKayttooikeusLoading &&
             !this.props.kayttooikeus.grantableKayttooikeus[organisaatioOid]
-        )
+        );
     }
 
     passivoiHenkiloOrganisation(organisationOid: string) {
-        this.props.passivoiHenkiloOrg(
-            this.props.henkilo.henkilo.oidHenkilo,
-            organisationOid,
-        )
+        this.props.passivoiHenkiloOrg(this.props.henkilo.henkilo.oidHenkilo, organisationOid);
     }
 
     flatOrganisations(organisations: Array<any>): Array<OrganisaatioFlat> {
@@ -141,18 +117,18 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
                 ? this.organisationTypesFlat(organisation.tyypit)
                 : organisation.organisaatiotyypit
                 ? this.organisationTypesFlat(organisation.organisaatiotyypit)
-                : ""
+                : '';
             return {
                 name: toLocalizedText(this.props.locale, organisation.nimi),
                 typesFlat: typesFlat,
                 passive: organisation.passivoitu,
                 id: organisation.oid,
-            }
-        })
+            };
+        });
     }
 
     organisationTypesFlat(tyypit: any) {
-        return tyypit.length ? "(" + StaticUtils.flatArray(tyypit) + ")" : ""
+        return tyypit.length ? '(' + StaticUtils.flatArray(tyypit) + ')' : '';
     }
 }
 
@@ -161,8 +137,8 @@ const mapStateToProps = state => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     kayttooikeus: state.kayttooikeus,
-})
+});
 
-export default connect<Props, OwnProps, _, _, _, _>(mapStateToProps, {
+export default connect<Props, OwnProps>(mapStateToProps, {
     passivoiHenkiloOrg,
-})(HenkiloViewOrganisationContent)
+})(HenkiloViewOrganisationContent);

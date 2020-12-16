@@ -1,33 +1,33 @@
-import React from "react"
-import {SpinnerInButton} from "../icons/SpinnerInButton"
-import OphModal from "./OphModal"
-import ValidationMessageButton from "../button/ValidationMessageButton"
-import {ValidationMessage} from "../../../types/validation.type"
+import React from 'react';
+import { SpinnerInButton } from '../icons/SpinnerInButton';
+import OphModal from './OphModal';
+import ValidationMessageButton from '../button/ValidationMessageButton';
+import { ValidationMessage } from '../../../types/validation.type';
 
 type SelectModalProps = {
-    disabled: boolean
-    buttonText: string
-    children?: React$Element<any>
-    loading?: boolean
+    disabled: boolean;
+    buttonText: string;
+    children?: React.ReactElement;
+    loading?: boolean;
     validationMessages?: {
-        [key: string]: ValidationMessage
-    }
-}
+        [key: string]: ValidationMessage;
+    };
+};
 
 type State = {
-    visible: boolean
-}
+    visible: boolean;
+};
 
 /**
  * Näyttää ja piilottaa lapsena annetun modalin. Välittää piilottamistoiminnon tälle modalille.
  */
 class SelectModal extends React.Component<SelectModalProps, State> {
     constructor(props: SelectModalProps) {
-        super(props)
+        super(props);
 
         this.state = {
             visible: false,
-        }
+        };
     }
 
     render() {
@@ -38,8 +38,7 @@ class SelectModal extends React.Component<SelectModalProps, State> {
                     validationMessages={this.props.validationMessages || {}}
                     buttonAction={this._onOpen}
                 >
-                    <SpinnerInButton show={!!this.props.loading} />{" "}
-                    {this.props.buttonText}
+                    <SpinnerInButton show={!!this.props.loading} /> {this.props.buttonText}
                 </ValidationMessageButton>
                 {this.state.visible ? (
                     <OphModal onClose={this._onClose}>
@@ -51,20 +50,20 @@ class SelectModal extends React.Component<SelectModalProps, State> {
                     </OphModal>
                 ) : null}
             </React.Fragment>
-        )
+        );
     }
 
     _onOpen = (event: React.SyntheticEvent<HTMLButtonElement>): void => {
-        event.preventDefault()
-        this.setState({visible: true})
-    }
+        event.preventDefault();
+        this.setState({ visible: true });
+    };
 
     _onClose = (event?: React.SyntheticEvent<HTMLButtonElement>): void => {
         if (event) {
-            event.preventDefault()
+            event.preventDefault();
         }
-        this.setState({visible: false})
-    }
+        this.setState({ visible: false });
+    };
 }
 
-export default SelectModal
+export default SelectModal;
