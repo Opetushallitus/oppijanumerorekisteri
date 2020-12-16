@@ -1,0 +1,30 @@
+{
+    "extends": [
+        "react-app",
+        "react-app/jest",
+        "prettier"
+    ],
+    "parser": "babel-eslint",
+    "plugins": [
+        "react"
+    ],
+    "overrides": [
+        {
+            "files": ["**/*.ts", "**/*.tsx"],
+            "parser": "@typescript-eslint/parser",
+            "plugins": ["@typescript-eslint"],
+            "rules": {
+                "react/prop-types": [
+                    0
+                ],
+                "no-unused-vars": "off",
+                "@typescript-eslint/no-unused-vars": "warn"
+            }
+          }
+    ],
+    "env": {
+        "browser": true
+    },
+    "rules": {
+    }
+}

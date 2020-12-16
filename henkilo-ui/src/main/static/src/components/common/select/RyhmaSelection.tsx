@@ -52,7 +52,7 @@ class RyhmaSelection extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
     ryhmaOptions: state.omattiedot.organisaatioRyhmaOptions,

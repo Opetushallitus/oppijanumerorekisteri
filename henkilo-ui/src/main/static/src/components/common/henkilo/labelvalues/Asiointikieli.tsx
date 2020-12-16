@@ -26,8 +26,8 @@ const Asiointikieli = (props: Props) => (
         values={{
             label: 'HENKILO_ASIOINTIKIELI',
             data: props.koodisto.kieli
-                .filter(koodi => ['fi', 'sv', 'en'].indexOf(koodi.value) !== -1)
-                .map(koodi => ({
+                .filter((koodi) => ['fi', 'sv', 'en'].indexOf(koodi.value) !== -1)
+                .map((koodi) => ({
                     value: koodi.value,
                     label: koodi[props.locale],
                     optionsName: 'asiointiKieli.kieliKoodi',
@@ -37,7 +37,7 @@ const Asiointikieli = (props: Props) => (
     />
 );
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     locale: state.locale,
     koodisto: state.koodisto,
     henkilo: state.henkilo,

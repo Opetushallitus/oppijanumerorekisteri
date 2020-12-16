@@ -26,7 +26,7 @@ export default class DuplikaatitPersonOtherApplications extends React.Component<
     render() {
         return (
             <div>
-                {this.props.hakemukset.map(hakemus => {
+                {this.props.hakemukset.map((hakemus) => {
                     return (
                         <div className="application" key={hakemus.oid}>
                             <span>{hakemus.kansalaisuus || ''}</span>

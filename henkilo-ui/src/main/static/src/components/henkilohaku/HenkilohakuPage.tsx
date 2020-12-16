@@ -125,12 +125,12 @@ class HenkilohakuPage extends React.Component<Props, State> {
                 {(this.initialised && !this.state.showNoDataMessage) || this.props.henkilohakuResult.length ? (
                     <div className="henkilohakuTableWrapper">
                         <Table
-                            headings={this.createColumnHeaders().map(template =>
+                            headings={this.createColumnHeaders().map((template) =>
                                 Object.assign({}, template, {
                                     label: this.L[template.key] || template.key,
                                 })
                             )}
-                            data={this.createRows(this.createColumnHeaders().map(template => template.key))}
+                            data={this.createRows(this.createColumnHeaders().map((template) => template.key))}
                             noDataText=""
                             striped
                             highlight
@@ -167,7 +167,7 @@ class HenkilohakuPage extends React.Component<Props, State> {
     }
 
     createRows(headingKeys: Array<string>): Array<any> {
-        return this.props.henkilohakuResult.map(henkilo => ({
+        return this.props.henkilohakuResult.map((henkilo) => ({
             [headingKeys[0]]: <Link to={`/virkailija/${henkilo.oidHenkilo}`}>{henkilo.nimi || ''}</Link>,
             [headingKeys[1]]: henkilo.kayttajatunnus || '',
             [headingKeys[2]]: (

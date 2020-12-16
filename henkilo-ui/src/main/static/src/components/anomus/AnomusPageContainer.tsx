@@ -57,7 +57,7 @@ class AnomusPageContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,

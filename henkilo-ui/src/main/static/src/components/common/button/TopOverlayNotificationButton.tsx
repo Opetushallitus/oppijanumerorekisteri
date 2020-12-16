@@ -50,7 +50,7 @@ class TopOverlayNotificationButton extends React.Component<Props, State> {
                 {...this.props}
                 styles={this.state.styles}
                 // @ts-ignore - TODO: What is this
-                inputRef={el => (this.inputElement = el)}
+                inputRef={(el) => (this.inputElement = el)}
                 arrowDirection={'down'}
             />
         );

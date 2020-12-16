@@ -1,5 +1,5 @@
 import { resolveInvitationRights } from './KutsuDetails';
-import type { KutsuRead as Kutsu } from "../../types/domain/kayttooikeus/Kutsu.types"
+import type { KutsuRead as Kutsu } from '../../types/domain/kayttooikeus/Kutsu.types';
 
 jest.mock('../../localizabletext', () => ({
     toLocalizedText: (locale, key) => key,

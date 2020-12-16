@@ -109,7 +109,7 @@ class App extends React.Component<AppProps, AppState> {
         this.warnOnUnsupportedLocale(L, props.locale);
     }
 
-    setBackGround = function(route: RouteType) {
+    setBackGround = function (route: RouteType) {
         if (route.isUnauthenticated) {
             window.document.body.style.backgroundImage = `url('${background}')`;
             window.document.body.style.backgroundRepeat = 'no-repeat';
@@ -123,7 +123,7 @@ class App extends React.Component<AppProps, AppState> {
         }
     };
 
-    setTitle = function(L: Localisations, route: RouteType) {
+    setTitle = function (L: Localisations, route: RouteType) {
         if (L) {
             // Change document title
             const title = L[route.title] || L['TITLE_DEFAULT'];

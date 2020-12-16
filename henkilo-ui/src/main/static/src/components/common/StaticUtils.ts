@@ -58,7 +58,7 @@ class StaticUtils {
         let yhteystietoIndex = null;
         let yhteystietoRyhma = henkiloUpdate.yhteystiedotRyhma.filter((yhteystiedotRyhma, idx) => {
             const yhteystietoByTyyppi = yhteystiedotRyhma.yhteystieto.filter(
-                yhteystieto => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi
+                (yhteystieto) => yhteystieto.yhteystietoTyyppi === yhteystietotyyppi
             )[0];
             if (
                 yhteystiedotRyhmaIndex === null &&
@@ -113,14 +113,14 @@ class StaticUtils {
     }
 
     static flatArray(arr: Array<string>) {
-        return arr && arr.length ? arr.filter(item => item).reduce((type1, type2) => type1.concat(', ', type2)) : '';
+        return arr && arr.length ? arr.filter((item) => item).reduce((type1, type2) => type1.concat(', ', type2)) : '';
     }
 
     static getOrganisaatiotyypitFlat(tyypit: Array<string>, L: Localisations, uppercase?: boolean) {
         return tyypit && tyypit.length
             ? '(' +
                   tyypit
-                      .map(tyyppi => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)
+                      .map((tyyppi) => L[tyyppi.toUpperCase() + (uppercase ? '_ISO' : '')] || tyyppi)
                       .reduce((type1, type2) => type1.concat(', ', type2)) +
                   ')'
             : '';
@@ -137,7 +137,7 @@ class StaticUtils {
     });
 
     static getLocalisedText(description: TextGroup | null | undefined, locale: Locale) {
-        return description ? description.texts.filter(text => text.lang.toLowerCase() === locale)[0].text : '';
+        return description ? description.texts.filter((text) => text.lang.toLowerCase() === locale)[0].text : '';
     }
 
     static stringIsNotEmpty(entity: string | null | undefined) {

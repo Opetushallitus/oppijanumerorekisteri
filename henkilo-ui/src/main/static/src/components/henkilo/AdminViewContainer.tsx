@@ -89,7 +89,7 @@ class AdminViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         henkilo: state.henkilo,
         koodisto: state.koodisto,

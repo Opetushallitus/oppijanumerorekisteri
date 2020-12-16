@@ -125,7 +125,7 @@ class OmattiedotUserContent extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],

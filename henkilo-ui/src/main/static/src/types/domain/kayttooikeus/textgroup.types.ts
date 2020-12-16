@@ -1,25 +1,25 @@
-import {Text} from "./text.types"
+import { Text } from './text.types';
 
 export type TextGroup = {
-    id: number
-    texts: Array<Text>
-    fi?: string
-    sv?: string
-    en?: string
-}
+    id: number;
+    texts: Array<Text>;
+    fi?: string;
+    sv?: string;
+    en?: string;
+};
 
 export type TextGroupModify = {
-    texts: Array<Text>
-}
+    texts: Array<Text>;
+};
 
 export type TextGroupMap = {
-    id: number
+    id: number;
     texts: {
-        [key: string]: string
-    }
-}
+        [key: string]: string;
+    };
+};
 
 export type TextGroupArray = {
-    id: number
-    texts: Array<Text>
-}
+    id: number;
+    texts: Array<Text>;
+};

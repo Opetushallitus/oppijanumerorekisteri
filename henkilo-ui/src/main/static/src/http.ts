@@ -4,16 +4,13 @@ import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
 
-const parseResponseBody = response => {
-    return new Promise(resolve =>
+const parseResponseBody = (response) => {
+    return new Promise((resolve) =>
         (response.headers.get('content-type') &&
-        response.headers
-            .get('content-type')
-            .toLowerCase()
-            .startsWith('application/json')
+        response.headers.get('content-type').toLowerCase().startsWith('application/json')
             ? response.json()
             : response.text()
-        ).then(data =>
+        ).then((data) =>
             resolve({
                 status: response.status,
                 ok: response.ok,
@@ -51,7 +48,7 @@ export const http = {
             })
                 .then(parseResponseBody)
                 .then((response: T) => resolveResponse(response, resolve, reject))
-                .catch(error => reject({ networkError: error.message }))
+                .catch((error) => reject({ networkError: error.message }))
         ),
     delete: <T>(url: string) =>
         new Promise<T>((resolve, reject) =>
@@ -61,7 +58,7 @@ export const http = {
             })
                 .then(parseResponseBody)
                 .then((response: T) => resolveResponse(response, resolve, reject))
-                .catch(error => reject({ networkError: error.message }))
+                .catch((error) => reject({ networkError: error.message }))
         ),
     put: <T>(url: string, payload?: any) =>
         new Promise<T>((resolve, reject) =>
@@ -76,7 +73,7 @@ export const http = {
             })
                 .then(parseResponseBody)
                 .then((response: T) => resolveResponse(response, resolve, reject))
-                .catch(error => reject({ networkError: error.message }))
+                .catch((error) => reject({ networkError: error.message }))
         ),
     post: <T>(url: string, payload?: any) =>
         new Promise<T>((resolve, reject) =>
@@ -91,6 +88,6 @@ export const http = {
             })
                 .then(parseResponseBody)
                 .then((response: T) => resolveResponse(response, resolve, reject))
-                .catch(error => reject({ networkError: error.message }))
+                .catch((error) => reject({ networkError: error.message }))
         ),
 };

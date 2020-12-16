@@ -4,13 +4,13 @@ import * as R from 'ramda';
 
 // Return localisations by priority data (data1 before data2) and language (fi, sv, en). Use key if nothing is found.
 const localisationFromAllKeys = (priorityLang: string, allKeys: Array<string>, data1: L10n, data2: L10n) => {
-    const priority = [priorityLang].concat(['fi', 'sv', 'en'].filter(priority => priority !== priorityLang));
+    const priority = [priorityLang].concat(['fi', 'sv', 'en'].filter((priority) => priority !== priorityLang));
     return allKeys
-        .map(key => ({
+        .map((key) => ({
             [key]:
                 priority
-                    .map(lang => data1[lang][key] || data2[lang][key])
-                    .filter(localisation => localisation !== undefined)[0] || key,
+                    .map((lang) => data1[lang][key] || data2[lang][key])
+                    .filter((localisation) => localisation !== undefined)[0] || key,
         }))
         .reduce((acc, current) => R.merge(acc, current), {});
 };
@@ -25,7 +25,7 @@ const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
         Object.keys(localisationData.en)
     );
     const allKeysWithoutDuplicates = [...new Set(allKeys)];
-    const localisationByPriority = priorityLang =>
+    const localisationByPriority = (priorityLang) =>
         localisationFromAllKeys(priorityLang, allKeysWithoutDuplicates, localisationData, data);
 
     return {

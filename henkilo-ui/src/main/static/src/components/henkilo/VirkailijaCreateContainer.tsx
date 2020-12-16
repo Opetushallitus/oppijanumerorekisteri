@@ -142,7 +142,7 @@ class VirkailijaCreateContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         L: state.l10n.localisations[state.locale],
     };

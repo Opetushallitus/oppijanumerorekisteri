@@ -46,7 +46,7 @@ class AnomusIlmoitus extends React.Component<Props, State> {
                     tilaukset &&
                         this.props.updateModelFieldAction({
                             optionsName: 'anomusilmoitus',
-                            value: [...tilaukset.map(tilaus => tilaus.value)],
+                            value: [...tilaukset.map((tilaus) => tilaus.value)],
                         });
                 }}
                 values={{
@@ -54,7 +54,7 @@ class AnomusIlmoitus extends React.Component<Props, State> {
                     inputValue: 'anomusilmoitus',
                     readOnly: this.props.readOnly,
                     selectValue: this.props.henkiloUpdate.anomusilmoitus,
-                    data: this.state.vastuukayttajaRyhmat.map(vastuukayttajaRyhma => ({
+                    data: this.state.vastuukayttajaRyhmat.map((vastuukayttajaRyhma) => ({
                         value: vastuukayttajaRyhma.id,
                         label: localizeTextGroup(vastuukayttajaRyhma.nimi.texts, this.props.locale),
                         optionsName: 'anomusilmoitus',
@@ -74,7 +74,7 @@ class AnomusIlmoitus extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
 });

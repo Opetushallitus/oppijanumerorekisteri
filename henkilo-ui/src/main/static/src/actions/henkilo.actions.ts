@@ -67,14 +67,14 @@ import { NOTIFICATIONTYPES } from '../components/common/Notification/notificatio
 import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
 
-const requestHenkilo = oid => ({ type: FETCH_HENKILO_REQUEST, oid });
-const receiveHenkilo = json => ({
+const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
+const receiveHenkilo = (json) => ({
     type: FETCH_HENKILO_SUCCESS,
     henkilo: json,
     receivedAt: Date.now(),
 });
-const receiveHenkiloFailure = data => ({ type: FETCH_HENKILO_FAILURE, data });
-export const fetchHenkilo = oid => async dispatch => {
+const receiveHenkiloFailure = (data) => ({ type: FETCH_HENKILO_FAILURE, data });
+export const fetchHenkilo = (oid) => async (dispatch) => {
     dispatch(requestHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.oid', oid);
     try {
@@ -86,13 +86,13 @@ export const fetchHenkilo = oid => async dispatch => {
     }
 };
 
-const requestHenkiloUpdate = oid => ({ type: UPDATE_HENKILO_REQUEST, oid });
-const receiveHenkiloUpdate = oid => ({
+const requestHenkiloUpdate = (oid) => ({ type: UPDATE_HENKILO_REQUEST, oid });
+const receiveHenkiloUpdate = (oid) => ({
     type: UPDATE_HENKILO_SUCCESS,
     oid,
     receivedAt: Date.now(),
 });
-const errorHenkiloUpdate = error => ({ type: UPDATE_HENKILO_FAILURE, error });
+const errorHenkiloUpdate = (error) => ({ type: UPDATE_HENKILO_FAILURE, error });
 export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => async (dispatch, getState) => {
     dispatch(requestHenkiloUpdate(payload.oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo');
@@ -105,7 +105,7 @@ export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => asy
         if (errorNotificationConfig) {
             const errorMessages = getUpdateHenkiloErrorMessages(error, L);
             if (errorMessages.length > 0) {
-                errorMessages.forEach(errorMessage =>
+                errorMessages.forEach((errorMessage) =>
                     dispatch(addGlobalNotification(createUpdateHenkiloErrorNotification(errorMessage)))
                 );
             } else {
@@ -136,7 +136,7 @@ const getUpdateHenkiloErrorMessages = (error, L): Array<string> => {
     return errorMessages;
 };
 
-export const fetchKayttaja = oid => async dispatch => {
+export const fetchKayttaja = (oid) => async (dispatch) => {
     dispatch({ type: FETCH_KAYTTAJA_REQUEST, oid });
     const url = urls.url('kayttooikeus-service.henkilo.byOid', oid);
     try {
@@ -148,8 +148,8 @@ export const fetchKayttaja = oid => async dispatch => {
     }
 };
 
-const requestKayttajatieto = oid => ({ type: FETCH_KAYTTAJATIETO_REQUEST, oid });
-const receiveKayttajatieto = json => ({
+const requestKayttajatieto = (oid) => ({ type: FETCH_KAYTTAJATIETO_REQUEST, oid });
+const receiveKayttajatieto = (json) => ({
     type: FETCH_KAYTTAJATIETO_SUCCESS,
     kayttajatieto: json,
     receivedAt: Date.now(),
@@ -158,21 +158,21 @@ const errorKayttajatieto = () => ({
     type: FETCH_KAYTTAJATIETO_FAILURE,
     kayttajatieto: {},
 });
-export const fetchKayttajatieto = oid => dispatch => {
+export const fetchKayttajatieto = (oid) => (dispatch) => {
     dispatch(requestKayttajatieto(oid));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
     http.get(url)
-        .then(json => {
+        .then((json) => {
             dispatch(receiveKayttajatieto(json));
         })
         .catch(() => dispatch(errorKayttajatieto()));
 };
 
-const requestKayttajatietoUpdate = kayttajatieto => ({
+const requestKayttajatietoUpdate = (kayttajatieto) => ({
     type: UPDATE_KAYTTAJATIETO_REQUEST,
     kayttajatieto,
 });
-const requestKayttajatietoUpdateSuccess = kayttajatieto => ({
+const requestKayttajatietoUpdateSuccess = (kayttajatieto) => ({
     type: UPDATE_KAYTTAJATIETO_SUCCESS,
     kayttajatieto,
 });
@@ -201,12 +201,12 @@ export const updateAndRefetchKayttajatieto = (oid, username) => async (dispatch,
     }
 };
 
-const requestPassivoiHenkilo = oid => ({ type: PASSIVOI_HENKILO_REQUEST, oid });
+const requestPassivoiHenkilo = (oid) => ({ type: PASSIVOI_HENKILO_REQUEST, oid });
 const receivePassivoiHenkilo = () => ({
     type: PASSIVOI_HENKILO_SUCCESS,
     receivedAt: Date.now(),
 });
-const errorPassivoiHenkilo = e => ({
+const errorPassivoiHenkilo = (e) => ({
     type: PASSIVOI_HENKILO_FAILURE,
     buttonNotification: {
         position: 'passivoi',
@@ -215,7 +215,7 @@ const errorPassivoiHenkilo = e => ({
     },
     receivedAt: Date.now(),
 });
-export const passivoiHenkilo = oid => dispatch => {
+export const passivoiHenkilo = (oid) => (dispatch) => {
     dispatch(requestPassivoiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.delete', oid);
     http.delete(url)
@@ -223,10 +223,10 @@ export const passivoiHenkilo = oid => dispatch => {
             dispatch(receivePassivoiHenkilo());
             dispatch(fetchHenkilo(oid));
         })
-        .catch(e => dispatch(errorPassivoiHenkilo(e)));
+        .catch((e) => dispatch(errorPassivoiHenkilo(e)));
 };
 
-const requestPoistaKayttajatunnus = oid => ({
+const requestPoistaKayttajatunnus = (oid) => ({
     type: POISTA_KAYTTAJATUNNUS_REQUEST,
     oid,
 });
@@ -234,7 +234,7 @@ const receivePoistaKayttajatunnus = () => ({
     type: POISTA_KAYTTAJATUNNUS_SUCCESS,
     receivedAt: Date.now(),
 });
-const errorPoistaKayttajatunnus = e => ({
+const errorPoistaKayttajatunnus = (e) => ({
     type: POISTA_KAYTTAJATUNNUS_FAILURE,
     buttonNotification: {
         position: 'poistaKayttajatunnus',
@@ -243,7 +243,7 @@ const errorPoistaKayttajatunnus = e => ({
     },
     receivedAt: Date.now(),
 });
-export const poistaKayttajatunnus = oid => dispatch => {
+export const poistaKayttajatunnus = (oid) => (dispatch) => {
     dispatch(requestPoistaKayttajatunnus(oid));
     const url = urls.url('kayttooikeus-service.henkilo.poista-kayttajatunnus', oid);
     http.delete(url)
@@ -253,10 +253,10 @@ export const poistaKayttajatunnus = oid => dispatch => {
             dispatch(fetchHenkiloOrgs(oid));
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(oid));
         })
-        .catch(e => dispatch(errorPoistaKayttajatunnus(e)));
+        .catch((e) => dispatch(errorPoistaKayttajatunnus(e)));
 };
 
-export const aktivoiHenkilo = oid => async (dispatch, getState) => {
+export const aktivoiHenkilo = (oid) => async (dispatch, getState) => {
     try {
         const url = urls.url('oppijanumerorekisteri-service.henkilo', oid);
         // henkilö put toimii kuten patch joten ei tarvita kaikkia tietoja
@@ -276,20 +276,20 @@ export const aktivoiHenkilo = oid => async (dispatch, getState) => {
     }
 };
 
-const requestHenkiloYksilointitieto = oid => ({
+const requestHenkiloYksilointitieto = (oid) => ({
     type: FETCH_HENKILO_YKSILOINTITIETO_REQUEST,
     oid,
 });
-const receiveHenkiloYksilointitieto = payload => ({
+const receiveHenkiloYksilointitieto = (payload) => ({
     type: FETCH_HENKILO_YKSILOINTITIETO_SUCCESS,
     payload,
 });
-const failureHenkiloYksilointitieto = error => ({
+const failureHenkiloYksilointitieto = (error) => ({
     type: FETCH_HENKILO_YKSILOINTITIETO_FAILURE,
     error,
 });
 
-export const fetchHenkiloYksilointitieto = oid => async dispatch => {
+export const fetchHenkiloYksilointitieto = (oid) => async (dispatch) => {
     dispatch(requestHenkiloYksilointitieto);
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
     try {
@@ -300,13 +300,13 @@ export const fetchHenkiloYksilointitieto = oid => async dispatch => {
     }
 };
 
-const requestYksiloiHenkilo = oid => ({ type: YKSILOI_HENKILO_REQUEST, oid });
-const receiveYksiloiHenkilo = oid => ({
+const requestYksiloiHenkilo = (oid) => ({ type: YKSILOI_HENKILO_REQUEST, oid });
+const receiveYksiloiHenkilo = (oid) => ({
     type: YKSILOI_HENKILO_SUCCESS,
     oid,
     receivedAt: Date.now(),
 });
-const errorYksiloiHenkilo = error => ({
+const errorYksiloiHenkilo = (error) => ({
     type: YKSILOI_HENKILO_FAILURE,
     receivedAt: Date.now(),
     buttonNotification: {
@@ -315,7 +315,7 @@ const errorYksiloiHenkilo = error => ({
         notL10nText: 'YKSILOI_ERROR_TEXT',
     },
 });
-export const yksiloiHenkilo = oid => dispatch => {
+export const yksiloiHenkilo = (oid) => (dispatch) => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloihetuton', oid);
     http.post(url)
@@ -323,13 +323,13 @@ export const yksiloiHenkilo = oid => dispatch => {
             dispatch(receiveYksiloiHenkilo(oid));
             dispatch(fetchHenkilo(oid));
         })
-        .catch(e => dispatch(errorYksiloiHenkilo(e)));
+        .catch((e) => dispatch(errorYksiloiHenkilo(e)));
 };
 
-const requestPuraYksilointi = oid => ({ type: PURA_YKSILOINTI_REQUEST, oid });
-const receivePuraYksilointi = oid => ({ type: PURA_YKSILOINTI_SUCCESS, oid });
-const errorPuraYksilointi = error => ({ type: PURA_YKSILOINTI_FAILURE });
-export const puraYksilointi = oid => async dispatch => {
+const requestPuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_REQUEST, oid });
+const receivePuraYksilointi = (oid) => ({ type: PURA_YKSILOINTI_SUCCESS, oid });
+const errorPuraYksilointi = (error) => ({ type: PURA_YKSILOINTI_FAILURE });
+export const puraYksilointi = (oid) => async (dispatch) => {
     dispatch(requestPuraYksilointi(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloi.pura', oid);
     try {
@@ -343,16 +343,16 @@ export const puraYksilointi = oid => async dispatch => {
 };
 
 // Henkikön tietojen yliajo yksilöintitiedoille niille, jotka henkilöille jotka on yksilöity
-const requestOverrideHenkiloVtjData = oid => ({
+const requestOverrideHenkiloVtjData = (oid) => ({
     type: VTJ_OVERRIDE_HENKILO_REQUEST,
     oid,
 });
-const receiveOverrideHenkiloVtjData = oid => ({
+const receiveOverrideHenkiloVtjData = (oid) => ({
     type: VTJ_OVERRIDE_HENKILO_SUCCESS,
     oid,
     receivedAt: Date.now(),
 });
-const errorOverrideHenkiloVtjData = error => ({
+const errorOverrideHenkiloVtjData = (error) => ({
     type: VTJ_OVERRIDE_HENKILO_FAILURE,
     receivedAt: Date.now(),
     buttonNotification: {
@@ -361,7 +361,7 @@ const errorOverrideHenkiloVtjData = error => ({
         notL10nText: 'VTJ_OVERRIDE_ERROR_TEXT',
     },
 });
-export const overrideHenkiloVtjData = oid => async dispatch => {
+export const overrideHenkiloVtjData = (oid) => async (dispatch) => {
     dispatch(requestOverrideHenkiloVtjData(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot', oid);
     try {
@@ -374,18 +374,18 @@ export const overrideHenkiloVtjData = oid => async dispatch => {
 };
 
 // Henkilön tietojen yliajo yksilöintitiedoilla niille henkilöille, joiden VTJ-yksilöinti on epäonnistunut
-const requestOverrideYksiloimatonHenkilo = oid => ({
+const requestOverrideYksiloimatonHenkilo = (oid) => ({
     type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_REQUEST,
     oid,
 });
-const successOverrideYksiloimatonHenkilo = oid => ({
+const successOverrideYksiloimatonHenkilo = (oid) => ({
     type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_SUCCESS,
     oid,
 });
-const errorOverrideYksiloimatonHenkilo = error => ({
+const errorOverrideYksiloimatonHenkilo = (error) => ({
     type: VTJ_OVERRIDE_YKSILOIMATON_HENKILO_FAILURE,
 });
-export const overrideYksiloimatonHenkiloVtjData = oid => async dispatch => {
+export const overrideYksiloimatonHenkiloVtjData = (oid) => async (dispatch) => {
     dispatch(requestOverrideYksiloimatonHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksilointitiedot.yliajayksiloimaton', oid);
     try {
@@ -397,7 +397,7 @@ export const overrideYksiloimatonHenkiloVtjData = oid => async dispatch => {
     }
 };
 
-const requestHenkiloOrgs = oid => ({ type: FETCH_HENKILOORGS_REQUEST, oid });
+const requestHenkiloOrgs = (oid) => ({ type: FETCH_HENKILOORGS_REQUEST, oid });
 const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({
     type: FETCH_HENKILOORGS_SUCCESS,
     henkiloOrgs: henkiloOrgs,
@@ -406,12 +406,12 @@ const receiveHenkiloOrgsSuccess = (henkiloOrgs, organisations) => ({
 });
 
 // Fetch organisations for given henkilo (non hierarchical). If no oid given user current user oid.
-export const fetchHenkiloOrgs = oidHenkilo => (dispatch, getState) => {
+export const fetchHenkiloOrgs = (oidHenkilo) => (dispatch, getState) => {
     oidHenkilo = oidHenkilo || getState().omattiedot.data.oid;
     dispatch(requestHenkiloOrgs(oidHenkilo));
     const url = urls.url('kayttooikeus-service.henkilo.organisaatiohenkilos', oidHenkilo);
-    return http.get<[{ organisaatioOid: string }]>(url).then(json => {
-        dispatch(fetchOrganisations(json.map(orgHenkilo => orgHenkilo.organisaatioOid))).then(organisationsAction =>
+    return http.get<[{ organisaatioOid: string }]>(url).then((json) => {
+        dispatch(fetchOrganisations(json.map((orgHenkilo) => orgHenkilo.organisaatioOid))).then((organisationsAction) =>
             dispatch(receiveHenkiloOrgsSuccess(json, getState().organisaatio.cached))
         );
     });
@@ -439,7 +439,7 @@ const errorPassivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => ({
     },
     receivedAt: Date.now(),
 });
-export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => dispatch => {
+export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => (dispatch) => {
     dispatch(requestPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg));
     const url = urls.url('kayttooikeus-service.organisaatiohenkilo.passivoi', oidHenkilo, oidHenkiloOrg);
     return http
@@ -452,7 +452,7 @@ export const passivoiHenkiloOrg = (oidHenkilo, oidHenkiloOrg) => dispatch => {
         .catch(() => dispatch(errorPassivoiHenkiloOrg(oidHenkilo, oidHenkiloOrg)));
 };
 
-const requestHenkiloDuplicates = oidHenkilo => ({
+const requestHenkiloDuplicates = (oidHenkilo) => ({
     type: FETCH_HENKILO_DUPLICATES_REQUEST,
     oidHenkilo,
 });
@@ -465,7 +465,7 @@ const requestHenkiloDuplicatesFailure = () => ({
     type: FETCH_HENKILO_DUPLICATES_FAILURE,
 });
 
-export const fetchHenkiloDuplicates = oidHenkilo => async (dispatch, getState) => {
+export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch, getState) => {
     dispatch(requestHenkiloDuplicates(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.duplicates', oidHenkilo);
     try {
@@ -506,11 +506,11 @@ export const fetchHenkiloDuplicates = oidHenkilo => async (dispatch, getState) =
     }
 };
 
-const requestHenkiloHakemukset = oid => ({
+const requestHenkiloHakemukset = (oid) => ({
     type: FETCH_HENKILO_HAKEMUKSET.REQUEST,
     oid,
 });
-const requestHenkiloHakemuksetSuccess = hakemukset => ({
+const requestHenkiloHakemuksetSuccess = (hakemukset) => ({
     type: FETCH_HENKILO_HAKEMUKSET.SUCCESS,
     hakemukset,
 });
@@ -549,20 +549,20 @@ export const fetchHenkiloHakemukset = (oid: string) => async (dispatch, getState
     }
 };
 
-const requestHenkiloSlaves = oidHenkilo => ({
+const requestHenkiloSlaves = (oidHenkilo) => ({
     type: FETCH_HENKILO_SLAVES_REQUEST,
     oidHenkilo,
 });
-const requestHenkiloSlavesSuccess = slaves => ({
+const requestHenkiloSlavesSuccess = (slaves) => ({
     type: FETCH_HENKILO_SLAVES_SUCCESS,
     slaves,
 });
-const requestHenkiloSlavesFailure = oidHenkilo => ({
+const requestHenkiloSlavesFailure = (oidHenkilo) => ({
     type: FETCH_HENKILO_SLAVES_FAILURE,
     oidHenkilo,
 });
 
-export const fetchHenkiloSlaves = oidHenkilo => async dispatch => {
+export const fetchHenkiloSlaves = (oidHenkilo) => async (dispatch) => {
     dispatch(requestHenkiloSlaves(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.slaves', oidHenkilo);
     try {
@@ -574,20 +574,20 @@ export const fetchHenkiloSlaves = oidHenkilo => async dispatch => {
     }
 };
 
-const requestHenkiloMaster = oidHenkilo => ({
+const requestHenkiloMaster = (oidHenkilo) => ({
     type: FETCH_HENKILO_MASTER_REQUEST,
     oidHenkilo,
 });
-const requestHenkiloMasterSuccess = master => ({
+const requestHenkiloMasterSuccess = (master) => ({
     type: FETCH_HENKILO_MASTER_SUCCESS,
     master,
 });
-const requestHenkiloMasterFailure = oidHenkilo => ({
+const requestHenkiloMasterFailure = (oidHenkilo) => ({
     type: FETCH_HENKILO_MASTER_FAILURE,
     oidHenkilo,
 });
 
-export const fetchHenkiloMaster = oidHenkilo => async dispatch => {
+export const fetchHenkiloMaster = (oidHenkilo) => async (dispatch) => {
     dispatch(requestHenkiloMaster(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.master', oidHenkilo);
     try {
@@ -604,13 +604,13 @@ const linkHenkilosRequest = (masterOid, slaveOids) => ({
     masterOid,
     slaveOids,
 });
-const linkHenkilosSuccess = slaveOids => ({
+const linkHenkilosSuccess = (slaveOids) => ({
     type: LINK_HENKILOS_SUCCESS,
     slaveOids,
 });
 const linkHenkilosFailure = () => ({ type: LINK_HENKILOS_FAILURE });
 
-export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) => async dispatch => {
+export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) => async (dispatch) => {
     dispatch(linkHenkilosRequest(masterOid, slaveOids));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.link', masterOid);
     try {
@@ -643,13 +643,13 @@ const updateHenkiloUnlink = (masterOid, slaveOid) => ({
     masterOid,
     slaveOid,
 });
-const updateHenkiloUnlinkSuccess = unlinkedSlaveOid => ({
+const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid) => ({
     type: UPDATE_HENKILO_UNLINK_SUCCESS,
     unlinkedSlaveOid,
 });
 const updateHenkiloUnlinkFailure = () => ({ type: UPDATE_HENKILO_UNLINK_FAILURE });
 
-export const unlinkHenkilo = (masterOid, slaveOid) => async dispatch => {
+export const unlinkHenkilo = (masterOid, slaveOid) => async (dispatch) => {
     dispatch(updateHenkiloUnlink(masterOid, slaveOid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink', masterOid, slaveOid);
     try {
@@ -661,4 +661,4 @@ export const unlinkHenkilo = (masterOid, slaveOid) => async dispatch => {
     }
 };
 
-export const clearHenkilo = () => dispatch => dispatch({ type: CLEAR_HENKILO });
+export const clearHenkilo = () => (dispatch) => dispatch({ type: CLEAR_HENKILO });

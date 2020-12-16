@@ -90,7 +90,7 @@ class VirkailijaViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,

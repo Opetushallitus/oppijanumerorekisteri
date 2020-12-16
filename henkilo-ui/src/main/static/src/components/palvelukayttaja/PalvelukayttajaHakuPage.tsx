@@ -1,65 +1,55 @@
-import React from "react"
-import {Localisations} from "../../types/localisation.type"
-import {PalvelukayttajaCriteria} from "../../types/domain/kayttooikeus/palvelukayttaja.types"
-import {PalvelukayttajatState} from "../../reducers/palvelukayttaja.reducer"
-import {OrganisaatioHenkilo} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types"
-import DelayedSearchInput from "../henkilohaku/DelayedSearchInput"
-import PalvelukayttajaHakuTaulukko from "./PalvelukayttajaHakuTaulukko"
-import SubOrganisationCheckbox from "../henkilohaku/criterias/SubOrganisationCheckbox"
-import "./PalvelukayttajaHakuPage.css"
+import React from 'react';
+import { Localisations } from '../../types/localisation.type';
+import { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
+import { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer';
+import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
+import PalvelukayttajaHakuTaulukko from './PalvelukayttajaHakuTaulukko';
+import SubOrganisationCheckbox from '../henkilohaku/criterias/SubOrganisationCheckbox';
+import './PalvelukayttajaHakuPage.css';
 import {
     findOrganisaatioSelectObjectByOid,
     omattiedotOrganisaatiotToOrganisaatioSelectObject,
-} from "../../utilities/organisaatio.util"
-import {OrganisaatioSelectModal} from "../common/select/OrganisaatioSelectModal"
-import {OrganisaatioSelectObject} from "../../types/organisaatioselectobject.types"
-import {Locale} from "../../types/locale.type"
-import CloseButton from "../common/button/CloseButton"
+} from '../../utilities/organisaatio.util';
+import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
+import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
+import { Locale } from '../../types/locale.type';
+import CloseButton from '../common/button/CloseButton';
 
 type PalvelukayttajaHakuPageProps = {
-    L: Localisations
-    locale: Locale
-    organisaatiot: Array<OrganisaatioHenkilo>
-    onCriteriaChange: (critera: PalvelukayttajaCriteria) => void
-    palvelukayttajat: PalvelukayttajatState
-    organisaatiotLoading: boolean
-}
+    L: Localisations;
+    locale: Locale;
+    organisaatiot: Array<OrganisaatioHenkilo>;
+    onCriteriaChange: (critera: PalvelukayttajaCriteria) => void;
+    palvelukayttajat: PalvelukayttajatState;
+    organisaatiotLoading: boolean;
+};
 
-class PalvelukayttajaHakuPage extends React.Component<
-    PalvelukayttajaHakuPageProps
-> {
+class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPageProps> {
     render() {
         return (
             <div className="wrapper">
-                <span className="oph-h2 oph-bold">
-                    {this.props.L["PALVELUKAYTTAJAN_HAKU_OTSIKKO"]}
-                </span>
+                <span className="oph-h2 oph-bold">{this.props.L['PALVELUKAYTTAJAN_HAKU_OTSIKKO']}</span>
                 {this.renderCriteria()}
                 {this.props.palvelukayttajat.dirty && this.renderData()}
             </div>
-        )
+        );
     }
 
     renderCriteria() {
         const organisaatiot = omattiedotOrganisaatiotToOrganisaatioSelectObject(
             this.props.organisaatiot,
-            this.props.locale,
-        )
-        const organisaatioSelection = this.props.palvelukayttajat.criteria
-            .organisaatioOids
-            ? findOrganisaatioSelectObjectByOid(
-                  this.props.palvelukayttajat.criteria.organisaatioOids,
-                  organisaatiot,
-              )
-            : null
+            this.props.locale
+        );
+        const organisaatioSelection = this.props.palvelukayttajat.criteria.organisaatioOids
+            ? findOrganisaatioSelectObjectByOid(this.props.palvelukayttajat.criteria.organisaatioOids, organisaatiot)
+            : null;
 
         return (
             <div className="PalvelukayttajaHakuPage-criteria">
                 <DelayedSearchInput
                     setSearchQueryAction={this.onNameQueryChange}
-                    defaultNameQuery={
-                        this.props.palvelukayttajat.criteria.nameQuery
-                    }
+                    defaultNameQuery={this.props.palvelukayttajat.criteria.nameQuery}
                     loading={this.props.palvelukayttajat.loading}
                 />
 
@@ -68,16 +58,8 @@ class PalvelukayttajaHakuPage extends React.Component<
                         <input
                             className="oph-input flex-item-1 "
                             type="text"
-                            value={
-                                organisaatioSelection
-                                    ? organisaatioSelection.name
-                                    : ""
-                            }
-                            placeholder={
-                                this.props.L[
-                                    "PALVELUKAYTTAJA_HAKU_ORGANISAATIOSUODATUS"
-                                ]
-                            }
+                            value={organisaatioSelection ? organisaatioSelection.name : ''}
+                            placeholder={this.props.L['PALVELUKAYTTAJA_HAKU_ORGANISAATIOSUODATUS']}
                             readOnly
                         />
                     </div>
@@ -88,29 +70,20 @@ class PalvelukayttajaHakuPage extends React.Component<
                         organisaatiot={organisaatiot}
                         onSelect={this.onOrganisationChange}
                     />
-                    <CloseButton
-                        closeAction={() => this.onOrganisationChange(undefined)}
-                    />
+                    <CloseButton closeAction={() => this.onOrganisationChange(undefined)} />
                 </div>
 
                 <SubOrganisationCheckbox
                     L={this.props.L}
-                    subOrganisationValue={
-                        this.props.palvelukayttajat.criteria.subOrganisation
-                    }
+                    subOrganisationValue={this.props.palvelukayttajat.criteria.subOrganisation}
                     subOrganisationAction={this.onSubOrganisationChange}
                 />
             </div>
-        )
+        );
     }
 
     renderData() {
-        return (
-            <PalvelukayttajaHakuTaulukko
-                L={this.props.L}
-                palvelukayttajat={this.props.palvelukayttajat}
-            />
-        )
+        return <PalvelukayttajaHakuTaulukko L={this.props.L} palvelukayttajat={this.props.palvelukayttajat} />;
     }
 
     onNameQueryChange = (element: HTMLInputElement) => {
@@ -118,27 +91,23 @@ class PalvelukayttajaHakuPage extends React.Component<
             this.props.onCriteriaChange({
                 ...this.props.palvelukayttajat.criteria,
                 nameQuery: element.value,
-            })
+            });
         }
-    }
+    };
 
-    onSubOrganisationChange = (
-        element: React.SyntheticEvent<HTMLInputElement>,
-    ) => {
+    onSubOrganisationChange = (element: React.SyntheticEvent<HTMLInputElement>) => {
         this.props.onCriteriaChange({
             ...this.props.palvelukayttajat.criteria,
             subOrganisation: element.currentTarget.checked,
-        })
-    }
+        });
+    };
 
-    onOrganisationChange = (
-        selection: OrganisaatioSelectObject | null | undefined,
-    ) => {
+    onOrganisationChange = (selection: OrganisaatioSelectObject | null | undefined) => {
         this.props.onCriteriaChange({
             ...this.props.palvelukayttajat.criteria,
             organisaatioOids: selection ? selection.oid : null,
-        })
-    }
+        });
+    };
 }
 
-export default PalvelukayttajaHakuPage
+export default PalvelukayttajaHakuPage;

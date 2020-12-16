@@ -1,5 +1,5 @@
 export type Hakemus = {
     hakemusData: {
-        [key: string]: unknown
-    }
-}
+        [key: string]: unknown;
+    };
+};

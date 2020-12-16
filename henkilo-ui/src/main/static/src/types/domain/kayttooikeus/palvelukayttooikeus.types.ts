@@ -1,6 +1,6 @@
-import {Text} from "./text.types"
+import { Text } from './text.types';
 
 export type PalveluKayttooikeus = {
-    rooli: string
-    oikeusLangs: Array<Text>
-}
+    rooli: string;
+    oikeusLangs: Array<Text>;
+};

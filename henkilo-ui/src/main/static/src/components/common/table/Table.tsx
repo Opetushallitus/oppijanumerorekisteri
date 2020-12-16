@@ -1,46 +1,46 @@
-import "./Table.css"
-import * as React from "react"
-import VisibilitySensor from "react-visibility-sensor"
-import ReactTable from "react-table"
-import "react-table/react-table.css"
-import SortAscIcon from "../icons/SortAscIcon"
-import SortDescIcon from "../icons/SortDescIcon"
-import SortIconNone from "../icons/SortIconNone"
-import classNames from "classnames/bind"
-import Loader from "../icons/Loader"
-import {TableHeading} from "../../../types/react-table.types"
+import './Table.css';
+import * as React from 'react';
+import VisibilitySensor from 'react-visibility-sensor';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
+import SortAscIcon from '../icons/SortAscIcon';
+import SortDescIcon from '../icons/SortDescIcon';
+import SortIconNone from '../icons/SortIconNone';
+import classNames from 'classnames/bind';
+import Loader from '../icons/Loader';
+import { TableHeading } from '../../../types/react-table.types';
 
 type Props = {
-    headings: Array<TableHeading>
-    data: Array<any>
-    noDataText?: string
-    striped?: boolean
-    highlight?: boolean
-    manual?: boolean
-    resizable?: boolean
-    onFetchData?: (arg0: any) => void
-    getTdProps?: () => void
-    subComponent?: (arg0: any) => React.ReactNode
-    defaultSorted?: Array<any>
+    headings: Array<TableHeading>;
+    data: Array<any>;
+    noDataText?: string;
+    striped?: boolean;
+    highlight?: boolean;
+    manual?: boolean;
+    resizable?: boolean;
+    onFetchData?: (arg0: any) => void;
+    getTdProps?: () => void;
+    subComponent?: (arg0: any) => React.ReactNode;
+    defaultSorted?: Array<any>;
     fetchMoreSettings?: {
-        fetchMoreAction?: () => void
-        isActive?: boolean
-    }
-    isLoading?: boolean
-}
+        fetchMoreAction?: () => void;
+        isActive?: boolean;
+    };
+    isLoading?: boolean;
+};
 
 class Table extends React.Component<Props> {
     static defaultProps = {
         fetchMoreSettings: {},
         resizable: false,
-    }
+    };
 
     render() {
         const classname = classNames({
             table: true,
-            "-striped": this.props.striped,
-            "-highlight": this.props.highlight,
-        })
+            '-striped': this.props.striped,
+            '-highlight': this.props.highlight,
+        });
         return (
             <div>
                 <ReactTable
@@ -51,19 +51,18 @@ class Table extends React.Component<Props> {
                     pageSize={this.props.data.length}
                     defaultSorted={this.props.defaultSorted || []}
                     loadingText=""
-                    noDataText={this.props.noDataText || ""}
+                    noDataText={this.props.noDataText || ''}
                     data={this.props.data}
                     SubComponent={this.props.subComponent}
                     freezeWhenExpanded={this.props.subComponent ? true : false}
-                    columns={this.props.headings.map(heading => ({
+                    columns={this.props.headings.map((heading) => ({
                         getHeaderProps: this.getHeaderProps,
-                        Header: props => {
+                        Header: (props) => {
                             return (
                                 <span className="oph-bold">
-                                    {heading.label}{" "}
+                                    {heading.label}{' '}
                                     {props.column.sortable ? (
-                                        props.column.sorting.desc !==
-                                        undefined ? (
+                                        props.column.sorting.desc !== undefined ? (
                                             props.column.sorting.desc ? (
                                                 <SortAscIcon />
                                             ) : (
@@ -74,7 +73,7 @@ class Table extends React.Component<Props> {
                                         )
                                     ) : null}
                                 </span>
-                            )
+                            );
                         },
                         Cell: heading.Cell,
                         accessor: heading.key,
@@ -85,46 +84,39 @@ class Table extends React.Component<Props> {
                         show: !heading.hide,
                     }))}
                     getTrProps={(state, rowInfo, column) => ({
-                        className: rowInfo.row.HIGHLIGHT
-                            ? "fadeOutBackgroundColor"
-                            : null,
+                        className: rowInfo.row.HIGHLIGHT ? 'fadeOutBackgroundColor' : null,
                     })}
                     getTdProps={this.props.getTdProps}
                     onFetchData={this.props.onFetchData}
                 />
                 <VisibilitySensor
-                    onChange={isVisible => {
+                    onChange={(isVisible) => {
                         if (isVisible) {
                             this.props.fetchMoreSettings &&
                                 this.props.fetchMoreSettings.fetchMoreAction &&
-                                this.props.fetchMoreSettings.fetchMoreAction()
+                                this.props.fetchMoreSettings.fetchMoreAction();
                         }
                     }}
-                    active={
-                        this.props.fetchMoreSettings &&
-                        this.props.fetchMoreSettings.isActive
-                    }
+                    active={this.props.fetchMoreSettings && this.props.fetchMoreSettings.isActive}
                     resizeDelay={500}
                     delayedCall
                     partialVisibility
                 >
-                    {({isVisible}) => (
-                        <div style={{visibility: "hidden"}}>invisible</div>
-                    )}
+                    {({ isVisible }) => <div style={{ visibility: 'hidden' }}>invisible</div>}
                 </VisibilitySensor>
                 {this.props.isLoading ? <Loader /> : null}
             </div>
-        )
+        );
     }
 
     getHeaderProps(state: any, rowInfo: any, column: any) {
         const sorting =
             state.sorted && state.sorted.length
-                ? state.sorted.filter(sorting => column.id === sorting.id)[0]
-                : undefined
-        column.sorting = {desc: sorting && sorting.desc}
-        return {}
+                ? state.sorted.filter((sorting) => column.id === sorting.id)[0]
+                : undefined;
+        column.sorting = { desc: sorting && sorting.desc };
+        return {};
     }
 }
 
-export default Table
+export default Table;

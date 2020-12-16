@@ -1,1 +1,1 @@
-export type YksilointiTila = "OK" | "VIRHE" | "KESKEN" | "HETU_PUUTTUU"
+export type YksilointiTila = 'OK' | 'VIRHE' | 'KESKEN' | 'HETU_PUUTTUU';

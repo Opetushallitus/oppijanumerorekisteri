@@ -100,7 +100,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
             kayttooikeusModel: this.initialKayttooikeusModel(),
         };
 
-        this.organisationAction = value => {
+        this.organisationAction = (value) => {
             const isOrganisaatio = value.hasOwnProperty('oid');
             const oid = isOrganisaatio ? value.oid : value.value;
 
@@ -141,7 +141,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
         };
 
         this.close = (kayttooikeusId: number) => {
-            const selectedList = this.state.selectedList.filter(selected => selected.value !== kayttooikeusId);
+            const selectedList = this.state.selectedList.filter((selected) => selected.value !== kayttooikeusId);
             const id = 'kayttooikeus';
             const labelLocalised = this.props.L['HENKILO_LISAA_KAYTTOOIKEUDET_KAYTTOOIKEUS_VALID'];
             let newState: State = Object.assign({}, this.state, {
@@ -180,7 +180,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
             this.props.addKayttooikeusToHenkilo(
                 this.props.oidHenkilo,
                 this.state.kayttooikeusModel.kayttokohdeOrganisationOid,
-                this.state.selectedList.map(selected => ({
+                this.state.selectedList.map((selected) => ({
                     id: selected.value,
                     kayttoOikeudenTila: 'MYONNA',
                     alkupvm: moment(this.state.kayttooikeusModel.alkupvm).format(

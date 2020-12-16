@@ -68,7 +68,7 @@ const LabelValue = ({
         </div>
     ) : null;
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 

@@ -133,7 +133,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         yhteenveto: state.oppijoidenTuontiYhteenveto,
         listaus: state.oppijoidenTuontiListaus,

@@ -1,16 +1,16 @@
 export type PalvelukayttajaCreate = {
-    nimi: string
-}
+    nimi: string;
+};
 
 export type PalvelukayttajaRead = {
-    oid: string
-    nimi: string
-    kayttajatunnus: string | null | undefined
-}
+    oid: string;
+    nimi: string;
+    kayttajatunnus: string | null | undefined;
+};
 
 export type PalvelukayttajaCriteria = {
-    subOrganisation: boolean
-    passivoitu: boolean
-    nameQuery: string
-    organisaatioOids: string | null | undefined
-}
+    subOrganisation: boolean;
+    passivoitu: boolean;
+    nameQuery: string;
+    organisaatioOids: string | null | undefined;
+};

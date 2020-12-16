@@ -114,7 +114,7 @@ export default class KutsututPage extends React.Component<Props, State> {
 
     componentDidUpdate(prevProps: Props, prevState: State) {
         // Update kutsus if payload changes. Basically payload.view change sets this for initial fetch.
-        if (Object.keys(this.state.payload).some(key => this.state.payload[key] !== prevState.payload[key])) {
+        if (Object.keys(this.state.payload).some((key) => this.state.payload[key] !== prevState.payload[key])) {
             this.fetchKutsus();
         }
     }
@@ -217,7 +217,7 @@ export default class KutsututPage extends React.Component<Props, State> {
                                         <th>{this.L['KUTSUTUT_ORGANISAATIO_OTSIKKO']}</th>
                                         <td>
                                             {this.state.confirmDeleteFor &&
-                                                this.state.confirmDeleteFor.organisaatiot.map(org => (
+                                                this.state.confirmDeleteFor.organisaatiot.map((org) => (
                                                     <div className="kutsuOrganisaatio" key={org.oid}>
                                                         {org.nimi[this.props.locale]}
                                                     </div>

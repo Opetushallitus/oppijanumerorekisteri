@@ -29,7 +29,7 @@ class ConfirmButton extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.notifications.filter(notification => notification.id === this.props.id)[0]) {
+        if (nextProps.notifications.filter((notification) => notification.id === this.props.id)[0]) {
             this.setState({ confirmState: false, disabled: true });
             this.props.setTimeout(() => {
                 this.setState({ disabled: false });

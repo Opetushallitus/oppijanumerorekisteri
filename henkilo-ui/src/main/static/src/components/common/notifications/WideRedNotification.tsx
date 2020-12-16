@@ -1,7 +1,7 @@
-import React from "react"
-import PropTypes from "prop-types"
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const WideRedNotification = ({message, closeAction}) => (
+const WideRedNotification = ({ message, closeAction }) => (
     <div className="oph-alert oph-alert-error">
         <div className="oph-alert-container">
             <div className="oph-alert-title">{message}</div>
@@ -16,11 +16,11 @@ const WideRedNotification = ({message, closeAction}) => (
             </button>
         </div>
     </div>
-)
+);
 
 WideRedNotification.propTypes = {
     message: PropTypes.string,
     closeAction: PropTypes.func.isRequired,
-}
+};
 
-export default WideRedNotification
+export default WideRedNotification;

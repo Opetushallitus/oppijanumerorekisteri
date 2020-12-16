@@ -59,7 +59,7 @@ const receiveOmattiedotSuccess = (json: Omattiedot) => ({
     type: FETCH_OMATTIEDOT_SUCCESS,
     omattiedot: json,
 });
-const receiveOmattiedotFailure = error => ({
+const receiveOmattiedotFailure = (error) => ({
     type: FETCH_OMATTIEDOT_FAILURE,
     error,
 });
@@ -98,7 +98,7 @@ const receiveOmattiedotOrganisaatiosSuccess = (json, locale) => ({
     organisaatios: json,
     locale,
 });
-const receiveOmattiedotOrganisaatiosFailure = error => ({
+const receiveOmattiedotOrganisaatiosFailure = (error) => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
     error,
 });

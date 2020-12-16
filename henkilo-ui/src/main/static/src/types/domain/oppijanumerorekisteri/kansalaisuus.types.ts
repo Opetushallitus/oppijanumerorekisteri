@@ -1,3 +1,3 @@
 export type Kansalaisuus = {
-    kansalaisuusKoodi?: string
-}
+    kansalaisuusKoodi?: string;
+};

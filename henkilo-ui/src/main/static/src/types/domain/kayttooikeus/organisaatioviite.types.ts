@@ -1,4 +1,4 @@
 export type OrganisaatioViite = {
-    id: number
-    organisaatioTyyppi: string
-}
+    id: number;
+    organisaatioTyyppi: string;
+};

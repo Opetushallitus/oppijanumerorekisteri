@@ -1,1 +1,1 @@
-export type AnomusTyyppi = "UUSI" | "JATKO"
+export type AnomusTyyppi = 'UUSI' | 'JATKO';

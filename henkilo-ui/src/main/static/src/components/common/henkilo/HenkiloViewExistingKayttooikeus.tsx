@@ -97,16 +97,16 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             { key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS', minWidth: 150 },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
-                Cell: cellProps => cellProps.value.format(),
+                Cell: (cellProps) => cellProps.value.format(),
             },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-                Cell: cellProps => cellProps.value.format(),
+                Cell: (cellProps) => cellProps.value.format(),
             },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
                 minWidth: 125,
-                Cell: cellProps => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
+                Cell: (cellProps) => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
                 sortMethod: (a, b) => {
                     const kasiteltyCompare = a.kasitelty.valueOf() - b.kasitelty.valueOf();
                     if (kasiteltyCompare !== 0) {
@@ -133,14 +133,14 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                 hide: !this.props.isOmattiedot,
             },
         ];
-        this.tableHeadings = this.headingList.map(heading =>
+        this.tableHeadings = this.headingList.map((heading) =>
             Object.assign({}, heading, { label: this.L[heading.key] || '' })
         );
 
         this.state = {
             dates: this.props.kayttooikeus.kayttooikeus
                 .filter(this._filterExpiredKayttooikeus)
-                .map(kayttooikeusAnomus => ({
+                .map((kayttooikeusAnomus) => ({
                     alkupvm: moment(),
                     loppupvm: this.props.vuosia
                         ? moment().add(this.props.vuosia, 'years')
@@ -188,7 +188,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                         ' ' +
                         StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L),
                     [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts.filter(
-                        text => text.lang === this.props.locale.toUpperCase()
+                        (text) => text.lang === this.props.locale.toUpperCase()
                     )[0].text,
                     [headingList[2]]: moment(
                         uusittavaKayttooikeusRyhma.alkuPvm,
@@ -213,7 +213,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                             >
                                 <DatePicker
                                     className="oph-input"
-                                    onChange={value => this.loppupvmAction(value, idx)}
+                                    onChange={(value) => this.loppupvmAction(value, idx)}
                                     selected={this.state.dates[idx].loppupvm}
                                     showYearDropdown
                                     showWeekNumbers
@@ -221,7 +221,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                                         uusittavaKayttooikeusRyhma.organisaatioOid,
                                         uusittavaKayttooikeusRyhma.ryhmaId
                                     )}
-                                    filterDate={date =>
+                                    filterDate={(date) =>
                                         Number.isInteger(this.props.vuosia)
                                             ? date.isBefore(moment().add(this.props.vuosia, 'years'))
                                             : true
@@ -263,11 +263,11 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                             )}
                         />
                     ),
-                    [headingList[7]]: this.props.notifications.existingKayttooikeus.some(notification => {
+                    [headingList[7]]: this.props.notifications.existingKayttooikeus.some((notification) => {
                         return (
                             notification.ryhmaIdList &&
                             notification.ryhmaIdList.some(
-                                ryhmaId =>
+                                (ryhmaId) =>
                                     ryhmaId === uusittavaKayttooikeusRyhma.ryhmaId &&
                                     uusittavaKayttooikeusRyhma.organisaatioOid ===
                                         (notification.organisaatioOid && notification.organisaatioOid)
@@ -302,7 +302,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
 
     isHaeJatkoaikaaButtonDisabled(idx: number, uusittavaKayttooikeusRyhma: MyonnettyKayttooikeusryhma) {
         const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus.filter(
-            haettuKayttooikeusRyhma =>
+            (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === uusittavaKayttooikeusRyhma.ryhmaId &&
                 uusittavaKayttooikeusRyhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
         )[0];
@@ -342,7 +342,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     }
 
     render() {
-        this.createRows(this.headingList.map(heading => heading.key));
+        this.createRows(this.headingList.map((heading) => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div className="header">
@@ -393,7 +393,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     l10n: state.l10n.localisations,
     locale: state.locale,
     henkilo: state.henkilo,

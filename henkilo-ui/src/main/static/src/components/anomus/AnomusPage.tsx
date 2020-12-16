@@ -1,127 +1,117 @@
-import React from "react"
-import "../../oph-table.css"
-import Loader from "../common/icons/Loader"
-import HaetutKayttooikeusRyhmatHakuForm from "./HaetutKayttooikeusRyhmatHakuForm"
-import HenkiloViewOpenKayttooikeusanomus from "../common/henkilo/HenkiloViewOpenKayttooikeusanomus"
-import {Locale} from "../../types/locale.type"
-import {GlobalNotificationConfig} from "../../types/notification.types"
-import {NOTIFICATIONTYPES} from "../common/Notification/notificationtypes"
-import {KAYTTOOIKEUDENTILA} from "../../globals/KayttooikeudenTila"
-import {getEmptyKayttooikeusRyhmaState} from "../../reducers/kayttooikeusryhma.reducer"
-import {OrganisaatioCache} from "../../reducers/organisaatio.reducer"
-import {OrganisaatioCriteria} from "../../types/domain/organisaatio/organisaatio.types"
+import React from 'react';
+import '../../oph-table.css';
+import Loader from '../common/icons/Loader';
+import HaetutKayttooikeusRyhmatHakuForm from './HaetutKayttooikeusRyhmatHakuForm';
+import HenkiloViewOpenKayttooikeusanomus from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
+import { Locale } from '../../types/locale.type';
+import { GlobalNotificationConfig } from '../../types/notification.types';
+import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
+import { KAYTTOOIKEUDENTILA } from '../../globals/KayttooikeudenTila';
+import { getEmptyKayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
+import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
+import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
 
 /**
  * Haettujen käyttöoikeusryhmien haku ja myöntäminen/hylkääminen.
  */
 export type FetchHaetutKayttooikeusryhmatParameters = {
-    orderBy: string
-    limit: number
-    showOwnAnomus: boolean
-    adminView: boolean
-    anomuksenTilat: Array<string>
-    kayttoOikeudenTilas: Array<string>
-}
+    orderBy: string;
+    limit: number;
+    showOwnAnomus: boolean;
+    adminView: boolean;
+    anomuksenTilat: Array<string>;
+    kayttoOikeudenTilas: Array<string>;
+};
 
 type Props = {
-    l10n: any
-    locale: Locale
-    kayttooikeusAnomus: any
-    organisaatioCache: OrganisaatioCache
-    clearHaetutKayttooikeusryhmat: () => void
-    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void
-    fetchHaetutKayttooikeusryhmat: (
-        arg0: FetchHaetutKayttooikeusryhmatParameters,
-    ) => void
-    haetutKayttooikeusryhmatLoading: boolean
-    fetchAllRyhmas: () => void
-    isAdmin: boolean
+    l10n: any;
+    locale: Locale;
+    kayttooikeusAnomus: any;
+    organisaatioCache: OrganisaatioCache;
+    clearHaetutKayttooikeusryhmat: () => void;
+    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
+    fetchHaetutKayttooikeusryhmat: (arg0: FetchHaetutKayttooikeusryhmatParameters) => void;
+    haetutKayttooikeusryhmatLoading: boolean;
+    fetchAllRyhmas: () => void;
+    isAdmin: boolean;
     updateHaettuKayttooikeusryhmaInAnomukset: (
         arg0: number,
         arg1: string,
         arg2: string,
         arg3: string,
-        arg4: string | null | undefined,
-    ) => Promise<any>
-    clearHaettuKayttooikeusryhma: (arg0: number) => void
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => void
-}
+        arg4: string | null | undefined
+    ) => Promise<any>;
+    clearHaettuKayttooikeusryhma: (arg0: number) => void;
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
+};
 
 type State = {
-    parameters: FetchHaetutKayttooikeusryhmatParameters
-    sorted: Array<any>
-    allFetched: boolean
-    page: number
-    kayttooikeus: any
-    anomusModifiedHenkilo: any
-}
+    parameters: FetchHaetutKayttooikeusryhmatParameters;
+    sorted: Array<any>;
+    allFetched: boolean;
+    page: number;
+    kayttooikeus: any;
+    anomusModifiedHenkilo: any;
+};
 
 class AnomusPage extends React.Component<Props, State> {
-    defaultLimit = 20
-    defaultOffset = 0
-    initialised = false
+    defaultLimit = 20;
+    defaultOffset = 0;
+    initialised = false;
 
     state: State = {
         parameters: {
-            orderBy: "ANOTTU_PVM_DESC",
+            orderBy: 'ANOTTU_PVM_DESC',
             limit: this.defaultLimit,
             showOwnAnomus: false,
             adminView: this.props.isAdmin,
-            anomuksenTilat: ["ANOTTU"],
+            anomuksenTilat: ['ANOTTU'],
             kayttoOikeudenTilas: [KAYTTOOIKEUDENTILA.ANOTTU],
         },
-        sorted: [{id: "ANOTTU_PVM", desc: true}],
+        sorted: [{ id: 'ANOTTU_PVM', desc: true }],
         allFetched: false,
         page: 0,
         kayttooikeus: {},
         anomusModifiedHenkilo: undefined,
-    }
+    };
 
     componentDidMount() {
-        this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters)
-        this.props.fetchAllRyhmas()
-        this.props.fetchAllOrganisaatios()
+        this.props.fetchHaetutKayttooikeusryhmat(this.state.parameters);
+        this.props.fetchAllRyhmas();
+        this.props.fetchAllOrganisaatios();
     }
 
     componentWillReceiveProps(nextProps: Props) {
         if (!nextProps.haetutKayttooikeusryhmatLoading) {
             this.setState({
-                allFetched:
-                    nextProps.kayttooikeusAnomus.length <
-                    this.defaultLimit * (this.state.page + 1),
-            })
+                allFetched: nextProps.kayttooikeusAnomus.length < this.defaultLimit * (this.state.page + 1),
+            });
         }
         if (!this.props.haetutKayttooikeusryhmatLoading) {
-            this.initialised = true
+            this.initialised = true;
         }
     }
 
     render() {
         return (
             <div className="oph-table">
-                <HaetutKayttooikeusRyhmatHakuForm
-                    onSubmit={this.onSubmit.bind(this)}
-                />
+                <HaetutKayttooikeusRyhmatHakuForm onSubmit={this.onSubmit.bind(this)} />
 
-                {this.props.haetutKayttooikeusryhmatLoading &&
-                !this.initialised ? (
+                {this.props.haetutKayttooikeusryhmatLoading && !this.initialised ? (
                     <Loader />
                 ) : (
                     <div>
                         <HenkiloViewOpenKayttooikeusanomus
                             kayttooikeus={{
                                 ...getEmptyKayttooikeusRyhmaState(),
-                                kayttooikeusAnomus: this.props
-                                    .kayttooikeusAnomus,
+                                kayttooikeusAnomus: this.props.kayttooikeusAnomus,
                                 grantableKayttooikeus: {},
                                 grantableKayttooikeusLoading: true,
                             }}
                             l10n={this.props.l10n}
                             locale={this.props.locale}
                             organisaatioCache={this.props.organisaatioCache}
-                            updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(
-                                this,
-                            )}
+                            updateHaettuKayttooikeusryhma={this.updateHaettuKayttooikeusryhma.bind(this)}
                             isAnomusView={true}
                             manualSortSettings={{
                                 manual: true,
@@ -129,28 +119,22 @@ class AnomusPage extends React.Component<Props, State> {
                                 onFetchData: this.onTableFetch.bind(this),
                             }}
                             fetchMoreSettings={{
-                                isActive:
-                                    !this.state.allFetched &&
-                                    !this.props.haetutKayttooikeusryhmatLoading,
-                                fetchMoreAction: this.onSubmitWithoutClear.bind(
-                                    this,
-                                ),
+                                isActive: !this.state.allFetched && !this.props.haetutKayttooikeusryhmatLoading,
+                                fetchMoreAction: this.onSubmitWithoutClear.bind(this),
                             }}
-                            tableLoading={
-                                this.props.haetutKayttooikeusryhmatLoading
-                            }
+                            tableLoading={this.props.haetutKayttooikeusryhmatLoading}
                             piilotaOtsikko={true}
                             striped
                         />
                     </div>
                 )}
             </div>
-        )
+        );
     }
 
     onTableFetch(tableState: any) {
-        const sort = tableState.sorted[0]
-        const stateSort = this.state.sorted[0]
+        const sort = tableState.sorted[0];
+        const stateSort = this.state.sorted[0];
         // Update sort state
         if (sort) {
             this.setState(
@@ -158,43 +142,37 @@ class AnomusPage extends React.Component<Props, State> {
                     sorted: [Object.assign({}, sort)],
                 }, // If sort state changed fetch new data
                 () => {
-                    if (
-                        !stateSort ||
-                        sort.id !== stateSort.id ||
-                        sort.desc !== stateSort.desc
-                    ) {
-                        this.onSubmit()
+                    if (!stateSort || sort.id !== stateSort.id || sort.desc !== stateSort.desc) {
+                        this.onSubmit();
                     }
-                },
-            )
+                }
+            );
         }
     }
 
     onSubmitWithoutClear(criteria: any) {
-        this.onSubmit(criteria, true)
+        this.onSubmit(criteria, true);
     }
 
     onSubmit(criteria?: any, shouldNotClear?: boolean) {
         if (!shouldNotClear) {
-            this.props.clearHaetutKayttooikeusryhmat()
+            this.props.clearHaetutKayttooikeusryhmat();
         }
-        const parameters = Object.assign({}, this.state.parameters, criteria)
+        const parameters = Object.assign({}, this.state.parameters, criteria);
         parameters.orderBy = this.state.sorted.length
             ? this.state.sorted[0].desc
-                ? this.state.sorted[0].id + "_DESC"
-                : this.state.sorted[0].id + "_ASC"
-            : this.state.parameters.orderBy
-        parameters.offset = shouldNotClear
-            ? this.defaultLimit * (this.state.page + 1)
-            : this.defaultOffset
+                ? this.state.sorted[0].id + '_DESC'
+                : this.state.sorted[0].id + '_ASC'
+            : this.state.parameters.orderBy;
+        parameters.offset = shouldNotClear ? this.defaultLimit * (this.state.page + 1) : this.defaultOffset;
         this.setState(
             {
                 parameters: parameters,
                 page: shouldNotClear ? this.state.page + 1 : 0,
                 allFetched: shouldNotClear ? this.state.allFetched : false,
             },
-            () => this.props.fetchHaetutKayttooikeusryhmat(parameters),
-        )
+            () => this.props.fetchHaetutKayttooikeusryhmat(parameters)
+        );
     }
 
     async updateHaettuKayttooikeusryhma(
@@ -203,7 +181,7 @@ class AnomusPage extends React.Component<Props, State> {
         alkupvm: string,
         loppupvm: string,
         henkilo: any,
-        hylkaysperuste?: string,
+        hylkaysperuste?: string
     ): Promise<any> {
         try {
             await this.props.updateHaettuKayttooikeusryhmaInAnomukset(
@@ -211,51 +189,45 @@ class AnomusPage extends React.Component<Props, State> {
                 kayttoOikeudenTila,
                 alkupvm,
                 loppupvm,
-                hylkaysperuste,
-            )
-            this.setState({anomusModifiedHenkilo: henkilo})
+                hylkaysperuste
+            );
+            this.setState({ anomusModifiedHenkilo: henkilo });
             const notificationMessageKey =
                 kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
-                    ? "HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS"
-                    : "HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS"
+                    ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_SUCCESS'
+                    : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_SUCCESS';
             this.props.addGlobalNotification({
                 key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
                 type: NOTIFICATIONTYPES.SUCCESS,
-                title: this.createNotificationMessage(
-                    henkilo,
-                    notificationMessageKey,
-                ),
+                title: this.createNotificationMessage(henkilo, notificationMessageKey),
                 autoClose: 10000,
-            })
-            this.props.clearHaettuKayttooikeusryhma(id)
+            });
+            this.props.clearHaettuKayttooikeusryhma(id);
         } catch (error) {
             const notificationMessageKey =
                 kayttoOikeudenTila === KAYTTOOIKEUDENTILA.HYLATTY
-                    ? "HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE"
-                    : "HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE"
+                    ? 'HENKILO_KAYTTOOIKEUSANOMUS_HYLKAYS_FAILURE'
+                    : 'HENKILO_KAYTTOOIKEUSANOMUS_HYVAKSYMINEN_FAILURE';
             this.props.addGlobalNotification({
                 key: `${henkilo.oid}_${id}_${notificationMessageKey}`,
                 type: NOTIFICATIONTYPES.ERROR,
-                title: this.createNotificationMessage(
-                    henkilo,
-                    notificationMessageKey,
-                ),
+                title: this.createNotificationMessage(henkilo, notificationMessageKey),
                 autoClose: 10000,
-            })
-            throw error
+            });
+            throw error;
         }
     }
 
     createNotificationMessage(henkilo: any, messageKey: string): string {
-        const message = this.props.l10n[this.props.locale][messageKey]
+        const message = this.props.l10n[this.props.locale][messageKey];
         const henkiloLocalized = this.props.l10n[this.props.locale][
-            "HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON"
-        ]
-        const etunimet = henkilo.etunimet
-        const sukunimi = henkilo.sukunimi
-        const oid = henkilo.oid
-        return `${henkiloLocalized} ${etunimet} ${sukunimi} (${oid}) ${message}`
+            'HENKILO_KAYTTOOIKEUSANOMUS_NOTIFICATIONS_HENKILON'
+        ];
+        const etunimet = henkilo.etunimet;
+        const sukunimi = henkilo.sukunimi;
+        const oid = henkilo.oid;
+        return `${henkiloLocalized} ${etunimet} ${sukunimi} (${oid}) ${message}`;
     }
 }
 
-export default AnomusPage
+export default AnomusPage;

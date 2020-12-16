@@ -1,16 +1,16 @@
-import "./AbstractUserContent.css"
-import React from "react"
-import EditButtons from "../buttons/EditButtons"
-import Columns from "react-columns"
+import './AbstractUserContent.css';
+import React from 'react';
+import EditButtons from '../buttons/EditButtons';
+import Columns from 'react-columns';
 
 type Props = {
-    basicInfo: Array<any>
-    readOnlyButtons: Array<any>
-    readOnly: boolean
-    discardAction: () => void
-    updateAction: () => void
-    isValidForm: boolean
-}
+    basicInfo: Array<any>;
+    readOnlyButtons: Array<any>;
+    readOnly: boolean;
+    discardAction: () => void;
+    updateAction: () => void;
+    isValidForm: boolean;
+};
 
 const AbstractUserContent = ({
     basicInfo,
@@ -34,21 +34,17 @@ const AbstractUserContent = ({
         {readOnly ? (
             <div className="henkiloViewButtons">
                 {readOnlyButtons.map((button, idx) => (
-                    <div style={{display: "inline-block"}} key={idx}>
+                    <div style={{ display: 'inline-block' }} key={idx}>
                         {button}
                     </div>
                 ))}
             </div>
         ) : (
             <div className="henkiloViewEditButtons">
-                <EditButtons
-                    discardAction={discardAction}
-                    updateAction={updateAction}
-                    isValidForm={isValidForm}
-                />
+                <EditButtons discardAction={discardAction} updateAction={updateAction} isValidForm={isValidForm} />
             </div>
         )}
     </div>
-)
+);
 
-export default AbstractUserContent
+export default AbstractUserContent;

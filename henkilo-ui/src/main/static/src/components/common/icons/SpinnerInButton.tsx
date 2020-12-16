@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react';
 
-type Props = {show: boolean}
+type Props = { show: boolean };
 
 export const SpinnerInButton = (props: Props) =>
     props.show ? (
@@ -9,4 +9,4 @@ export const SpinnerInButton = (props: Props) =>
             <span className="oph-bounce oph-bounce2" aria-hidden="true"></span>
             <span className="oph-bounce oph-bounce3" aria-hidden="true"></span>
         </span>
-    ) : null
+    ) : null;

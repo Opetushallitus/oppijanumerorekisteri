@@ -1,12 +1,12 @@
-import * as React from "react"
-import {NotificationType} from "../../../types/notification.types"
+import * as React from 'react';
+import { NotificationType } from '../../../types/notification.types';
 
 type Props = {
-    closeAction: () => void
-    title: string
-    type: NotificationType
-    children?: React.ReactNode
-}
+    closeAction: () => void;
+    title: string;
+    type: NotificationType;
+    children?: React.ReactNode;
+};
 
 export const TypedNotification = (props: Props) => (
     <div className={`oph-alert oph-alert-${props.type}`}>
@@ -24,4 +24,4 @@ export const TypedNotification = (props: Props) => (
             </button>
         </div>
     </div>
-)
+);

@@ -190,7 +190,7 @@ class AdminUserContent extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],

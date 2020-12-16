@@ -1,1 +1,1 @@
-export type Dispatch = (arg0: {}) => void
+export type Dispatch = (arg0: {}) => void;

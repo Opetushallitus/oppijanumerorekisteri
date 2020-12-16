@@ -155,7 +155,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         const aidinkieliKoodi = (hakemus.aidinkieli || '').toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
         const kansalaisuus = hakemus.kansalaisuus
-            .map(k => this._koodistoLabel(k.toLocaleLowerCase(), this.props.koodisto.kansalaisuus, this.props.locale))
+            .map((k) => this._koodistoLabel(k.toLocaleLowerCase(), this.props.koodisto.kansalaisuus, this.props.locale))
             .join(', ');
 
         return {
@@ -203,7 +203,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
     }
 
     _koodistoLabel(koodi: any, koodisto: any, locale: Locale): string | null | undefined {
-        const koodistoItem = R.find(koodistoItem => koodistoItem.value === koodi, koodisto);
+        const koodistoItem = R.find((koodistoItem) => koodistoItem.value === koodi, koodisto);
         return koodistoItem ? koodistoItem[locale] : null;
     }
 }

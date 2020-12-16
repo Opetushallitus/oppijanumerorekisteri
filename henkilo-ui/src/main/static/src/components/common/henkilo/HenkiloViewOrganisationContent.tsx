@@ -112,7 +112,7 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
     }
 
     flatOrganisations(organisations: Array<any>): Array<OrganisaatioFlat> {
-        return organisations.map(organisation => {
+        return organisations.map((organisation) => {
             const typesFlat = organisation.tyypit
                 ? this.organisationTypesFlat(organisation.tyypit)
                 : organisation.organisaatiotyypit
@@ -132,7 +132,7 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,

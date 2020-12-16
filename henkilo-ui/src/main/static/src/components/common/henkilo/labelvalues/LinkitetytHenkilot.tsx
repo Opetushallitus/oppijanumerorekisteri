@@ -87,7 +87,7 @@ class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     henkilo: state.henkilo,
     kayttooikeudet: state.omattiedot.organisaatiot,

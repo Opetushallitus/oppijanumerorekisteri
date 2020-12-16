@@ -81,11 +81,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 
     render() {
         const L = this.props.l10n[this.props.locale];
-        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.map(selection => {
+        const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.map((selection) => {
             return { id: selection.value };
         });
         const kayttooikeusryhmat = this.props.kayttooikeusryhmat.filter(
-            kayttooikeusryhma => R.findIndex(R.propEq('id', kayttooikeusryhma.id), kayttooikeusryhmaSelections) < 0
+            (kayttooikeusryhma) => R.findIndex(R.propEq('id', kayttooikeusryhma.id), kayttooikeusryhmaSelections) < 0
         );
 
         return this.props.henkilo.henkiloLoading ? (
@@ -386,15 +386,15 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     _parseEmailOptions(henkilo: HenkiloState): Array<{ value: string; label: string }> {
         let emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
-            henkilo.henkilo.yhteystiedotRyhma.forEach(yhteystietoRyhma => {
-                yhteystietoRyhma.yhteystieto.forEach(yhteys => {
+            henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
+                yhteystietoRyhma.yhteystieto.forEach((yhteys) => {
                     if (yhteys.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI') {
                         emails.push(yhteys.yhteystietoArvo);
                     }
                 });
             });
         }
-        return emails.map(email => ({ value: email || '', label: email || '' }));
+        return emails.map((email) => ({ value: email || '', label: email || '' }));
     }
 
     _addKayttooikeusryhmaSelection(kayttooikeusryhma: any) {
@@ -417,14 +417,14 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 
     _removeKayttooikeusryhmaSelection(kayttooikeusryhmaSelection: any) {
         const kayttooikeusryhmaSelections = this.state.kayttooikeusryhmaSelections.filter(
-            selection => selection.value !== kayttooikeusryhmaSelection.value
+            (selection) => selection.value !== kayttooikeusryhmaSelection.value
         );
         this.setState({ kayttooikeusryhmaSelections });
     }
 
     async _createKayttooikeusAnomus() {
         const kayttooikeusRyhmaIds = R.map(
-            selection => R.view(R.lensProp('value'), selection),
+            (selection) => R.view(R.lensProp('value'), selection),
             this.state.kayttooikeusryhmaSelections
         );
         const anomusData = {

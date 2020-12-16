@@ -52,7 +52,7 @@ class HenkilohakuContainer extends React.Component<Props> {
         const kayttooikeudet = parsePalveluRoolit(this.props.omattiedot.organisaatiot);
         const vainOppijoidenTuonti =
             kayttooikeudet.every(
-                kayttooikeus =>
+                (kayttooikeus) =>
                     kayttooikeus.startsWith('OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI') ||
                     (!kayttooikeus.startsWith('OPPIJANUMEROREKISTERI') &&
                         !kayttooikeus.startsWith('KAYTTOOIKEUS') &&

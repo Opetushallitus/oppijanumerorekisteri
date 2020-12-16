@@ -1,5 +1,5 @@
 export type OppijaTuontiYhteenveto = {
-    onnistuneet: number
-    virheet: number
-    keskeneraiset: number
-}
+    onnistuneet: number;
+    virheet: number;
+    keskeneraiset: number;
+};

@@ -22,7 +22,7 @@ export default class KayttooikeusryhmatKuvaus extends React.Component<Props> {
                         id="kayttooikeusryhma-kuvaus-fi"
                         className="oph-input"
                         value={this.props.description.FI}
-                        onChange={event => this.props.setDescription('FI', event.target.value)}
+                        onChange={(event) => this.props.setDescription('FI', event.target.value)}
                     />
                 </div>
                 <div className="oph-field oph-field-inline oph-field-is-required">
@@ -33,7 +33,7 @@ export default class KayttooikeusryhmatKuvaus extends React.Component<Props> {
                         id="kayttooikeusryhma-kuvaus-sv"
                         className="oph-input"
                         value={this.props.description.SV}
-                        onChange={event => this.props.setDescription('SV', event.target.value)}
+                        onChange={(event) => this.props.setDescription('SV', event.target.value)}
                     />
                 </div>
                 <div className="oph-field oph-field-inline">
@@ -44,7 +44,7 @@ export default class KayttooikeusryhmatKuvaus extends React.Component<Props> {
                         id="kayttooikeusryhma-kuvaus-en"
                         className="oph-input"
                         value={this.props.description.EN}
-                        onChange={event => this.props.setDescription('EN', event.target.value)}
+                        onChange={(event) => this.props.setDescription('EN', event.target.value)}
                     />
                 </div>
             </div>

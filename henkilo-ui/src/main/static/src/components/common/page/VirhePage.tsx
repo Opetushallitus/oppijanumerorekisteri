@@ -32,7 +32,7 @@ class VirhePage extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations['fi'],
 });
 

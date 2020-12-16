@@ -101,9 +101,11 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         const isEmail = (label: string) => label === PropertySingleton.state.SAHKOPOSTI;
 
         const content: Array<React.ReactNode> = this.state.contactInfo
-            .filter(yhteystiedotRyhmaFlat => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1)
             .filter(
-                yhteystiedotRyhmaFlat =>
+                (yhteystiedotRyhmaFlat) => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1
+            )
+            .filter(
+                (yhteystiedotRyhmaFlat) =>
                     this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.henkiloUiId) === -1
             )
             .map((yhteystiedotRyhmaFlat, idx) => (
@@ -232,10 +234,10 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 
     _update() {
-        this.state.yhteystietoRemoveList.forEach(yhteystietoId =>
+        this.state.yhteystietoRemoveList.forEach((yhteystietoId) =>
             this.henkiloUpdate.yhteystiedotRyhma.splice(
                 this.henkiloUpdate.yhteystiedotRyhma.findIndex(
-                    yhteystieto => yhteystieto.id === yhteystietoId || yhteystieto.henkiloUiId === yhteystietoId
+                    (yhteystieto) => yhteystieto.id === yhteystietoId || yhteystieto.henkiloUiId === yhteystietoId
                 ),
                 1
             )
@@ -250,7 +252,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         let contactInfoErrorFields = this.state.contactInfoErrorFields;
         if (isContactInfoValid) {
             contactInfoErrorFields = contactInfoErrorFields.filter(
-                errorKeyValue => errorKeyValue !== contactInfo.inputValue
+                (errorKeyValue) => errorKeyValue !== contactInfo.inputValue
             );
         } else {
             contactInfoErrorFields.push(contactInfo.inputValue);
@@ -265,7 +267,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             readOnly: false,
             ryhmaAlkuperaTieto: 'alkupera2', // Virkailija
             ryhmaKuvaus: yhteystietoryhmaTyyppi,
-            yhteystieto: this.contactInfoTemplate.map(template => ({
+            yhteystieto: this.contactInfoTemplate.map((template) => ({
                 yhteystietoTyyppi: template.label,
             })),
             henkiloUiId: henkiloUiId,
@@ -310,7 +312,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 yhteystietotyypit,
                 locale
             );
-            yhteystiedotRyhma.yhteystieto = yhteystietoFlatList.value.map(yhteystietoFlat => ({
+            yhteystiedotRyhma.yhteystieto = yhteystietoFlatList.value.map((yhteystietoFlat) => ({
                 yhteystietoTyyppi: yhteystietoFlat.label,
                 yhteystietoArvo: yhteystietoFlat.value,
             }));
@@ -334,14 +336,14 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             value: contactInfoTemplate.map((template, idx2) => ({
                 label: template.label,
                 value:
-                    yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0] &&
-                    yhteystietoList.filter(yhteystieto => yhteystieto.yhteystietoTyyppi === template.label)[0]
+                    yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0] &&
+                    yhteystietoList.filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === template.label)[0]
                         .yhteystietoArvo,
                 inputValue: 'yhteystiedotRyhma.' + idx + '.yhteystieto.' + idx2 + '.yhteystietoArvo',
             })),
             name:
                 yhteystiedotRyhma.ryhmaKuvaus &&
-                yhteystietotyypit.filter(kieli => kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
+                yhteystietotyypit.filter((kieli) => kieli.value === yhteystiedotRyhma.ryhmaKuvaus)[0][locale],
             readOnly: yhteystiedotRyhma.readOnly,
             id: yhteystiedotRyhma.id,
             henkiloUiId: henkiloUiId,
@@ -356,7 +358,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     omattiedot: state.omattiedot,

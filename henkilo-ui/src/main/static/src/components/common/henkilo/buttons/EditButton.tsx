@@ -17,7 +17,7 @@ const EditButton = (props: Props) => (
         {props.L['MUOKKAA_LINKKI']}
     </Button>
 );
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 

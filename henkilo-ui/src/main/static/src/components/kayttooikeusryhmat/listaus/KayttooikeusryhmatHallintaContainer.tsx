@@ -47,7 +47,7 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     muokkausoikeus: hasAnyPalveluRooli(state.omattiedot.organisaatiot, [
         'KOOSTEROOLIENHALLINTA_CRUD',
         'HENKILONHALLINTA_OPHREKISTERI',

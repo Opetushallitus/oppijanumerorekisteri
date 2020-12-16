@@ -20,10 +20,10 @@ import StaticUtils from '../components/common/StaticUtils';
 import { Koodisto } from '../types/domain/koodisto/koodisto.types';
 
 const mapKoodistoValuesByLocale = (koodisto: Koodisto): any =>
-    koodisto.map(koodi => ({
+    koodisto.map((koodi) => ({
         value: koodi.koodiArvo.toLowerCase(),
         ...koodi.metadata
-            .map(kieliKoodi => ({
+            .map((kieliKoodi) => ({
                 [kieliKoodi.kieli.toLowerCase()]: kieliKoodi.nimi,
             }))
             .reduce(StaticUtils.reduceListToObject, {}),

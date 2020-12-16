@@ -1,10 +1,10 @@
-import * as React from "react"
-import sad from "../../img/sad.png"
-import "./VirheKirjautunut.css"
+import * as React from 'react';
+import sad from '../../img/sad.png';
+import './VirheKirjautunut.css';
 
 type Props = {
-    children: React.ReactNode
-}
+    children: React.ReactNode;
+};
 
 /**
  * Käyttö: <VirheKirjautunut>Virheilmoitus</VirheKirjautunut>
@@ -20,8 +20,8 @@ class VirheKirjautunut extends React.Component<Props> {
                     {this.props.children}
                 </div>
             </div>
-        )
+        );
     }
 }
 
-export default VirheKirjautunut
+export default VirheKirjautunut;

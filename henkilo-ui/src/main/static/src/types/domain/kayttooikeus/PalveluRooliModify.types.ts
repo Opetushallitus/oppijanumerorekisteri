@@ -1,4 +1,4 @@
 export type PalveluRooliModify = {
-    palveluName: string
-    rooli: string
-}
+    palveluName: string;
+    rooli: string;
+};

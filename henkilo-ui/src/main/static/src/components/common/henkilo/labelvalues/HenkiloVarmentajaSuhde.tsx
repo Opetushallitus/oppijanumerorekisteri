@@ -68,7 +68,7 @@ class HenkiloVarmentajaSuhde extends React.Component<HenkiloVarmentajaSuhdeProps
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     linkitetyt: state.linkitykset,
 });
 

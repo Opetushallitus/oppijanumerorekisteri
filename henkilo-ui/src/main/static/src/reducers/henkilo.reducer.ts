@@ -106,7 +106,7 @@ const initialState: HenkiloState = {
 };
 
 const mapOrgHenkilosWithOrganisations = (henkiloOrgs, organisations) => {
-    return henkiloOrgs.map(henkiloOrg =>
+    return henkiloOrgs.map((henkiloOrg) =>
         Object.assign(
             {},
             henkiloOrg,
@@ -213,7 +213,7 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
         case UPDATE_HENKILO_UNLINK_REQUEST:
             return Object.assign({}, state, { unlinkingLoading: true });
         case UPDATE_HENKILO_UNLINK_SUCCESS:
-            const slaves = R.filter(slave => slave.oidHenkilo !== action.unlinkedSlaveOid, state.slaves);
+            const slaves = R.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid, state.slaves);
             return Object.assign({}, state, { unlinkingLoading: false, slaves });
         case UPDATE_HENKILO_UNLINK_FAILURE:
             return Object.assign({}, state, { unlinkingLoading: false });

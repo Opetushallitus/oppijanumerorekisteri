@@ -72,7 +72,7 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
                     LoadingComponent={TableLoader}
                     className="OppijoidenTuontiListaus table -striped"
                     manual
-                    onFetchData={state => {
+                    onFetchData={(state) => {
                         this.props.onFetchData(state.page + 1, state.pageSize);
                     }}
                 ></ReactTable>
@@ -126,10 +126,10 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
 }
 
 const YKSILOINTI_TILAT = {
-    OK: L => '',
-    VIRHE: L => L['YKSILOINTI_TILA_VIRHE'],
-    KESKEN: L => L['YKSILOINTI_TILA_KESKEN'],
-    HETU_PUUTTUU: L => L['YKSILOINTI_TILA_HETU_PUUTTUU'],
+    OK: (L) => '',
+    VIRHE: (L) => L['YKSILOINTI_TILA_VIRHE'],
+    KESKEN: (L) => L['YKSILOINTI_TILA_KESKEN'],
+    HETU_PUUTTUU: (L) => L['YKSILOINTI_TILA_HETU_PUUTTUU'],
 };
 
 export default OppijoidenTuontiListaus;

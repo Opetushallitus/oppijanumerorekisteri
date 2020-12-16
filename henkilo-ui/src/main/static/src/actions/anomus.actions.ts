@@ -14,7 +14,7 @@ import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayt
 const requestHaetutKayttooikeusryhmat = () => ({
     type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST,
 });
-const receiveHaetutKayttooikeusryhmatSuccess = json => ({
+const receiveHaetutKayttooikeusryhmatSuccess = (json) => ({
     type: FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS,
     haetutKayttooikeusryhmat: json,
 });

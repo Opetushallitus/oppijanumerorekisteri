@@ -77,7 +77,7 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
 
     isKayttajanimiError() {
         return !!this.props.notifications.filter(
-            notification =>
+            (notification) =>
                 notification.id === 'rekisteroidyPage' &&
                 (notification.errorType === 'UsernameAlreadyExistsException' ||
                     notification.errorType === 'IllegalArgumentException')
@@ -86,12 +86,12 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
 
     isSalasanaError() {
         return !!this.props.notifications.filter(
-            notification => notification.id === 'rekisteroidyPage' && notification.errorType === 'PasswordException'
+            (notification) => notification.id === 'rekisteroidyPage' && notification.errorType === 'PasswordException'
         )[0];
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     notifications: state.notifications.buttonNotifications,
     L: state.l10n.localisations[state.locale],
 });

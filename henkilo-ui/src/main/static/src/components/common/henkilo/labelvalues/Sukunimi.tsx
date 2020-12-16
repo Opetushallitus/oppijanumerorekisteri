@@ -29,7 +29,7 @@ const Sukunimi = (props: Props) => (
     />
 );
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
 });
 

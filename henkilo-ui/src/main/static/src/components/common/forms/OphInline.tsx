@@ -1,8 +1,8 @@
-import React from "react"
-import "../../../flex.css"
+import React from 'react';
+import '../../../flex.css';
 
-const OphInline = ({children}) => <div className="flex-inline">{children}</div>
+const OphInline = ({ children }) => <div className="flex-inline">{children}</div>;
 
-OphInline.propTypes = {}
+OphInline.propTypes = {};
 
-export default OphInline
+export default OphInline;

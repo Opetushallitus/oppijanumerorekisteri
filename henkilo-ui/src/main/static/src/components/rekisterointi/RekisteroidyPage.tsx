@@ -20,28 +20,28 @@ type Props = {
         hakaIdentifier?: string;
         organisaatiot: KutsuOrganisaatio[];
     };
-    createHenkiloByToken: (temporaryToken: string, payload: any) => any
-    removeNotification: (status: string, group: string, id: string) => any
+    createHenkiloByToken: (temporaryToken: string, payload: any) => any;
+    removeNotification: (status: string, group: string, id: string) => any;
     L: Record<string, string>;
     locale: string;
 };
 
 type Henkilo = {
-    etunimet: string,
-    sukunimi: string,
-    kutsumanimi: string,
+    etunimet: string;
+    sukunimi: string;
+    kutsumanimi: string;
     asiointiKieli: {
-        kieliKoodi: string,
-    },
-    kayttajanimi: string,
-    password: string,
-    passwordAgain: string,
-}
+        kieliKoodi: string;
+    };
+    kayttajanimi: string;
+    password: string;
+    passwordAgain: string;
+};
 
 type State = {
-    henkilo: Henkilo,
-    isValid: boolean,
-}
+    henkilo: Henkilo;
+    isValid: boolean;
+};
 
 class RekisteroidyPage extends React.Component<Props, State> {
     errorChecks;
@@ -50,11 +50,12 @@ class RekisteroidyPage extends React.Component<Props, State> {
         super(props);
 
         this.errorChecks = [
-            henkilo => (!this.etunimetContainsKutsumanimi(henkilo) ? props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'] : null),
-            henkilo => (!this.kayttajanimiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KAYTTAJANIMI'] : null),
-            henkilo => (!this.passwordsAreSame(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH'] : null),
-            henkilo => (!isValidPassword(henkilo.password) ? props.L['REKISTEROIDY_ERROR_PASSWORD_INVALID'] : null),
-            henkilo => (!this.kielikoodiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KIELIKOODI'] : null),
+            (henkilo) =>
+                !this.etunimetContainsKutsumanimi(henkilo) ? props.L['REKISTEROIDY_ERROR_KUTSUMANIMI'] : null,
+            (henkilo) => (!this.kayttajanimiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KAYTTAJANIMI'] : null),
+            (henkilo) => (!this.passwordsAreSame(henkilo) ? props.L['REKISTEROIDY_ERROR_PASSWORD_MATCH'] : null),
+            (henkilo) => (!isValidPassword(henkilo.password) ? props.L['REKISTEROIDY_ERROR_PASSWORD_INVALID'] : null),
+            (henkilo) => (!this.kielikoodiIsNotEmpty(henkilo) ? props.L['REKISTEROIDY_ERROR_KIELIKOODI'] : null),
         ];
 
         this.state = {
@@ -153,7 +154,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
     }
 
     etunimetContainsKutsumanimi(henkilo) {
-        return henkilo.etunimet.split(' ').filter(nimi => nimi === henkilo.kutsumanimi).length;
+        return henkilo.etunimet.split(' ').filter((nimi) => nimi === henkilo.kutsumanimi).length;
     }
 
     passwordIsNotEmpty(henkilo) {

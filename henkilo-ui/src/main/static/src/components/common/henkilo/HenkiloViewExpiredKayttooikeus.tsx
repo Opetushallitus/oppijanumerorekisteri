@@ -68,7 +68,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             {
                 key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
                 minWidth: 150,
-                Cell: cellProps => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
+                Cell: (cellProps) => cellProps.value.kasitelty.format() + ' / ' + cellProps.value.kasittelija,
                 sortMethod: (a, b) => {
                     const kasiteltyCompare = a.kasitelty.valueOf() - b.kasitelty.valueOf();
                     if (kasiteltyCompare !== 0) {
@@ -83,7 +83,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
                 hide: !this.props.isOmattiedot,
             },
         ];
-        this.tableHeadings = headingList.map(heading => ({
+        this.tableHeadings = headingList.map((heading) => ({
             ...heading,
             label: this.L[heading.key],
         }));
@@ -119,7 +119,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
                     ).nimi
                 ),
                 [headingList[1]]: vanhentunutKayttooikeus.ryhmaNames.texts.filter(
-                    text => text.lang === this.props.locale.toUpperCase()
+                    (text) => text.lang === this.props.locale.toUpperCase()
                 )[0].text,
                 [headingList[2]]: this.L[vanhentunutKayttooikeus.tila],
                 [headingList[3]]: {
@@ -140,7 +140,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 
     render() {
-        this.createRows(this.tableHeadings.map(heading => heading.key));
+        this.createRows(this.tableHeadings.map((heading) => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
                 <div>
@@ -217,7 +217,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
 
     isHaeJatkoaikaaButtonDisabled(idx: number, vanhentunutKayttooikeusryhma: MyonnettyKayttooikeusryhma) {
         const anomusAlreadyExists = !!this.props.kayttooikeus.kayttooikeusAnomus.filter(
-            haettuKayttooikeusRyhma =>
+            (haettuKayttooikeusRyhma) =>
                 haettuKayttooikeusRyhma.kayttoOikeusRyhma.id === vanhentunutKayttooikeusryhma.ryhmaId &&
                 vanhentunutKayttooikeusryhma.organisaatioOid === haettuKayttooikeusRyhma.anomus.organisaatioOid
         )[0];

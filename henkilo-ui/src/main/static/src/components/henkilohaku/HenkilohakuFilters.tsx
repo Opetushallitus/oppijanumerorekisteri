@@ -141,8 +141,8 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                     <OphSelect
                                         id="kayttooikeusryhmaFilter"
                                         options={this.props.kayttooikeusryhmas
-                                            .filter(kayttooikeusryhma => !kayttooikeusryhma.passivoitu)
-                                            .map(kayttooikeusryhma => ({
+                                            .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
+                                            .map((kayttooikeusryhma) => ({
                                                 value: kayttooikeusryhma.id,
                                                 label: StaticUtils.getLocalisedText(
                                                     kayttooikeusryhma.description,
@@ -207,8 +207,8 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                 (acc, organisaatio) => acc.concat([organisaatio.organisaatio], organisaatio.organisaatio.children),
                 []
             )
-            .filter(organisaatio => organisaatio.tyypit.some(tyyppi => tyyppi === 'Ryhma'))
-            .map(ryhma => ({
+            .filter((organisaatio) => organisaatio.tyypit.some((tyyppi) => tyyppi === 'Ryhma'))
+            .map((ryhma) => ({
                 label: ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
                 value: ryhma.oid,
             }))
@@ -216,7 +216,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         L: state.l10n.localisations[state.locale],
         locale: state.locale,

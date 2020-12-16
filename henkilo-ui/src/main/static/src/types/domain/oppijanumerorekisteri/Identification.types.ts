@@ -1,4 +1,4 @@
 export type Identification = {
-    identifier: string
-    idpEntityId: string
-}
+    identifier: string;
+    idpEntityId: string;
+};

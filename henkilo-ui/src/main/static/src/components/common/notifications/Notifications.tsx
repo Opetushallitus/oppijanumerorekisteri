@@ -25,7 +25,7 @@ type Props = {
 const Notifications = ({ notifications, L, closeAction, styles }: Props) => (
     <div style={styles}>
         {notifications
-            .filter(notification => notification.type === 'ok') // TODO: check this (ok missing from type, adding to compile)
+            .filter((notification) => notification.type === 'ok') // TODO: check this (ok missing from type, adding to compile)
             .map((notification, idx) => (
                 <WideGreenNotification
                     key={idx}
@@ -41,7 +41,7 @@ const Notifications = ({ notifications, L, closeAction, styles }: Props) => (
                 />
             ))}
         {notifications
-            .filter(notification => notification.type === 'error')
+            .filter((notification) => notification.type === 'error')
             .map((notification, idx) => (
                 <WideRedNotification
                     key={idx}
@@ -57,7 +57,7 @@ const Notifications = ({ notifications, L, closeAction, styles }: Props) => (
                 />
             ))}
         {notifications
-            .filter(notification => notification.type === 'info')
+            .filter((notification) => notification.type === 'info')
             .map((notification, idx) => (
                 <WideBlueNotification
                     key={idx}

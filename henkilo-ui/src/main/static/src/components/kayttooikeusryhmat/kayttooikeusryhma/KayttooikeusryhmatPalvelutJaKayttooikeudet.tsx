@@ -39,7 +39,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
 
     componentWillMount() {
         const lang = this.props.locale.toUpperCase();
-        const palvelutOptions: Array<any> = this.props.palvelutState.palvelut.map(palvelu => {
+        const palvelutOptions: Array<any> = this.props.palvelutState.palvelut.map((palvelu) => {
             const textObject = R.find(R.propEq('lang', lang))(palvelu.description.texts);
             return {
                 label: R.path(['text'], textObject),

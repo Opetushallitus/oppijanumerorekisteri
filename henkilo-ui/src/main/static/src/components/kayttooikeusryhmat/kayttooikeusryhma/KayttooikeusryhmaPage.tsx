@@ -142,7 +142,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     }
 
     _parseExistingRyhmaRestrictionViite = (organisaatioViitteet: any): any => {
-        return R.find(viite => this._isRyhmaOid(viite.organisaatioTyyppi))(organisaatioViitteet);
+        return R.find((viite) => this._isRyhmaOid(viite.organisaatioTyyppi))(organisaatioViitteet);
     };
 
     render() {
@@ -365,7 +365,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _parseExistingOppilaitostyyppiData = (organisaatioViitteet: any): Array<string> => {
         const oppilaitostyypit: Array<string> = this.props.koodisto.oppilaitostyypit.map(
-            oppilaitostyyppiKoodi => oppilaitostyyppiKoodi.value
+            (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.value
         );
         const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite: any) =>
             this._isOppilaitosId(organisaatioViite.organisaatioTyyppi)
@@ -376,7 +376,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: any): Array<string> => {
         const organisaatiotyypit: Array<string> = this.props.koodisto.organisaatiotyyppiKoodisto.map(
-            organisaatiotyyppiKoodi => organisaatiotyyppiKoodi.koodiUri
+            (organisaatiotyyppiKoodi) => organisaatiotyyppiKoodi.koodiUri
         );
         const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite: any) =>
             this._isOrganisaatiotyyppi(organisaatioViite.organisaatioTyyppi)
@@ -425,7 +425,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
     _onOrganisaatioSelection = (selection: OrganisaatioSelectObject): void => {
         const currentOrganisaatioSelections: Array<OrganisaatioSelectObject> = this.state.kayttooikeusryhmaForm
             .organisaatioSelections;
-        if (!currentOrganisaatioSelections.some(organisaatio => organisaatio.oid === selection.oid)) {
+        if (!currentOrganisaatioSelections.some((organisaatio) => organisaatio.oid === selection.oid)) {
             this.setState({
                 kayttooikeusryhmaForm: {
                     ...this.state.kayttooikeusryhmaForm,
@@ -437,7 +437,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _onRemoveOrganisaatioSelect = (selection: OrganisaatioSelectObject): void => {
         const newOrganisaatioSelections: Array<OrganisaatioSelectObject> = this.state.kayttooikeusryhmaForm.organisaatioSelections.filter(
-            organisaatio => selection.oid !== organisaatio.oid
+            (organisaatio) => selection.oid !== organisaatio.oid
         );
         this.setState({
             kayttooikeusryhmaForm: {
@@ -634,7 +634,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _parseNameData = (): TextGroupModify => {
         const name = this.state.kayttooikeusryhmaForm.name;
-        const texts: Text[] = Object.keys(name).map(key => ({
+        const texts: Text[] = Object.keys(name).map((key) => ({
             lang: key as Locales,
             text: name[key] as string,
         }));
@@ -643,7 +643,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
 
     _parseDescriptionData = (): TextGroupModify => {
         const description = this.state.kayttooikeusryhmaForm.description;
-        const texts: Text[] = Object.keys(description).map(key => ({
+        const texts: Text[] = Object.keys(description).map((key) => ({
             lang: key as Locales,
             text: description[key] as string,
         }));

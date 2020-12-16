@@ -37,7 +37,7 @@ const ItemList = (props: Props) => (
     </div>
 );
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
 });
 

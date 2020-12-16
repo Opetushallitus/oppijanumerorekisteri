@@ -137,7 +137,7 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
     closeModalAction = () => this.setState({ showPassivoiModal: false });
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     valittuKayttooikeusryhma: state.kayttooikeus.kayttooikeusryhma,
 });

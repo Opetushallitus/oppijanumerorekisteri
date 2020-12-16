@@ -50,12 +50,12 @@ class KoodistoMultiSelect extends React.Component<Props> {
     };
 
     onChange = (selected: Array<ReactSelectOption>) => {
-        const value = selected ? selected.map(a => a.value) : null;
+        const value = selected ? selected.map((a) => a.value) : null;
         this.props.onChange(value);
     };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         locale: state.locale,
     };

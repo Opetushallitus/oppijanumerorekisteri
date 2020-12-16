@@ -48,7 +48,7 @@ class PalvelukayttajaHakuContainer extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     palvelukayttajat: state.palvelukayttajat,

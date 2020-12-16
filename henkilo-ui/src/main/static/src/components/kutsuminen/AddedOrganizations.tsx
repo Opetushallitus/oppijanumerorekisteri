@@ -1,21 +1,16 @@
-import React from "react"
+import React from 'react';
 
-import AddedOrganization from "./AddedOrganization"
-import {KutsuOrganisaatio} from "../../types/domain/kayttooikeus/OrganisaatioHenkilo.types"
+import AddedOrganization from './AddedOrganization';
+import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type Props = {
-    addedOrgs: Array<KutsuOrganisaatio>
-}
+    addedOrgs: Array<KutsuOrganisaatio>;
+};
 
 export const AddedOrganizations = (props: Props) => (
     <div>
         {props.addedOrgs.map((organization, index) => (
-            <AddedOrganization
-                key={index}
-                index={index}
-                addedOrgs={props.addedOrgs}
-                addedOrg={organization}
-            />
+            <AddedOrganization key={index} index={index} addedOrgs={props.addedOrgs} addedOrg={organization} />
         ))}
     </div>
-)
+);

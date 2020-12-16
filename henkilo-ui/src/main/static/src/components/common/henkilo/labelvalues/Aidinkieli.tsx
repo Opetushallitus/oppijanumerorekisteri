@@ -27,7 +27,7 @@ const Aidinkieli = (props: Props) => (
         updateModelFieldAction={props.updateModelFieldAction}
         values={{
             label: 'HENKILO_AIDINKIELI',
-            data: props.koodisto.kieli.map(koodi => ({
+            data: props.koodisto.kieli.map((koodi) => ({
                 value: koodi.value,
                 label: koodi[props.locale],
                 optionsName: 'aidinkieli.kieliKoodi',
@@ -38,7 +38,7 @@ const Aidinkieli = (props: Props) => (
     />
 );
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,

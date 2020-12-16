@@ -40,7 +40,7 @@ class BooleanRadioButtonGroup extends React.Component<Props> {
         );
     }
 
-    onChange = event => {
+    onChange = (event) => {
         this.props.onChange(event.target.value === 'true');
     };
 }

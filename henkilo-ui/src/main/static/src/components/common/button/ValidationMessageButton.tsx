@@ -1,15 +1,15 @@
-import React from "react"
-import Button from "./Button"
-import {ValidationMessage} from "../../../types/validation.type"
+import React from 'react';
+import Button from './Button';
+import { ValidationMessage } from '../../../types/validation.type';
 
 type Props = {
-    children: any
+    children: any;
     validationMessages: {
-        [key: string]: ValidationMessage
-    }
-    buttonAction: (arg0: any) => void
-    disabled?: boolean
-}
+        [key: string]: ValidationMessage;
+    };
+    buttonAction: (arg0: any) => void;
+    disabled?: boolean;
+};
 
 // Nappi jonka oikealla puolella tulostuvat mustat validointitekstit. Olettaa kaikkien syötteiden olevan lokalisoituja.
 // Nappi on disabloitu niin kauan kuin virheviestejä esiintyy.
@@ -22,8 +22,7 @@ class ValidationMessageButton extends React.Component<Props> {
                         disabled={
                             !!this.props.disabled ||
                             Object.keys(this.props.validationMessages).some(
-                                key =>
-                                    !this.props.validationMessages[key].isValid,
+                                (key) => !this.props.validationMessages[key].isValid
                             )
                         }
                         action={this.props.buttonAction}
@@ -34,24 +33,17 @@ class ValidationMessageButton extends React.Component<Props> {
                 <div className="haeButtonWrapper">
                     <ul>
                         {Object.keys(this.props.validationMessages)
-                            .filter(
-                                key =>
-                                    !this.props.validationMessages[key].isValid,
-                            )
+                            .filter((key) => !this.props.validationMessages[key].isValid)
                             .map((key, idx) => (
                                 <li key={idx} className="oph-h5">
-                                    !{" "}
-                                    {
-                                        this.props.validationMessages[key]
-                                            .labelLocalised
-                                    }
+                                    ! {this.props.validationMessages[key].labelLocalised}
                                 </li>
                             ))}
                     </ul>
                 </div>
             </div>
-        )
+        );
     }
 }
 
-export default ValidationMessageButton
+export default ValidationMessageButton;

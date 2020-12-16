@@ -1,62 +1,44 @@
-import React from "react"
-import PropTypes from "prop-types"
-import DatePicker from "react-datepicker"
-import moment from "moment"
+import React from 'react';
+import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
-const CKKesto = ({
-    alkaaPvmAction,
-    alkaaInitValue,
-    paattyyPvmAction,
-    paattyyInitValue,
-    L,
-    vuosia,
-}) => (
+const CKKesto = ({ alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L, vuosia }) => (
     <tr key="kayttooikeusKestoField">
         <td>
-            <span className="oph-bold">
-                {L["HENKILO_LISAA_KAYTTOOIKEUDET_KESTO"]}
-            </span>
-            :
+            <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_KESTO']}</span>:
         </td>
         <td>
             <div className="kayttooikeus-input-container">
-                <span className="oph-h5">
-                    {L["HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA"]}
-                </span>
+                <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_ALKAA']}</span>
                 <DatePicker
                     className="oph-input"
                     onChange={alkaaPvmAction}
                     selected={alkaaInitValue}
                     showYearDropdown
                     showWeekNumbers
-                    filterDate={date =>
-                        Number.isInteger(vuosia)
-                            ? date.isBefore(moment().add(vuosia, "years"))
-                            : true
+                    filterDate={(date) =>
+                        Number.isInteger(vuosia) ? date.isBefore(moment().add(vuosia, 'years')) : true
                     }
                 />
             </div>
             <div className="kayttooikeus-input-container">
-                <span className="oph-h5">
-                    {L["HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY"]}
-                </span>
+                <span className="oph-h5">{L['HENKILO_LISAA_KAYTTOOIKEUDET_PAATTYY']}</span>
                 <DatePicker
                     className="oph-input"
                     onChange={paattyyPvmAction}
                     selected={paattyyInitValue}
                     showYearDropdown
                     showWeekNumbers
-                    filterDate={date =>
-                        Number.isInteger(vuosia)
-                            ? date.isBefore(moment().add(vuosia, "years"))
-                            : true
+                    filterDate={(date) =>
+                        Number.isInteger(vuosia) ? date.isBefore(moment().add(vuosia, 'years')) : true
                     }
                 />
             </div>
         </td>
         <td />
     </tr>
-)
+);
 
 CKKesto.propTypes = {
     alkaaPvmAction: PropTypes.func,
@@ -65,6 +47,6 @@ CKKesto.propTypes = {
     paattyyInitValue: PropTypes.object,
     L: PropTypes.object,
     vuosia: PropTypes.number.isRequired,
-}
+};
 
-export default CKKesto
+export default CKKesto;

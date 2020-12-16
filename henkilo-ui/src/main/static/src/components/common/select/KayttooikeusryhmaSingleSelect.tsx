@@ -44,15 +44,15 @@ class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
             <OphSelect
                 id="kayttooikeusryhmaFilter"
                 options={this.props.kayttooikeusRyhmas
-                    .filter(kayttooikeusryhma => !kayttooikeusryhma.passivoitu)
-                    .map(kayttooikeusryhma => ({
+                    .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
+                    .map((kayttooikeusryhma) => ({
                         value: kayttooikeusryhma.id,
                         label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, this.props.locale),
                     }))
                     .sort((a, b) => a.label.localeCompare(b.label))}
                 value={this.props.kayttooikeusSelection}
                 placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                onChange={event => this.props.kayttooikeusSelectionAction(event.value)}
+                onChange={(event) => this.props.kayttooikeusSelectionAction(event.value)}
             />
         ) : null;
     }

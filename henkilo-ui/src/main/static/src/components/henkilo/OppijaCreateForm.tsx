@@ -61,7 +61,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
 
     render() {
         // oppijanumerorekisteri käyttää kielikoodiston koodeja pienillä kirjaimilla
-        const kieliKoodisto = this.props.kieliKoodisto.map(koodi => {
+        const kieliKoodisto = this.props.kieliKoodisto.map((koodi) => {
             return { ...koodi, koodiArvo: koodi.koodiArvo.toLowerCase() };
         });
         return (
@@ -117,7 +117,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         })}
                         placeholder={this.props.L['HENKILO_SYNTYMAAIKA']}
                         value={this.state.henkilo.syntymaaika}
-                        onChange={value =>
+                        onChange={(value) =>
                             this.onHenkiloChange({
                                 name: 'syntymaaika',
                                 value: value,
@@ -135,7 +135,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         placeholder={this.props.L['HENKILO_SUKUPUOLI']}
                         koodisto={this.props.sukupuoliKoodisto}
                         value={this.state.henkilo.sukupuoli}
-                        onChange={value =>
+                        onChange={(value) =>
                             this.onHenkiloChange({
                                 name: 'sukupuoli',
                                 value: value,
@@ -153,7 +153,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         placeholder={this.props.L['HENKILO_AIDINKIELI']}
                         koodisto={kieliKoodisto}
                         value={this.state.henkilo.aidinkieli}
-                        onChange={value =>
+                        onChange={(value) =>
                             this.onHenkiloChange({
                                 name: 'aidinkieli',
                                 value: value,
@@ -171,7 +171,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                         placeholder={this.props.L['HENKILO_KANSALAISUUS']}
                         koodisto={this.props.kansalaisuusKoodisto}
                         value={this.state.henkilo.kansalaisuus}
-                        onChange={value =>
+                        onChange={(value) =>
                             this.onHenkiloChange({
                                 name: 'kansalaisuus',
                                 value: value,
@@ -248,7 +248,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                 });
                 state.errors = errors;
             } else if (this.hasError('kutsumanimi') && isValidKutsumanimi(henkilo.etunimet, henkilo.kutsumanimi)) {
-                state.errors = errors.filter(error => error.name !== 'kutsumanimi');
+                state.errors = errors.filter((error) => error.name !== 'kutsumanimi');
             }
         }
         this.setState(state);
@@ -322,13 +322,13 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
     };
 
     isSubmittedAndHasError = (name: string): boolean => {
-        return this.state.submitted && this.state.errors.findIndex(error => error.name === name) !== -1;
+        return this.state.submitted && this.state.errors.findIndex((error) => error.name === name) !== -1;
     };
 
-    hasError = (name: string): boolean => this.state.errors.findIndex(error => error.name === name) !== -1;
+    hasError = (name: string): boolean => this.state.errors.findIndex((error) => error.name === name) !== -1;
 
     renderErrors = (name: string): any => {
-        return this.state.errors.filter(error => error.name === name).map(this.renderError);
+        return this.state.errors.filter((error) => error.name === name).map(this.renderError);
     };
 
     renderError = (error: Error, index: number): any => {

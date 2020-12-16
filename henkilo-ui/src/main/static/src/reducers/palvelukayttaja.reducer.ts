@@ -3,18 +3,15 @@ import {
     FETCH_PALVELUKAYTTAJAT_REQUEST,
     FETCH_PALVELUKAYTTAJAT_SUCCESS,
     FETCH_PALVELUKAYTTAJAT_FAILURE,
-} from "../actions/actiontypes"
-import {
-    PalvelukayttajaRead,
-    PalvelukayttajaCriteria,
-} from "../types/domain/kayttooikeus/palvelukayttaja.types"
+} from '../actions/actiontypes';
+import { PalvelukayttajaRead, PalvelukayttajaCriteria } from '../types/domain/kayttooikeus/palvelukayttaja.types';
 
 export type PalvelukayttajatState = {
-    dirty: boolean
-    loading: boolean
-    criteria: PalvelukayttajaCriteria
-    data: Array<PalvelukayttajaRead>
-}
+    dirty: boolean;
+    loading: boolean;
+    criteria: PalvelukayttajaCriteria;
+    data: Array<PalvelukayttajaRead>;
+};
 
 const initialState: PalvelukayttajatState = {
     dirty: false,
@@ -22,29 +19,24 @@ const initialState: PalvelukayttajatState = {
     criteria: {
         subOrganisation: true,
         passivoitu: false,
-        nameQuery: "",
+        nameQuery: '',
         organisaatioOids: null,
     },
     data: [],
-}
+};
 
-export const palvelukayttajat = (
-    state: PalvelukayttajatState = initialState,
-    action: any,
-) => {
+export const palvelukayttajat = (state: PalvelukayttajatState = initialState, action: any) => {
     switch (action.type) {
         case SET_PALVELUKAYTTAJAT_CRITERIA:
-            const dirty =
-                action.criteria.nameQuery !== "" ||
-                !!action.criteria.organisaatioOids
-            return {...state, criteria: action.criteria, dirty}
+            const dirty = action.criteria.nameQuery !== '' || !!action.criteria.organisaatioOids;
+            return { ...state, criteria: action.criteria, dirty };
         case FETCH_PALVELUKAYTTAJAT_REQUEST:
-            return {...state, loading: true}
+            return { ...state, loading: true };
         case FETCH_PALVELUKAYTTAJAT_SUCCESS:
-            return {...state, loading: false, data: action.data}
+            return { ...state, loading: false, data: action.data };
         case FETCH_PALVELUKAYTTAJAT_FAILURE:
-            return {...state, loading: false}
+            return { ...state, loading: false };
         default:
-            return state
+            return state;
     }
-}
+};

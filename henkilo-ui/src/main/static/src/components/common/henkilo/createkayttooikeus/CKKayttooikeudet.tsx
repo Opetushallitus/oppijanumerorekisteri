@@ -1,27 +1,27 @@
-import React from "react"
-import KayttooikeusryhmaSelectModal from "../../select/KayttooikeusryhmaSelectModal"
-import {toLocalizedText} from "../../../../localizabletext"
-import {myonnettyToKayttooikeusryhma} from "../../../../utils/KayttooikeusryhmaUtils"
-import {Localisations} from "../../../../types/localisation.type"
-import {Locale} from "../../../../types/locale.type"
-import {AllowedKayttooikeus} from "../../../../reducers/kayttooikeusryhma.reducer"
+import React from 'react';
+import KayttooikeusryhmaSelectModal from '../../select/KayttooikeusryhmaSelectModal';
+import { toLocalizedText } from '../../../../localizabletext';
+import { myonnettyToKayttooikeusryhma } from '../../../../utils/KayttooikeusryhmaUtils';
+import { Localisations } from '../../../../types/localisation.type';
+import { Locale } from '../../../../types/locale.type';
+import { AllowedKayttooikeus } from '../../../../reducers/kayttooikeusryhma.reducer';
 
 export type ValittuKayttooikeusryhma = {
-    value: number
-    label: string
-}
+    value: number;
+    label: string;
+};
 
 type Props = {
-    kayttooikeusData: AllowedKayttooikeus | null | undefined
-    selectedList: Array<ValittuKayttooikeusryhma>
-    kayttooikeusAction: (arg0: ValittuKayttooikeusryhma) => void
-    close: (kayttooikeusryhmaId: number) => void
-    L: Localisations
-    locale: Locale
-    loading: boolean
-    selectedOrganisationOid: string
-    isPalvelukayttaja: boolean
-}
+    kayttooikeusData: AllowedKayttooikeus | null | undefined;
+    selectedList: Array<ValittuKayttooikeusryhma>;
+    kayttooikeusAction: (arg0: ValittuKayttooikeusryhma) => void;
+    close: (kayttooikeusryhmaId: number) => void;
+    L: Localisations;
+    locale: Locale;
+    loading: boolean;
+    selectedOrganisationOid: string;
+    isPalvelukayttaja: boolean;
+};
 
 const CKKayttooikeudet = ({
     kayttooikeusData,
@@ -37,20 +37,13 @@ const CKKayttooikeudet = ({
     const kayttooikeusryhmat =
         (kayttooikeusData &&
             kayttooikeusData
-                .filter(myonnetty =>
-                    selectedList.every(
-                        selected => selected.value !== myonnetty.ryhmaId,
-                    ),
-                )
+                .filter((myonnetty) => selectedList.every((selected) => selected.value !== myonnetty.ryhmaId))
                 .map(myonnettyToKayttooikeusryhma)) ||
-        []
+        [];
     return (
         <tr key="kayttooikeusKayttooikeudetField">
             <td>
-                <span className="oph-bold">
-                    {L["HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT"]}
-                </span>
-                :
+                <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_MYONNETTAVAT']}</span>:
             </td>
             <td>
                 <div>
@@ -60,20 +53,15 @@ const CKKayttooikeudet = ({
                             L={L}
                             kayttooikeusryhmat={kayttooikeusryhmat}
                             kayttooikeusryhmaValittu={selectedList.length > 0}
-                            onSelect={kayttooikeusryhma =>
+                            onSelect={(kayttooikeusryhma) =>
                                 kayttooikeusAction({
                                     value: kayttooikeusryhma.id,
-                                    label: toLocalizedText(
-                                        locale,
-                                        kayttooikeusryhma.nimi,
-                                    ),
+                                    label: toLocalizedText(locale, kayttooikeusryhma.nimi),
                                 })
                             }
                             loading={loading}
                             isOrganisaatioSelected={!!selectedOrganisationOid}
-                            sallittuKayttajatyyppi={
-                                isPalvelukayttaja ? "PALVELU" : "VIRKAILIJA"
-                            }
+                            sallittuKayttajatyyppi={isPalvelukayttaja ? 'PALVELU' : 'VIRKAILIJA'}
                         />
                     </div>
                 </div>
@@ -81,13 +69,11 @@ const CKKayttooikeudet = ({
                     {selectedList.map((selected, idx) => (
                         <div key={idx} className="oph-alert oph-alert-info">
                             <div className="oph-alert-container">
-                                <div className="oph-alert-title">
-                                    {selected.label}
-                                </div>
+                                <div className="oph-alert-title">{selected.label}</div>
                                 <button
                                     className="oph-button oph-button-close"
                                     type="button"
-                                    title={L["POISTA"]}
+                                    title={L['POISTA']}
                                     aria-label="Close"
                                     onClick={() => close(selected.value)}
                                 >
@@ -100,7 +86,7 @@ const CKKayttooikeudet = ({
             </td>
             <td />
         </tr>
-    )
-}
+    );
+};
 
-export default CKKayttooikeudet
+export default CKKayttooikeudet;

@@ -62,7 +62,7 @@ class PasswordPopupContent extends React.Component<Props, State> {
                         className={passwordClass}
                         type="password"
                         aria-required="true"
-                        ref={input => {
+                        ref={(input) => {
                             this.passwordInput = input;
                         }}
                         value={this.state.password}
@@ -137,7 +137,7 @@ class PasswordPopupContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     notifications: state.notifications,
 });

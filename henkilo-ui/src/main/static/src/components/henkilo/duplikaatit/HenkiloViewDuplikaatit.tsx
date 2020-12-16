@@ -93,7 +93,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
                         henkiloType={this.props.henkiloType}
                         setSelection={this.setSelection.bind(this)}
                     />
-                    {duplicates.map(duplicate => (
+                    {duplicates.map((duplicate) => (
                         <DuplikaatitPerson
                             henkilo={duplicate}
                             koodisto={koodisto}
@@ -151,13 +151,13 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
 
     setSelection(oid: string) {
         const selectedDuplicates = R.contains(oid, this.state.selectedDuplicates)
-            ? R.reject(duplicateOid => duplicateOid === oid, this.state.selectedDuplicates)
+            ? R.reject((duplicateOid) => duplicateOid === oid, this.state.selectedDuplicates)
             : R.append(oid, this.state.selectedDuplicates);
         this.setState({ selectedDuplicates });
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     ownOid: state.omattiedot.data.oid,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,

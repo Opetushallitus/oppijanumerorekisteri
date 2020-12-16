@@ -37,7 +37,7 @@ const Kansalaisuus = (props: Props) => {
                     } else {
                         props.updateModelFieldAction({
                             optionsName: 'kansalaisuus',
-                            value: newOption.map(kansalaisuusOption => ({
+                            value: newOption.map((kansalaisuusOption) => ({
                                 kansalaisuusKoodi: kansalaisuusOption.value,
                             })),
                         });
@@ -45,12 +45,12 @@ const Kansalaisuus = (props: Props) => {
                 }}
                 values={{
                     label: 'HENKILO_KANSALAISUUS',
-                    data: props.koodisto.kansalaisuus.map(koodi => ({
+                    data: props.koodisto.kansalaisuus.map((koodi) => ({
                         value: koodi.value,
                         label: koodi[props.locale],
                         optionsName: 'kansalaisuus',
                     })),
-                    selectValue: kansalaisuus.map(kansalaisuus => kansalaisuus.kansalaisuusKoodi),
+                    selectValue: kansalaisuus.map((kansalaisuus) => kansalaisuus.kansalaisuusKoodi),
                     disabled: disabled,
                     clearable: false,
                     multiselect: true,
@@ -60,7 +60,7 @@ const Kansalaisuus = (props: Props) => {
     );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,

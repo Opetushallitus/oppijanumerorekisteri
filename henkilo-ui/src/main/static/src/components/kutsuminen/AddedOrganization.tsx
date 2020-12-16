@@ -126,7 +126,7 @@ class AddedOrganization extends React.Component<Props, State> {
                     </div>
 
                     <ul className="kutsuminen-selected-permissions">
-                        {addedOrg.selectedPermissions.map(permission => {
+                        {addedOrg.selectedPermissions.map((permission) => {
                             return (
                                 <li key={permission.ryhmaId}>
                                     {toLocalizedText(this.props.locale, permission.ryhmaNames)}
@@ -148,7 +148,7 @@ class AddedOrganization extends React.Component<Props, State> {
                             className="oph-input"
                             value={addedOrg.voimassaLoppuPvm}
                             onChange={this.selectVoimassaLoppuPvm}
-                            filterDate={date => date.isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
+                            filterDate={(date) => date.isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
                         />
                     </div>
                 </div>
@@ -206,7 +206,7 @@ class AddedOrganization extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     currentHenkiloOid: state.omattiedot.data.oid,
     locale: state.locale,
     L: state.l10n.localisations[state.locale],

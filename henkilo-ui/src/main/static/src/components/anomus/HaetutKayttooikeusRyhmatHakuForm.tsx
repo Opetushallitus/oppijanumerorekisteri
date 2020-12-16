@@ -107,7 +107,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                                     placeholder={this.props.L['HAETTU_KAYTTOOIKEUSRYHMA_HAKU_RYHMA']}
                                     onChange={this.onRyhmaChange.bind(this)}
                                     maxHeight={400}
-                                    optionHeight={object => {
+                                    optionHeight={(object) => {
                                         const length = object.option.label.length;
                                         return 25 + (length / 50) * 20;
                                     }}
@@ -138,7 +138,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat
             ? ryhmat
-                  .map(ryhma => ({
+                  .map((ryhma) => ({
                       label:
                           ryhma.nimi[this.props.locale] ||
                           ryhma.nimi['fi'] ||
@@ -184,7 +184,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     organisaatios: state.omattiedot.organisaatios,

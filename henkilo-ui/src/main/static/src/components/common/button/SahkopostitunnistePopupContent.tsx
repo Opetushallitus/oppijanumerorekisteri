@@ -48,7 +48,7 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
                     ) : this.state.tunnisteet.length > 0 ? (
                         this.state.tunnisteet
                             .sort((a, b) => a.identifier.localeCompare(b.identifier))
-                            .map(tunniste => (
+                            .map((tunniste) => (
                                 <li className="tunnistetag" key={tunniste.identifier}>
                                     <span>{tunniste.identifier}</span>
                                     {tunniste.idpEntityId === 'oppijaToken' && (
@@ -73,7 +73,7 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
                         placeholder="Lisää uusi tunnus"
                         value={this.state.newTunniste}
                         onChange={this.handleChange.bind(this)}
-                        onKeyPress={e => (e.key === 'Enter' ? this.addSahkopostitunniste() : null)}
+                        onKeyPress={(e) => (e.key === 'Enter' ? this.addSahkopostitunniste() : null)}
                     />
                     <button
                         className="tunnistesave oph-button oph-button-primary"

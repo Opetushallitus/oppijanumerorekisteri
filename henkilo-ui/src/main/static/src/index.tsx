@@ -22,9 +22,11 @@ const App = () => {
     const browserHistory = useRouterHistory(createHistory)({
         basename: '/henkilo-ui',
     });
-    const history = syncHistoryWithStore(browserHistory, store);
 
-    (window as any).opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId;
+    const history = (syncHistoryWithStore(
+        browserHistory,
+        store
+    )(window as any).opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId);
 
     return (
         <Provider store={store}>

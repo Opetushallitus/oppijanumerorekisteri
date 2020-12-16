@@ -54,7 +54,7 @@ class KoodistoSelect extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         locale: state.locale,
     };

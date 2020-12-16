@@ -26,7 +26,7 @@ class EmailSelect extends React.Component<Props> {
                     placeholder={this.L['OMATTIEDOT_SAHKOPOSTI_VALINTA']}
                     options={this.props.emailOptions}
                     value={this.props.emailSelection}
-                    onChange={entity => this.props.changeEmailAction(entity.value)} // onInputChange={this._changeEmailInput.bind(this)}
+                    onChange={(entity) => this.props.changeEmailAction(entity.value)} // onInputChange={this._changeEmailInput.bind(this)}
                     onBlurResetsInput={false}
                     noResultsText={this.L['OMATTIEDOT_HAE_OLEMASSAOLEVA_SAHKOPOSTI']}
                 />
@@ -35,7 +35,7 @@ class EmailSelect extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,

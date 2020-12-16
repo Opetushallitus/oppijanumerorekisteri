@@ -1,11 +1,6 @@
-import {
-    MyonnettyKayttooikeusryhma,
-    Kayttooikeusryhma,
-} from "../types/domain/kayttooikeus/kayttooikeusryhma.types"
+import { MyonnettyKayttooikeusryhma, Kayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
-export function myonnettyToKayttooikeusryhma(
-    myonnetty: MyonnettyKayttooikeusryhma,
-): Kayttooikeusryhma {
+export function myonnettyToKayttooikeusryhma(myonnetty: MyonnettyKayttooikeusryhma): Kayttooikeusryhma {
     return {
         id: myonnetty.ryhmaId,
         tunniste: myonnetty.ryhmaTunniste,
@@ -14,5 +9,5 @@ export function myonnettyToKayttooikeusryhma(
         organisaatioViite: [],
         sallittuKayttajatyyppi: myonnetty.sallittuKayttajatyyppi,
         description: null,
-    }
+    };
 }

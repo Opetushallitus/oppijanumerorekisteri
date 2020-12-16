@@ -58,7 +58,7 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisat
                         >
                             <ul>
                                 {this.props.form.errors
-                                    .filter(error => error.name === 'password')
+                                    .filter((error) => error.name === 'password')
                                     .map((error, index) => (
                                         <li key={index}>{error.text}</li>
                                     ))}
@@ -86,7 +86,7 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisat
                         >
                             <ul>
                                 {this.props.form.errors
-                                    .filter(error => error.name === 'tyosahkopostiosoite')
+                                    .filter((error) => error.name === 'tyosahkopostiosoite')
                                     .map((error, index) => (
                                         <li key={index}>{error.text}</li>
                                     ))}
@@ -99,7 +99,7 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisat
     }
 
     hasError = (name: string): boolean => {
-        return this.props.form.submitted && this.props.form.errors.some(error => error.name === name);
+        return this.props.form.submitted && this.props.form.errors.some((error) => error.name === name);
     };
 
     onInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {

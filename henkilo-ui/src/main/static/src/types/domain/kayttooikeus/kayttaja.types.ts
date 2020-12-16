@@ -1,4 +1,4 @@
 export type Kayttaja = {
-    oid: string
-    kayttajaTyyppi: "VIRKAILIJA" | "PALVELU"
-}
+    oid: string;
+    kayttajaTyyppi: 'VIRKAILIJA' | 'PALVELU';
+};

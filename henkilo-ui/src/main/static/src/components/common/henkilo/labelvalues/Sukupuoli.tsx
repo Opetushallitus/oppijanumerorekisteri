@@ -34,7 +34,7 @@ class Sukupuoli extends React.Component<Props> {
                 updateModelFieldAction={this.props.updateModelFieldAction}
                 values={{
                     label: 'HENKILO_SUKUPUOLI',
-                    data: this.props.koodisto.sukupuoli.map(koodi => ({
+                    data: this.props.koodisto.sukupuoli.map((koodi) => ({
                         value: koodi.value,
                         label: koodi[this.props.locale],
                         optionsName: 'sukupuoli',
@@ -47,7 +47,7 @@ class Sukupuoli extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,

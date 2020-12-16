@@ -1,5 +1,5 @@
-import React from "react"
+import React from 'react';
 
-const CloseIcon = () => <i className="fa fa-times fa-2x" aria-hidden="true" />
+const CloseIcon = () => <i className="fa fa-times fa-2x" aria-hidden="true" />;
 
-export default CloseIcon
+export default CloseIcon;

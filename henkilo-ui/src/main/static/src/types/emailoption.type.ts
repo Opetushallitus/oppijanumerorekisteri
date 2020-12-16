@@ -1,3 +1,3 @@
 export type EmailOption = {
-    value: string | null | undefined
-}
+    value: string | null | undefined;
+};

@@ -271,7 +271,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     koodisto: state.koodisto,
     henkilo: state.henkilo,
     omattiedot: state.omattiedot,

@@ -66,7 +66,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
         sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined
     ): Array<Kayttooikeusryhma> =>
         kayttooikeusryhmat.filter(
-            kayttooikeusRyhma =>
+            (kayttooikeusRyhma) =>
                 !kayttooikeusRyhma.sallittuKayttajatyyppi ||
                 kayttooikeusRyhma.sallittuKayttajatyyppi === sallittuKayttajatyyppi
         );
@@ -87,7 +87,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
         kayttooikeusryhmat: Array<KielistettyKayttooikeusryhma>,
         hakutermi: string
     ): Array<KielistettyKayttooikeusryhma> => {
-        return kayttooikeusryhmat.filter(kayttooikeusryhma => {
+        return kayttooikeusryhmat.filter((kayttooikeusryhma) => {
             return kayttooikeusryhma.nimi.toLowerCase().indexOf(hakutermi.toLowerCase()) !== -1;
         });
     };
@@ -136,7 +136,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
                     valittu: this.state.valittu === kayttooikeusryhma,
                     valittava: true,
                 })}
-                onClick={event => this.onSelect(event, kayttooikeusryhma)}
+                onClick={(event) => this.onSelect(event, kayttooikeusryhma)}
             >
                 {kayttooikeusryhma.nimi}
             </div>
@@ -158,7 +158,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
         const hakutermi = event.currentTarget.value;
         const naytettavat = this.getNaytettavat(this.state.kaikki, hakutermi);
         const valittuId = this.state.valittu ? this.state.valittu.id : null;
-        const valittu = valittuId ? naytettavat.find(naytettava => naytettava.id === valittuId) : null;
+        const valittu = valittuId ? naytettavat.find((naytettava) => naytettava.id === valittuId) : null;
         this.setState({
             naytettavat: naytettavat,
             hakutermi: hakutermi,
@@ -178,7 +178,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
             this.props.kayttooikeusryhmat,
             this.props.sallittuKayttajatyyppi
         );
-        const valittu = sallitut.find(kayttooikeusryhma => kayttooikeusryhma.id === valittuId);
+        const valittu = sallitut.find((kayttooikeusryhma) => kayttooikeusryhma.id === valittuId);
         if (valittu) {
             this.props.onSelect(valittu);
             this.setState({ valittu: null });

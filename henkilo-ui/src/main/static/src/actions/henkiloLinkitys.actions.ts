@@ -1,30 +1,30 @@
-import {http} from "../http"
-import {urls} from "oph-urls-js"
-import {Dispatch} from "../types/dispatch.type"
+import { http } from '../http';
+import { urls } from 'oph-urls-js';
+import { Dispatch } from '../types/dispatch.type';
 import {
     FETCH_HENKILO_LINKITYKSET_FAILURE,
     FETCH_HENKILO_LINKITYKSET_REQUEST,
     FETCH_HENKILO_LINKITYKSET_SUCCESS,
-} from "./actiontypes"
-import {HenkiloLinkitysState} from "../reducers/henkiloLinkitys.reducer"
+} from './actiontypes';
+import { HenkiloLinkitysState } from '../reducers/henkiloLinkitys.reducer';
 
 type HenkiloLinkitysGetState = () => {
-    linkitykset: HenkiloLinkitysState
-}
+    linkitykset: HenkiloLinkitysState;
+};
 
-const henkiloLinkitysRequest = oidHenkilo => ({
+const henkiloLinkitysRequest = (oidHenkilo) => ({
     type: FETCH_HENKILO_LINKITYKSET_REQUEST,
     oidHenkilo,
-})
+});
 const henkiloLinkitysSuccess = (oidHenkilo, linkityksetByOid) => ({
     type: FETCH_HENKILO_LINKITYKSET_SUCCESS,
     linkityksetByOid,
     oidHenkilo,
-})
-const henkiloLinkitysFailure = oidHenkilo => ({
+});
+const henkiloLinkitysFailure = (oidHenkilo) => ({
     type: FETCH_HENKILO_LINKITYKSET_FAILURE,
     oidHenkilo,
-})
+});
 
 /**
  * Hakee henkilön varmentaja linkitykset käyttöoikeuspalvelusta. Ei yritä hakea uudestaan jos tiedot on jo haettu.
@@ -33,22 +33,17 @@ const henkiloLinkitysFailure = oidHenkilo => ({
  */
 export const fetchHenkiloLinkitykset = (oidHenkilo: string) => async (
     dispatch: Dispatch,
-    getState: HenkiloLinkitysGetState,
+    getState: HenkiloLinkitysGetState
 ) => {
     if (!getState().linkitykset[oidHenkilo]) {
-        dispatch(henkiloLinkitysRequest(oidHenkilo))
-        const url = urls.url(
-            "kayttooikeus-service.henkilo.linkitykset",
-            oidHenkilo,
-        )
+        dispatch(henkiloLinkitysRequest(oidHenkilo));
+        const url = urls.url('kayttooikeus-service.henkilo.linkitykset', oidHenkilo);
         try {
-            const linkitykset = await http.get(url)
-            dispatch(
-                henkiloLinkitysSuccess(oidHenkilo, {[oidHenkilo]: linkitykset}),
-            )
+            const linkitykset = await http.get(url);
+            dispatch(henkiloLinkitysSuccess(oidHenkilo, { [oidHenkilo]: linkitykset }));
         } catch (error) {
-            dispatch(henkiloLinkitysFailure(oidHenkilo))
-            throw error
+            dispatch(henkiloLinkitysFailure(oidHenkilo));
+            throw error;
         }
     }
-}
+};

@@ -2,7 +2,7 @@ import React from 'react';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 
-const TyoPuhelin = props => (
+const TyoPuhelin = (props) => (
     <LabelValue
         {...props}
         values={StaticUtils.findOrCreateYhteystiedotRyhmaFlat(

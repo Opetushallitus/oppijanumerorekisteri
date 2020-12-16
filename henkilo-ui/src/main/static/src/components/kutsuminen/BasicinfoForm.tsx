@@ -22,7 +22,7 @@ export default class BasicInfo extends React.Component<Props> {
 
     render() {
         const { basicInfo } = this.props;
-        const languageOptions = this.languages.map(language => ({
+        const languageOptions = this.languages.map((language) => ({
             value: language.code,
             label: language.name[this.props.locale],
         }));

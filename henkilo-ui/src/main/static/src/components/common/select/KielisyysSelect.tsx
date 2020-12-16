@@ -1,15 +1,15 @@
-import React from "react"
-import {Koodisto} from "../../../types/domain/koodisto/koodisto.types"
-import {Kielisyys} from "../../../types/domain/oppijanumerorekisteri/kielisyys.types"
-import KoodistoSelect from "./KoodistoSelect"
+import React from 'react';
+import { Koodisto } from '../../../types/domain/koodisto/koodisto.types';
+import { Kielisyys } from '../../../types/domain/oppijanumerorekisteri/kielisyys.types';
+import KoodistoSelect from './KoodistoSelect';
 
 type KielisyysSelectProps = {
-    className?: string
-    placeholder: string
-    koodisto: Koodisto
-    value: Kielisyys | null | undefined
-    onChange: (arg0: Kielisyys | null | undefined) => void
-}
+    className?: string;
+    placeholder: string;
+    koodisto: Koodisto;
+    value: Kielisyys | null | undefined;
+    onChange: (arg0: Kielisyys | null | undefined) => void;
+};
 
 /**
  * Komponentti kielisyyden valitsemiseen.
@@ -24,12 +24,12 @@ class KielisyysSelect extends React.Component<KielisyysSelectProps> {
                 value={this.props.value ? this.props.value.kieliKoodi : null}
                 onChange={this.onChange}
             />
-        )
+        );
     }
 
     onChange = (value: string | null | undefined) => {
-        this.props.onChange(value ? {kieliKoodi: value} : null)
-    }
+        this.props.onChange(value ? { kieliKoodi: value } : null);
+    };
 }
 
-export default KielisyysSelect
+export default KielisyysSelect;

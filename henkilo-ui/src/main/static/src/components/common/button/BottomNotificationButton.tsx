@@ -40,7 +40,7 @@ class BottomNotificationButton extends React.Component<Props, State> {
                 {...this.props}
                 styles={this.state.styles}
                 // @ts-ignore - TODO: don't understand
-                inputRef={el => (this.inputElement = el)}
+                inputRef={(el) => (this.inputElement = el)}
                 arrowDirection={'up'}
             />
         );

@@ -97,7 +97,7 @@ class HenkiloViewPage extends React.Component<Props> {
                     </div>
                 )}
                 {this.props.view !== 'OPPIJA' && (
-                    <div className="wrapper" ref={ref => (this.existingKayttooikeusRef = ref)}>
+                    <div className="wrapper" ref={(ref) => (this.existingKayttooikeusRef = ref)}>
                         {kayttooikeusState.kayttooikeusLoading ? (
                             <Loader />
                         ) : (
@@ -160,7 +160,7 @@ class HenkiloViewPage extends React.Component<Props> {
 
     _parseRyhmaOptions(): Array<{ label: string; value: string }> {
         return this.props.ryhmas
-            ? this.props.ryhmas.ryhmas.map(ryhma => ({
+            ? this.props.ryhmas.ryhmas.map((ryhma) => ({
                   label:
                       ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
                   value: ryhma.oid,

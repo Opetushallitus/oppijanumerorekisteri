@@ -1,75 +1,73 @@
-import "./Field.css"
-import React from "react"
-import classNames from "classnames/bind"
-import OphSelect from "../select/OphSelect"
-import moment from "moment"
-import SimpleDatePicker from "../../henkilo/SimpleDatePicker"
-import {validateEmail} from "../../../validation/EmailValidator"
+import './Field.css';
+import React from 'react';
+import classNames from 'classnames/bind';
+import OphSelect from '../select/OphSelect';
+import moment from 'moment';
+import SimpleDatePicker from '../../henkilo/SimpleDatePicker';
+import { validateEmail } from '../../../validation/EmailValidator';
 
-export type SelectValue =
-    | (string | null | undefined)
-    | (boolean | null | undefined)
+export type SelectValue = (string | null | undefined) | (boolean | null | undefined);
 
 type Props = {
-    readOnly: boolean
-    changeAction: (arg0: any) => any
-    inputValue: string
-    selectValue?: SelectValue | Array<SelectValue>
-    password?: boolean
-    isEmail?: boolean
-    className?: string
-    disabled?: boolean
-    autofocus?: boolean
-    placeholder?: string
-    isError?: boolean
-    data?: any
-    date?: any
-    children: any
-    clearable?: boolean
-    multiselect?: boolean
-}
+    readOnly: boolean;
+    changeAction: (arg0: any) => any;
+    inputValue: string;
+    selectValue?: SelectValue | Array<SelectValue>;
+    password?: boolean;
+    isEmail?: boolean;
+    className?: string;
+    disabled?: boolean;
+    autofocus?: boolean;
+    placeholder?: string;
+    isError?: boolean;
+    data?: any;
+    date?: any;
+    children: any;
+    clearable?: boolean;
+    multiselect?: boolean;
+};
 
 type State = {
-    readOnly: boolean
-    inputError: boolean
-}
+    readOnly: boolean;
+    inputError: boolean;
+};
 
 class Field extends React.Component<Props, State> {
     constructor(props: Props) {
-        super(props)
+        super(props);
 
         this.state = {
             readOnly: true,
             inputError: false,
-        }
+        };
     }
 
     render() {
         const classNamesCreator = {
             field: true,
             readOnly: this.props.readOnly,
-            "oph-input": !this.props.readOnly && !this.props.data,
-            "oph-input-has-error": this.props.isError || this.state.inputError,
-        }
+            'oph-input': !this.props.readOnly && !this.props.data,
+            'oph-input-has-error': this.props.isError || this.state.inputError,
+        };
         if (this.props.className) {
-            classNamesCreator[this.props.className] = this.props.className
+            classNamesCreator[this.props.className] = this.props.className;
         }
-        const className = classNames(classNamesCreator)
-        return <span>{this.createField(className)}</span>
+        const className = classNames(classNamesCreator);
+        return <span>{this.createField(className)}</span>;
     }
 
     createField(className: string) {
-        let type = "text"
+        let type = 'text';
 
         if (this.props.password) {
-            type = "password"
+            type = 'password';
         }
         if (this.props.isEmail) {
-            type = "email"
+            type = 'email';
         }
 
         if (this.props.readOnly) {
-            return <span className={className}>{this.getReadOnlyValue()}</span>
+            return <span className={className}>{this.getReadOnlyValue()}</span>;
         }
         if (this.props.data) {
             return (
@@ -84,13 +82,13 @@ class Field extends React.Component<Props, State> {
                     clearable={this.props.clearable}
                     multiselect={this.props.multiselect}
                 />
-            )
+            );
         }
         if (this.props.date) {
             return (
                 <SimpleDatePicker
                     className="oph-input"
-                    onChange={value =>
+                    onChange={(value) =>
                         this.props.changeAction({
                             target: {
                                 value: value,
@@ -101,18 +99,18 @@ class Field extends React.Component<Props, State> {
                     value={this.props.children}
                     disabled={this.props.disabled}
                 />
-            )
+            );
         }
         return (
             <input
                 className={className}
                 name={this.props.inputValue}
                 key={this.props.inputValue}
-                onChange={event => {
+                onChange={(event) => {
                     this.setState({
                         inputError: this.isValidEmailInputEvent(type, event),
-                    })
-                    this.props.changeAction(event)
+                    });
+                    this.props.changeAction(event);
                 }}
                 defaultValue={this.props.children}
                 autoFocus={this.props.autofocus}
@@ -120,18 +118,11 @@ class Field extends React.Component<Props, State> {
                 disabled={this.props.disabled}
                 type={type}
             />
-        )
+        );
     }
 
-    isValidEmailInputEvent(
-        type: string,
-        event: React.SyntheticEvent<HTMLButtonElement>,
-    ) {
-        return (
-            type === "email" &&
-            event.currentTarget.value !== "" &&
-            !validateEmail(event.currentTarget.value)
-        )
+    isValidEmailInputEvent(type: string, event: React.SyntheticEvent<HTMLButtonElement>) {
+        return type === 'email' && event.currentTarget.value !== '' && !validateEmail(event.currentTarget.value);
     }
 
     getReadOnlyValue() {
@@ -139,15 +130,11 @@ class Field extends React.Component<Props, State> {
             const selected =
                 this.props.multiselect && Array.isArray(this.props.selectValue)
                     ? this.props.data.filter(
-                          item =>
+                          (item) =>
                               Array.isArray(this.props.selectValue) &&
-                              this.props.selectValue.some(
-                                  selectValue => selectValue === item.value,
-                              ),
+                              this.props.selectValue.some((selectValue) => selectValue === item.value)
                       )
-                    : this.props.data.find(
-                          item => item.value === this.props.selectValue,
-                      )
+                    : this.props.data.find((item) => item.value === this.props.selectValue);
             return (
                 selected &&
                 (this.props.multiselect ? (
@@ -159,12 +146,10 @@ class Field extends React.Component<Props, State> {
                 ) : (
                     selected.label
                 ))
-            )
+            );
         }
-        return this.props.date && this.props.children
-            ? moment(this.props.children).format()
-            : this.props.children
+        return this.props.date && this.props.children ? moment(this.props.children).format() : this.props.children;
     }
 }
 
-export default Field
+export default Field;

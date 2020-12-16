@@ -87,7 +87,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         super(props);
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [
-            { key: 'ANOTTU_PVM', Cell: cellProps => cellProps.value.format() },
+            { key: 'ANOTTU_PVM', Cell: (cellProps) => cellProps.value.format() },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_NIMI',
                 hide: !this.props.isAnomusView,
@@ -111,14 +111,14 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             {
                 key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
                 notSortable: this.props.isAnomusView,
-                Cell: cellProps => cellProps.value.format(),
+                Cell: (cellProps) => cellProps.value.format(),
             },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
                 localizationKey: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
                 hide: !this.props.isOmattiedot,
                 notSortable: this.props.isAnomusView,
-                Cell: cellProps => cellProps.value.format(),
+                Cell: (cellProps) => cellProps.value.format(),
             },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM_MYONTO',
@@ -134,13 +134,13 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             { key: 'EMPTY_PLACEHOLDER', minWidth: 165, notSortable: true },
         ];
 
-        this.tableHeadings = this.headingList.map(heading => ({
+        this.tableHeadings = this.headingList.map((heading) => ({
             ...heading,
             label: this.L[heading.localizationKey ? heading.localizationKey : heading.key],
         }));
 
         this.state = {
-            dates: this._getKayttooikeusAnomukset(this.props).map(kayttooikeusAnomus => ({
+            dates: this._getKayttooikeusAnomukset(this.props).map((kayttooikeusAnomus) => ({
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
@@ -157,7 +157,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
     componentWillReceiveProps(nextProps: Props) {
         this.setState({
-            dates: this._getKayttooikeusAnomukset(nextProps).map(kayttooikeusAnomus => ({
+            dates: this._getKayttooikeusAnomukset(nextProps).map((kayttooikeusAnomus) => ({
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
@@ -173,7 +173,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
     }
 
     createRows() {
-        const headingList = this.headingList.map(heading => heading.key);
+        const headingList = this.headingList.map((heading) => heading.key);
         this._rows = this._getKayttooikeusAnomukset(this.props).map(
             (haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
                 [headingList[0]]: moment(haettuKayttooikeusRyhma.anomus.anottuPvm),
@@ -202,7 +202,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 [headingList[7]]: (
                     <DatePicker
                         className="oph-input"
-                        onChange={value => this.loppupvmAction(value, idx)}
+                        onChange={(value) => this.loppupvmAction(value, idx)}
                         selected={this.state.dates[idx].loppupvm}
                         showYearDropdown
                         showWeekNumbers
@@ -210,7 +210,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                             haettuKayttooikeusRyhma.anomus.organisaatioOid,
                             haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
                         )}
-                        filterDate={date => date.isBefore(moment().add(1, 'years'))}
+                        filterDate={(date) => date.isBefore(moment().add(1, 'years'))}
                     />
                 ),
                 [headingList[8]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],

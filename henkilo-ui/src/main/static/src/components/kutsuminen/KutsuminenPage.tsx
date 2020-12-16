@@ -180,7 +180,7 @@ class KutsuminenPage extends React.Component<Props, State> {
     isOrganizationsValid(newAddedOrgs: Array<KutsuOrganisaatio>): boolean {
         return (
             newAddedOrgs.length > 0 &&
-            newAddedOrgs.every(org => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0)
+            newAddedOrgs.every((org) => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0)
         );
     }
 

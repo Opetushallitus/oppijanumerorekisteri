@@ -82,7 +82,7 @@ class KutsututTable extends React.Component<Props, State> {
             },
         ];
 
-        const data = this.props.kutsus.map(kutsu => ({
+        const data = this.props.kutsus.map((kutsu) => ({
             id: kutsu.id,
             KUTSUT_NIMI_OTSIKKO: this.createNimiCell(kutsu),
             KUTSUT_SAHKOPOSTI_OTSIKKO: this.createSahkopostiCell(kutsu),
@@ -111,7 +111,7 @@ class KutsututTable extends React.Component<Props, State> {
                     isLoading={this.props.isLoading}
                     subComponent={(row: any) => (
                         <KutsuDetails
-                            kutsu={this.props.kutsus.find(kutsu => kutsu.id === row.original.id)}
+                            kutsu={this.props.kutsus.find((kutsu) => kutsu.id === row.original.id)}
                             L={this.props.L}
                             locale={this.props.locale}
                         />
@@ -132,7 +132,7 @@ class KutsututTable extends React.Component<Props, State> {
     createOrganisaatiotCell(kutsu: any) {
         return (
             <div>
-                {kutsu.organisaatiot.map(org => (
+                {kutsu.organisaatiot.map((org) => (
                     <div key={org.organisaatioOid}>
                         {toLocalizedText(this.props.locale, org.nimi) || org.organisaatioOid}
                     </div>
@@ -225,7 +225,7 @@ class KutsututTable extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
 });

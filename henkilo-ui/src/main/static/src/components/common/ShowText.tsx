@@ -1,5 +1,5 @@
-import React from "react"
+import React from 'react';
 
-export const ShowText = props => {
-    return <span>{props.show ? props.children : ""}</span>
-}
+export const ShowText = (props) => {
+    return <span>{props.show ? props.children : ''}</span>;
+};
