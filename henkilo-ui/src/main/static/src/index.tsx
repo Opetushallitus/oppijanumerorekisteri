@@ -17,20 +17,22 @@ import './index.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import './flex.css';
 
-let store = configureStore();
-const browserHistory = useRouterHistory(createHistory)({
-    basename: '/henkilo-ui',
-});
-const history = (syncHistoryWithStore(
-    browserHistory,
-    store
-)(window as any).opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId);
+const App = () => {
+    let store = configureStore();
+    const browserHistory = useRouterHistory(createHistory)({
+        basename: '/henkilo-ui',
+    });
+    const history = syncHistoryWithStore(browserHistory, store);
 
-render(
-    <Provider store={store}>
-        <div>
-            <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
-        </div>
-    </Provider>,
-    document.getElementById('root')
-);
+    (window as any).opintopolku_caller_id = PropertySingleton.getState().opintopolkuCallerId;
+
+    return (
+        <Provider store={store}>
+            <div>
+                <Router history={history} routes={routes} onUpdate={() => window.scrollTo(0, 0)} />
+            </div>
+        </Provider>
+    );
+};
+
+render(<App />, document.getElementById('root'));

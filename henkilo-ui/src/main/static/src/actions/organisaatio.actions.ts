@@ -1,6 +1,6 @@
-import * as R from "ramda"
-import {http} from "../http"
-import {urls} from "oph-urls-js"
+import * as R from 'ramda';
+import { http } from '../http';
+import { urls } from 'oph-urls-js';
 import {
     FETCH_ALL_ORGANISAATIOS_REQUEST,
     FETCH_ALL_ORGANISAATIOS_SUCCESS,
@@ -11,159 +11,136 @@ import {
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS,
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE,
-} from "./actiontypes"
-import {
-    FETCH_ORGANISATIONS_REQUEST,
-    FETCH_ORGANISATIONS_SUCCESS,
-} from "./actiontypes"
-import {Dispatch} from "../types/dispatch.type"
-import {OrganisaatioState} from "../reducers/organisaatio.reducer"
-import {RyhmatState} from "../reducers/ryhmat.reducer"
-import {OrganisaatioCriteria} from "../types/domain/organisaatio/organisaatio.types"
+} from './actiontypes';
+import { FETCH_ORGANISATIONS_REQUEST, FETCH_ORGANISATIONS_SUCCESS } from './actiontypes';
+import { Dispatch } from '../types/dispatch.type';
+import { OrganisaatioState } from '../reducers/organisaatio.reducer';
+import { RyhmatState } from '../reducers/ryhmat.reducer';
+import { OrganisaatioCriteria } from '../types/domain/organisaatio/organisaatio.types';
 
 type GetState = () => {
-    ryhmatState: RyhmatState
-    organisaatio: OrganisaatioState
-    locale: string
-}
+    ryhmatState: RyhmatState;
+    organisaatio: OrganisaatioState;
+    locale: string;
+};
 
-const requestAllOrganisaatios = () => ({type: FETCH_ALL_ORGANISAATIOS_REQUEST})
-const requestAllOrganisaatiosSuccess = organisaatios => ({
+const requestAllOrganisaatios = () => ({ type: FETCH_ALL_ORGANISAATIOS_REQUEST });
+const requestAllOrganisaatiosSuccess = (organisaatios) => ({
     type: FETCH_ALL_ORGANISAATIOS_SUCCESS,
     organisaatios,
-})
-const requestAllOrganisaatiosFailure = error => ({
+});
+const requestAllOrganisaatiosFailure = (error) => ({
     type: FETCH_ALL_ORGANISAATIOS_FAILURE,
     error,
-})
+});
 
 export const fetchAllOrganisaatios = (
     criteria: OrganisaatioCriteria = {
-        tyyppi: "ORGANISAATIO",
-        tila: ["AKTIIVINEN"],
-    },
+        tyyppi: 'ORGANISAATIO',
+        tila: ['AKTIIVINEN'],
+    }
 ) => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only with the first call
-    if (
-        !getState().organisaatio.organisaatioLoaded &&
-        !getState().organisaatio.organisaatioLoading
-    ) {
-        const url = urls.url("kayttooikeus-service.organisaatio", criteria)
-        dispatch(requestAllOrganisaatios())
+    if (!getState().organisaatio.organisaatioLoaded && !getState().organisaatio.organisaatioLoading) {
+        const url = urls.url('kayttooikeus-service.organisaatio', criteria);
+        dispatch(requestAllOrganisaatios());
         try {
-            const organisaatiot = await http.get(url)
-            dispatch(requestAllOrganisaatiosSuccess(organisaatiot))
+            const organisaatiot = await http.get(url);
+            dispatch(requestAllOrganisaatiosSuccess(organisaatiot));
             dispatch({
                 type: FETCH_ORGANISATIONS_SUCCESS,
                 organisations: organisaatiot,
-            })
+            });
         } catch (error) {
-            dispatch(requestAllOrganisaatiosFailure(error))
-            throw error
+            dispatch(requestAllOrganisaatiosFailure(error));
+            throw error;
         }
     }
-}
+};
 
 const requestAllHierarchialOrganisaatios = () => ({
     type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,
-})
-const requestAllHierarchialOrganisaatiosSuccess = root => ({
+});
+const requestAllHierarchialOrganisaatiosSuccess = (root) => ({
     type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS,
     root,
-})
-const requestAllHierarchialOrganisaatiosFailure = error => ({
+});
+const requestAllHierarchialOrganisaatiosFailure = (error) => ({
     type: FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE,
     error,
-})
+});
 
-export const fetchAllHierarchialOrganisaatios = () => async (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
+export const fetchAllHierarchialOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     if (
-        typeof getState().organisaatio.organisaatioHierarkia === "undefined" &&
+        typeof getState().organisaatio.organisaatioHierarkia === 'undefined' &&
         !getState().organisaatio.organisaatioHierarkiaLoading
     ) {
         const criteria: OrganisaatioCriteria = {
-            tyyppi: "ORGANISAATIO",
-            tila: ["AKTIIVINEN", "SUUNNITELTU"],
-        }
-        const url = urls.url("kayttooikeus-service.organisaatio.root", criteria)
-        dispatch(requestAllHierarchialOrganisaatios())
+            tyyppi: 'ORGANISAATIO',
+            tila: ['AKTIIVINEN', 'SUUNNITELTU'],
+        };
+        const url = urls.url('kayttooikeus-service.organisaatio.root', criteria);
+        dispatch(requestAllHierarchialOrganisaatios());
         try {
-            const root = await http.get(url)
-            dispatch(requestAllHierarchialOrganisaatiosSuccess(root))
+            const root = await http.get(url);
+            dispatch(requestAllHierarchialOrganisaatiosSuccess(root));
         } catch (error) {
-            dispatch(requestAllHierarchialOrganisaatiosFailure(error))
-            throw error
+            dispatch(requestAllHierarchialOrganisaatiosFailure(error));
+            throw error;
         }
     }
-}
+};
 
 // ALL ORGANISAATIORYHMAT
-const requestRyhmas = () => ({type: FETCH_ALL_RYHMAT_REQUEST})
-const requestRyhmasSuccess = ryhmas => ({
+const requestRyhmas = () => ({ type: FETCH_ALL_RYHMAT_REQUEST });
+const requestRyhmasSuccess = (ryhmas) => ({
     type: FETCH_ALL_RYHMAT_SUCCESS,
     ryhmas,
-})
-const requestRyhmasFailure = error => ({type: FETCH_ALL_RYHMAT_FAILURE, error})
-export const fetchAllRyhmas = () => async (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
+});
+const requestRyhmasFailure = (error) => ({ type: FETCH_ALL_RYHMAT_FAILURE, error });
+export const fetchAllRyhmas = () => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only with first call
     if (
         getState().ryhmatState.ryhmas &&
         !getState().ryhmatState.ryhmas.length &&
         !getState().ryhmatState.ryhmasLoading
     ) {
-        const url = urls.url("kayttooikeus-service.organisaatio", {
-            tyyppi: "RYHMA",
-        })
-        dispatch(requestRyhmas())
+        const url = urls.url('kayttooikeus-service.organisaatio', {
+            tyyppi: 'RYHMA',
+        });
+        dispatch(requestRyhmas());
         try {
-            const ryhmas = await http.get(url)
-            dispatch(requestRyhmasSuccess(ryhmas))
+            const ryhmas = await http.get(url);
+            dispatch(requestRyhmasSuccess(ryhmas));
         } catch (error) {
-            dispatch(requestRyhmasFailure(error))
-            throw error
+            dispatch(requestRyhmasFailure(error));
+            throw error;
         }
     }
-}
+};
 
-const requestOrganisations = oidOrganisations => ({
+const requestOrganisations = (oidOrganisations) => ({
     type: FETCH_ORGANISATIONS_REQUEST,
     oidOrganisations,
-})
-const receiveOrganisations = json => ({
+});
+const receiveOrganisations = (json) => ({
     type: FETCH_ORGANISATIONS_SUCCESS,
     organisations: json,
     receivedAt: Date.now(),
-})
-export const fetchOrganisations = (oidOrganisations: Array<string>) => (
-    dispatch: Dispatch,
-    getState: GetState,
-) => {
+});
+export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch: Dispatch, getState: GetState) => {
     if (!oidOrganisations) {
-        console.error("Can not fetch null organisations")
-        return
+        console.error('Can not fetch null organisations');
+        return;
     }
-    oidOrganisations = R.uniq(oidOrganisations)
-    dispatch(requestOrganisations(oidOrganisations))
+    oidOrganisations = R.uniq(oidOrganisations);
+    dispatch(requestOrganisations(oidOrganisations));
     const promises = oidOrganisations
-        .filter(
-            oidOrganisation =>
-                Object.keys(getState().organisaatio.cached).indexOf(
-                    oidOrganisation,
-                ) === -1,
-        )
-        .map(oidOrganisation => {
-            const url = urls.url(
-                "kayttooikeus-service.organisaatio.by-oid",
-                oidOrganisation,
-            )
-            return http.get(url).catch(error => {
-                console.log("Organisaation lataus epäonnistui", error)
+        .filter((oidOrganisation) => Object.keys(getState().organisaatio.cached).indexOf(oidOrganisation) === -1)
+        .map((oidOrganisation) => {
+            const url = urls.url('kayttooikeus-service.organisaatio.by-oid', oidOrganisation);
+            return http.get(url).catch((error) => {
+                console.log('Organisaation lataus epäonnistui', error);
                 return {
                     oid: oidOrganisation,
                     nimi: {
@@ -172,10 +149,10 @@ export const fetchOrganisations = (oidOrganisations: Array<string>) => (
                         sv: oidOrganisation,
                     },
                     tyypit: [],
-                }
-            })
-        })
-    return Promise.all(promises.map(p => p.catch(e => e)))
-        .then(json => dispatch(receiveOrganisations(json)))
-        .catch(e => console.error(e))
-}
+                };
+            });
+        });
+    return Promise.all(promises.map((p) => p.catch((e) => e)))
+        .then((json) => dispatch(receiveOrganisations(json)))
+        .catch((e) => console.error(e));
+};

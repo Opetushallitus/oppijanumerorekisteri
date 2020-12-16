@@ -10,22 +10,22 @@
         "babel-polyfill": "6.26.0",
         "classnames": "2.2.5",
         "history": "3.3.0",
-        "isomorphic-fetch": "2.2.1",
+        "isomorphic-fetch": "3.0.0",
         "moment": "2.24.0",
         "normalizr": "3.0.0",
         "oph-urls-js": "github:Opetushallitus/oph-urls-js#master",
         "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
-        "prop-types": "15.6.0",
         "ramda": "0.25.0",
-        "react": "16.4.2",
+        "react": "16.14.0",
         "react-columns": "1.2.0",
         "react-datepicker": "0.48.0",
-        "react-dom": "16.4.2",
+        "react-dom": "16.14.0",
         "react-load-script": "0.0.6",
         "react-onclickoutside": "6.7.0",
         "react-redux": "5.0.6",
         "react-router": "3.2.0",
         "react-router-redux": "4.0.8",
+        "react-scripts": "4.0.1",
         "react-scroll-to-component": "1.0.2",
         "react-select-fast-filter-options": "0.2.3",
         "react-table": "6.7.4",
@@ -36,14 +36,17 @@
         "redux": "3.7.2",
         "redux-thunk": "2.2.0",
         "shallow-equal-fuzzy": "0.0.2",
+        "typescript": "4.1.3",
         "universal-cookie": "4.0.2"
     },
     "devDependencies": {
-        "jest": "23.6.0",
-        "jest-resolve": "^23.6.0",
-        "react-scripts": "2.1.4",
-        "request": "^2.88.0",
-        "typescript": "4.1.3"
+        "request": "^2.88.0"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
     },
     "scripts": {
         "start": "react-scripts start",
