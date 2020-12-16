@@ -3,7 +3,6 @@ import ReactTable from 'react-table';
 import * as R from 'ramda';
 import 'react-table/react-table.css';
 import './VtjVertailuListaus.css';
-import { string } from 'prop-types';
 
 type Props = {
     L: Record<string, string>;
@@ -24,34 +23,34 @@ export default class VtjVertailuListaus extends React.Component<Props> {
         const columns = [
             {
                 Header: this.props.L['HENKILO_VTJ_TIETOLAHDE'],
-                accessor: henkilo => this.renderPalvelu(henkilo),
+                accessor: (henkilo) => this.renderPalvelu(henkilo),
                 id: 'palvelu',
                 width: 150,
             },
             {
                 Header: this.props.L['HENKILO_VTJ_ETUNIMET'],
-                accessor: henkilo => henkilo.etunimet,
+                accessor: (henkilo) => henkilo.etunimet,
                 id: 'etunimet',
             },
             {
                 Header: this.props.L['HENKILO_VTJ_SUKUNIMI'],
-                accessor: henkilo => henkilo.sukunimi,
+                accessor: (henkilo) => henkilo.sukunimi,
                 id: 'sukunimi',
             },
             {
                 Header: this.props.L['HENKILO_VTJ_KUTSUMANIMI'],
-                accessor: henkilo => henkilo.kutsumanimi,
+                accessor: (henkilo) => henkilo.kutsumanimi,
                 id: 'kutsumanimi',
             },
             {
                 Header: this.props.L['HENKILO_VTJ_SUKUPUOLI'],
-                accessor: henkilo => this.renderSukupuoli(henkilo),
+                accessor: (henkilo) => this.renderSukupuoli(henkilo),
                 id: 'sukupuoli',
                 width: 100,
             },
             {
                 Header: this.props.L['HENKILO_VTJ_YHTEYSTIEDOT'],
-                accessor: henkilo => this.renderYhteystiedotRyhma(henkilo),
+                accessor: (henkilo) => this.renderYhteystiedotRyhma(henkilo),
                 id: 'yhteystiedot',
             },
         ];
@@ -86,7 +85,7 @@ export default class VtjVertailuListaus extends React.Component<Props> {
         const yhteystiedot = henkilo.yhteystiedotRyhma
             ? henkilo.yhteystiedotRyhma
                   .reduce((accumulator, current) => accumulator.concat(current.yhteystieto), [])
-                  .filter(yhteystieto => yhteystieto.yhteystietoArvo)
+                  .filter((yhteystieto) => yhteystieto.yhteystietoArvo)
             : [];
         return (
             <ul>

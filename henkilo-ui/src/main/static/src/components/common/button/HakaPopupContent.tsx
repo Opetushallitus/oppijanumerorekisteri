@@ -49,7 +49,11 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
                         ) => (
                             <li className="tag" key={hakatunniste}>
                                 <span>{hakatunniste}</span>{' '}
-                                <a className="remove" onClick={() => this.removeHakatunniste(hakatunniste)}>
+                                <a
+                                    className="remove"
+                                    href="#poista"
+                                    onClick={() => this.removeHakatunniste(hakatunniste)}
+                                >
                                     {this.props.L['POISTA']}
                                 </a>
                             </li>
@@ -101,7 +105,7 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
     }
 
     async removeHakatunniste(tunniste: string) {
-        const filteredTunnisteet = reject(hakatunniste => hakatunniste === tunniste)(this.state.hakatunnisteet);
+        const filteredTunnisteet = reject((hakatunniste) => hakatunniste === tunniste)(this.state.hakatunnisteet);
         await this.saveHakatunnisteet(filteredTunnisteet, tunniste);
     }
 

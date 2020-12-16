@@ -45,7 +45,7 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
                     {/*eslint-disable no-script-url*/}
                     {route.backButton ? ( // eslint-disable-next-line jsx-a11y/anchor-is-valid
                         <li>
-                            <a href="javascript:history.go(-1)">
+                            <a href="# " onClick={() => window.history.go(-1)}>
                                 &#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon />
                             </a>
                         </li>
@@ -55,10 +55,10 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
                         naviTabs.length > 0 &&
                         naviTabs
                             .filter(
-                                data =>
+                                (data) =>
                                     isRekisterinpitaja ||
                                     !data.sallitutRoolit ||
-                                    data.sallitutRoolit.some(sallittuRooli => roolit.includes(sallittuRooli))
+                                    data.sallitutRoolit.some((sallittuRooli) => roolit.includes(sallittuRooli))
                             )
                             .map((data, index) => {
                                 const className = classNames({
@@ -85,7 +85,7 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
     );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     L: state.l10n.localisations[state.locale],
     isRekisterinpitaja: state.omattiedot.isAdmin,
     organisaatiot: state.omattiedot.organisaatiot,

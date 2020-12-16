@@ -1,4 +1,3 @@
-import {TextGroup} from "./textgroup.types"
 import {AllowedKayttooikeus} from "../../../reducers/kayttooikeusryhma.reducer"
 import {OrganisaatioWithChildren} from "../organisaatio/organisaatio.types"
 

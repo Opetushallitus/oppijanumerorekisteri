@@ -1,4 +1,4 @@
-export default {
+const urlConfig = {
     "cas.baseUrl": "/",
     "cas.login": "cas/login",
     "cas.me": "cas/me",
@@ -181,3 +181,5 @@ export default {
     "virkailija-raamit.raamit.js": "virkailija-raamit/apply-raamit.js",
     "virkailija-raamit.raamit.css": "virkailija-raamit/apply-raamit.css",
 }
+
+export default urlConfig;
