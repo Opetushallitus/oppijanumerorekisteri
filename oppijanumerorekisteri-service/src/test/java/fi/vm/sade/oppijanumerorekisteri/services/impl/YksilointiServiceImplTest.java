@@ -291,7 +291,7 @@ public class YksilointiServiceImplTest {
         ArgumentCaptor<Yksilointitieto> argumentCaptor = ArgumentCaptor.forClass(Yksilointitieto.class);
         verify(yksilointitietoRepository).save(argumentCaptor.capture());
         Yksilointitieto yksilointitieto = argumentCaptor.getValue();
-        assertThat(yksilointitieto).isNotNull().extracting("etunimet").contains("Teijo Tahvelo");
+        assertThat(yksilointitieto).isNotNull().extracting("etunimet").isEqualTo("Teijo Tahvelo");
         assertThat(yksiloity.getEtunimet()).isEqualTo("Teppo Taneli");
     }
 

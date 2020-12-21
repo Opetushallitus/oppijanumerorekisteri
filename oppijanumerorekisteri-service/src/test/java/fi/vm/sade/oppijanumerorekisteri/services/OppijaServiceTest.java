@@ -552,63 +552,63 @@ public class OppijaServiceTest {
                 .build();
         Page<OppijaListDto> result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("ar")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("noppa")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("nop")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("kuutio")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("kuu")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("arpa noppa kuutio")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("noppa kuutio")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).containsExactly("oid1");
+        assertThat(result).extracting(OppijaListDto::getOid).containsExactly("oid1");
 
         criteria = OppijaTuontiCriteria.builder()
                 .nimiHaku("siansaksaa")
                 .build();
         result = this.oppijaService
                 .list(criteria, 1, 100, OppijaTuontiSortKey.CREATED, Sort.Direction.ASC);
-        assertThat(result.iterator()).extracting(OppijaListDto::getOid).isEmpty();
+        assertThat(result).extracting(OppijaListDto::getOid).isEmpty();
 
     }
 
