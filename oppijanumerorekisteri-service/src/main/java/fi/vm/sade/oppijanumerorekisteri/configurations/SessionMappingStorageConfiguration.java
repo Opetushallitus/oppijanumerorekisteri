@@ -5,13 +5,13 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.security.OphSessionMappin
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.session.jdbc.JdbcOperationsSessionRepository;
+import org.springframework.session.jdbc.JdbcIndexedSessionRepository;
 
 @Configuration
 public class SessionMappingStorageConfiguration {
 
     @Bean
-    public OphSessionMappingStorage sessionMappingStorage(JdbcTemplate jdbcTemplate, JdbcOperationsSessionRepository sessionRepository) {
+    public OphSessionMappingStorage sessionMappingStorage(JdbcTemplate jdbcTemplate, JdbcIndexedSessionRepository sessionRepository) {
         return new JdbcSessionMappingStorage(jdbcTemplate, sessionRepository);
     }
 
