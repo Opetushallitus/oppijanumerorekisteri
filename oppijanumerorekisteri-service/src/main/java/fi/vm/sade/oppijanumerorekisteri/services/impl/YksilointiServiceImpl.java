@@ -219,15 +219,14 @@ public class YksilointiServiceImpl implements YksilointiService {
         return nimetEivatVastaa;
     }
 
-    private boolean tarkistaNimet(Henkilo onrHenkilo, YksiloityHenkilo vtjHenkilo, Set<String> kaikkiSukunimet) {
-        String onrSukunimi = TextUtils.normalize(onrHenkilo.getSukunimi()).toLowerCase();
-        String onrKutsumanimi = TextUtils.normalize(onrHenkilo.getKutsumanimi()).toLowerCase();
+    protected boolean tarkistaNimet(Henkilo onrHenkilo, YksiloityHenkilo vtjHenkilo, Set<String> kaikkiSukunimet) {
+        String onrSukunimi = normalize(onrHenkilo.getSukunimi());
+        String onrKutsumanimi = normalize(onrHenkilo.getKutsumanimi());
 
         Set<String> vtjSukunimet = kaikkiSukunimet.stream()
-                .map(TextUtils::normalize)
-                .map(String::toLowerCase)
-                .collect(toCollection(LinkedHashSet::new));
-        String vtjEtunimi = TextUtils.normalize(vtjHenkilo.getEtunimi()).toLowerCase();
+                .map(this::normalize)
+                .collect(toSet());
+        String vtjEtunimi = normalize(vtjHenkilo.getEtunimi());
 
         return vtjSukunimet.stream().anyMatch(vtjSukunimi -> tarkistaSukunimi(onrSukunimi, vtjSukunimi))
                 && tarkistaEtunimi(onrKutsumanimi, vtjEtunimi)
@@ -236,13 +235,17 @@ public class YksilointiServiceImpl implements YksilointiService {
                 && tarkistaEtunimi(onrSukunimi, vtjEtunimi);
     }
 
-    private boolean tarkistaSukunimi(String henkilo1sukunimi, String henkilo2sukunimi) {
+    protected String normalize(@NotNull final String input) {
+        return TextUtils.normalize(input).toLowerCase();
+    }
+
+    protected boolean tarkistaSukunimi(String henkilo1sukunimi, String henkilo2sukunimi) {
         StringDistance stringDistance = new JaroWinklerDistance();
         float distance = stringDistance.getDistance(henkilo1sukunimi, henkilo2sukunimi);
         return distance >= oppijanumerorekisteriProperties.getSukunimiThreshold();
     }
 
-    private boolean tarkistaEtunimi(String henkilo1kutsumanimi, String henkilo2etunimet) {
+    protected boolean tarkistaEtunimi(String henkilo1kutsumanimi, String henkilo2etunimet) {
         StringDistance stringDistance = new JaroWinklerDistance();
         if (henkilo2etunimet.contains(henkilo1kutsumanimi)) {
             return true;
