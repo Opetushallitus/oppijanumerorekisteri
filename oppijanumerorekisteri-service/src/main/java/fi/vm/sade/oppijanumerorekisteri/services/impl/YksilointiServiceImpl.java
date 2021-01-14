@@ -654,8 +654,7 @@ public class YksilointiServiceImpl implements YksilointiService {
     static String sensuroiHetu(String hetu) {
         if (hetu == null || hetu.length() < 7) return hetu;
         // testihetut voi palauttaa sensuroimatta, muuten sensuroidaan välimerkki, numero ja tarkiste
-        //return isFakeHetu(hetu) ? hetu : hetu.substring(0, 6) + "*****";
-        return hetu.substring(0, 6) + "*****";
+        return isFakeHetu(hetu) ? hetu : hetu.substring(0, 6) + "*****";
     }
 
     static boolean isFakeHetu(String hetu) {
