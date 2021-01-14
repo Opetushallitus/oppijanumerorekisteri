@@ -20,6 +20,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -441,6 +442,7 @@ public class YksilointiServiceImplTest {
         assertThat(YksilointiServiceImpl.sensuroiHetu(hetu)).isEqualTo(sensuroitu);
     }
 
+    @Ignore("Fake hetujen sensurointi on testaamisen vuoksi käytössä.")
     @Test
     public void sensuroiHetuEiSensuroiFakeHetua() {
         String fake = "999999-999X";
