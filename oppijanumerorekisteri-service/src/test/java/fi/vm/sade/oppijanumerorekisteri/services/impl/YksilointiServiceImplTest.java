@@ -1,4 +1,4 @@
-package fi.vm.sade.oppijanumerorekisteri.services;
+package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
@@ -10,6 +10,12 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
+import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
+import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
+import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import org.assertj.core.groups.Tuple;
@@ -30,7 +36,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-public class YksilointiServiceTest {
+public class YksilointiServiceImplTest {
     @Spy
     private MockVtjClient vtjClient = new MockVtjClient();
 
@@ -426,5 +432,18 @@ public class YksilointiServiceTest {
         String fromNormal  = TextUtils.normalize("Eva Nomm Noel Helene Dong Bui");
 
         assertThat(fromSpecial).isEqualTo(fromNormal);
+    }
+
+    @Test
+    public void sensuroiHetuSensuroiValimerkinNumeronJaTarkisteen() {
+        String hetu = "123456-1234";
+        String sensuroitu = "123456*****";
+        assertThat(YksilointiServiceImpl.sensuroiHetu(hetu)).isEqualTo(sensuroitu);
+    }
+
+    @Test
+    public void sensuroiHetuEiSensuroiFakeHetua() {
+        String fake = "999999-999X";
+        assertThat(YksilointiServiceImpl.sensuroiHetu(fake)).isEqualTo(fake);
     }
 }
