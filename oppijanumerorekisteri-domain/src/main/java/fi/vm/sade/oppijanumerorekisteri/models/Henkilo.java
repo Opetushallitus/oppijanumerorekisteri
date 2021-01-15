@@ -230,10 +230,6 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
         this.turvakielto = turvakielto;
     }
 
-    public Boolean isHetuFake() {
-        return hetu.charAt(7) == '9';
-    }
-
     public boolean addOrganisaatio(Organisaatio organisaatio) {
         if (organisaatiot == null) {
             organisaatiot = new HashSet<>();
