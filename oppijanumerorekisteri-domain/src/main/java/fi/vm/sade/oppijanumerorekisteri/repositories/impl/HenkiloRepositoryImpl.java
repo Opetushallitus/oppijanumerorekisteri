@@ -483,16 +483,17 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
+        this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_CONSIDER_THRESHOLD)
+                .executeUpdate();
         Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT " +
                 "h1.*, similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) AS nimetsimilarity \n" +
                 "FROM henkilo AS h1 \n" +
-                "WHERE similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) >= :threshold \n" +
+                "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
                 "ORDER BY nimetsimilarity DESC \n",
                 Henkilo.DUPLICATE_RESULT_MAPPING)
-                .setParameter("nimet", getAllNames(criteria))
-                .setParameter("threshold", DUPLICATE_QUERY_CONSIDER_THRESHOLD);
+                .setParameter("nimet", getAllNames(criteria));
         List<Object[]> results = henkiloTypedQuery.getResultList();
         return results.stream().filter(result -> {
             float similarity = (float) result[1];
