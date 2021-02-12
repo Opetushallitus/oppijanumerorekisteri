@@ -73,7 +73,7 @@ public class HuoltajasuhdeRepositoryImpl implements HuoltajasuhdeRepository {
                 .from(qHenkiloHuoltajaSuhde)
                 .join(qHenkiloHuoltajaSuhde.lapsi, qHenkilo).on(qHenkilo.oidHenkilo.eq(oid))
                 .where(
-                        qHenkiloHuoltajaSuhde.alkuPvm.isNull().or(qHenkiloHuoltajaSuhde.alkuPvm.before(now)),
+                        qHenkiloHuoltajaSuhde.alkuPvm.isNull().or(qHenkiloHuoltajaSuhde.alkuPvm.loe(now)),
                         qHenkiloHuoltajaSuhde.loppuPvm.isNull().or(qHenkiloHuoltajaSuhde.loppuPvm.after(now))
                 ).select(qHenkiloHuoltajaSuhde);
         return query.fetch();

@@ -54,7 +54,7 @@ public class HuoltajasuhdeRepositoryTest extends AbstractRepositoryTest {
         HenkiloHuoltajaSuhde huoltajaSuhde = HenkiloHuoltajaSuhde.builder()
                 .huoltaja(parent)
                 .lapsi(child)
-                .alkuPvm(LocalDate.of(2008, 12, 13))
+                .alkuPvm(LocalDate.now())
                 .loppuPvm(LocalDate.now().plus(1, ChronoUnit.YEARS))
                 .build();
         testEntityManager.persist(huoltajaSuhde);
@@ -87,7 +87,7 @@ public class HuoltajasuhdeRepositoryTest extends AbstractRepositoryTest {
                 .huoltaja(parent)
                 .lapsi(child)
                 .alkuPvm(LocalDate.now().minus(19, ChronoUnit.YEARS))
-                .loppuPvm(LocalDate.now().minus(1, ChronoUnit.YEARS))
+                .loppuPvm(LocalDate.now())
                 .build();
         testEntityManager.persistAndFlush(huoltajaSuhde);
         List<HenkiloHuoltajaSuhde> results = huoltajasuhdeRepository.findCurrentHuoltajatByHenkilo(child.getOidHenkilo());
