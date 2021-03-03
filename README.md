@@ -2,8 +2,8 @@
 
 ## Vaatimukset
 - PostgreSQL 10.6
-- Java 1.8.0_92 (ei toiminut 1.8.0_60)
-- Maven 3.3
+- Java 11
+- Maven 3.6
 
 ## Rakenne
 ### oppijanumerorekisteri
