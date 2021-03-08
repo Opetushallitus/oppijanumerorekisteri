@@ -1,7 +1,7 @@
 # Henkilö UI
 
 ## Teknologiat
-* Java 8
+* Java 11
 * Spring Boot
 * Maven 3
 * React
@@ -10,7 +10,7 @@
 * NPM 5
 
 ## Ennakkovaatimukset
-* Asennettu Java 8
+* Asennettu Java 11
 * henkiloui.yml (löytyy integraatiopalvelimelta tai kysy muilta kehittäjiltä)
   * Lisää front propertyt esim. seuraavasti:
   ```
