@@ -16,9 +16,9 @@ public class UrlConfiguration extends OphProperties {
         addFiles("/henkiloui-service-oph.properties");
         addOverride("host-cas", environment.getRequiredProperty("host.host-cas"));
         addOverride("host-virkailija", environment.getRequiredProperty("host.host-virkailija"));
-        addOverride("host-shibboleth", environment.getRequiredProperty("host.host-shibboleth"));
+        addOverride("host-cas-oppija", environment.getRequiredProperty("host.host-cas-oppija"));
         // Required
-        this.frontProperties.put("shibboleth.baseUrl", environment.getRequiredProperty("host.host-shibboleth"));
+        this.frontProperties.put("cas-oppija.baseUrl", environment.getRequiredProperty("host.host-cas-oppija"));
         // Optional, default to localhost
         this.addUrlIfConfigured("front.lokalisointi.baseUrl", "lokalisointi.baseUrl");
         this.addUrlIfConfigured("front.koodisto.baseUrl", "koodisto-service.baseUrl");

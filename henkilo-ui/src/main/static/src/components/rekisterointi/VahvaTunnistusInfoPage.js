@@ -13,11 +13,11 @@ type Props = {
 
 class VahvaTunnistusInfoPage extends React.Component<Props> {
     render() {
-        const targetUrl = urls.url('shibboleth.kayttooikeus-service.cas.tunnistus', {
+        const targetUrl = urls.url('cas-oppija.kayttooikeus-service.cas.tunnistus', {
             loginToken: this.props.loginToken,
-            kielisyys: this.props.locale,
+            locale: this.props.locale,
         });
-        const identificationUrl: string = urls.url('shibboleth.identification', this.props.locale.toUpperCase(), {target: targetUrl});
+        const identificationUrl: string = urls.url('cas-oppija.identification', { service: targetUrl, locale: this.props.locale});
         return <InfoPage topicLocalised={this.props.L['VAHVATUNNISTUSINFO_OTSIKKO']}>
             <span className="oph-bold">{this.props.L['VAHVATUNNISTUSINFO_TEKSTI']}</span>
             <div style={{textAlign: 'center', paddingTop: '25px'}}>

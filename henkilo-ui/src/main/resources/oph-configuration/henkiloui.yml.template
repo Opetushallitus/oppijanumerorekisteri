@@ -19,7 +19,7 @@ cas:
 host:
   host-virkailija: https://{{host_virkailija}}
   host-cas: https://{{host_cas}}
-  host-shibboleth: https://{{host_tunnistus}}
+  host-cas-oppija: https://{{host_oppija}}
 henkiloui:
   uses-ssl-proxy: true
   lokalisointi_synkronointi:
