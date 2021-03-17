@@ -1,7 +1,7 @@
 host:
   host-virkailija: localhost
   host-cas: localhost
-  host-shibboleth: localhost
+  host-cas-oppija: localhost
 cas:
   service: http://localhost/kayttooikeus-service
   send-renew: false
