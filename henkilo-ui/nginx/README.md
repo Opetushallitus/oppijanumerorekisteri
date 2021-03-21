@@ -1,10 +1,10 @@
-# Easy local development environment setup
+# Easy local setup for UI development
 
 *How I Learned to Stop Worrying and Love the Bomb*
 
 ## Purpose
 
-To get local development environment up and running with minimal hassle
+To get local UI development environment up and running with minimal hassle
 
 Want:
 * Minimal configuration
@@ -13,35 +13,32 @@ Want:
 
 ## Prerequisites 
 
-* JDK 
-* Maven
-* Docker
+* node + npm
+* docker
 * docker-compose
 
 ## Approach
 
-![deployment](http://www.plantuml.com/plantuml/png/JOv1JiGm34NtFeMNi8ZOiwX6uW18S8AaCTDeKZiu3fsvFP6cKRlqzt_FlbJpQctDCCjQX8aDWyfMIK_9Hg7u-NPA-9huVffhqSJN868mPsaH6rlxym2x3DqqBFYEYnWgPV4HOAHkUahxkgZS7xtmswXQnPVmABvM_FZy-du5UBPSb8qxSnpkeC_vm7v4yMqXlgKihgN1JVjhUrri8HqGN8XZM_C_)
+![deployment](http://www.plantuml.com/plantuml/png/JOr1RiKW34JtdC9YpmMwg7AFgWiALa41cnf8qjj_-0fIDcW6pvlPQhFIUaxAkiO2lQ8enxam8JMWtqZNmv_uKwpRmLRGItiyO507YbOkSVUWnnScBdaYI4SKfgdrvBW4fUOC6CydcSzxvFt2iAlt0tH0scDYqoC8_dMihUexkE1HDvCs9U0MK1x1LMI-lAq1_VVQci0w5k7hNwiDoVUSNW00)
 
-* Access UI via webpack dev server (fast feedback loop)
-* Webpack dev server proxies requests to local nginx (by-pass CORS)
-* nginx proxy divide requests to local backend or selected dev environment (utilize existing services @ untuva)
-* spring-boot is run with minimal configuration settings (default settings hit local nginx proxy)  
+[//]: # (image source: http://www.plantuml.com/plantuml/uml/JOr1RiKW34JtdC9YpmMwg7AFgWiALa41cnf8qjj_-0fIDcW6pvlPQhFIUaxAkiO2lQ8enxam8JMWtqZNmv_uKwpRmLRGItiyO507YbOkSVUWnnScBdaYI4SKfgdrvBW4fUOC6CydcSzxvFt2iAlt0tH0scDYqoC8_dMihUexkE1HDvCs9U0MK1x1LMI-lAq1_VVQci0w5k7hNwiDoVUSNW00)
+
+* UI Access via nginx proxy
+* henkilo-ui requests proxied to local webpack dev server (with hot reload support!)
+* All other (+ some henkilo-ui) requests proxied to selected developement environment (see [nginx.conf](nginx.conf)) 
 
 ### Setup
 
 Components are run in following ports
-* spring-boot: 8081
 * nginx: 8080
 * webpack: 3000
 
 ## Steps
 
-1. Compile application `mvn clean install`
-2. Run spring boot application with minimal configuration `java -Dspring.profiles.active=dev -jar target/henkiloui-0.0.1-SNAPSHOT.jar`
-3. Start local nginx with `cd nginx && docker-compose up`
-4. Start webpack-dev-server `cd src/main/static && npm start`
-5. Access nginx proxy to login http://localhost:8080
-6. Now one should be able to use webpack-dev-server http://localhost:3000
+1. Start webpack-dev-server `cd src/main/static && npm start`
+2. Start local nginx with `cd nginx && docker-compose up`
+3. Access CAS via nginx proxy to login http://localhost:8080/cas
+4. Navigate either via menu or directly to http://localhost:8080/henkilo-ui
 
 ## Troubleshooting
 
@@ -50,16 +47,9 @@ Components are run in following ports
 Nginx needs to access services in host machine. Some platforms (mac, win) has made this easy by adding
 virtual domain name *host.docker.internal* which resolves to host address.
 
-*host.docker.internal* can be replaced by IP address of the host or by some other clever trick. 
+*host.docker.internal* can be replaced by IP address of the host or by some other clever trick.
 
-### Cannot access API
+### I want to connect to different development environment
 
-Login flow is quite delicate and may break easily. Usually one may have multiple overlapping `JSESSIONID` cookies. 
-1. Breath.
-2. Close all tabs having UI open. 
-3. Open http://localhost:8080 
-4. Open Application tab in devtools and delete all cookies 
-5. Reload 
-6. Login
-7. Rock'n roll
- 
+Go through [nginx.conf](nginx.conf) and replace all references to development environment with the desired one.
+Delete cookies. Try again.
