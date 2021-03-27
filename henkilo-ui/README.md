@@ -46,13 +46,14 @@ JAR:  `java -jar target/henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=de
 Ui löytyy osoitteesta http://localhost:8280/henkilo-ui/
 
 ## Frontend
+
 Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyttää webpack-dev-server:iä seuraavasti:
 
 `npm install`
 
-`npm run flow-install`
-
 `npm start`
+
+Mikäli kehityksesssä tarvitsee tehdä kutsuja taustajärjestelmiin, sen pitäisi onnistua helposti [näillä ohjeilla](nginx): 
 
 
 ### Flowjs

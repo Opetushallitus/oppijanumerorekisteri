@@ -52,4 +52,4 @@ virtual domain name *host.docker.internal* which resolves to host address.
 ### I want to connect to different development environment
 
 Go through [nginx.conf](nginx.conf) and replace all references to development environment with the desired one.
-Delete cookies. Try again.
+Restart nginx. Delete cookies. Try again.
