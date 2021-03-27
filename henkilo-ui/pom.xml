@@ -5,7 +5,7 @@
 
     <groupId>fi.vm.sade.henkiloui</groupId>
     <artifactId>henkiloui</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>henkilo-ui</name>
@@ -21,7 +21,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+
+        <maven.compiler.release>11</maven.compiler.release>
+
         <springfox.version>2.7.0</springfox.version>
         <frontend-plugin.version>1.6</frontend-plugin.version>
         <nodejs.version>v14.15.1</nodejs.version>

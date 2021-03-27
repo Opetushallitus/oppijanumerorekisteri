@@ -109,9 +109,9 @@ const urlConfig = {
     'koodisto-service.koodisto.oppilaitostyypit': 'koodisto-service/rest/codeelement/codes/oppilaitostyyppi/1',
     'koodisto-service.koodisto.organisaatiotyypit': 'koodisto-service/rest/codeelement/codes/organisaatiotyyppi/3',
 
-    'shibboleth.baseUrl': '/',
-    'shibboleth.identification': 'shibbolethVirkailija/virkailija$1',
-    'shibboleth.kayttooikeus-service.cas.tunnistus': 'kayttooikeus-service/cas/tunnistus',
+    'cas-oppija.baseUrl': '/',
+    'cas-oppija.identification': 'cas-oppija/login',
+    'cas-oppija.kayttooikeus-service.cas.tunnistus': 'kayttooikeus-service/cas/tunnistus',
 
     'virkailija-raamit.baseUrl': '/',
     'virkailija-raamit.raamit.js': 'virkailija-raamit/apply-raamit.js',
