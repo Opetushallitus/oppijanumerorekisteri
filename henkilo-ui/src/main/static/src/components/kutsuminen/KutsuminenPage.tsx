@@ -4,7 +4,7 @@ import React from 'react';
 import KutsuOrganisaatios from './KutsuOrganisaatios';
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
-import { kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
+import { kutsuClearOrganisaatios, kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
 import KutsuConfirmation from './KutsuConfirmation';
 import Loader from '../common/icons/Loader';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -25,6 +25,7 @@ type OwnProps = {
 };
 
 type Props = OwnProps & {
+    kutsuClearOrganisaatios: () => void;
     fetchOmattiedotOrganisaatios: () => void;
     fetchAllRyhmas: () => void;
     L: Localisations;
@@ -95,6 +96,7 @@ class KutsuminenPage extends React.Component<Props, State> {
     }
 
     async componentDidMount() {
+        this.props.kutsuClearOrganisaatios();
         this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllRyhmas();
         await this.fetchKayttaja(this.props.kayttajaOid);
@@ -250,6 +252,7 @@ const mapStateToProps = (state, ownProps) => {
 
 export default connect<Props, OwnProps>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
+    kutsuClearOrganisaatios,
     kutsuAddOrganisaatio,
     fetchHenkilo,
     fetchAllRyhmas,

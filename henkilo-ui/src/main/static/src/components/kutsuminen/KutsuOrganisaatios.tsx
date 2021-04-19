@@ -33,6 +33,7 @@ export default class KutsuOrganisaatios extends React.Component<Props> {
     addEmptyOrganization(e: React.SyntheticEvent<HTMLButtonElement>) {
         e.preventDefault();
         this.props.addOrganisaatio({
+            key: moment.now(),
             oid: '',
             organisation: { oid: '' },
             voimassaLoppuPvm: moment().add(1, 'years').format(PropertySingleton.state.PVM_DBFORMAATTI),

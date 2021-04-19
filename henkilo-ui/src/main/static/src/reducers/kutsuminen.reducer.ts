@@ -38,7 +38,8 @@ export const kutsuminenOrganisaatios = (
             };
             return newOrganisaatios;
         case KUTSU_REMOVE_ORGANISAATIO:
-            return reject((organisaatio) => organisaatio.oid === action.organisaatioOid, newOrganisaatios);
+            newOrganisaatios.splice(action.index, 1);
+            return [...newOrganisaatios];
         case KUTSU_CLEAR_ORGANISAATIOS:
             return [];
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST:

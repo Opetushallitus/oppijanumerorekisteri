@@ -12,8 +12,7 @@ export const kutsuSetOrganisaatio = (index, organisaatio) => (dispatch) =>
     dispatch({ type: KUTSU_SET_ORGANISAATIO, index, organisaatio });
 export const kutsuAddOrganisaatio = (organisaatio) => (dispatch) =>
     dispatch({ type: KUTSU_ADD_ORGANISAATIO, organisaatio });
-export const kutsuRemoveOrganisaatio = (organisaatioOid) => (dispatch) =>
-    dispatch({ type: KUTSU_REMOVE_ORGANISAATIO, organisaatioOid });
+export const kutsuRemoveOrganisaatio = (index) => (dispatch) => dispatch({ type: KUTSU_REMOVE_ORGANISAATIO, index });
 export const kutsuClearOrganisaatios = () => (dispatch) => dispatch({ type: KUTSU_CLEAR_ORGANISAATIOS });
 
 export const addOrganisaatioPermission = (organisaatioOid, permission) => (dispatch) =>

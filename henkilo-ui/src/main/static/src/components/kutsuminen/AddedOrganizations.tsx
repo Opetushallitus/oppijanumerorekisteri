@@ -10,7 +10,12 @@ type Props = {
 export const AddedOrganizations = (props: Props) => (
     <div>
         {props.addedOrgs.map((organization, index) => (
-            <AddedOrganization key={index} index={index} addedOrgs={props.addedOrgs} addedOrg={organization} />
+            <AddedOrganization
+                key={organization.key}
+                index={index}
+                addedOrgs={props.addedOrgs}
+                addedOrg={organization}
+            />
         ))}
     </div>
 );
