@@ -6,6 +6,7 @@ export type OrganisaatioHenkilo = {
 };
 
 export type KutsuOrganisaatio = {
+    key?: number;
     oid: string;
     organisation: { oid: string };
     voimassaLoppuPvm: string | null | undefined;
