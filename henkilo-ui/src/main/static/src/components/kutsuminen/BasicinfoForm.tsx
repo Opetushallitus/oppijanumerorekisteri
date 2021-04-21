@@ -75,6 +75,7 @@ export default class BasicInfo extends React.Component<Props> {
                         <label>{this.props.L['VIRKAILIJAN_TIEDOT_SAATE']}</label>
                         <textarea
                             className="oph-input"
+                            value={basicInfo.saate}
                             style={{ marginTop: '10px' }}
                             placeholder="Valinnainen saate"
                             onChange={this.updateSaate.bind(this)}

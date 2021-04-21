@@ -17,7 +17,7 @@ type Props = {
     modalCloseFn: (arg0: React.SyntheticEvent<HTMLElement>) => void;
     modalOpen: boolean;
     basicInfo: KutsuBasicInfo;
-    clearBasicInfo: () => void;
+    resetFormValues: () => void;
     locale: string;
     l10n: L10n;
 };
@@ -81,6 +81,7 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
     }
 
     onClose(e: React.SyntheticEvent<HTMLElement>) {
+        this.props.resetFormValues();
         this.props.modalCloseFn(e);
         this.setState({ sent: false });
     }

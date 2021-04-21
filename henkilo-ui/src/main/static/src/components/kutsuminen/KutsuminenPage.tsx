@@ -121,7 +121,7 @@ class KutsuminenPage extends React.Component<Props, State> {
             modalCloseFn: this.closeConfirmationModal.bind(this),
             modalOpen: this.state.confirmationModalOpen,
             basicInfo: this.state.basicInfo,
-            clearBasicInfo: this.clearBasicInfo.bind(this),
+            resetFormValues: this.resetFormValues.bind(this),
         };
         const { basicInfo } = this.state;
 
@@ -217,6 +217,11 @@ class KutsuminenPage extends React.Component<Props, State> {
 
     clearBasicInfo() {
         this.setBasicInfo({ ...this.initialBasicInfo });
+    }
+
+    resetFormValues() {
+        this.clearBasicInfo();
+        this.props.kutsuClearOrganisaatios();
     }
 
     openConfirmationModal(e: Event) {
