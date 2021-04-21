@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.aspects;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -107,6 +108,14 @@ public class AuditlogAspect {
     private Object logDisableYksilointi(ProceedingJoinPoint proceedingJoinPoint, String henkiloOid, String palvelutunniste) throws Throwable {
         Object result = proceedingJoinPoint.proceed();
         auditlogAspectHelper.logDisableYksilointi(henkiloOid, palvelutunniste, result);
+        return result;
+    }
+
+    @Around(value = "execution(public * fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService.create(fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto))" +
+                    "&& args(dto)", argNames = "proceedingJoinPoint, dto")
+    private Object logSaveTuonti(ProceedingJoinPoint proceedingJoinPoint, OppijaTuontiCreateDto dto) throws Throwable {
+        Object result = proceedingJoinPoint.proceed();
+        auditlogAspectHelper.logCreateTuonti(dto);
         return result;
     }
 }
