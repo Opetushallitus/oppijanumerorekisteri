@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -42,15 +43,18 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
             {!isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')} />}
             {!isNoAuthenticationPage && (
                 <ul className="tabs">
-                    {/*eslint-disable no-script-url*/}
-                    {route.backButton ? ( // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                    {route.backButton ? (
                         <li>
-                            <a href="# " onClick={() => window.history.go(-1)}>
+                            <a
+                                onClick={() => {
+                                    window.history.go(-1);
+                                    return false;
+                                }}
+                            >
                                 &#8701; {L['TAKAISIN_LINKKI']} <PlaceholderIcon />
                             </a>
                         </li>
                     ) : null}
-                    {/*eslint-enable no-script-url*/}
                     {naviTabs &&
                         naviTabs.length > 0 &&
                         naviTabs
