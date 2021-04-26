@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.models;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,6 +48,9 @@ public class Tuonti extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija_oid")
     private String kasittelijaOid;
 
+    @Column(name = "aikaleima", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date aikaleima;
     /*
      * Yksilöintipuutteisiin liittyvä ilmoitustarve käsitelty
      */

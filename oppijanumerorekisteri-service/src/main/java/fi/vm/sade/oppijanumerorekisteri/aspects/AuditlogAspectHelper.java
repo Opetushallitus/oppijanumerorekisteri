@@ -7,6 +7,7 @@ import fi.vm.sade.auditlog.Target;
 import fi.vm.sade.oppijanumerorekisteri.audit.*;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.IdentificationDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -121,6 +122,14 @@ public class AuditlogAspectHelper {
                 .build();
         virkailijaLogger.log(OnrOperation.TUNNISTUSTIETOJEN_PAIVITYS, target, new Changes.Builder().build());
         virkailijaLogger.log(OnrOperation.YKSILOINTITIETOJEN_PAIVITYS, target, new Changes.Builder().build());
+    }
+
+
+    void logCreateTuonti(OppijaTuontiCreateDto dto) {
+        Target target = new Target.Builder()
+                .setField(AuditMessageFields.LISATIETO, "Oppijatuonti luotu.")
+                .setField(AuditMessageFields.TUNNISTETIETO, dto.getSahkoposti()).build();
+        virkailijaLogger.log(OnrOperation.OPPIJOIDEN_TUONTI, target, new Changes.Builder().build());
     }
 
     private String getJson(Object object) {
