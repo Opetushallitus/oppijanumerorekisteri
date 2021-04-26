@@ -1,5 +1,6 @@
 import './RekisteroidyPage.css';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import RekisteroidyPerustiedot from './content/RekisteroidyPerustiedot';
 import RekisteroidyOrganisaatiot from './content/RekisteroidyOrganisaatiot';
 import StaticUtils from '../common/StaticUtils';
@@ -41,6 +42,7 @@ type Henkilo = {
 type State = {
     henkilo: Henkilo;
     isValid: boolean;
+    privacyPolicySeen: boolean;
 };
 
 class RekisteroidyPage extends React.Component<Props, State> {
@@ -71,6 +73,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
                 passwordAgain: '',
             },
             isValid: false,
+            privacyPolicySeen: false,
         };
     }
 
@@ -80,12 +83,9 @@ class RekisteroidyPage extends React.Component<Props, State> {
         }
     }
 
-    render() {
+    showForm() {
         return (
-            <div className="borderless-colored-wrapper rekisteroidy-page" style={{ marginTop: '50px' }}>
-                <div className="header-borderless">
-                    <p className="oph-h2 oph-bold">{this.props.L['REKISTEROIDY_OTSIKKO']}</p>
-                </div>
+            <div>
                 <div className="wrapper">
                     <RekisteroidyOrganisaatiot
                         organisaatiot={this.props.kutsu.organisaatiot}
@@ -125,6 +125,33 @@ class RekisteroidyPage extends React.Component<Props, State> {
                         />
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    showPrivacyPolicy() {
+        return (
+            <div className="wrapper">
+                <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
+                    <ReactMarkdown linkTarget="_blank">{this.props.L['REKISTEROIDY_PRIVACY_POLICY']}</ReactMarkdown>
+                </div>
+                <BottomNotificationButton
+                    action={() => this.setState({ privacyPolicySeen: true })}
+                    id="rekisteroidyPage"
+                >
+                    {this.props.L['REKISTEROIDY_ACCEPT_PRIVACY_POLICY']}
+                </BottomNotificationButton>
+            </div>
+        );
+    }
+
+    render() {
+        return (
+            <div className="borderless-colored-wrapper rekisteroidy-page" style={{ marginTop: '50px' }}>
+                <div className="header-borderless">
+                    <p className="oph-h2 oph-bold">{this.props.L['REKISTEROIDY_OTSIKKO']}</p>
+                </div>
+                {this.state.privacyPolicySeen ? this.showForm() : this.showPrivacyPolicy()}
             </div>
         );
     }

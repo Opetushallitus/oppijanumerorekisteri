@@ -5,7 +5,7 @@ import CSS from 'csstype';
 type Props = {
     id: string;
     action: (foo?: any) => any; // TODO: ???
-    disabled: boolean;
+    disabled?: boolean;
 };
 
 type State = {
