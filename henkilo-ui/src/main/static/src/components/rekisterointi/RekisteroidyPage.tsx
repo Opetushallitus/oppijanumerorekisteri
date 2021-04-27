@@ -133,7 +133,9 @@ class RekisteroidyPage extends React.Component<Props, State> {
         return (
             <div className="wrapper">
                 <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
-                    <ReactMarkdown linkTarget="_blank">{this.props.L['REKISTEROIDY_PRIVACY_POLICY']}</ReactMarkdown>
+                    <ReactMarkdown linkTarget="_blank" className="privacy-policy">
+                        {this.props.L['REKISTEROIDY_PRIVACY_POLICY']}
+                    </ReactMarkdown>
                 </div>
                 <BottomNotificationButton
                     action={() => this.setState({ privacyPolicySeen: true })}
