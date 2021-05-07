@@ -23,8 +23,8 @@ class StaticUtils {
             value = event.value;
             fieldpath = event.optionsName;
         } else {
-            value = event.currentTarget.value;
-            fieldpath = event.currentTarget.name;
+            value = (event.currentTarget || (event.target as HTMLInputElement)).value;
+            fieldpath = (event.currentTarget || (event.target as HTMLInputElement)).name;
         }
 
         let schema = obj; // a moving reference to internal objects within obj
