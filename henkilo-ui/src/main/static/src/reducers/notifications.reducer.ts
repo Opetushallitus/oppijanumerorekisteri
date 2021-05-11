@@ -9,7 +9,16 @@ import {
     CREATE_HENKILOBYTOKEN_FAILURE,
 } from '../actions/actiontypes';
 
-const rekisteroidyErrors = {
+type ErrorMessage = {
+    notL10nMessage: string;
+    notL10nText: string;
+};
+
+const rekisteroidyErrors: Record<string, ErrorMessage> = {
+    NotFoundException: {
+        notL10nMessage: '',
+        notL10nText: 'REKISTEROIDY_TEMP_TOKEN_INVALID',
+    },
     UsernameAlreadyExistsException: {
         notL10nMessage: 'REKISTEROIDY_USERNAMEEXISTS_OTSIKKO',
         notL10nText: 'REKISTEROIDY_USERNAMEEXISTS_TEKSTI',
@@ -23,6 +32,12 @@ const rekisteroidyErrors = {
         notL10nText: 'REKISTEROIDY_ILLEGALARGUMENT_TEKSTI',
     },
 };
+
+export const mapErrorTypeToErrorMessage = (errorType: string): ErrorMessage =>
+    rekisteroidyErrors[errorType] || {
+        notL10nMessage: '',
+        notL10nText: 'KUTSU_LUONTI_EPAONNISTUI_TUNTEMATON_VIRHE',
+    };
 
 const createButtonNotification = (type, buttonNotification) => ({
     type: type,
@@ -101,14 +116,14 @@ export const notifications = (
                 ],
             };
         case CREATE_HENKILOBYTOKEN_FAILURE:
-            const error = rekisteroidyErrors[action.error.errorType];
+            const errorMessage = mapErrorTypeToErrorMessage(action.error.errorType);
             return {
                 ...state,
                 buttonNotifications: [
                     ...state.buttonNotifications,
                     createButtonNotification('error', {
-                        notL10nMessage: error.notL10nMessage,
-                        notL10nText: error.notL10nText,
+                        notL10nMessage: errorMessage.notL10nMessage,
+                        notL10nText: errorMessage.notL10nText,
                         position: 'rekisteroidyPage',
                         errorType: action.error.errorType,
                     }),
