@@ -494,7 +494,10 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 "ORDER BY nimetsimilarity DESC \n",
                 Henkilo.DUPLICATE_RESULT_MAPPING)
                 .setParameter("nimet", getAllNames(criteria));
+        long currentTimeMsBefore = System.currentTimeMillis();
         List<Object[]> results = henkiloTypedQuery.getResultList();
+        long durationMs = System.currentTimeMillis() - currentTimeMsBefore;
+        logger.info("Query time for findDuplikaatit: {} milliseconds", durationMs);
         return results.stream().filter(result -> {
             float similarity = (float) result[1];
             Henkilo henkilo = (Henkilo) result[0];
