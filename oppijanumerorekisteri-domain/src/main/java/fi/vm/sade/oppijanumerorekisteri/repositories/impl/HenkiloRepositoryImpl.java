@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.toList;
 public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
     static final float DUPLICATE_QUERY_SIMILARITY_THRESHOLD = 0.5f;
+    static final int DUPLICATE_QUERY_LIMIT = 200;
 
     private final EntityManager entityManager;
 
@@ -492,7 +493,8 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
                 "ORDER BY (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) <-> :nimet ASC, " +
-                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0000-01-01') - COALESCE(h1.syntymaaika, '0000-01-01'))) ASC",
+                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0000-01-01') - COALESCE(h1.syntymaaika, '0000-01-01'))) ASC " +
+                "LIMIT " + DUPLICATE_QUERY_LIMIT,
                 Henkilo.DUPLICATE_RESULT_MAPPING)
                 .setParameter("nimet", getAllNames(criteria))
                 .setParameter("syntymaaika", criteria.getSyntymaaika());
