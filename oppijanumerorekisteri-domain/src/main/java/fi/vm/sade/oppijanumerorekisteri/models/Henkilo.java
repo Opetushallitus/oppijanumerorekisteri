@@ -37,7 +37,7 @@ import static java.util.Arrays.asList;
 @SqlResultSetMapping(
         name = Henkilo.DUPLICATE_RESULT_MAPPING,
         entities = @EntityResult(entityClass = Henkilo.class),
-        columns = @ColumnResult(name = "nimetsimilarity", type = float.class)
+        columns = @ColumnResult(name = "syntymavuosidiff", type = Integer.class)
 )
 // nullable = false => in database, @Notnull => only in model
 public class Henkilo extends IdentifiableAndVersionedEntity {

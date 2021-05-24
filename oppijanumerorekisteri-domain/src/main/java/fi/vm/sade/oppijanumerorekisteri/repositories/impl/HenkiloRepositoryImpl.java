@@ -45,8 +45,7 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
-    static final float DUPLICATE_QUERY_CONSIDER_THRESHOLD = 0.4f;
-    static final float DUPLICATE_QUERY_ACCEPT_THRESHOLD = 0.6f;
+    static final float DUPLICATE_QUERY_SIMILARITY_THRESHOLD = 0.5f;
 
     private final EntityManager entityManager;
 
@@ -483,27 +482,25 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @SuppressWarnings("unchecked")
     @Override
     public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
-        this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_CONSIDER_THRESHOLD)
+        this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_SIMILARITY_THRESHOLD)
                 .executeUpdate();
         Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT " +
-                "h1.*, similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) AS nimetsimilarity \n" +
+                "h1.*, " +
+                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0000-01-01') - COALESCE(h1.syntymaaika, '0000-01-01'))) AS syntymavuosidiff " +
                 "FROM henkilo AS h1 \n" +
                 "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
-                "ORDER BY nimetsimilarity DESC \n",
+                "ORDER BY (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) <-> :nimet ASC, " +
+                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0000-01-01') - COALESCE(h1.syntymaaika, '0000-01-01'))) ASC",
                 Henkilo.DUPLICATE_RESULT_MAPPING)
-                .setParameter("nimet", getAllNames(criteria));
+                .setParameter("nimet", getAllNames(criteria))
+                .setParameter("syntymaaika", criteria.getSyntymaaika());
         long currentTimeMsBefore = System.currentTimeMillis();
         List<Object[]> results = henkiloTypedQuery.getResultList();
         long durationMs = System.currentTimeMillis() - currentTimeMsBefore;
         logger.info("Query time for findDuplikaatit: {} milliseconds", durationMs);
-        return results.stream().filter(result -> {
-            float similarity = (float) result[1];
-            Henkilo henkilo = (Henkilo) result[0];
-            return similarity >= DUPLICATE_QUERY_ACCEPT_THRESHOLD
-                    || (criteria.getSyntymaaika() != null && criteria.getSyntymaaika().equals(henkilo.getSyntymaaika()));
-        }).map(result -> (Henkilo) result[0]).collect(toList());
+        return results.stream().map(result -> (Henkilo) result[0]).collect(toList());
     }
 
     private String getAllNames(HenkiloDuplikaattiCriteria criteria) {
