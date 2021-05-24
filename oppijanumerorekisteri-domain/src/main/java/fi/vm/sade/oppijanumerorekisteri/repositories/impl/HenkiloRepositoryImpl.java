@@ -487,13 +487,13 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .executeUpdate();
         Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT " +
                 "h1.*, " +
-                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0000-01-01') - COALESCE(h1.syntymaaika, '0000-01-01'))) AS syntymavuosidiff " +
+                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0001-01-01') - COALESCE(h1.syntymaaika, '0001-01-01'))) AS syntymavuosidiff " +
                 "FROM henkilo AS h1 \n" +
                 "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
                 "  AND h1.passivoitu = FALSE \n" +
                 "  AND h1.duplicate = FALSE \n" +
                 "ORDER BY (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) <-> :nimet ASC, " +
-                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0000-01-01') - COALESCE(h1.syntymaaika, '0000-01-01'))) ASC " +
+                "ABS(EXTRACT(year from COALESCE(:syntymaaika, '0001-01-01') - COALESCE(h1.syntymaaika, '0001-01-01'))) ASC " +
                 "LIMIT " + DUPLICATE_QUERY_LIMIT,
                 Henkilo.DUPLICATE_RESULT_MAPPING)
                 .setParameter("nimet", getAllNames(criteria))
