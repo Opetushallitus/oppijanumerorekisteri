@@ -254,6 +254,11 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     public Henkilo update(Henkilo henkilo) {
         setSyntymaaikaAndSukupuoliFromHetu(henkilo);
 
+        // varmistetaan että tyhjä hetu tallentuu nullina
+        if (StringUtils.isEmpty(henkilo.getHetu())) {
+            henkilo.setHetu(null);
+        }
+
         Date nyt = new Date();
         Optional<String> kayttajaOid = userDetailsHelper.findCurrentUserOid();
 
@@ -468,5 +473,4 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
             henkilo.setSukupuoli(HetuUtils.sukupuoliFromHetu(henkilo.getHetu()));
         }
     }
-
 }

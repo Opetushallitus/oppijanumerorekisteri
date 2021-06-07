@@ -202,6 +202,24 @@ public class HenkiloModificationServiceImplTest {
     }
 
     @Test
+    public void updateHenkiloShouldNullifyEmptyHetu() {
+        when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
+                .thenReturn(Lists.newArrayList(new Henkilo()));
+        when(henkiloDataRepositoryMock.save(any(Henkilo.class)))
+                .thenAnswer(returnsFirstArg());
+        HenkiloUpdateDto input = new HenkiloUpdateDto();
+
+        input.setHetu("");
+        HenkiloUpdateDto output = service.updateHenkilo(input);
+
+        assertThat(output.getHetu()).isEqualTo(null);
+        ArgumentCaptor<Henkilo> argumentCaptor = ArgumentCaptor.forClass(Henkilo.class);
+        verify(henkiloDataRepositoryMock).save(argumentCaptor.capture());
+        Henkilo saved = argumentCaptor.getValue();
+        assertThat(saved.getHetu()).isEqualTo(null);
+    }
+
+    @Test
     public void updateHenkiloShouldSaveSyntymaaika() {
         when(henkiloDataRepositoryMock.findByOidHenkiloIsIn(any()))
                 .thenReturn(Lists.newArrayList(new Henkilo()));
