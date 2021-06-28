@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.toList;
 @Repository
 public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
-    static final float DUPLICATE_QUERY_SIMILARITY_THRESHOLD = 0.5f;
+    static final float DUPLICATE_QUERY_SIMILARITY_THRESHOLD = 0.4f;
 
     private final EntityManager entityManager;
 
