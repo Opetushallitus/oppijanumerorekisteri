@@ -74,12 +74,13 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-
         this.initialKayttooikeusModel = () => ({
             kayttokohdeOrganisationOid: '',
             myonnettavatOikeudet: [],
             alkupvm: moment(),
-            loppupvm: moment().add(this.props.vuosia, 'years'),
+            loppupvm: this.props.isPalvelukayttaja
+                ? moment('2099-12-31', 'YYYY-MM-DD')
+                : moment().add(this.props.vuosia, 'years'),
         });
         this.initialState = {
             selectedList: [],
@@ -200,6 +201,17 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
         };
 
         this.state = this.initialState;
+    }
+
+    // We dont knwon whether we are operating on PALVELU user during component initialization, thus the hack
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.isPalvelukayttaja !== this.props.isPalvelukayttaja) {
+            this.setState((state) => ({
+                ...state,
+                kayttooikeusModel: this.initialKayttooikeusModel(),
+            }));
+            this.initialState.kayttooikeusModel = this.initialKayttooikeusModel();
+        }
     }
 
     render() {
