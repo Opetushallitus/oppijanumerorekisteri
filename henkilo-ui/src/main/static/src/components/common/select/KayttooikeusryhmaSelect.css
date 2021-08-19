@@ -38,3 +38,13 @@
     position: absolute;
     bottom: 0;
 }
+
+.KayttooikeusryhmaSelect .valinta div {
+    margin-bottom: 2rem;
+    max-height: 75vh;
+    overflow-y: scroll;
+}
+
+.KayttooikeusryhmaSelect .valinta div div {
+    overflow: visible;
+}

@@ -53,7 +53,7 @@
         "nginx": "docker-compose -f ../../../nginx/docker-compose.yml up",
         "start": "BROWSER=none react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test --env=jsdom",
+        "test": "react-scripts test --env=jsdom --coverage --watchAll=false",
         "lint": "eslint --ext .ts,.tsx src",
         "lint:fix": "eslint --ext .ts,.tsx src --fix",
         "prettier": "prettier --check 'src/**/*{ts,tsx}'",
@@ -67,5 +67,11 @@
         "> 1%",
         "maintained node versions",
         "not dead"
-    ]
+    ],
+    "jest": {
+        "coverageReporters": [
+            "text-summary",
+            "html"
+        ]
+    }
 }
