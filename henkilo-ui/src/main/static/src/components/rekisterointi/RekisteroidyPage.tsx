@@ -131,7 +131,7 @@ class RekisteroidyPage extends React.Component<Props, State> {
 
     showPrivacyPolicy() {
         return (
-            <div className="wrapper">
+            <div className="wrapper notranslate">
                 <div className="rekisteroidy-organisaatiot-wrapper" style={{ marginBottom: '2em' }}>
                     <ReactMarkdown linkTarget="_blank" className="privacy-policy">
                         {this.props.L['REKISTEROIDY_PRIVACY_POLICY']}
