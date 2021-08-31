@@ -320,7 +320,7 @@ public class HenkiloServiceImpl implements HenkiloService {
     @Transactional(readOnly = true)
     public HenkiloReadDto getByHetu(String hetu) {
         Henkilo henkilo = findByHetu(hetu)
-                .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + hetu));
+                .orElseThrow(() -> new NotFoundException("Henkilöä ei löytynyt henkilötunnuksella " + YksilointiServiceImpl.sensuroiHetu(hetu)));
         return mapper.map(henkilo, HenkiloReadDto.class);
     }
 
