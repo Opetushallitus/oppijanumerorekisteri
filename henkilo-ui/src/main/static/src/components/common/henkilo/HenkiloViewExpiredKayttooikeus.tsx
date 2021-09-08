@@ -21,6 +21,11 @@ import {
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
+import AccessRightDetails, {
+    Props as AccessRight,
+    resolveLocalizedText,
+    AccessRightDetaisLinkColumn,
+} from './AccessRightDetails';
 
 type OwnProps = {
     l10n: L10n;
@@ -49,6 +54,7 @@ type State = {
     emailSelection: Array<EmailOption>;
     missingEmail: boolean;
     showMissingEmailNotification: boolean;
+    accessRight: AccessRight | null;
 };
 
 class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
@@ -63,7 +69,15 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
 
         const headingList = [
             { key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO' },
-            { key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS' },
+            {
+                key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
+                Cell: (cellProps) => (
+                    <AccessRightDetaisLinkColumn
+                        cellProps={cellProps}
+                        clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
+                    />
+                ),
+            },
             { key: 'HENKILO_KAYTTOOIKEUS_TILA' },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
@@ -94,6 +108,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
                 this._filterExistingKayttooikeus,
                 this.props.kayttooikeus.kayttooikeus
             ),
+            accessRight: null,
         };
     }
 
@@ -111,6 +126,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
         this._rows = this.props.kayttooikeus.kayttooikeus
             .filter(this._filterExistingKayttooikeus)
             .map((vanhentunutKayttooikeus: MyonnettyKayttooikeusryhma, idx: number) => ({
+                accessRightGroup: vanhentunutKayttooikeus,
                 [headingList[0]]: toLocalizedText(
                     this.props.locale,
                     (
@@ -139,10 +155,23 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             }));
     }
 
+    showAccessRightGroupDetails(accessRightGroup) {
+        const accessRight: AccessRight = {
+            name: resolveLocalizedText(accessRightGroup.ryhmaNames.texts, this.props.locale),
+            description: resolveLocalizedText(
+                [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...accessRightGroup.ryhmaNames.texts],
+                this.props.locale
+            ),
+            onClose: () => this.setState({ ...this.state, accessRight: null }),
+        };
+        this.setState({ ...this.state, accessRight });
+    }
+
     render() {
         this.createRows(this.tableHeadings.map((heading) => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
+                {this.state.accessRight && <AccessRightDetails {...this.state.accessRight} />}
                 <div>
                     <div className="header">
                         <p className="oph-h2 oph-bold">{this.L['HENKILO_VANHAT_KAYTTOOIKEUDET_OTSIKKO']}</p>

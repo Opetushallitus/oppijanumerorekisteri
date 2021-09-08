@@ -20,10 +20,15 @@ import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/k
 import * as R from 'ramda';
 import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
 import './HenkiloViewOpenKayttooikeusanomus.css';
-import { TableHeading } from '../../../types/react-table.types';
+import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
+import AccessRightDetails, {
+    Props as AccessRight,
+    resolveLocalizedText,
+    AccessRightDetaisLinkColumn,
+} from './AccessRightDetails';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: any;
@@ -47,6 +52,7 @@ type State = {
     disabledMyonnettyButtons: {
         [key: number]: boolean;
     };
+    accessRight: AccessRight | null;
 };
 
 type Props = {
@@ -102,6 +108,12 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 key: 'HENKILO_KAYTTOOIKEUSANOMUS_ANOTTU_RYHMA',
                 minWidth: 220,
                 notSortable: this.props.isAnomusView,
+                Cell: (cellProps: TableCellProps & { original: any }) => (
+                    <AccessRightDetaisLinkColumn
+                        cellProps={cellProps}
+                        clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
+                    />
+                ),
             },
             {
                 key: 'HENKILO_KAYTTOOIKEUSANOMUS_PERUSTELU',
@@ -148,6 +160,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             showHylkaysPopup: false,
             disabledHylkaaButtons: {},
             disabledMyonnettyButtons: {},
+            accessRight: null,
         };
     }
 
@@ -176,6 +189,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         const headingList = this.headingList.map((heading) => heading.key);
         this._rows = this._getKayttooikeusAnomukset(this.props).map(
             (haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) => ({
+                accessRightGroup: haettuKayttooikeusRyhma.kayttoOikeusRyhma,
                 [headingList[0]]: moment(haettuKayttooikeusRyhma.anomus.anottuPvm),
                 [headingList[1]]:
                     haettuKayttooikeusRyhma.anomus.henkilo.etunimet +
@@ -459,10 +473,23 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         return R.find(R.propEq('anojaOid', anojaOid))(this.state.kayttooikeusRyhmatByAnoja);
     };
 
+    showAccessRightGroupDetails(accessRightGroup) {
+        const accessRight: AccessRight = {
+            name: resolveLocalizedText(accessRightGroup.nimi.texts, this.props.locale),
+            description: resolveLocalizedText(
+                [...(accessRightGroup.kuvaus?.texts || []), ...accessRightGroup.nimi.texts],
+                this.props.locale
+            ),
+            onClose: () => this.setState({ ...this.state, accessRight: null }),
+        };
+        this.setState({ ...this.state, accessRight });
+    }
+
     render() {
         this.createRows();
         return (
             <div className="henkiloViewUserContentWrapper">
+                {this.state.accessRight && <AccessRightDetails {...this.state.accessRight} />}
                 <div>
                     {!this.props.piilotaOtsikko && (
                         <div className="header">

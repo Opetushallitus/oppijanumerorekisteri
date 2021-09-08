@@ -19,7 +19,7 @@ import {
 } from '../../../actions/kayttooikeusryhma.actions';
 import { Localisations, L10n } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
-import { TableHeading } from '../../../types/react-table.types';
+import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { createKayttooikeusanomus } from '../../../actions/kayttooikeusryhma.actions';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
@@ -30,6 +30,11 @@ import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
+import AccessRightDetails, {
+    Props as AccessRight,
+    resolveLocalizedText,
+    AccessRightDetaisLinkColumn,
+} from './AccessRightDetails';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -67,6 +72,7 @@ type Props = OwnProps & {
         kayttooikeusRyhmaIds: Array<number>;
         anojaOid: string;
     }) => void;
+    ryhmas: any;
 };
 type EmailOption = {
     value: string | null | undefined;
@@ -78,6 +84,7 @@ type State = {
     emailOptions: Array<EmailOption>;
     showMissingEmailNotification: boolean;
     missingEmail: boolean;
+    accessRight: AccessRight | null;
 };
 
 class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
@@ -94,7 +101,16 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         this.L = this.props.l10n[this.props.locale];
         this.headingList = [
             { key: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA', minWidth: 200 },
-            { key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS', minWidth: 150 },
+            {
+                key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
+                minWidth: 150,
+                Cell: (cellProps: TableCellProps & { original: any }) => (
+                    <AccessRightDetaisLinkColumn
+                        cellProps={cellProps}
+                        clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
+                    />
+                ),
+            },
             {
                 key: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
                 Cell: (cellProps) => cellProps.value.format(),
@@ -154,6 +170,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                 this._filterExpiredKayttooikeus,
                 this.props.kayttooikeus.kayttooikeus
             ),
+            accessRight: null,
         };
     }
 
@@ -183,6 +200,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                     this.props.organisaatioCache[uusittavaKayttooikeusRyhma.organisaatioOid] ||
                     StaticUtils.defaultOrganisaatio(uusittavaKayttooikeusRyhma.organisaatioOid, this.props.l10n);
                 return {
+                    accessRightGroup: uusittavaKayttooikeusRyhma,
                     [headingList[0]]:
                         toLocalizedText(this.props.locale, organisaatio.nimi) +
                         ' ' +
@@ -341,10 +359,23 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
         );
     }
 
+    showAccessRightGroupDetails(accessRightGroup) {
+        const accessRight: AccessRight = {
+            name: resolveLocalizedText(accessRightGroup.ryhmaNames.texts, this.props.locale),
+            description: resolveLocalizedText(
+                [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...accessRightGroup.ryhmaNames.texts],
+                this.props.locale
+            ),
+            onClose: () => this.setState({ ...this.state, accessRight: null }),
+        };
+        this.setState({ ...this.state, accessRight });
+    }
+
     render() {
         this.createRows(this.headingList.map((heading) => heading.key));
         return (
             <div className="henkiloViewUserContentWrapper">
+                {this.state.accessRight && <AccessRightDetails {...this.state.accessRight} />}
                 <div className="header">
                     <p className="oph-h2 oph-bold">{this.L['HENKILO_OLEVAT_KAYTTOOIKEUDET_OTSIKKO']}</p>
                 </div>
