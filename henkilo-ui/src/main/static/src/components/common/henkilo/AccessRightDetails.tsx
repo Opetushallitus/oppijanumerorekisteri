@@ -26,12 +26,13 @@ export const AccessRightDetaisLinkColumn = ({
     cellProps: TableCellProps & { original: any };
     clickHandler: (accessRightGroup: any) => void;
 }) => (
-    <span
-        style={{ cursor: 'help', textDecorationLine: 'underline' }}
+    <button
+        className="oph-button oph-button-ghost"
         onClick={() => clickHandler(cellProps.original.accessRightGroup)}
+        style={{ cursor: 'help', textAlign: 'left' }}
     >
         {cellProps.value}
-    </span>
+    </button>
 );
 
 const AccessRightDetails = ({ name, description, onClose }: Props) => (
