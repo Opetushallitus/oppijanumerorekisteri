@@ -36,7 +36,7 @@ export const AccessRightDetaisLinkColumn = ({
 );
 
 const AccessRightDetails = ({ name, description, onClose }: Props) => (
-    <OphModal title={name} onClose={() => onClose()}>
+    <OphModal title={name} onClose={onClose} onOverlayClick={onClose}>
         <div className="accessRightDescription">{description}</div>
     </OphModal>
 );

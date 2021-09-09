@@ -6,6 +6,7 @@ type OphModalProps = {
     title?: string;
     onClose: (arg0: React.SyntheticEvent<HTMLButtonElement>) => void;
     big?: boolean;
+    onOverlayClick?: (arg0: React.SyntheticEvent) => void;
 };
 
 /**
@@ -14,7 +15,12 @@ type OphModalProps = {
 class OphModal extends React.Component<OphModalProps> {
     render() {
         return (
-            <div className="oph-overlay oph-overlay-bg oph-overlay-is-visible" role="dialog" tabIndex={-1}>
+            <div
+                className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
+                role="dialog"
+                tabIndex={-1}
+                onClick={this.props.onOverlayClick && this.props.onOverlayClick}
+            >
                 <div className={classNames({ 'oph-modal': true }, { 'oph-modal-big': this.props.big })} role="document">
                     <button
                         className="oph-button oph-button-close"
