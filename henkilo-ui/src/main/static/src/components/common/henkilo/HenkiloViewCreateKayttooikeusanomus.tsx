@@ -436,6 +436,12 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         };
         try {
             await this.props.createKayttooikeusanomus(anomusData);
+            this.props.addGlobalNotification({
+                key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK',
+                type: NOTIFICATIONTYPES.SUCCESS,
+                title: this.props.l10n[this.props.locale]['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                autoClose: 5000,
+            });
         } catch (error) {
             this.props.addGlobalNotification({
                 key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
