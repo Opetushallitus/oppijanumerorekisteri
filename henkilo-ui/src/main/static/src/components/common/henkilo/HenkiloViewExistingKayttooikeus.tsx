@@ -394,6 +394,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                 ) : null}
                 <div>
                     <Table
+                        getTdProps={() => ({ style: { textOverflow: 'unset' } })}
                         headings={this.tableHeadings}
                         data={this._rows}
                         noDataText={this.L['HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA']}

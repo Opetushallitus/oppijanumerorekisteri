@@ -19,7 +19,7 @@ type Props = {
     manual?: boolean;
     resizable?: boolean;
     onFetchData?: (arg0: any) => void;
-    getTdProps?: () => void;
+    getTdProps?: (cellInfo: any) => any;
     subComponent?: (arg0: any) => React.ReactNode;
     defaultSorted?: Array<any>;
     fetchMoreSettings?: {
