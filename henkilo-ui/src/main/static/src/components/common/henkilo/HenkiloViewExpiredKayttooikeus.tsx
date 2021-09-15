@@ -21,11 +21,7 @@ import {
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
-import AccessRightDetails, {
-    Props as AccessRight,
-    resolveLocalizedText,
-    AccessRightDetaisLink,
-} from './AccessRightDetails';
+import AccessRightDetails, { AccessRight, resolveLocalizedText, AccessRightDetaisLink } from './AccessRightDetails';
 
 type OwnProps = {
     l10n: L10n;

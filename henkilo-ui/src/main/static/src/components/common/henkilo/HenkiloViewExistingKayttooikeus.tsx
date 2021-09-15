@@ -30,11 +30,7 @@ import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
-import AccessRightDetails, {
-    Props as AccessRight,
-    resolveLocalizedText,
-    AccessRightDetaisLink,
-} from './AccessRightDetails';
+import AccessRightDetails, { AccessRight, resolveLocalizedText, AccessRightDetaisLink } from './AccessRightDetails';
 
 type OwnProps = {
     oidHenkilo: string;

@@ -3,7 +3,7 @@ import OphModal from '../modal/OphModal';
 import './AccessRightDetails.css';
 import type { TableCellProps } from '../../../types/react-table.types';
 
-export type Props = {
+export type AccessRight = {
     name: string;
     description: string;
     onClose: () => void;
@@ -35,7 +35,7 @@ export const AccessRightDetaisLink = ({
     </button>
 );
 
-const AccessRightDetails = ({ name, description, onClose }: Props) => (
+const AccessRightDetails = ({ name, description, onClose }: AccessRight) => (
     <OphModal title={name} onClose={onClose} onOverlayClick={onClose}>
         <div className="accessRightDescription">{description}</div>
     </OphModal>
