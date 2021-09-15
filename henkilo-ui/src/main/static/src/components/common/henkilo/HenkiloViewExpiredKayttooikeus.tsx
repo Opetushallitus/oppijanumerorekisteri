@@ -24,7 +24,7 @@ import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import AccessRightDetails, {
     Props as AccessRight,
     resolveLocalizedText,
-    AccessRightDetaisLinkColumn,
+    AccessRightDetaisLink,
 } from './AccessRightDetails';
 
 type OwnProps = {
@@ -72,7 +72,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
             {
                 key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
                 Cell: (cellProps) => (
-                    <AccessRightDetaisLinkColumn
+                    <AccessRightDetaisLink
                         cellProps={cellProps}
                         clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
                     />

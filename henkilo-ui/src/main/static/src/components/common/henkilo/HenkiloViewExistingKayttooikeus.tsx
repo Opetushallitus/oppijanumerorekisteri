@@ -33,7 +33,7 @@ import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, {
     Props as AccessRight,
     resolveLocalizedText,
-    AccessRightDetaisLinkColumn,
+    AccessRightDetaisLink,
 } from './AccessRightDetails';
 
 type OwnProps = {
@@ -105,7 +105,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                 key: 'HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS',
                 minWidth: 150,
                 Cell: (cellProps: TableCellProps & { original: any }) => (
-                    <AccessRightDetaisLinkColumn
+                    <AccessRightDetaisLink
                         cellProps={cellProps}
                         clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
                     />

@@ -27,7 +27,7 @@ import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
 import AccessRightDetails, {
     Props as AccessRight,
     resolveLocalizedText,
-    AccessRightDetaisLinkColumn,
+    AccessRightDetaisLink,
 } from './AccessRightDetails';
 
 export type KayttooikeusryhmaData = {
@@ -109,7 +109,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 minWidth: 220,
                 notSortable: this.props.isAnomusView,
                 Cell: (cellProps: TableCellProps & { original: any }) => (
-                    <AccessRightDetaisLinkColumn
+                    <AccessRightDetaisLink
                         cellProps={cellProps}
                         clickHandler={(accessRightGroup) => this.showAccessRightGroupDetails(accessRightGroup)}
                     />

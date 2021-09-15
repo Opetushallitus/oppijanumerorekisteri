@@ -19,7 +19,7 @@ export const resolveLocalizedText = (textGroups: Array<TextGroup> = [], lang: st
         (textGroup) => (textGroup.lang || 'fi').toUpperCase() === lang.toUpperCase()
     )[0].text;
 
-export const AccessRightDetaisLinkColumn = ({
+export const AccessRightDetaisLink = ({
     cellProps,
     clickHandler,
 }: {
