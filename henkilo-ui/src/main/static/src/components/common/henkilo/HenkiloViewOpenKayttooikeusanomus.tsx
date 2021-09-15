@@ -476,9 +476,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 [...(accessRightGroup.kuvaus?.texts || []), ...accessRightGroup.nimi.texts],
                 this.props.locale
             ),
-            onClose: () => this.setState({ ...this.state, accessRight: null }),
+            onClose: () => this.setState(() => ({ accessRight: null })),
         };
-        this.setState({ ...this.state, accessRight });
+        this.setState(() => ({ accessRight }));
     }
 
     render() {

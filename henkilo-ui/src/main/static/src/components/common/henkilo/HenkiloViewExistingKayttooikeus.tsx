@@ -363,9 +363,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                 [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...accessRightGroup.ryhmaNames.texts],
                 this.props.locale
             ),
-            onClose: () => this.setState({ ...this.state, accessRight: null }),
+            onClose: () => this.setState(() => ({ accessRight: null })),
         };
-        this.setState({ ...this.state, accessRight });
+        this.setState(() => ({ accessRight }));
     }
 
     render() {
