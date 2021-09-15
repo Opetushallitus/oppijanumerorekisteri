@@ -30,7 +30,8 @@ import { createEmailOptions } from '../../../utilities/henkilo.util';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
-import AccessRightDetails, { AccessRight, resolveLocalizedText, AccessRightDetaisLink } from './AccessRightDetails';
+import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
+import { localizeTextGroup } from '../../../utilities/localisation.util';
 
 type OwnProps = {
     oidHenkilo: string;
@@ -357,8 +358,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
 
     showAccessRightGroupDetails(accessRightGroup) {
         const accessRight: AccessRight = {
-            name: resolveLocalizedText(accessRightGroup.ryhmaNames.texts, this.props.locale),
-            description: resolveLocalizedText(
+            name: localizeTextGroup(accessRightGroup.ryhmaNames.texts, this.props.locale),
+            description: localizeTextGroup(
                 [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...accessRightGroup.ryhmaNames.texts],
                 this.props.locale
             ),

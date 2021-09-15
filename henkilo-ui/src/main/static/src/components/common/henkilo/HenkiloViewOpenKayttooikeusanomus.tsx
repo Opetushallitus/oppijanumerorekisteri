@@ -24,7 +24,7 @@ import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { KAYTTOOIKEUDENTILA } from '../../../globals/KayttooikeudenTila';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
-import AccessRightDetails, { AccessRight, resolveLocalizedText, AccessRightDetaisLink } from './AccessRightDetails';
+import AccessRightDetails, { AccessRight, AccessRightDetaisLink } from './AccessRightDetails';
 
 export type KayttooikeusryhmaData = {
     voimassaPvm: any;
@@ -471,8 +471,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
     showAccessRightGroupDetails(accessRightGroup) {
         const accessRight: AccessRight = {
-            name: resolveLocalizedText(accessRightGroup.nimi.texts, this.props.locale),
-            description: resolveLocalizedText(
+            name: localizeTextGroup(accessRightGroup.nimi.texts, this.props.locale),
+            description: localizeTextGroup(
                 [...(accessRightGroup.kuvaus?.texts || []), ...accessRightGroup.nimi.texts],
                 this.props.locale
             ),

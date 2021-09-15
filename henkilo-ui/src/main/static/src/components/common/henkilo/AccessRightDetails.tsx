@@ -9,16 +9,6 @@ export type AccessRight = {
     onClose: () => void;
 };
 
-export type TextGroup = {
-    text: string;
-    lang: string;
-};
-
-export const resolveLocalizedText = (textGroups: Array<TextGroup> = [], lang: string = 'fi'): string =>
-    [...textGroups, { text: '', lang: lang.toUpperCase() }].filter(
-        (textGroup) => (textGroup.lang || 'fi').toUpperCase() === lang.toUpperCase()
-    )[0].text;
-
 export const AccessRightDetaisLink = ({
     cellProps,
     clickHandler,

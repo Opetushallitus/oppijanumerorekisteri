@@ -1,7 +1,8 @@
-import { resolveLocalizedText } from './AccessRightDetails';
+// @ts-nocheck
+import { localizeTextGroup } from './localisation.util';
 
-describe('AccessRightDetails', () => {
-    describe('resolveLocalizedText', () => {
+describe('localisation.util', () => {
+    describe('localizeTextGroup', () => {
         test.each([
             ['Handles invalid parameters', undefined, undefined, ''],
             ['Handles empty text groups', [], 'fi', ''],
@@ -27,6 +28,6 @@ describe('AccessRightDetails', () => {
                 'fi',
                 'testi',
             ],
-        ])('%s', (_, textGroup, lang, expected) => expect(resolveLocalizedText(textGroup, lang)).toEqual(expected));
+        ])('%s', (_, textGroup, lang, expected) => expect(localizeTextGroup(textGroup, lang)).toEqual(expected));
     });
 });
