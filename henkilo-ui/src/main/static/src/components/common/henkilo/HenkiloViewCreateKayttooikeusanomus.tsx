@@ -46,6 +46,7 @@ type Props = {
 };
 
 type State = {
+    showInstructions: boolean;
     organisaatioSelection: string;
     organisaatioSelectionName: string;
     ryhmaSelection: string;
@@ -64,6 +65,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         super(props);
 
         this.state = {
+            showInstructions: false,
             organisaatioSelection: '',
             organisaatioSelectionName: '',
             ryhmaSelection: '',
@@ -110,7 +112,13 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                     />
                 ) : null}
 
-                <div>
+                <div
+                    onClick={
+                        this.state.showInstructions
+                            ? undefined
+                            : () => this.setState(() => ({ showInstructions: true }))
+                    }
+                >
                     <div className="oph-field oph-field-inline">
                         <label className="oph-label oph-bold oph-label-long" aria-describedby="field-text">
                             {L['OMATTIEDOT_ORGANISAATIO_TAI_RYHMA']}*
@@ -258,24 +266,28 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 
                             <div className="anomus-form-errors flex-horizontal">
                                 <div className="flex-item-1">
-                                    <LocalNotification
-                                        title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
-                                        toggle={!this.validAnomusForm()}
-                                        type={NOTIFICATIONTYPES.WARNING}
-                                    >
-                                        <ul>
-                                            {!this._validOrganisaatioOrRyhmaSelection() ? (
-                                                <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li>
-                                            ) : null}
-                                            {!this._validKayttooikeusryhmaSelection() ? (
-                                                <li>{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</li>
-                                            ) : null}
-                                            {!this._validEmailSelection() ? (
-                                                <li>{L['OMATTIEDOT_VAATIMUS_EMAIL']}</li>
-                                            ) : null}
-                                            {!this.validPerustelu() ? <li>{L['OMATTIEDOT_PERUSTELU_VIRHE']}</li> : null}
-                                        </ul>
-                                    </LocalNotification>
+                                    {this.state.showInstructions && (
+                                        <LocalNotification
+                                            title={L['OMATTIEDOT_ANOMINEN_VIRHEET']}
+                                            toggle={!this.validAnomusForm()}
+                                            type={NOTIFICATIONTYPES.WARNING}
+                                        >
+                                            <ul>
+                                                {!this._validOrganisaatioOrRyhmaSelection() ? (
+                                                    <li>{L['OMATTIEDOT_VAATIMUS_ORGANISAATIO']}</li>
+                                                ) : null}
+                                                {!this._validKayttooikeusryhmaSelection() ? (
+                                                    <li>{L['OMATTIEDOT_VAATIMUS_KAYTTOOIKEUDET']}</li>
+                                                ) : null}
+                                                {!this._validEmailSelection() ? (
+                                                    <li>{L['OMATTIEDOT_VAATIMUS_EMAIL']}</li>
+                                                ) : null}
+                                                {!this.validPerustelu() ? (
+                                                    <li>{L['OMATTIEDOT_PERUSTELU_VIRHE']}</li>
+                                                ) : null}
+                                            </ul>
+                                        </LocalNotification>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -374,6 +386,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 
     _resetAnomusFormFields() {
         this.setState({
+            showInstructions: false,
             organisaatioSelection: '',
             organisaatioSelectionName: '',
             ryhmaSelection: '',
@@ -436,6 +449,12 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         };
         try {
             await this.props.createKayttooikeusanomus(anomusData);
+            this.props.addGlobalNotification({
+                key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK',
+                type: NOTIFICATIONTYPES.SUCCESS,
+                title: this.props.l10n[this.props.locale]['OMATTIEDOT_ANOMUKSEN_TALLENNUS_OK'],
+                autoClose: 5000,
+            });
         } catch (error) {
             this.props.addGlobalNotification({
                 key: 'OMATTIEDOT_ANOMUKSEN_TALLENNUS_VIRHEILMOITUS',
