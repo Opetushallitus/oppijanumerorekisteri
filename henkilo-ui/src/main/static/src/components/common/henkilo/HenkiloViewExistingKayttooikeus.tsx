@@ -241,6 +241,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                                             ? date.isBefore(moment().add(this.props.vuosia, 'years'))
                                             : true
                                     }
+                                    dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
                                 />
                             </div>
                             <div style={{ display: 'table-cell' }}>

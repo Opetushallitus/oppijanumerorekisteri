@@ -1,6 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import Moment from 'moment';
+import PropertySingleton from '../../globals/PropertySingleton';
 
 const DEFAULT_MODEL_FORMAT = 'YYYY-MM-DD';
 
@@ -30,6 +31,7 @@ class SimpleDatePicker extends React.Component<SimpleDatePickerProps> {
                 dropdownMode="select"
                 disabled={this.props.disabled}
                 filterDate={this.props.filterDate}
+                dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
             />
         );
     }

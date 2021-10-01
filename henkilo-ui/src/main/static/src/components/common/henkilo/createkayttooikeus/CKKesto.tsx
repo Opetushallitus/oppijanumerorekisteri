@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import PropertySingleton from '../../../../globals/PropertySingleton';
 
 const CKKesto = ({ alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L, vuosia }) => (
     <tr key="kayttooikeusKestoField">
@@ -20,6 +21,7 @@ const CKKesto = ({ alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInit
                     filterDate={(date) =>
                         Number.isInteger(vuosia) ? date.isBefore(moment().add(vuosia, 'years')) : true
                     }
+                    dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
                 />
             </div>
             <div className="kayttooikeus-input-container">
@@ -33,6 +35,7 @@ const CKKesto = ({ alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInit
                     filterDate={(date) =>
                         Number.isInteger(vuosia) ? date.isBefore(moment().add(vuosia, 'years')) : true
                     }
+                    dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
                 />
             </div>
         </td>

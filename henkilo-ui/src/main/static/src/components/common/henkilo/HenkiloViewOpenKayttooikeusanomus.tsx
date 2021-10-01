@@ -221,6 +221,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                             haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
                         )}
                         filterDate={(date) => date.isBefore(moment().add(1, 'years'))}
+                        dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
                     />
                 ),
                 [headingList[8]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
