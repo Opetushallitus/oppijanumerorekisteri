@@ -21,6 +21,7 @@ import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
 import { ReactSelectOption } from '../../../types/react-select.types';
+import { WORK_ADDRESS } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 
 type OwnProps = {
     henkilo: HenkiloState;
@@ -54,8 +55,6 @@ type State = {
     contactInfoErrorFields: Array<string>;
     isContactInfoValid: boolean;
 };
-
-const WORK_ADDRESS = 'yhteystietotyyppi2'; // refers to koodisto (yhteystietotyypit)
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
     henkiloUpdate: Henkilo;

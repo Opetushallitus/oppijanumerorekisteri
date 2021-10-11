@@ -1,7 +1,8 @@
 import { EmailOption } from '../types/emailoption.type';
 import { HenkiloState } from '../reducers/henkilo.reducer';
-import PropertySingleton from '../globals/PropertySingleton';
 import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { WORK_ADDRESS } from '../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
+import { EMAIL } from '../types/domain/oppijanumerorekisteri/yhteystieto.types';
 
 type CreateEmailOptions = {
     emailSelection: Array<EmailOption>;
@@ -45,17 +46,12 @@ export const createEmailOptions = (
     };
 };
 
-const parseEmailOptions = (henkilo: HenkiloState): Array<any> => {
-    let emails = [];
-    if (henkilo.henkilo.yhteystiedotRyhma) {
-        henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
-            yhteystietoRyhma.yhteystieto.forEach((yhteys) => {
-                if (yhteys.yhteystietoTyyppi === PropertySingleton.getState().SAHKOPOSTI) {
-                    emails.push(yhteys.yhteystietoArvo);
-                }
-            });
-        });
-    }
-
-    return emails.map((email) => ({ value: email, label: email }));
-};
+const parseEmailOptions = (henkilo: HenkiloState): Array<EmailOption> =>
+    (henkilo.henkilo.yhteystiedotRyhma || [])
+        .filter((yhteystietoRyhma) => yhteystietoRyhma.ryhmaKuvaus === WORK_ADDRESS)
+        .flatMap((yhteystietoRyhma) => yhteystietoRyhma.yhteystieto)
+        .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === EMAIL)
+        .map((yhteystieto) => yhteystieto.yhteystietoArvo)
+        .filter((value) => !!value)
+        .sort((a, b) => a.localeCompare(b))
+        .map((email) => ({ value: email, label: email }));

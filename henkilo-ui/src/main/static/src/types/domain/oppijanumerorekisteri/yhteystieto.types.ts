@@ -1,4 +1,6 @@
+export const EMAIL = 'YHTEYSTIETO_SAHKOPOSTI';
+
 export type Yhteystieto = {
-    yhteystietoTyyppi?: string;
+    yhteystietoTyyppi: string;
     yhteystietoArvo?: string | null | undefined;
 };
