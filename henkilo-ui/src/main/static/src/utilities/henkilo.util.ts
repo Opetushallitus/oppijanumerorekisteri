@@ -1,4 +1,5 @@
 import { EmailOption } from '../types/emailoption.type';
+import { YhteystietoRyhma } from '../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
 import { HenkiloState } from '../reducers/henkilo.reducer';
 import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { WORK_ADDRESS, EMAIL } from '../types/constants';
@@ -15,7 +16,7 @@ export const createEmailOptions = (
     filterKayttooikeusRyhma: (kayttooikeus: MyonnettyKayttooikeusryhma) => boolean,
     kayttooikeusryhmat: Array<MyonnettyKayttooikeusryhma>
 ): CreateEmailOptions => {
-    const emailOptions = parseEmailOptions(henkilo);
+    const emailOptions = parseEmailOptions(henkilo?.henkilo.yhteystiedotRyhma);
     if (emailOptions.length === 1) {
         return {
             emailSelection: kayttooikeusryhmat
@@ -45,8 +46,8 @@ export const createEmailOptions = (
     };
 };
 
-const parseEmailOptions = (henkilo: HenkiloState): Array<EmailOption> =>
-    (henkilo.henkilo.yhteystiedotRyhma || [])
+export const parseEmailOptions = (yhteystiedot: Array<YhteystietoRyhma>): Array<EmailOption> =>
+    (yhteystiedot || [])
         .filter((yhteystietoRyhma) => yhteystietoRyhma.ryhmaKuvaus === WORK_ADDRESS)
         .flatMap((yhteystietoRyhma) => yhteystietoRyhma.yhteystieto)
         .filter((yhteystieto) => yhteystieto.yhteystietoTyyppi === EMAIL)

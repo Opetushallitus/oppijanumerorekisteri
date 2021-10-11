@@ -155,7 +155,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             content.push(
                 <div
                     className="contact-content-add-new"
-                    onClick={() => this._createYhteystiedotRyhma(EMAIL)}
+                    onClick={() => this._createYhteystiedotRyhma(WORK_ADDRESS)}
                     key="add-new"
                 >
                     <span className="oph-bold oph-blue-lighten-1">
