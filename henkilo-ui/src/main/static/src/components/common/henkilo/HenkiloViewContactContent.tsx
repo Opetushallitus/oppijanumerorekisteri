@@ -38,6 +38,7 @@ type Props = OwnProps & {
 
 type ContactInfo = {
     id: number | null | undefined;
+    type: string;
     henkiloUiId: string | null | undefined;
     name: string;
     readOnly: boolean;
@@ -53,6 +54,8 @@ type State = {
     contactInfoErrorFields: Array<string>;
     isContactInfoValid: boolean;
 };
+
+const WORK_ADDRESS = 'yhteystietotyyppi2'; // refers to koodisto (yhteystietotyypit)
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
     henkiloUpdate: Henkilo;
@@ -100,6 +103,10 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     createContent() {
         const isEmail = (label: string) => label === PropertySingleton.state.SAHKOPOSTI;
 
+        const defaultWorkAddress = (this.state.contactInfo || [])
+            .filter((contactInfo) => contactInfo.type === WORK_ADDRESS)
+            .reduce((_, curr, acc) => (curr.id > acc ? curr.id : acc), 0);
+
         const content: Array<React.ReactNode> = this.state.contactInfo
             .filter(
                 (yhteystiedotRyhmaFlat) => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1
@@ -110,7 +117,9 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             )
             .map((yhteystiedotRyhmaFlat, idx) => (
                 <div key={idx}>
-                    <span className="oph-h3 oph-bold midHeader">{yhteystiedotRyhmaFlat.name}</span>
+                    <span className="oph-h3 oph-bold midHeader">
+                        {yhteystiedotRyhmaFlat.name} {yhteystiedotRyhmaFlat.id === defaultWorkAddress ? '*' : ''}
+                    </span>
                     {!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly ? (
                         <span className="float-right">
                             <IconButton
@@ -347,6 +356,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             readOnly: yhteystiedotRyhma.readOnly,
             id: yhteystiedotRyhma.id,
             henkiloUiId: henkiloUiId,
+            type: yhteystiedotRyhma.ryhmaKuvaus,
         };
     }
 
