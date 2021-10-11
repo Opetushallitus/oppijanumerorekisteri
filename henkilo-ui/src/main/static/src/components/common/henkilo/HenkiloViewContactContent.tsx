@@ -21,7 +21,7 @@ import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
 import { ReactSelectOption } from '../../../types/react-select.types';
-import { WORK_ADDRESS } from '../../../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
+import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 
 type OwnProps = {
     henkilo: HenkiloState;
@@ -100,7 +100,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 
     createContent() {
-        const isEmail = (label: string) => label === PropertySingleton.state.SAHKOPOSTI;
+        const isEmail = (label: string) => label === EMAIL;
 
         const defaultWorkAddress = (this.state.contactInfo || [])
             .filter((contactInfo) => contactInfo.type === WORK_ADDRESS)
@@ -155,7 +155,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             content.push(
                 <div
                     className="contact-content-add-new"
-                    onClick={() => this._createYhteystiedotRyhma(PropertySingleton.getState().TYOOSOITE)}
+                    onClick={() => this._createYhteystiedotRyhma(EMAIL)}
                     key="add-new"
                 >
                     <span className="oph-bold oph-blue-lighten-1">
@@ -360,7 +360,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 
     validateContactInfo(contactInfoLabel: string, contactInfoValue: string) {
-        if (contactInfoLabel === PropertySingleton.state.SAHKOPOSTI) {
+        if (contactInfoLabel === EMAIL) {
             return validateEmail(contactInfoValue);
         }
         return true;

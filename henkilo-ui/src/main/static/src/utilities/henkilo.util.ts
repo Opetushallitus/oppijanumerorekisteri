@@ -1,8 +1,7 @@
 import { EmailOption } from '../types/emailoption.type';
 import { HenkiloState } from '../reducers/henkilo.reducer';
 import { MyonnettyKayttooikeusryhma } from '../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { WORK_ADDRESS } from '../types/domain/oppijanumerorekisteri/yhteystietoryhma.types';
-import { EMAIL } from '../types/domain/oppijanumerorekisteri/yhteystieto.types';
+import { WORK_ADDRESS, EMAIL } from '../types/constants';
 
 type CreateEmailOptions = {
     emailSelection: Array<EmailOption>;

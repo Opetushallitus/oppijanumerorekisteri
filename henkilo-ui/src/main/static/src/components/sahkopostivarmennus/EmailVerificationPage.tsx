@@ -14,6 +14,7 @@ import {
 } from '../../utilities/yhteystietoryhma.util';
 import { Yhteystieto } from '../../types/domain/oppijanumerorekisteri/yhteystieto.types';
 import PropertySingleton from '../../globals/PropertySingleton';
+import { WORK_ADDRESS, EMAIL } from '../../types/constants';
 
 type Props = {
     locale: Locale;
@@ -49,7 +50,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
         if (this.state.emailFieldCount === 0) {
             const yhteystiedotRyhma = clone(this.state.henkilo.yhteystiedotRyhma);
             const emptyEmailYhteystieto: Yhteystieto = {
-                yhteystietoTyyppi: PropertySingleton.state.SAHKOPOSTI,
+                yhteystietoTyyppi: EMAIL,
                 yhteystietoArvo: '',
             };
 
@@ -61,7 +62,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
             ) {
                 const yhteystietoRyhma: YhteystietoRyhma = {
                     ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
-                    ryhmaKuvaus: PropertySingleton.state.TYOOSOITE,
+                    ryhmaKuvaus: WORK_ADDRESS,
                     yhteystieto: [emptyEmailYhteystieto],
                 };
 
@@ -143,7 +144,7 @@ export class EmailVerificationPage extends React.Component<Props, State> {
     onEmailRemove(yhteystiedotRyhmaIndex: number, yhteystietoIndex: number): void {
         let yhteystiedotRyhma = this.state.henkilo.yhteystiedotRyhma;
         const emailNotOnlyYhteystietoInYhteystietoryhma = yhteystiedotRyhma[yhteystiedotRyhmaIndex].yhteystieto
-            .filter((yhteystieto: Yhteystieto) => yhteystieto.yhteystietoTyyppi !== PropertySingleton.state.SAHKOPOSTI)
+            .filter((yhteystieto: Yhteystieto) => yhteystieto.yhteystietoTyyppi !== EMAIL)
             .some(
                 (yhteystieto: Yhteystieto) =>
                     yhteystieto.yhteystietoArvo !== '' &&

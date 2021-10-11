@@ -7,9 +7,7 @@ type State = {
     opintopolkuCallerId?: string;
 
     KOTIOSOITE?: string;
-    TYOOSOITE?: string;
     YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI?: string;
-    SAHKOPOSTI?: string;
 
     externalPermissionService: string;
     rootOrganisaatioOid: string;
@@ -28,9 +26,7 @@ class PropertySingleton {
             opintopolkuCallerId: '1.2.246.562.10.00000000001.henkilo-ui',
             idRunner: 0,
             KOTIOSOITE: 'yhteystietotyyppi1',
-            TYOOSOITE: 'yhteystietotyyppi2',
             YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI: 'alkupera2',
-            SAHKOPOSTI: 'YHTEYSTIETO_SAHKOPOSTI',
             specialCharacterRegex: /[!@#$%^&*()~`\-=_+[\]{}|:";',.\\/<>?]/,
             numberRegex: /\d/,
             characterRegex: /[a-zA-Z]/,

@@ -11,6 +11,7 @@ import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect';
 import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
 import { Localisations } from '../../types/localisation.type';
 import LoaderWithText from '../common/loadingbar/LoaderWithText';
+import { EMAIL } from '../../types/constants';
 
 type Error = {
     name: string;
@@ -368,7 +369,7 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                           ryhmaAlkuperaTieto: properties.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
                           yhteystieto: [
                               {
-                                  yhteystietoTyyppi: properties.SAHKOPOSTI,
+                                  yhteystietoTyyppi: EMAIL,
                                   yhteystietoArvo: this.state.form.sahkoposti,
                               },
                           ],
