@@ -32,3 +32,6 @@ aws:
   henkiloModifiedTopic:
     enabled: true
     topicArn: test-topic-arn
+
+logback:
+  access: true
