@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri;
 
+import fi.vm.sade.oppijanumerorekisteri.configurations.CustomFilterConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,7 +11,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestApplication.class, H2Configuration.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestApplication.class, H2Configuration.class, CustomFilterConfiguration.class})
 public @interface IntegrationTest {
-
 }

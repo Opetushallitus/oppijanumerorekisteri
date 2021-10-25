@@ -419,7 +419,7 @@ public class HenkiloController {
     @GetMapping("/{oid}/slaves")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")
-    @AuditLogRead(jsonPath = "$..oppijanumero")
+    @AuditLogRead(jsonPath = "$..oidHenkilo")
     public List<HenkiloReadDto> findSlavesByMasterOid(
             @PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
