@@ -16,7 +16,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.YksilointiServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
@@ -147,6 +146,18 @@ public class YksilointiServiceImplTest {
 
         Henkilo yksiloity = this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
         assertThat(yksiloity).extracting(Henkilo::isYksiloityVTJ).isEqualTo(true);
+        verify(this.yksilointitietoRepository, times(0)).save(any());
+    }
+
+    @Test(expected = SuspendableIdentificationException.class)
+    public void yksiloiVtjError() {
+
+        doReturn(Optional.empty()).when(vtjClient).fetchHenkilo(any());
+
+        when(henkiloModificationService.update(any(Henkilo.class))).thenAnswer(returnsFirstArg());
+
+        this.yksilointiService.yksiloiManuaalisesti(this.henkiloOid);
+
         verify(this.yksilointitietoRepository, times(0)).save(any());
     }
 
@@ -432,18 +443,5 @@ public class YksilointiServiceImplTest {
         String fromNormal  = TextUtils.normalize("Eva Nomm Noel Helene Dong Bui");
 
         assertThat(fromSpecial).isEqualTo(fromNormal);
-    }
-
-    @Test
-    public void sensuroiHetuSensuroiValimerkinNumeronJaTarkisteen() {
-        String hetu = "123456-1234";
-        String sensuroitu = "123456*****";
-        assertThat(YksilointiServiceImpl.sensuroiHetu(hetu)).isEqualTo(sensuroitu);
-    }
-
-    @Test
-    public void sensuroiHetuEiSensuroiFakeHetua() {
-        String fake = "999999-999X";
-        assertThat(YksilointiServiceImpl.sensuroiHetu(fake)).isEqualTo(fake);
     }
 }
