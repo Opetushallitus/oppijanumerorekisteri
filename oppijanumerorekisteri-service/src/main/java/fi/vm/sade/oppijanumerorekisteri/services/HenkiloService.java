@@ -91,4 +91,6 @@ public interface HenkiloService {
     List<HenkiloPerustietoDto> getHenkiloPerustietoByHetus(List<String> hetus);
 
     HenkiloForceReadDto getByHetuForMuutostieto(String hetu);
+
+    Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, int page);
 }

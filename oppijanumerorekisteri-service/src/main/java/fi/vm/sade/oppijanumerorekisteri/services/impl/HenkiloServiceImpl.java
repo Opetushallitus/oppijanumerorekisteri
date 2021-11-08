@@ -73,6 +73,14 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
+    public Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(final String municipal, final LocalDate dob, final int page) {
+        Long limit = MAX_FETCH_PERSONS + 1L;
+        Long offset = (page - 1L) * MAX_FETCH_PERSONS;
+        return Slice.of(page, MAX_FETCH_PERSONS, henkiloDataRepository.findByMunicipalAndBirthdate(municipal, dob, limit, offset));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
         return this.henkiloDataRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);
     }

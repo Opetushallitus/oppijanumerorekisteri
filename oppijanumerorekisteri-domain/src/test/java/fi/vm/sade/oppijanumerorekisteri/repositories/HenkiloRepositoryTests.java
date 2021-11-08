@@ -1,10 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import com.google.common.collect.Sets;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloHakuDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloPerustietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
@@ -28,6 +25,7 @@ import javax.persistence.PersistenceException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi.*;
@@ -37,8 +35,7 @@ import static fi.vm.sade.oppijanumerorekisteri.repositories.populator.Yhteystied
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -458,6 +455,46 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
         Optional<Henkilo> optHenkilo = dataRepository.findByKaikkiHetut(TESTI_HETU);
         assertFalse(optHenkilo.isPresent());
+    }
+
+    @Test
+    public void findByMunicipalityAndDobEmpty() {
+        List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 05), Long.MAX_VALUE, 0L);
+        assertTrue(henkilos.isEmpty());
+    }
+
+    @Test
+    public void findByMunicipalityAndDob() {
+
+        String kunta = "foo";
+        LocalDate dob = LocalDate.of(2021, 11, 5);
+        Date dobDate = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("")
+                .kutsumanimi("")
+                .sukunimi("")
+                .hetu("")
+                .kotikunta(kunta)
+                .syntymaaika(dob)
+                .created(dobDate)
+                .modified(dobDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 0L);
+        assertEquals("Incorrect result size", 1, henkilos.size());
+
+        henkilos = dataRepository.findByMunicipalAndBirthdate("bar", dob, Long.MAX_VALUE, 0L);
+        assertTrue("Result should be empty (municipality)", henkilos.isEmpty());
+
+        henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob.plusDays(1), Long.MAX_VALUE, 0L);
+        assertTrue("Result should be empty (dob)", henkilos.isEmpty());
+
+        henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 1L);
+        assertTrue("Result should be empty (offset)", henkilos.isEmpty());
     }
 
     @Test
