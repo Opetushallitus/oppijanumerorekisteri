@@ -164,13 +164,12 @@ public class YksilointiServiceImpl implements YksilointiService {
             throw new SuspendableIdentificationException("Henkilön hetu ei ole oikea: " + henkilo.getHetu());
         }
 
-        String sensuroituHetu = sensuroiHetu(henkilo.getHetu());
         YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(henkilo.getHetu())
                 .orElseThrow(() ->
-                        new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + sensuroituHetu));
+                        new SuspendableIdentificationException("Henkilöä ei löytynyt VTJ-palvelusta henkilötunnuksella: " + henkilo.getHetu()));
 
         if (yksiloityHenkilo.isPassivoitu()) {
-            throw new SuspendableIdentificationException("Henkilön hetu on passivoitu: " + sensuroituHetu);
+            throw new SuspendableIdentificationException("Henkilön hetu on passivoitu: " + henkilo.getHetu());
         }
 
         yksilointivirheRepository.findByHenkilo(henkilo).ifPresent(yksilointivirheRepository::delete);
@@ -192,7 +191,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 yksilointitietoRepository.findByHenkilo(henkilo).ifPresent(yksilointitietoRepository::delete);
             }
             linked.forEachModified(henkiloModificationService::update);
-            logger.info("Henkilön yksilöinti onnistui hetulle: {}", sensuroituHetu);
+            logger.info("Henkilön yksilöinti onnistui hetulle: {}", henkilo.getHetu());
         }
 
         return henkilo;
@@ -498,11 +497,11 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (hetu == null || hetu.isEmpty()) {
             throw new DataInconsistencyException("Henkilöllä " + henkiloOid + " ei ole hetua vaikka yksilöinti on suoritettu");
         }
-        String sensuroituHetu = sensuroiHetu(hetu);
-        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(hetu)
-                .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + sensuroituHetu));
 
-        logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", sensuroituHetu);
+        YksiloityHenkilo yksiloityHenkilo = vtjClient.fetchHenkilo(hetu)
+                .orElseThrow(() -> new DataInconsistencyException("Henkilöä ei löydy VTJ:stä hetulla " + hetu));
+
+        logger.info("Päivitetään tiedot VTJ:stä hetulle: {}", hetu);
         LinkResult linked = this.paivitaHenkilonTiedotVTJnTiedoilla(henkilo, yksiloityHenkilo);
         linked.forEachModified(henkiloModificationService::update);
     }
@@ -656,14 +655,7 @@ public class YksilointiServiceImpl implements YksilointiService {
         return kayttooikeusClient.getKayttajaByOid(oid).map(KayttajaReadDto::isOppija).orElse(true);
     }
 
-    static String sensuroiHetu(String hetu) {
-        if (hetu == null || hetu.length() < 7) return hetu;
-        // testihetut voi palauttaa sensuroimatta, muuten sensuroidaan välimerkki, numero ja tarkiste
-        return isFakeHetu(hetu) ? hetu : hetu.substring(0, 6) + "*****";
-    }
-
     static boolean isFakeHetu(String hetu) {
         return hetu.charAt(7) == '9';
     }
-
 }

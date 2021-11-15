@@ -13,6 +13,7 @@ spring:
     type: NONE
   flyway:
     enabled: false
+
 host:
   host-cas: localhost
   host-virkailija: localhost
