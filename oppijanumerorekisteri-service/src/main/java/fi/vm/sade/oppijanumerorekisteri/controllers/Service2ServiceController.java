@@ -122,7 +122,7 @@ public class Service2ServiceController {
 
     @ApiOperation(value = "Hakee henkilöiden perustiedot kunnan ja syntymäajan mukaan",
             notes="Tulosjoukko on sivutettu " + HenkiloServiceImpl.MAX_FETCH_PERSONS + " henkilön kokoisiin paloihin.")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @GetMapping("/henkilo/list/{municipal}/{birthdate}")
     public Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(
             @ApiParam("Koodisto \"kunta\"") @PathVariable("municipal") final String municipal,

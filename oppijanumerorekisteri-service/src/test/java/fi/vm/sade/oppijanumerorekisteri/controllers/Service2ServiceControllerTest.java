@@ -369,7 +369,7 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA_READ")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findByMunicipalAndDob() throws Exception {
         given(henkiloService.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1))
                 .willReturn(Slice.of(1, 0, Collections.EMPTY_LIST));
@@ -380,14 +380,14 @@ public class Service2ServiceControllerTest  {
     }
 
     @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA_READ")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findByMunicipalAndDobIncorrectPage() throws Exception {
         mvc.perform(get("/s2s/henkilo/list/foo/2021-11-05?page=0").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA_READ")
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void findByMunicipalAndDobIncorrectDate() throws Exception {
         mvc.perform(get("/s2s/henkilo/list/foo/juhannus").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
