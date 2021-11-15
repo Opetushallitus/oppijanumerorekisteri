@@ -23,6 +23,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.impl.HenkiloServiceImpl;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloUpdatePostValidator;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -164,6 +166,13 @@ public class HenkiloServiceTest {
         verify(henkiloDataRepositoryMock).findBy(criteriaCaptor.capture(), eq(21L), eq(0L));
         HenkiloCriteria henkiloCriteria = criteriaCaptor.getValue();
         assertThat(henkiloCriteria.getHenkiloOids()).containsExactlyInAnyOrder("henkilo1", "henkilo3");
+    }
+
+    @Test
+    public void findByMunicipalAndBirthdate() {
+        Slice<HenkiloMunicipalDobDto> slice = service.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), 1);
+        assertThat(slice.getResults()).isEmpty();
+        verify(henkiloDataRepositoryMock).findByMunicipalAndBirthdate(eq("foo"), any(LocalDate.class), eq(HenkiloServiceImpl.MAX_FETCH_PERSONS + 1L), eq(0L));
     }
 
     @Test

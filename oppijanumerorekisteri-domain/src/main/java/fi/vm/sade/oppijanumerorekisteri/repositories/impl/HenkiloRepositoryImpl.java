@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -693,5 +694,28 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .where(kaikkiHetutPath.eq(hetu))
                 .select(qHenkilo)
                 .fetchOne());
+    }
+
+    @Override
+    public List<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(final String municipal, final LocalDate dob, final long limit, final long offset) {
+        JPAQuery<HenkiloMunicipalDobDto> query = jpa().from(henkilo)
+                .select(Projections.constructor(HenkiloMunicipalDobDto.class,
+                        henkilo.oidHenkilo,
+                        henkilo.hetu,
+                        henkilo.etunimet,
+                        henkilo.kutsumanimi,
+                        henkilo.sukunimi,
+                        henkilo.syntymaaika
+                ));
+
+        query.where(henkilo.kotikunta.eq(municipal)
+                .and(henkilo.syntymaaika.goe(dob)));
+
+        query.orderBy(henkilo.id.asc());
+
+        query.limit(limit);
+        query.offset(offset);
+
+        return query.fetch();
     }
 }
