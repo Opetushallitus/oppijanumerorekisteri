@@ -14,12 +14,8 @@ import static org.mockito.Mockito.mock;
 @SpringBootApplication
 public class TestApplication {
 
-    @Configuration
-    @EnableJpaRepositories(basePackages = "fi.vm.sade.oppijanumerorekisteri.repositories")
-    @PropertySource("application.yml")
-    @EnableTransactionManagement
-    public class H2JpaConfig {
-
+    public static void main(String[] args) {
+        SpringApplication.run(TestApplication.class, args);
     }
 
     @Bean
@@ -27,7 +23,11 @@ public class TestApplication {
         return mock(JdbcOperationsSessionRepository.class);
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
+    @Configuration
+    @EnableJpaRepositories(basePackages = "fi.vm.sade.oppijanumerorekisteri.repositories")
+    @PropertySource("application.yml")
+    @EnableTransactionManagement
+    public class H2JpaConfig {
+
     }
 }
