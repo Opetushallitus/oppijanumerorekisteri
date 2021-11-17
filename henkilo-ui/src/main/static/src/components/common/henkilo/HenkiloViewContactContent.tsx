@@ -61,24 +61,26 @@ const isEmail = ({ label }) => label === EMAIL;
 const containsEmail = (infoGroup: ContactInfo): boolean =>
     !!infoGroup.value.filter((info) => isEmail(info)).filter((info) => info.value).length;
 
-const isWorkEmail = (contactInfo: ContactInfo): boolean =>
-    contactInfo.id && contactInfo.type === WORK_ADDRESS && containsEmail(contactInfo);
+const isWorkEmail = (infoGroup: ContactInfo): boolean =>
+    infoGroup.id && infoGroup.type === WORK_ADDRESS && containsEmail(infoGroup);
+
+const excludeRemovedItems = (removeList: Array<number | string>) => (infoGroup: ContactInfo): boolean =>
+    !removeList.includes(infoGroup.id) && !removeList.includes(infoGroup.henkiloUiId);
+
+const resolveWorkAddresses = (contactInfo: Array<ContactInfo>, removeList: Array<number | string>) =>
+    (contactInfo || []).filter((infoGroup) => isWorkEmail(infoGroup)).filter(excludeRemovedItems(removeList));
 
 export const resolveDefaultWorkAddress = (contactInfo: Array<ContactInfo>, removeList: Array<number | string>) =>
-    (contactInfo || [])
-        .filter((infoGroup) => isWorkEmail(infoGroup))
-        .filter((infoGroup) => !removeList.includes(infoGroup.id) && !removeList.includes(infoGroup.henkiloUiId))
-        .reduce((acc, infoGroup) => (infoGroup.id > acc ? infoGroup.id : acc), 0);
+    resolveWorkAddresses(contactInfo, removeList).reduce(
+        (acc, infoGroup) => (infoGroup.id > acc ? infoGroup.id : acc),
+        0
+    );
 
 export const endlingWorkAddress = (
     infoGroup: ContactInfo,
     contactInfo: Array<ContactInfo>,
     removeList: Array<number | string>
-): boolean =>
-    isWorkEmail(infoGroup) &&
-    contactInfo
-        .filter((info) => isWorkEmail(info))
-        .filter((info) => !removeList.includes(info.id) && !removeList.includes(info.henkiloUiId)).length === 1;
+): boolean => isWorkEmail(infoGroup) && resolveWorkAddresses(contactInfo, removeList).length === 1;
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
     henkiloUpdate: Henkilo;
