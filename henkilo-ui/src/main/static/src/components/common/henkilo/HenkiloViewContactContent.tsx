@@ -56,18 +56,19 @@ type State = {
     isContactInfoValid: boolean;
 };
 
-const isEmail = (label: string) => label === EMAIL;
+const isEmail = ({ label }) => label === EMAIL;
 
 const containsEmail = (infoGroup: ContactInfo): boolean =>
-    !!infoGroup.value.filter((info) => isEmail(info.label)).filter((info) => info.value).length;
+    !!infoGroup.value.filter((info) => isEmail(info)).filter((info) => info.value).length;
 
 const isWorkEmail = (contactInfo: ContactInfo): boolean =>
     contactInfo.id && contactInfo.type === WORK_ADDRESS && containsEmail(contactInfo);
 
-export const resolveDefaultWorkAddress = (contactInfo: Array<ContactInfo>) =>
+export const resolveDefaultWorkAddress = (contactInfo: Array<ContactInfo>, removeList: Array<number | string>) =>
     (contactInfo || [])
-        .filter((contactInfo) => isWorkEmail(contactInfo))
-        .reduce((acc, contactInfo) => (contactInfo.id > acc ? contactInfo.id : acc), 0);
+        .filter((infoGroup) => isWorkEmail(infoGroup))
+        .filter((infoGroup) => !removeList.includes(infoGroup.id) && !removeList.includes(infoGroup.henkiloUiId))
+        .reduce((acc, infoGroup) => (infoGroup.id > acc ? infoGroup.id : acc), 0);
 
 export const endlingWorkAddress = (
     infoGroup: ContactInfo,
@@ -123,7 +124,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 
     createContent() {
-        const defaultWorkAddress = resolveDefaultWorkAddress(this.state.contactInfo);
+        const defaultWorkAddress = resolveDefaultWorkAddress(this.state.contactInfo, this.state.yhteystietoRemoveList);
         const content: Array<React.ReactNode> = this.state.contactInfo
             .filter(
                 (yhteystiedotRyhmaFlat) => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1
@@ -164,7 +165,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                                     <Field
                                         inputValue={yhteystietoFlat.inputValue}
                                         changeAction={this._updateModelField.bind(this, yhteystietoFlat)}
-                                        isEmail={isEmail(yhteystietoFlat.label)}
+                                        isEmail={isEmail(yhteystietoFlat)}
                                         readOnly={yhteystiedotRyhmaFlat.readOnly || this.state.readOnly}
                                     >
                                         {yhteystietoFlat.value}

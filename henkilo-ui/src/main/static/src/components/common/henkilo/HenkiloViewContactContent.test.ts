@@ -40,12 +40,18 @@ describe('HenkiloViewContactContent', () => {
 
     describe('resolveDefaultWorkAddress', () => {
         test.each([
-            ['Handles invalid parameters', undefined, 0],
-            ['Handles list of one work address', [workAddress], 1],
-            ['Find one among many', [otherAddress, workAddress, workAddressWithoutEmail], 1],
-            ['Picks the one with greatest id', [workAddress, { ...workAddress, id: 3 }, { ...workAddress, id: 2 }], 3],
-        ])('%s', (_, contactInfo, expected) =>
-            expect(resolveDefaultWorkAddress(contactInfo as Array<ContactInfo>)).toEqual(expected)
+            ['Handles invalid parameters', undefined, [], 0],
+            ['Handles list of one work address', [workAddress], [], 1],
+            ['Find one among many', [otherAddress, workAddress, workAddressWithoutEmail], [], 1],
+            [
+                'Picks the one with greatest id',
+                [workAddress, { ...workAddress, id: 3 }, { ...workAddress, id: 2 }],
+                [],
+                3,
+            ],
+            ['Excludes items in remove list', [workAddress], [1], 0],
+        ])('%s', (_, contactInfo, removeList, expected) =>
+            expect(resolveDefaultWorkAddress(contactInfo as Array<ContactInfo>, removeList)).toEqual(expected)
         );
     });
 });
