@@ -128,13 +128,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     createContent() {
         const defaultWorkAddress = resolveDefaultWorkAddress(this.state.contactInfo, this.state.yhteystietoRemoveList);
         const content: Array<React.ReactNode> = this.state.contactInfo
-            .filter(
-                (yhteystiedotRyhmaFlat) => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1
-            )
-            .filter(
-                (yhteystiedotRyhmaFlat) =>
-                    this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.henkiloUiId) === -1
-            )
+            .filter(excludeRemovedItems(this.state.yhteystietoRemoveList))
             .map((yhteystiedotRyhmaFlat, idx) => (
                 <div key={idx}>
                     <span className="oph-h3 oph-bold midHeader">
