@@ -102,20 +102,26 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     createContent() {
         const isEmail = (label: string) => label === EMAIL;
 
+        const containsEmail = (contactInfo: ContactInfo): boolean =>
+            !!contactInfo.value
+                .filter((yhteystieto) => isEmail(yhteystieto.label))
+                .filter((yhteystieto) => yhteystieto.value).length;
+
+        const isWorkEmail = (contactInfo: ContactInfo): boolean =>
+            contactInfo.id && contactInfo.type === WORK_ADDRESS && containsEmail(contactInfo);
+
         const defaultWorkAddress = (this.state.contactInfo || [])
-            .filter((contactInfo) => contactInfo.type === WORK_ADDRESS)
+            .filter((contactInfo) => isWorkEmail(contactInfo))
             .reduce((_, curr, acc) => (curr.id > acc ? curr.id : acc), 0);
 
         const endlingWorkAddress = (contactInfo: ContactInfo): boolean =>
-            contactInfo.type === WORK_ADDRESS &&
-            contactInfo.id &&
+            isWorkEmail(contactInfo) &&
             this.state.contactInfo
-                .filter((yhteystietoRyhma) => yhteystietoRyhma.id)
+                .filter((yhteystietoRyhma) => isWorkEmail(yhteystietoRyhma))
                 .filter((yhteystietoRyhma) => this.state.yhteystietoRemoveList.indexOf(yhteystietoRyhma.id) === -1)
                 .filter(
                     (yhteystietoRyhma) => this.state.yhteystietoRemoveList.indexOf(yhteystietoRyhma.henkiloUiId) === -1
-                )
-                .filter((yhteystietoRyhma) => yhteystietoRyhma.type === WORK_ADDRESS).length === 1;
+                ).length === 1;
 
         const content: Array<React.ReactNode> = this.state.contactInfo
             .filter(
