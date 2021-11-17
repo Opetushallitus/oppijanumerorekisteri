@@ -106,6 +106,17 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             .filter((contactInfo) => contactInfo.type === WORK_ADDRESS)
             .reduce((_, curr, acc) => (curr.id > acc ? curr.id : acc), 0);
 
+        const endlingWorkAddress = (contactInfo: ContactInfo): boolean =>
+            contactInfo.type === WORK_ADDRESS &&
+            contactInfo.id &&
+            this.state.contactInfo
+                .filter((yhteystietoRyhma) => yhteystietoRyhma.id)
+                .filter((yhteystietoRyhma) => this.state.yhteystietoRemoveList.indexOf(yhteystietoRyhma.id) === -1)
+                .filter(
+                    (yhteystietoRyhma) => this.state.yhteystietoRemoveList.indexOf(yhteystietoRyhma.henkiloUiId) === -1
+                )
+                .filter((yhteystietoRyhma) => yhteystietoRyhma.type === WORK_ADDRESS).length === 1;
+
         const content: Array<React.ReactNode> = this.state.contactInfo
             .filter(
                 (yhteystiedotRyhmaFlat) => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1
@@ -119,7 +130,9 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                     <span className="oph-h3 oph-bold midHeader">
                         {yhteystiedotRyhmaFlat.name} {yhteystiedotRyhmaFlat.id === defaultWorkAddress ? '*' : ''}
                     </span>
-                    {!this.state.readOnly && !yhteystiedotRyhmaFlat.readOnly ? (
+                    {!this.state.readOnly &&
+                    !yhteystiedotRyhmaFlat.readOnly &&
+                    !endlingWorkAddress(yhteystiedotRyhmaFlat) ? (
                         <span className="float-right">
                             <IconButton
                                 onClick={() =>
