@@ -112,7 +112,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
 
         const defaultWorkAddress = (this.state.contactInfo || [])
             .filter((contactInfo) => isWorkEmail(contactInfo))
-            .reduce((_, curr, acc) => (curr.id > acc ? curr.id : acc), 0);
+            .reduce((acc, contactInfo) => (contactInfo.id > acc ? contactInfo.id : acc), 0);
 
         const endlingWorkAddress = (contactInfo: ContactInfo): boolean =>
             isWorkEmail(contactInfo) &&
