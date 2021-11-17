@@ -37,7 +37,7 @@ type Props = OwnProps & {
     omattiedot: OmattiedotState;
 };
 
-type ContactInfo = {
+export type ContactInfo = {
     id: number | null | undefined;
     type: string;
     henkiloUiId: string | null | undefined;
@@ -55,6 +55,29 @@ type State = {
     contactInfoErrorFields: Array<string>;
     isContactInfoValid: boolean;
 };
+
+const isEmail = (label: string) => label === EMAIL;
+
+const containsEmail = (infoGroup: ContactInfo): boolean =>
+    !!infoGroup.value.filter((info) => isEmail(info.label)).filter((info) => info.value).length;
+
+const isWorkEmail = (contactInfo: ContactInfo): boolean =>
+    contactInfo.id && contactInfo.type === WORK_ADDRESS && containsEmail(contactInfo);
+
+export const resolveDefaultWorkAddress = (contactInfo: Array<ContactInfo>) =>
+    (contactInfo || [])
+        .filter((contactInfo) => isWorkEmail(contactInfo))
+        .reduce((acc, contactInfo) => (contactInfo.id > acc ? contactInfo.id : acc), 0);
+
+export const endlingWorkAddress = (
+    infoGroup: ContactInfo,
+    contactInfo: Array<ContactInfo>,
+    removeList: Array<number | string>
+): boolean =>
+    isWorkEmail(infoGroup) &&
+    contactInfo
+        .filter((info) => isWorkEmail(info))
+        .filter((info) => !removeList.includes(info.id) && !removeList.includes(info.henkiloUiId)).length === 1;
 
 class HenkiloViewContactContent extends React.Component<Props, State> {
     henkiloUpdate: Henkilo;
@@ -100,29 +123,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 
     createContent() {
-        const isEmail = (label: string) => label === EMAIL;
-
-        const containsEmail = (contactInfo: ContactInfo): boolean =>
-            !!contactInfo.value
-                .filter((yhteystieto) => isEmail(yhteystieto.label))
-                .filter((yhteystieto) => yhteystieto.value).length;
-
-        const isWorkEmail = (contactInfo: ContactInfo): boolean =>
-            contactInfo.id && contactInfo.type === WORK_ADDRESS && containsEmail(contactInfo);
-
-        const defaultWorkAddress = (this.state.contactInfo || [])
-            .filter((contactInfo) => isWorkEmail(contactInfo))
-            .reduce((acc, contactInfo) => (contactInfo.id > acc ? contactInfo.id : acc), 0);
-
-        const endlingWorkAddress = (contactInfo: ContactInfo): boolean =>
-            isWorkEmail(contactInfo) &&
-            this.state.contactInfo
-                .filter((yhteystietoRyhma) => isWorkEmail(yhteystietoRyhma))
-                .filter((yhteystietoRyhma) => this.state.yhteystietoRemoveList.indexOf(yhteystietoRyhma.id) === -1)
-                .filter(
-                    (yhteystietoRyhma) => this.state.yhteystietoRemoveList.indexOf(yhteystietoRyhma.henkiloUiId) === -1
-                ).length === 1;
-
+        const defaultWorkAddress = resolveDefaultWorkAddress(this.state.contactInfo);
         const content: Array<React.ReactNode> = this.state.contactInfo
             .filter(
                 (yhteystiedotRyhmaFlat) => this.state.yhteystietoRemoveList.indexOf(yhteystiedotRyhmaFlat.id) === -1
@@ -138,7 +139,11 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                     </span>
                     {!this.state.readOnly &&
                     !yhteystiedotRyhmaFlat.readOnly &&
-                    !endlingWorkAddress(yhteystiedotRyhmaFlat) ? (
+                    !endlingWorkAddress(
+                        yhteystiedotRyhmaFlat,
+                        this.state.contactInfo,
+                        this.state.yhteystietoRemoveList
+                    ) ? (
                         <span className="float-right">
                             <IconButton
                                 onClick={() =>
