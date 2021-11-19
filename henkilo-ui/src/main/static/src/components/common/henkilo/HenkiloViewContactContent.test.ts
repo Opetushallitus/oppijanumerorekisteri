@@ -1,5 +1,5 @@
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
-import { ContactInfo, endlingWorkAddress, resolveDefaultWorkAddress } from './HenkiloViewContactContent';
+import { ContactInfo, isLastWorkEmail, resolveDefaultWorkAddress } from './HenkiloViewContactContent';
 
 describe('HenkiloViewContactContent', () => {
     const value = {
@@ -32,7 +32,7 @@ describe('HenkiloViewContactContent', () => {
             ['Excludes items in remove list by id', workAddress, [workAddress], [1], false],
             ['Excludes items in remove list by henkiloUiId', workAddress, [workAddress], ['id'], false],
         ])('%s', (_, infoGroup, contactInfo, removeList, expected) =>
-            expect(endlingWorkAddress(infoGroup as ContactInfo, contactInfo as Array<ContactInfo>, removeList)).toEqual(
+            expect(isLastWorkEmail(infoGroup as ContactInfo, contactInfo as Array<ContactInfo>, removeList)).toEqual(
                 expected
             )
         );

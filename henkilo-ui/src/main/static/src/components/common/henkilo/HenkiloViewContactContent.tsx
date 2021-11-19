@@ -76,7 +76,7 @@ export const resolveDefaultWorkAddress = (contactInfo: Array<ContactInfo>, remov
         0
     );
 
-export const endlingWorkAddress = (
+export const isLastWorkEmail = (
     infoGroup: ContactInfo,
     contactInfo: Array<ContactInfo>,
     removeList: Array<number | string>
@@ -136,7 +136,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                     </span>
                     {!this.state.readOnly &&
                     !yhteystiedotRyhmaFlat.readOnly &&
-                    !endlingWorkAddress(
+                    !isLastWorkEmail(
                         yhteystiedotRyhmaFlat,
                         this.state.contactInfo,
                         this.state.yhteystietoRemoveList
