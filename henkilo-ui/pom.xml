@@ -31,6 +31,12 @@
         <buildNumber>default buildnumber</buildNumber>
         <branch>default branch</branch>
         <revision>default revision</revision>
+
+        <sonar.coverage.jacoco.xmlReportPaths>**/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.sources>src/main/java,src/main/static/src</sonar.sources>
+        <sonar.language>js,ts,tsx</sonar.language>
+        <sonar.exclusions>**/*.test.ts, **/*.test.tsx</sonar.exclusions>
+        <sonar.javascript.lcov.reportPaths>src/main/static/coverage/lcov.info</sonar.javascript.lcov.reportPaths>
     </properties>
 
     <dependencies>
@@ -240,7 +246,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <echo message="writing target/public/classes/buildversion.txt" />
+                                <echo message="writing target/public/classes/buildversion.txt"/>
                                 <echo file="target/classes/public/buildversion.txt">
                                     <![CDATA[artifactId=${project.artifactId}
 version=${project.version}
@@ -270,6 +276,26 @@ buildTtime=${maven.build.timestamp}
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
