@@ -14,14 +14,14 @@ import PropertySingleton from '../../../globals/PropertySingleton';
 import { toLocalizedText } from '../../../localizabletext';
 import {
     addKayttooikeusToHenkilo,
-    removePrivilege,
+    createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
+    removePrivilege,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { Localisations, L10n } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 import { TableCellProps, TableHeading } from '../../../types/react-table.types';
 import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { createKayttooikeusanomus } from '../../../actions/kayttooikeusryhma.actions';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { removeNotification } from '../../../actions/notifications.actions';
 import * as R from 'ramda';

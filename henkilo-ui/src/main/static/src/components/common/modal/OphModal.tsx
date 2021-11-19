@@ -19,7 +19,7 @@ class OphModal extends React.Component<OphModalProps> {
                 className="oph-overlay oph-overlay-bg oph-overlay-is-visible"
                 role="dialog"
                 tabIndex={-1}
-                onClick={this.props.onOverlayClick && this.props.onOverlayClick}
+                onClick={(e) => this.props.onOverlayClick && this.props.onOverlayClick(e)}
             >
                 <div className={classNames({ 'oph-modal': true }, { 'oph-modal-big': this.props.big })} role="document">
                     <button
