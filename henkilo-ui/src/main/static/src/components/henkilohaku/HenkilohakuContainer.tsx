@@ -72,7 +72,6 @@ class HenkilohakuContainer extends React.Component<Props> {
                 l10n={this.props.l10n}
                 locale={this.props.locale}
                 initialCriteria={this.initialCriteria}
-                // henkilo={this.props.henkilo} // TODO: not used at all?
                 henkilohakuAction={this.props.henkilohaku}
                 henkilohakuCount={this.props.henkilohakuCount}
                 henkilohakuResult={this.props.henkilohakuState.result}

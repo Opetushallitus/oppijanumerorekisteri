@@ -6,7 +6,7 @@ import { Locale } from '../../types/locale.type';
 import { KutsuRead as Kutsu } from '../../types/domain/kayttooikeus/Kutsu.types';
 
 type Props = {
-    kutsu: Kutsu | null | undefined;
+    kutsu?: Kutsu;
     L: Localisations;
     locale: Locale;
 };
@@ -14,7 +14,7 @@ type Props = {
 export const resolveInvitationRights = (
     kutsu: Kutsu | null | undefined,
     locale: string
-): Array<{ organisaatio: String; ryhma: string }> =>
+): Array<{ organisaatio: string; ryhma: string }> =>
     kutsu
         ? kutsu.organisaatiot.flatMap((organisaatio) =>
               organisaatio.kayttoOikeusRyhmat.map((ryhma) => ({

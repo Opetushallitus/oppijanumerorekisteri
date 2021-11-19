@@ -18,7 +18,7 @@ type Props = OwnProps & {
 
 const PassivoiButton = (props: Props) =>
     props.henkilo.henkilo.passivoitu ? (
-        <Button key="passivoi" disabled={!!props.henkilo.henkilo.passivoitu} action={() => {}}>
+        <Button key="passivoi" disabled={!!props.henkilo.henkilo.passivoitu}>
             {props.L['PASSIVOI_PASSIVOITU']}
         </Button>
     ) : (

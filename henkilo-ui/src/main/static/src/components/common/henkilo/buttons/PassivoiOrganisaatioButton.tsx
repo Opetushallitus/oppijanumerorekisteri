@@ -15,9 +15,7 @@ const PassivoiOrganisaatioButton = ({ passive, id, L, passivoiOrgAction, disable
             disabled={disabled}
         />
     ) : (
-        <Button disabled action={() => {}}>
-            {L['HENKILO_ORG_PASSIVOITU']}
-        </Button>
+        <Button disabled>{L['HENKILO_ORG_PASSIVOITU']}</Button>
     );
 
 PassivoiOrganisaatioButton.propTypes = {

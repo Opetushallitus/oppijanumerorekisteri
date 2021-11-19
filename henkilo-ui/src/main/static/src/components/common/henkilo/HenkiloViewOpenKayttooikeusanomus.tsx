@@ -393,8 +393,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
             .then((myonnettyKayttooikeusryhmat: Array<MyonnettyKayttooikeusryhma>) => {
                 const kayttooikeudet: Array<KayttooikeusryhmaData> = myonnettyKayttooikeusryhmat
                     .filter(
-                        (myonnettyKayttooikeusryhmat: MyonnettyKayttooikeusryhma) =>
-                            myonnettyKayttooikeusryhmat.tila !== KAYTTOOIKEUDENTILA.ANOTTU
+                        (myonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.ANOTTU
                     )
                     .map(this._parseAnojaKayttooikeus);
                 const anojaKayttooikeusryhmat = {

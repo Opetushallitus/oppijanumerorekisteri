@@ -10,9 +10,10 @@ type Props = {
 };
 export default class VtjVertailuListaus extends React.Component<Props> {
     render() {
-        const henkilo = R.path(['henkilo'], this.props.henkilo);
-
-        const henkiloData = R.pick(['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'], henkilo);
+        const henkiloData = R.pick(
+            ['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'],
+            R.path(['henkilo'], this.props.henkilo)
+        );
         henkiloData.palvelu = 'HENKILO_VTJ_HENKILOPALVELU';
 
         const yksilointitiedot = R.path(['yksilointitiedot'], this.props.henkilo);

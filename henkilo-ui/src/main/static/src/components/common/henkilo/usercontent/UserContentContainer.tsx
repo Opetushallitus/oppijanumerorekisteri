@@ -1,4 +1,3 @@
-import './UserContentContainer.css';
 import React from 'react';
 import { connect } from 'react-redux';
 import StaticUtils from '../../StaticUtils';
@@ -95,7 +94,7 @@ class UserContentContainer extends React.Component<Props, State> {
             discardAction: this._discard.bind(this),
             updateAction: this._update.bind(this),
             updateModelAction: this._updateModelField.bind(this),
-            updateDateAction: this._updateDateField.bind(this),
+            updateDateAction: this._updateModelField.bind(this),
             henkiloUpdate: this.state.henkiloUpdate,
             edit: this._edit.bind(this),
             aktivoiHenkilo: this.props.aktivoiHenkilo,
@@ -222,12 +221,6 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 
     _updateModelField(event: any) {
-        this.setState({
-            henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event),
-        });
-    }
-
-    _updateDateField(event: any) {
         this.setState({
             henkiloUpdate: StaticUtils.updateFieldByDotAnnotation(this.state.henkiloUpdate, event),
         });

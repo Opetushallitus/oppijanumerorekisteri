@@ -5,7 +5,7 @@ import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component';
 import CKKohde from './createkayttooikeus/CKKohde';
 import CKKesto from './createkayttooikeus/CKKesto';
-import CKKayttooikeudet from './createkayttooikeus/CKKayttooikeudet';
+import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
 import CKHaeButton from './createkayttooikeus/CKHaeButton';
 import {
     addKayttooikeusToHenkilo,
@@ -15,7 +15,6 @@ import { Localisations } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 import { ValidationMessage } from '../../../types/validation.type';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 

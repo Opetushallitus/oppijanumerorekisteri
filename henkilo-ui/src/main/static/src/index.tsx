@@ -2,12 +2,11 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { useRouterHistory } from 'react-router';
+import { Router, useRouterHistory } from 'react-router';
 import { createHistory } from 'history';
 import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './store/configureStore';
 import routes from './routes';
-import { Router } from 'react-router';
 import PropertySingleton from './globals/PropertySingleton';
 
 import './reset.css';

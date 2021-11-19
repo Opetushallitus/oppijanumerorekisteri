@@ -35,16 +35,12 @@ type Localisation = {
 export const fetchL10n = () => async (dispatch: any) => {
     dispatch(requestLocalisations());
 
-    try {
-        const henkiloUiLocalisations = await http.get(urls.url('henkilo-ui.l10n'));
-        dispatch(receiveLocalisations(henkiloUiLocalisations));
+    const henkiloUiLocalisations = await http.get(urls.url('henkilo-ui.l10n'));
+    dispatch(receiveLocalisations(henkiloUiLocalisations));
 
-        const localisationPalveluLocalisations = await http.get<Localisation[]>(
-            urls().url('lokalisointi.localisation', { category: 'henkilo-ui' })
-        );
-        const localisationsByLocale = mapLocalisationsByLocale(localisationPalveluLocalisations);
-        dispatch(receiveLocalisations(localisationsByLocale));
-    } catch (error) {
-        throw error;
-    }
+    const localisationPalveluLocalisations = await http.get<Localisation[]>(
+        urls().url('lokalisointi.localisation', { category: 'henkilo-ui' })
+    );
+    const localisationsByLocale = mapLocalisationsByLocale(localisationPalveluLocalisations);
+    dispatch(receiveLocalisations(localisationsByLocale));
 };

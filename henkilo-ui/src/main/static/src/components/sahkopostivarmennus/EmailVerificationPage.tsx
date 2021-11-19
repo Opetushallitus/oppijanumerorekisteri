@@ -107,27 +107,20 @@ export class EmailVerificationPage extends React.Component<Props, State> {
     }
 
     async verifyEmailAddresses() {
-        try {
-            const loginTokenValidationCodeUrl = urls.url(
-                'kayttooikeus-service.cas.emailverification.loginToken.validation',
-                this.props.loginToken
+        const loginTokenValidationCodeUrl = urls.url(
+            'kayttooikeus-service.cas.emailverification.loginToken.validation',
+            this.props.loginToken
+        );
+        const loginTokenValidationCode = await http.get(loginTokenValidationCodeUrl);
+        if (loginTokenValidationCode !== 'TOKEN_OK') {
+            this.props.router.push(
+                `/sahkopostivarmistus/virhe/${this.props.locale}/${this.props.loginToken}/${loginTokenValidationCode}`
             );
-            const loginTokenValidationCode = await http.get(loginTokenValidationCodeUrl);
-            if (loginTokenValidationCode !== 'TOKEN_OK') {
-                this.props.router.push(
-                    `/sahkopostivarmistus/virhe/${this.props.locale}/${this.props.loginToken}/${loginTokenValidationCode}`
-                );
-            } else {
-                const emailVerificationUrl = urls.url(
-                    'kayttooikeus-service.cas.emailverification',
-                    this.props.loginToken
-                );
-                const redirectParams = await http.post(emailVerificationUrl, this.state.henkilo);
-                const redirectUrl = urls.url('cas.login', redirectParams);
-                window.location.replace(redirectUrl);
-            }
-        } catch (error) {
-            throw error;
+        } else {
+            const emailVerificationUrl = urls.url('kayttooikeus-service.cas.emailverification', this.props.loginToken);
+            const redirectParams = await http.post(emailVerificationUrl, this.state.henkilo);
+            const redirectUrl = urls.url('cas.login', redirectParams);
+            window.location.replace(redirectUrl);
         }
     }
 

@@ -66,11 +66,11 @@ const mapOrganisaatioLevelsRecursively = (
         result.push(organisaatioSelectObject);
 
         if (organisaatio.children) {
-            const parentNames =
+            const parents =
                 organisaatio.oid === PropertySingleton.state.rootOrganisaatioOid
                     ? []
                     : [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name];
-            mapOrganisaatioLevelsRecursively(organisaatio.children, parentNames, locale, result);
+            mapOrganisaatioLevelsRecursively(organisaatio.children, parents, locale, result);
         }
     });
 };
@@ -145,7 +145,7 @@ export const organisaatioHierarchyRoots = (
                 // do not add duplicates:
                 if (R.findIndex(R.pathEq(['oid'], org.oid))(parent.children) < 0) {
                     parent.children.push(org);
-                    parent.children = R.sortBy((org: OrganisaatioWithChildren) => toLocalizedText(locale, org.nimi))(
+                    parent.children = R.sortBy((o: OrganisaatioWithChildren) => toLocalizedText(locale, o.nimi))(
                         parent.children
                     );
                 }
@@ -190,8 +190,7 @@ export const mapOrganisaatio = (
     locale: Locale,
     sisallytaTyypit: boolean = true
 ): { value: string; label: string } => {
-    const organisaatioNimi = (org) => toLocalizedText(locale, organisaatio.nimi);
-    const nimi = organisaatioNimi(organisaatio);
+    const nimi = toLocalizedText(locale, organisaatio.nimi);
     const tyypit = sisallytaTyypit ? ` (${organisaatio.tyypit.join(',')})` : '';
     return {
         value: organisaatio.oid,

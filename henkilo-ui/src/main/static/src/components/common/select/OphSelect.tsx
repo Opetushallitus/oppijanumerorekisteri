@@ -19,7 +19,7 @@ type Props = {
     name?: string;
     placeholder?: string;
     disabled?: boolean;
-    clearable?: boolean | null | undefined;
+    clearable?: boolean;
     closeOnSelect?: boolean;
     multiselect?: boolean;
 };

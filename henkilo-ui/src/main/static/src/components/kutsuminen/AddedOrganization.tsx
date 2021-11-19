@@ -21,13 +21,12 @@ import { KutsuOrganisaatio, OrganisaatioHenkilo } from '../../types/domain/kaytt
 import { Localisations } from '../../types/localisation.type';
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal';
 import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils';
-import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
 import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import moment from 'moment';
 import { fetchAllowedKayttooikeusryhmasForOrganisation } from '../../actions/kayttooikeusryhma.actions';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
-import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
 
 type OwnProps = {

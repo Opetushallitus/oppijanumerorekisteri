@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Columns from 'react-columns';
-import Field from '../../field/Field';
+import Field, { SelectValue } from '../../field/Field';
 import { Localisations } from '../../../../types/localisation.type';
-import { SelectValue } from '../../field/Field';
 
 type OwnProps = {
     values: {

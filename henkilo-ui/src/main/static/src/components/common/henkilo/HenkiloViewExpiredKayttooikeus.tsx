@@ -1,4 +1,3 @@
-import './HenkiloViewExistingKayttooikeus.css';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import Table from '../table/Table';

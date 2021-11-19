@@ -112,11 +112,7 @@ export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, get
         const oid = R.path(['omattiedot', 'data', 'oid'], getState());
         const omattiedotLoading = getState().omattiedot.omattiedotLoading;
         if (!oid && !omattiedotLoading) {
-            try {
-                await dispatch(fetchOmattiedot());
-            } catch (error) {
-                throw error;
-            }
+            dispatch(fetchOmattiedot());
         }
         const userOid = getState().omattiedot.data.oid;
         dispatch(requestOmattiedotOrganisaatios());

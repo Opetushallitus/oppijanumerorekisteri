@@ -50,7 +50,7 @@ const Kansalaisuus = (props: Props) => {
                         label: koodi[props.locale],
                         optionsName: 'kansalaisuus',
                     })),
-                    selectValue: kansalaisuus.map((kansalaisuus) => kansalaisuus.kansalaisuusKoodi),
+                    selectValue: kansalaisuus.map((item) => item.kansalaisuusKoodi),
                     disabled: disabled,
                     clearable: false,
                     multiselect: true,

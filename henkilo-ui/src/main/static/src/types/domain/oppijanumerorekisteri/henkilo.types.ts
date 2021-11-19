@@ -41,10 +41,10 @@ export type HenkiloCreate = {
     etunimet?: string;
     kutsumanimi?: string;
     sukunimi?: string;
-    aidinkieli?: Kielisyys | null | undefined;
-    kansalaisuus?: Array<Kansalaisuus> | null | undefined;
-    syntymaaika?: string | null | undefined;
-    sukupuoli?: string | null | undefined;
-    passinumerot?: Array<string> | null | undefined;
-    yhteystiedotRyhma?: Array<YhteystietoRyhma> | null | undefined;
+    aidinkieli?: Kielisyys;
+    kansalaisuus?: Array<Kansalaisuus>;
+    syntymaaika?: string;
+    sukupuoli?: string;
+    passinumerot?: Array<string>;
+    yhteystiedotRyhma?: Array<YhteystietoRyhma>;
 };

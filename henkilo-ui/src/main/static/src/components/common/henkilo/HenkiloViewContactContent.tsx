@@ -38,9 +38,9 @@ type Props = OwnProps & {
 };
 
 type ContactInfo = {
-    id: number | null | undefined;
+    id?: number;
     type: string;
-    henkiloUiId: string | null | undefined;
+    henkiloUiId?: string;
     name: string;
     readOnly: boolean;
     value: Array<{ label: string; value: string; inputValue: string }>;
@@ -60,8 +60,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     henkiloUpdate: Henkilo;
     contactInfoTemplate: Array<{
         label: string;
-        value: string | null | undefined;
-        inputValue: string | null | undefined;
+        value?: string;
+        inputValue?: string;
     }>;
     _preEditData: { contactInfo: Array<ContactInfo> };
 
@@ -304,8 +304,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         henkiloUpdate: Henkilo,
         contactInfoTemplate: Array<{
             label: string;
-            value: string | null | undefined;
-            inputValue: string | null | undefined;
+            value?: string;
+            inputValue?: string;
         }>,
         yhteystietotyypit: Array<any>,
         locale: string,
@@ -330,8 +330,8 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     createFlatYhteystieto(
         contactInfoTemplate: Array<{
             label: string;
-            value: string | null | undefined;
-            inputValue: string | null | undefined;
+            value?: string;
+            inputValue?: string;
         }>,
         yhteystietoList: Array<any>,
         idx: number,

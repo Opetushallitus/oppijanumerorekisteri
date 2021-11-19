@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import AnomusPage from './AnomusPage';
-import { FetchHaetutKayttooikeusryhmatParameters } from './AnomusPage';
+import AnomusPage, { FetchHaetutKayttooikeusryhmatParameters } from './AnomusPage';
 import { clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat } from '../../actions/anomus.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import {

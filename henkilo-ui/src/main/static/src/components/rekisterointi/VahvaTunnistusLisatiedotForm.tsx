@@ -1,6 +1,5 @@
 import React from 'react';
-import VahvaTunnistusLisatiedotInputs from './VahvaTunnistusLisatiedotInputs';
-import { Form } from './VahvaTunnistusLisatiedotInputs';
+import VahvaTunnistusLisatiedotInputs, { Form } from './VahvaTunnistusLisatiedotInputs';
 import { Localisations } from '../../types/localisation.type';
 
 type VahvaTunnistusLisatiedotFormProps = {

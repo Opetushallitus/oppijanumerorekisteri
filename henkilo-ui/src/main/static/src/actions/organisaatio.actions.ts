@@ -11,8 +11,9 @@ import {
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS,
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE,
+    FETCH_ORGANISATIONS_REQUEST,
+    FETCH_ORGANISATIONS_SUCCESS,
 } from './actiontypes';
-import { FETCH_ORGANISATIONS_REQUEST, FETCH_ORGANISATIONS_SUCCESS } from './actiontypes';
 import { Dispatch } from '../types/dispatch.type';
 import { OrganisaatioState } from '../reducers/organisaatio.reducer';
 import { RyhmatState } from '../reducers/ryhmat.reducer';

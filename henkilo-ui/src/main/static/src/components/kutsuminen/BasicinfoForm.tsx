@@ -13,7 +13,7 @@ type Props = {
     setBasicInfo: (arg0: KutsuBasicInfo) => void;
 };
 
-export default class BasicInfo extends React.Component<Props> {
+export default class BasicinfoForm extends React.Component<Props> {
     languages = [
         { code: 'fi', name: { fi: 'Suomi', en: 'Finnish', sv: 'Finska' } },
         { code: 'sv', name: { fi: 'Ruotsi', en: 'Swedish', sv: 'Svenska' } },

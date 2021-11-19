@@ -5,17 +5,6 @@ export type NoficationListState = Array<GlobalNotificationConfig>;
 
 type Action = any; // AddAction | RemoveAction
 
-/*
-type AddAction = {
-    type: string,
-    payload: GlobalNotificationConfig
-}
-
-type RemoveAction = {
-    type: string,
-    key: string
-}
-*/
 export const notificationList = (state: NoficationListState = [], action: Action): NoficationListState => {
     switch (action.type) {
         case GLOBAL_NOTIFICATION.ADD:

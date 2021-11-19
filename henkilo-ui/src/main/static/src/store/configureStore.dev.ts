@@ -7,19 +7,7 @@ const configureStore = () => {
     const isClient = typeof window !== 'undefined';
     const composeEnchancers = (isDev && isClient && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
-    const store = createStore(rootReducer, undefined, composeEnchancers(applyMiddleware(thunkMiddleware)));
-
-    /*
-    if (module.hot) {
-        // Enable Webpack hot module replacement for reducers
-        module.hot.accept('../reducers', () => {
-            const nextRootReducer = require('../reducers').default;
-            store.replaceReducer(nextRootReducer);
-        });
-    }
-    */
-
-    return store;
+    return createStore(rootReducer, undefined, composeEnchancers(applyMiddleware(thunkMiddleware)));
 };
 
 export default configureStore;

@@ -65,7 +65,7 @@ export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid) => (dispatch) =
         : urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.current');
     http.get<[{ organisaatioOid: string }]>(url)
         .then((kayttooikeus) => {
-            dispatch(fetchOrganisations(kayttooikeus.map((kayttooikeus) => kayttooikeus.organisaatioOid))).then(() =>
+            dispatch(fetchOrganisations(kayttooikeus.map((ko) => ko.organisaatioOid))).then(() =>
                 dispatch(receiveAllKayttooikeusryhmasForHenkilo(henkiloOid, kayttooikeus))
             );
         })
@@ -240,7 +240,7 @@ export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) =
             dispatch(
                 receiveAddKayttooikeusToHenkilo(
                     organisaatioOid,
-                    payload.map((payload) => payload.id)
+                    payload.map((kayttooikeus) => kayttooikeus.id)
                 )
             );
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(henkiloOid));
@@ -251,7 +251,7 @@ export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) =
             dispatch(
                 errorAddKayttooikeusToHenkilo(
                     organisaatioOid,
-                    payload.map((payload) => payload.id)
+                    payload.map((kayttooikeus) => kayttooikeus.id)
                 )
             )
         );

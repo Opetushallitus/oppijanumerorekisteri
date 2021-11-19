@@ -21,7 +21,7 @@ type Props = {
 // Do not use directly but by one of the wrappers of this class.
 class NotificationButton extends React.Component<Props> {
     render() {
-        const notification = this.props.notifications.filter((notification) => notification.id === this.props.id)[0];
+        const notification = this.props.notifications.filter((item) => item.id === this.props.id)[0];
         let arrowDirectionStyle;
         let style: CSS.Properties = { ...this.props.styles };
         if (this.props.arrowDirection === 'down') {

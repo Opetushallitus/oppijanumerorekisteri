@@ -31,12 +31,8 @@ export default class KayttooikeusryhmaTiedot extends React.Component<Props, Stat
     async componentWillReceiveProps(nextProps: Props): Promise<void> {
         if (nextProps.show && R.isEmpty(this.state.palvelutRoolit)) {
             const url = urls.url('kayttooikeus-service.kayttooikeusryhma.palvelurooli', this.props.item.id);
-            try {
-                const data = await http.get<PalveluRooli[]>(url);
-                this.setState({ palvelutRoolit: data });
-            } catch (error) {
-                throw error;
-            }
+            const data = await http.get<PalveluRooli[]>(url);
+            this.setState({ palvelutRoolit: data });
         }
     }
 

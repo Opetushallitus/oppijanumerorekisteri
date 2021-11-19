@@ -1,8 +1,4 @@
 
-.organisaatio-select {
-
-}
-
 .organisaatio-select .oph-h3 {
     margin-bottom: 10px;
 }
@@ -21,10 +17,6 @@
 
 .organisaatio-select-list .organisaatio .wrapper {
     padding: 10px;
-}
-
-.organisaatio-select-list .organisaatio:hover {
-    border-right-width: 10px;
 }
 
 .organisaatio-select-list .organisaatio .parent {
@@ -49,6 +41,7 @@
 
 .organisaatio-select-list .organisaatio:hover {
     background-color: aliceblue;
+    border-right-width: 10px;
 }
 
 .organisaatio-select-list .suunniteltu,
