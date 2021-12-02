@@ -1,18 +1,24 @@
 # Henkilö UI
 
 ## Teknologiat
-* Java 11
-* Spring Boot
-* Maven 3
-* React
-* Redux
-* ES6
-* NPM 5
+
+- (Docker)
+- Java 11
+- Maven 3
+- Node
+- Spring Boot
+- Spring Security
+- Typescript
+- React (CRA)
+- Redux
+- ES6
+- NPM 5
 
 ## Ennakkovaatimukset
-* Asennettu Java 11
-* henkiloui.yml (löytyy integraatiopalvelimelta tai kysy muilta kehittäjiltä)
-  * Lisää front propertyt esim. seuraavasti:
+
+- Asennettu Java 11
+- henkiloui.yml (löytyy integraatiopalvelimelta tai kysy muilta kehittäjiltä)
+  - Lisää front propertyt esim. seuraavasti:
   ```
   server:
     port: 8280
@@ -28,20 +34,22 @@
     oppijanumerorekisteri:
       baseUrl: http://localhost:<port>
   ```
-  * Näihin voi myös laittaa integraatiopalvelimen osoitteen kehittäjän tarpeista riippuen
-  * Jos käytät kirjautumista vaativia integraatiopalvelimen rajapintoja muista käydä kirjautumassa sinne ja tarvittaessa avaa dev konsolissa näkyvät linkit erikseen ennen sivun uudelleenpäivitystä!
+  - Näihin voi myös laittaa integraatiopalvelimen osoitteen kehittäjän tarpeista riippuen
+  - Jos käytät kirjautumista vaativia integraatiopalvelimen rajapintoja muista käydä kirjautumassa sinne ja tarvittaessa avaa dev konsolissa näkyvät linkit erikseen ennen sivun uudelleenpäivitystä!
 
 ## Backend
 
 ### Kääntäminen:
+
 `mvn clean install`
 
-Tämä ajaa testit ja luo 
+Tämä ajaa testit ja luo
 
 ### Ajaminen:
+
 Idea: SpringBoot VMOptions `-Dspring.profiles.active=dev -Dspring.config.location=<path-to-local-henkiloui.yml>/henkiloui.yml`
 
-JAR:  `java -jar target/henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=<path-to-local-henkiloui.yml>/henkiloui.yml`
+JAR: `java -jar target/henkiloui-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.config.additional-location=<path-to-local-henkiloui.yml>/henkiloui.yml`
 
 Ui löytyy osoitteesta http://localhost:8280/henkilo-ui/
 
@@ -53,10 +61,10 @@ Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyt
 
 `npm start`
 
-Mikäli kehityksesssä tarvitsee tehdä kutsuja taustajärjestelmiin, sen pitäisi onnistua helposti [näillä ohjeilla](nginx): 
-
+Mikäli kehityksesssä tarvitsee tehdä kutsuja taustajärjestelmiin, sen pitäisi onnistua helposti [näillä ohjeilla](nginx):
 
 ### Flowjs
+
 Voit ajaa tyyppitarkistukset lokaalisti komennolla `npm run flowrun`. Tämä ei kuitenkaa seuraa muutoksia, vaan prosessi päättyy heti ajon jälkeen. Kannattanee asentaa omaan IDEn plugin, joka hoitaa jatkuvan tyyppitarkistuksen.
 
 ### Riippuvuudet
@@ -80,7 +88,8 @@ Poistaminen
 Commitoi sekä package.json että package-lock.json -tiedostot.
 
 ### CORS
-Integraatiopalvelinta vastaan kehitettäessä on käytettävästä 
+
+Integraatiopalvelinta vastaan kehitettäessä on käytettävästä
 selaimesta otettava pois käytöstä tietoturva-asetuksia. Myös lokaalisti ajettavaa palvelinta kehitettäessä (eri localhost portti)
 
 <b>Chrome:</b>
@@ -89,17 +98,17 @@ Sulje kaikki chrome instanssit ennen seuraavan ajamista.
 
 Linux `$ google-chrome --disable-web-security`
 
-Windows `chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security` 
+Windows `chrome.exe --user-data-dir="C:/Chrome dev session" --disable-web-security`
 
 OSX `$ open -a Google\ Chrome --args --disable-web-security --user-data-dir`
 
-Tämän jälkeen avaa sessio haluttuihin palveluihin integraatiopalvelimelle tekemällä niihin jokin kysely. 
+Tämän jälkeen avaa sessio haluttuihin palveluihin integraatiopalvelimelle tekemällä niihin jokin kysely.
 
 <b>Huom. ei turvallinen selailuun kehityksen aikana! Käytä tällöin rinnalla eri selainta.</b>
 
 ## API-dokumentaatio
 
-Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta: 
+Rest API on dokumentoitu swaggerin avulla ja löytyy osoitteesta:
 https://virkailija.opintopolku.fi/henkilo-ui/swagger-ui.html
 
 Tämä sisältää vain UI:n pakolliset rajapinnat ja sitä ei ole tarkoitettu kutsuttavaksi mistään muualta.
