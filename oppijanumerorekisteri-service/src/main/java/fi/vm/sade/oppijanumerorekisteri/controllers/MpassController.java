@@ -8,6 +8,9 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.HttpURLConnection;
+import java.util.Collection;
 
 /**
  * Oppijanumeron käyttö yleistunnisteena
@@ -53,6 +58,9 @@ public class MpassController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
+    @ApiResponses(value = {@ApiResponse(code = HttpURLConnection.HTTP_OK,
+            message = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat",
+            response = FilteredResult.class)})
     public MappingJacksonValue getOppijatByTuontiId(@PathVariable Long id) {
 
         OppijaTuontiReadDto result = oppijaService.getOppijatByTuontiId(id);
@@ -80,5 +88,27 @@ public class MpassController {
             notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
     public OppijaTuontiPerustiedotReadDto getTuontiById(@PathVariable Long id) {
         return oppijaService.getTuontiById(id);
+    }
+
+    // Following is just for swagger documentation
+    @Getter
+    static class FilteredResult {
+        private long id;
+        private int kasiteltavia;
+        private int kasiteltyja;
+        private boolean kasitelty;
+        private Collection<FilteredRow> henkilot;
+    }
+
+    @Getter
+    static class FilteredRow {
+        private String tunniste;
+        private FilteredStudent henkilo;
+    }
+
+    @Getter
+    static class FilteredStudent {
+        private String oid;
+        private String oppijanumero;
     }
 }
