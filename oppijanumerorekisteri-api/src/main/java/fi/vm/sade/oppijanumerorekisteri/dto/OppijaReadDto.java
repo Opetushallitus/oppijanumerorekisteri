@@ -1,14 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter
+@JsonFilter("mpassFilter")
 public class OppijaReadDto {
 
     private String oid;

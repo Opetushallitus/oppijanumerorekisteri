@@ -8,19 +8,7 @@
       "tunniste": "tunniste",
       "henkilo": {
         "oid": null,
-        "oppijanumero": null,
-        "luotu": null,
-        "muokattu": null,
-        "hetu": null,
-        "etunimet": null,
-        "kutsumanimi": null,
-        "sukunimi": null,
-        "syntymaaika": null,
-        "sukupuoli": null,
-        "aidinkieli": null,
-        "kansalaisuus": null,
-        "kotikunta": null,
-        "yhteystiedotRyhma": null
+        "oppijanumero": null
       }
     }
   ]

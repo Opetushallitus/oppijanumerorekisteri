@@ -1,11 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +34,8 @@ import javax.validation.Valid;
 public class MpassController {
 
     protected static final String REQUEST_MAPPING = "/mpass";
+    private static final SimpleBeanPropertyFilter mpassFilter = SimpleBeanPropertyFilter.filterOutAllExcept("oid", "oppijanumero");
+    private static final FilterProvider filterProvider = new SimpleFilterProvider().addFilter("mpassFilter", mpassFilter);
     private final OppijaService oppijaService;
 
     @PutMapping
@@ -47,8 +53,14 @@ public class MpassController {
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
-    public OppijaTuontiReadDto getOppijatByTuontiId(@PathVariable Long id) {
-        return oppijaService.getOppijatByTuontiId(id);
+    public MappingJacksonValue getOppijatByTuontiId(@PathVariable Long id) {
+
+        OppijaTuontiReadDto result = oppijaService.getOppijatByTuontiId(id);
+
+        MappingJacksonValue filtered = new MappingJacksonValue(result);
+        filtered.setFilters(filterProvider);
+
+        return filtered;
     }
 
     @PostMapping("/tuonti={id}")

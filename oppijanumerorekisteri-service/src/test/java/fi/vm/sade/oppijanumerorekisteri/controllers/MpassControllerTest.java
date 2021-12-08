@@ -297,7 +297,7 @@ public class MpassControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/mpass/tuontiPerustiedot.json")));
+                .andExpect(content().json(getFixture("/controller/mpass/tuontiPerustiedot.json"), true));
 
         verify(oppijaServiceMock, times(1)).getTuontiById(37337L);
     }
@@ -339,7 +339,7 @@ public class MpassControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/mpass/tuontiPerustiedot.json")));
+                .andExpect(content().json(getFixture("/controller/mpass/tuontiPerustiedot.json"), true));
 
         verify(oppijaServiceMock, times(1)).create(37337L);
     }
@@ -408,7 +408,7 @@ public class MpassControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/mpass/tuontiOppijat.json")));
+                .andExpect(content().json(getFixture("/controller/mpass/tuontiOppijat.json"), true));
 
         verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
     }
