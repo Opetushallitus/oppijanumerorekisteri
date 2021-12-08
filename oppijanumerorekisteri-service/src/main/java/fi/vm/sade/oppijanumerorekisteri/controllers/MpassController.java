@@ -7,9 +7,11 @@ import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.Generated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -32,6 +34,7 @@ import java.util.Collection;
  * OppijaController sillä erotuksella että vastauksista on poistettu
  * arkaluontoiseksi katsottavaa informaatiota
  */
+@Api(tags = "MPass - Oppijanumeron käyttö yleistunnisteena")
 @RestController
 @RequestMapping(MpassController.REQUEST_MAPPING)
 @RequiredArgsConstructor
@@ -91,6 +94,7 @@ public class MpassController {
     }
 
     // Following is just for swagger documentation
+    @Generated
     @Getter
     static class FilteredResult {
         private long id;
@@ -100,12 +104,14 @@ public class MpassController {
         private Collection<FilteredRow> henkilot;
     }
 
+    @Generated
     @Getter
     static class FilteredRow {
         private String tunniste;
         private FilteredStudent henkilo;
     }
 
+    @Generated
     @Getter
     static class FilteredStudent {
         private String oid;
