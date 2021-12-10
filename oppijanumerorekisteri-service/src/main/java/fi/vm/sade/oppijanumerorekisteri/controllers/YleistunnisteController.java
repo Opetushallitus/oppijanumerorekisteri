@@ -34,16 +34,16 @@ import java.util.Collection;
  * OppijaController sillä erotuksella että vastauksista on poistettu
  * arkaluontoiseksi katsottavaa informaatiota
  */
-@Api(tags = "MPass - Oppijanumeron käyttö yleistunnisteena")
+@Api(tags = "Yleistunniste - Oppijanumeron käyttö yleistunnisteena")
 @RestController
-@RequestMapping(MpassController.REQUEST_MAPPING)
+@RequestMapping(YleistunnisteController.REQUEST_MAPPING)
 @RequiredArgsConstructor
 @Validated
-public class MpassController {
+public class YleistunnisteController {
 
-    protected static final String REQUEST_MAPPING = "/mpass";
-    private static final SimpleBeanPropertyFilter mpassFilter = SimpleBeanPropertyFilter.filterOutAllExcept("oid", "oppijanumero");
-    private static final FilterProvider filterProvider = new SimpleFilterProvider().addFilter("mpassFilter", mpassFilter);
+    protected static final String REQUEST_MAPPING = "/yleistunniste";
+    private static final SimpleBeanPropertyFilter yleistunnisteFilter = SimpleBeanPropertyFilter.filterOutAllExcept("oid", "oppijanumero");
+    private static final FilterProvider filterProvider = new SimpleFilterProvider().addFilter("yleistunnisteFilter", yleistunnisteFilter);
     private final OppijaService oppijaService;
 
     @PutMapping

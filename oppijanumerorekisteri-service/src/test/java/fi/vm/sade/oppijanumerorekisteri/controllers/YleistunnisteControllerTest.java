@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-import static fi.vm.sade.oppijanumerorekisteri.controllers.MpassController.REQUEST_MAPPING;
+import static fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController.REQUEST_MAPPING;
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
@@ -43,9 +43,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
-@WebMvcTest(MpassController.class)
+@WebMvcTest(YleistunnisteController.class)
 @ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
-public class MpassControllerTest {
+public class YleistunnisteControllerTest {
 
     private static final String VALID_ROLE = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA";
     private static final String ACCESS_DENIED = "PIGGLYWIGGLY";
@@ -297,7 +297,7 @@ public class MpassControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/mpass/tuontiPerustiedot.json"), true));
+                .andExpect(content().json(getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
 
         verify(oppijaServiceMock, times(1)).getTuontiById(37337L);
     }
@@ -339,7 +339,7 @@ public class MpassControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/mpass/tuontiPerustiedot.json"), true));
+                .andExpect(content().json(getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
 
         verify(oppijaServiceMock, times(1)).create(37337L);
     }
@@ -408,7 +408,7 @@ public class MpassControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/mpass/tuontiOppijat.json"), true));
+                .andExpect(content().json(getFixture("/controller/yleistunniste/tuontiOppijat.json"), true));
 
         verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
     }
