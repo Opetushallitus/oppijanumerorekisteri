@@ -47,7 +47,6 @@ public class OppijanumerorekisteriProperties {
         }
 
         @Getter
-        @Setter
         public static class DeathCleanup {
             private int hour = 4;
             private int minute = 30;

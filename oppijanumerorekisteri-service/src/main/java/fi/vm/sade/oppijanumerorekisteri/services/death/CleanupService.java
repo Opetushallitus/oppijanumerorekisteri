@@ -76,7 +76,7 @@ public class CleanupService {
     }
 
     private CleanupStep resolveFinalCleanupStep() {
-        return getCleanupSteps().reduce((a, b) -> b).get();
+        return getCleanupSteps().reduce((a, b) -> b).orElse(CleanupStep.INITIATED);
     }
 
     private Stream<CleanupStep> getCleanupSteps() {
