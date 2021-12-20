@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.Oppijanumerorekist
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import org.joda.time.DateTime;
 
 import java.time.LocalDate;
@@ -195,4 +196,6 @@ public interface HenkiloJpaRepository {
     Optional<Henkilo> findByKaikkiHetut(String hetu);
 
     List<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, long limit, long offset);
+
+    Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step);
 }

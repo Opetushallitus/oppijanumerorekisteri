@@ -18,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.Oppijanumerorekist
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YhteystietoCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.dto.YhteystietoHakuDto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -717,5 +718,18 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         query.offset(offset);
 
         return query.fetch();
+    }
+
+    @Override
+    public Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return jpa()
+                .from(qHenkilo)
+                .where(
+                        qHenkilo.kuolinpaiva.before(LocalDate.now()),
+                        qHenkilo.cleanupStep.isNull().or(qHenkilo.cleanupStep.ne(step))
+                )
+                .select(qHenkilo)
+                .fetch();
     }
 }

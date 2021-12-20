@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import com.google.common.collect.Sets;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
@@ -495,6 +496,73 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
         henkilos = dataRepository.findByMunicipalAndBirthdate(kunta, dob, Long.MAX_VALUE, 1L);
         assertTrue("Result should be empty (offset)", henkilos.isEmpty());
+    }
+
+    @Test
+    public void findDeadWithIncompleteCleanup() {
+        LocalDate dod = LocalDate.of(2015, 12, 28);
+        Date dodDate = Date.from(dod.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Ian Fraser")
+                .kutsumanimi("Lemmy")
+                .sukunimi("Kilmister")
+                .hetu("")
+                .kuolinpaiva(dod)
+                .created(dodDate)
+                .modified(dodDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
+        assertEquals("Incorrect result size", 1, henkilos.size());
+    }
+
+    @Test
+    public void findDeadWithIncompleteCleanupAllDone() {
+        LocalDate dod = LocalDate.of(2015, 12, 28);
+        Date dodDate = Date.from(dod.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Ian Fraser")
+                .kutsumanimi("Lemmy")
+                .sukunimi("Kilmister")
+                .hetu("")
+                .kuolinpaiva(dod)
+                .cleanupStep(CleanupStep.INITIATED)
+                .created(dodDate)
+                .modified(dodDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
+        assertTrue("Incorrect result size", henkilos.isEmpty());
+    }
+
+    @Test
+    public void findDeadWithIncompleteCleanupNotDeadYet() {
+        LocalDate dod = LocalDate.now().plusDays(1);
+        Date dodDate = Date.from(dod.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Henkilo testiHenkilo = Henkilo.builder()
+                .oidHenkilo(UUID.randomUUID().toString())
+                .etunimet("Ernesto")
+                .kutsumanimi("Che")
+                .sukunimi("Guevara")
+                .hetu("")
+                .kuolinpaiva(dod)
+                .created(dodDate)
+                .modified(dodDate)
+                .build();
+
+        dataRepository.saveAndFlush(testiHenkilo);
+
+        Collection<Henkilo> henkilos = dataRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED);
+        assertTrue("Incorrect result size", henkilos.isEmpty());
     }
 
     @Test
