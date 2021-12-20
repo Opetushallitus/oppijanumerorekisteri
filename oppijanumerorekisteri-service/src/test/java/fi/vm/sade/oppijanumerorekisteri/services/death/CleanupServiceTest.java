@@ -9,10 +9,10 @@ import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.death.steps.NOPStep;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,12 @@ class CleanupServiceTest {
 
     @Mock
     Henkilo subject;
+
+    @BeforeEach
+    void setUp() {
+        Logger logger = (Logger) LoggerFactory.getLogger(CleanupService.class);
+        logger.addAppender(mockAppender);
+    }
 
     @Test
     void runNoSubject() {
@@ -104,22 +110,17 @@ class CleanupServiceTest {
 
     @Test
     void reportSuccess() {
-        Logger logger = (Logger) LoggerFactory.getLogger(CleanupService.class);
-        logger.addAppender(mockAppender);
+        ArgumentCaptor<ILoggingEvent> argumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
 
         cleanupService.report(Map.of(true, 1), CleanupStep.INITIATED);
 
-        verify(mockAppender, times(1)).doAppend(ArgumentMatchers.argThat(msg -> {
-            assertThat(msg.getLevel()).isEqualTo(Level.INFO);
-            return true;
-        }));
+        verify(mockAppender, times(1)).doAppend(argumentCaptor.capture());
+        assertThat(argumentCaptor.getAllValues().get(0).getLevel()).isEqualTo(Level.INFO);
     }
 
     @Test
     void reportFailure() {
         ArgumentCaptor<ILoggingEvent> argumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
-        Logger logger = (Logger) LoggerFactory.getLogger(CleanupService.class);
-        logger.addAppender(mockAppender);
 
         cleanupService.report(Map.of(false, 1), CleanupStep.INITIATED);
 
@@ -142,6 +143,6 @@ class CleanupServiceTest {
     void resolveSubjectsNeedingStepInitiatedSubject() {
         given(subject.getCleanupStep()).willReturn(CleanupStep.INITIATED);
 
-        assertThat(cleanupService.resolveSubjectsNeedingStep(Collections.emptyList(), CleanupStep.INITIATED)).isEmpty();
+        assertThat(cleanupService.resolveSubjectsNeedingStep(List.of(subject), CleanupStep.INITIATED)).isEmpty();
     }
 }
