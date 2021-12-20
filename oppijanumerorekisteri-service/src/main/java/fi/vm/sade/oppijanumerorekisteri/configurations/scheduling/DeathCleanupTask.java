@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalTime;
 
 @Component
-public class DeathCleanupTask extends RecurringTask {
+public class DeathCleanupTask extends RecurringTask<Void> {
 
     private final CleanupService cleanupService;
 
