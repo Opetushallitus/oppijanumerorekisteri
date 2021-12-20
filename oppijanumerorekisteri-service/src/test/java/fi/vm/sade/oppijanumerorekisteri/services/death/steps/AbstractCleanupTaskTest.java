@@ -8,9 +8,12 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Oppijanumerore
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
+import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,15 +23,29 @@ import static org.mockito.Mockito.*;
 
 class AbstractCleanupTaskTest {
 
+    @Mock(answer = Answers.CALLS_REAL_METHODS)
+    AbstractCleanupTask step;
+
+    @Mock
+    Henkilo subject = mock(Henkilo.class);
+
+    @Mock
+    Appender<ILoggingEvent> mockAppender;
+
+    @Mock
+    OppijanumerorekisteriProperties properties;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+        step.properties = properties;
+        given(step.getCleanupStep()).willReturn(CleanupStep.INITIATED);
+        Logger logger = (Logger) LoggerFactory.getLogger(AbstractCleanupTask.class);
+        logger.addAppender(mockAppender);
+    }
+
     @Test
     void happyPath() {
-        AbstractCleanupTask step = mock(
-                AbstractCleanupTask.class,
-                Mockito.CALLS_REAL_METHODS);
-        step.properties = mock(OppijanumerorekisteriProperties.class);
-        Henkilo subject = mock(Henkilo.class);
-        given(step.getCleanupStep()).willReturn(CleanupStep.INITIATED);
-
         Assertions.assertTrue(step.applyTo(subject));
 
         verify(subject, times(1)).setCleanupStep(CleanupStep.INITIATED);
@@ -36,22 +53,13 @@ class AbstractCleanupTaskTest {
 
     @Test
     void handlesExceptions() {
-        Appender<ILoggingEvent> mockAppender = mock(Appender.class);
-        Logger logger = (Logger) LoggerFactory.getLogger(AbstractCleanupTask.class);
-        logger.addAppender(mockAppender);
-        AbstractCleanupTask step = mock(
-                AbstractCleanupTask.class,
-                Mockito.CALLS_REAL_METHODS);
-        Henkilo subject = mock(Henkilo.class);
-        given(step.getCleanupStep()).willReturn(CleanupStep.INITIATED);
+        ArgumentCaptor<ILoggingEvent> argumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
         willThrow(new RuntimeException())
                 .given(step).apply(subject);
 
         Assertions.assertFalse(step.applyTo(subject));
 
-        verify(mockAppender, times(1)).doAppend(ArgumentMatchers.argThat(msg -> {
-            assertThat(msg.getLevel()).isEqualTo(Level.ERROR);
-            return true;
-        }));
+        verify(mockAppender, times(1)).doAppend(argumentCaptor.capture());
+        assertThat(argumentCaptor.getAllValues().get(0).getLevel()).isEqualTo(Level.ERROR);
     }
 }
