@@ -25,6 +25,13 @@ import static java.util.stream.Collectors.summingInt;
 @Component
 public class CleanupService {
 
+    /**
+     * Magic value used for tracking which step should be run
+     * on subject next. Logic: difference between two adjacent
+     * enum ordinals.
+     */
+    private static final int STEPSIZE = -1;
+
     private final HenkiloRepository henkiloDataRepository;
 
     private Map<CleanupStep, CleanupTask> steps;
@@ -67,7 +74,7 @@ public class CleanupService {
                 .filter(subject ->
                         Optional.ofNullable(subject.getCleanupStep())
                                 .map(Enum::ordinal)
-                                .orElse(-1) - step.ordinal() == -1)
+                                .orElse(STEPSIZE) - step.ordinal() == STEPSIZE)
                 .collect(Collectors.toList());
     }
 
