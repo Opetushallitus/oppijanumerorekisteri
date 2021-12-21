@@ -103,7 +103,7 @@ class CleanupServiceTest {
 
     @Test
     void reportEmpty() {
-        cleanupService.report(Collections.emptyMap(), CleanupStep.INITIATED);
+        cleanupService.output(Collections.emptyMap(), CleanupStep.INITIATED);
 
         verifyNoInteractions(mockAppender);
     }
@@ -112,7 +112,7 @@ class CleanupServiceTest {
     void reportSuccess() {
         ArgumentCaptor<ILoggingEvent> argumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
 
-        cleanupService.report(Map.of(true, 1), CleanupStep.INITIATED);
+        cleanupService.output(Map.of(true, 1), CleanupStep.INITIATED);
 
         verify(mockAppender, times(1)).doAppend(argumentCaptor.capture());
         assertThat(argumentCaptor.getAllValues().get(0).getLevel()).isEqualTo(Level.INFO);
@@ -122,7 +122,7 @@ class CleanupServiceTest {
     void reportFailure() {
         ArgumentCaptor<ILoggingEvent> argumentCaptor = ArgumentCaptor.forClass(ILoggingEvent.class);
 
-        cleanupService.report(Map.of(false, 1), CleanupStep.INITIATED);
+        cleanupService.output(Map.of(false, 1), CleanupStep.INITIATED);
 
         verify(mockAppender, times(2)).doAppend(argumentCaptor.capture());
         assertThat(argumentCaptor.getAllValues().get(0).getLevel()).isEqualTo(Level.INFO);
