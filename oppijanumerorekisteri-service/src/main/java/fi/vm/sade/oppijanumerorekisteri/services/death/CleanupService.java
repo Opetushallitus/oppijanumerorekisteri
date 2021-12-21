@@ -51,20 +51,20 @@ public class CleanupService {
     }
 
     protected void applyStep(final Collection<Henkilo> subjects, final CleanupStep step) {
-        Map<Boolean, Integer> result = resolveSubjectsNeedingStep(subjects, step).stream()
+        Map<Boolean, Integer> report = resolveSubjectsNeedingStep(subjects, step).stream()
                 .map(subject -> steps.containsKey(step) && steps.get(step).applyTo(subject))
-                .collect(groupingBy(Boolean::booleanValue, summingInt(success -> 1)));
-        report(result, step);
+                .collect(groupingBy(Boolean::booleanValue, summingInt(result -> 1)));
+        output(report, step);
     }
 
-    protected void report(Map<Boolean, Integer> result, CleanupStep step) {
-        if (!result.isEmpty()) {
+    protected void output(Map<Boolean, Integer> report, CleanupStep step) {
+        if (!report.isEmpty()) {
             log.info("Run death cleanup step {}. {} success, {} failures",
                     step.name(),
-                    result.getOrDefault(true, 0),
-                    result.getOrDefault(false, 0));
+                    report.getOrDefault(true, 0),
+                    report.getOrDefault(false, 0));
         }
-        if (result.containsKey(false)) {
+        if (report.containsKey(false)) {
             log.error("There was errors running cleanup process. Please check the logs");
         }
     }
