@@ -11,5 +11,6 @@ package fi.vm.sade.oppijanumerorekisteri.enums;
  */
 public enum CleanupStep {
     INITIATED, // NOP operation acting as a sentry
-    CLEAR_MUNICIPALITY
+    CLEAR_MUNICIPALITY,
+    REMOVE_CONTACT_INFORMATION
 }
