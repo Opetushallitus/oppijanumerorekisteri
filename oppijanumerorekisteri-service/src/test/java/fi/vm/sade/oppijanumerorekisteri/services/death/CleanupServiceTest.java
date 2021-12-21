@@ -52,7 +52,7 @@ class CleanupServiceTest {
 
     @Test
     void runNoSubject() {
-        given(henkiloRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED)).willReturn(Collections.emptyList());
+        given(henkiloRepository.findDeadWithIncompleteCleanup(any(CleanupStep.class))).willReturn(Collections.emptyList());
 
         cleanupService.run();
 
@@ -61,7 +61,7 @@ class CleanupServiceTest {
 
     @Test
     void runNullSubject() {
-        given(henkiloRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED)).willReturn(List.of(subject));
+        given(henkiloRepository.findDeadWithIncompleteCleanup(any(CleanupStep.class))).willReturn(List.of(subject));
 
         cleanupService.run();
 
@@ -71,7 +71,7 @@ class CleanupServiceTest {
     @Test
     void runInitiatedSubject() {
         given(subject.getCleanupStep()).willReturn(CleanupStep.INITIATED);
-        given(henkiloRepository.findDeadWithIncompleteCleanup(CleanupStep.INITIATED)).willReturn(List.of(subject));
+        given(henkiloRepository.findDeadWithIncompleteCleanup(any(CleanupStep.class))).willReturn(List.of(subject));
 
         cleanupService.run();
 

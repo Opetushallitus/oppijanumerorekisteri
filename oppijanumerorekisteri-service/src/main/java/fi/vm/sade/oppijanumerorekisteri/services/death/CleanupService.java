@@ -45,7 +45,7 @@ public class CleanupService {
 
     protected void applyStep(final Collection<Henkilo> subjects, final CleanupStep step) {
         Map<Boolean, Integer> result = resolveSubjectsNeedingStep(subjects, step).stream()
-                .map(subject -> steps.get(step).applyTo(subject))
+                .map(subject -> steps.containsKey(step) && steps.get(step).applyTo(subject))
                 .collect(groupingBy(Boolean::booleanValue, summingInt(success -> 1)));
         report(result, step);
     }
