@@ -10,5 +10,6 @@ package fi.vm.sade.oppijanumerorekisteri.enums;
  * If new cleanup needs arise, append those to the end of this enumeration.
  */
 public enum CleanupStep {
-    INITIATED // NOP operation acting as a sentry
+    INITIATED, // NOP operation acting as a sentry
+    CLEAR_MUNICIPALITY
 }

@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-class NOPStepTest {
+class ClearMunicipalityStepTest {
 
-    private final CleanupTask step = new NOPStep();
+    private final CleanupTask step = new ClearMunicipalityStep();
 
     @Test
     void updatesCleanupStep() {
@@ -17,6 +17,8 @@ class NOPStepTest {
 
         step.applyTo(subject);
 
-        verify(subject, times(1)).setCleanupStep(CleanupStep.INITIATED);
+        verify(subject, times(1)).setCleanupStep(CleanupStep.CLEAR_MUNICIPALITY);
+        verify(subject, times(1)).setKotikunta(null);
     }
 }
+
