@@ -59,6 +59,7 @@ class AbstractCleanupTaskTest {
 
         Assertions.assertFalse(step.applyTo(subject));
 
+        verify(subject, never()).setCleanupStep(any(CleanupStep.class));
         verify(mockAppender, times(1)).doAppend(argumentCaptor.capture());
         assertThat(argumentCaptor.getAllValues().get(0).getLevel()).isEqualTo(Level.ERROR);
     }
