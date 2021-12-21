@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,11 +51,35 @@ public class CleanupService {
         getCleanupSteps().forEach(step -> applyStep(deadPersons, step));
     }
 
+    protected Collection<Henkilo> resolveIncompleteCleanups() {
+        return henkiloDataRepository.findDeadWithIncompleteCleanup(resolveFinalCleanupStep());
+    }
+
+    private CleanupStep resolveFinalCleanupStep() {
+        return getCleanupSteps().reduce((a, b) -> b).orElse(CleanupStep.INITIATED);
+    }
+
+    private Stream<CleanupStep> getCleanupSteps() {
+        return Stream.of(CleanupStep.values());
+    }
+
     protected void applyStep(final Collection<Henkilo> subjects, final CleanupStep step) {
         Map<Boolean, Integer> report = resolveSubjectsNeedingStep(subjects, step).stream()
                 .map(subject -> steps.containsKey(step) && steps.get(step).applyTo(subject))
                 .collect(groupingBy(Boolean::booleanValue, summingInt(result -> 1)));
         output(report, step);
+    }
+
+    protected Collection<Henkilo> resolveSubjectsNeedingStep(final Collection<Henkilo> subjects, final CleanupStep step) {
+        return subjects.stream()
+                .filter(notApplied(step))
+                .collect(Collectors.toList());
+    }
+
+    private Predicate<Henkilo> notApplied(CleanupStep step) {
+        return subject -> Optional.ofNullable(subject.getCleanupStep())
+                .map(Enum::ordinal)
+                .orElse(STEPSIZE) - step.ordinal() == STEPSIZE;
     }
 
     protected void output(Map<Boolean, Integer> report, CleanupStep step) {
@@ -67,26 +92,5 @@ public class CleanupService {
         if (report.containsKey(false)) {
             log.error("There was errors running cleanup process. Please check the logs");
         }
-    }
-
-    protected Collection<Henkilo> resolveSubjectsNeedingStep(final Collection<Henkilo> subjects, final CleanupStep step) {
-        return subjects.stream()
-                .filter(subject ->
-                        Optional.ofNullable(subject.getCleanupStep())
-                                .map(Enum::ordinal)
-                                .orElse(STEPSIZE) - step.ordinal() == STEPSIZE)
-                .collect(Collectors.toList());
-    }
-
-    protected Collection<Henkilo> resolveIncompleteCleanups() {
-        return henkiloDataRepository.findDeadWithIncompleteCleanup(resolveFinalCleanupStep());
-    }
-
-    private CleanupStep resolveFinalCleanupStep() {
-        return getCleanupSteps().reduce((a, b) -> b).orElse(CleanupStep.INITIATED);
-    }
-
-    private Stream<CleanupStep> getCleanupSteps() {
-        return Stream.of(CleanupStep.values());
     }
 }
