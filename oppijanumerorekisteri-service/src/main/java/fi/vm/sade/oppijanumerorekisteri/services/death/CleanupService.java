@@ -72,11 +72,11 @@ public class CleanupService {
 
     protected Collection<Henkilo> resolveSubjectsNeedingStep(final Collection<Henkilo> subjects, final CleanupStep step) {
         return subjects.stream()
-                .filter(notApplied(step))
+                .filter(shouldApply(step))
                 .collect(Collectors.toList());
     }
 
-    private Predicate<Henkilo> notApplied(CleanupStep step) {
+    private Predicate<Henkilo> shouldApply(CleanupStep step) {
         return subject -> Optional.ofNullable(subject.getCleanupStep())
                 .map(Enum::ordinal)
                 .orElse(STEPSIZE) - step.ordinal() == STEPSIZE;
