@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController.REQUEST_MAPPING;
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -47,8 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
 public class YleistunnisteControllerTest {
 
-    private static final String VALID_ROLE = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA";
-    private static final String ACCESS_DENIED = "PIGGLYWIGGLY";
+    private static final String WRONG_ACCESS_RIGHT = "PIGGLYWIGGLY";
 
     @MockBean
     private OppijaService oppijaServiceMock;
@@ -97,7 +95,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void putOppijaShouldWork() throws Exception {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
 
@@ -112,7 +110,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
         dto.setSahkoposti(null);
@@ -287,7 +285,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void getTuontiPerustiedot() throws Exception {
         OppijaTuontiPerustiedotReadDto result = new OppijaTuontiPerustiedotReadDto(37337L, 1000, 1000, true);
         when(oppijaServiceMock.getTuontiById(anyLong())).thenReturn(result);
@@ -303,7 +301,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = ACCESS_DENIED)
+    @WithMockUser(authorities = WRONG_ACCESS_RIGHT)
     public void getTuontiPerustiedotAccessDenied() throws Exception {
         mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337/perustiedot"))
                         .with(csrf())
@@ -315,7 +313,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void getTuontiPerustiedotNotFound() throws Exception {
         when(oppijaServiceMock.getTuontiById(anyLong())).thenThrow(new NotFoundException());
 
@@ -329,7 +327,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void create() throws Exception {
         OppijaTuontiPerustiedotReadDto result = new OppijaTuontiPerustiedotReadDto(37337L, 1000, 1000, true);
         when(oppijaServiceMock.create(anyLong())).thenReturn(result);
@@ -345,7 +343,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = ACCESS_DENIED)
+    @WithMockUser(roles = WRONG_ACCESS_RIGHT)
     public void createAccessDenied() throws Exception {
         mvc.perform(post(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
                         .with(csrf())
@@ -357,7 +355,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void createNotFound() throws Exception {
         when(oppijaServiceMock.create(anyLong())).thenThrow(new NotFoundException());
 
@@ -371,7 +369,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = ACCESS_DENIED)
+    @WithMockUser(roles = WRONG_ACCESS_RIGHT)
     public void getOppijatByTuontiIdAccessDenied() throws Exception {
         mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
                         .with(csrf())
@@ -383,7 +381,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void getOppijatByTuontiIdNotFound() throws Exception {
         when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenThrow(new NotFoundException());
 
@@ -397,7 +395,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = VALID_ROLE)
+    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void getOppijatByTuontiId() throws Exception {
         OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 1, 1, true,
                 singletonList(new OppijaTuontiRiviReadDto("tunniste", new OppijaReadDto())));

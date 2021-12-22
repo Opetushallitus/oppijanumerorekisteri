@@ -42,13 +42,15 @@ import java.util.Collection;
 public class YleistunnisteController {
 
     protected static final String REQUEST_MAPPING = "/yleistunniste";
+    protected static final String ACCESS_RIGHT = "YLEISTUNNISTE_LUONTI";
+    protected static final String ACCESS_RIGHT_CHECK = "hasAnyRole('" + ACCESS_RIGHT + "')";
+
     private static final SimpleBeanPropertyFilter yleistunnisteFilter = SimpleBeanPropertyFilter.filterOutAllExcept("oid", "oppijanumero");
     private static final FilterProvider filterProvider = new SimpleFilterProvider().addFilter("yleistunnisteFilter", yleistunnisteFilter);
     private final OppijaService oppijaService;
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @PreAuthorize(ACCESS_RIGHT_CHECK)
     @ApiOperation(value = "Useamman oppijan luonti",
             notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
     public OppijaTuontiPerustiedotReadDto create(@Valid @RequestBody OppijaTuontiCreateDto dto) {
@@ -56,9 +58,7 @@ public class YleistunnisteController {
     }
 
     @GetMapping("/tuonti={id}")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
-            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @PreAuthorize(ACCESS_RIGHT_CHECK)
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
     @ApiResponses(value = {@ApiResponse(code = HttpURLConnection.HTTP_OK,
@@ -75,8 +75,7 @@ public class YleistunnisteController {
     }
 
     @PostMapping("/tuonti={id}")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @PreAuthorize(ACCESS_RIGHT_CHECK)
     @ApiOperation(value = "Käynnistää oppijoiden tuonnin käsittelyn",
             notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
     public OppijaTuontiPerustiedotReadDto create(@PathVariable Long id) {
@@ -84,9 +83,7 @@ public class YleistunnisteController {
     }
 
     @GetMapping("/tuonti={id}/perustiedot")
-    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',''," +
-            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @PreAuthorize(ACCESS_RIGHT_CHECK)
     @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
             notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
     public OppijaTuontiPerustiedotReadDto getTuontiById(@PathVariable Long id) {
