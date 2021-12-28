@@ -7,6 +7,7 @@ import ch.qos.logback.core.Appender;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -35,10 +38,15 @@ class AbstractCleanupTaskTest {
     @Mock
     OppijanumerorekisteriProperties properties;
 
+    @Mock
+    HenkiloRepository henkiloRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
         step.properties = properties;
+        step.henkiloRepository = henkiloRepository;
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(subject));
         given(step.getCleanupStep()).willReturn(CleanupStep.INITIATED);
         Logger logger = (Logger) LoggerFactory.getLogger(AbstractCleanupTask.class);
         logger.addAppender(mockAppender);
@@ -46,7 +54,7 @@ class AbstractCleanupTaskTest {
 
     @Test
     void happyPath() {
-        Assertions.assertTrue(step.applyTo(subject));
+        Assertions.assertTrue(step.applyTo(subject.getOidHenkilo()));
 
         verify(subject, times(1)).setCleanupStep(CleanupStep.INITIATED);
     }
@@ -57,7 +65,7 @@ class AbstractCleanupTaskTest {
         willThrow(new RuntimeException())
                 .given(step).apply(subject);
 
-        Assertions.assertFalse(step.applyTo(subject));
+        Assertions.assertFalse(step.applyTo(subject.getOidHenkilo()));
 
         verify(subject, never()).setCleanupStep(any(CleanupStep.class));
         verify(mockAppender, times(1)).doAppend(argumentCaptor.capture());

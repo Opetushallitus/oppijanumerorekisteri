@@ -23,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -48,6 +49,7 @@ class CleanupServiceTest {
     void setUp() {
         Logger logger = (Logger) LoggerFactory.getLogger(CleanupService.class);
         logger.addAppender(mockAppender);
+        when(henkiloRepository.findByOidHenkilo(any())).thenReturn(Optional.of(subject));
     }
 
     @Test
@@ -80,14 +82,17 @@ class CleanupServiceTest {
 
     @Test
     void applyStepNoSubject() {
-        cleanupService.applyStep(Collections.emptyList(), CleanupStep.INITIATED);
+        cleanupService.applyStep(CleanupStep.INITIATED);
 
         verifyNoInteractions(subject);
     }
 
     @Test
     void applyStepNullSubject() {
-        cleanupService.applyStep(List.of(subject), CleanupStep.INITIATED);
+        given(henkiloRepository.findByOidHenkilo(any())).willReturn(Optional.of(subject));
+        given(henkiloRepository.findDeadWithIncompleteCleanup(any(CleanupStep.class))).willReturn(List.of(subject));
+
+        cleanupService.applyStep(CleanupStep.INITIATED);
 
         verify(subject, times(1)).setCleanupStep(CleanupStep.INITIATED);
     }
@@ -96,7 +101,7 @@ class CleanupServiceTest {
     void applyStepInitiatedSubject() {
         given(subject.getCleanupStep()).willReturn(CleanupStep.INITIATED);
 
-        cleanupService.applyStep(List.of(subject), CleanupStep.INITIATED);
+        cleanupService.applyStep(CleanupStep.INITIATED);
 
         verify(subject, never()).setCleanupStep(any());
     }
@@ -127,22 +132,5 @@ class CleanupServiceTest {
         verify(mockAppender, times(2)).doAppend(argumentCaptor.capture());
         assertThat(argumentCaptor.getAllValues().get(0).getLevel()).isEqualTo(Level.INFO);
         assertThat(argumentCaptor.getAllValues().get(1).getLevel()).isEqualTo(Level.ERROR);
-    }
-
-    @Test
-    void resolveSubjectsNeedingStepNoSubject() {
-        assertThat(cleanupService.resolveSubjectsNeedingStep(Collections.emptyList(), CleanupStep.INITIATED)).isEmpty();
-    }
-
-    @Test
-    void resolveSubjectsNeedingStepNullSubject() {
-        assertThat(cleanupService.resolveSubjectsNeedingStep(List.of(subject), CleanupStep.INITIATED)).hasSize(1);
-    }
-
-    @Test
-    void resolveSubjectsNeedingStepInitiatedSubject() {
-        given(subject.getCleanupStep()).willReturn(CleanupStep.INITIATED);
-
-        assertThat(cleanupService.resolveSubjectsNeedingStep(List.of(subject), CleanupStep.INITIATED)).isEmpty();
     }
 }
