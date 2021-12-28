@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Map;
@@ -45,10 +43,8 @@ public class CleanupService {
                         Function.identity()));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void run() {
-        final Collection<Henkilo> deadPersons = resolveIncompleteCleanups();
-        getCleanupSteps().forEach(step -> applyStep(deadPersons, step));
+        getCleanupSteps().forEach(this::applyStep);
     }
 
     protected Collection<Henkilo> resolveIncompleteCleanups() {
@@ -63,16 +59,18 @@ public class CleanupService {
         return Stream.of(CleanupStep.values());
     }
 
-    protected void applyStep(final Collection<Henkilo> subjects, final CleanupStep step) {
-        Map<Boolean, Integer> report = resolveSubjectsNeedingStep(subjects, step).stream()
-                .map(subject -> steps.containsKey(step) && steps.get(step).applyTo(subject))
+    protected void applyStep(final CleanupStep step) {
+        Map<Boolean, Integer> report = resolveSubjectsNeedingStep(step).stream()
+                .map(oid -> steps.containsKey(step) && steps.get(step).applyTo(oid))
                 .collect(groupingBy(Boolean::booleanValue, summingInt(result -> 1)));
         output(report, step);
     }
 
-    protected Collection<Henkilo> resolveSubjectsNeedingStep(final Collection<Henkilo> subjects, final CleanupStep step) {
-        return subjects.stream()
+    protected Collection<String> resolveSubjectsNeedingStep(final CleanupStep step) {
+        return resolveIncompleteCleanups()
+                .stream()
                 .filter(shouldApply(step))
+                .map(Henkilo::getOidHenkilo)
                 .collect(Collectors.toList());
     }
 
