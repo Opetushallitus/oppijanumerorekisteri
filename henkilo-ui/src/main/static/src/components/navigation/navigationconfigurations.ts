@@ -2,6 +2,17 @@ import { NaviTab } from '../../types/navigation.type';
 
 export const mainNavigation: Array<NaviTab> = [
     {
+        path: '/raportit/kayttooikeudet',
+        label: 'TITLE_RAPORTTI_KAYTTOOIKEUS',
+        sallitutRoolit: [
+            'OPPIJANUMEROREKISTERI_READ',
+            'OPPIJANUMEROREKISTERI_HENKILON_RU',
+            'OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',
+            'KAYTTOOIKEUS_READ',
+            'KAYTTOOIKEUS_CRUD',
+        ],
+    },
+    {
         path: '/anomukset',
         label: 'NAVI_KAYTTOOIKEUSANOMUKSET',
         sallitutRoolit: [

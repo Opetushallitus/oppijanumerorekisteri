@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route } from 'react-router';
 import App from './containers/App';
+import AccessRightReport from './components/reports/accessrights/AccessRightsReport';
 import KutsututPageContainer from './components/kutsutut/KutsututPageContainer';
 import KutsuminenPage from './components/kutsuminen/KutsuminenPage';
 import AnomustListPageContainer from './components/anomus/AnomusPageContainer';
@@ -46,6 +47,12 @@ export type RouteType = {
 
 export default (
     <Route path="/" component={App} getNaviTabs={updateDefaultNavigation}>
+        <Route
+            path="/raportit/kayttooikeudet"
+            component={AccessRightReport}
+            title="TITLE_RAPORTTI_KAYTTOOIKEUS"
+            getNaviTabs={updateDefaultNavigation}
+        />
         <Route
             path="/anomukset"
             component={AnomustListPageContainer}
