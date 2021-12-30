@@ -23,6 +23,7 @@ import { palvelutState } from './palvelut.reducer';
 import { kayttooikeusState } from './kayttooikeus.reducer';
 import { notificationList } from './notification.reducer';
 import { linkitykset } from './henkiloLinkitys.reducer';
+import { reportReducer, AccessRightsReportState } from './report.reducer';
 
 export type RootState = {
     routing: unknown;
@@ -34,7 +35,7 @@ export type RootState = {
     prequels: unknown;
     omattiedot: OmattiedotState;
     kutsuminenOrganisaatios: unknown;
-    locale: unknown;
+    locale: string;
     kayttooikeus: unknown;
     ryhmatState: unknown;
     OrganisaatioKayttooikeusryhmat: unknown;
@@ -50,6 +51,7 @@ export type RootState = {
     palvelutState: unknown;
     kayttooikeusState: unknown;
     linkitykset: unknown;
+    report: AccessRightsReportState;
 };
 
 const rootReducer = combineReducers<RootState>({
@@ -78,6 +80,7 @@ const rootReducer = combineReducers<RootState>({
     palvelutState,
     kayttooikeusState,
     linkitykset,
+    report: reportReducer,
 });
 
 export default rootReducer;

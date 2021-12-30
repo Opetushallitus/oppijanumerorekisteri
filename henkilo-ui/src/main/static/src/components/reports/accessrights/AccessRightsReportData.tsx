@@ -1,10 +1,13 @@
 import React from 'react';
+import type { AccessRightsReportRow } from '../../../reducers/report.reducer';
 
-type Props = {};
+type Props = {
+    reportData: AccessRightsReportRow[];
+};
 
-const AccessRightsReportData: React.FC<Props> = () => (
+const AccessRightsReportData: React.FC<Props> = ({ reportData }) => (
     <div className="flex-horizontal">
-        <span>Data</span>
+        <pre>{JSON.stringify(reportData, null, 4)}</pre>
     </div>
 );
 
