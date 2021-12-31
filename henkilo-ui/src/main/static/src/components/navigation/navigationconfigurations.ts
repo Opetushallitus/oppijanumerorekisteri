@@ -3,7 +3,7 @@ import { NaviTab } from '../../types/navigation.type';
 export const mainNavigation: Array<NaviTab> = [
     {
         path: '/raportit/kayttooikeudet',
-        label: 'TITLE_RAPORTTI_KAYTTOOIKEUS',
+        label: 'KAYTTOOIKEUSRAPORTTI_TITLE',
         sallitutRoolit: [
             'OPPIJANUMEROREKISTERI_READ',
             'OPPIJANUMEROREKISTERI_HENKILON_RU',

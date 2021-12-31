@@ -25,7 +25,7 @@ type Props = {
 
 const Header: React.FC<{ translate: (string) => string }> = ({ translate }) => (
     <div className="flex-horizontal">
-        <span className="oph-h2 oph-bold">{translate('TITLE_RAPORTTI_KAYTTOOIKEUS')}</span>
+        <span className="oph-h2 oph-bold">{translate('KAYTTOOIKEUSRAPORTTI_TITLE')}</span>
     </div>
 );
 
@@ -51,9 +51,11 @@ const AccessRightsReport: React.FC<Props> = ({
         oid && fetchAccessRightsReport(oid);
     }, [clearAccessRightsReport, fetchAccessRightsReport, oid]);
 
+    const translate = (key: string) => l10n[locale][key] || key;
+
     return (
         <div className="wrapper">
-            <Header translate={(key: string) => l10n[locale][key] || key} />
+            <Header translate={translate} />
             <Controls
                 locale={locale}
                 L={l10n[locale]}
@@ -61,7 +63,7 @@ const AccessRightsReport: React.FC<Props> = ({
                 disabled={organisationsLoading || reportLoading}
                 setOid={setOid}
             />
-            {oid && (reportLoading ? <Loader /> : <Report reportData={reportData} />)}
+            {oid && (reportLoading ? <Loader /> : <Report reportData={reportData} translate={translate} />)}
         </div>
     );
 };

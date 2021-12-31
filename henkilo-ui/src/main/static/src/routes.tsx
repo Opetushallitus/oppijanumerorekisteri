@@ -50,7 +50,7 @@ export default (
         <Route
             path="/raportit/kayttooikeudet"
             component={AccessRightReport}
-            title="TITLE_RAPORTTI_KAYTTOOIKEUS"
+            title="KAYTTOOIKEUSRAPORTTI_TITLE"
             getNaviTabs={updateDefaultNavigation}
         />
         <Route

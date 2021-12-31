@@ -1,0 +1,7 @@
+.reportScroll {
+    overflow-x: scroll;
+}
+.reportWrapper {
+    width: 150em;
+    white-space: nowrap;
+}

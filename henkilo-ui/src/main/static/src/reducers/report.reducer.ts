@@ -5,7 +5,19 @@ import {
     FETCH_ACCESS_RIGHT_REPORT_FAILURE,
 } from '../actions/actiontypes';
 
-export type AccessRightsReportRow = {};
+export type AccessRightsReportRow = {
+    id: number;
+    personName: string;
+    personOid: string;
+    organisationName: string;
+    organisationOid: string;
+    accessRightName: string;
+    accessRightId: number;
+    startDate: string;
+    endDate: string;
+    modified: string;
+    modifiedBy: string;
+};
 
 export type ClearAction = {
     type: typeof CLEAR_ACCESS_RIGHT_REPORT;
