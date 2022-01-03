@@ -8,7 +8,7 @@ import './AccessRightsReportData.css';
 
 type Props = {
     translate: (string) => string;
-    reportData: AccessRightsReportRow[];
+    report: AccessRightsReportRow[];
 };
 
 const tableDefinition: TableHeading[] = [
@@ -56,13 +56,13 @@ const tableDefinition: TableHeading[] = [
     },
 ];
 
-const AccessRightsReportData: React.FC<Props> = ({ reportData, translate }) => (
+const AccessRightsReportData: React.FC<Props> = ({ report, translate }) => (
     <div className="reportScroll">
         <div className="reportWrapper">
             <Table
                 getTdProps={() => ({ style: { textOverflow: 'unset' } })}
                 headings={tableDefinition.map((column) => ({ ...column, label: translate(column.label) }))}
-                data={reportData || []}
+                data={report || []}
                 noDataText={translate('HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA')}
             />
         </div>

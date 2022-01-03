@@ -41,8 +41,10 @@ const AccessRightsReport: React.FC<Props> = ({
     reportData,
 }) => {
     const [oid, setOid] = useState<string>(undefined);
+    const [filter, setFilter] = useState<string>(undefined);
+    const [filterValues, setFilterValues] = useState<string[]>([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchOmattiedotOrganisaatios();
     }, [fetchOmattiedotOrganisaatios]);
 
@@ -51,7 +53,16 @@ const AccessRightsReport: React.FC<Props> = ({
         oid && fetchAccessRightsReport(oid);
     }, [clearAccessRightsReport, fetchAccessRightsReport, oid]);
 
+    useEffect(() => {
+        setFilter(undefined);
+        setFilterValues([
+            ...new Set((reportData || []).map((row) => row.accessRightName).sort((a, b) => a.localeCompare(b))),
+        ]);
+    }, [reportData]);
+
     const translate = (key: string) => l10n[locale][key] || key;
+
+    const report = reportData && reportData.filter((row) => !filter || row.accessRightName === filter);
 
     return (
         <div className="wrapper">
@@ -61,9 +72,12 @@ const AccessRightsReport: React.FC<Props> = ({
                 L={l10n[locale]}
                 organisaatiot={organisations}
                 disabled={organisationsLoading || reportLoading}
+                filterValues={filterValues}
+                filter={filter}
+                setFilter={setFilter}
                 setOid={setOid}
             />
-            {oid && (reportLoading ? <Loader /> : <Report reportData={reportData} translate={translate} />)}
+            {oid && (reportLoading ? <Loader /> : <Report report={report} translate={translate} />)}
         </div>
     );
 };
