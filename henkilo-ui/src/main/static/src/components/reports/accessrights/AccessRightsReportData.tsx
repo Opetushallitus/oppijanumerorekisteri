@@ -11,7 +11,9 @@ type Props = {
     report: AccessRightsReportRow[];
 };
 
-const tableDefinition: TableHeading[] = [
+export const formatDate: (string) => string = (value) => moment(value).format(PropertySingleton.state.PVM_FORMAATTI);
+
+export const columns: TableHeading[] = [
     {
         key: 'personName',
         label: 'HENKILO_NIMI',
@@ -36,19 +38,19 @@ const tableDefinition: TableHeading[] = [
         key: 'startDate',
         label: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
         maxWidth: 150,
-        Cell: (cellProps) => moment(cellProps.value).format(PropertySingleton.state.PVM_FORMAATTI),
+        Cell: (cellProps) => formatDate(cellProps.value),
     },
     {
         key: 'endDate',
         label: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
         maxWidth: 150,
-        Cell: (cellProps) => moment(cellProps.value).format(PropertySingleton.state.PVM_FORMAATTI),
+        Cell: (cellProps) => formatDate(cellProps.value),
     },
     {
         key: 'modified',
         label: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
         maxWidth: 150,
-        Cell: (cellProps) => moment(cellProps.value).format(PropertySingleton.state.PVM_FORMAATTI),
+        Cell: (cellProps) => formatDate(cellProps.value),
     },
     {
         key: 'modifiedBy',
@@ -61,7 +63,7 @@ const AccessRightsReportData: React.FC<Props> = ({ report, translate }) => (
         <div className="reportWrapper">
             <Table
                 getTdProps={() => ({ style: { textOverflow: 'unset' } })}
-                headings={tableDefinition.map((column) => ({ ...column, label: translate(column.label) }))}
+                headings={columns.map((column) => ({ ...column, label: translate(column.label) }))}
                 data={report || []}
                 noDataText={translate('HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA')}
             />

@@ -9,7 +9,8 @@ import { fetchOmattiedotOrganisaatios } from '../../../actions/omattiedot.action
 import { fetchAccessRightsReport, clearAccessRightsReport } from '../../../actions/report.actions';
 import Loader from '../../common/icons/Loader';
 import Controls from './AccessRightsReportControls';
-import Report from './AccessRightsReportData';
+import Report, { columns } from './AccessRightsReportData';
+import { exportReport } from './exportUtil';
 
 type Props = {
     l10n: L10n;
@@ -76,6 +77,7 @@ const AccessRightsReport: React.FC<Props> = ({
                 filter={filter}
                 setFilter={setFilter}
                 setOid={setOid}
+                dataExport={report && report[0] && (() => exportReport(report, columns, translate))}
             />
             {oid && (reportLoading ? <Loader /> : <Report report={report} translate={translate} />)}
         </div>

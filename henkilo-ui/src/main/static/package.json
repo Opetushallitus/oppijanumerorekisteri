@@ -13,6 +13,7 @@
         "normalizr": "3.0.0",
         "oph-urls-js": "github:Opetushallitus/oph-urls-js#master",
         "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
+        "papaparse": "5.3.1",
         "ramda": "0.25.0",
         "react": "16.14.0",
         "react-columns": "1.2.0",

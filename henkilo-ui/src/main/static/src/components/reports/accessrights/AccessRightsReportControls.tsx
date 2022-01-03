@@ -6,8 +6,11 @@ import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/Organisa
 import { OrganisaatioSelectModal } from '../../common/select/OrganisaatioSelectModal';
 import ItemList from '../../kayttooikeusryhmat/kayttooikeusryhma/ItemList';
 import OphSelect from '../../common/select/OphSelect';
+import Button from '../../common/button/Button';
+import DownloadIcon from '../../common/icons/DownloadIcon';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
+import './AccessRightsReportControls.css';
 
 type Props = {
     locale: Locale;
@@ -18,6 +21,7 @@ type Props = {
     filter: string;
     setFilter: (string) => void;
     setOid: (string) => void;
+    dataExport?: () => void;
 };
 
 const AccessRightsReportControls: React.FC<Props> = ({
@@ -29,6 +33,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
     filter,
     filterValues,
     setFilter,
+    dataExport,
 }) => {
     const [selectedOrganisation, setSelectedOrganisation] = useState<OrganisaatioSelectObject[]>([]);
     const onSelect = (organisaatio: OrganisaatioSelectObject) => setSelectedOrganisation([organisaatio]);
@@ -58,7 +63,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                 </div>
             </div>
             {filterOptions.length > 1 && (
-                <div className="flex-horizontal">
+                <div className="flex-horizontal access-right-report-controls-row">
                     <div className="flex-item-1 ">
                         <OphSelect
                             options={filterOptions}
@@ -67,6 +72,16 @@ const AccessRightsReportControls: React.FC<Props> = ({
                             clearable
                             onChange={(option: ReactSelectOption) => setFilter(option && option.value)}
                         />
+                    </div>
+                </div>
+            )}
+            {dataExport && (
+                <div className="flex-horizontal access-right-report-controls-row">
+                    <div className="flex-item-1 ">
+                        <Button action={dataExport}>
+                            {L['KAYTTOOIKEUSRAPORTTI_EXPORT'] || 'KAYTTOOIKEUSRAPORTTI_EXPORT'}
+                            <DownloadIcon />
+                        </Button>
                     </div>
                 </div>
             )}
