@@ -79,7 +79,7 @@ const AccessRightsReport: React.FC<Props> = ({
                 setOid={setOid}
                 dataExport={report && report[0] && (() => exportReport(report, columns, translate))}
             />
-            {oid && (reportLoading ? <Loader /> : <Report report={report} translate={translate} />)}
+            {oid && (reportLoading ? <Loader /> : report ? <Report report={report} translate={translate} /> : null)}
         </div>
     );
 };

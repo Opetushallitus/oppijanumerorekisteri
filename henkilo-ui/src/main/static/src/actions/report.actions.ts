@@ -1,5 +1,8 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
+import { addGlobalNotification } from './notification.actions';
+import { localizeWithState } from '../utilities/localisation.util';
+import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import {
     CLEAR_ACCESS_RIGHT_REPORT,
     FETCH_ACCESS_RIGHT_REPORT_REQUEST,
@@ -29,7 +32,7 @@ const requestAccessRightsReportFailure = (): FailureAction => ({
     type: FETCH_ACCESS_RIGHT_REPORT_FAILURE,
 });
 
-export const fetchAccessRightsReport = (oid: string) => async (dispatch) => {
+export const fetchAccessRightsReport = (oid: string) => async (dispatch, state: () => any) => {
     dispatch(requestAccessRightsReport());
     try {
         const url = urls.url('kayttooikeus-service.report.access-rights-for-organisaatio', oid);
@@ -37,5 +40,13 @@ export const fetchAccessRightsReport = (oid: string) => async (dispatch) => {
         dispatch(requestAccessRightsReportSuccess(report));
     } catch (error) {
         dispatch(requestAccessRightsReportFailure());
+        dispatch(
+            addGlobalNotification({
+                key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
+                title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000,
+            })
+        );
     }
 };

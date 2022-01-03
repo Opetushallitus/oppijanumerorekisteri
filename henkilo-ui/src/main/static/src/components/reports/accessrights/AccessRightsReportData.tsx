@@ -48,13 +48,13 @@ export const columns: TableHeading[] = [
     },
     {
         key: 'modified',
-        label: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
+        label: 'KAYTTOOIKEUSRAPORTTI_COLUMN_MODIFIED',
         maxWidth: 150,
         Cell: (cellProps) => formatDate(cellProps.value),
     },
     {
         key: 'modifiedBy',
-        label: 'HENKILO_KAYTTOOIKEUS_KASITTELIJA',
+        label: 'KAYTTOOIKEUSRAPORTTI_COLUMN_MODIFIER',
     },
 ];
 
