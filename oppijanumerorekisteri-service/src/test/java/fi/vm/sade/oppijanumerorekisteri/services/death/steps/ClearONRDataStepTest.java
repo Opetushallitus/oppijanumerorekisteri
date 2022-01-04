@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.death.steps;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.OppijanumerorekisteriProperties;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.YhteystiedotRyhma;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,16 +11,20 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-class ClearMunicipalityStepTest {
-
-    final ClearMunicipalityStep step = new ClearMunicipalityStep();
+class ClearONRDataStepTest {
+    final ClearONRDataStep step = new ClearONRDataStep();
 
     @Mock
     Henkilo subject;
+
+    @Mock
+    Set<YhteystiedotRyhma> contactInfo;
 
     @Mock
     OppijanumerorekisteriProperties properties;
@@ -37,10 +42,13 @@ class ClearMunicipalityStepTest {
 
     @Test
     void updatesCleanupStep() {
+        given(subject.getYhteystiedotRyhma()).willReturn(contactInfo);
+
         step.applyTo("oid");
 
-        verify(subject, times(1)).setCleanupStep(CleanupStep.CLEAR_MUNICIPALITY);
+        verify(subject, times(1)).setCleanupStep(CleanupStep.CLEAR_ONR_DATA);
+        verify(subject, times(1)).setPassivoitu(true);
         verify(subject, times(1)).setKotikunta(null);
+        verify(contactInfo, times(1)).clear();
     }
 }
-
