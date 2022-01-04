@@ -4,16 +4,23 @@ import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import org.springframework.stereotype.Component;
 
+/**
+ * Home municipality information is no more relevant after
+ * subject has passed away, thus clearing it from the database.
+ * Will mess up statistics unless done.
+ */
 @Component
-public class RemoveContactInformationStep extends AbstractCleanupTask {
+public class ClearONRDataStep extends AbstractCleanupTask {
 
     @Override
     public CleanupStep getCleanupStep() {
-        return CleanupStep.REMOVE_CONTACT_INFORMATION;
+        return CleanupStep.CLEAR_ONR_DATA;
     }
 
     @Override
     protected void apply(Henkilo subject) {
+        subject.setPassivoitu(true);
+        subject.setKotikunta(null);
         subject.getYhteystiedotRyhma().clear();
     }
 }
