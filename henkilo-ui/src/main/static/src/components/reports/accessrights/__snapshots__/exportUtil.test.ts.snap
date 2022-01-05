@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createCSV Handles data row 1`] = `
+"label
+datarow"
+`;
+
+exports[`createCSV Handles empty data 1`] = `
+"label
+"
+`;
+
+exports[`createCSV Handles empty input 1`] = `""`;
+
+exports[`createCSV Handles multiple columns 1`] = `
+"label1;label2
+item1;item1"
+`;
+
+exports[`createCSV Handles multiple data rows 1`] = `
+"label
+datarow1
+datarow2"
+`;
+
+exports[`exportReport Creates a link and appends it to the document 1`] = `
+<a
+  download="report.csv"
+  href="undefined"
+  style="display: none;"
+/>
+`;

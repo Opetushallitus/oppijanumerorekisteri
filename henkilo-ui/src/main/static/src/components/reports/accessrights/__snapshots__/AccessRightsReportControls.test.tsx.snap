@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccessRightsReportControls renders without crashing 1`] = `
+<div>
+  <div
+    className="flex-horizontal"
+  >
+    <div
+      className="flex-item-1 "
+    >
+      <OrganisaatioSelectModal
+        L={Object {}}
+        disabled={false}
+        locale=""
+        onSelect={[Function]}
+        organisaatiot={Array []}
+      />
+      <Connect(ItemList)
+        items={Array []}
+        labelPath={
+          Array [
+            "name",
+          ]
+        }
+        removeAction={[Function]}
+      />
+    </div>
+  </div>
+</div>
+`;

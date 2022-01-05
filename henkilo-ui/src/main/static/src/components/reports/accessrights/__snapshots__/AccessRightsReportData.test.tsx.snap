@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AccessRightsReport Should render (empty) report without crashing 1`] = `
+<div
+  className="reportScroll"
+>
+  <div
+    className="reportWrapper"
+  >
+    <Table
+      data={Array []}
+      fetchMoreSettings={Object {}}
+      headings={
+        Array [
+          Object {
+            "key": "personName",
+            "label": undefined,
+          },
+          Object {
+            "key": "personOid",
+            "label": undefined,
+          },
+          Object {
+            "key": "organisationName",
+            "label": undefined,
+          },
+          Object {
+            "key": "organisationOid",
+            "label": undefined,
+          },
+          Object {
+            "key": "accessRightName",
+            "label": undefined,
+          },
+          Object {
+            "Cell": [Function],
+            "key": "startDate",
+            "label": undefined,
+            "maxWidth": 150,
+          },
+          Object {
+            "Cell": [Function],
+            "key": "endDate",
+            "label": undefined,
+            "maxWidth": 150,
+          },
+          Object {
+            "Cell": [Function],
+            "key": "modified",
+            "label": undefined,
+            "maxWidth": 150,
+          },
+          Object {
+            "key": "modifiedBy",
+            "label": undefined,
+          },
+        ]
+      }
+      resizable={false}
+    />
+  </div>
+</div>
+`;
+
+exports[`AccessRightsReportData Should render (empty) report without crashing 1`] = `
+<AccessRightsReport
+  report={Array []}
+  translate={[MockFunction]}
+/>
+`;

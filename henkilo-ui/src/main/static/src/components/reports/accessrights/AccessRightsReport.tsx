@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import type { L10n } from '../../../types/localisation.type';
 import type { Locale } from '../../../types/locale.type';
@@ -10,19 +10,24 @@ import { fetchAccessRightsReport, clearAccessRightsReport } from '../../../actio
 import Loader from '../../common/icons/Loader';
 import Controls from './AccessRightsReportControls';
 import Report, { columns } from './AccessRightsReportData';
-import { exportReport } from './exportUtil';
+import exportReport from './exportUtil';
 
-type Props = {
+type DispatchProps = {
+    fetchOrgs: () => void;
+    fetchReport: (string) => void;
+    clearReport: () => void;
+};
+
+type StateProps = {
     l10n: L10n;
     locale: Locale;
-    fetchOmattiedotOrganisaatios: () => void;
-    fetchAccessRightsReport: (string) => void;
-    clearAccessRightsReport: () => void;
     organisationsLoading: boolean;
     organisations: OrganisaatioHenkilo[];
     reportLoading: boolean;
     reportData?: AccessRightsReportRow[];
 };
+
+type Props = DispatchProps & StateProps;
 
 const Header: React.FC<{ translate: (string) => string }> = ({ translate }) => (
     <div className="flex-horizontal">
@@ -30,35 +35,33 @@ const Header: React.FC<{ translate: (string) => string }> = ({ translate }) => (
     </div>
 );
 
-const AccessRightsReport: React.FC<Props> = ({
+export const AccessRightsReport: React.FC<Props> = ({
     l10n,
     locale,
-    fetchOmattiedotOrganisaatios,
-    fetchAccessRightsReport,
-    clearAccessRightsReport,
     organisationsLoading,
     organisations,
     reportLoading,
     reportData,
+    fetchOrgs,
+    fetchReport,
+    clearReport,
 }) => {
-    const [oid, setOid] = useState<string>(undefined);
-    const [filter, setFilter] = useState<string>(undefined);
-    const [filterValues, setFilterValues] = useState<string[]>([]);
+    const [oid, setOid] = React.useState<string>(undefined);
+    const [filter, setFilter] = React.useState<string>(undefined);
+    const [filterValues, setFilterValues] = React.useState<string[]>([]);
 
-    useEffect(() => {
-        fetchOmattiedotOrganisaatios();
-    }, [fetchOmattiedotOrganisaatios]);
+    React.useEffect(() => {
+        fetchOrgs();
+    }, [fetchOrgs]);
 
-    useEffect(() => {
-        clearAccessRightsReport();
-        oid && fetchAccessRightsReport(oid);
-    }, [clearAccessRightsReport, fetchAccessRightsReport, oid]);
+    React.useEffect(() => {
+        clearReport();
+        oid && fetchReport(oid);
+    }, [clearReport, fetchReport, oid]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         setFilter(undefined);
-        setFilterValues([
-            ...new Set((reportData || []).map((row) => row.accessRightName).sort((a, b) => a.localeCompare(b))),
-        ]);
+        setFilterValues([...new Set((reportData || []).map((row) => row.accessRightName))]);
     }, [reportData]);
 
     const translate = (key: string) => l10n[locale][key] || key;
@@ -71,7 +74,7 @@ const AccessRightsReport: React.FC<Props> = ({
             <Controls
                 locale={locale}
                 L={l10n[locale]}
-                organisaatiot={organisations}
+                organisations={organisations}
                 disabled={organisationsLoading || reportLoading}
                 filterValues={filterValues}
                 filter={filter}
@@ -79,12 +82,12 @@ const AccessRightsReport: React.FC<Props> = ({
                 setOid={setOid}
                 dataExport={report && report[0] && (() => exportReport(report, columns, translate))}
             />
-            {oid && (reportLoading ? <Loader /> : report ? <Report report={report} translate={translate} /> : null)}
+            {oid && (reportLoading ? <Loader /> : <Report report={report} translate={translate} />)}
         </div>
     );
 };
 
-const mapStateToProps = (state: RootState): Partial<Props> => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     l10n: state.l10n.localisations,
     locale: state.locale,
     organisationsLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
@@ -93,10 +96,10 @@ const mapStateToProps = (state: RootState): Partial<Props> => ({
     reportData: state.report.reportData,
 });
 
-const mapDispatchToProps: Partial<Props> = {
-    fetchOmattiedotOrganisaatios,
-    fetchAccessRightsReport,
-    clearAccessRightsReport,
+const mapDispatchToProps: DispatchProps = {
+    fetchOrgs: fetchOmattiedotOrganisaatios,
+    fetchReport: fetchAccessRightsReport,
+    clearReport: clearAccessRightsReport,
 };
 
 export default connect<Props>(mapStateToProps, mapDispatchToProps)(AccessRightsReport);

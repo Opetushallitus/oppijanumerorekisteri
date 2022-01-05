@@ -58,11 +58,10 @@ export const columns: TableHeading[] = [
     },
 ];
 
-const AccessRightsReportData: React.FC<Props> = ({ report, translate }) => (
+export const AccessRightsReport: React.FC<Props> = ({ report, translate }) => (
     <div className="reportScroll">
         <div className="reportWrapper">
             <Table
-                getTdProps={() => ({ style: { textOverflow: 'unset' } })}
                 headings={columns.map((column) => ({ ...column, label: translate(column.label) }))}
                 data={report || []}
                 noDataText={translate('HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA')}
@@ -71,4 +70,6 @@ const AccessRightsReportData: React.FC<Props> = ({ report, translate }) => (
     </div>
 );
 
-export default AccessRightsReportData;
+const AccessRightsReportWrapper: React.FC<Props> = (props) => (props.report ? <AccessRightsReport {...props} /> : null);
+
+export default AccessRightsReportWrapper;

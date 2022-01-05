@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DownloadIcon Should render without crashing 1`] = `
+<i
+  aria-hidden="true"
+  className="fa fa-download"
+  style={
+    Object {
+      "paddingLeft": "1em",
+    }
+  }
+/>
+`;

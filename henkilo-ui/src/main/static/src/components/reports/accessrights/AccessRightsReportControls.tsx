@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ReactSelectOption } from '../../../types/react-select.types';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
@@ -15,7 +15,7 @@ import './AccessRightsReportControls.css';
 type Props = {
     locale: Locale;
     L: Localisations;
-    organisaatiot: OrganisaatioHenkilo[];
+    organisations: OrganisaatioHenkilo[];
     disabled: boolean;
     filterValues: string[];
     filter: string;
@@ -28,17 +28,17 @@ const AccessRightsReportControls: React.FC<Props> = ({
     locale,
     L,
     disabled,
-    organisaatiot,
+    organisations,
     setOid,
     filter,
     filterValues,
     setFilter,
     dataExport,
 }) => {
-    const [selectedOrganisation, setSelectedOrganisation] = useState<OrganisaatioSelectObject[]>([]);
+    const [selectedOrganisation, setSelectedOrganisation] = React.useState<OrganisaatioSelectObject[]>([]);
     const onSelect = (organisaatio: OrganisaatioSelectObject) => setSelectedOrganisation([organisaatio]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         setOid(selectedOrganisation[0] && selectedOrganisation[0].oid);
     }, [setOid, selectedOrganisation]);
 
@@ -51,7 +51,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                     <OrganisaatioSelectModal
                         locale={locale}
                         L={L}
-                        organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(organisaatiot, locale)}
+                        organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(organisations, locale)}
                         onSelect={onSelect}
                         disabled={disabled}
                     />

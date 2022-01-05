@@ -11,7 +11,11 @@ const formatDate = (date) => moment(date).format('D.M.YYYY');
 
 const format: (any) => any = (value) => (isDate(value) ? formatDate(value) : value);
 
-const convertToCSV = (data: Record<string, any>[], columns: TableHeading[], translate: (string) => string) => {
+export const convertToCSV = (
+    data: Record<string, any>[],
+    columns: TableHeading[],
+    translate: (string) => string
+): Record<string, string>[] => {
     const fields: Record<string, string> = columns.reduce(
         (acc, curr) => ({
             ...acc,
@@ -30,7 +34,11 @@ const convertToCSV = (data: Record<string, any>[], columns: TableHeading[], tran
     );
 };
 
-const createCSV = (data: Record<string, any>[], columns: TableHeading[], translate: (string) => string) =>
+export const createCSV = (
+    data: Record<string, any>[],
+    columns: TableHeading[],
+    translate: (string) => string
+): string =>
     unparse(
         {
             data: convertToCSV(data, columns, translate),
@@ -41,7 +49,7 @@ const createCSV = (data: Record<string, any>[], columns: TableHeading[], transla
         }
     );
 
-const createBlob: (csv: string) => Blob = (csv) => new Blob([BOM + csv], { type: 'text/csv' });
+const createBlob: (csv: string) => Blob = (csv) => new Blob([`${BOM}csv`], { type: 'text/csv' });
 
 const createAnchor: (Blob) => HTMLAnchorElement = (blob) => {
     const link = document.createElement('a');
@@ -51,7 +59,7 @@ const createAnchor: (Blob) => HTMLAnchorElement = (blob) => {
     return link;
 };
 
-const downloadCSV = (csv: string) => {
+export const downloadCSV = (csv: string) => {
     const link = createAnchor(createBlob(csv));
     document.body.appendChild(link);
     link.click();
@@ -59,3 +67,5 @@ const downloadCSV = (csv: string) => {
 
 export const exportReport = (data: Record<string, any>[], columns: TableHeading[], translate: (string) => string) =>
     downloadCSV(createCSV(data, columns, translate));
+
+export default exportReport;
