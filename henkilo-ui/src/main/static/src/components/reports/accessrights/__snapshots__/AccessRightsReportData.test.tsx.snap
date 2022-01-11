@@ -5,7 +5,7 @@ exports[`AccessRightsReport Should render (empty) report without crashing 1`] = 
   className="reportScroll"
 >
   <div
-    className="reportWrapper"
+    className="henkilohakuTableWrapper reportWrapper"
   >
     <Table
       data={Array []}
@@ -15,18 +15,23 @@ exports[`AccessRightsReport Should render (empty) report without crashing 1`] = 
           Object {
             "key": "personName",
             "label": undefined,
+            "maxWidth": 300,
           },
           Object {
+            "Cell": [Function],
             "key": "personOid",
             "label": undefined,
+            "maxWidth": 250,
           },
           Object {
             "key": "organisationName",
             "label": undefined,
+            "maxWidth": 300,
           },
           Object {
             "key": "organisationOid",
             "label": undefined,
+            "maxWidth": 250,
           },
           Object {
             "key": "accessRightName",
@@ -36,27 +41,31 @@ exports[`AccessRightsReport Should render (empty) report without crashing 1`] = 
             "Cell": [Function],
             "key": "startDate",
             "label": undefined,
-            "maxWidth": 150,
+            "maxWidth": 120,
           },
           Object {
             "Cell": [Function],
             "key": "endDate",
             "label": undefined,
-            "maxWidth": 150,
+            "maxWidth": 135,
           },
           Object {
             "Cell": [Function],
             "key": "modified",
             "label": undefined,
-            "maxWidth": 150,
+            "maxWidth": 165,
           },
           Object {
+            "Cell": [Function],
             "key": "modifiedBy",
             "label": undefined,
+            "maxWidth": 250,
           },
         ]
       }
-      resizable={false}
+      highlight={true}
+      resizable={true}
+      striped={true}
     />
   </div>
 </div>

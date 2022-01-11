@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import type { AccessRightsReportRow } from '../../../reducers/report.reducer';
 import type { TableHeading } from '../../../types/react-table.types';
 import moment from 'moment';
@@ -13,22 +14,30 @@ type Props = {
 
 export const formatDate: (string) => string = (value) => moment(value).format(PropertySingleton.state.PVM_FORMAATTI);
 
+export const formatDateTime: (string) => string = (value) =>
+    moment(value).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI);
+
 export const columns: TableHeading[] = [
     {
         key: 'personName',
         label: 'HENKILO_NIMI',
+        maxWidth: 300,
     },
     {
         key: 'personOid',
         label: 'HENKILO_OPPIJANUMERO',
+        maxWidth: 250,
+        Cell: (cellProps) => <Link to={`/virkailija/${cellProps.value}`}>{cellProps.value}</Link>,
     },
     {
         key: 'organisationName',
         label: 'HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA',
+        maxWidth: 300,
     },
     {
         key: 'organisationOid',
         label: 'HENKILO_OID',
+        maxWidth: 250,
     },
     {
         key: 'accessRightName',
@@ -37,34 +46,39 @@ export const columns: TableHeading[] = [
     {
         key: 'startDate',
         label: 'HENKILO_KAYTTOOIKEUS_ALKUPVM',
-        maxWidth: 150,
-        Cell: (cellProps) => formatDate(cellProps.value),
+        maxWidth: 120,
+        Cell: (cellProps) => <div className="right">{formatDate(cellProps.value)}</div>,
     },
     {
         key: 'endDate',
         label: 'HENKILO_KAYTTOOIKEUS_LOPPUPVM',
-        maxWidth: 150,
-        Cell: (cellProps) => formatDate(cellProps.value),
+        maxWidth: 135,
+        Cell: (cellProps) => <div className="right">{formatDate(cellProps.value)}</div>,
     },
     {
         key: 'modified',
-        label: 'KAYTTOOIKEUSRAPORTTI_COLUMN_MODIFIED',
-        maxWidth: 150,
-        Cell: (cellProps) => formatDate(cellProps.value),
+        label: 'OPPIJOIDEN_TUONTI_LUONTIAIKA',
+        maxWidth: 165,
+        Cell: (cellProps) => <div className="right">{formatDateTime(cellProps.value)}</div>,
     },
     {
         key: 'modifiedBy',
-        label: 'KAYTTOOIKEUSRAPORTTI_COLUMN_MODIFIER',
+        label: 'VIRKAILIJAN_TIEDOT_OTSIKKO',
+        maxWidth: 250,
+        Cell: (cellProps) => <Link to={`/virkailija/${cellProps.value}`}>{cellProps.value}</Link>,
     },
 ];
 
 export const AccessRightsReport: React.FC<Props> = ({ report, translate }) => (
     <div className="reportScroll">
-        <div className="reportWrapper">
+        <div className="henkilohakuTableWrapper reportWrapper">
             <Table
                 headings={columns.map((column) => ({ ...column, label: translate(column.label) }))}
                 data={report || []}
                 noDataText={translate('HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA')}
+                resizable
+                striped
+                highlight
             />
         </div>
     </div>

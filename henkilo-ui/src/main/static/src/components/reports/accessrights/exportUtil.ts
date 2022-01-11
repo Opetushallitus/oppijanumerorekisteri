@@ -49,7 +49,7 @@ export const createCSV = (
         }
     );
 
-const createBlob: (csv: string) => Blob = (csv) => new Blob([`${BOM}csv`], { type: 'text/csv' });
+const createBlob: (csv: string) => Blob = (csv) => new Blob([`${BOM}${csv}`], { type: 'text/csv' });
 
 const createAnchor: (Blob) => HTMLAnchorElement = (blob) => {
     const link = document.createElement('a');

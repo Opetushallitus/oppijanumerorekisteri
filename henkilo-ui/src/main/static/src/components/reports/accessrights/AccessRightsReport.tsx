@@ -31,7 +31,7 @@ type Props = DispatchProps & StateProps;
 
 const Header: React.FC<{ translate: (string) => string }> = ({ translate }) => (
     <div className="flex-horizontal">
-        <span className="oph-h2 oph-bold">{translate('KAYTTOOIKEUSRAPORTTI_TITLE')}</span>
+        <span className="oph-h2 oph-bold henkilohaku-main-header">{translate('KAYTTOOIKEUSRAPORTTI_TITLE')}</span>
     </div>
 );
 

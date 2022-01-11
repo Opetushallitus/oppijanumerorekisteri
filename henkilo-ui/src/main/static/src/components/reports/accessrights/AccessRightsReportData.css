@@ -1,7 +1,13 @@
 .reportScroll {
     overflow-x: scroll;
+    margin-top: 1em;
+    padding-bottom: 1em;
+    transform: rotateX(180deg);
 }
 .reportWrapper {
     width: 150em;
-    white-space: nowrap;
+    transform: rotateX(180deg);
+}
+.right {
+    text-align: right;
 }
