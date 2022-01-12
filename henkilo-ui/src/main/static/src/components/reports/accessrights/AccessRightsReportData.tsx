@@ -55,18 +55,6 @@ export const columns: TableHeading[] = [
         maxWidth: 135,
         Cell: (cellProps) => <div className="right">{formatDate(cellProps.value)}</div>,
     },
-    {
-        key: 'modified',
-        label: 'OPPIJOIDEN_TUONTI_LUONTIAIKA',
-        maxWidth: 165,
-        Cell: (cellProps) => <div className="right">{formatDateTime(cellProps.value)}</div>,
-    },
-    {
-        key: 'modifiedBy',
-        label: 'VIRKAILIJAN_TIEDOT_OTSIKKO',
-        maxWidth: 250,
-        Cell: (cellProps) => <Link to={`/virkailija/${cellProps.value}`}>{cellProps.value}</Link>,
-    },
 ];
 
 export const AccessRightsReport: React.FC<Props> = ({ report, translate }) => (

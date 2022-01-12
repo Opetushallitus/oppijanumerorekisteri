@@ -49,18 +49,6 @@ exports[`AccessRightsReport Should render (empty) report without crashing 1`] = 
             "label": undefined,
             "maxWidth": 135,
           },
-          Object {
-            "Cell": [Function],
-            "key": "modified",
-            "label": undefined,
-            "maxWidth": 165,
-          },
-          Object {
-            "Cell": [Function],
-            "key": "modifiedBy",
-            "label": undefined,
-            "maxWidth": 250,
-          },
         ]
       }
       highlight={true}
