@@ -27,7 +27,11 @@ export const columns: TableHeading[] = [
         key: 'personOid',
         label: 'HENKILO_OPPIJANUMERO',
         maxWidth: 250,
-        Cell: (cellProps) => <Link to={`/virkailija/${cellProps.value}`}>{cellProps.value}</Link>,
+        Cell: (cellProps) => (
+            <Link to={`/virkailija/${cellProps.value}`} target="_blank">
+                {cellProps.value}
+            </Link>
+        ),
     },
     {
         key: 'organisationName',
