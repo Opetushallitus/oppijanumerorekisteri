@@ -27,6 +27,8 @@ public class OppijanumerorekisteriProperties {
 
         private final Vtjsync vtjsync = new Vtjsync();
 
+        private final DeathCleanup deathCleanup = new DeathCleanup();
+
         @Getter
         @Setter
         public static class Yksilointi {
@@ -42,6 +44,12 @@ public class OppijanumerorekisteriProperties {
             private Boolean enabled = true;
             private Long fixedDelayInMillis = 300000L;
             private Boolean asiayhteysKaytossa = false;
+        }
+
+        @Getter
+        public static class DeathCleanup {
+            private int hour = 4;
+            private int minute = 30;
         }
     }
 }

@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.YksilointiTila;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.envers.Audited;
@@ -157,6 +158,10 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     private LocalDate syntymaaika;
 
     private LocalDate kuolinpaiva;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "kuolinsiivous")
+    private CleanupStep cleanupStep;
 
     private String kotikunta; // kunta-koodisto
 

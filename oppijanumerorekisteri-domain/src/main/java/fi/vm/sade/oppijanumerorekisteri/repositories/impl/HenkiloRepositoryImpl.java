@@ -10,6 +10,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
@@ -48,7 +49,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
     static final float DUPLICATE_QUERY_CONSIDER_THRESHOLD = 0.4f;
     static final float DUPLICATE_QUERY_ACCEPT_THRESHOLD = 0.6f;
-
+    private final static Logger logger = LoggerFactory.getLogger(HenkiloRepositoryImpl.class);
     private final EntityManager entityManager;
 
     public HenkiloRepositoryImpl(JpaContext jpaContext) {
@@ -58,8 +59,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     private JPAQueryFactory jpa() {
         return new JPAQueryFactory(this.entityManager);
     }
-
-    private final static Logger logger = LoggerFactory.getLogger(HenkiloRepositoryImpl.class);
 
     @Override
     public List<HenkiloHakuDto> findBy(OppijanumerorekisteriCriteria criteria) {
@@ -142,10 +141,10 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                              JPAQuery<?> query) {
         query.where(criteria.condition(qHenkilo));
         query.orderBy(qHenkilo.sukunimi.asc(), qHenkilo.kutsumanimi.asc());
-        if(limit != null) {
+        if (limit != null) {
             query.limit(limit);
         }
-        if(offset != null) {
+        if (offset != null) {
             query.offset(offset);
         }
     }
@@ -225,12 +224,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public List<Henkilo> findHetusAndOids(Long syncedBeforeTimestamp, long offset, long limit) {
         JPAQuery<Henkilo> query = jpa()
-            .select(Projections.bean(Henkilo.class,
-                henkilo.oidHenkilo,
-                henkilo.hetu,
-                henkilo.vtjsynced)
-            )
-            .from(henkilo);
+                .select(Projections.bean(Henkilo.class,
+                        henkilo.oidHenkilo,
+                        henkilo.hetu,
+                        henkilo.vtjsynced)
+                )
+                .from(henkilo);
 
         // always select all identities that have never been synced. also, select those that have been synced earlier
         // than syncedBeforeTimestamp (if given, otherwise select everything)
@@ -256,7 +255,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public List<HenkiloPerustietoDto> findByOidIn(List<String> oidList) {
         List<HenkiloPerustietoDto> henkiloDtoList = jpa().from(henkilo)
                 .select(Projections.bean(HenkiloPerustietoDto.class, henkilo.oidHenkilo, henkilo.hetu, henkilo.etunimet,
-                        henkilo.kutsumanimi,henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
+                        henkilo.kutsumanimi, henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
                 .where(henkilo.oidHenkilo.in(oidList)).fetch();
 
         Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)
@@ -329,7 +328,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
                 .select(qHenkiloViite.masterOid, qHenkiloViite.slaveOid)
                 .fetch()
                 .forEach(queryResult -> slaveToMasterOid
-                            .put(queryResult.get(qHenkiloViite.slaveOid), queryResult.get(qHenkiloViite.masterOid)));
+                        .put(queryResult.get(qHenkiloViite.slaveOid), queryResult.get(qHenkiloViite.masterOid)));
 
         Set<String> foundSlaves = slaveToMasterOid.keySet();
 
@@ -361,13 +360,13 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     @Override
     public List<String> findOidsModifiedSince(HenkiloCriteria criteria, DateTime modifiedSince, Integer offset, Integer amount) {
         JPAQuery<String> query = jpa().from(henkilo).where(criteria.condition(henkilo))
-                    .where(henkilo.modified.goe(modifiedSince.toDate()))
+                .where(henkilo.modified.goe(modifiedSince.toDate()))
                 .select(henkilo.oidHenkilo)
                 .orderBy(henkilo.modified.asc());
-        if(offset != null) {
+        if (offset != null) {
             query.offset(offset);
         }
-        if(amount != null) {
+        if (amount != null) {
             query.limit(amount);
         }
         return query.fetch();
@@ -426,7 +425,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
 
         List<Predicate> predicates = identifications.stream().map(identification ->
                 qIdentification.idpEntityId.eq(identification.getIdpEntityId())
-                .and(qIdentification.identifier.eq(identification.getIdentifier()))).collect(toList());
+                        .and(qIdentification.identifier.eq(identification.getIdentifier()))).collect(toList());
 
         return jpa()
                 .from(qHenkilo)
@@ -487,13 +486,13 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_CONSIDER_THRESHOLD)
                 .executeUpdate();
         Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT " +
-                "h1.*, similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) AS nimetsimilarity \n" +
-                "FROM henkilo AS h1 \n" +
-                "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
-                "  AND h1.passivoitu = FALSE \n" +
-                "  AND h1.duplicate = FALSE \n" +
-                "ORDER BY nimetsimilarity DESC \n",
-                Henkilo.DUPLICATE_RESULT_MAPPING)
+                                "h1.*, similarity(h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi, :nimet) AS nimetsimilarity \n" +
+                                "FROM henkilo AS h1 \n" +
+                                "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi) % :nimet \n" +
+                                "  AND h1.passivoitu = FALSE \n" +
+                                "  AND h1.duplicate = FALSE \n" +
+                                "ORDER BY nimetsimilarity DESC \n",
+                        Henkilo.DUPLICATE_RESULT_MAPPING)
                 .setParameter("nimet", getAllNames(criteria));
         List<Object[]> results = henkiloTypedQuery.getResultList();
         return results.stream().filter(result -> {
@@ -616,7 +615,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         QHenkilo qHenkilo = QHenkilo.henkilo;
         QTuontiRivi qTuontiRivi = QTuontiRivi.tuontiRivi;
         return criteria.getQuery(entityManager, qHenkilo)
-                .where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse())
+                .where(qHenkilo.duplicate.isFalse(), qHenkilo.passivoitu.isFalse())
                 .where(anyOf(
                         allOf(
                                 qHenkilo.hetu.isNull(),
@@ -651,7 +650,7 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public List<HenkiloPerustietoDto> findPerustiedotByHetuIn(List<String> hetuList) {
         List<HenkiloPerustietoDto> henkiloDtoList = jpa().from(henkilo)
                 .select(Projections.bean(HenkiloPerustietoDto.class, henkilo.oidHenkilo, henkilo.hetu, henkilo.etunimet,
-                        henkilo.kutsumanimi,henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
+                        henkilo.kutsumanimi, henkilo.sukunimi, henkilo.syntymaaika, henkilo.turvakielto, henkilo.kasittelijaOid, henkilo.sukupuoli, henkilo.modified))
                 .where(henkilo.hetu.in(hetuList)).fetch();
 
         Map<String, KielisyysDto> stringAsiointikieliMap = jpa().from(henkilo)
@@ -717,5 +716,19 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         query.offset(offset);
 
         return query.fetch();
+    }
+
+    @Override
+    @Transactional
+    public Collection<Henkilo> findDeadWithIncompleteCleanup(CleanupStep step) {
+        QHenkilo qHenkilo = QHenkilo.henkilo;
+        return jpa()
+                .from(qHenkilo)
+                .where(
+                        qHenkilo.kuolinpaiva.before(LocalDate.now()),
+                        qHenkilo.cleanupStep.isNull().or(qHenkilo.cleanupStep.ne(step))
+                )
+                .select(qHenkilo)
+                .fetch();
     }
 }
