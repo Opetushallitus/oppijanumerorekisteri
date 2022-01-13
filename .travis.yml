@@ -50,6 +50,7 @@ script:
   - export BASE_IMAGE="baseimage-fatjar-openjdk11:master"
   - ./ci-tools/common/pull-image.sh
   - ./ci-tools/build/build-fatjar.sh $ARTIFACT_NAME
+  - ./ci-tools/build/upload-image.sh $ARTIFACT_NAME
 
 deploy:
   - provider: script
