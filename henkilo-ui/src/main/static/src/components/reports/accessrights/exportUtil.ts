@@ -1,5 +1,6 @@
 import { unparse } from 'papaparse';
 import moment from 'moment';
+import PropertySingleton from '../../../globals/PropertySingleton';
 import type { TableHeading } from '../../../types/react-table.types';
 
 const BOM = '\ufeff';
@@ -7,7 +8,7 @@ const DELIMITER = ';';
 
 const isDate = (value) => String(value).match(/^\d{4}-\d{2}-\d{2}/);
 
-const formatDate = (date) => moment(date).format('D.M.YYYY');
+const formatDate = (date) => moment(date).format(PropertySingleton.state.PVM_FORMAATTI);
 
 const format: (any) => any = (value) => (isDate(value) ? formatDate(value) : value);
 
