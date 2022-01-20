@@ -1,9 +1,9 @@
 import React from 'react';
-import { Localisations } from '../../types/localisation.type';
-import { Locale } from '../../types/locale.type';
-import { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
-import HenkiloViewDuplikaatit from '../../components/henkilo/duplikaatit/HenkiloViewDuplikaatit';
+import { Localisations } from '../../../../../types/localisation.type';
+import { Locale } from '../../../../../types/locale.type';
+import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import HenkiloViewDuplikaatit from '../../../../../components/henkilo/duplikaatit/HenkiloViewDuplikaatit';
 
 type OppijaCreateDuplikaatitProps = {
     locale: Locale;

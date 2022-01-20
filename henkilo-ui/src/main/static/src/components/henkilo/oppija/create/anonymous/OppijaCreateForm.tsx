@@ -1,17 +1,18 @@
 import React from 'react';
-import SimpleDatePicker from './SimpleDatePicker';
+import SimpleDatePicker from '../../../SimpleDatePicker';
 import classNames from 'classnames';
-import { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { Locale } from '../../types/locale.type';
-import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
-import PropertySingleton from '../../globals/PropertySingleton';
-import KoodistoSelect from '../common/select/KoodistoSelect';
-import KielisyysSelect from '../common/select/KielisyysSelect';
-import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect';
-import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
-import { Localisations } from '../../types/localisation.type';
-import LoaderWithText from '../common/loadingbar/LoaderWithText';
-import { EMAIL } from '../../types/constants';
+import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Locale } from '../../../../../types/locale.type';
+import { Koodisto } from '../../../../../types/domain/koodisto/koodisto.types';
+import PropertySingleton from '../../../../../globals/PropertySingleton';
+import KoodistoSelect from '../../../../common/select/KoodistoSelect';
+import KielisyysSelect from '../../../../common/select/KielisyysSelect';
+import KansalaisuusMultiSelect from '../../../../common/select/KansalaisuusMultiSelect';
+import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
+import { Localisations } from '../../../../../types/localisation.type';
+import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
+import { EMAIL } from '../../../../../types/constants';
+import Button from '../../../../common/button/Button';
 
 type Error = {
     name: string;
@@ -24,6 +25,7 @@ type Form = {
 };
 
 type OppijaCreateFormProps = {
+    goBack: () => void;
     tallenna: (arg0: HenkiloCreate) => Promise<void>;
     locale: Locale;
     L: Localisations;
@@ -220,6 +222,9 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
                     {this.state.submitted && this.state.errors.length > 0 && (
                         <span className="oph-field-text oph-error">{this.props.L['LOMAKE_SISALTAA_VIRHEITA']}</span>
                     )}
+                </div>
+                <div className="oph-field">
+                    <Button action={this.props.goBack}>{this.props.L['TAKAISIN_LINKKI']}</Button>
                 </div>
             </form>
         );

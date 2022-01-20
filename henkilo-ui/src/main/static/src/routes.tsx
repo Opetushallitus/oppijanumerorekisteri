@@ -14,7 +14,7 @@ import OppijoidenTuontiContainer from './components/oppijoidentuonti/OppijoidenT
 import VtjVertailuPage from './components/henkilo/vtjvertailu/VtjVertailuPage';
 import KayttooikeusryhmaPageContainer from './components/kayttooikeusryhmat/kayttooikeusryhma/KayttooikeusryhmaPageContainer';
 import KayttooikeusryhmatHallintaContainer from './components/kayttooikeusryhmat/listaus/KayttooikeusryhmatHallintaContainer';
-import OppijaCreateContainer from './components/henkilo/OppijaCreateContainer';
+import OppijaCreate from './components/henkilo/oppija/create/form';
 import VirkailijaCreateContainer from './components/henkilo/VirkailijaCreateContainer';
 import PalveluCreateContainer from './components/henkilo/PalveluCreateContainer';
 import PalvelukayttajaHakuContainer from './components/palvelukayttaja/PalvelukayttajaHakuContainer';
@@ -35,14 +35,10 @@ export type RouteType = {
     path: string;
     component: React.ReactNode;
     title: string;
-    getNaviTabs: (
-        arg0: string | null | undefined,
-        arg1: HenkiloState | null | undefined,
-        arg2: string | null | undefined
-    ) => Array<NaviTab>;
-    isUnauthenticated: boolean | null | undefined;
-    backButton: boolean | null | undefined;
-    henkiloType: string | null | undefined;
+    getNaviTabs: (() => NaviTab[]) | ((oid: string, henkiloState: HenkiloState, henkiloType: string) => NaviTab[]);
+    isUnauthenticated?: boolean;
+    backButton?: boolean;
+    henkiloType?: string;
 };
 
 export default (
@@ -80,7 +76,7 @@ export default (
         <Route path="/virkailija/luonti" component={VirkailijaCreateContainer} title="" />
         <Route
             path="/oppija/luonti"
-            component={OppijaCreateContainer}
+            component={OppijaCreate}
             title="TITLE_OPPIJA_LUONTI"
             getNaviTabs={updateDefaultNavigation}
         />

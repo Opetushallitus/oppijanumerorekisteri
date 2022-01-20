@@ -14,7 +14,7 @@ import exportReport from './exportUtil';
 
 type DispatchProps = {
     fetchOrgs: () => void;
-    fetchReport: (string) => void;
+    fetchReport: (oid: string) => void;
     clearReport: () => void;
 };
 
@@ -29,7 +29,7 @@ type StateProps = {
 
 type Props = DispatchProps & StateProps;
 
-const Header: React.FC<{ translate: (string) => string }> = ({ translate }) => (
+const Header: React.FC<{ translate: (key: string) => string }> = ({ translate }) => (
     <div className="flex-horizontal">
         <span className="oph-h2 oph-bold henkilohaku-main-header">{translate('KAYTTOOIKEUSRAPORTTI_TITLE')}</span>
     </div>

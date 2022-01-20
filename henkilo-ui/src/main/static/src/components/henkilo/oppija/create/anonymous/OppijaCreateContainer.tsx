@@ -1,22 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
-import { http } from '../../http';
+import type { RootState } from '../../../../../reducers';
+import { BrowserRouter } from 'react-router';
+import { http } from '../../../../../http';
 import { urls } from 'oph-urls-js';
-import { fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchKansalaisuusKoodisto } from '../../actions/koodisto.actions';
-import { Locale } from '../../types/locale.type';
-import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
+import {
+    fetchKieliKoodisto,
+    fetchSukupuoliKoodisto,
+    fetchKansalaisuusKoodisto,
+} from '../../../../../actions/koodisto.actions';
+import { Locale } from '../../../../../types/locale.type';
+import { Koodisto } from '../../../../../types/domain/koodisto/koodisto.types';
 import OppijaCreateForm from './OppijaCreateForm';
-import { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloDuplicate } from '../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
-import { Localisations } from '../../types/localisation.type';
+import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import { Localisations } from '../../../../../types/localisation.type';
 import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
-import { addGlobalNotification } from '../../actions/notification.actions';
-import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { GlobalNotificationConfig } from '../../types/notification.types';
+import { addGlobalNotification } from '../../../../../actions/notification.actions';
+import { NOTIFICATIONTYPES } from '../../../../common/Notification/notificationtypes';
+import { GlobalNotificationConfig } from '../../../../../types/notification.types';
 
 type OwnProps = {
-    router: any;
+    router: BrowserRouter;
+    goBack: () => void;
 };
 
 type StateProps = {
@@ -70,6 +76,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 <span className="oph-h2 oph-bold">{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</span>
                 {this.state.naytaDuplikaatit === false ? (
                     <OppijaCreateForm
+                        goBack={this.props.goBack}
                         tallenna={this.tallenna}
                         locale={this.props.locale}
                         L={this.props.L}
@@ -153,4 +160,4 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,
     addGlobalNotification,
-})(OppijaCreateContainer);
+})(OppijaCreateContainer) as React.FC<OwnProps>;
