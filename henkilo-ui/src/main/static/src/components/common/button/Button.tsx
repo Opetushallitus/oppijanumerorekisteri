@@ -35,6 +35,7 @@ class Button extends React.Component<ButtonProps> {
             </a>
         ) : (
             <button
+                type="button"
                 className={className}
                 disabled={this.props.disabled || this.props.loading}
                 onClick={this.props.action}
