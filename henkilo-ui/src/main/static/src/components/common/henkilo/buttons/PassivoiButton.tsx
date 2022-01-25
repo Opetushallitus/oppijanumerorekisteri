@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import ConfirmButton from '../../button/ConfirmButton';
 import Button from '../../button/Button';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
@@ -10,11 +11,16 @@ type OwnProps = {
     disabled?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     L: Localisations;
-    passivoiHenkilo: (arg0: string) => void;
 };
+
+type DispatchProps = {
+    passivoiHenkilo: (oid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 const PassivoiButton = (props: Props) =>
     props.henkilo.henkilo.passivoitu ? (
@@ -32,11 +38,11 @@ const PassivoiButton = (props: Props) =>
         />
     );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     passivoiHenkilo,
 })(PassivoiButton);

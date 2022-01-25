@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
+import type { NotificationsState } from '../../../reducers/notifications.reducer';
 import classNames from 'classnames/bind';
 import './PasswordPopupContent.css';
 import { Localisations } from '../../../types/localisation.type';
@@ -15,10 +17,16 @@ type OwnProps = {
     oidHenkilo: string;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
+    notifications: NotificationsState;
 };
+
+type DispatchProps = {
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     password: string;
@@ -137,11 +145,11 @@ class PasswordPopupContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     notifications: state.notifications,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     addGlobalNotification,
 })(PasswordPopupContent);

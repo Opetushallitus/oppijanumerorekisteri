@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { fetchAllKayttooikeusryhma } from '../../../actions/kayttooikeusryhma.actions';
 import Loader from '../../common/icons/Loader';
 import KayttooikeusryhmatHallintaPage from './KayttooikeusryhmatHallintaPage';
@@ -13,14 +14,19 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     muokkausoikeus: boolean;
     kayttooikeusryhmat: KayttooikeusRyhmaState;
-    fetchAllKayttooikeusryhma: (arg0: boolean) => void;
     locale: Locale;
     L: Localisations;
     omattiedot: OmattiedotState;
 };
+
+type DispatchProps = {
+    fetchAllKayttooikeusryhma: (arg0: boolean) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class KayttooikeusryhmatContainer extends React.Component<Props> {
     componentDidMount() {
@@ -47,7 +53,7 @@ class KayttooikeusryhmatContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     muokkausoikeus: hasAnyPalveluRooli(state.omattiedot.organisaatiot, [
         'KOOSTEROOLIENHALLINTA_CRUD',
         'HENKILONHALLINTA_OPHREKISTERI',
@@ -59,6 +65,6 @@ const mapStateToProps = (state) => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchAllKayttooikeusryhma,
 })(KayttooikeusryhmatContainer);

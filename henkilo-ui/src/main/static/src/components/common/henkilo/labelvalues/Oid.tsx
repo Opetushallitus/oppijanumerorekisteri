@@ -1,4 +1,5 @@
 import React from 'react';
+import type { RootState } from '../../../../reducers';
 import { connect } from 'react-redux';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
@@ -8,9 +9,11 @@ type OwnProps = {
     updateModelFieldAction: () => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
 };
+
+type Props = OwnProps & StateProps;
 
 const Oid = (props: Props) => (
     <LabelValue
@@ -25,8 +28,8 @@ const Oid = (props: Props) => (
     />
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Oid);
+export default connect<StateProps>(mapStateToProps)(Oid);

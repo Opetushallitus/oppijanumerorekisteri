@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import HenkiloViewPage from '../../components/henkilo/HenkiloViewPage';
 import {
     fetchKayttaja,
@@ -19,7 +20,6 @@ import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo,
     getGrantablePrivileges,
-    updateHaettuKayttooikeusryhma,
 } from '../../actions/kayttooikeusryhma.actions';
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
@@ -33,13 +33,17 @@ type OwnProps = {
     oidHenkilo: string;
 };
 
-type Props = OwnProps & {
-    clearHenkilo: () => void;
+type StateProps = {
     henkilo: HenkiloState;
     organisaatioCache: OrganisaatioCache;
     koodisto: KoodistoState;
     l10n: L10n;
     locale: Locale;
+    kayttooikeus: KayttooikeusRyhmaState;
+};
+
+type DispatchProps = {
+    clearHenkilo: () => void;
     fetchHenkilo: (arg0: string) => void;
     fetchHenkiloOrgs: (arg0: string) => void;
     fetchHenkiloSlaves: (arg0: string) => void;
@@ -53,8 +57,9 @@ type Props = OwnProps & {
     fetchHenkiloYksilointitieto: (arg0: string) => void;
     fetchOmattiedotOrganisaatios: () => any;
     getGrantablePrivileges: (arg0: string) => void;
-    kayttooikeus: KayttooikeusRyhmaState;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class VirkailijaViewContainer extends React.Component<Props> {
     async componentDidMount() {
@@ -90,7 +95,7 @@ class VirkailijaViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: RootState): StateProps => {
     return {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
@@ -98,11 +103,10 @@ const mapStateToProps = (state) => {
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
-        notifications: state.notifications,
     };
 };
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloSlaves,
     fetchHenkiloOrgs,
@@ -114,7 +118,6 @@ export default connect<Props, OwnProps>(mapStateToProps, {
     fetchHenkiloYksilointitieto,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
-    updateHaettuKayttooikeusryhma,
     fetchOmattiedotOrganisaatios,
     getGrantablePrivileges,
     clearHenkilo,

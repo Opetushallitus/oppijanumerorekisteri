@@ -32,13 +32,13 @@ export type Form = {
     submitted: boolean;
 };
 
-type VahvaTunnistusLisatiedotInputsProps = {
+type Props = {
     L: Localisations;
     form: Form;
     onChange: (name: string, value: any) => void;
 };
 
-class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisatiedotInputsProps> {
+class VahvaTunnistusLisatiedotInputs extends React.Component<Props> {
     render() {
         return (
             <div>
@@ -48,7 +48,6 @@ class VahvaTunnistusLisatiedotInputs extends React.Component<VahvaTunnistusLisat
                         <Salasana
                             disabled={this.props.form.metadata.password.disabled}
                             isError={this.hasError('password')}
-                            L={this.props.L}
                             updateModelFieldAction={this.onInputChange.bind(this)}
                         />
                         <LocalNotification

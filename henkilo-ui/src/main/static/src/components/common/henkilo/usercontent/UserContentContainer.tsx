@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import StaticUtils from '../../StaticUtils';
 import { Localisations } from '../../../../types/localisation.type';
 import {
@@ -34,7 +35,15 @@ type OwnProps = {
     view: string;
 };
 
-type Props = OwnProps & {
+type DispatchProps = {
+    updateHenkiloAndRefetch: (arg0: any, arg1: boolean) => void;
+    updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void;
+    aktivoiHenkilo: (oid: string) => void;
+    fetchOmattiedot: (arg0: boolean | null | undefined) => any;
+    updateAnomusilmoitus: (arg0: boolean) => any;
+};
+
+type StateProps = {
     L: Localisations;
     henkilo: {
         henkilo: Henkilo;
@@ -48,14 +57,11 @@ type Props = OwnProps & {
         sukupuoliKoodistoLoading: boolean;
         yhteystietotyypitKoodistoLoading: boolean;
     };
-    updateHenkiloAndRefetch: (arg0: any, arg1: boolean) => void;
-    updateAndRefetchKayttajatieto: (henkiloOid: string, kayttajatunnus: string) => void;
-    aktivoiHenkilo: (oid: string) => void;
     omattiedot: OmattiedotState;
     ownOid: string;
-    fetchOmattiedot: (arg0: boolean | null | undefined) => any;
-    updateAnomusilmoitus: (arg0: boolean) => any;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     henkiloUpdate: any;
@@ -264,7 +270,7 @@ class UserContentContainer extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     koodisto: state.koodisto,
     henkilo: state.henkilo,
     omattiedot: state.omattiedot,
@@ -272,7 +278,7 @@ const mapStateToProps = (state) => ({
     ownOid: state.omattiedot.data.oid,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto,
     aktivoiHenkilo,

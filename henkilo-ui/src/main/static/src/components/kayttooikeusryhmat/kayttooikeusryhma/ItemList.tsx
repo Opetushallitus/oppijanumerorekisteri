@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import './ItemList.css';
 import * as R from 'ramda';
 import { Localisations } from '../../../types/localisation.type';
@@ -10,9 +11,11 @@ type OwnProps = {
     labelPath: Array<string>;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 /*
  * Simple array of items and remove button for each of them
@@ -37,8 +40,8 @@ const ItemList = (props: Props) => (
     </div>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(ItemList);
+export default connect<StateProps>(mapStateToProps)(ItemList);

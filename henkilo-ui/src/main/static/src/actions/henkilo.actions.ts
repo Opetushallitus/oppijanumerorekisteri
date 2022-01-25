@@ -74,7 +74,7 @@ const receiveHenkilo = (json) => ({
     receivedAt: Date.now(),
 });
 const receiveHenkiloFailure = (data) => ({ type: FETCH_HENKILO_FAILURE, data });
-export const fetchHenkilo = (oid) => async (dispatch) => {
+export const fetchHenkilo = (oid: string) => async (dispatch) => {
     dispatch(requestHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.oid', oid);
     try {
@@ -97,7 +97,7 @@ export const updateHenkiloAndRefetch = (payload, errorNotificationConfig) => asy
     dispatch(requestHenkiloUpdate(payload.oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo');
     try {
-        const oid = await http.put(url, payload);
+        const oid = await http.put<string>(url, payload);
         dispatch(receiveHenkiloUpdate(oid));
         dispatch(fetchHenkilo(oid));
     } catch (error) {
@@ -315,7 +315,7 @@ const errorYksiloiHenkilo = (error) => ({
         notL10nText: 'YKSILOI_ERROR_TEXT',
     },
 });
-export const yksiloiHenkilo = (oid) => (dispatch) => {
+export const yksiloiHenkilo = (oid: string) => (dispatch) => {
     dispatch(requestYksiloiHenkilo(oid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.yksiloihetuton', oid);
     http.post(url)
@@ -587,7 +587,7 @@ const requestHenkiloMasterFailure = (oidHenkilo) => ({
     oidHenkilo,
 });
 
-export const fetchHenkiloMaster = (oidHenkilo) => async (dispatch) => {
+export const fetchHenkiloMaster = (oidHenkilo: string) => async (dispatch) => {
     dispatch(requestHenkiloMaster(oidHenkilo));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.master', oidHenkilo);
     try {
@@ -638,18 +638,18 @@ export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) 
     }
 };
 
-const updateHenkiloUnlink = (masterOid, slaveOid) => ({
+const updateHenkiloUnlink = (masterOid: string, slaveOid: string) => ({
     type: UPDATE_HENKILO_UNLINK_REQUEST,
     masterOid,
     slaveOid,
 });
-const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid) => ({
+const updateHenkiloUnlinkSuccess = (unlinkedSlaveOid: string) => ({
     type: UPDATE_HENKILO_UNLINK_SUCCESS,
     unlinkedSlaveOid,
 });
 const updateHenkiloUnlinkFailure = () => ({ type: UPDATE_HENKILO_UNLINK_FAILURE });
 
-export const unlinkHenkilo = (masterOid, slaveOid) => async (dispatch) => {
+export const unlinkHenkilo = (masterOid: string, slaveOid: string) => async (dispatch) => {
     dispatch(updateHenkiloUnlink(masterOid, slaveOid));
     const url = urls.url('oppijanumerorekisteri-service.henkilo.unlink', masterOid, slaveOid);
     try {

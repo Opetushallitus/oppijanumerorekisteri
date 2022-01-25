@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import BasicInfoForm from './BasicinfoForm';
 import React from 'react';
 import KutsuOrganisaatios from './KutsuOrganisaatios';
@@ -24,23 +25,28 @@ type OwnProps = {
     location: any;
 };
 
-type Props = OwnProps & {
-    kutsuClearOrganisaatios: () => void;
-    fetchOmattiedotOrganisaatios: () => void;
-    fetchAllRyhmas: () => void;
+type StateProps = {
     L: Localisations;
     l10n: L10n;
     locale: string;
-    addedOrgs: Array<KutsuOrganisaatio>;
-    kutsuAddOrganisaatio: (arg0: KutsuOrganisaatio) => void;
+    addedOrgs: readonly KutsuOrganisaatio[];
     kayttajaOid: string;
-    fetchHenkilo: (oid: string) => Promise<any>;
     henkilo: Henkilo;
     organisaatioState: OrganisaatioState;
     omattiedotLoading: boolean;
     henkiloLoading: boolean;
     ryhmasLoading: boolean;
 };
+
+type DispatchProps = {
+    kutsuClearOrganisaatios: () => void;
+    fetchOmattiedotOrganisaatios: () => void;
+    fetchAllRyhmas: () => void;
+    kutsuAddOrganisaatio: (arg0: KutsuOrganisaatio) => void;
+    fetchHenkilo: (oid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     confirmationModalOpen: boolean;
@@ -179,7 +185,7 @@ class KutsuminenPage extends React.Component<Props, State> {
         return !!email && !!etunimi && !!sukunimi && !!languageCode;
     }
 
-    isOrganizationsValid(newAddedOrgs: Array<KutsuOrganisaatio>): boolean {
+    isOrganizationsValid(newAddedOrgs: readonly KutsuOrganisaatio[]): boolean {
         return (
             newAddedOrgs.length > 0 &&
             newAddedOrgs.every((org) => StaticUtils.stringIsNotEmpty(org.oid) && org.selectedPermissions.length > 0)
@@ -203,7 +209,7 @@ class KutsuminenPage extends React.Component<Props, State> {
         });
     }
 
-    updateOrganisaatioValidation(newAddedOrgs: Array<KutsuOrganisaatio>) {
+    updateOrganisaatioValidation(newAddedOrgs: readonly KutsuOrganisaatio[]) {
         this.setState({
             validationMessages: {
                 ...this.state.validationMessages,
@@ -239,23 +245,20 @@ class KutsuminenPage extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        path: ownProps.location.pathname,
-        l10n: state.l10n.localisations,
-        L: state.l10n.localisations[state.locale],
-        omattiedotLoading: state.omattiedot.omattiedotLoading,
-        kayttajaOid: state.omattiedot.data.oid,
-        henkiloLoading: state.henkilo.henkiloLoading,
-        henkilo: state.henkilo.henkilo,
-        addedOrgs: state.kutsuminenOrganisaatios,
-        locale: state.locale,
-        organisaatioState: state.organisaatio,
-        ryhmasLoading: state.ryhmatState.ryhmasLoading,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    l10n: state.l10n.localisations,
+    L: state.l10n.localisations[state.locale],
+    omattiedotLoading: state.omattiedot.omattiedotLoading,
+    kayttajaOid: state.omattiedot.data.oid,
+    henkiloLoading: state.henkilo.henkiloLoading,
+    henkilo: state.henkilo.henkilo,
+    addedOrgs: state.kutsuminenOrganisaatios,
+    locale: state.locale,
+    organisaatioState: state.organisaatio,
+    ryhmasLoading: state.ryhmatState.ryhmasLoading,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     kutsuClearOrganisaatios,
     kutsuAddOrganisaatio,

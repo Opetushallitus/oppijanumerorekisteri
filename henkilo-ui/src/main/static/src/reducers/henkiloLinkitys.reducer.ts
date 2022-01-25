@@ -6,8 +6,8 @@ import {
 
 export type HenkiloLinkitysState = {
     [key: string]: {
-        henkiloVarmentajas: Array<string>;
-        henkiloVarmennettavas: Array<string>;
+        henkiloVarmentajas?: string[];
+        henkiloVarmennettavas?: string[];
     };
 };
 
@@ -17,7 +17,7 @@ type HenkiloLinkitysAction = {
     linkityksetByOid: HenkiloLinkitysState;
 };
 
-export const linkitykset = (state: HenkiloLinkitysState = {}, action: HenkiloLinkitysAction) => {
+export const linkitykset = (state: HenkiloLinkitysState = {}, action: HenkiloLinkitysAction): HenkiloLinkitysState => {
     switch (action.type) {
         case FETCH_HENKILO_LINKITYKSET_REQUEST:
             return { ...state, [action.oidHenkilo]: {} };

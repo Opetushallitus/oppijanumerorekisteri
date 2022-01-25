@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import Table from '../table/Table';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
@@ -16,6 +17,7 @@ import {
     createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
     removePrivilege,
+    Kayttooikeus,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { Localisations, L10n } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
@@ -34,50 +36,41 @@ import { localizeTextGroup } from '../../../utilities/localisation.util';
 
 type OwnProps = {
     oidHenkilo: string;
-    omattiedot: OmattiedotState;
+    omattiedot?: OmattiedotState;
     organisaatioCache: OrganisaatioCache;
     isOmattiedot: boolean;
     vuosia: number;
+    ryhmas?: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     l10n: L10n;
     locale: Locale;
     henkilo: HenkiloState;
     kayttooikeus: KayttooikeusRyhmaState;
     notifications: {
-        existingKayttooikeus: Array<any>;
+        existingKayttooikeus: any[];
     };
-    removeNotification: (arg0: string, arg1: string, arg2: string | null | undefined) => void;
-    removePrivilege: (arg0: string, arg1: string, arg2: number) => void;
-    fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
-    addKayttooikeusToHenkilo: (
-        arg0: string,
-        arg1: string,
-        arg2: Array<{
-            id: number;
-            kayttooikeudenTila: string;
-            alkupvm: string;
-            loppupvm: string;
-        }>
-    ) => void;
-    createKayttooikeusanomus: (arg0: {
-        organisaatioOrRyhmaOid: string;
-        email: string | null | undefined;
-        perustelut: string;
-        kayttooikeusRyhmaIds: Array<number>;
-        anojaOid: string;
-    }) => void;
-    ryhmas: any;
 };
+
+type DispatchProps = {
+    removeNotification: typeof removeNotification;
+    removePrivilege: (oidHenkilo: string, oidOrganisaatio: string, kayttooikeusryhmaId: number) => void;
+    fetchAllKayttooikeusAnomusForHenkilo: (oidHenkilo: string) => void;
+    addKayttooikeusToHenkilo: (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => void;
+    createKayttooikeusanomus: (anomusData: { anojaOid: string }) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
+
 type EmailOption = {
-    value: string | null | undefined;
+    value?: string;
 };
 
 type State = {
     dates: { alkupvm: moment.Moment; loppupvm: moment.Moment }[];
-    emailSelection: Array<EmailOption>;
-    emailOptions: Array<EmailOption>;
+    emailSelection: EmailOption[];
+    emailOptions: EmailOption[];
     showMissingEmailNotification: boolean;
     missingEmail: boolean;
     accessRight: AccessRight | null;
@@ -304,11 +297,11 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
             });
     }
 
-    updateKayttooikeusryhma(id: number, kayttooikeudenTila: string, idx: number, organisaatioOid: string) {
+    updateKayttooikeusryhma(id: number, kayttoOikeudenTila: string, idx: number, organisaatioOid: string) {
         this.props.addKayttooikeusToHenkilo(this.props.oidHenkilo, organisaatioOid, [
             {
                 id,
-                kayttooikeudenTila,
+                kayttoOikeudenTila,
                 alkupvm: moment(this.state.dates[idx].alkupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
                 loppupvm: moment(this.state.dates[idx].loppupvm).format(PropertySingleton.state.PVM_DBFORMAATTI),
             },
@@ -422,7 +415,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     l10n: state.l10n.localisations,
     locale: state.locale,
     henkilo: state.henkilo,
@@ -430,7 +423,7 @@ const mapStateToProps = (state) => ({
     notifications: state.notifications,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     addKayttooikeusToHenkilo,
     removePrivilege,
     removeNotification,

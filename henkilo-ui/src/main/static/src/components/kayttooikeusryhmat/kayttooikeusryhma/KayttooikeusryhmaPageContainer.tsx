@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import { fetchOmattiedotOrganisaatios } from '../../../actions/omattiedot.actions';
 import { fetchOppilaitostyypit, fetchOrganisaatiotyypit } from '../../../actions/koodisto.actions';
@@ -28,18 +29,8 @@ type OwnProps = {
     routeParams: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
-    fetchKayttooikeusryhmaById: (id: string) => Promise<any>;
-    fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => Promise<any>;
-    fetchOmattiedotOrganisaatios: () => void;
-    fetchOppilaitostyypit: () => void;
-    fetchOrganisaatiotyypit: () => void;
-    fetchAllKayttooikeusryhma: () => void;
-    fetchAllPalvelut: () => void;
-    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
-    fetchKayttooikeusryhmaSlaves: (id: string) => Promise<any>;
-    fetchPalveluKayttooikeus: (palveluName: string) => void;
     organisaatios: Array<OrganisaatioHenkilo>;
     organisaatioCache: OrganisaatioCache;
     koodisto: any;
@@ -49,8 +40,23 @@ type Props = OwnProps & {
     palvelutState: PalvelutState;
     omattiedotOrganisaatiosLoading: boolean;
     kayttooikeusryhmaId?: string;
+};
+
+type DispatchProps = {
+    fetchKayttooikeusryhmaById: (id: string) => void;
+    fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => void;
+    fetchOmattiedotOrganisaatios: () => void;
+    fetchOppilaitostyypit: () => void;
+    fetchOrganisaatiotyypit: () => void;
+    fetchAllKayttooikeusryhma: () => void;
+    fetchAllPalvelut: () => void;
+    fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
+    fetchKayttooikeusryhmaSlaves: (id: string) => void;
+    fetchPalveluKayttooikeus: (palveluName: string) => void;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class KayttooikeusryhmaPageContainer extends React.Component<Props> {
     componentDidMount() {
@@ -86,23 +92,20 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        kayttooikeusryhmaId: ownProps.routeParams['id'],
-        L: state.l10n.localisations[state.locale],
-        organisaatios: state.omattiedot.organisaatios,
-        organisaatioCache: state.organisaatio.cached,
-        organisaatioLoading: state.organisaatio.organisaatioLoading,
-        koodisto: state.koodisto,
-        locale: state.locale,
-        kayttooikeus: state.kayttooikeus,
-        palvelutState: state.palvelutState,
-        kayttooikeusState: state.kayttooikeusState,
-        omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
-    };
-};
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+    kayttooikeusryhmaId: ownProps.routeParams['id'],
+    L: state.l10n.localisations[state.locale],
+    organisaatios: state.omattiedot.organisaatios,
+    organisaatioCache: state.organisaatio.cached,
+    koodisto: state.koodisto,
+    locale: state.locale,
+    kayttooikeus: state.kayttooikeus,
+    palvelutState: state.palvelutState,
+    kayttooikeusState: state.kayttooikeusState,
+    omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     fetchKayttooikeusryhmaById,
     fetchPalveluRooliByKayttooikeusryhmaId,

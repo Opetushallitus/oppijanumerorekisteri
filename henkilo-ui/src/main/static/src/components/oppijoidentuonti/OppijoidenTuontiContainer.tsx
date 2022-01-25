@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { fetchOppijoidenTuontiYhteenveto, fetchOppijoidenTuontiListaus } from '../../actions/oppijoidentuonti.actions';
 import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
-import { OppijaTuontiYhteenveto } from '../../types/domain/oppijanumerorekisteri/oppijatuontiyhteenveto.types';
 import { Localisations } from '../../types/localisation.type';
-import { TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
+import { TuontiYhteenvetoState, TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 
 type SearchCriteria = {
@@ -18,16 +18,19 @@ type SearchCriteria = {
     nimiHaku: string | null | undefined;
 };
 
-type OwnProps = {};
-
-type Props = OwnProps & {
-    fetchOppijoidenTuontiYhteenveto: () => any;
-    fetchOppijoidenTuontiListaus: (arg0: SearchCriteria) => any;
-    yhteenveto: OppijaTuontiYhteenveto;
+type StateProps = {
+    yhteenveto: TuontiYhteenvetoState;
     L: Localisations;
     listaus: TuontiListausState;
     isOppijaHakuLoading: boolean;
 };
+
+type DispatchProps = {
+    fetchOppijoidenTuontiYhteenveto: () => any;
+    fetchOppijoidenTuontiListaus: (arg0: SearchCriteria) => any;
+};
+
+type Props = StateProps & DispatchProps;
 
 type State = {
     criteria: SearchCriteria;
@@ -133,16 +136,14 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state) => {
-    return {
-        yhteenveto: state.oppijoidenTuontiYhteenveto,
-        listaus: state.oppijoidenTuontiListaus,
-        L: state.l10n.localisations[state.locale],
-        isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    yhteenveto: state.oppijoidenTuontiYhteenveto,
+    listaus: state.oppijoidenTuontiListaus,
+    L: state.l10n.localisations[state.locale],
+    isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchOppijoidenTuontiYhteenveto,
     fetchOppijoidenTuontiListaus,
 })(OppijoidenTuontiContainer);

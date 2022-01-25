@@ -1,6 +1,7 @@
 import './HenkiloViewOrganisationContent.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import Columns from 'react-columns';
 import { Locale } from '../../../types/locale.type';
 import PassivoiOrganisaatioButton from './buttons/PassivoiOrganisaatioButton';
@@ -15,13 +16,18 @@ type OwnProps = {
     readOnly: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
     henkilo: HenkiloState;
     kayttooikeus: KayttooikeusRyhmaState;
+};
+
+type DispatchProps = {
     passivoiHenkiloOrg: (henkiloOid: string, organisaatioOid: string) => void;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     readOnly: boolean;
@@ -132,13 +138,13 @@ class HenkiloViewOrganisationContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     kayttooikeus: state.kayttooikeus,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     passivoiHenkiloOrg,
 })(HenkiloViewOrganisationContent);

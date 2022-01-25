@@ -1,6 +1,7 @@
 import './HenkilohakuFilters.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import OphCheckboxInline from '../common/forms/OphCheckboxInline';
 import SubOrganisationCheckbox from './criterias/SubOrganisationCheckbox';
 import NoOrganisationCheckbox from './criterias/NoOrganisationCheckbox';
@@ -23,7 +24,7 @@ import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/Organisaati
 import { ReactSelectOption } from '../../types/react-select.types';
 
 type OwnProps = {
-    ryhmaSelectionAction: (arg0: { value: number | null | undefined }) => void;
+    ryhmaSelectionAction: (arg0: any) => void;
     selectedRyhma: string | null | undefined;
     selectedOrganisation?: Array<string> | string;
     selectedKayttooikeus: string | null | undefined;
@@ -37,17 +38,22 @@ type OwnProps = {
     initialValues: HenkilohakuCriteria;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
-    kayttooikeusryhmas: Array<Kayttooikeusryhma>;
-    fetchAllKayttooikeusryhma: () => void;
+    kayttooikeusryhmas: Kayttooikeusryhma[];
     henkilohakuOrganisaatiotLoading: boolean;
-    henkilohakuOrganisaatiot: Array<OrganisaatioHenkilo>;
+    henkilohakuOrganisaatiot: OrganisaatioHenkilo[];
     isAdmin: boolean;
     isOphVirkailija: boolean;
+};
+
+type DispatchProps = {
+    fetchAllKayttooikeusryhma: () => void;
     fetchOmatHenkiloHakuOrganisaatios: () => any;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     organisaatioSelection: string;
@@ -143,7 +149,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                         options={this.props.kayttooikeusryhmas
                                             .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
                                             .map((kayttooikeusryhma) => ({
-                                                value: kayttooikeusryhma.id,
+                                                value: '' + kayttooikeusryhma.id,
                                                 label: StaticUtils.getLocalisedText(
                                                     kayttooikeusryhma.description,
                                                     this.props.locale
@@ -216,20 +222,19 @@ class HenkilohakuFilters extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: RootState): StateProps => {
     return {
         L: state.l10n.localisations[state.locale],
         locale: state.locale,
         isAdmin: state.omattiedot.isAdmin,
         isOphVirkailija: state.omattiedot.isOphVirkailija,
-        organisaatioList: state.omattiedot.organisaatios,
         kayttooikeusryhmas: state.kayttooikeus.allKayttooikeusryhmas,
         henkilohakuOrganisaatiotLoading: state.omattiedot.henkilohakuOrganisaatiotLoading,
         henkilohakuOrganisaatiot: state.omattiedot.henkilohakuOrganisaatiot,
     };
 };
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchOmatHenkiloHakuOrganisaatios,
     fetchAllKayttooikeusryhma,
 })(HenkilohakuFilters);

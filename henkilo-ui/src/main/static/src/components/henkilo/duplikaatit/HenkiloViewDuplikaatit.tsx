@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import './HenkiloViewDuplikaatit.css';
 import Button from '../../common/button/Button';
 import * as R from 'ramda';
@@ -25,13 +26,18 @@ type OwnProps = {
     vainLuku: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: Locale;
     L: Localisations;
     koodisto: KoodistoState;
-    linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void;
     ownOid: string;
 };
+
+type DispatchProps = {
+    linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     selectedDuplicates: Array<string>;
@@ -157,13 +163,13 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     ownOid: state.omattiedot.data.oid,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     koodisto: state.koodisto,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     linkHenkilos,
 })(HenkiloViewDuplikaatit);

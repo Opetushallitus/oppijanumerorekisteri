@@ -74,7 +74,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                         <OphSelect
                             id="kayttooikeusryhmat-palvelut"
                             options={this.state.palvelutOptions}
-                            value={this.props.palvelutSelection}
+                            value={this.props.palvelutSelection?.value}
                             placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_PALVELU']}
                             onChange={this.props.palvelutSelectAction}
                         ></OphSelect>
@@ -87,7 +87,7 @@ export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Co
                                     id="kayttooikeusryhmat-palvelu-kayttooikeudet"
                                     options={this.state.palveluKayttooikeusOptions}
                                     disabled={!this.props.palvelutSelection}
-                                    value={this.props.palveluKayttooikeusSelection}
+                                    value={this.props.palveluKayttooikeusSelection?.value}
                                     placeholder={this.props.L['KAYTTOOIKEUSRYHMAT_LISAA_VALITSE_KAYTTOOIKEUS']}
                                     onChange={this.props.palveluKayttooikeusSelectAction}
                                 ></OphSelect>

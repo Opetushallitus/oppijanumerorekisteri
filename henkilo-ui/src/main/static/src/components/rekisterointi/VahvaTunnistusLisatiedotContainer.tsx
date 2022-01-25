@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage';
 import { Form, Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
 import { Locale } from '../../types/locale.type';
@@ -13,13 +14,15 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: Locale;
     L: Localisations;
     loginToken: string;
     salasana: boolean;
     tyosahkopostiosoite: boolean;
 };
+
+type Props = OwnProps & StateProps;
 
 type State = {
     form: Form;
@@ -157,7 +160,7 @@ class VahvaTunnistusLisatiedotContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     locale: ownProps.params['locale'],
     L: state.l10n.localisations[ownProps.params['locale']],
     loginToken: ownProps.params['loginToken'],
@@ -165,4 +168,4 @@ const mapStateToProps = (state, ownProps) => ({
     tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(VahvaTunnistusLisatiedotContainer);
+export default connect<StateProps>(mapStateToProps)(VahvaTunnistusLisatiedotContainer);

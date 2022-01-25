@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { ReactSelectOption } from '../../../../types/react-select.types';
@@ -13,14 +14,19 @@ type OwnProps = {
     updateModelFieldAction: () => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
         sukupuoli: Array<ReactSelectOption>;
     };
     locale: Locale;
+};
+
+type DispatchProps = {
     fetchSukupuoliKoodisto: () => void;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class Sukupuoli extends React.Component<Props> {
     componentDidMount(): void {
@@ -47,12 +53,12 @@ class Sukupuoli extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchSukupuoliKoodisto,
 })(Sukupuoli);

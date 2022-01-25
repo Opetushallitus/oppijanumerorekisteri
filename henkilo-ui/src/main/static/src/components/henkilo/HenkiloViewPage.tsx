@@ -79,7 +79,7 @@ class HenkiloViewPage extends React.Component<Props> {
                         {this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
                             <Loader />
                         ) : (
-                            <HenkiloViewContactContent {...this.props} readOnly={true} locale={this.props.locale} />
+                            <HenkiloViewContactContent {...this.props} readOnly={true} />
                         )}
                     </div>
                 )}
@@ -88,11 +88,7 @@ class HenkiloViewPage extends React.Component<Props> {
                         {this.props.henkilo.henkiloOrgsLoading ? (
                             <Loader />
                         ) : (
-                            <HenkiloViewOrganisationContent
-                                {...this.props}
-                                readOnly={true}
-                                locale={this.props.locale}
-                            />
+                            <HenkiloViewOrganisationContent {...this.props} readOnly={true} />
                         )}
                     </div>
                 )}

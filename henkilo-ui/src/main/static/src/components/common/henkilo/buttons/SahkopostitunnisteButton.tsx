@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import { Localisations } from '../../../../types/localisation.type';
 import PopupButton from '../../button/PopupButton';
 import SahkopostitunnistePopupContent from '../../button/SahkopostitunnistePopupContent';
@@ -10,9 +11,11 @@ type OwnProps = {
     disabled?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 const SahkopostitunnisteButton = (props: Props) => (
     <PopupButton
@@ -31,8 +34,8 @@ const SahkopostitunnisteButton = (props: Props) => (
     </PopupButton>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(SahkopostitunnisteButton);
+export default connect<StateProps>(mapStateToProps)(SahkopostitunnisteButton);

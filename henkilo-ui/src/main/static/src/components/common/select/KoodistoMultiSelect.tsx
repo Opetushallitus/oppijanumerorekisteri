@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-virtualized-select';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { ReactSelectOption } from '../../../types/react-select.types';
 import { Locale } from '../../../types/locale.type';
 import { Koodisto, Koodi } from '../../../types/domain/koodisto/koodisto.types';
@@ -15,9 +16,11 @@ type OwnProps = {
     onChange: (arg0: Array<string> | null | undefined) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: Locale;
 };
+
+type Props = OwnProps & StateProps;
 
 /**
  * Komponentti koodiston koodien valitsemiseen.
@@ -55,10 +58,8 @@ class KoodistoMultiSelect extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state) => {
-    return {
-        locale: state.locale,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    locale: state.locale,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(KoodistoMultiSelect);
+export default connect<StateProps>(mapStateToProps)(KoodistoMultiSelect);

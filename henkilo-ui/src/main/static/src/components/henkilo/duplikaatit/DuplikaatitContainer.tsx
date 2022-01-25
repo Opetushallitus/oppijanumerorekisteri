@@ -1,6 +1,7 @@
 import DuplikaatitPage from './DuplikaatitPage';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import {
     fetchHenkilo,
     fetchKayttaja,
@@ -14,12 +15,10 @@ import {
     fetchMaatJaValtiotKoodisto,
     fetchKieliKoodisto,
 } from '../../../actions/koodisto.actions';
-import { removeNotification } from '../../../actions/notifications.actions';
-import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { L10n } from '../../../types/localisation.type';
-import { Locale } from '../../../types/locale.type';
+import type { HenkiloState } from '../../../reducers/henkilo.reducer';
 import PropertySingleton from '../../../globals/PropertySingleton';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { Localisations } from '../../../types/localisation.type';
 
 type OwnProps = {
     params: any;
@@ -27,13 +26,16 @@ type OwnProps = {
     route: any;
 };
 
-type Props = OwnProps & {
-    l10n: L10n;
-    locale: Locale;
+type StateProps = {
     oidHenkilo: string;
     henkilo: HenkiloState;
     koodisto: KoodistoState;
     henkiloType: string;
+    externalPermissionService: string;
+    L: Localisations;
+};
+
+type DispatchProps = {
     fetchHenkilo: (arg0: string) => void;
     fetchKayttaja: (arg0: string) => void;
     fetchOmattiedot: () => void;
@@ -43,8 +45,9 @@ type Props = OwnProps & {
     fetchMaatJaValtiotKoodisto: () => void;
     fetchKansalaisuusKoodisto: () => void;
     fetchKieliKoodisto: () => void;
-    externalPermissionService: string;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     async componentDidMount() {
@@ -69,20 +72,16 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        oidHenkilo: ownProps.params['oid'],
-        externalPermissionService: ownProps.location.query.permissionCheckService,
-        henkiloType: ownProps.route['henkiloType'],
-        l10n: state.l10n.localisations,
-        locale: state.locale,
-        henkilo: state.henkilo,
-        koodisto: state.koodisto,
-        notifications: state.notifications.duplicatesNotifications,
-    };
-};
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+    oidHenkilo: ownProps.params['oid'],
+    externalPermissionService: ownProps.location.query.permissionCheckService,
+    henkiloType: ownProps.route['henkiloType'],
+    henkilo: state.henkilo,
+    koodisto: state.koodisto,
+    L: state.l10n.localisations[state.locale],
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchHenkilo,
     fetchKayttaja,
     fetchOmattiedot,
@@ -92,5 +91,4 @@ export default connect<Props, OwnProps>(mapStateToProps, {
     fetchKansalaisuusKoodisto,
     fetchMaatJaValtiotKoodisto,
     fetchKieliKoodisto,
-    removeNotification,
 })(VirkailijaDuplikaatitContainer);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { http } from '../../http';
 import { urls } from 'oph-urls-js';
 import { fetchKieliKoodisto, fetchSukupuoliKoodisto, fetchKansalaisuusKoodisto } from '../../actions/koodisto.actions';
@@ -18,17 +19,22 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: Locale;
     L: Localisations;
-    fetchSukupuoliKoodisto: () => void;
     sukupuoliKoodisto: Koodisto;
-    fetchKieliKoodisto: () => void;
     kieliKoodisto: Koodisto;
-    fetchKansalaisuusKoodisto: () => void;
     kansalaisuusKoodisto: Koodisto;
+};
+
+type DispatchProps = {
+    fetchSukupuoliKoodisto: () => void;
+    fetchKieliKoodisto: () => void;
+    fetchKansalaisuusKoodisto: () => void;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     oppija: HenkiloCreate;
@@ -134,17 +140,15 @@ class OppijaCreateContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state) => {
-    return {
-        locale: state.locale,
-        L: state.l10n.localisations[state.locale],
-        sukupuoliKoodisto: state.koodisto.sukupuoliKoodisto,
-        kieliKoodisto: state.koodisto.kieliKoodisto,
-        kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    locale: state.locale,
+    L: state.l10n.localisations[state.locale],
+    sukupuoliKoodisto: state.koodisto.sukupuoliKoodisto,
+    kieliKoodisto: state.koodisto.kieliKoodisto,
+    kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import VirhePage from '../common/page/VirhePage';
@@ -12,12 +13,14 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     virhekoodi: string;
     L: Localisations;
     locale: Locale;
     loginToken: string;
 };
+
+type Props = OwnProps & StateProps;
 
 class EmailVerificationErrorContainer extends React.Component<Props> {
     render() {
@@ -87,11 +90,11 @@ class EmailVerificationErrorContainer extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
     virhekoodi: ownProps.params['virhekoodi'],
     locale: ownProps.params['locale'],
     loginToken: ownProps.params['loginToken'],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(EmailVerificationErrorContainer);
+export default connect<StateProps>(mapStateToProps)(EmailVerificationErrorContainer);

@@ -1,6 +1,7 @@
 import React from 'react';
 import OphSelect from './OphSelect';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { Localisations } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 
@@ -10,18 +11,20 @@ type Option = {
 };
 
 type OwnProps = {
-    selectOrganisaatio: () => any;
+    selectOrganisaatio: (arg0: { label: string; value: string; optionsName: string }) => void;
     selectedOrganisaatioOid: string;
     placeholder?: string;
     clearable?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
     ryhmaOptions: Array<Option>;
     ryhmaFilter: any;
 };
+
+type Props = OwnProps & StateProps;
 
 class RyhmaSelection extends React.Component<Props> {
     placeholder: string;
@@ -52,11 +55,11 @@ class RyhmaSelection extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
     ryhmaOptions: state.omattiedot.organisaatioRyhmaOptions,
     ryhmaFilter: state.omattiedot.organisaatioRyhmaFilter,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(RyhmaSelection);
+export default connect<StateProps>(mapStateToProps)(RyhmaSelection);

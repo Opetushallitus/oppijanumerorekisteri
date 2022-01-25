@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
@@ -21,7 +22,7 @@ type OwnProps = {
     onSubmit: (arg0: {}) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
     organisaatios: Array<OrganisaatioHenkilo>;
@@ -29,9 +30,14 @@ type Props = OwnProps & {
     isOphVirkailija: boolean;
     haetutKayttooikeusryhmatLoading: boolean;
     ryhmat: { ryhmas: Array<{}> };
-    fetchOmattiedotOrganisaatios: () => any;
     omattiedotOrganisaatiosLoading: boolean;
 };
+
+type DispatchProps = {
+    fetchOmattiedotOrganisaatios: () => any;
+};
+
+type Props = StateProps & DispatchProps & OwnProps;
 
 type State = {
     searchTerm: string;
@@ -184,7 +190,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     organisaatios: state.omattiedot.organisaatios,
@@ -195,6 +201,6 @@ const mapStateToProps = (state) => ({
     ryhmat: state.ryhmatState,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
 })(HaetutKayttooikeusRyhmatHakuForm);

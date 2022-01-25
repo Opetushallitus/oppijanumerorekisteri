@@ -184,10 +184,8 @@ export default class KutsututPage extends React.Component<Props, State> {
                 </div>
                 <KutsututTable
                     fetchKutsus={this.fetchKutsus.bind(this)}
-                    L={this.L}
                     kutsus={kutsuResponse.result}
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
-                    locale={this.props.locale}
                     allFetched={this.state.allFetched}
                     isLoading={this.props.kutsuListLoading}
                 />

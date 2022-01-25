@@ -4,6 +4,7 @@ import { http } from '../../../../http';
 import LabelValue from './LabelValue';
 import { Localisations } from '../../../../types/localisation.type';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { Kayttooikeusryhma } from '../../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../../utilities/localisation.util';
@@ -16,10 +17,11 @@ type OwnProps = {
     henkiloUpdate: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
 };
+type Props = OwnProps & StateProps;
 
 type State = {
     vastuukayttajaRyhmat: Array<Kayttooikeusryhma>;
@@ -74,9 +76,9 @@ class AnomusIlmoitus extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(AnomusIlmoitus);
+export default connect<StateProps>(mapStateToProps)(AnomusIlmoitus);

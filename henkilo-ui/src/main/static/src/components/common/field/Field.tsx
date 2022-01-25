@@ -5,13 +5,11 @@ import moment from 'moment';
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker';
 import { validateEmail } from '../../../validation/EmailValidator';
 
-export type SelectValue = (string | null | undefined) | (boolean | null | undefined);
-
 type Props = {
     readOnly: boolean;
     changeAction: (arg0: any) => any;
-    inputValue: string;
-    selectValue?: SelectValue | Array<SelectValue>;
+    inputValue?: string;
+    selectValue?: string;
     password?: boolean;
     isEmail?: boolean;
     className?: string;
@@ -19,7 +17,7 @@ type Props = {
     autofocus?: boolean;
     placeholder?: string;
     isError?: boolean;
-    data?: any;
+    data?: any[];
     date?: any;
     children: any;
     clearable?: boolean;
@@ -138,12 +136,12 @@ class Field extends React.Component<Props, State> {
                 selected &&
                 (this.props.multiselect ? (
                     <ul>
-                        {selected.map((selectValue, idx) => (
+                        {(selected as any[]).map((selectValue, idx) => (
                             <li key={idx}>{selectValue.label}</li>
                         ))}
                     </ul>
                 ) : (
-                    selected.label
+                    (selected as any).label
                 ))
             );
         }

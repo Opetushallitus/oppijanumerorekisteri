@@ -14,6 +14,8 @@ import {
 } from '../actions/actiontypes';
 import { KutsuOrganisaatio } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
+export type KutsuminenOrganisaatiosState = readonly KutsuOrganisaatio[];
+
 export const kutsuminenOrganisaatios = (
     state: Array<KutsuOrganisaatio> = [],
     action: any

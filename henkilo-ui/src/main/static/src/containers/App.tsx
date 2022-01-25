@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../reducers';
 import { fetchFrontProperties } from '../actions/frontProperties.actions';
 import TopNavigation from '../components/navigation/TopNavigation';
 import Loader from '../components/common/icons/Loader';
@@ -11,6 +12,8 @@ import PropertySingleton from '../globals/PropertySingleton';
 import { addGlobalNotification, removeGlobalNotification } from '../actions/notification.actions';
 import { GlobalNotifications } from '../components/common/Notification/GlobalNotifications';
 import { LocalisationState } from '../reducers/l10n.reducer';
+import { FrontPropertiesState } from '../reducers/frontProperties.reducer';
+import type { NotificationListState } from '../reducers/notification.reducer';
 import { ophLightGray } from '../components/navigation/navigation.utils';
 import { Locale } from '../types/locale.type';
 import background from '../img/unauthenticated_background.jpg';
@@ -28,22 +31,24 @@ type OwnProps = {
     };
 };
 
-type AppProps = OwnProps & {
-    frontProperties: {
-        initialized: boolean;
-        properties: Array<any>;
-    };
+type StateProps = {
+    frontProperties: FrontPropertiesState;
     l10n: LocalisationState;
     locale: Locale;
     pathName: string;
-    notificationList: Array<GlobalNotificationConfig>;
-    removeGlobalNotification: (key: string) => void;
+    notificationList: NotificationListState;
     omattiedotLoaded: boolean;
     prequelsNotLoadedCount: number;
+};
+
+type DispatchProps = {
+    removeGlobalNotification: (key: string) => void;
     fetchFrontProperties: () => void;
     fetchPrequels: () => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
+
+type AppProps = OwnProps & StateProps & DispatchProps;
 
 type AppState = {
     lastPath: string | null | undefined;
@@ -148,21 +153,17 @@ class App extends React.Component<AppProps, AppState> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        frontProperties: state.frontProperties,
-        l10n: state.l10n,
-        prequelsNotLoadedCount: state.prequels.notLoadedCount,
-        locale: state.locale,
-        omattiedotLoaded: state.omattiedot.initialized,
-        pathName: ownProps.location.pathname,
-        notificationList: state.notificationList,
-        routes: ownProps.routes,
-        params: ownProps.params,
-    };
-};
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+    frontProperties: state.frontProperties,
+    l10n: state.l10n,
+    prequelsNotLoadedCount: state.prequels.notLoadedCount,
+    locale: state.locale,
+    omattiedotLoaded: state.omattiedot.initialized,
+    pathName: ownProps.location.pathname,
+    notificationList: state.notificationList,
+});
 
-export default connect<AppProps, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchFrontProperties,
     fetchPrequels,
     removeGlobalNotification,

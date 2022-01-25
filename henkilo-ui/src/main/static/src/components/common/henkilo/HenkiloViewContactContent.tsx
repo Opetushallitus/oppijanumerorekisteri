@@ -1,6 +1,7 @@
 import './HenkiloViewContactContent.css';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import Columns from 'react-columns';
 import Field from '../field/Field';
 import Button from '../button/Button';
@@ -30,12 +31,17 @@ type OwnProps = {
     view: string;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
-    updateHenkiloAndRefetch: (arg0: Henkilo, arg1?: GlobalNotificationConfig) => void;
     omattiedot: OmattiedotState;
 };
+
+type DispatchProps = {
+    updateHenkiloAndRefetch: (arg0: Henkilo, arg1?: GlobalNotificationConfig) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type ContactInfo = {
     id?: number;
@@ -227,7 +233,6 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                         <EditButtons
                             discardAction={this._discard.bind(this)}
                             updateAction={this._update.bind(this)}
-                            L={this.props.L}
                             isValidForm={this.state.modified && this.state.contactInfoErrorFields.length === 0}
                         />
                     </div>
@@ -388,12 +393,12 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     omattiedot: state.omattiedot,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     updateHenkiloAndRefetch,
 })(HenkiloViewContactContent);

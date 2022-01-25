@@ -31,19 +31,15 @@ type OwnProps = {
     isOmattiedot: boolean;
     henkilo: HenkiloState;
     oidHenkilo: string;
-    omattiedot: OmattiedotState;
+    omattiedot?: OmattiedotState;
 };
 
-type Props = OwnProps & {
-    createKayttooikeusanomus: (arg0: {
-        organisaatioOrRyhmaOid: string;
-        email: string | null | undefined;
-        perustelut: string;
-        kayttooikeusRyhmaIds: Array<number>;
-        anojaOid: string;
-    }) => void;
+type DispatchProps = {
+    createKayttooikeusanomus: (anousData: any) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
 };
+
+type Props = OwnProps & DispatchProps;
 
 type State = {
     emailOptions: Array<EmailOption>;
@@ -253,7 +249,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-export default connect<Props, OwnProps>(() => ({}), {
+export default connect<{}, DispatchProps>(undefined, {
     createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
 })(HenkiloViewExpiredKayttooikeus);

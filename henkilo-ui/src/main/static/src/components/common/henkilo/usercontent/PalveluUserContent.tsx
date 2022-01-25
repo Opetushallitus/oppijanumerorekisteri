@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import EditButton from '../buttons/EditButton';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
-import { Locale } from '../../../../types/locale.type';
 import { fetchHenkiloSlaves, fetchKayttajatieto, yksiloiHenkilo } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Oid from '../labelvalues/Oid';
@@ -30,19 +30,22 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: any;
     L: Localisations;
-    locale: Locale;
-    yksiloiHenkilo: () => void;
     isAdmin: boolean;
-    fetchKayttajatieto: (arg0: string) => void;
 };
 
-type State = {};
+type DispatchProps = {
+    yksiloiHenkilo: (oid: string) => void;
+    fetchHenkiloSlaves: (oid: string) => void;
+    fetchKayttajatieto: (oid: string) => void;
+};
 
-class PalveluUserContent extends React.Component<Props, State> {
+type Props = OwnProps & StateProps & DispatchProps;
+
+class PalveluUserContent extends React.Component<Props> {
     componentDidMount() {
         if (!this.props.henkilo.kayttajatieto.username && !this.props.henkilo.kayttajatietoLoading) {
             this.props.fetchKayttajatieto(this.props.oidHenkilo);
@@ -110,15 +113,14 @@ class PalveluUserContent extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
-    locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     yksiloiHenkilo,
     fetchHenkiloSlaves,
     fetchKayttajatieto,

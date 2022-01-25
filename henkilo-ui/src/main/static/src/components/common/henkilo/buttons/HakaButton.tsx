@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import PopupButton from '../../button/PopupButton';
 import HakatunnistePopupContent from '../../button/HakaPopupContent';
 import { Localisations } from '../../../../types/localisation.type';
@@ -10,9 +11,10 @@ type OwnProps = {
     disabled?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+type Props = OwnProps & StateProps;
 
 const HakaButton = (props: Props) => (
     <PopupButton
@@ -31,8 +33,8 @@ const HakaButton = (props: Props) => (
     </PopupButton>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(HakaButton);
+export default connect<StateProps>(mapStateToProps, {})(HakaButton);

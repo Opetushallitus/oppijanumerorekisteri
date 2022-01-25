@@ -1,26 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Localisations } from '../../types/localisation.type';
+import type { RootState } from '../../reducers';
+import type { Localisations } from '../../types/localisation.type';
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import { setPalvelukayttajatCriteria, fetchPalvelukayttajat } from '../../actions/palvelukayttaja.actions';
 import PalvelukayttajaHakuPage from './PalvelukayttajaHakuPage';
-import { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
-import { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer';
-import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import { Locale } from '../../types/locale.type';
+import type { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
+import type { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer';
+import type { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import type { Locale } from '../../types/locale.type';
 
-type OwnProps = {};
-
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
     palvelukayttajat: PalvelukayttajatState;
     omatOrganisaatiot: Array<OrganisaatioHenkilo>;
+    omatOrganisaatiosLoading: boolean;
+};
+
+type DispatchProps = {
     fetchOmattiedotOrganisaatios: () => void;
     setPalvelukayttajatCriteria: (criteria: PalvelukayttajaCriteria) => void;
     fetchPalvelukayttajat: (criteria: PalvelukayttajaCriteria) => void;
-    omatOrganisaatiosLoading: boolean;
 };
+
+type Props = StateProps & DispatchProps;
 
 class PalvelukayttajaHakuContainer extends React.Component<Props> {
     componentDidMount() {
@@ -48,7 +52,7 @@ class PalvelukayttajaHakuContainer extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     palvelukayttajat: state.palvelukayttajat,
@@ -56,7 +60,7 @@ const mapStateToProps = (state) => ({
     omatOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     setPalvelukayttajatCriteria,
     fetchPalvelukayttajat,

@@ -12,7 +12,7 @@ import { OppijaTuontiYhteenveto } from '../types/domain/oppijanumerorekisteri/op
 
 export type TuontiYhteenvetoState = {
     loading: boolean;
-    data: OppijaTuontiYhteenveto | {};
+    data: OppijaTuontiYhteenveto;
 };
 
 export type TuontiListausState = {
@@ -20,7 +20,16 @@ export type TuontiListausState = {
     data: Page<OppijaList> | any;
 };
 
-export const oppijoidenTuontiYhteenveto = (state: TuontiYhteenvetoState = { loading: true, data: {} }, action: any) => {
+const yhteenvetoInitialState: TuontiYhteenvetoState = {
+    loading: true,
+    data: {
+        onnistuneet: 0,
+        keskeneraiset: 0,
+        virheet: 0,
+    },
+};
+
+export const oppijoidenTuontiYhteenveto = (state = { ...yhteenvetoInitialState }, action: any) => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST:
             return { ...state, loading: true };

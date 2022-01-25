@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import * as R from 'ramda';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
@@ -11,7 +12,6 @@ import Asiointikieli from '../labelvalues/Asiointikieli';
 import EditButton from '../buttons/EditButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
-import { Locale } from '../../../../types/locale.type';
 import { fetchHenkiloSlaves, yksiloiHenkilo } from '../../../../actions/henkilo.actions';
 import Loader from '../../icons/Loader';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
@@ -38,15 +38,20 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: any;
     L: Localisations;
-    locale: Locale;
-    yksiloiHenkilo: () => void;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
 };
+
+type DispatchProps = {
+    yksiloiHenkilo: (oid: string) => void;
+    fetchHenkiloSlaves: (oid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class OmattiedotUserContent extends React.Component<Props> {
     render() {
@@ -86,7 +91,7 @@ class OmattiedotUserContent extends React.Component<Props> {
         // Basic info box content
         return [
             [
-                <Etunimet {...props} autofocus={true} />,
+                <Etunimet {...props} />,
                 <Sukunimi {...props} />,
                 <Syntymaaika {...props} />,
                 <Hetu {...props} />,
@@ -125,16 +130,15 @@ class OmattiedotUserContent extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
-    locale: state.locale,
     isAdmin: state.omattiedot.isAdmin,
     omattiedot: state.omattiedot,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps>(mapStateToProps, {
     yksiloiHenkilo,
     fetchHenkiloSlaves,
 })(OmattiedotUserContent);

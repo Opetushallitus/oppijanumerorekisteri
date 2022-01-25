@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
 
@@ -8,9 +9,11 @@ type OwnProps = {
     params: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     oidHenkilo: string;
 };
+
+type Props = OwnProps & StateProps;
 
 class AdminRedirect extends React.Component<Props> {
     componentDidMount() {
@@ -22,8 +25,8 @@ class AdminRedirect extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     oidHenkilo: ownProps.params['oid'],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(AdminRedirect);
+export default connect<StateProps>(mapStateToProps)(AdminRedirect);
