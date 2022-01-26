@@ -33,12 +33,13 @@ import java.util.Collection;
  * Sisältää käytännössä identtiset oppijantuontitoiminnot kuin
  * OppijaController sillä erotuksella että vastauksista on poistettu
  * arkaluontoiseksi katsottavaa informaatiota
- */
+
 @Api(tags = "Yleistunniste - Oppijanumeron käyttö yleistunnisteena")
 @RestController
 @RequestMapping(YleistunnisteController.REQUEST_MAPPING)
 @RequiredArgsConstructor
 @Validated
+ */
 public class YleistunnisteController {
 
     protected static final String REQUEST_MAPPING = "/yleistunniste";
@@ -47,7 +48,7 @@ public class YleistunnisteController {
 
     private static final SimpleBeanPropertyFilter yleistunnisteFilter = SimpleBeanPropertyFilter.filterOutAllExcept("oid", "oppijanumero");
     private static final FilterProvider filterProvider = new SimpleFilterProvider().addFilter("yleistunnisteFilter", yleistunnisteFilter);
-    private final OppijaService oppijaService;
+    private final OppijaService oppijaService = null;
 
     @PutMapping
     @PreAuthorize(ACCESS_RIGHT_CHECK)
