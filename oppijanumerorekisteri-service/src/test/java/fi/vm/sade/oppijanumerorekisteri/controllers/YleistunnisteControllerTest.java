@@ -11,7 +11,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Ignore
 @ActiveProfiles("dev")
 @RunWith(SpringRunner.class)
 @WebMvcTest(YleistunnisteController.class)

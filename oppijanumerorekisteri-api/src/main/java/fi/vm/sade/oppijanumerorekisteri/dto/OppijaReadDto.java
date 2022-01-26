@@ -1,6 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-// @JsonFilter("yleistunnisteFilter")
 public class OppijaReadDto {
 
     private String oid;
