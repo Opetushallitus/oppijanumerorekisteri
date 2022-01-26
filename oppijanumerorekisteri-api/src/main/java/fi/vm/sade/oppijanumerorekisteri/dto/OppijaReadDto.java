@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@JsonFilter("yleistunnisteFilter")
+// @JsonFilter("yleistunnisteFilter")
 public class OppijaReadDto {
 
     private String oid;
