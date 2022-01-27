@@ -1,11 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiReadDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +9,6 @@ import io.swagger.annotations.ApiResponses;
 import lombok.Generated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.HttpURLConnection;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Oppijanumeron käyttö yleistunnisteena
@@ -33,22 +28,19 @@ import java.util.Collection;
  * Sisältää käytännössä identtiset oppijantuontitoiminnot kuin
  * OppijaController sillä erotuksella että vastauksista on poistettu
  * arkaluontoiseksi katsottavaa informaatiota
-
+ */
 @Api(tags = "Yleistunniste - Oppijanumeron käyttö yleistunnisteena")
 @RestController
 @RequestMapping(YleistunnisteController.REQUEST_MAPPING)
 @RequiredArgsConstructor
 @Validated
- */
 public class YleistunnisteController {
 
     protected static final String REQUEST_MAPPING = "/yleistunniste";
     protected static final String ACCESS_RIGHT = "YLEISTUNNISTE_LUONTI";
     protected static final String ACCESS_RIGHT_CHECK = "hasAnyRole('" + ACCESS_RIGHT + "')";
 
-    private static final SimpleBeanPropertyFilter yleistunnisteFilter = SimpleBeanPropertyFilter.filterOutAllExcept("oid", "oppijanumero");
-    private static final FilterProvider filterProvider = new SimpleFilterProvider().addFilter("yleistunnisteFilter", yleistunnisteFilter);
-    private final OppijaService oppijaService = null;
+    private final OppijaService oppijaService;
 
     @PutMapping
     @PreAuthorize(ACCESS_RIGHT_CHECK)
@@ -65,14 +57,8 @@ public class YleistunnisteController {
     @ApiResponses(value = {@ApiResponse(code = HttpURLConnection.HTTP_OK,
             message = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat",
             response = FilteredResult.class)})
-    public MappingJacksonValue getOppijatByTuontiId(@PathVariable Long id) {
-
-        OppijaTuontiReadDto result = oppijaService.getOppijatByTuontiId(id);
-
-        MappingJacksonValue filtered = new MappingJacksonValue(result);
-        filtered.setFilters(filterProvider);
-
-        return filtered;
+    public FilteredResult getOppijatByTuontiId(@PathVariable Long id) {
+        return new FilteredResult(oppijaService.getOppijatByTuontiId(id));
     }
 
     @PostMapping("/tuonti={id}")
@@ -91,28 +77,45 @@ public class YleistunnisteController {
         return oppijaService.getTuontiById(id);
     }
 
-    // Following is just for swagger documentation
     @Generated
     @Getter
     static class FilteredResult {
-        private long id;
-        private int kasiteltavia;
-        private int kasiteltyja;
-        private boolean kasitelty;
-        private Collection<FilteredRow> henkilot;
+        private final long id;
+        private final int kasiteltavia;
+        private final int kasiteltyja;
+        private final boolean kasitelty;
+        private final Collection<FilteredRow> henkilot;
+
+        public FilteredResult(OppijaTuontiReadDto dto) {
+            id = dto.getId();
+            kasiteltavia = dto.getKasiteltavia();
+            kasiteltyja = dto.getKasiteltyja();
+            kasitelty = dto.isKasitelty();
+            henkilot = dto.getHenkilot().stream().map(FilteredRow::new).collect(Collectors.toList());
+        }
     }
 
     @Generated
     @Getter
     static class FilteredRow {
-        private String tunniste;
-        private FilteredStudent henkilo;
+        private final String tunniste;
+        private final FilteredStudent henkilo;
+
+        public FilteredRow(OppijaTuontiRiviReadDto dto) {
+            tunniste = dto.getTunniste();
+            henkilo = new FilteredStudent(dto.getHenkilo());
+        }
     }
 
     @Generated
     @Getter
     static class FilteredStudent {
-        private String oid;
-        private String oppijanumero;
+        private final String oid;
+        private final String oppijanumero;
+
+        public FilteredStudent(OppijaReadDto dto) {
+            oid = dto.getOid();
+            oppijanumero = dto.getOppijanumero();
+        }
     }
 }

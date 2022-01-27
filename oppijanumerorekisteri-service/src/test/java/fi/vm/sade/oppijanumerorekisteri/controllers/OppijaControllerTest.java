@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.KoodiUpdateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
@@ -24,19 +22,23 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("dev")
@@ -87,16 +89,20 @@ public class OppijaControllerTest {
                 .build();
     }
 
+    private String getFixture(String fileName) throws Exception {
+        return Files.readString(Paths.get(getClass().getResource(fileName).toURI()), StandardCharsets.UTF_8);
+    }
+
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void putOppijaShouldWork() throws Exception {
         OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
         verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
@@ -109,10 +115,10 @@ public class OppijaControllerTest {
         dto.setSahkoposti(null);
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
         verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
@@ -125,10 +131,10 @@ public class OppijaControllerTest {
         dto.setSahkoposti("lsdkjd");
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -141,10 +147,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(null);
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -157,10 +163,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(emptyList());
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -175,10 +181,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -193,10 +199,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -211,10 +217,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -229,10 +235,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -247,10 +253,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -268,10 +274,10 @@ public class OppijaControllerTest {
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put("/oppija")
-                .with(csrf())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(oppijaServiceMock);
@@ -281,13 +287,29 @@ public class OppijaControllerTest {
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getOppijaShouldValidatePageParameter() throws Exception {
         mvc.perform(get("/oppija?page=1")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         mvc.perform(get("/oppija?page=0")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
+    public void getOppijatByTuontiId() throws Exception {
+        OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 1, 1, true,
+                singletonList(new OppijaTuontiRiviReadDto("tunniste", new OppijaReadDto())));
+        when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenReturn(result);
+
+        mvc.perform(get("/oppija/tuonti=37337")
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(getFixture("/controller/oppija/tuontiOppijat.json"), true));
+
+        verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
+    }
 }
