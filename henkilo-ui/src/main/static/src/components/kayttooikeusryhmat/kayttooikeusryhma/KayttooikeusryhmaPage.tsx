@@ -332,6 +332,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         );
         return organisaatioOids
             .map((oid: string) => organisaatioCache[oid])
+            .filter(Boolean) // might be undefined (at least in dev environments)
             .map((organisaatio: any) => {
                 const localizedName = getLocalization(organisaatio.nimi, this.props.locale);
                 const name =
