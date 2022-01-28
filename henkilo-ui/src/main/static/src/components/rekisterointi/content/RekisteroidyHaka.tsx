@@ -19,9 +19,6 @@ type OwnProps = {
         passwordAgain?: string;
     };
     updatePayloadModel: () => void;
-    koodisto: {
-        kieli: string[];
-    };
     temporaryKutsuToken: string;
 };
 

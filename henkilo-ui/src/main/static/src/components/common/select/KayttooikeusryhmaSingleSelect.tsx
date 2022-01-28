@@ -56,7 +56,7 @@ class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
                         label: StaticUtils.getLocalisedText(kayttooikeusryhma.description, this.props.locale),
                     }))
                     .sort((a, b) => a.label.localeCompare(b.label))}
-                value={'' + this.props.kayttooikeusSelection}
+                value={`${this.props.kayttooikeusSelection}`}
                 placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                 onChange={(event) => this.props.kayttooikeusSelectionAction(event.value)}
             />

@@ -9,7 +9,7 @@ type Props = {
     readOnly: boolean;
     changeAction: (arg0: any) => any;
     inputValue?: string;
-    selectValue?: string;
+    selectValue?: string | string[];
     password?: boolean;
     isEmail?: boolean;
     className?: string;
@@ -17,7 +17,7 @@ type Props = {
     autofocus?: boolean;
     placeholder?: string;
     isError?: boolean;
-    data?: any[];
+    data?: any;
     date?: any;
     children: any;
     clearable?: boolean;
@@ -136,7 +136,7 @@ class Field extends React.Component<Props, State> {
                 selected &&
                 (this.props.multiselect ? (
                     <ul>
-                        {(selected as any[]).map((selectValue, idx) => (
+                        {selected.map((selectValue, idx) => (
                             <li key={idx}>{selectValue.label}</li>
                         ))}
                     </ul>

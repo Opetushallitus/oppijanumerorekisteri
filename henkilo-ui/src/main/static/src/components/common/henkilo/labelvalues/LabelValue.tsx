@@ -16,7 +16,7 @@ type OwnProps = {
         date?: string | boolean;
         showOnlyOnWrite?: boolean;
         readOnly?: boolean;
-        selectValue?: string;
+        selectValue?: string | string[];
         multiselect?: boolean;
         data?: {
             value: string | number;

@@ -16,7 +16,7 @@ type OwnProps = {
     onChange: (arg0: { label: string; value: string; optionsName: string }) => void;
     className?: string;
     options: ReactSelectOption[];
-    value?: string;
+    value?: string | string[];
     name?: string;
     placeholder?: string;
     disabled?: boolean;
@@ -24,7 +24,7 @@ type OwnProps = {
     closeOnSelect?: boolean;
     multiselect?: boolean;
     maxHeight?: number;
-    optionHeight?: number | ((option: any) => void);
+    optionHeight?: number | ((options: { option: string }) => number);
     filterOptions?: any;
     noResultsText?: string;
     onBlurResetsInput?: boolean;

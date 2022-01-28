@@ -149,7 +149,7 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                         options={this.props.kayttooikeusryhmas
                                             .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
                                             .map((kayttooikeusryhma) => ({
-                                                value: '' + kayttooikeusryhma.id,
+                                                value: `${kayttooikeusryhma.id}`,
                                                 label: StaticUtils.getLocalisedText(
                                                     kayttooikeusryhma.description,
                                                     this.props.locale

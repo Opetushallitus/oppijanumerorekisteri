@@ -17,7 +17,7 @@ type OwnProps = {
 type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        kansalaisuus: Array<ReactSelectOption>;
+        kansalaisuus: ReactSelectOption[];
     };
     locale: Locale;
 };
@@ -25,7 +25,7 @@ type StateProps = {
 type Props = OwnProps & StateProps;
 
 const Kansalaisuus = (props: Props) => {
-    const kansalaisuus = props.henkiloUpdate ? props.henkiloUpdate.kansalaisuus : [];
+    const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
     const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
     return (
         <div>
@@ -53,7 +53,7 @@ const Kansalaisuus = (props: Props) => {
                         label: koodi[props.locale],
                         optionsName: 'kansalaisuus',
                     })),
-                    selectValue: kansalaisuus.map((item) => item.kansalaisuusKoodi)[0],
+                    selectValue: kansalaisuus.map((item) => item.kansalaisuusKoodi),
                     disabled: disabled,
                     clearable: false,
                     multiselect: true,
