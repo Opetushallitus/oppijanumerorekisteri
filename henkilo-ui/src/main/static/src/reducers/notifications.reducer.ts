@@ -14,6 +14,7 @@ export type Notification = {
     type: string;
     errorType: string;
     notL10nMessage: string;
+    notL10nText: string;
 };
 
 export type NotificationsState = {

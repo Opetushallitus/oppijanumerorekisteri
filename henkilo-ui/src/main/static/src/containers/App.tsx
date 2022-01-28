@@ -163,7 +163,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     notificationList: state.notificationList,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchFrontProperties,
     fetchPrequels,
     removeGlobalNotification,

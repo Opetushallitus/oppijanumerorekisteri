@@ -104,7 +104,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     fetchAllKayttooikeusryhma,
     henkilohaku,

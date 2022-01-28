@@ -2,13 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../reducers';
 import OphSelect from './OphSelect';
+import type { OnChangeHandler, Options, Option } from 'react-select';
 import StaticUtils from '../StaticUtils';
 import { fetchAllKayttooikeusryhma } from '../../../actions/kayttooikeusryhma.actions';
 import { Localisations } from '../../../types/localisation.type';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 
 type OwnProps = {
-    kayttooikeusSelectionAction: (arg0: string) => void;
+    kayttooikeusSelectionAction: OnChangeHandler<string, Options<string> | Option<string>>;
     kayttooikeusSelection?: number;
 };
 
@@ -58,7 +59,7 @@ class KayttooikeusryhmaSingleSelect extends React.Component<Props, State> {
                     .sort((a, b) => a.label.localeCompare(b.label))}
                 value={`${this.props.kayttooikeusSelection}`}
                 placeholder={this.props.L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
-                onChange={(event) => this.props.kayttooikeusSelectionAction(event.value)}
+                onChange={(event) => this.props.kayttooikeusSelectionAction(event)}
             />
         ) : null;
     }
@@ -71,6 +72,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     kayttooikeusRyhmas: state.kayttooikeus.allKayttooikeusryhmas,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchAllKayttooikeusryhma,
 })(KayttooikeusryhmaSingleSelect);

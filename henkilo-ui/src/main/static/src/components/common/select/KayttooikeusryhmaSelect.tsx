@@ -143,16 +143,13 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
         );
     };
 
-    renderValittuKayttooikeusryhma = (kayttooikeusryhma: KielistettyKayttooikeusryhma | null | undefined) => {
-        if (kayttooikeusryhma) {
-            return (
-                <div>
-                    <div className="oph-bold">{kayttooikeusryhma.nimi}</div>
-                    <div>{kayttooikeusryhma.kuvaus}</div>
-                </div>
-            );
-        }
-    };
+    renderValittuKayttooikeusryhma = (kayttooikeusryhma?: KielistettyKayttooikeusryhma) =>
+        kayttooikeusryhma && (
+            <div>
+                <div className="oph-bold">{kayttooikeusryhma.nimi}</div>
+                <div>{kayttooikeusryhma.kuvaus}</div>
+            </div>
+        );
 
     onFilter = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const hakutermi = event.currentTarget.value;

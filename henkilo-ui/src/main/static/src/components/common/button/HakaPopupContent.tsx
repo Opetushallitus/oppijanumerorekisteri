@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { urls } from 'oph-urls-js';
 import { http } from '../../../http';
 import { reject } from 'ramda';
@@ -137,6 +138,6 @@ class HakatunnistePopupContent extends React.Component<Props, State> {
     }
 }
 
-export default connect<{}, DispatchProps>(undefined, {
+export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
     addGlobalNotification,
 })(HakatunnistePopupContent);

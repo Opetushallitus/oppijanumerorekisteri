@@ -278,7 +278,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ownOid: state.omattiedot.data.oid,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     updateHenkiloAndRefetch,
     updateAndRefetchKayttajatieto,
     aktivoiHenkilo,

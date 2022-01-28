@@ -218,7 +218,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmatState: state.ryhmatState,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     kutsuSetOrganisaatio,
     kutsuRemoveOrganisaatio,
     fetchAllowedKayttooikeusryhmasForOrganisation,

@@ -9,6 +9,7 @@ import CKKesto from './createkayttooikeus/CKKesto';
 import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
 import CKHaeButton from './createkayttooikeus/CKHaeButton';
 import {
+    Kayttooikeus,
     addKayttooikeusToHenkilo,
     fetchAllowedKayttooikeusryhmasForOrganisation,
 } from '../../../actions/kayttooikeusryhma.actions';
@@ -29,14 +30,13 @@ type OwnProps = {
 
 type StateProps = {
     organisaatios: Array<OrganisaatioHenkilo>;
-
     L: Localisations;
     locale: Locale;
 };
 
 type DispatchProps = {
-    fetchAllowedKayttooikeusryhmasForOrganisation: typeof fetchAllowedKayttooikeusryhmasForOrganisation;
-    addKayttooikeusToHenkilo: typeof addKayttooikeusToHenkilo;
+    fetchAllowedKayttooikeusryhmasForOrganisation: (oidHenkilo: string, oidOrganisaatio: string) => void;
+    addKayttooikeusToHenkilo: (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -274,7 +274,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     organisaatios: state.omattiedot.organisaatios,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchAllowedKayttooikeusryhmasForOrganisation,
     addKayttooikeusToHenkilo,
 })(HenkiloViewCreateKayttooikeus);

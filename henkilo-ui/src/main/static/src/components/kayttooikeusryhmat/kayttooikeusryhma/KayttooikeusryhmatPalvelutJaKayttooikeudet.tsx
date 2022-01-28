@@ -1,7 +1,7 @@
 import React from 'react';
 import './KayttooikeusryhmatPalvelutJaKayttooikeudet.css';
-import { ReactSelectOption } from '../../../types/react-select.types';
 import OphSelect from '../../common/select/OphSelect';
+import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { PalvelutState } from '../../../reducers/palvelut.reducer';
 import * as R from 'ramda';
@@ -17,18 +17,18 @@ type Props = {
     locale: Locale;
     palvelutState: PalvelutState;
     kayttooikeusState: KayttooikeusState;
-    palvelutSelectAction: (selection: ReactSelectOption) => void;
-    palvelutSelection: ReactSelectOption;
-    palveluKayttooikeusSelectAction: (selection: ReactSelectOption) => void;
-    palveluKayttooikeusSelection: ReactSelectOption;
+    palvelutSelectAction: (selection: Option<string>) => void;
+    palvelutSelection: Option<string>;
+    palveluKayttooikeusSelectAction: (selection: Option<string>) => void;
+    palveluKayttooikeusSelection: Option<string>;
     lisaaPalveluJaKayttooikeusAction: () => void;
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
     removePalveluJaKayttooikeus: (arg0: PalveluJaKayttooikeusSelection) => void;
 };
 
 type State = {
-    palvelutOptions: Array<ReactSelectOption>;
-    palveluKayttooikeusOptions: Array<ReactSelectOption>;
+    palvelutOptions: Options<string>;
+    palveluKayttooikeusOptions: Options<string>;
 };
 
 export default class KayttooikeusryhmatPalvelutJaKayttooikeudet extends React.Component<Props, State> {

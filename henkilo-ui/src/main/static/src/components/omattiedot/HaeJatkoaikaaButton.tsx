@@ -1,28 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
+import type { Localisations } from '../../types/localisation.type';
 import ConfirmButton from '../common/button/ConfirmButton';
 
-const HaeJatkoaikaaButton = ({ haeJatkoaikaaAction, l10n, locale, disabled }) => (
+type OwnProps = {
+    haeJatkoaikaaAction: () => void;
+    disabled: boolean;
+};
+
+type StateProps = {
+    L: Localisations;
+};
+
+type Props = OwnProps & StateProps;
+
+const HaeJatkoaikaaButton = ({ haeJatkoaikaaAction, L, disabled }: Props) => (
     <ConfirmButton
         action={haeJatkoaikaaAction}
         id="haeJatkoaikaaButton"
-        normalLabel={l10n[locale]['OMATTIEDOT_HAE_JATKOAIKAA']}
-        confirmLabel={l10n[locale]['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
+        normalLabel={L['OMATTIEDOT_HAE_JATKOAIKAA']}
+        confirmLabel={L['OMATTIEDOT_HAE_JATKOAIKAA_CONFIRM']}
         disabled={disabled}
     />
 );
 
-HaeJatkoaikaaButton.propTypes = {
-    haeJatkoaikaaAction: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    L: state.l10n.localisations[state.locale],
+});
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        l10n: state.l10n.localisations,
-        locale: state.locale,
-    };
-};
-
-export default connect(mapStateToProps, {})(HaeJatkoaikaaButton);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(HaeJatkoaikaaButton);

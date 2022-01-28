@@ -52,7 +52,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     isOphVirkailija: state.omattiedot.isOphVirkailija,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchKutsus,
     deleteKutsu,
     fetchOmattiedotOrganisaatios,

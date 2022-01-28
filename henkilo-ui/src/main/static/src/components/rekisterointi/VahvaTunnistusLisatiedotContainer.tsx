@@ -168,4 +168,4 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     tyosahkopostiosoite: ownProps.params['tyosahkopostiosoite'] === 'true',
 });
 
-export default connect<StateProps>(mapStateToProps)(VahvaTunnistusLisatiedotContainer);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(VahvaTunnistusLisatiedotContainer);

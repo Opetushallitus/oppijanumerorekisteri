@@ -8,14 +8,15 @@ import type { RootState } from '../../../reducers';
 import Select from 'react-virtualized-select';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
-import { Localisations } from '../../../types/localisation.type';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { Localisations } from '../../../types/localisation.type';
+import type { OnChangeHandler, Option, Options } from 'react-select';
 
 type OwnProps = {
     id?: string;
-    onChange: (arg0: { label: string; value: string; optionsName: string }) => void;
+    onChange: OnChangeHandler<string, Option<string> | Options<string>>;
+    //onChange: (arg0: { label: string; value: string; optionsName: string }) => void;
     className?: string;
-    options: ReactSelectOption[];
+    options: Options<string>;
     value?: string | string[];
     name?: string;
     placeholder?: string;
@@ -64,4 +65,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps>(mapStateToProps)(OphSelect);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(OphSelect);

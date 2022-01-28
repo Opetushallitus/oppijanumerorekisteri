@@ -6,7 +6,7 @@ import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { ReactSelectOption } from '../../../../types/react-select.types';
+import type { Options } from 'react-select';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -17,7 +17,7 @@ type OwnProps = {
 type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        kansalaisuus: ReactSelectOption[];
+        kansalaisuus: Options<string>;
     };
     locale: Locale;
 };
@@ -69,4 +69,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     locale: state.locale,
 });
 
-export default connect<StateProps>(mapStateToProps)(Kansalaisuus);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Kansalaisuus);

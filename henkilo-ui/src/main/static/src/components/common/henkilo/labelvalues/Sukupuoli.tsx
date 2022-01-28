@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { ReactSelectOption } from '../../../../types/react-select.types';
+import type { Options } from 'react-select';
 import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { fetchSukupuoliKoodisto } from '../../../../actions/koodisto.actions';
@@ -17,7 +17,7 @@ type OwnProps = {
 type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        sukupuoli: Array<ReactSelectOption>;
+        sukupuoli: Options<string>;
     };
     locale: Locale;
 };
@@ -59,6 +59,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     locale: state.locale,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchSukupuoliKoodisto,
 })(Sukupuoli);

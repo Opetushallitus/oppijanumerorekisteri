@@ -69,4 +69,4 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     locale: ownProps.params['locale'],
 });
 
-export default connect<StateProps>(mapStateToProps)(EmailVerificationContainer);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(EmailVerificationContainer);

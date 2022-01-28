@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { ReactSelectOption } from '../../../../types/react-select.types';
+import type { Options } from 'react-select';
 import { Locale } from '../../../../types/locale.type';
 
 type OwnProps = {
@@ -15,7 +15,7 @@ type OwnProps = {
 type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        kieli: ReactSelectOption[];
+        kieli: Options<string>;
     };
     locale: Locale;
 };
@@ -46,4 +46,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<StateProps>(mapStateToProps)(Asiointikieli);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Asiointikieli);

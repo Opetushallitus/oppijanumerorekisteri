@@ -97,7 +97,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     kayttooikeudet: state.omattiedot.organisaatiot,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkiloMaster,
     unlinkHenkilo,
     fetchHenkilo,

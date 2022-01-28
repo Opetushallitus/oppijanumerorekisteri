@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import Table from '../table/Table';
 import moment from 'moment';
 import StaticUtils from '../StaticUtils';
@@ -249,7 +250,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-export default connect<{}, DispatchProps>(undefined, {
+export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
     createKayttooikeusanomus,
     fetchAllKayttooikeusAnomusForHenkilo,
 })(HenkiloViewExpiredKayttooikeus);

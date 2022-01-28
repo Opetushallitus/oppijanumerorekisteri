@@ -2,7 +2,7 @@ import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { Localisations, L10n } from '../../types/localisation.type';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 import { Locale } from '../../types/locale.type';
-import { ReactSelectOption } from '../../types/react-select.types';
+import type { Option } from 'react-select';
 import { Kayttaja } from '../../types/domain/kayttooikeus/kayttaja.types';
 import { TextGroup } from '../../types/domain/kayttooikeus/textgroup.types';
 
@@ -13,7 +13,7 @@ class StaticUtils {
     }
 
     // Example fieldpath: organisaatio.nimet.0.nimiValue
-    static updateFieldByDotAnnotation<T>(obj: T, event: ReactSelectOption & React.SyntheticEvent<HTMLInputElement>): T {
+    static updateFieldByDotAnnotation<T>(obj: T, event: Option<string> & React.SyntheticEvent<HTMLInputElement>): T {
         let value;
         let fieldpath;
         if (event === null) {

@@ -81,4 +81,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     locale: state.locale,
 });
 
-export default connect<StateProps>(mapStateToProps)(AnomusIlmoitus);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(AnomusIlmoitus);

@@ -148,6 +148,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     valittuKayttooikeusryhma: state.kayttooikeus.kayttooikeusryhma,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     addGlobalNotification,
 })(ToggleKayttooikeusryhmaStateModal);

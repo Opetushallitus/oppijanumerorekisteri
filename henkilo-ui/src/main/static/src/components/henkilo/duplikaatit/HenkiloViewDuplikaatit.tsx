@@ -170,6 +170,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     koodisto: state.koodisto,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     linkHenkilos,
 })(HenkiloViewDuplikaatit);

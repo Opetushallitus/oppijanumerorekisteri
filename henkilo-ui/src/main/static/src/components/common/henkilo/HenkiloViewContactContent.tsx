@@ -21,7 +21,7 @@ import { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 
 type OwnProps = {
@@ -43,7 +43,7 @@ type DispatchProps = {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-type ContactInfo = {
+export type ContactInfo = {
     id?: number;
     type: string;
     henkiloUiId?: string;
@@ -280,7 +280,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     }
 
-    _updateModelField(contactInfo: any, event: ReactSelectOption & React.SyntheticEvent<HTMLInputElement>) {
+    _updateModelField(contactInfo: any, event: Option<string> & React.SyntheticEvent<HTMLInputElement>) {
         const isContactInfoValid = this.validateContactInfo(contactInfo.label, event.currentTarget.value);
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);
         let contactInfoErrorFields = this.state.contactInfoErrorFields;
@@ -399,6 +399,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     updateHenkiloAndRefetch,
 })(HenkiloViewContactContent);

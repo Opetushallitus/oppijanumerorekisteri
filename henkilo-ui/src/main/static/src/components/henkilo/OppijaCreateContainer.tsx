@@ -148,7 +148,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     kansalaisuusKoodisto: state.koodisto.kansalaisuusKoodisto,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchKieliKoodisto,
     fetchSukupuoliKoodisto,
     fetchKansalaisuusKoodisto,

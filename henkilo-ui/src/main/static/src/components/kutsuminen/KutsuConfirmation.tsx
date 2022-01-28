@@ -14,7 +14,7 @@ import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
-    modalCloseFn: (arg0: React.SyntheticEvent<HTMLElement>) => void;
+    modalCloseFn: (arg0: React.SyntheticEvent<EventTarget>) => void;
     modalOpen: boolean;
     basicInfo: KutsuBasicInfo;
     resetFormValues: () => void;

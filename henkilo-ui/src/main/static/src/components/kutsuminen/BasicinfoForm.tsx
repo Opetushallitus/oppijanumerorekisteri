@@ -1,8 +1,8 @@
 import React from 'react';
 import './BasicinfoForm.css';
 import OphSelect from '../common/select/OphSelect';
+import type { Option } from 'react-select';
 import { Localisations } from '../../types/localisation.type';
-import { ReactSelectOption } from '../../types/react-select.types';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 
 type Props = {
@@ -110,7 +110,7 @@ export default class BasicinfoForm extends React.Component<Props> {
         this.props.setBasicInfo(basicInfo);
     }
 
-    selectLanguage(selection: ReactSelectOption) {
+    selectLanguage(selection: Option<string>) {
         const { basicInfo } = this.props;
         basicInfo.languageCode = selection.value;
         this.props.setBasicInfo(basicInfo);

@@ -78,4 +78,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     linkitetyt: state.linkitykset,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, { fetchHenkiloLinkitykset })(HenkiloVarmentajaSuhde);
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, { fetchHenkiloLinkitykset })(
+    HenkiloVarmentajaSuhde
+);

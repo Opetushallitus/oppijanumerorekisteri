@@ -29,4 +29,4 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     oidHenkilo: ownProps.params['oid'],
 });
 
-export default connect<StateProps>(mapStateToProps)(AdminRedirect);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(AdminRedirect);

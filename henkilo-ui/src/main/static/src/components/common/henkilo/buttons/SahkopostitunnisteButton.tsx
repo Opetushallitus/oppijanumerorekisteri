@@ -38,4 +38,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<StateProps>(mapStateToProps)(SahkopostitunnisteButton);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(SahkopostitunnisteButton);

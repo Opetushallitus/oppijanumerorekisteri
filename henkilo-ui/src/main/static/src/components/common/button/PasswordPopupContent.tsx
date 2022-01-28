@@ -150,6 +150,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     notifications: state.notifications,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     addGlobalNotification,
 })(PasswordPopupContent);

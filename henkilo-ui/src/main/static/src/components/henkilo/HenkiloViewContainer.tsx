@@ -85,7 +85,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     externalPermissionService: path(['location', 'query', 'permissionCheckService'], ownProps),
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchOmattiedot,
 })(HenkiloViewContainer);

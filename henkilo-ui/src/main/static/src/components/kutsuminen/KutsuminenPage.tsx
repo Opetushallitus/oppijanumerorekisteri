@@ -258,7 +258,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmasLoading: state.ryhmatState.ryhmasLoading,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     kutsuClearOrganisaatios,
     kutsuAddOrganisaatio,

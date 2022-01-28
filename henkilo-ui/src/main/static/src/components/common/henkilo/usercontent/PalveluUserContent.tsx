@@ -120,7 +120,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     isAdmin: state.omattiedot.isAdmin,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     yksiloiHenkilo,
     fetchHenkiloSlaves,
     fetchKayttajatieto,

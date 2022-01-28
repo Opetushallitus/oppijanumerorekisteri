@@ -17,7 +17,7 @@ import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModa
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import { ReactSelectOption } from '../../types/react-select.types';
+import type { Option } from 'react-select';
 
 type OwnProps = {
     onSubmit: (arg0: {}) => void;
@@ -47,7 +47,7 @@ type State = {
     selectedRyhma?: string;
 };
 
-const isReactSelectOption = (something: any): something is ReactSelectOption =>
+const isReactSelectOption = (something: any): something is Option<string> =>
     something?.label instanceof String && something?.value instanceof String;
 
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
@@ -210,6 +210,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmat: state.ryhmatState,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
 })(HaetutKayttooikeusRyhmatHakuForm);

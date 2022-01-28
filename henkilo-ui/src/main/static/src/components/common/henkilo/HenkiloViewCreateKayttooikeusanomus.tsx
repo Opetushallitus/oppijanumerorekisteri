@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
@@ -29,6 +30,7 @@ import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
+import type { Option } from 'react-select';
 
 type OwnProps = {
     l10n: L10n;
@@ -59,7 +61,7 @@ type State = {
     kayttooikeusryhmaSelections: Array<any>;
     perustelut: string;
     emailOptions: {
-        emailSelection?: any;
+        emailSelection?: string;
         missingEmail: boolean;
         showMissingEmailNotification: boolean;
         options?: any;
@@ -322,11 +324,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return { missingEmail: true, showMissingEmailNotification: true };
     }
 
-    _changeEmail(value: string) {
+    _changeEmail(selection: Option<string>) {
         this.setState({
             emailOptions: {
                 ...this.state.emailOptions,
-                emailSelection: value,
+                emailSelection: selection.value,
             },
         });
     }
@@ -475,7 +477,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 }
 
-export default connect<{}, DispatchProps>(undefined, {
+export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchOrganisaatioKayttooikeusryhmat,
     createKayttooikeusanomus,

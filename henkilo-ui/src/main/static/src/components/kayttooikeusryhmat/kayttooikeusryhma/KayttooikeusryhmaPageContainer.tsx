@@ -105,7 +105,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     fetchKayttooikeusryhmaById,
     fetchPalveluRooliByKayttooikeusryhmaId,

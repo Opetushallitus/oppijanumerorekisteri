@@ -1,18 +1,26 @@
 import './Button.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
+import type { Notification } from '../../../reducers/notifications.reducer';
 import ReactTimeout from 'react-timeout';
 import TopOverlayNotificationButton from './TopOverlayNotificationButton';
 
-type Props = {
+type OwnProps = {
     action: () => void;
-    setTimeout: (fn: () => void, millis: number) => void;
+    setTimeout?: (fn: () => void, millis: number) => void; // Set by react-timeout HOC
     normalLabel: string;
     confirmLabel: string;
     id: string;
-    disabled: boolean;
-    className: string;
+    disabled?: boolean;
+    className?: string;
 };
+
+type StateProps = {
+    notifications: Notification[];
+};
+
+type Props = OwnProps & StateProps;
 
 type State = {
     confirmState: boolean;
@@ -71,10 +79,8 @@ class ConfirmButton extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        notifications: state.notifications.buttonNotifications,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    notifications: state.notifications.buttonNotifications,
+});
 
-export default connect(mapStateToProps, {})(ReactTimeout(ConfirmButton));
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(ReactTimeout(ConfirmButton));

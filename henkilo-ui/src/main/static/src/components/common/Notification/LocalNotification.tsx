@@ -53,13 +53,11 @@ export class LocalNotification extends React.Component<LocalNotificationProps, S
         }
     };
 
-    _childrenIsValid(): boolean {
-        return Array.isArray(this.props.children)
-            ? this.props.children.every((child) => this._childIsValid(child))
-            : this._childIsValid(this.props.children);
+    _childrenIsValid() {
+        return React.Children.map(this.props.children, this._childIsValid).every(Boolean);
     }
 
-    _childIsValid(child: (React.ReactElement<any> | null | undefined) | string) {
-        return !!(child && typeof child !== 'string' && child.type === 'ul' && child.props && child.props.children);
+    _childIsValid(child?: React.ReactNode) {
+        return !!(child && React.isValidElement(child) && child.type === 'ul' && child.props && child.props.children);
     }
 }

@@ -114,7 +114,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     notifications: state.notifications,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedot,
     fetchHenkilo,
     fetchHenkiloOrgs,

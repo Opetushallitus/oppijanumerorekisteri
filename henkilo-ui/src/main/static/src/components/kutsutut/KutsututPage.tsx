@@ -299,6 +299,7 @@ export default class KutsututPage extends React.Component<Props, State> {
         });
     }
 
+    // todo: fix type
     onKayttooikeusryhmaChange(newKayttooikeusId: number) {
         this.setState({
             payload: {

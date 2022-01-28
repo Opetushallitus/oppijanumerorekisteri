@@ -39,4 +39,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations['fi'],
 });
 
-export default connect<StateProps>(mapStateToProps)(VirhePage);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(VirhePage);

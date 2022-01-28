@@ -17,9 +17,9 @@ import { KutsuOrganisaatio } from '../types/domain/kayttooikeus/OrganisaatioHenk
 export type KutsuminenOrganisaatiosState = readonly KutsuOrganisaatio[];
 
 export const kutsuminenOrganisaatios = (
-    state: Array<KutsuOrganisaatio> = [],
+    state: KutsuminenOrganisaatiosState = [],
     action: any
-): Array<KutsuOrganisaatio> => {
+): KutsuminenOrganisaatiosState => {
     const newOrganisaatios = [...state];
     let kutsu: KutsuOrganisaatio | null | undefined;
     switch (action.type) {

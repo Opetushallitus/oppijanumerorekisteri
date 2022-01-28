@@ -43,6 +43,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     passivoiHenkilo,
 })(PassivoiButton);

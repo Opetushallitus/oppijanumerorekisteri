@@ -145,6 +145,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     kayttooikeus: state.kayttooikeus,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     passivoiHenkiloOrg,
 })(HenkiloViewOrganisationContent);

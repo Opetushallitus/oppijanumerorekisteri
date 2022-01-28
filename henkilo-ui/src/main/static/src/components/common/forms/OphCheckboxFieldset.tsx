@@ -11,7 +11,7 @@ type Option = {
 type OphCheckboxListProps = {
     legendText: string;
     options: Array<Option>;
-    selectAction: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
+    selectAction: (arg0: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 class OphCheckboxFieldset extends React.Component<OphCheckboxListProps> {

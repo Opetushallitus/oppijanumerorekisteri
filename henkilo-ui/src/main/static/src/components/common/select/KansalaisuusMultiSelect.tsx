@@ -2,13 +2,14 @@ import React from 'react';
 import { Koodisto } from '../../../types/domain/koodisto/koodisto.types';
 import { Kansalaisuus } from '../../../types/domain/oppijanumerorekisteri/kansalaisuus.types';
 import KoodistoMultiSelect from './KoodistoMultiSelect';
+import type { OnChangeHandler, Options, Option } from 'react-select';
 
 type KansalaisuusMultiSelectProps = {
     className?: string;
     placeholder: string;
     koodisto: Koodisto;
     value: Array<Kansalaisuus> | null | undefined;
-    onChange: (arg0: Array<Kansalaisuus> | null | undefined) => void;
+    onChange: OnChangeHandler<string, Options<string> | Option<string>>;
 };
 
 /**
@@ -27,7 +28,7 @@ class KansalaisuusMultiSelect extends React.Component<KansalaisuusMultiSelectPro
         );
     }
 
-    onChange = (values: Array<string> | null | undefined) => {
+    onChange: OnChangeHandler<string, Options<string> | Option<string>> = (values) => {
         this.props.onChange(values?.map((value) => ({ kansalaisuusKoodi: value } as Kansalaisuus)));
     };
 }

@@ -143,7 +143,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
 });
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, {
     fetchOppijoidenTuontiYhteenveto,
     fetchOppijoidenTuontiListaus,
 })(OppijoidenTuontiContainer);

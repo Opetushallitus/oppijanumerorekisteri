@@ -389,9 +389,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
     _parseAnojaKayttooikeusryhmat(anojaOid: string): void {
         const url = urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', anojaOid);
-        http.get(url)
-            .then((myonnettyKayttooikeusryhmat: Array<MyonnettyKayttooikeusryhma>) => {
-                const kayttooikeudet: Array<KayttooikeusryhmaData> = myonnettyKayttooikeusryhmat
+        http.get<MyonnettyKayttooikeusryhma[]>(url)
+            .then((myonnettyKayttooikeusryhmat: MyonnettyKayttooikeusryhma[]) => {
+                const kayttooikeudet: KayttooikeusryhmaData[] = myonnettyKayttooikeusryhmat
                     .filter(
                         (myonnettyKayttooikeusryhma) => myonnettyKayttooikeusryhma.tila !== KAYTTOOIKEUDENTILA.ANOTTU
                     )
