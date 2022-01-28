@@ -25,7 +25,7 @@ class AdminRedirect extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+const mapStateToProps = (_state: RootState, ownProps: OwnProps): StateProps => ({
     oidHenkilo: ownProps.params['oid'],
 });
 

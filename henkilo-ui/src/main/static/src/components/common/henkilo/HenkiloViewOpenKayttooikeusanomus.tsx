@@ -148,7 +148,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         }));
 
         this.state = {
-            dates: this._getKayttooikeusAnomukset(this.props).map((kayttooikeusAnomus) => ({
+            dates: this._getKayttooikeusAnomukset(this.props).map(() => ({
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
@@ -166,7 +166,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
 
     componentWillReceiveProps(nextProps: Props) {
         this.setState({
-            dates: this._getKayttooikeusAnomukset(nextProps).map((kayttooikeusAnomus) => ({
+            dates: this._getKayttooikeusAnomukset(nextProps).map(() => ({
                 alkupvm: moment(),
                 loppupvm: moment().add(1, 'years'),
             })),
@@ -226,7 +226,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                 ),
                 [headingList[8]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
                 [headingList[9]]: this.props.isOmattiedot
-                    ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma, idx)
+                    ? this.anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma)
                     : this.anomusHandlingButtonsForHenkilo(haettuKayttooikeusRyhma, idx),
             })
         );
@@ -254,7 +254,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         );
     }
 
-    anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma, idx: number) {
+    anomusHandlingButtonsForOmattiedot(haettuKayttooikeusRyhma: HaettuKayttooikeusryhma) {
         return (
             <div>
                 <div style={{ display: 'table-cell', paddingRight: '10px' }}>
@@ -407,7 +407,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                     kayttooikeusRyhmatByAnoja: kayttooikeusRyhmatByAnoja,
                 });
             })
-            .catch((error: any) => {
+            .catch(() => {
                 const anojaKayttooikeusryhmat = {
                     anojaOid,
                     kayttooikeudet: [],

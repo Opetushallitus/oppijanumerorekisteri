@@ -2,7 +2,7 @@ import { resolveInvitationRights } from './KutsuDetails';
 import type { KutsuRead as Kutsu } from '../../types/domain/kayttooikeus/Kutsu.types';
 
 jest.mock('../../localizabletext', () => ({
-    toLocalizedText: (locale, key) => key,
+    toLocalizedText: (_, key) => key,
 }));
 
 describe('KutsuDetails', () => {

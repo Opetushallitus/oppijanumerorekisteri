@@ -29,7 +29,7 @@ type GetState = () => {
     locale: string;
 };
 
-export const fetchLocale = () => async (dispatch: Dispatch, getState: GetState) => {
+export const fetchLocale = () => async (dispatch: Dispatch) => {
     const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
     dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST });
     try {

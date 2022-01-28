@@ -48,11 +48,11 @@ class OppijaCreateDuplikaatit extends React.Component<OppijaCreateDuplikaatitPro
         );
     }
 
-    tallenna = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    tallenna = () => {
         this.props.tallenna(this.props.oppija);
     };
 
-    peruuta = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    peruuta = () => {
         this.props.peruuta();
     };
 }

@@ -126,7 +126,7 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
 }
 
 const YKSILOINTI_TILAT = {
-    OK: (L) => '',
+    OK: (_) => '',
     VIRHE: (L) => L['YKSILOINTI_TILA_VIRHE'],
     KESKEN: (L) => L['YKSILOINTI_TILA_KESKEN'],
     HETU_PUUTTUU: (L) => L['YKSILOINTI_TILA_HETU_PUUTTUU'],

@@ -121,8 +121,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 this.henkiloUpdate,
                 this.contactInfoTemplate,
                 this.props.koodisto.yhteystietotyypit,
-                this.props.locale,
-                []
+                this.props.locale
             ),
             yhteystietoRemoveList: [],
             isContactInfoValid: true,
@@ -334,8 +333,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             inputValue?: string;
         }>,
         yhteystietotyypit: Array<any>,
-        locale: string,
-        yhteystietoRemoveList: Array<any>
+        locale: string
     ): Array<any> =>
         henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
             const yhteystietoFlatList = this.createFlatYhteystieto(

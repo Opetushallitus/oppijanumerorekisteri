@@ -208,7 +208,7 @@ class KutsututTable extends React.Component<Props, State> {
         );
     }
 
-    onTableFetch(tableState: any, instance: any) {
+    onTableFetch(tableState: any) {
         const newSort = tableState.sorted[0];
         const stateSort = this.state.sorted[0];
         // Update sort state

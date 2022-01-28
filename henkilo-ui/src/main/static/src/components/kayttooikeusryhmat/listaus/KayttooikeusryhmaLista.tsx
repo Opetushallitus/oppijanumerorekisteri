@@ -32,7 +32,7 @@ export default class KayttooikeusryhmaLista extends React.Component<Props, State
 
     componentDidMount() {
         this.setState({
-            showItems: this.props.items.map((item: any) => false),
+            showItems: this.props.items.map(() => false),
         });
     }
 
