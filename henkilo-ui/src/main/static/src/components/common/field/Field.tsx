@@ -141,7 +141,7 @@ class Field extends React.Component<Props, State> {
                         ))}
                     </ul>
                 ) : (
-                    (selected as any).label
+                    selected.label
                 ))
             );
         }

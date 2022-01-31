@@ -17,7 +17,7 @@ import { KutsuOrganisaatio } from '../types/domain/kayttooikeus/OrganisaatioHenk
 export type KutsuminenOrganisaatiosState = readonly KutsuOrganisaatio[];
 
 export const kutsuminenOrganisaatios = (
-    state: KutsuminenOrganisaatiosState = [],
+    state: KutsuminenOrganisaatiosState = [], // NOSONAR
     action: any
 ): KutsuminenOrganisaatiosState => {
     const newOrganisaatios = [...state];

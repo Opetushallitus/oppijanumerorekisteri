@@ -101,22 +101,18 @@ class KutsuminenPage extends React.Component<Props, State> {
         };
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         this.props.kutsuClearOrganisaatios();
         this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllRyhmas();
-        await this.fetchKayttaja(this.props.kayttajaOid);
+        this.props.fetchHenkilo(this.props.kayttajaOid);
     }
 
-    async componentWillReceiveProps(nextProps: Props) {
+    componentWillReceiveProps(nextProps: Props) {
         if (this.props.kayttajaOid !== nextProps.kayttajaOid) {
-            await this.fetchKayttaja(nextProps.kayttajaOid);
+            this.props.fetchHenkilo(nextProps.kayttajaOid);
         }
         this.updateOrganisaatioValidation(nextProps.addedOrgs);
-    }
-
-    async fetchKayttaja(oid: string) {
-        await this.props.fetchHenkilo(oid);
     }
 
     render() {

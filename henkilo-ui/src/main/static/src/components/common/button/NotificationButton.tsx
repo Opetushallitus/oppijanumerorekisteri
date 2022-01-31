@@ -2,10 +2,9 @@ import Button from './Button';
 import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../reducers';
-import type { Localisations } from '../../../types/localisation.type';
+import type { L10n, Localisations } from '../../../types/localisation.type';
 import type { Notification } from '../../../reducers/notifications.reducer';
 import type { Locale } from '../../../types/locale.type';
-import type { L10n } from '../../../types/localisation.type';
 import { removeNotification } from '../../../actions/notifications.actions';
 import CSS from 'csstype';
 

@@ -44,8 +44,8 @@ type Props = OwnProps & StateProps & DispatchProps;
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
 class HenkiloViewContainer extends React.Component<Props> {
-    async componentDidMount() {
-        await this.props.fetchOmattiedot();
+    componentDidMount() {
+        this.props.fetchOmattiedot();
         if (this.props.oidHenkilo && this.props.ownOid && this.props.ownOid === this.props.oidHenkilo) {
             this.props.router.replace('/omattiedot');
         }

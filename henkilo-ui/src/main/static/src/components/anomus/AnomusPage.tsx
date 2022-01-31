@@ -175,16 +175,16 @@ class AnomusPage extends React.Component<Props, State> {
         );
     }
 
-    async updateHaettuKayttooikeusryhma(
+    updateHaettuKayttooikeusryhma(
         id: number,
         kayttoOikeudenTila: string,
         alkupvm: string,
         loppupvm: string,
         henkilo: any,
         hylkaysperuste?: string
-    ): Promise<any> {
+    ): void {
         try {
-            await this.props.updateHaettuKayttooikeusryhmaInAnomukset(
+            this.props.updateHaettuKayttooikeusryhmaInAnomukset(
                 id,
                 kayttoOikeudenTila,
                 alkupvm,
