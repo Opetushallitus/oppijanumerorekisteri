@@ -29,8 +29,10 @@ const yhteenvetoInitialState: TuontiYhteenvetoState = {
     },
 };
 
-// NOSONAR
-export const oppijoidenTuontiYhteenveto = (state = { ...yhteenvetoInitialState }, action: any) => {
+export const oppijoidenTuontiYhteenveto = (
+    state = { ...yhteenvetoInitialState }, // NOSONAR
+    action: any
+) => {
     switch (action.type) {
         case FETCH_OPPIJOIDEN_TUONTI_YHTEENVETO_REQUEST:
             return { ...state, loading: true };
