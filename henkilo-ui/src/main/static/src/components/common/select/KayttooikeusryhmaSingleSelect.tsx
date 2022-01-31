@@ -10,7 +10,7 @@ import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooike
 
 type OwnProps = {
     kayttooikeusSelectionAction: OnChangeHandler<string, Options<string> | Option<string>>;
-    kayttooikeusSelection?: number;
+    kayttooikeusSelection?: string;
 };
 
 type StateProps = {

@@ -16,6 +16,7 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import CloseButton from '../common/button/CloseButton';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { Option } from 'react-select';
 
 type Payload = {
     searchTerm: string;
@@ -23,8 +24,8 @@ type Payload = {
     tilas: Array<string>;
     sortBy: string;
     direction: string;
-    view: string | null | undefined;
-    kayttooikeusryhmaIds: number | null | undefined;
+    view?: string;
+    kayttooikeusryhmaIds?: string;
     subOrganisations?: boolean;
 };
 
@@ -59,7 +60,7 @@ type Sort = {
 
 type State = {
     allFetched: boolean;
-    confirmDeleteFor: Kutsu | null | undefined;
+    confirmDeleteFor?: Kutsu;
     payload: Payload;
     organisaatioSelection: string;
 };
@@ -299,12 +300,11 @@ export default class KutsututPage extends React.Component<Props, State> {
         });
     }
 
-    // todo: fix type
-    onKayttooikeusryhmaChange(newKayttooikeusId: number) {
+    onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
         this.setState({
             payload: {
                 ...this.state.payload,
-                kayttooikeusryhmaIds: newKayttooikeusId,
+                kayttooikeusryhmaIds: kayttooikeusOption.value,
             },
         });
     }
