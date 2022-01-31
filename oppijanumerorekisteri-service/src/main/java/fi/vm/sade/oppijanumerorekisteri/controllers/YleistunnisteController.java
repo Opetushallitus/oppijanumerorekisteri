@@ -37,7 +37,9 @@ import java.util.stream.Collectors;
 public class YleistunnisteController {
 
     protected static final String REQUEST_MAPPING = "/yleistunniste";
-    protected static final String ACCESS_RIGHT = "YLEISTUNNISTE_LUONTI";
+    private static final String ACCESS_RIGHT_LITERAL = "YLEISTUNNISTE_LUONTI";
+    private static final String ACCESS_RIGHT_PREFIX = "APP_OPPIJANUMEROREKISTERI_";
+    protected static final String ACCESS_RIGHT = ACCESS_RIGHT_PREFIX + ACCESS_RIGHT_LITERAL;
     protected static final String ACCESS_RIGHT_CHECK = "hasAnyRole('" + ACCESS_RIGHT + "')";
 
     private final OppijaService oppijaService;
