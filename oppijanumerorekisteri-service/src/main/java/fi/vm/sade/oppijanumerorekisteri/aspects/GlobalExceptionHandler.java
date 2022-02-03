@@ -61,6 +61,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.CONFLICT, reason = "conflict") // 409 Conflict during data processing
     @ExceptionHandler({ConflictException.class})
     public void conflict() {
+        // functionality provided via annotations
     }
 
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)

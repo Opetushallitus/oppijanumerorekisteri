@@ -503,7 +503,7 @@ public class YksilointiServiceImplTest {
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
         when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
 
-        assertThat(yksilointiService.exists(existenceCheckDto())).isEqualTo("");
+        assertThat(yksilointiService.exists(existenceCheckDto())).isEmpty();
     }
 
     @Test(expected = ConflictException.class)

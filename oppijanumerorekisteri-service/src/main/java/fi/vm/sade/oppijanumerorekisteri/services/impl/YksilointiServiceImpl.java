@@ -664,7 +664,7 @@ public class YksilointiServiceImpl implements YksilointiService {
                 .orElseGet(() ->
                         vtjClient.fetchHenkilo(details.getSsn())
                                 .map(henkilo -> compareDetails(henkilo, details))
-                                .orElseThrow(() -> new NotFoundException()));
+                                .orElseThrow(NotFoundException::new));
     }
 
     private String compareDetails(final Henkilo henkilo, final HenkiloExistenceCheckDto details) {
