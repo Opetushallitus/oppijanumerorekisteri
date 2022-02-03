@@ -9,6 +9,9 @@ import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
+import lombok.Generated;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
@@ -234,18 +237,19 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilön olemassaolon tarkistus",
             notes = "Tarkistaa henkilön olemassa olon annetun syötteen pohjalta.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero"),
-            @ApiResponse(code = 204, message = "Henkilö on olemassa muttei oppijanumerorekisterissä"),
+            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = ExistenceCheckResult.class),
+            @ApiResponse(code = 204, message = "Henkilö on olemassa muttei oppijanumerorekisterissä", response = ExistenceCheckResult.class),
             @ApiResponse(code = 400, message = "Viallinen syöte"),
             @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
             @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),
     })
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @PostMapping(value = "/exists")
-    public ResponseEntity<String> existenceCheck(@ApiParam("Henkilön yksilöivät tiedot.")
-                                                 @RequestBody @Validated HenkiloExistenceCheckDto details) {
+    public ResponseEntity<ExistenceCheckResult> existenceCheck(@ApiParam("Henkilön yksilöivät tiedot.")
+                                                               @RequestBody @Validated HenkiloExistenceCheckDto details) {
         String oid = yksilointiService.exists(details);
-        return new ResponseEntity<>(oid, oid == null ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+        HttpStatus status = "".equals(oid) ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return new ResponseEntity(new ExistenceCheckResult(oid), status);
     }
 
 
@@ -574,4 +578,10 @@ public class HenkiloController {
         );
     }
 
+    @Generated
+    @Getter
+    @AllArgsConstructor
+    static class ExistenceCheckResult {
+        private final String oid;
+    }
 }

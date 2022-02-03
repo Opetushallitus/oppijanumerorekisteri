@@ -34,6 +34,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -459,18 +462,19 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void existenceCheck200() throws Exception {
-        String oid = "foo";
-        given(yksilointiService.exists(any())).willReturn(oid);
+        given(yksilointiService.exists(any())).willReturn("1.2.3.4.5");
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(oid));
+                .andExpect(content().json(getFixture("/controller/henkilo/existenceCheckOnr.json"), true));
     }
 
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void existenceCheck204() throws Exception {
+        given(yksilointiService.exists(any())).willReturn("");
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andExpect(content().json(getFixture("/controller/henkilo/existenceCheckVtj.json"), true));
     }
 
     @Test
@@ -499,6 +503,10 @@ public class HenkiloControllerTest {
 
     private HenkiloExistenceCheckDto existenceCheckDto() {
         return new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d");
+    }
+
+    private String getFixture(String fileName) throws Exception {
+        return Files.readString(Paths.get(getClass().getResource(fileName).toURI()), StandardCharsets.UTF_8);
     }
 
     private void verifyReadAudit(String expected) {
