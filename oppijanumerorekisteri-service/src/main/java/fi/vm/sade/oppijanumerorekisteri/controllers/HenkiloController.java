@@ -231,6 +231,24 @@ public class HenkiloController {
         return this.henkiloModificationService.createHenkilo(henkilo).getOidHenkilo();
     }
 
+    @ApiOperation(value = "Henkilön olemassaolon tarkistus",
+            notes = "Tarkistaa henkilön olemassa olon annetun syötteen pohjalta.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero"),
+            @ApiResponse(code = 204, message = "Henkilö on olemassa muttei oppijanumerorekisterissä"),
+            @ApiResponse(code = 400, message = "Viallinen syöte"),
+            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
+            @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),
+    })
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PostMapping(value = "/exists")
+    public ResponseEntity<String> existenceCheck(@ApiParam("Henkilön yksilöivät tiedot.")
+                                                 @RequestBody @Validated HenkiloExistenceCheckDto details) {
+        String oid = yksilointiService.exists(details);
+        return new ResponseEntity<>(oid, oid == null ? HttpStatus.NO_CONTENT : HttpStatus.OK);
+    }
+
+
     @ApiOperation(value = "Henkilöiden haku OID:ien perusteella.",
             notes = "Hakee henkilöiden tiedot annetun OID:ien pohjalta, sisältään kaikkien henkilön kaikki tiedot.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
@@ -256,7 +274,7 @@ public class HenkiloController {
     @RequestMapping(value = "/masterHenkilosByOidList", method = RequestMethod.POST)
     public Map<String, HenkiloDto> masterHenkilosByOidList(@ApiParam("Format: [\"oid1\", ...]") @RequestBody List<String> oids,
                                                            @RequestHeader(value = "External-Permission-Service", required = false)
-                                                          ExternalPermissionService permissionService) throws IOException {
+                                                                   ExternalPermissionService permissionService) throws IOException {
         return this.permissionChecker.filterUnpermittedHenkilo(
                 this.henkiloService.getMastersByOids(Sets.newHashSet(oids)),
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Arrays.asList(KAYTTOOIKEUS_READ, KAYTTOOIKEUS_HENKILON_RU)),
@@ -301,7 +319,6 @@ public class HenkiloController {
     }
 
 
-
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.",
             notes = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
@@ -320,7 +337,7 @@ public class HenkiloController {
             authorizations = {@Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiManuaalisesti(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
                                      @RequestHeader(value = "External-Permission-Service", required = false)
-                                             ExternalPermissionService permissionService){
+                                             ExternalPermissionService permissionService) {
 
         this.yksilointiService.yksiloiManuaalisesti(henkiloOid);
     }
@@ -328,10 +345,10 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#henkiloOid, {'OPPIJANUMEROREKISTERI': {'MANUAALINEN_YKSILOINTI'}} , #permissionService )")
     @RequestMapping(value = "/{oid}/yksiloihetuton", method = RequestMethod.POST)
     @ApiOperation(value = "Yksilöi hetuttoman henkilön.",
-    notes = "Yksilöi hetuttoman henkilön.",
-    authorizations = {@Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
+            notes = "Yksilöi hetuttoman henkilön.",
+            authorizations = {@Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_MANUAALINEN_YKSILOINTI")})
     public void yksiloiHetuton(@ApiParam(value = "Henkilön OID", required = true) @PathVariable("oid") String henkiloOid,
-    @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+                               @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         this.yksilointiService.hetuttomanYksilointi(henkiloOid);
     }
 
@@ -432,7 +449,7 @@ public class HenkiloController {
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     @LogExecutionTime
     public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+                                                    @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.duplicateService.findDuplicates(oid);
     }
 
@@ -462,7 +479,7 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#oid, {'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+                                       @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloModificationService.linkHenkilos(oid, slaveOids);
     }
 
@@ -533,8 +550,7 @@ public class HenkiloController {
     public Set<String> getHuoltajaSuhdeMuutokset(
             @ApiParam(value = "vvvv-kk-pp", required = true) @RequestParam("startdate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @ApiParam(value = "vvvv-kk-pp", required = true) @RequestParam("enddate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
-    {
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloService.getHuoltajaSuhdeMuutokset(
                 start,
                 end
@@ -550,8 +566,7 @@ public class HenkiloController {
             @PathVariable DateTime at,
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer amount,
-            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService)
-    {
+            @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloService.getHuoltajaSuhdeMuutokset(
                 at,
                 amount,

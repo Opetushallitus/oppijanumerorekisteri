@@ -1,10 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.aspects;
 
-import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.UnprocessableEntityException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.*;
 
 import java.util.*;
 
@@ -60,6 +56,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "unauthorized") // 401 Not authorized
     @ExceptionHandler(UnauthorizedException.class)
     public void unauthorized() {
+    }
+
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "conflict") // 409 Conflict during data processing
+    @ExceptionHandler({ConflictException.class})
+    public void conflict() {
     }
 
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)

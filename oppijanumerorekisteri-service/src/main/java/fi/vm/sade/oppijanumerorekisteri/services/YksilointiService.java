@@ -111,4 +111,16 @@ public interface YksilointiService {
      */
     void enableYksilointi(String oid, AsiayhteysKayttooikeusDto dto);
 
+    /**
+     * Tarkista löytyykö annetulla hetulla henkilö
+     * 1. oppijanumerorekisteristä
+     * 2. vtj:stä
+     *
+     * Mikäli löytyy, tarkistetaan että muut tiedot ovat oikein.
+     *
+     * @param details hetu sekä nimitiedot
+     * @return oppijanumero mikäli henkilö löytyy
+     * @throws RuntimeException poikkeustapaukset välitetään tyypitetyin poikkeuksin
+     */
+    String exists(HenkiloExistenceCheckDto details);
 }

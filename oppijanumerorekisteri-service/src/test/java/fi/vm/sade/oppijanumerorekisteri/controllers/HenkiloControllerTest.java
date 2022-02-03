@@ -8,6 +8,8 @@ import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
@@ -28,6 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
@@ -440,6 +443,63 @@ public class HenkiloControllerTest {
         verifyReadAudit("1.2.3.4.5");
     }
 
+    @Test
+    public void existenceCheck401() throws Exception {
+        mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void existenceCheck400() throws Exception {
+        mvc.perform(postRequest("/henkilo/exists", Collections.emptyMap()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void existenceCheck200() throws Exception {
+        String oid = "foo";
+        given(yksilointiService.exists(any())).willReturn(oid);
+        mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(oid));
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void existenceCheck204() throws Exception {
+        mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void existenceCheck404() throws Exception {
+        given(yksilointiService.exists(any())).willThrow(new NotFoundException());
+        mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void existenceCheck409() throws Exception {
+        given(yksilointiService.exists(any())).willThrow(new ConflictException());
+        mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
+                .andExpect(status().isConflict());
+    }
+
+    private MockHttpServletRequestBuilder postRequest(String endpoint, Object payload) throws Exception {
+        return post(endpoint)
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payload));
+    }
+
+    private HenkiloExistenceCheckDto existenceCheckDto() {
+        return new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d");
+    }
 
     private void verifyReadAudit(String expected) {
         verify(auditLogger).log(eq(OnrOperation.READ), auditCaptor.capture(), any());
