@@ -20,15 +20,15 @@ public class HenkiloExistenceCheckDto {
     private final String ssn;
 
     @NotNull(message = "Cannot be empty")
-    @Pattern(message = "Invalid pattern. Must contain an alphabetic character.", regexp = "^\\p{Alpha}+( \\p{Alpha}+)*+$")
+    @Pattern(message = "Invalid pattern. Must contain an alphabetic character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String firstName;
 
     @NotNull(message = "Cannot be empty")
-    @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "^\\p{Alpha}+$")
+    @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+$")
     private final String nickName;
 
     @NotNull(message = "Cannot be empty")
-    @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "^\\p{Alpha}+( \\p{Alpha}+)*+$")
+    @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String lastName;
 
     @AssertTrue(message = "Nick name must be one of the first names")

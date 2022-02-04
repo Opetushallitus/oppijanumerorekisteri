@@ -34,7 +34,8 @@ class HenkiloExistenceCheckDtoTest {
                 Arguments.of("Requires lastName", new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", null), false),
                 Arguments.of("Validates lastName", new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", ""), false),
                 Arguments.of("Validates lastName for leading spaces", new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", " d"), false),
-                Arguments.of("Validates lastName for trailing spaces", new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d "), false)
+                Arguments.of("Validates lastName for trailing spaces", new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d "), false),
+                Arguments.of("Should be valid (special chars)", new HenkiloExistenceCheckDto("230668-003A", "X Æ A-12", "Æ", "Musk"), true)
         );
     }
 
