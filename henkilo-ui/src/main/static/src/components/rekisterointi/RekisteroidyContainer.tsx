@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import RekisteroidyPage from './RekisteroidyPage';
+import { fetchKieliKoodisto } from '../../actions/koodisto.actions';
 import Loader from '../common/icons/Loader';
-import { createHenkiloByToken } from '../../actions/kutsu.actions';
+import { createHenkiloByToken, fetchKutsuByToken } from '../../actions/kutsu.actions';
 import { removeNotification } from '../../actions/notifications.actions';
 import VirhePage from '../common/page/VirhePage';
 import type { Location } from 'history';
@@ -11,8 +12,6 @@ import type { KoodistoState } from '../../reducers/koodisto.reducer';
 
 type OwnProps = {
     location: Location;
-    fetchKieliKoodisto: () => void;
-    fetchKutsuByToken: (arg: string) => void;
 };
 
 type StateProps = {
@@ -30,6 +29,8 @@ type StateProps = {
 };
 
 type DispatchProps = {
+    fetchKieliKoodisto: () => void;
+    fetchKutsuByToken: (token: string) => void;
     removeNotification: (status: string, group: string, id: string) => any;
     createHenkiloByToken: (temporaryToken: string, payload: any) => any;
 };
@@ -85,6 +86,8 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
 };
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+    fetchKieliKoodisto,
+    fetchKutsuByToken,
     createHenkiloByToken,
     removeNotification,
 })(RekisteroidyContainer);
