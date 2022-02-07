@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import lombok.AllArgsConstructor;
 import lombok.Generated;
@@ -31,6 +32,7 @@ public class HenkiloExistenceCheckDto {
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
     private final String lastName;
 
+    @JsonIgnore
     @AssertTrue(message = "Nick name must be one of the first names")
     public boolean isNicknameOk() {
         return firstName != null && nickName != null && Arrays.asList(firstName.toLowerCase().split(" ")).contains(nickName.toLowerCase());
