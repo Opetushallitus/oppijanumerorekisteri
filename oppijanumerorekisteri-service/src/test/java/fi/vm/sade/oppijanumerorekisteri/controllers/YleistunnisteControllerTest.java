@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,9 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController.REQUEST_MAPPING;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -66,27 +67,26 @@ public class YleistunnisteControllerTest {
     @MockBean
     private OrganisaatioService organisaatioService;
 
-    private OppijaTuontiCreateDto getValidOppijatCreateDto() {
-        return OppijaTuontiCreateDto.builder()
+    private YleistunnisteController.YleistunnisteInput getValidYleistunnisteInput() {
+        return YleistunnisteController.YleistunnisteInput.builder()
                 .sahkoposti("example@example.com")
-                .henkilot(Stream.of(getValidOppijaCreateDto()).collect(toList()))
+                .henkilot(Stream.of(getValidYleistunnisteInputRow()).collect(toList()))
                 .build();
     }
 
-    private OppijaTuontiRiviCreateDto getValidOppijaCreateDto() {
-        return OppijaTuontiRiviCreateDto.builder()
+    private YleistunnisteController.YleistunnisteInputRow getValidYleistunnisteInputRow() {
+        return YleistunnisteController.YleistunnisteInputRow.builder()
                 .tunniste("henkilo1")
-                .henkilo(getValidHenkiloCreateDto())
+                .henkilo(getValidYleistunnisteInputPerson())
                 .build();
     }
 
-    private OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto getValidHenkiloCreateDto() {
-        return OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+    private YleistunnisteController.YleistunnisteInputPerson getValidYleistunnisteInputPerson() {
+        return YleistunnisteController.YleistunnisteInputPerson.builder()
                 .hetu("170897-935L")
                 .etunimet("etu")
                 .kutsumanimi("etu")
                 .sukunimi("suku")
-                .kansalaisuus(Stream.of("kansalaisuus1").map(KoodiUpdateDto::new).collect(toSet()))
                 .build();
     }
 
@@ -97,7 +97,7 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void putOppijaShouldWork() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
 
         mvc.perform(put(REQUEST_MAPPING)
                         .with(csrf())
@@ -112,7 +112,7 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
     public void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         dto.setSahkoposti(null);
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -128,7 +128,7 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldValidateSahkoposti() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         dto.setSahkoposti("lsdkjd");
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -144,7 +144,7 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldRequireHenkilot() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         dto.setHenkilot(null);
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -160,7 +160,7 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldContainHenkilot() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         dto.setHenkilot(emptyList());
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -176,8 +176,8 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldValidateHetu() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
-        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
         oppijaCreateDto.getHenkilo().setHetu("hetu1");
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
@@ -192,11 +192,12 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
+    @Ignore("Irrelevant if kansalaisuus is omitted")
     @WithMockUser("user1")
     public void putOppijaShouldRequireKansalaisuusFromNull() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
-        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
-        oppijaCreateDto.getHenkilo().setKansalaisuus(null);
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
+        // oppijaCreateDto.getHenkilo().setKansalaisuus(null);
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -210,11 +211,12 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
+    @Ignore("Irrelevant if kansalaisuus is omitted")
     @WithMockUser("user1")
     public void putOppijaShouldRequireKansalaisuusFromEmpty() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
-        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
-        oppijaCreateDto.getHenkilo().setKansalaisuus(emptySet());
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
+        // oppijaCreateDto.getHenkilo().setKansalaisuus(emptySet());
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -228,11 +230,12 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
+    @Ignore("Irrelevant if kansalaisuus is omitted")
     @WithMockUser("user1")
     public void putOppijaShouldRequireKansalaisuusFromNullDto() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
-        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
-        oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((KoodiUpdateDto) null).collect(toSet()));
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
+        //oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((KoodiUpdateDto) null).collect(toSet()));
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -246,11 +249,12 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
+    @Ignore("Irrelevant if kansalaisuus is omitted")
     @WithMockUser("user1")
     public void putOppijaShouldRequireKansalaisuusFromNullKoodi() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
-        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
-        oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((String) null).map(KoodiUpdateDto::new).collect(toSet()));
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
+        // oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((String) null).map(KoodiUpdateDto::new).collect(toSet()));
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -266,12 +270,12 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser("user1")
     public void putOppijaShouldValidateHenkilo() throws Exception {
-        OppijaTuontiCreateDto dto = getValidOppijatCreateDto();
-        OppijaTuontiRiviCreateDto oppijaCreateDto = getValidOppijaCreateDto();
-        oppijaCreateDto.getHenkilo().setOid(null);
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
+        // oppijaCreateDto.getHenkilo().setOid(null);
         oppijaCreateDto.getHenkilo().setHetu(null);
-        oppijaCreateDto.getHenkilo().setPassinumero(null);
-        oppijaCreateDto.getHenkilo().setSahkoposti(null);
+        // oppijaCreateDto.getHenkilo().setPassinumero(null);
+        // oppijaCreateDto.getHenkilo().setSahkoposti(null);
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
