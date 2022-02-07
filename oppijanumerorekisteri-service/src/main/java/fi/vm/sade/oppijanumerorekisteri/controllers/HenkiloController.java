@@ -248,8 +248,7 @@ public class HenkiloController {
     public ResponseEntity<ExistenceCheckResult> existenceCheck(@ApiParam("Henkilön yksilöivät tiedot.")
                                                                @RequestBody @Validated HenkiloExistenceCheckDto details) {
         String oid = yksilointiService.exists(details);
-        HttpStatus status = "".equals(oid) ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return new ResponseEntity<>(new ExistenceCheckResult(oid), status);
+        return new ResponseEntity<>(new ExistenceCheckResult(oid), oid.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK);
     }
 
 
