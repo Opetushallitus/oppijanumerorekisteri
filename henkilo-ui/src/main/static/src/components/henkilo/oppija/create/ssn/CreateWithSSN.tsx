@@ -4,8 +4,9 @@ import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import classNames from 'classnames';
-import type { Localisations } from '../../../../../types/localisation.type';
 import type { RootState } from '../../../../../reducers';
+import type { ExistenceCheckRequest, ExistenceCheckReponse } from '../../../../../reducers/existence.reducer';
+import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import Button from '../../../../common/button/Button';
 
 type OwnProps = {
@@ -13,17 +14,18 @@ type OwnProps = {
 };
 
 type StateProps = {
-    L: Localisations;
+    translate: (key: string) => string;
+    loading: boolean;
+    status?: number;
+    data?: ExistenceCheckReponse;
 };
 
-type Props = OwnProps & StateProps;
-
-type Form = {
-    ssn: string;
-    firstName: string;
-    nickName: string;
-    lastName: string;
+type DispatchProps = {
+    clear: () => void;
+    check: (payload: ExistenceCheckRequest) => void;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 export const schema = Joi.object({
     ssn: Joi.string()
@@ -42,7 +44,7 @@ export const schema = Joi.object({
 });
 
 type FormField = {
-    name: keyof Form;
+    name: keyof ExistenceCheckRequest;
     localizationKey: string;
 };
 
@@ -65,14 +67,19 @@ const formFields: FormField[] = [
     },
 ];
 
-export const CreateWithSSN: React.FC<Props> = ({ L, goBack }) => {
-    const translate = (key: string): string => L[key] || key;
+export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check, status }) => {
+    React.useEffect(() => {
+        clear();
+    }, [clear]);
+
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Form>({ resolver: joiResolver(schema) });
-    const onSubmit = (data: Form): void => console.log(data);
+    } = useForm<ExistenceCheckRequest>({ resolver: joiResolver(schema) });
+
+    const onSubmit = (data: ExistenceCheckRequest): void => check(data);
+
     return (
         <div className="wrapper">
             <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
@@ -100,6 +107,7 @@ export const CreateWithSSN: React.FC<Props> = ({ L, goBack }) => {
                         {translate('TALLENNA_LINKKI')}
                     </button>
                 </div>
+                {status && <div>{status}</div>}
                 <div className="oph-field">
                     <Button action={goBack}>{translate('TAKAISIN_LINKKI')}</Button>
                 </div>
@@ -109,7 +117,18 @@ export const CreateWithSSN: React.FC<Props> = ({ L, goBack }) => {
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
+    translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
+    loading: state.existenceCheck.loading,
+    data: state.existenceCheck.data,
+    status: state.existenceCheck.status,
 });
 
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(CreateWithSSN);
+const mapDispatchToProps = {
+    clear: clearExistenceCheck,
+    check: doExistenceCheck,
+};
+
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+    mapStateToProps,
+    mapDispatchToProps
+)(CreateWithSSN);

@@ -28,12 +28,8 @@ const resolveResponse = (response, resolve, reject) => {
     return reject(response.data);
 };
 
-const resolveResponseWithStatus = (response, resolve, reject) => {
-    if (response.ok) {
-        return resolve([response.data, response.status]);
-    }
-    // extract the error from the server's json
-    return reject([response.data, response.status]);
+const resolveResponseWithStatus = (response, resolve) => {
+    return resolve([response.data, response.status, response.ok]);
 };
 
 const getCommonOptions = () => ({
@@ -101,8 +97,8 @@ export const http = {
 };
 
 export const httpWithStatus = {
-    post: <T>(url: string, payload?: any): Promise<[T, number]> =>
-        new Promise<[T, number]>((resolve, reject) =>
+    post: <T>(url: string, payload?: any): Promise<[T, number, boolean]> =>
+        new Promise<[T, number, boolean]>((resolve, reject) =>
             fetch(url, {
                 ...getCommonOptions(),
                 method: 'POST',
@@ -113,7 +109,7 @@ export const httpWithStatus = {
                 },
             })
                 .then(parseResponseBody)
-                .then((response: T) => resolveResponseWithStatus(response, resolve, reject))
+                .then((response: T) => resolveResponseWithStatus(response, resolve))
                 .catch((error) => reject({ networkError: error.message }))
         ),
 };

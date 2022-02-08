@@ -40,7 +40,11 @@ export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispa
     try {
         const url = urls.url('oppijanumerorekisteri-service.henkilo.exists');
         const [data, status] = await httpWithStatus.post<ExistenceCheckReponse>(url, payload);
-        dispatch(requestExistenceCheckSuccess(data, status));
+        if ([200, 204, 400, 404, 409].includes(status)) {
+            dispatch(requestExistenceCheckSuccess(data, status));
+        } else {
+            throw new Error();
+        }
     } catch (error) {
         dispatch(requestExistenceCheckFailure(500));
         dispatch(
