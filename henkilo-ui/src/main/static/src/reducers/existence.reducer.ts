@@ -37,14 +37,24 @@ export type FailureAction = {
 
 export type ExistenceCheckState = {
     loading: boolean;
-    data?: ExistenceCheckReponse;
+    oid?: string;
+    msgKey?: string;
     status?: number;
 };
 
 export const initialState: ExistenceCheckState = {
     loading: false,
-    data: undefined,
+    oid: undefined,
+    msgKey: undefined,
     status: undefined,
+};
+
+export const statusToMessage = {
+    200: 'EXISTENCE_CHECK_ONR',
+    204: 'EXISTENCE_CHECK_VTJ',
+    400: 'EXISTENCE_CHECK_BAD_REQUEST',
+    404: 'EXISTENCE_CHECK_NOK',
+    409: 'EXISTENCE_CHECK_CONFLICT',
 };
 
 export const existenceCheckReducer = (
@@ -55,9 +65,14 @@ export const existenceCheckReducer = (
         case FETCH_EXISTENCE_CHECK_REQUEST:
             return { ...initialState, loading: true };
         case FETCH_EXISTENCE_CHECK_SUCCESS:
-            return { ...initialState, data: action.data, status: action.status };
+            return {
+                ...initialState,
+                oid: action.data.oid,
+                msgKey: statusToMessage[action.status],
+                status: action.status,
+            };
         case FETCH_EXISTENCE_CHECK_FAILURE:
-            return { ...initialState, status: action.status };
+            return { ...initialState };
         case CLEAR_EXISTENCE_CHECK:
             return initialState;
         default:

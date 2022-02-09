@@ -17,6 +17,7 @@ import type {
     SuccessAction,
     FailureAction,
 } from '../reducers/existence.reducer';
+import { statusToMessage } from '../reducers/existence.reducer';
 
 export const clearExistenceCheck = (): ClearAction => ({
     type: CLEAR_EXISTENCE_CHECK,
@@ -35,12 +36,14 @@ const requestExistenceCheckFailure = (status: number): FailureAction => ({
     status,
 });
 
+const isSupportedResponseStatus = (status: number) => Object.keys(statusToMessage).includes(status.toString());
+
 export const doExistenceCheck = (payload: ExistenceCheckRequest) => async (dispatch, state: () => any) => {
     dispatch(requestExistenceCheck());
     try {
         const url = urls.url('oppijanumerorekisteri-service.henkilo.exists');
         const [data, status] = await httpWithStatus.post<ExistenceCheckReponse>(url, payload);
-        if ([200, 204, 400, 404, 409].includes(status)) {
+        if (isSupportedResponseStatus(status)) {
             dispatch(requestExistenceCheckSuccess(data, status));
         } else {
             throw new Error();

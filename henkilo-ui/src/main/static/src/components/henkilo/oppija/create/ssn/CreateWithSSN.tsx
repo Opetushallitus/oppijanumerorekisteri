@@ -1,23 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import classNames from 'classnames';
 import type { RootState } from '../../../../../reducers';
-import type { ExistenceCheckRequest, ExistenceCheckReponse } from '../../../../../reducers/existence.reducer';
+import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../reducers/existence.reducer';
 import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
+import { Link } from 'react-router';
 import Button from '../../../../common/button/Button';
+import './CreateWithSSN.css';
 
 type OwnProps = {
     goBack: () => void;
 };
 
-type StateProps = {
+type StateProps = ExistenceCheckState & {
     translate: (key: string) => string;
-    loading: boolean;
-    status?: number;
-    data?: ExistenceCheckReponse;
 };
 
 type DispatchProps = {
@@ -67,7 +67,7 @@ const formFields: FormField[] = [
     },
 ];
 
-export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check, status }) => {
+export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check, status, oid, msgKey }) => {
     React.useEffect(() => {
         clear();
     }, [clear]);
@@ -83,6 +83,23 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
     return (
         <div className="wrapper">
             <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
+            {msgKey && (
+                <div
+                    className={classNames('check-result', {
+                        'oph-alert-success': status === 200,
+                        'oph-alert-info': status === 204,
+                        'oph-alert-error': status >= 400,
+                    })}
+                >
+                    <ReactMarkdown>{translate(msgKey)}</ReactMarkdown>
+                    {oid && (
+                        <b>
+                            <Link to={`/oppija/${oid}`}>{oid}</Link>
+                        </b>
+                    )}
+                    {status === 204 && <Button>Nappi joka ei tee vielä mitään</Button>}
+                </div>
+            )}
             <form>
                 {formFields.map((field) => (
                     <div className="oph-field oph-field-is-required">
@@ -104,10 +121,9 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                         className="oph-button oph-button-primary"
                         disabled={!!Object.keys(errors).length}
                     >
-                        {translate('TALLENNA_LINKKI')}
+                        {translate('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                     </button>
                 </div>
-                {status && <div>{status}</div>}
                 <div className="oph-field">
                     <Button action={goBack}>{translate('TAKAISIN_LINKKI')}</Button>
                 </div>
@@ -119,7 +135,8 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
 const mapStateToProps = (state: RootState): StateProps => ({
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
     loading: state.existenceCheck.loading,
-    data: state.existenceCheck.data,
+    oid: state.existenceCheck.oid,
+    msgKey: state.existenceCheck.msgKey,
     status: state.existenceCheck.status,
 });
 
