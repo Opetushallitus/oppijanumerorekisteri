@@ -238,7 +238,7 @@ public class HenkiloController {
             notes = "Tarkistaa henkilön olemassa olon annetun syötteen pohjalta.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = ExistenceCheckResult.class),
-            @ApiResponse(code = 204, message = "Henkilö on olemassa muttei oppijanumerorekisterissä", response = ExistenceCheckResult.class),
+            @ApiResponse(code = 204, message = "Henkilö on olemassa muttei oppijanumerorekisterissä", response = Object.class),
             @ApiResponse(code = 400, message = "Viallinen syöte"),
             @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
             @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),

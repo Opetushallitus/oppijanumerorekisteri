@@ -36,6 +36,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .directModelSubstitute(Date.class, Integer.class) // unix time
+                .directModelSubstitute(Object.class, java.lang.Void.class) // 204 empty
                 .useDefaultResponseMessages(false);
     }
 
