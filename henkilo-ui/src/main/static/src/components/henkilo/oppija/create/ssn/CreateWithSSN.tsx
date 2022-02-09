@@ -76,6 +76,7 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors, isValid },
     } = useForm<ExistenceCheckRequest>({ resolver: joiResolver(schema), mode: 'onChange' });
 
@@ -112,6 +113,7 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                             placeholder={translate(field.localizationKey)}
                             type="text"
                             {...register(field.name)}
+                            onFocus={clear}
                         />
                     </div>
                 ))}
@@ -124,6 +126,17 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                     >
                         <SpinnerInButton show={loading} />
                         {translate('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            clear();
+                            reset();
+                        }}
+                        className="oph-button oph-button-primary margin-left"
+                        disabled={loading}
+                    >
+                        {translate('PERUUTA')}
                     </button>
                 </div>
                 <div className="oph-field">
