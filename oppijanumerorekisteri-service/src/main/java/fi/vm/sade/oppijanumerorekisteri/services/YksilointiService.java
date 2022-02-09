@@ -3,6 +3,8 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 
+import java.util.Optional;
+
 public interface YksilointiService {
 
     /**
@@ -122,5 +124,5 @@ public interface YksilointiService {
      * @return oppijanumero mikäli henkilö löytyy
      * @throws RuntimeException poikkeustapaukset välitetään tyypitetyin poikkeuksin
      */
-    String exists(HenkiloExistenceCheckDto details);
+    Optional<String> exists(HenkiloExistenceCheckDto details);
 }

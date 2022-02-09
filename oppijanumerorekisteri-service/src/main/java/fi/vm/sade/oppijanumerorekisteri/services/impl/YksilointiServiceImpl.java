@@ -658,24 +658,24 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     @Override
-    public String exists(final HenkiloExistenceCheckDto details) {
+    public Optional<String> exists(final HenkiloExistenceCheckDto details) {
         return henkiloRepository.findByHetu(details.getSsn())
-                .map(henkilo -> compareDetails(henkilo, details))
+                .map(henkilo -> compareOnrDetails(henkilo, details))
                 .orElseGet(() ->
                         vtjClient.fetchHenkilo(details.getSsn())
-                                .map(henkilo -> compareDetails(henkilo, details))
+                                .map(henkilo -> compareVtjDetails(henkilo, details))
                                 .orElseThrow(NotFoundException::new));
     }
 
-    private String compareDetails(final Henkilo henkilo, final HenkiloExistenceCheckDto details) {
+    private Optional<String> compareOnrDetails(final Henkilo henkilo, final HenkiloExistenceCheckDto details) {
         if (detailsMatch(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), details))
-            return henkilo.getOidHenkilo();
+            return Optional.of(henkilo.getOidHenkilo());
         throw new ConflictException();
     }
 
-    private String compareDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
+    private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
         if (detailsMatch(henkilo.getEtunimi(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), details))
-            return "";
+            return Optional.empty();
         throw new ConflictException();
     }
 

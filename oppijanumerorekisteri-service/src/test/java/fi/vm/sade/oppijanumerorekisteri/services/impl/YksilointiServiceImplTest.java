@@ -476,7 +476,7 @@ public class YksilointiServiceImplTest {
 
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.of(henkilo));
 
-        assertThat(yksilointiService.exists(existenceCheckDto())).isEqualTo("test");
+        assertThat(yksilointiService.exists(existenceCheckDto())).isEqualTo(Optional.of("test"));
 
         verifyNoInteractions(vtjClient);
     }

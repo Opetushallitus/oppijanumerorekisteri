@@ -37,10 +37,7 @@ import javax.validation.ValidationException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROOT_ORGANISATION_SUFFIX;
@@ -462,7 +459,7 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void existenceCheck200() throws Exception {
-        given(yksilointiService.exists(any())).willReturn("1.2.3.4.5");
+        given(yksilointiService.exists(any())).willReturn(Optional.of("1.2.3.4.5"));
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(getFixture("/controller/henkilo/existenceCheckOnr.json"), true));
@@ -471,10 +468,10 @@ public class HenkiloControllerTest {
     @Test
     @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
     public void existenceCheck204() throws Exception {
-        given(yksilointiService.exists(any())).willReturn("");
+        given(yksilointiService.exists(any())).willReturn(Optional.empty());
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
                 .andExpect(status().isNoContent())
-                .andExpect(content().json(getFixture("/controller/henkilo/existenceCheckVtj.json"), true));
+                .andExpect(content().string(""));
     }
 
     @Test
