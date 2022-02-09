@@ -75,8 +75,8 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
     const {
         register,
         handleSubmit,
-        formState: { errors },
-    } = useForm<ExistenceCheckRequest>({ resolver: joiResolver(schema) });
+        formState: { errors, isValid },
+    } = useForm<ExistenceCheckRequest>({ resolver: joiResolver(schema), mode: 'onChange' });
 
     const onSubmit = (data: ExistenceCheckRequest): void => check(data);
 
@@ -119,7 +119,7 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                         type="button"
                         onClick={handleSubmit(onSubmit)}
                         className="oph-button oph-button-primary"
-                        disabled={!!Object.keys(errors).length}
+                        disabled={!isValid || loading}
                     >
                         {translate('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                     </button>
