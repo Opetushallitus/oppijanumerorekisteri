@@ -10,6 +10,7 @@ import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../
 import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import { Link } from 'react-router';
 import Button from '../../../../common/button/Button';
+import { SpinnerInButton } from '../../../../common/icons/SpinnerInButton';
 import './CreateWithSSN.css';
 
 type OwnProps = {
@@ -121,6 +122,7 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                         className="oph-button oph-button-primary"
                         disabled={!isValid || loading}
                     >
+                        <SpinnerInButton show={loading} />
                         {translate('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
                     </button>
                 </div>
