@@ -31,4 +31,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps)(FormPicker) as React.FC<Props>;
+export default connect<StateProps, {}, Props, RootState>(mapStateToProps)(FormPicker);

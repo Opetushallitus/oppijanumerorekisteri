@@ -148,11 +148,8 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
+    ...state.existenceCheck,
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
-    loading: state.existenceCheck.loading,
-    oid: state.existenceCheck.oid,
-    msgKey: state.existenceCheck.msgKey,
-    status: state.existenceCheck.status,
 });
 
 const mapDispatchToProps = {
