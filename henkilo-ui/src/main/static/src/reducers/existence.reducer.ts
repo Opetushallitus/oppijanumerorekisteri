@@ -6,10 +6,10 @@ import {
 } from '../actions/actiontypes';
 
 export type ExistenceCheckRequest = {
-    ssn: string;
-    firstName: string;
-    nickName: string;
-    lastName: string;
+    hetu: string;
+    etunimet: string;
+    kutsumanimi: string;
+    sukunimi: string;
 };
 
 export type ExistenceCheckReponse = {

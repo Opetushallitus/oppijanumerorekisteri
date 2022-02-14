@@ -3,22 +3,22 @@ import { schema } from './CreateWithSSN';
 describe('CreateWithSSN', () => {
     describe('Verify form validation schema', () => {
         const valid = {
-            ssn: '000000-0000',
-            firstName: 'X Æ A-12',
-            nickName: 'Æ',
-            lastName: 'Musk',
+            hetu: '000000-0000',
+            etunimet: 'X Æ A-12',
+            kutsumanimi: 'Æ',
+            sukunimi: 'Musk',
         };
 
         test.each([
             ['Accepts valid input', valid, true],
-            ['Rejects empty ssn', { ...valid, ssn: '' }, false],
-            ['Rejects empty name', { ...valid, firstName: '' }, false],
-            ['Rejects empty nick', { ...valid, nickName: '' }, false],
-            ['Rejects empty last', { ...valid, lastName: '' }, false],
-            ['Rejects incorrect ssn', { ...valid, ssn: 'test' }, false],
-            ['Rejects incorrect nick', { ...valid, nickName: 'test' }, false],
-            ['Rejects multiple nicks', { ...valid, nickName: 'X Æ A-12' }, true],
-            ['Accepts multiple lastNames', { ...valid, lastName: 'X Æ A-12' }, true],
+            ['Rejects empty ssn', { ...valid, hetu: '' }, false],
+            ['Rejects empty name', { ...valid, etunimet: '' }, false],
+            ['Rejects empty nick', { ...valid, kutsumanimi: '' }, false],
+            ['Rejects empty last', { ...valid, sukunimi: '' }, false],
+            ['Rejects incorrect ssn', { ...valid, hetu: 'test' }, false],
+            ['Rejects incorrect nick', { ...valid, kutsumanimi: 'test' }, false],
+            ['Rejects multiple nicks', { ...valid, kutsumanimi: 'X Æ A-12' }, true],
+            ['Accepts multiple lastNames', { ...valid, sukunimi: 'X Æ A-12' }, true],
         ])('%s', (_, input, expected) => {
             expect(!!!schema.validate(input).error).toEqual(expected);
         });

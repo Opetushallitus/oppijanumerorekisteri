@@ -29,19 +29,19 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 export const schema = Joi.object({
-    ssn: Joi.string()
+    hetu: Joi.string()
         .trim(true)
         .regex(/^\d{6}[A+-]\d{3}[0-9A-z]$/)
         .required(),
-    firstName: Joi.string().trim(true).required(),
-    nickName: Joi.string()
+    etunimet: Joi.string().trim(true).required(),
+    kutsumanimi: Joi.string()
         .trim(true)
         .custom((nickName, { state }) => {
-            if (state.ancestors[0]['firstName'].includes(nickName)) return nickName;
+            if (state.ancestors[0]['etunimet'].includes(nickName)) return nickName;
             throw new Error();
         })
         .required(),
-    lastName: Joi.string().trim(true).required(),
+    sukunimi: Joi.string().trim(true).required(),
 });
 
 type FormField = {
@@ -51,19 +51,19 @@ type FormField = {
 
 const formFields: FormField[] = [
     {
-        name: 'ssn',
+        name: 'hetu',
         localizationKey: 'HENKILO_HETU',
     },
     {
-        name: 'firstName',
+        name: 'etunimet',
         localizationKey: 'HENKILO_ETUNIMET',
     },
     {
-        name: 'nickName',
+        name: 'kutsumanimi',
         localizationKey: 'HENKILO_KUTSUMANIMI',
     },
     {
-        name: 'lastName',
+        name: 'sukunimi',
         localizationKey: 'HENKILO_SUKUNIMI',
     },
 ];
