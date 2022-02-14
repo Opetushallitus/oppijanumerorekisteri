@@ -659,10 +659,10 @@ public class YksilointiServiceImpl implements YksilointiService {
 
     @Override
     public Optional<String> exists(final HenkiloExistenceCheckDto details) {
-        return henkiloRepository.findByHetu(details.getSsn())
+        return henkiloRepository.findByHetu(details.getHetu())
                 .map(henkilo -> compareOnrDetails(henkilo, details))
                 .orElseGet(() ->
-                        vtjClient.fetchHenkilo(details.getSsn())
+                        vtjClient.fetchHenkilo(details.getHetu())
                                 .map(henkilo -> compareVtjDetails(henkilo, details))
                                 .orElseThrow(NotFoundException::new));
     }
@@ -680,9 +680,9 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private boolean detailsMatch(final String firstName, final String nickName, final String lastName, final HenkiloExistenceCheckDto details) {
-        return isSimilar(firstName, details.getFirstName()) &&
-                isSimilar(nickName, details.getNickName()) &&
-                isSimilar(lastName, details.getLastName());
+        return isSimilar(firstName, details.getEtunimet()) &&
+                isSimilar(nickName, details.getKutsumanimi()) &&
+                isSimilar(lastName, details.getSukunimi());
     }
 
     private boolean isOppija(String oid) {

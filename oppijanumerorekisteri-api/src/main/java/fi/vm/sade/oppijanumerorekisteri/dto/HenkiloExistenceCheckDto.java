@@ -18,23 +18,23 @@ public class HenkiloExistenceCheckDto {
 
     @NotNull(message = "Cannot be empty")
     @ValidateHetu
-    private final String ssn;
+    private final String hetu;
 
     @NotNull(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
-    private final String firstName;
+    private final String etunimet;
 
     @NotNull(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+$")
-    private final String nickName;
+    private final String kutsumanimi;
 
     @NotNull(message = "Cannot be empty")
     @Pattern(message = "Invalid pattern. Must contain an alphabetic character", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
-    private final String lastName;
+    private final String sukunimi;
 
     @JsonIgnore
     @AssertTrue(message = "Nick name must be one of the first names")
     public boolean isNicknameOk() {
-        return firstName != null && nickName != null && Arrays.asList(firstName.toLowerCase().split(" ")).contains(nickName.toLowerCase());
+        return etunimet != null && kutsumanimi != null && Arrays.asList(etunimet.toLowerCase().split(" ")).contains(kutsumanimi.toLowerCase());
     }
 }
