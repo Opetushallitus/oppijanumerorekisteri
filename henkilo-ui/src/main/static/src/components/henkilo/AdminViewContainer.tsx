@@ -18,6 +18,7 @@ import {
 import {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchAllKayttooikeusryhmasForHenkilo,
+    updateHaettuKayttooikeusryhma,
 } from '../../actions/kayttooikeusryhma.actions';
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import HenkiloViewPage from './HenkiloViewPage';
@@ -60,6 +61,14 @@ type DispatchProps = {
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
     fetchOmattiedotOrganisaatios: () => any;
+    updateHaettuKayttooikeusryhma: (
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        oidHenkilo: { oid: string },
+        hylkaysperuste: string
+    ) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -114,6 +123,7 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchHenkiloYksilointitieto,
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
+    updateHaettuKayttooikeusryhma,
     fetchOmattiedotOrganisaatios,
     fetchHenkiloSlaves,
     clearHenkilo,
