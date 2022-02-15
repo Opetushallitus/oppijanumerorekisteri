@@ -1,4 +1,4 @@
-import { schema } from './CreateWithSSN';
+import { schema } from './ExistenceCheck';
 
 describe('CreateWithSSN', () => {
     describe('Verify form validation schema', () => {

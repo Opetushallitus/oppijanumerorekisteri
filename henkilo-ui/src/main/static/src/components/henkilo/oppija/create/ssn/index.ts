@@ -1,3 +1,3 @@
-import component from './CreateWithSSN';
+import component from './Container';
 
 export default component;

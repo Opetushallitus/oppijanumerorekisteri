@@ -1,32 +1,22 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import classNames from 'classnames';
-import type { RootState } from '../../../../../reducers';
 import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../reducers/existence.reducer';
-import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import { Link } from 'react-router';
 import Button from '../../../../common/button/Button';
 import { SpinnerInButton } from '../../../../common/icons/SpinnerInButton';
-import './CreateWithSSN.css';
+import './ExistenceCheck.css';
 
-type OwnProps = {
-    goBack: () => void;
-};
-
-type StateProps = ExistenceCheckState & {
+type Props = ExistenceCheckState & {
     translate: (key: string) => string;
-};
-
-type DispatchProps = {
     clear: () => void;
     check: (payload: ExistenceCheckRequest) => void;
+    cache: (payload: ExistenceCheckRequest) => void;
+    create: () => void;
 };
-
-type Props = OwnProps & StateProps & DispatchProps;
 
 export const schema = Joi.object({
     hetu: Joi.string()
@@ -68,10 +58,11 @@ const formFields: FormField[] = [
     },
 ];
 
-export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check, status, oid, msgKey }) => {
+const ExistenceCheck: React.FC<Props> = ({ translate, clear, check, cache, create, loading, status, oid, msgKey }) => {
     React.useEffect(() => {
         clear();
-    }, [clear]);
+        cache(undefined);
+    }, [clear, cache]);
 
     const {
         register,
@@ -80,11 +71,13 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
         formState: { errors, isValid },
     } = useForm<ExistenceCheckRequest>({ resolver: joiResolver(schema), mode: 'onChange' });
 
-    const onSubmit = (data: ExistenceCheckRequest): void => check(data);
+    const onSubmit = (data: ExistenceCheckRequest): void => {
+        cache(data);
+        check(data);
+    };
 
     return (
-        <div className="wrapper">
-            <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
+        <>
             {msgKey && (
                 <div
                     className={classNames('check-result', {
@@ -94,12 +87,12 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                     })}
                 >
                     <ReactMarkdown>{translate(msgKey)}</ReactMarkdown>
-                    {oid && (
+                    {status === 200 && (
                         <b>
                             <Link to={`/oppija/${oid}`}>{oid}</Link>
                         </b>
                     )}
-                    {status === 204 && <Button>Nappi joka ei tee vielä mitään</Button>}
+                    {status === 204 && <Button action={create}>{translate('HENKILO_LUOYHTEYSTIETO')}</Button>}
                 </div>
             )}
             <form>
@@ -131,6 +124,7 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                         type="button"
                         onClick={() => {
                             clear();
+                            cache(undefined);
                             reset();
                         }}
                         className="oph-button oph-button-primary margin-left"
@@ -139,25 +133,9 @@ export const CreateWithSSN: React.FC<Props> = ({ translate, goBack, clear, check
                         {translate('PERUUTA')}
                     </button>
                 </div>
-                <div className="oph-field">
-                    <Button action={goBack}>{translate('TAKAISIN_LINKKI')}</Button>
-                </div>
             </form>
-        </div>
+        </>
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    ...state.existenceCheck,
-    translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
-});
-
-const mapDispatchToProps = {
-    clear: clearExistenceCheck,
-    check: doExistenceCheck,
-};
-
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(
-    mapStateToProps,
-    mapDispatchToProps
-)(CreateWithSSN);
+export default ExistenceCheck;
