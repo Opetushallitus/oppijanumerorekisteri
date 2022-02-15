@@ -33,6 +33,7 @@ import { notificationList, NotificationListState } from './notification.reducer'
 import { linkitykset, HenkiloLinkitysState } from './henkiloLinkitys.reducer';
 import { reportReducer, AccessRightsReportState } from './report.reducer';
 import existinceCheckReducer, { ExistenceCheckState } from './existence.reducer';
+import createPersonReducer, { CreatePersonState } from './create.reducer';
 
 export type RootState = {
     routing: unknown;
@@ -62,6 +63,7 @@ export type RootState = {
     linkitykset: HenkiloLinkitysState;
     report: AccessRightsReportState;
     existenceCheck: ExistenceCheckState;
+    createPerson: CreatePersonState;
 };
 
 const rootReducer = combineReducers<RootState>({
@@ -92,6 +94,7 @@ const rootReducer = combineReducers<RootState>({
     linkitykset,
     report: reportReducer,
     existenceCheck: existinceCheckReducer,
+    createPerson: createPersonReducer,
 });
 
 export default rootReducer;

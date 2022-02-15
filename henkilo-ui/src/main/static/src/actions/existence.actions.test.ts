@@ -21,7 +21,7 @@ beforeEach(() => {
 
 describe('Existence check action creator', () => {
     const dispatch = jest.fn();
-    const actionCreator = doExistenceCheck({ ssn: '', firstName: '', nickName: '', lastName: '' });
+    const actionCreator = doExistenceCheck({ hetu: '', etunimet: '', kutsumanimi: '', sukunimi: '' });
 
     test('Fetches data', async () => {
         httpWithStatus.post = jest.fn().mockResolvedValue([{ oid: '' }, 204]);
