@@ -14,6 +14,10 @@
 - ES6
 - NPM 5
 
+## Kehittäminen
+
+Lokaalikehitys onnistuu helpoiten käyttämällä tarkoitukseen kehitettyä [välityspalvelinta](nginx).
+
 ## Ennakkovaatimukset
 
 - Asennettu Java 11

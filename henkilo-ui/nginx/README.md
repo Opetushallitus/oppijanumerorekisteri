@@ -1,21 +1,29 @@
 # Easy local setup for UI development
 
-*How I Learned to Stop Worrying and Love the Bomb*
+_How I Learned to Stop Worrying and Love the Bomb_
+
+## TL;DR
+
+- `cd src/main/static`
+- `npm install`
+- `npm run dev`
+- Navigate to http://localhost:8080
 
 ## Purpose
 
 To get local UI development environment up and running with minimal hassle
 
 Want:
-* Minimal configuration
-* Fast feedback loop (e.g. webpack hot reload)
-* By-pass any CORS issues
 
-## Prerequisites 
+- Minimal configuration
+- Fast feedback loop (e.g. webpack hot reload)
+- By-pass any CORS issues
 
-* node + npm
-* docker
-* docker-compose
+## Prerequisites
+
+- node + npm
+- docker
+- docker-compose
 
 ## Approach
 
@@ -23,15 +31,16 @@ Want:
 
 [//]: # (image source: http://www.plantuml.com/plantuml/uml/JOr1RiKW34JtdC9YpmMwg7AFgWiALa41cnf8qjj_-0fIDcW6pvlPQhFIUaxAkiO2lQ8enxam8JMWtqZNmv_uKwpRmLRGItiyO507YbOkSVUWnnScBdaYI4SKfgdrvBW4fUOC6CydcSzxvFt2iAlt0tH0scDYqoC8_dMihUexkE1HDvCs9U0MK1x1LMI-lAq1_VVQci0w5k7hNwiDoVUSNW00)
 
-* UI Access via nginx proxy
-* henkilo-ui requests proxied to local webpack dev server (with hot reload support!)
-* All other (+ some henkilo-ui) requests proxied to selected developement environment (see [nginx.conf](nginx.conf)) 
+- UI Access via nginx proxy
+- henkilo-ui requests proxied to local webpack dev server (with hot reload support!)
+- All other (+ some henkilo-ui) requests proxied to selected developement environment (see [nginx.conf](nginx.conf))
 
 ### Setup
 
 Components are run in following ports
-* nginx: 8080
-* webpack: 3000
+
+- nginx: 8080
+- webpack: 3000
 
 ## Steps
 
@@ -42,12 +51,17 @@ Components are run in following ports
 
 ## Troubleshooting
 
+### I seem to be logged in as some strange "Varius Strabo" guy
+
+Just hard-reload the page. This is a feature of other part of the whole. Authentication is not properly
+picked up by _virkailija raamit_ component.
+
 ### There is something wrong with docker
 
 Nginx needs to access services in host machine. Some platforms (mac, win) has made this easy by adding
-virtual domain name *host.docker.internal* which resolves to host address.
+virtual domain name _host.docker.internal_ which resolves to host address.
 
-*host.docker.internal* can be replaced by IP address of the host or by some other clever trick.
+_host.docker.internal_ can be replaced by IP address of the host or by some other clever trick.
 
 ### I want to connect to different development environment
 
