@@ -1,13 +1,12 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import classNames from 'classnames';
 import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../reducers/existence.reducer';
-import { Link } from 'react-router';
 import Button from '../../../../common/button/Button';
 import { SpinnerInButton } from '../../../../common/icons/SpinnerInButton';
+import StatusNotification from './StatusNotification';
 import './ExistenceCheck.css';
 
 type Props = ExistenceCheckState & {
@@ -78,23 +77,7 @@ const ExistenceCheck: React.FC<Props> = ({ translate, clear, check, cache, creat
 
     return (
         <>
-            {msgKey && (
-                <div
-                    className={classNames('check-result', {
-                        'oph-alert-success': status === 200,
-                        'oph-alert-info': status === 204,
-                        'oph-alert-error': status >= 400,
-                    })}
-                >
-                    <ReactMarkdown>{translate(msgKey)}</ReactMarkdown>
-                    {status === 200 && (
-                        <b>
-                            <Link to={`/oppija/${oid}`}>{oid}</Link>
-                        </b>
-                    )}
-                    {status === 204 && <Button action={create}>{translate('HENKILO_LUOYHTEYSTIETO')}</Button>}
-                </div>
-            )}
+            <StatusNotification {...{ translate, create, status, oid, msgKey }} />
             <form>
                 {formFields.map((field) => (
                     <div className="oph-field oph-field-is-required">
@@ -111,27 +94,21 @@ const ExistenceCheck: React.FC<Props> = ({ translate, clear, check, cache, creat
                     </div>
                 ))}
                 <div className="oph-field">
-                    <button
-                        type="button"
-                        onClick={handleSubmit(onSubmit)}
-                        className="oph-button oph-button-primary"
-                        disabled={!isValid || loading}
-                    >
+                    <Button action={handleSubmit(onSubmit)} disabled={!isValid || loading}>
                         <SpinnerInButton show={loading} />
                         {translate('KUTSUTUT_VIRKAILIJAT_HAKU_HENKILO')}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
+                    </Button>
+                    <Button
+                        className="margin-left"
+                        action={() => {
                             clear();
                             cache(undefined);
                             reset();
                         }}
-                        className="oph-button oph-button-primary margin-left"
                         disabled={loading}
                     >
                         {translate('PERUUTA')}
-                    </button>
+                    </Button>
                 </div>
             </form>
         </>
