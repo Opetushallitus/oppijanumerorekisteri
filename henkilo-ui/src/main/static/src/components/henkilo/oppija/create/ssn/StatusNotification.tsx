@@ -22,11 +22,7 @@ const StatusNotification: React.FC<Props> = ({ translate, create, msgKey, status
                 })}
             >
                 <ReactMarkdown>{translate(msgKey)}</ReactMarkdown>
-                {status === 200 && (
-                    <b>
-                        <Link to={`/oppija/${oid}`}>{oid}</Link>
-                    </b>
-                )}
+                {status === 200 && <Link to={`/oppija/${oid}`}>{oid}</Link>}
                 {status === 204 && <Button action={create}>{translate('HENKILO_LUOYHTEYSTIETO')}</Button>}
             </div>
         ) : null}
