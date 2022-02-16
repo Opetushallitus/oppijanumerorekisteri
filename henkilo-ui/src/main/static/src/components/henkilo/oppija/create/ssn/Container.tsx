@@ -4,7 +4,7 @@ import type { RootState } from '../../../../../reducers';
 import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../reducers/existence.reducer';
 import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import type { CreatePersonState } from '../../../../../reducers/create.reducer';
-import { createPerson } from '../../../../../actions/create.actions';
+import { createPerson as createPersonImported } from '../../../../../actions/create.actions';
 import Button from '../../../../common/button/Button';
 import Create from './Create';
 import DetailsForm from './DetailsForm';
@@ -79,7 +79,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
 const mapDispatchToProps = {
     clearDetailsForm: clearExistenceCheck,
     checkExistence: doExistenceCheck,
-    createPerson: createPerson,
+    createPerson: createPersonImported,
 };
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, mapDispatchToProps)(Container);
