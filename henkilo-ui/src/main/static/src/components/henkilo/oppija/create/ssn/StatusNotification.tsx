@@ -4,7 +4,7 @@ import type { ExistenceCheckState } from '../../../../../reducers/existence.redu
 import { Link } from 'react-router';
 import Button from '../../../../common/button/Button';
 import ReactMarkdown from 'react-markdown';
-import './ExistenceCheck.css';
+import './DetailsForm.css';
 
 type Props = Omit<ExistenceCheckState, 'loading'> & {
     translate: (key: string) => string;

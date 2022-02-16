@@ -1,6 +1,6 @@
-import { schema } from './ExistenceCheck';
+import { schema } from './DetailsForm';
 
-describe('CreateWithSSN', () => {
+describe('DetailsForm', () => {
     describe('Verify form validation schema', () => {
         const valid = {
             hetu: '000000-0000',

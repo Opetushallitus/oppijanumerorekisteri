@@ -7,7 +7,7 @@ import type { CreatePersonState } from '../../../../../reducers/create.reducer';
 import { createPerson } from '../../../../../actions/create.actions';
 import Button from '../../../../common/button/Button';
 import Create from './Create';
-import ExistenceCheck from './ExistenceCheck';
+import DetailsForm from './DetailsForm';
 
 type OwnProps = {
     goBack: () => void;
@@ -20,7 +20,7 @@ type StateProps = {
 };
 
 type DispatchProps = {
-    clearExistenceCheckForm: () => void;
+    clearDetailsForm: () => void;
     checkExistence: (payload: ExistenceCheckRequest) => void;
     createPerson: (payload: ExistenceCheckRequest) => void;
 };
@@ -33,7 +33,7 @@ export const Container: React.FC<Props> = ({
     person,
     existence,
     checkExistence,
-    clearExistenceCheckForm,
+    clearDetailsForm,
 }) => {
     const [create, setCreate] = React.useState<boolean>(false);
     const [data, setData] = React.useState<ExistenceCheckRequest>();
@@ -52,12 +52,12 @@ export const Container: React.FC<Props> = ({
                         }}
                     />
                 ) : (
-                    <ExistenceCheck
+                    <DetailsForm
                         {...{
                             ...existence,
                             translate,
                             check: checkExistence,
-                            clear: clearExistenceCheckForm,
+                            clear: clearDetailsForm,
                             cache: setData,
                             create: () => setCreate(true),
                         }}
@@ -76,7 +76,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
 });
 
 const mapDispatchToProps = {
-    clearExistenceCheckForm: clearExistenceCheck,
+    clearDetailsForm: clearExistenceCheck,
     checkExistence: doExistenceCheck,
     createPerson: createPerson,
 };

@@ -7,7 +7,7 @@ import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../
 import Button from '../../../../common/button/Button';
 import { SpinnerInButton } from '../../../../common/icons/SpinnerInButton';
 import StatusNotification from './StatusNotification';
-import './ExistenceCheck.css';
+import './DetailsForm.css';
 
 type Props = ExistenceCheckState & {
     translate: (key: string) => string;
@@ -57,7 +57,7 @@ const formFields: FormField[] = [
     },
 ];
 
-const ExistenceCheck: React.FC<Props> = ({ translate, clear, check, cache, create, loading, status, oid, msgKey }) => {
+const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, loading, status, oid, msgKey }) => {
     React.useEffect(() => {
         clear();
         cache(undefined);
@@ -115,4 +115,4 @@ const ExistenceCheck: React.FC<Props> = ({ translate, clear, check, cache, creat
     );
 };
 
-export default ExistenceCheck;
+export default DetailsForm;

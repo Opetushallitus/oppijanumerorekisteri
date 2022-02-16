@@ -4,7 +4,7 @@ import type { CreatePersonState } from '../../../../../reducers/create.reducer';
 import { Link } from 'react-router';
 import ReactMarkdown from 'react-markdown';
 import Loader from '../../../../common/icons/Loader';
-import './ExistenceCheck.css';
+import './DetailsForm.css';
 
 type Props = CreatePersonState & {
     translate: (key: string) => string;
