@@ -20,8 +20,8 @@ export const FormPicker: React.FC<Props & StateProps> = ({ L, setFormType }) => 
         <div className="wrapper">
             <div className="form-picker">
                 <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
-                <Button action={() => setFormType('ssn')}>{translate('OPPIJAN_LUONTI_SSN')}</Button>
-                <Button action={() => setFormType('anonymous')}>{translate('OPPIJAN_LUONTI_ANONYMOUS')}</Button>
+                <Button action={() => setFormType('ssn')}>{translate('OPPIJAN_LUONTI_HETULLINEN')}</Button>
+                <Button action={() => setFormType('anonymous')}>{translate('OPPIJAN_LUONTI_HETUTON')}</Button>
             </div>
         </div>
     );

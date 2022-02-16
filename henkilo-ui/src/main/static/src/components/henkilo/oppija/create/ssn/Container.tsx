@@ -34,6 +34,7 @@ export const Container: React.FC<Props> = ({
     existence,
     checkExistence,
     clearDetailsForm,
+    createPerson,
 }) => {
     const [create, setCreate] = React.useState<boolean>(false);
     const [data, setData] = React.useState<ExistenceCheckRequest>();

@@ -80,7 +80,7 @@ const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, 
             <StatusNotification {...{ translate, create, status, oid, msgKey }} />
             <form>
                 {formFields.map((field) => (
-                    <div className="oph-field oph-field-is-required">
+                    <div className="oph-field oph-field-is-required" key={field.name}>
                         <label className="oph-label">{translate(field.localizationKey)}</label>
                         <input
                             className={classNames('oph-input', {
@@ -107,7 +107,7 @@ const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, 
                         }}
                         disabled={loading}
                     >
-                        {translate('PERUUTA')}
+                        {translate('TYHJENNA')}
                     </Button>
                 </div>
             </form>

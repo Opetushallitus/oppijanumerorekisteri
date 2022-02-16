@@ -12,27 +12,29 @@ type Props = CreatePersonState & {
     payload: ExistenceCheckRequest;
 };
 
-const Success: React.FC<Props> = ({ translate, oid }) => (
+type ResultProps = Pick<Props, 'translate' | 'status' | 'oid'>;
+
+const Success: React.FC<ResultProps> = ({ translate, oid }) => (
     <div className="create-result oph-alert-success">
         <ReactMarkdown>{translate('CREATE_PERSON_SUCCESS')}</ReactMarkdown>
         <Link to={`/oppija/${oid}`}>{oid}</Link>
     </div>
 );
 
-const Error: React.FC<Props> = ({ translate }) => (
+const Error: React.FC<ResultProps> = ({ translate }) => (
     <div className="create-result oph-alert-error">
         <ReactMarkdown>{translate('CREATE_PERSON_FAILURE')}</ReactMarkdown>
     </div>
 );
 
-const Result: React.FC<Props> = (props) => (props.status === 201 ? <Success {...props} /> : <Error {...props} />);
+const Result: React.FC<ResultProps> = (props) => (props.status === 201 ? <Success {...props} /> : <Error {...props} />);
 
-const Wrapper: React.FC<Props> = (props) => {
+const Create: React.FC<Props> = ({ createPerson, payload, loading, ...rest }) => {
     React.useEffect(() => {
-        props.createPerson(props.payload);
-    }, [props, props.createPerson, props.payload]);
+        createPerson(payload);
+    }, [createPerson, payload]);
 
-    return props.loading ? <Loader /> : <Result {...props} />;
+    return loading ? <Loader /> : <Result {...rest} />;
 };
 
-export default Wrapper;
+export default Create;

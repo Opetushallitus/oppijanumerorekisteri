@@ -53,12 +53,12 @@ export const statusToMessage = {
     200: 'EXISTENCE_CHECK_ONR',
     204: 'EXISTENCE_CHECK_VTJ',
     400: 'EXISTENCE_CHECK_BAD_REQUEST',
-    404: 'EXISTENCE_CHECK_NOK',
+    404: 'EXISTENCE_CHECK_NOT_FOUND',
     409: 'EXISTENCE_CHECK_CONFLICT',
 };
 
 export const existenceCheckReducer = (
-    state: ExistenceCheckState = initialState,
+    state: ExistenceCheckState = initialState, // NOSONAR
     action: ClearAction | RequestAction | SuccessAction | FailureAction | never
 ): ExistenceCheckState => {
     switch (action.type) {

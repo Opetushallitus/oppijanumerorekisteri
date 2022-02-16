@@ -23,7 +23,7 @@ const createPersonRequestFailure = (status: number): FailureAction => ({
 export const createPerson = (payload: ExistenceCheckRequest) => async (dispatch, state: () => any) => {
     dispatch(createPersonRequest());
     try {
-        const url = urls.url('oppijanumerorekisteri-service.oppija');
+        const url = urls.url('oppijanumerorekisteri-service.henkilo');
         const [data, status] = await httpWithStatus.post<string>(url, payload);
         if (status === 201) {
             dispatch(createPersonRequestSuccess(data, status));
