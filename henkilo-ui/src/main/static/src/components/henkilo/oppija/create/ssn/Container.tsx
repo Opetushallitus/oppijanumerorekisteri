@@ -5,7 +5,7 @@ import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../
 import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import type { CreatePersonState } from '../../../../../reducers/create.reducer';
 import { createPerson as createPersonImported } from '../../../../../actions/create.actions';
-import Button from '../../../../common/button/Button';
+import CloseButton from '../../../../common/button/CloseButton';
 import Create from './Create';
 import DetailsForm from './DetailsForm';
 
@@ -42,6 +42,9 @@ export const Container: React.FC<Props> = ({
     return (
         <div className="wrapper">
             <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
+            <span className="float-right">
+                <CloseButton closeAction={goBack} />
+            </span>
             <div className="oph-field">
                 {create ? (
                     <Create
@@ -64,7 +67,6 @@ export const Container: React.FC<Props> = ({
                         }}
                     />
                 )}
-                <Button action={goBack}>{translate('TAKAISIN_LINKKI')}</Button>
             </div>
         </div>
     );

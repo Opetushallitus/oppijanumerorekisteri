@@ -29,12 +29,12 @@ const Error: React.FC<ResultProps> = ({ translate }) => (
 
 const Result: React.FC<ResultProps> = (props) => (props.status === 201 ? <Success {...props} /> : <Error {...props} />);
 
-const Create: React.FC<Props> = ({ createPerson, payload, loading, ...rest }) => {
+const Create: React.FC<Props> = ({ createPerson, payload, ...rest }) => {
     React.useEffect(() => {
         createPerson(payload);
     }, [createPerson, payload]);
 
-    return loading ? <Loader /> : <Result {...rest} />;
+    return rest.status ? <Result {...rest} /> : <Loader />;
 };
 
 export default Create;

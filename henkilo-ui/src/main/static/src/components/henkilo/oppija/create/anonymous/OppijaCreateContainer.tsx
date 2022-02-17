@@ -19,6 +19,7 @@ import OppijaCreateDuplikaatit from './OppijaCreateDuplikaatit';
 import { addGlobalNotification } from '../../../../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../../../common/Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../../../../../types/notification.types';
+import CloseButton from '../../../../common/button/CloseButton';
 
 type OwnProps = {
     router: BrowserRouter;
@@ -74,9 +75,11 @@ class OppijaCreateContainer extends React.Component<Props, State> {
         return (
             <div className="wrapper">
                 <span className="oph-h2 oph-bold">{this.props.L['OPPIJAN_LUONTI_OTSIKKO']}</span>
+                <span style={{ float: 'right' }}>
+                    <CloseButton closeAction={this.props.goBack} />
+                </span>
                 {this.state.naytaDuplikaatit === false ? (
                     <OppijaCreateForm
-                        goBack={this.props.goBack}
                         tallenna={this.tallenna}
                         locale={this.props.locale}
                         L={this.props.L}
