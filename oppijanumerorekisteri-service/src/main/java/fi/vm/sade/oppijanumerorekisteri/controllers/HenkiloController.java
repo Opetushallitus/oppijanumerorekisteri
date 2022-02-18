@@ -250,7 +250,7 @@ public class HenkiloController {
         Optional<String> oid = yksilointiService.exists(details);
         return oid.isPresent() ?
             new ResponseEntity<>(new ExistenceCheckResult(oid.get()), HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+                ResponseEntity.noContent().build();
     }
 
 
