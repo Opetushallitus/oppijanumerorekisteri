@@ -25,8 +25,9 @@ export const schema = Joi.object({
     etunimet: Joi.string().trim(true).required(),
     kutsumanimi: Joi.string()
         .trim(true)
-        .custom((nickName, { state }) => {
-            if (state.ancestors[0]['etunimet'].includes(nickName)) return nickName;
+        .custom((kutsumanimi, { state }) => {
+            const firstnames = state.ancestors[0]['etunimet'].split(' ').map((s: string) => s.toLowerCase());
+            if (firstnames.includes(kutsumanimi.toLowerCase())) return kutsumanimi;
             throw new Error();
         })
         .required(),
