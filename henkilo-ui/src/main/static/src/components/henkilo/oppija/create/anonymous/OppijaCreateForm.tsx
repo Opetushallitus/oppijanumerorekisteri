@@ -347,11 +347,11 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
         if (errors.length > 0) {
             this.setState({ submitted: true, errors: errors });
         } else {
-            await this.setState({ disabled: true, loading: true });
+            this.setState({ disabled: true, loading: true });
             try {
                 await this.props.tallenna(this.getHenkilo());
             } catch (error) {
-                await this.setState({ disabled: false, loading: true });
+                this.setState({ disabled: false, loading: true });
             }
         }
     };

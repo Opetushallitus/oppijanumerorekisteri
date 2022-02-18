@@ -134,19 +134,19 @@ class OppijaCreateContainer extends React.Component<Props, State> {
         window.location.reload();
     };
 
-    haeDuplikaatit = async (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
+    haeDuplikaatit = (oppija: HenkiloCreate): Promise<Array<HenkiloDuplicate>> => {
         const url = urls.url(
             'oppijanumerorekisteri-service.henkilo.duplikaatit',
             oppija.etunimet,
             oppija.kutsumanimi,
             oppija.sukunimi
         );
-        return await http.get(url);
+        return http.get(url);
     };
 
-    luoOppija = async (oppija: HenkiloCreate): Promise<string> => {
+    luoOppija = (oppija: HenkiloCreate): Promise<string> => {
         const url = urls.url('oppijanumerorekisteri-service.oppija');
-        return await http.post(url, oppija); // palauttaa oid
+        return http.post(url, oppija); // palauttaa oid
     };
 }
 
