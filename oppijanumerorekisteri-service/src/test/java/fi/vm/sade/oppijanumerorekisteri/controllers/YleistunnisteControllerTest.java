@@ -11,7 +11,6 @@ import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,82 +178,6 @@ public class YleistunnisteControllerTest {
         YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
         oppijaCreateDto.getHenkilo().setHetu("hetu1");
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
-
-        mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @Ignore("Irrelevant if kansalaisuus is omitted")
-    @WithMockUser("user1")
-    public void putOppijaShouldRequireKansalaisuusFromNull() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
-        // oppijaCreateDto.getHenkilo().setKansalaisuus(null);
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
-
-        mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @Ignore("Irrelevant if kansalaisuus is omitted")
-    @WithMockUser("user1")
-    public void putOppijaShouldRequireKansalaisuusFromEmpty() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
-        // oppijaCreateDto.getHenkilo().setKansalaisuus(emptySet());
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
-
-        mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @Ignore("Irrelevant if kansalaisuus is omitted")
-    @WithMockUser("user1")
-    public void putOppijaShouldRequireKansalaisuusFromNullDto() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
-        //oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((KoodiUpdateDto) null).collect(toSet()));
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
-
-        mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @Ignore("Irrelevant if kansalaisuus is omitted")
-    @WithMockUser("user1")
-    public void putOppijaShouldRequireKansalaisuusFromNullKoodi() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
-        // oppijaCreateDto.getHenkilo().setKansalaisuus(Stream.of((String) null).map(KoodiUpdateDto::new).collect(toSet()));
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
