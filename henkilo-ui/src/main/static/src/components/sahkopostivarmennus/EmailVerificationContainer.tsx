@@ -5,6 +5,9 @@ import { EmailVerificationPage } from './EmailVerificationPage';
 import { Localisations } from '../../types/localisation.type';
 import { urls } from 'oph-urls-js';
 import { http } from '../../http';
+import { addGlobalNotification } from '../../actions/notification.actions';
+import { NOTIFICATIONTYPES } from '../../components/common/Notification/notificationtypes';
+import type { RootState } from '../../reducers';
 import Loader from '../common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
 
@@ -13,11 +16,17 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     loginToken: string;
     locale: Locale;
     L: Localisations;
 };
+
+type DispatchProps = {
+    errorNotification: (title: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     loading: boolean;
@@ -32,7 +41,7 @@ class EmailVerificationContainer extends React.Component<Props, State> {
         super(props);
         this.state = {
             loading: true,
-            henkilo: {},
+            henkilo: { yhteystiedotRyhma: [] },
         };
     }
 
@@ -40,7 +49,11 @@ class EmailVerificationContainer extends React.Component<Props, State> {
         if (this.props.loginToken) {
             const url = urls.url('kayttooikeus-service.cas.henkilo.bylogintoken', this.props.loginToken);
             this.setState({ loading: true });
-            const henkilo = await http.get(url);
+            const henkilo = await http.get(url).catch((error) => {
+                this.props.errorNotification(this.props.L['REKISTEROIDY_TEMP_TOKEN_INVALID']);
+                this.setState({ loading: false });
+                throw error;
+            });
             this.setState({ henkilo, loading: false });
         }
     }
@@ -55,15 +68,31 @@ class EmailVerificationContainer extends React.Component<Props, State> {
                 L={this.props.L}
                 loginToken={this.props.loginToken}
                 router={this.props.router}
+                errorNotification={this.props.errorNotification}
             />
         );
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
     loginToken: ownProps.params['loginToken'],
     locale: ownProps.params['locale'],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(EmailVerificationContainer);
+const mapDispatchToProps = (dispatch): DispatchProps => ({
+    errorNotification: (title: string) =>
+        dispatch(
+            addGlobalNotification({
+                key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
+                title,
+                type: NOTIFICATIONTYPES.ERROR,
+                autoClose: 10000,
+            })
+        ),
+});
+
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(
+    mapStateToProps,
+    mapDispatchToProps
+)(EmailVerificationContainer);
