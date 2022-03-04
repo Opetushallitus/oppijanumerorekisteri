@@ -1,10 +1,10 @@
 import React from 'react';
 import type { ExistenceCheckRequest } from '../../../../../reducers/existence.reducer';
 import type { CreatePersonState } from '../../../../../reducers/create.reducer';
-import { Link } from 'react-router';
 import ReactMarkdown from 'react-markdown';
 import Button from '../../../../common/button/Button';
 import Loader from '../../../../common/icons/Loader';
+import CopyToClipboard from './CopyToClipboard';
 import './DetailsForm.css';
 
 type Props = CreatePersonState & {
@@ -20,7 +20,7 @@ const Success: React.FC<ResultProps> = ({ translate, oid, reset }) => (
     <>
         <div className="create-result oph-alert-success">
             <ReactMarkdown>{translate('CREATE_PERSON_SUCCESS')}</ReactMarkdown>
-            <Link to={`/oppija/${oid}`}>{oid}</Link>
+            <CopyToClipboard text={oid} translate={translate} />
         </div>
         <Button action={reset}>{translate('HENKILO_LUOYHTEYSTIETO')}</Button>
     </>
