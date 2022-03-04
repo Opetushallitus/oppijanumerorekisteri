@@ -53,6 +53,11 @@ export const Container: React.FC<Props> = ({
                             payload: data,
                             translate,
                             createPerson,
+                            reset: () => {
+                                clearDetailsForm();
+                                setData(undefined);
+                                setCreate(false);
+                            },
                         }}
                     />
                 ) : (
