@@ -58,6 +58,13 @@ const formFields: FormField[] = [
     },
 ];
 
+const formFieldErrors: Record<string, string> = {
+    'string.empty': 'LOMAKE_PAKOLLINEN_TIETO',
+    'any.custom': 'HENKILO_KUTSUMANIMI_VALIDOINTI',
+};
+
+const resolveErrorKey = (key: string): string => formFieldErrors[key] || 'LOMAKE_KENTTA_SISALTAA_VIRHEITA';
+
 const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, loading, status, oid, msgKey }) => {
     React.useEffect(() => {
         clear();
@@ -92,6 +99,11 @@ const DetailsForm: React.FC<Props> = ({ translate, clear, check, cache, create, 
                             {...register(field.name)}
                             onFocus={clear}
                         />
+                        {!!errors[field.name] && (
+                            <div className="oph-field-text oph-error">
+                                {translate(resolveErrorKey(errors[field.name].type))}
+                            </div>
+                        )}
                     </div>
                 ))}
                 <div className="oph-field">

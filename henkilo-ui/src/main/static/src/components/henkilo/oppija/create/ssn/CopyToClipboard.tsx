@@ -8,7 +8,7 @@ type Props = {
 
 const CopyToClipboard: React.FC<Props> = ({ text, translate }) => (
     <div className="oph-field" style={{ display: 'flex' }}>
-        <input type="text" className="oph-input" value={text || ''} disabled style={{ width: 'fit-content' }} />
+        <input type="text" className="oph-input" value={text || ''} readOnly style={{ width: 'fit-content' }} />
         <Button action={() => navigator.clipboard.writeText(text)}>{translate('KOPIOI')}</Button>
     </div>
 );
