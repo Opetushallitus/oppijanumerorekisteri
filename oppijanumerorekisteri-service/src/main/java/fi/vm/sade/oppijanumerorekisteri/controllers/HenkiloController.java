@@ -243,7 +243,9 @@ public class HenkiloController {
             @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
             @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),
     })
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', " +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI', " +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI')")
     @PostMapping(value = "/exists")
     public ResponseEntity<ExistenceCheckResult> existenceCheck(@ApiParam("Henkilön yksilöivät tiedot.")
                                                                @RequestBody @Validated HenkiloExistenceCheckDto details) {
