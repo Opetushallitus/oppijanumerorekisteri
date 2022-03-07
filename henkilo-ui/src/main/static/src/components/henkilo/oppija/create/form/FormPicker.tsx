@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import type { FormType } from './types';
 import type { Localisations } from '../../../../../types/localisation.type';
 import type { RootState } from '../../../../../reducers';
+import AccessRightCheck from '../../../../../access/AccessRightCheck';
 import Button from '../../../../common/button/Button';
 import './FormPicker.css';
 
@@ -21,7 +22,9 @@ export const FormPicker: React.FC<Props & StateProps> = ({ L, setFormType }) => 
             <div className="form-picker">
                 <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
                 <Button action={() => setFormType('ssn')}>{translate('OPPIJAN_LUONTI_HETULLINEN')}</Button>
-                <Button action={() => setFormType('anonymous')}>{translate('OPPIJAN_LUONTI_HETUTON')}</Button>
+                <AccessRightCheck roles={['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']}>
+                    <Button action={() => setFormType('anonymous')}>{translate('OPPIJAN_LUONTI_HETUTON')}</Button>
+                </AccessRightCheck>
             </div>
         </div>
     );
