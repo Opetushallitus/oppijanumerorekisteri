@@ -21,7 +21,9 @@ export const FormPicker: React.FC<Props & StateProps> = ({ L, setFormType }) => 
         <div className="wrapper">
             <div className="form-picker">
                 <span className="oph-h2 oph-bold">{translate('OPPIJAN_LUONTI_OTSIKKO')}</span>
-                <Button action={() => setFormType('ssn')}>{translate('OPPIJAN_LUONTI_HETULLINEN')}</Button>
+                <AccessRightCheck roles={['OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI']}>
+                    <Button action={() => setFormType('ssn')}>{translate('OPPIJAN_LUONTI_HETULLINEN')}</Button>
+                </AccessRightCheck>
                 <AccessRightCheck roles={['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI']}>
                     <Button action={() => setFormType('anonymous')}>{translate('OPPIJAN_LUONTI_HETUTON')}</Button>
                 </AccessRightCheck>
