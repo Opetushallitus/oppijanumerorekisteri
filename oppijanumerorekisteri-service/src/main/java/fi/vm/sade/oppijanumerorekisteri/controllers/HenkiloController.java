@@ -226,7 +226,8 @@ public class HenkiloController {
     @ApiOperation(value = "Henkilö luonti",
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "bad input")})
-    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', " +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI')")
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public String createHenkiloFromHenkiloCreateDto(@ApiParam("Henkilön sukupuolen kelvolliset arvot löytyvät sukupuoli koodistosta.")
@@ -244,7 +245,6 @@ public class HenkiloController {
             @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),
     })
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', " +
-            "'ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI', " +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI')")
     @PostMapping(value = "/exists")
     public ResponseEntity<ExistenceCheckResult> existenceCheck(@ApiParam("Henkilön yksilöivät tiedot.")
