@@ -1,12 +1,12 @@
 import React from 'react';
 import { AnojaKayttooikeusryhmaData, KayttooikeusryhmaData } from '../common/henkilo/HenkiloViewOpenKayttooikeusanomus';
 import Loader from '../common/icons/Loader';
-import { Locale } from '../../types/locale.type';
 import { path } from 'ramda';
 import './AnojaKayttoooikeusryhma.css';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../common/Notification/notificationtypes';
-import { L10n } from '../../types/localisation.type';
+import type { Locale } from '../../types/locale.type';
+import type { L10n } from '../../types/localisation.type';
 import { localize } from '../../utilities/localisation.util';
 import ReactTable from 'react-table';
 

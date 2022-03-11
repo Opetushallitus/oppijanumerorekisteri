@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import AdminViewContainer from './AdminViewContainer';
 import VirkailijaViewContainer from './VirkailijaViewContainer';
@@ -21,26 +22,30 @@ type OwnProps = {
     henkilo: HenkiloState;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     path: string;
     omattiedot: OmattiedotState;
     oidHenkilo: string;
     ownOid: string;
     henkiloType: string;
-    router: any;
     l10n: L10n;
     locale: Locale;
-    externalPermissionService?: string | null;
-    fetchHenkilo: (arg0: string) => Promise<any>;
-    fetchOmattiedot: () => Promise<any>;
+    externalPermissionService?: string;
+    isAdmin: boolean;
 };
 
+type DispatchProps = {
+    fetchHenkilo: (arg0: string) => void;
+    fetchOmattiedot: () => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 /*
  * Henkilo-näkymä. Päätellään näytetäänkö admin/virkailija/oppija -versio henkilöstä, vai siirrytäänkö omattiedot-sivulle
  */
 class HenkiloViewContainer extends React.Component<Props> {
-    async componentDidMount() {
-        await this.props.fetchOmattiedot();
+    componentDidMount() {
+        this.props.fetchOmattiedot();
         if (this.props.oidHenkilo && this.props.ownOid && this.props.ownOid === this.props.oidHenkilo) {
             this.props.router.replace('/omattiedot');
         }
@@ -68,7 +73,7 @@ class HenkiloViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     path: ownProps.location.pathname,
     oidHenkilo: ownProps.params['oid'],
     henkiloType: ownProps.params['henkiloType'],
@@ -80,7 +85,7 @@ const mapStateToProps = (state, ownProps) => ({
     externalPermissionService: path(['location', 'query', 'permissionCheckService'], ownProps),
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchOmattiedot,
 })(HenkiloViewContainer);

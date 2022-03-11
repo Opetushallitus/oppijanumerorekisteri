@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import Button from '../../button/Button';
 import { Localisations } from '../../../../types/localisation.type';
 
@@ -9,9 +10,10 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+type Props = OwnProps & StateProps;
 
 const EditButtons = (props: Props) => (
     <div>
@@ -29,8 +31,8 @@ const EditButtons = (props: Props) => (
     </div>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(EditButtons);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(EditButtons);

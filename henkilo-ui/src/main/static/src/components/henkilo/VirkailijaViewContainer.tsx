@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import HenkiloViewPage from '../../components/henkilo/HenkiloViewPage';
 import {
     fetchKayttaja,
@@ -33,13 +34,17 @@ type OwnProps = {
     oidHenkilo: string;
 };
 
-type Props = OwnProps & {
-    clearHenkilo: () => void;
+type StateProps = {
     henkilo: HenkiloState;
     organisaatioCache: OrganisaatioCache;
     koodisto: KoodistoState;
     l10n: L10n;
     locale: Locale;
+    kayttooikeus: KayttooikeusRyhmaState;
+};
+
+type DispatchProps = {
+    clearHenkilo: () => void;
     fetchHenkilo: (arg0: string) => void;
     fetchHenkiloOrgs: (arg0: string) => void;
     fetchHenkiloSlaves: (arg0: string) => void;
@@ -51,10 +56,19 @@ type Props = OwnProps & {
     fetchAllKayttooikeusryhmasForHenkilo: (arg0: string) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
-    fetchOmattiedotOrganisaatios: () => any;
+    fetchOmattiedotOrganisaatios: () => void;
+    updateHaettuKayttooikeusryhma: (
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        oidHenkilo: { oid: string },
+        hylkaysperuste: string
+    ) => void;
     getGrantablePrivileges: (arg0: string) => void;
-    kayttooikeus: KayttooikeusRyhmaState;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class VirkailijaViewContainer extends React.Component<Props> {
     async componentDidMount() {
@@ -90,7 +104,7 @@ class VirkailijaViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: RootState): StateProps => {
     return {
         henkilo: state.henkilo,
         l10n: state.l10n.localisations,
@@ -98,11 +112,10 @@ const mapStateToProps = (state) => {
         locale: state.locale,
         kayttooikeus: state.kayttooikeus,
         organisaatioCache: state.organisaatio.cached,
-        notifications: state.notifications,
     };
 };
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloSlaves,
     fetchHenkiloOrgs,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import { Link } from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import { fetchHenkiloLinkitykset } from '../../../../actions/henkiloLinkitys.actions';
@@ -10,10 +11,15 @@ type OwnProps = {
     type: 'henkiloVarmentajas' | 'henkiloVarmennettavas';
 };
 
-type HenkiloVarmentajaSuhdeProps = OwnProps & {
-    fetchHenkiloLinkitykset: (arg0: string) => () => Promise<void>;
+type StateProps = {
     linkitetyt: HenkiloLinkitysState;
 };
+
+type DispatchProps = {
+    fetchHenkiloLinkitykset: (oidHenkilo: string) => void;
+};
+
+type HenkiloVarmentajaSuhdeProps = OwnProps & StateProps & DispatchProps;
 
 /**
  * Hakee ja näyttää henkilön varmentajasuhteen LabelValueGroup:ina. Näitä suhteita on vain virkailijoilla joten linkki
@@ -68,10 +74,10 @@ class HenkiloVarmentajaSuhde extends React.Component<HenkiloVarmentajaSuhdeProps
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     linkitetyt: state.linkitykset,
 });
 
-export default connect<HenkiloVarmentajaSuhdeProps, OwnProps>(mapStateToProps, { fetchHenkiloLinkitykset })(
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, { fetchHenkiloLinkitykset })(
     HenkiloVarmentajaSuhde
 );

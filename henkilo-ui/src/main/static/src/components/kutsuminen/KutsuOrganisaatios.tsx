@@ -8,7 +8,7 @@ import moment from 'moment';
 import PropertySingleton from '../../globals/PropertySingleton';
 
 type Props = {
-    addedOrgs: Array<KutsuOrganisaatio>;
+    addedOrgs: readonly KutsuOrganisaatio[];
     L: Localisations;
     henkilo: Henkilo;
     addOrganisaatio: (arg0: KutsuOrganisaatio) => void;

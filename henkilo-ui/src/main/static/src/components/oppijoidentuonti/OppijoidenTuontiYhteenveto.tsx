@@ -1,11 +1,11 @@
 import React from 'react';
-import { OppijaTuontiYhteenveto } from '../../types/domain/oppijanumerorekisteri/oppijatuontiyhteenveto.types';
+import type { TuontiYhteenvetoState } from '../../reducers/oppijoidentuonti.reducer';
+import type { Localisations } from '../../types/localisation.type';
 import './OppijoidenTuontiYhteenveto.css';
 
 type Props = {
-    // TODO: Typedef clearly b0rked --- revisit some day
-    state: OppijaTuontiYhteenveto & { loading?: boolean; data?: OppijaTuontiYhteenveto };
-    L: Record<string, string>;
+    state: TuontiYhteenvetoState;
+    L: Localisations;
 };
 
 /**
@@ -18,11 +18,11 @@ class OppijoidenTuontiYhteenveto extends React.Component<Props> {
                 {!this.props.state.loading && (
                     <dl className="side-by-side inverse">
                         <dt>{this.props.L['OPPIJOIDEN_TUONTI_YHTEENVETO_ONNISTUNEET']}</dt>
-                        <dd>{this.props.state.data?.onnistuneet}</dd>
+                        <dd>{this.props.state.data.onnistuneet}</dd>
                         <dt>{this.props.L['OPPIJOIDEN_TUONTI_YHTEENVETO_VIRHEET']}</dt>
-                        <dd>{this.props.state.data?.virheet}</dd>
+                        <dd>{this.props.state.data.virheet}</dd>
                         <dt>{this.props.L['OPPIJOIDEN_TUONTI_YHTEENVETO_KESKENERAISET']}</dt>
-                        <dd>{this.props.state.data?.keskeneraiset}</dd>
+                        <dd>{this.props.state.data.keskeneraiset}</dd>
                     </dl>
                 )}
             </div>

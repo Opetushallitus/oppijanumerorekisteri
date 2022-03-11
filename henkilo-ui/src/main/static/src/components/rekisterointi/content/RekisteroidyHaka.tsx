@@ -1,28 +1,32 @@
 import React from 'react';
 import { urls } from 'oph-urls-js';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
+import type { Localisations } from '../../../types/localisation.type';
 import Asiointikieli from '../../common/henkilo/labelvalues/Asiointikieli';
 import IconButton from '../../common/button/IconButton';
 import HakaIcon from '../../common/icons/HakaIcon';
 
-type Props = {
+type OwnProps = {
     henkilo: {
         henkilo: {
             etunimet: string;
             sukunimi: string;
             kutsumanimi: string;
         };
-        username: string;
-        password: string;
-        passwordAgain: string;
+        username?: string;
+        password?: string;
+        passwordAgain?: string;
     };
     updatePayloadModel: () => void;
-    koodisto: {
-        kieli: string[];
-    };
     temporaryKutsuToken: string;
-    L: Record<string, string>;
 };
+
+type StateProps = {
+    L: Localisations;
+};
+
+type Props = OwnProps & StateProps;
 
 class RekisteroidyPerustiedot extends React.Component<Props> {
     render() {
@@ -31,7 +35,6 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
             <div>
                 <p className="oph-h3 oph-bold">{this.props.L['REKISTEROIDY_HAKA_OTSIKKO']}</p>
                 <Asiointikieli
-                    koodisto={this.props.koodisto}
                     henkiloUpdate={this.props.henkilo.henkilo}
                     updateModelFieldAction={this.props.updatePayloadModel}
                 />
@@ -43,8 +46,8 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect(mapStateToProps)(RekisteroidyPerustiedot);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(RekisteroidyPerustiedot);

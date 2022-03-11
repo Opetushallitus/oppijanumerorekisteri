@@ -13,8 +13,8 @@ import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 
 type Props = {
-    addedOrgs: Array<KutsuOrganisaatio>;
-    modalCloseFn: (arg0: React.SyntheticEvent<HTMLElement>) => void;
+    addedOrgs: readonly KutsuOrganisaatio[];
+    modalCloseFn: (arg0: React.SyntheticEvent<EventTarget>) => void;
     modalOpen: boolean;
     basicInfo: KutsuBasicInfo;
     resetFormValues: () => void;

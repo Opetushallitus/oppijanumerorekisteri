@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import { Link } from 'react-router';
 import { fetchHenkilo, fetchHenkiloMaster, unlinkHenkilo } from '../../../../actions/henkilo.actions';
 import LabelValue from './LabelValue';
@@ -14,16 +15,20 @@ type OwnProps = {
     oppija?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
+    L: Localisations;
     kayttooikeudet: Array<KayttooikeusOrganisaatiot>;
     henkilo: HenkiloState;
-    L: Localisations;
-    fetchHenkiloMaster: (arg0: string) => void;
-    fetchHenkilo: (arg0: string) => void;
-    unlinkHenkilo: (arg0: string, arg1: string) => void;
     isLoading: boolean;
 };
 
+type DispatchProps = {
+    fetchHenkiloMaster: (oid: string) => void;
+    fetchHenkilo: (oid: string) => void;
+    unlinkHenkilo: (masterOid: string, slaveOid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 class MasterHenkilo extends React.Component<Props> {
     componentDidMount() {
         this.props.fetchHenkiloMaster(this.props.oidHenkilo);
@@ -85,18 +90,14 @@ class MasterHenkilo extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        l10n: state.l10n.localisations,
-        locale: state.locale,
-        L: state.l10n.localisations[state.locale],
-        isLoading: state.henkilo.master.masterLoading,
-        henkilo: state.henkilo,
-        kayttooikeudet: state.omattiedot.organisaatiot,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    L: state.l10n.localisations[state.locale],
+    isLoading: state.henkilo.master.masterLoading,
+    henkilo: state.henkilo,
+    kayttooikeudet: state.omattiedot.organisaatiot,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkiloMaster,
     unlinkHenkilo,
     fetchHenkilo,

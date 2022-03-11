@@ -3,17 +3,17 @@ import './MyonnettavatKayttooikeusryhmat.css';
 import { Locale } from '../../../types/locale.type';
 import * as R from 'ramda';
 import OphSelect from '../../common/select/OphSelect';
+import type { Option, Options } from 'react-select';
 import ItemList from './ItemList';
-import { ReactSelectOption } from '../../../types/react-select.types';
 import { Localisations } from '../../../types/localisation.type';
 
 type Props = {
     kayttooikeus: any;
     L: Localisations;
     locale: Locale;
-    kayttooikeusryhmaSelectAction: (selection: ReactSelectOption) => void;
-    kayttooikeusryhmaSelections: Array<ReactSelectOption>;
-    removeKayttooikeusryhmaSelectAction: (selection: ReactSelectOption) => void;
+    kayttooikeusryhmaSelectAction: (selection: Option<string>) => void;
+    kayttooikeusryhmaSelections: Options<string>;
+    removeKayttooikeusryhmaSelectAction: (selection: Option<string>) => void;
 };
 
 type State = {
@@ -27,7 +27,7 @@ export default class MyonnettavatKayttooikeusryhmat extends React.Component<Prop
 
     componentWillMount() {
         const lang = this.props.locale.toUpperCase();
-        const kayttooikeusryhmaOptions: Array<ReactSelectOption> = this.props.kayttooikeus.allKayttooikeusryhmas
+        const kayttooikeusryhmaOptions: Options<string> = this.props.kayttooikeus.allKayttooikeusryhmas
             .filter((kayttooikeusryhma) => !kayttooikeusryhma.passivoitu)
             .map((kayttooikeusryhma) => {
                 const textObject = R.find(R.propEq('lang', lang))(

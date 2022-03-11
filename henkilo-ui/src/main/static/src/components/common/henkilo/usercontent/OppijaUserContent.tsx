@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import AbstractUserContent from './AbstractUserContent';
 import Sukunimi from '../labelvalues/Sukunimi';
 import Etunimet from '../labelvalues/Etunimet';
@@ -37,14 +38,19 @@ type OwnProps = {
     isValidForm: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: any;
     L: Localisations;
     locale: Locale;
-    yksiloiHenkilo: () => void;
     omattiedot: OmattiedotState;
 };
+
+type DispatchProps = {
+    yksiloiHenkilo: (oid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class OppijaUserContent extends React.Component<Props> {
     render() {
@@ -121,7 +127,7 @@ class OppijaUserContent extends React.Component<Props> {
     };
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
@@ -129,6 +135,6 @@ const mapStateToProps = (state) => ({
     omattiedot: state.omattiedot,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     yksiloiHenkilo,
 })(OppijaUserContent);

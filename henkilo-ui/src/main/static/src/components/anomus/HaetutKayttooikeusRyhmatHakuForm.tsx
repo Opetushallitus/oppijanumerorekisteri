@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
@@ -16,12 +17,13 @@ import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModa
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import type { Option } from 'react-select';
 
 type OwnProps = {
     onSubmit: (arg0: {}) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
     organisaatios: Array<OrganisaatioHenkilo>;
@@ -29,16 +31,24 @@ type Props = OwnProps & {
     isOphVirkailija: boolean;
     haetutKayttooikeusryhmatLoading: boolean;
     ryhmat: { ryhmas: Array<{}> };
-    fetchOmattiedotOrganisaatios: () => any;
     omattiedotOrganisaatiosLoading: boolean;
 };
+
+type DispatchProps = {
+    fetchOmattiedotOrganisaatios: () => any;
+};
+
+type Props = StateProps & DispatchProps & OwnProps;
 
 type State = {
     searchTerm: string;
     naytaKaikki: boolean;
-    selectedOrganisaatio: OrganisaatioSelectObject | null | undefined;
-    selectedRyhma: string | null | undefined;
+    selectedOrganisaatio?: OrganisaatioSelectObject;
+    selectedRyhma?: string;
 };
+
+const isReactSelectOption = (something: any): something is Option<string> =>
+    something?.label instanceof String && something?.value instanceof String;
 
 class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -108,8 +118,13 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                                     onChange={this.onRyhmaChange.bind(this)}
                                     maxHeight={400}
                                     optionHeight={(object) => {
-                                        const length = object.option.label.length;
-                                        return 25 + (length / 50) * 20;
+                                        // Select options handling is not so consistent within the application, thus using
+                                        // type guard to cast to "proper" type. fallback value of 100 is just a wild guess
+                                        // Additional note type _should_ be: { label: string, value: string }
+                                        const length = isReactSelectOption(object.option)
+                                            ? object.option.label.length
+                                            : 100;
+                                        return 25 + (length / 50) * 20; // no clue?
                                     }}
                                 ></OphSelect>
                             </span>
@@ -184,7 +199,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     organisaatios: state.omattiedot.organisaatios,
@@ -195,6 +210,6 @@ const mapStateToProps = (state) => ({
     ryhmat: state.ryhmatState,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
 })(HaetutKayttooikeusRyhmatHakuForm);

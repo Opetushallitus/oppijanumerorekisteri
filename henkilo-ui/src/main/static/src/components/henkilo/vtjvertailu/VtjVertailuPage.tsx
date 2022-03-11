@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
@@ -24,13 +25,16 @@ type OwnProps = {
     params: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     oidHenkilo: string;
     henkiloType: string;
     henkilo: HenkiloState;
     ownOid: string;
     omattiedot: OmattiedotState;
     L: Localisations;
+};
+
+type DispatchProps = {
     fetchHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
     fetchHenkiloMaster: (arg0: string) => void;
@@ -39,6 +43,8 @@ type Props = OwnProps & {
     fetchHenkiloSlaves: (arg0: string) => void;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class VtjVertailuPage extends React.Component<Props> {
     async componentDidMount() {
@@ -99,19 +105,16 @@ class VtjVertailuPage extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        oidHenkilo: ownProps.params['oid'],
-        henkiloType: ownProps.params['henkiloType'],
-        henkilo: state.henkilo,
-        ownOid: state.omattiedot.data.oid,
-        omattiedotLoading: state.omattiedot.omattiedotLoading,
-        omattiedot: state.omattiedot,
-        L: state.l10n.localisations[state.locale],
-    };
-};
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+    oidHenkilo: ownProps.params['oid'],
+    henkiloType: ownProps.params['henkiloType'],
+    henkilo: state.henkilo,
+    ownOid: state.omattiedot.data.oid,
+    omattiedot: state.omattiedot,
+    L: state.l10n.localisations[state.locale],
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloYksilointitieto,
     fetchHenkiloMaster,

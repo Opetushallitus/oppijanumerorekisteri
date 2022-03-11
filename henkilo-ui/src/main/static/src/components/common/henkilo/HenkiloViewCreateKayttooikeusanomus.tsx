@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import './HenkiloViewCreateKayttooikeusanomus.css';
 import OphSelect from '../select/OphSelect';
 import Button from '../button/Button';
@@ -13,6 +14,7 @@ import Loader from '../icons/Loader';
 import {
     createKayttooikeusanomus,
     fetchOrganisaatioKayttooikeusryhmat,
+    fetchAllKayttooikeusAnomusForHenkilo,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import { OrganisaatioSelectModal } from '../select/OrganisaatioSelectModal';
@@ -28,22 +30,28 @@ import { HenkiloState } from '../../../reducers/henkilo.reducer';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
+import type { Option } from 'react-select';
 
-type Props = {
+type OwnProps = {
     l10n: L10n;
     locale: Locale;
-    omattiedot: OmattiedotState;
-    organisaatios: OrganisaatioState;
+    omattiedot?: OmattiedotState;
+    organisaatios?: OrganisaatioState;
     ryhmas?: RyhmatState;
     henkilo: HenkiloState;
     ryhmaOptions: Array<{ label: string; value: string }>;
     kayttooikeusryhmat: Array<any>;
+    organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;
+};
+
+type DispatchProps = {
     fetchOrganisaatioKayttooikeusryhmat: (arg0: string) => void;
-    organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
     createKayttooikeusanomus: (arg0: any) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
 };
+
+type Props = OwnProps & DispatchProps;
 
 type State = {
     showInstructions: boolean;
@@ -53,7 +61,7 @@ type State = {
     kayttooikeusryhmaSelections: Array<any>;
     perustelut: string;
     emailOptions: {
-        emailSelection?: any;
+        emailSelection?: string;
         missingEmail: boolean;
         showMissingEmailNotification: boolean;
         options?: any;
@@ -316,11 +324,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return { missingEmail: true, showMissingEmailNotification: true };
     }
 
-    _changeEmail(value: string) {
+    _changeEmail(selection: Option<string>) {
         this.setState({
             emailOptions: {
                 ...this.state.emailOptions,
-                emailSelection: value,
+                emailSelection: selection.value,
             },
         });
     }
@@ -396,7 +404,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         });
     }
 
-    _parseEmailOptions(henkilo: HenkiloState): Array<{ value: string; label: string }> {
+    _parseEmailOptions(henkilo: HenkiloState): { value: string; label: string }[] {
         let emails = [];
         if (henkilo.henkilo.yhteystiedotRyhma) {
             henkilo.henkilo.yhteystiedotRyhma.forEach((yhteystietoRyhma) => {
@@ -469,7 +477,8 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 }
 
-export default connect(() => ({}), {
+export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
+    fetchAllKayttooikeusAnomusForHenkilo,
     fetchOrganisaatioKayttooikeusryhmat,
     createKayttooikeusanomus,
     addGlobalNotification,

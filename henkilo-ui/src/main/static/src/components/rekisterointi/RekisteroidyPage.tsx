@@ -119,7 +119,6 @@ class RekisteroidyPage extends React.Component<Props, State> {
                     <div className="wrapper flex-item-1">
                         <RekisteroidyHaka
                             henkilo={{ henkilo: this.state.henkilo }}
-                            koodisto={this.props.koodisto}
                             updatePayloadModel={this.updatePayloadModelInput.bind(this)}
                             temporaryKutsuToken={this.props.kutsu.temporaryToken}
                         />

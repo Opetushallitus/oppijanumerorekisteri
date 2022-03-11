@@ -12,8 +12,6 @@ import type { KoodistoState } from '../../reducers/koodisto.reducer';
 
 type OwnProps = {
     location: Location;
-    fetchKieliKoodisto: () => void;
-    fetchKutsuByToken: (arg: string) => void;
 };
 
 type StateProps = {
@@ -28,11 +26,16 @@ type StateProps = {
     omattiedotLoading: boolean;
     authToken: string;
     temporaryTokenInvalid: boolean;
+};
+
+type DispatchProps = {
+    fetchKieliKoodisto: () => void;
+    fetchKutsuByToken: (token: string) => void;
     removeNotification: (status: string, group: string, id: string) => any;
     createHenkiloByToken: (temporaryToken: string, payload: any) => any;
 };
 
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 class RekisteroidyContainer extends React.Component<Props> {
     loggedIn;
@@ -66,7 +69,7 @@ class RekisteroidyContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state: RootState, ownProps: OwnProps) => {
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
     return {
         l10n: state.l10n.localisations,
         koodistoLoading: state.koodisto.kieliKoodistoLoading,
@@ -82,7 +85,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps) => {
     };
 };
 
-export default connect(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchKieliKoodisto,
     fetchKutsuByToken,
     createHenkiloByToken,

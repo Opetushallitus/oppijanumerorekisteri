@@ -48,9 +48,7 @@ export class EmailVerificationList extends React.Component<Props> {
                                     {this.props.emailFieldCount > 1 ? (
                                         <i
                                             className="fa fa-times-circle oph-blue email-verification-remove"
-                                            onClick={(event: React.SyntheticEvent<HTMLElement>) =>
-                                                this.props.onEmailRemove(ryhmaIndex, yhteystietoIndex)
-                                            }
+                                            onClick={() => this.props.onEmailRemove(ryhmaIndex, yhteystietoIndex)}
                                         ></i>
                                     ) : null}
                                 </span>

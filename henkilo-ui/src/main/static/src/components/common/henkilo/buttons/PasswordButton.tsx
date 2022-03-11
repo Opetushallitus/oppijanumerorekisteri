@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
+import type { NotificationsState } from '../../../../reducers/notifications.reducer';
 import PopupButton from '../../button/PopupButton';
 import PasswordPopupContent from '../../button/PasswordPopupContent';
 import { removeNotification } from '../../../../actions/notifications.actions';
@@ -11,9 +13,16 @@ type OwnProps = {
     oidHenkilo: string;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
+    notifications: NotificationsState;
 };
+
+type DispatchProps = {
+    removeNotification: (status: string, group: string, id: string) => any;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class PasswordButton extends React.Component<Props> {
     render() {
@@ -36,13 +45,11 @@ class PasswordButton extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        notifications: state.notifications,
-        L: state.l10n.localisations[state.locale],
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    notifications: state.notifications,
+    L: state.l10n.localisations[state.locale],
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     removeNotification,
 })(PasswordButton);

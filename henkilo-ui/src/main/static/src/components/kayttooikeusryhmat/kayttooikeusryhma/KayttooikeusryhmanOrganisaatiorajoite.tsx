@@ -2,7 +2,7 @@ import React from 'react';
 import ItemList from './ItemList';
 import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import { Locale } from '../../../types/locale.type';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { Options } from 'react-select';
 import { Localisations } from '../../../types/localisation.type';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { OrganisaatioSelectModal } from '../../common/select/OrganisaatioSelectModal';
@@ -22,9 +22,9 @@ type Props = {
     organisaatioSelectAction: (organisaatio: OrganisaatioSelectObject) => void;
     removeOrganisaatioSelectAction: (selection: OrganisaatioSelectObject) => void;
     oppilaitostyypitSelections: Array<string>;
-    oppilaitostyypitSelectAction: (selection: React.SyntheticEvent<HTMLInputElement>) => void;
+    oppilaitostyypitSelectAction: (selection: React.ChangeEvent<HTMLInputElement>) => void;
     organisaatiotyypitSelections: Array<string>;
-    organisaatiotyypitSelectAction: (selection: React.SyntheticEvent<HTMLInputElement>) => void;
+    organisaatiotyypitSelectAction: (selection: React.ChangeEvent<HTMLInputElement>) => void;
     omattiedotOrganisaatiosLoading: boolean;
 };
 
@@ -40,13 +40,13 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
     };
 
     componentWillMount() {
-        const oppilaitostyypitOptions: Array<ReactSelectOption> = this.props.koodisto.oppilaitostyypit.map(
+        const oppilaitostyypitOptions: Options<string> = this.props.koodisto.oppilaitostyypit.map(
             (oppilaitostyyppi) => ({
                 label: oppilaitostyyppi[this.props.locale],
                 value: oppilaitostyyppi.value,
             })
         );
-        const organisaatiotyypitOptions: Array<ReactSelectOption> = this.props.koodisto.organisaatiotyyppiKoodisto.map(
+        const organisaatiotyypitOptions: Options<string> = this.props.koodisto.organisaatiotyyppiKoodisto.map(
             (organisaatiotyyppi) => ({
                 label: toLocalizedText(this.props.locale, organisaatiotyyppi.metadata) || organisaatiotyyppi.koodiUri,
                 value: organisaatiotyyppi.koodiUri,

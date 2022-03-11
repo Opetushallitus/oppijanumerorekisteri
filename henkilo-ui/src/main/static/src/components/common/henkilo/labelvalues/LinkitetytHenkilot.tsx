@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import { Link } from 'react-router';
 import LabelValueGroup from './LabelValueGroup';
 import TextButton from '../../button/TextButton';
@@ -15,13 +16,18 @@ type OwnProps = {
     oppija?: boolean;
 };
 
-type LinkitetytHenkilotProps = OwnProps & {
-    kayttooikeudet: Array<KayttooikeusOrganisaatiot>;
+type StateProps = {
+    kayttooikeudet: KayttooikeusOrganisaatiot[];
     henkilo: HenkiloState;
     L: Localisations;
-    unlinkHenkilo: (arg0: string, arg1: string) => void;
-    fetchHenkiloSlaves: (arg0: string) => void;
 };
+
+type DispatchProps = {
+    unlinkHenkilo: (masterOid: string, slaveOid: string) => void;
+    fetchHenkiloSlaves: (oidHenkilo: string) => void;
+};
+
+type LinkitetytHenkilotProps = OwnProps & StateProps & DispatchProps;
 
 /**
  * Henkilön linkitykset (duplikaattislave- ja varmentaja-suhteet)
@@ -87,12 +93,13 @@ class LinkitetytHenkilot extends React.Component<LinkitetytHenkilotProps> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     henkilo: state.henkilo,
     kayttooikeudet: state.omattiedot.organisaatiot,
 });
 
-export default connect<LinkitetytHenkilotProps, OwnProps>(mapStateToProps, { unlinkHenkilo, fetchHenkiloSlaves })(
-    LinkitetytHenkilot
-);
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
+    unlinkHenkilo,
+    fetchHenkiloSlaves,
+})(LinkitetytHenkilot);

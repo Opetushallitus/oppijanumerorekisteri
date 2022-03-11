@@ -1,22 +1,32 @@
 import Button from './Button';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
+import type { L10n, Localisations } from '../../../types/localisation.type';
+import type { Notification } from '../../../reducers/notifications.reducer';
+import type { Locale } from '../../../types/locale.type';
 import { removeNotification } from '../../../actions/notifications.actions';
 import CSS from 'csstype';
 
-type Props = {
+type OwnProps = {
     id: string;
     inputRef: () => void;
-    removeNotification: (status: string, group: string, id: string) => any;
     styles: Pick<CSS.Properties, 'top' | 'left' | 'position'>;
     arrowDirection: string;
-    notifications: {
-        id: string;
-        notL10nMessage: string;
-        notL10nText: string;
-    }[];
-    L: Record<string, string>;
-}; // & React.HTMLProps<HTMLButtonElement>;
+};
+
+type StateProps = {
+    notifications: Notification[];
+    l10n: L10n;
+    locale: Locale;
+    L: Localisations;
+};
+
+type DispatchProps = {
+    removeNotification: (status: string, group: string, id: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 // Do not use directly but by one of the wrappers of this class.
 class NotificationButton extends React.Component<Props> {
@@ -58,13 +68,13 @@ class NotificationButton extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        notifications: state.notifications.buttonNotifications,
-        l10n: state.l10n.localisations,
-        locale: state.locale,
-        L: state.l10n.localisations[state.locale],
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    notifications: state.notifications.buttonNotifications,
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    L: state.l10n.localisations[state.locale],
+});
 
-export default connect(mapStateToProps, { removeNotification })(NotificationButton);
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, { removeNotification })(
+    NotificationButton
+);

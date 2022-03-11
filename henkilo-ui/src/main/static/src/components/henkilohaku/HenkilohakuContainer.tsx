@@ -1,6 +1,7 @@
 import React from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import Loader from '../common/icons/Loader';
 import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
@@ -8,7 +9,7 @@ import { clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters } from '
 import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { Locale } from '../../types/locale.type';
 import { L10n } from '../../types/localisation.type';
-import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { HenkiloState } from '../../reducers/henkilo.reducer';
 import {
     HenkilohakuCriteria,
     HenkilohakuQueryparameters,
@@ -21,22 +22,27 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     l10n: L10n;
     locale: Locale;
-    fetchOmattiedotOrganisaatios: () => void;
-    fetchAllKayttooikeusryhma: () => void;
     allKayttooikeusryhmasLoading: boolean;
-    fetchAllRyhmas: () => void;
-    henkilohaku: (arg0: HenkilohakuCriteria, arg1: HenkilohakuQueryparameters) => void;
-    henkilohakuCount: (arg0: HenkilohakuCriteria) => void;
-    henkilo: Henkilo;
+    henkilo: HenkiloState;
     henkilohakuState: HenkilohakuState;
-    updateFilters: (arg0: HenkilohakuCriteria) => void;
-    clearHenkilohaku: () => void;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
 };
+
+type DispatchProps = {
+    fetchOmattiedotOrganisaatios: () => void;
+    fetchAllKayttooikeusryhma: () => void;
+    fetchAllRyhmas: () => void;
+    henkilohaku: (arg0: HenkilohakuCriteria, arg1: HenkilohakuQueryparameters) => void;
+    henkilohakuCount: (arg0: HenkilohakuCriteria) => void;
+    updateFilters: (arg0: HenkilohakuCriteria) => void;
+    clearHenkilohaku: () => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class HenkilohakuContainer extends React.Component<Props> {
     initialCriteria: HenkilohakuCriteria = {
@@ -88,20 +94,17 @@ class HenkilohakuContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        l10n: state.l10n.localisations,
-        locale: state.locale,
-        henkilo: state.henkilo,
-        allKayttooikeusryhmasLoading: state.kayttooikeus.allKayttooikeusryhmasLoading,
-        henkilohakuState: state.henkilohakuState,
-        isAdmin: state.omattiedot.isAdmin,
-        ryhmas: state.ryhmatState,
-        omattiedot: state.omattiedot,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    l10n: state.l10n.localisations,
+    locale: state.locale,
+    henkilo: state.henkilo,
+    allKayttooikeusryhmasLoading: state.kayttooikeus.allKayttooikeusryhmasLoading,
+    henkilohakuState: state.henkilohakuState,
+    isAdmin: state.omattiedot.isAdmin,
+    omattiedot: state.omattiedot,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedotOrganisaatios,
     fetchAllKayttooikeusryhma,
     henkilohaku,

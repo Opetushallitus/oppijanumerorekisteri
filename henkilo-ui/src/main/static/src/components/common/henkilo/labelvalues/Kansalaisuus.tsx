@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { ReactSelectOption } from '../../../../types/react-select.types';
+import type { Options } from 'react-select';
 
 type OwnProps = {
     henkiloUpdate: Henkilo;
@@ -13,16 +14,18 @@ type OwnProps = {
     updateModelFieldAction: (arg0: any) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        kansalaisuus: Array<ReactSelectOption>;
+        kansalaisuus: Options<string>;
     };
     locale: Locale;
 };
 
+type Props = OwnProps & StateProps;
+
 const Kansalaisuus = (props: Props) => {
-    const kansalaisuus = props.henkiloUpdate ? props.henkiloUpdate.kansalaisuus : [];
+    const kansalaisuus = props.henkiloUpdate.kansalaisuus || [];
     const disabled = StaticUtils.hasHetuAndIsYksiloity(props.henkilo);
     return (
         <div>
@@ -60,10 +63,10 @@ const Kansalaisuus = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Kansalaisuus);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Kansalaisuus);

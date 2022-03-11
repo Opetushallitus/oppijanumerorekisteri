@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
+import type { HenkiloState } from '../../../../reducers/henkilo.reducer';
+import type { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import LabelValue from './LabelValue';
-import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
 type OwnProps = {
     readOnly: boolean;
@@ -10,9 +11,11 @@ type OwnProps = {
     updateDateFieldAction: () => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
 };
+
+type Props = OwnProps & StateProps;
 
 const Syntymaaika = (props: Props) => {
     return (
@@ -30,8 +33,8 @@ const Syntymaaika = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Syntymaaika);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Syntymaaika);

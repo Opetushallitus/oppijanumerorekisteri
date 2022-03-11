@@ -1,22 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import Columns from 'react-columns';
-import Field, { SelectValue } from '../../field/Field';
+import Field from '../../field/Field';
 import { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
     values: {
         value?: any;
         label?: string;
-        inputValue: string;
+        inputValue?: string;
         disabled?: boolean;
         password?: boolean;
         isError?: boolean;
         date?: string | boolean;
         showOnlyOnWrite?: boolean;
         readOnly?: boolean;
-        selectValue?: SelectValue | Array<SelectValue>;
+        selectValue?: string | string[];
         multiselect?: boolean;
+        data?: {
+            value: string | number;
+            label: any;
+            optionsName: string;
+        }[];
+        clearable?: boolean;
+        className?: string;
     };
     readOnly?: boolean;
     updateModelFieldAction?: (arg0: any) => void;
@@ -26,9 +34,11 @@ type OwnProps = {
     hideLabel?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 const LabelValue = ({
     values,
@@ -67,8 +77,8 @@ const LabelValue = ({
         </div>
     ) : null;
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(LabelValue);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(LabelValue);

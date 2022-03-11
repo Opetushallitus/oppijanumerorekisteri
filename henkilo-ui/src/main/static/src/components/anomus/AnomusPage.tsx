@@ -35,12 +35,12 @@ type Props = {
     fetchAllRyhmas: () => void;
     isAdmin: boolean;
     updateHaettuKayttooikeusryhmaInAnomukset: (
-        arg0: number,
-        arg1: string,
-        arg2: string,
-        arg3: string,
-        arg4: string | null | undefined
-    ) => Promise<any>;
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        hylkaysperuste: string
+    ) => void;
     clearHaettuKayttooikeusryhma: (arg0: number) => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
@@ -175,16 +175,16 @@ class AnomusPage extends React.Component<Props, State> {
         );
     }
 
-    async updateHaettuKayttooikeusryhma(
+    updateHaettuKayttooikeusryhma(
         id: number,
         kayttoOikeudenTila: string,
         alkupvm: string,
         loppupvm: string,
         henkilo: any,
         hylkaysperuste?: string
-    ): Promise<any> {
+    ): void {
         try {
-            await this.props.updateHaettuKayttooikeusryhmaInAnomukset(
+            this.props.updateHaettuKayttooikeusryhmaInAnomukset(
                 id,
                 kayttoOikeudenTila,
                 alkupvm,

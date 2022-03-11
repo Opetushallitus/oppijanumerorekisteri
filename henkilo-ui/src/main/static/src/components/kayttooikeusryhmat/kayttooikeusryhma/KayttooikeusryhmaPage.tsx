@@ -6,8 +6,8 @@ import KayttooikeusryhmatNimi from './KayttooikeusryhmatNimi';
 import KayttooikeusryhmatKuvaus from './KayttooikeusryhmatKuvaus';
 import MyonnettavatKayttooikeusryhmat from './MyonnettavatKayttooikeusryhmat';
 import KayttooikeusryhmatPalvelutJaKayttooikeudet from './KayttooikeusryhmatPalvelutJaKayttooikeudet';
+import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
-import { ReactSelectOption } from '../../../types/react-select.types';
 import { PalvelutState } from '../../../reducers/palvelut.reducer';
 import { KayttooikeusState } from '../../../reducers/kayttooikeus.reducer';
 import { TextGroupModify } from '../../../types/domain/kayttooikeus/textgroup.types';
@@ -38,8 +38,8 @@ type Locales = 'FI' | 'SV' | 'EN';
 export type LocalizableField = Record<Locales, string>;
 
 export type PalveluJaKayttooikeusSelection = {
-    palvelu: ReactSelectOption;
-    kayttooikeus: ReactSelectOption;
+    palvelu: Option<string>;
+    kayttooikeus: Option<string>;
 };
 
 export type SallitutKayttajatyypit = 'PALVELU' | 'VIRKAILIJA';
@@ -51,7 +51,7 @@ export type KayttooikeusryhmaForm = {
     organisaatioSelections: Array<OrganisaatioSelectObject>;
     oppilaitostyypitSelections: Array<string>;
     organisaatiotyypitSelections: Array<string>;
-    kayttooikeusryhmaSelections: Array<ReactSelectOption>;
+    kayttooikeusryhmaSelections: Options<string>;
     palveluJaKayttooikeusSelections: Array<PalveluJaKayttooikeusSelection>;
     sallittuKayttajatyyppi: SallitutKayttajatyypit | null | undefined;
 };
@@ -74,8 +74,8 @@ type Props = {
 
 type State = {
     kayttooikeusryhmaForm: KayttooikeusryhmaForm;
-    palvelutSelection: ReactSelectOption;
-    palveluKayttooikeusSelection: ReactSelectOption;
+    palvelutSelection: Option<string>;
+    palveluKayttooikeusSelection: Option<string>;
     ryhmaRestrictionViite: any;
     toggleTallenna: boolean;
     organisaatios: Array<OrganisaatioSelectObject>;
@@ -294,7 +294,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         return organisaatioViiteRyhmaRestriction || ryhmaRestriction;
     };
 
-    _parseExistingKayttooikeusryhmaSelections = (slaves: any): Array<ReactSelectOption> => {
+    _parseExistingKayttooikeusryhmaSelections = (slaves: any): Options<string> => {
         return slaves.map((slave: Kayttooikeusryhma) => {
             const text: any = R.find((text: any) => text.lang.toLowerCase() === this.props.locale)(slave.nimi.texts);
             return {
@@ -530,12 +530,12 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         });
     };
 
-    _onKayttooikeusryhmaSelection = (selection: ReactSelectOption): void => {
-        const currentKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.kayttooikeusryhmaForm
+    _onKayttooikeusryhmaSelection = (selection: Option<string>): void => {
+        const currentKayttooikeusryhmaSelections: Options<string> = this.state.kayttooikeusryhmaForm
             .kayttooikeusryhmaSelections;
         if (
             !currentKayttooikeusryhmaSelections.some(
-                (kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value === selection.value
+                (kayttooikeusryhma: Option<string>) => kayttooikeusryhma.value === selection.value
             )
         ) {
             this.setState({
@@ -547,9 +547,9 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         }
     };
 
-    _onRemoveKayttooikeusryhmaSelect = (selection: ReactSelectOption): void => {
-        const newKayttooikeusryhmaSelections: Array<ReactSelectOption> = this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.filter(
-            (kayttooikeusryhma: ReactSelectOption) => kayttooikeusryhma.value !== selection.value
+    _onRemoveKayttooikeusryhmaSelect = (selection: Option<string>): void => {
+        const newKayttooikeusryhmaSelections: Options<string> = this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.filter(
+            (kayttooikeusryhma: Option<string>) => kayttooikeusryhma.value !== selection.value
         );
         this.setState({
             kayttooikeusryhmaForm: {
@@ -559,7 +559,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         });
     };
 
-    _onPalvelutSelection = (selection: ReactSelectOption): void => {
+    _onPalvelutSelection = (selection: Option<string>): void => {
         this.setState({
             palvelutSelection: selection,
             palveluKayttooikeusSelection: undefined,
@@ -567,7 +567,7 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         this.props.fetchPalveluKayttooikeus(selection.value);
     };
 
-    _onPalveluKayttooikeusSelection = (selection: ReactSelectOption): void => {
+    _onPalveluKayttooikeusSelection = (selection: Option<string>): void => {
         this.setState({ palveluKayttooikeusSelection: selection });
     };
 
@@ -660,8 +660,8 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         );
     };
 
-    _parseSlaveIds = (): Array<number> => {
-        return this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.map((selection: ReactSelectOption) =>
+    _parseSlaveIds = (): number[] => {
+        return this.state.kayttooikeusryhmaForm.kayttooikeusryhmaSelections.map((selection: Option<string>) =>
             parseInt(selection.value, 10)
         );
     };

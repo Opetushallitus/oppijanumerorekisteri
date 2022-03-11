@@ -1,5 +1,9 @@
 import { FETCH_FRONTPROPERTIES_REQUEST, FETCH_FRONTPROPERTIES_SUCCESS } from '../actions/actiontypes';
 
+export type FrontPropertiesState = {
+    initialized: boolean;
+};
+
 export const frontProperties = (state = { initialized: false }, action) => {
     switch (action.type) {
         case FETCH_FRONTPROPERTIES_REQUEST:

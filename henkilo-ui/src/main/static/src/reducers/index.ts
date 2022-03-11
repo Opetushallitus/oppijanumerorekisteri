@@ -1,56 +1,64 @@
 import { routerReducer as routing } from 'react-router-redux';
 import { combineReducers } from 'redux';
 import l10n, { LocalisationState } from './l10n.reducer';
-import { frontProperties } from './frontProperties.reducer';
+import { frontProperties, FrontPropertiesState } from './frontProperties.reducer';
 import kutsuList, { KutsuListState } from './kutsuList.reducer';
-import { henkilo } from './henkilo.reducer';
+import { henkilo, HenkiloState } from './henkilo.reducer';
 import koodisto, { KoodistoState } from './koodisto.reducer';
-import { prequels } from './prequels.reducer';
+import { prequels, PrequelsState } from './prequels.reducer';
 import omattiedot, { OmattiedotState } from './omattiedot.reducer';
-import { kutsuminenOrganisaatios } from './kutsuminen.reducer';
+import { kutsuminenOrganisaatios, KutsuminenOrganisaatiosState } from './kutsuminen.reducer';
 import { locale } from './locale.reducer';
-import { kayttooikeus } from './kayttooikeusryhma.reducer';
-import { ryhmatState } from './ryhmat.reducer';
-import { OrganisaatioKayttooikeusryhmat } from './organisaatiokayttooikeusryhmat.reducer';
-import { organisaatio } from './organisaatio.reducer';
-import { notifications } from './notifications.reducer';
-import { haetutKayttooikeusryhmat } from './anomus.reducer';
-import { henkilohakuState } from './henkilohaku.reducer';
+import { kayttooikeus, KayttooikeusRyhmaState } from './kayttooikeusryhma.reducer';
+import { ryhmatState, RyhmatState } from './ryhmat.reducer';
+import {
+    OrganisaatioKayttooikeusryhmat,
+    OrganisaatioKayttooikeusryhmatState,
+} from './organisaatiokayttooikeusryhmat.reducer';
+import { organisaatio, OrganisaatioState } from './organisaatio.reducer';
+import { notifications, NotificationsState } from './notifications.reducer';
+import { haetutKayttooikeusryhmat, HaetutKayttooikeusryhmatState } from './anomus.reducer';
+import { henkilohakuState, HenkilohakuState } from './henkilohaku.reducer';
 import cas, { CasState } from './cas.reducer';
-import { oppijoidenTuontiYhteenveto, oppijoidenTuontiListaus } from './oppijoidentuonti.reducer';
-import { palvelukayttajat } from './palvelukayttaja.reducer';
-import { palvelutState } from './palvelut.reducer';
-import { kayttooikeusState } from './kayttooikeus.reducer';
-import { notificationList } from './notification.reducer';
-import { linkitykset } from './henkiloLinkitys.reducer';
+import {
+    oppijoidenTuontiYhteenveto,
+    TuontiYhteenvetoState,
+    oppijoidenTuontiListaus,
+    TuontiListausState,
+} from './oppijoidentuonti.reducer';
+import { palvelukayttajat, PalvelukayttajatState } from './palvelukayttaja.reducer';
+import { palvelutState, PalvelutState } from './palvelut.reducer';
+import { kayttooikeusState, KayttooikeusState } from './kayttooikeus.reducer';
+import { notificationList, NotificationListState } from './notification.reducer';
+import { linkitykset, HenkiloLinkitysState } from './henkiloLinkitys.reducer';
 import { reportReducer, AccessRightsReportState } from './report.reducer';
 
 export type RootState = {
     routing: unknown;
     kutsuList: KutsuListState;
-    frontProperties: unknown;
+    frontProperties: FrontPropertiesState;
     l10n: LocalisationState;
-    henkilo: unknown;
+    henkilo: HenkiloState;
     koodisto: KoodistoState;
-    prequels: unknown;
+    prequels: PrequelsState;
     omattiedot: OmattiedotState;
-    kutsuminenOrganisaatios: unknown;
+    kutsuminenOrganisaatios: KutsuminenOrganisaatiosState;
     locale: string;
-    kayttooikeus: unknown;
-    ryhmatState: unknown;
-    OrganisaatioKayttooikeusryhmat: unknown;
-    organisaatio: unknown;
-    notificationList: unknown;
-    notifications: unknown;
-    haetutKayttooikeusryhmat: unknown;
-    henkilohakuState: unknown;
+    kayttooikeus: KayttooikeusRyhmaState;
+    ryhmatState: RyhmatState;
+    OrganisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
+    organisaatio: OrganisaatioState;
+    notificationList: NotificationListState;
+    notifications: NotificationsState;
+    haetutKayttooikeusryhmat: HaetutKayttooikeusryhmatState;
+    henkilohakuState: HenkilohakuState;
     cas: CasState;
-    oppijoidenTuontiYhteenveto: unknown;
-    oppijoidenTuontiListaus: unknown;
-    palvelukayttajat: unknown;
-    palvelutState: unknown;
-    kayttooikeusState: unknown;
-    linkitykset: unknown;
+    oppijoidenTuontiYhteenveto: TuontiYhteenvetoState;
+    oppijoidenTuontiListaus: TuontiListausState;
+    palvelukayttajat: PalvelukayttajatState;
+    palvelutState: PalvelutState;
+    kayttooikeusState: KayttooikeusState;
+    linkitykset: HenkiloLinkitysState;
     report: AccessRightsReportState;
 };
 

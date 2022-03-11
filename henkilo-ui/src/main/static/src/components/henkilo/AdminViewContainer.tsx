@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import {
     fetchKayttaja,
     fetchHenkilo,
@@ -25,6 +26,7 @@ import { L10n } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
+import { NotificationsState } from '../../reducers/notifications.reducer';
 import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
 import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 
@@ -37,7 +39,15 @@ type OwnProps = {
     locale: Locale;
 };
 
-type Props = OwnProps & {
+type StateProps = {
+    henkilo: HenkiloState;
+    kayttooikeus: KayttooikeusRyhmaState;
+    koodisto: KoodistoState;
+    organisaatioCache: OrganisaatioCache;
+    notifications: NotificationsState;
+};
+
+type DispatchProps = {
     clearHenkilo: () => void;
     fetchHenkilo: (arg0: string) => void;
     fetchHenkiloOrgs: (arg0: string) => void;
@@ -51,12 +61,17 @@ type Props = OwnProps & {
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
     fetchOmattiedotOrganisaatios: () => any;
-    henkilo: HenkiloState;
-    kayttooikeus: KayttooikeusRyhmaState;
-    koodisto: KoodistoState;
-    organisaatioCache: OrganisaatioCache;
+    updateHaettuKayttooikeusryhma: (
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        oidHenkilo: { oid: string },
+        hylkaysperuste: string
+    ) => void;
 };
 
+type Props = OwnProps & StateProps & DispatchProps;
 class AdminViewContainer extends React.Component<Props> {
     async componentDidMount() {
         await this.fetchHenkiloViewData(this.props.oidHenkilo);
@@ -89,17 +104,15 @@ class AdminViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        henkilo: state.henkilo,
-        koodisto: state.koodisto,
-        kayttooikeus: state.kayttooikeus,
-        organisaatioCache: state.organisaatio.cached,
-        notifications: state.notifications,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    henkilo: state.henkilo,
+    koodisto: state.koodisto,
+    kayttooikeus: state.kayttooikeus,
+    organisaatioCache: state.organisaatio.cached,
+    notifications: state.notifications,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloOrgs,
     fetchKieliKoodisto,

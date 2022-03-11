@@ -45,6 +45,13 @@ import {
 import { fetchOrganisations } from './organisaatio.actions';
 import { fetchHenkiloOrgs } from './henkilo.actions';
 
+export type Kayttooikeus = {
+    id: number;
+    kayttoOikeudenTila: string;
+    alkupvm: string;
+    loppupvm: string;
+};
+
 const requestAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({
     type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_REQUEST,
     henkiloOid,
@@ -58,7 +65,7 @@ const errorAllKayttooikeusryhmasForHenkilo = (henkiloOid) => ({
     type: FETCH_ALL_KAYTTOOIKEUSRYHMAS_FOR_HENKILO_FAILURE,
     henkiloOid,
 });
-export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid) => (dispatch) => {
+export const fetchAllKayttooikeusryhmasForHenkilo = (henkiloOid?: string) => (dispatch) => {
     dispatch(requestAllKayttooikeusryhmasForHenkilo(henkiloOid));
     const url = henkiloOid
         ? urls.url('kayttooikeus-service.kayttooikeusryhma.henkilo.oid', henkiloOid)
@@ -86,7 +93,7 @@ const errorAllKayttooikeusryhmaAnomusForHenkilo = (henkiloOid) => ({
     henkiloOid,
 });
 
-export const fetchAllKayttooikeusAnomusForHenkilo = (henkiloOid) => (dispatch) => {
+export const fetchAllKayttooikeusAnomusForHenkilo = (henkiloOid: string) => (dispatch) => {
     dispatch(requestAllKayttooikeusryhmaAnomusForHenkilo(henkiloOid));
     const url = urls.url('kayttooikeus-service.henkilo.anomus-list', henkiloOid, { activeOnly: true });
     http.get<[{ anomus: { organisaatioOid: string } }]>(url)
@@ -111,12 +118,12 @@ const errorHaettuKayttooikeusryhmaUpdate = (id) => ({
     id,
 });
 export const updateHaettuKayttooikeusryhma = (
-    id,
-    kayttoOikeudenTila,
-    alkupvm,
-    loppupvm,
-    oidHenkilo,
-    hylkaysperuste
+    id: number,
+    kayttoOikeudenTila: string,
+    alkupvm: string,
+    loppupvm: string,
+    oidHenkilo: { oid: string },
+    hylkaysperuste: string
 ) => async (dispatch) => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
@@ -138,11 +145,11 @@ export const updateHaettuKayttooikeusryhma = (
 };
 
 export const updateHaettuKayttooikeusryhmaInAnomukset = (
-    id,
-    kayttoOikeudenTila,
-    alkupvm,
-    loppupvm,
-    hylkaysperuste
+    id: number,
+    kayttoOikeudenTila: string,
+    alkupvm: string,
+    loppupvm: string,
+    hylkaysperuste: string
 ) => async (dispatch) => {
     dispatch(requestHaettuKayttooikeusryhmaUpdate(id));
     const url = urls.url('kayttooikeus-service.henkilo.kaytto-oikeus-anomus');
@@ -232,7 +239,9 @@ const errorAddKayttooikeusToHenkilo = (organisaatioOid, ryhmaIdList) => ({
     type: ADD_KAYTTOOIKEUS_TO_HENKILO_FAILURE,
     id: organisaatioOid + ryhmaIdList.join(''),
 });
-export const addKayttooikeusToHenkilo = (henkiloOid, organisaatioOid, payload) => (dispatch) => {
+export const addKayttooikeusToHenkilo = (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => (
+    dispatch
+) => {
     dispatch(requestAddKayttooikeusToHenkilo());
     const url = urls.url('kayttooikeus-service.henkilo.kayttooikeus-myonto', henkiloOid, organisaatioOid);
     http.put(url, payload)
@@ -296,7 +305,9 @@ const removePrivilegeFailure = (error, data) => ({
     ...data,
 });
 
-export const removePrivilege = (oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId) => (dispatch) => {
+export const removePrivilege = (oidHenkilo: string, oidOrganisaatio: string, kayttooikeusryhmaId: number) => (
+    dispatch
+) => {
     const data = { oidHenkilo, oidOrganisaatio, kayttooikeusryhmaId };
     const url = urls.url(
         'kayttooikeus-service.henkilo.kayttooikeus-remove',

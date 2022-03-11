@@ -5,13 +5,11 @@ import moment from 'moment';
 import SimpleDatePicker from '../../henkilo/SimpleDatePicker';
 import { validateEmail } from '../../../validation/EmailValidator';
 
-export type SelectValue = (string | null | undefined) | (boolean | null | undefined);
-
 type Props = {
     readOnly: boolean;
     changeAction: (arg0: any) => any;
-    inputValue: string;
-    selectValue?: SelectValue | Array<SelectValue>;
+    inputValue?: string;
+    selectValue?: string | string[];
     password?: boolean;
     isEmail?: boolean;
     className?: string;

@@ -1,5 +1,9 @@
 import { FETCH_PREQUEL_REQUEST, FETCH_PREQUEL_SUCCESS } from '../actions/actiontypes';
 
+export type PrequelsState = {
+    notLoadedCount: number;
+};
+
 // notLoadedCount = number of prequels
 export const prequels = (state = { notLoadedCount: 2 }, action) => {
     switch (action.type) {

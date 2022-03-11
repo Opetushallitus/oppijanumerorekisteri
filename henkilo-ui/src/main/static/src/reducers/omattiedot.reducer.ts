@@ -29,7 +29,7 @@ export type OmattiedotState = {
     readonly organisaatioRyhmaFilter: Array<any>;
     readonly organisaatiot: Array<KayttooikeusOrganisaatiot>;
     readonly henkilohakuOrganisaatiotLoading: boolean;
-    readonly henkilohakuOrganisaatiot: Array<KayttooikeusOrganisaatiot>;
+    readonly henkilohakuOrganisaatiot: Array<OrganisaatioHenkilo>;
 };
 
 const initialState: OmattiedotState = {

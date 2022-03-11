@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { Link } from 'react-router';
 import classNames from 'classnames/bind';
 import ophLogo from '../../img/logo_oph.svg';
@@ -8,7 +9,6 @@ import okmLogo from '../../img/logo_okm.png';
 import { Localisations } from '../../types/localisation.type';
 import Script from 'react-load-script';
 import { urls } from 'oph-urls-js';
-
 import './TopNavigation.css';
 import { parsePalveluRoolit } from '../../utilities/palvelurooli.util';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
@@ -25,12 +25,14 @@ type OwnProps = {
     };
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     isRekisterinpitaja: boolean;
     organisaatiot: Array<KayttooikeusOrganisaatiot>;
     henkilo?: HenkiloState;
 };
+
+type Props = OwnProps & StateProps;
 
 const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, params, henkilo }: Props) => {
     const isNoAuthenticationPage = route.isUnauthenticated;
@@ -89,11 +91,11 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
     );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     isRekisterinpitaja: state.omattiedot.isAdmin,
     organisaatiot: state.omattiedot.organisaatiot,
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(TopNavigation);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(TopNavigation);

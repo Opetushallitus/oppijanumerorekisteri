@@ -107,7 +107,7 @@ class PopupButton extends React.Component<Props, State> {
         this.setState({ show: true });
     }
 
-    handleClickOutside = (event: any) => {
+    handleClickOutside = () => {
         this.setState({ show: false });
     };
 }

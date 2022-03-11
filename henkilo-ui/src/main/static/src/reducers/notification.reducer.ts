@@ -1,11 +1,11 @@
 import { GLOBAL_NOTIFICATION } from '../actions/actiontypes';
 import { GlobalNotificationConfig } from '../types/notification.types';
 
-export type NoficationListState = Array<GlobalNotificationConfig>;
+export type NotificationListState = GlobalNotificationConfig[];
 
 type Action = any; // AddAction | RemoveAction
 
-export const notificationList = (state: NoficationListState = [], action: Action): NoficationListState => {
+export const notificationList = (state: NotificationListState = [], action: Action): NotificationListState => {
     switch (action.type) {
         case GLOBAL_NOTIFICATION.ADD:
             return state.some(

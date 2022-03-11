@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { ReactSelectOption } from '../../../../types/react-select.types';
+import type { Options } from 'react-select';
 import { Locale } from '../../../../types/locale.type';
 
 type OwnProps = {
@@ -11,13 +12,15 @@ type OwnProps = {
     updateModelFieldAction: (arg0: string) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        kieli: Array<ReactSelectOption>;
+        kieli: Options<string>;
     };
     locale: Locale;
 };
+
+type Props = OwnProps & StateProps;
 
 const Asiointikieli = (props: Props) => (
     <LabelValue
@@ -37,10 +40,10 @@ const Asiointikieli = (props: Props) => (
     />
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     locale: state.locale,
     koodisto: state.koodisto,
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Asiointikieli);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Asiointikieli);

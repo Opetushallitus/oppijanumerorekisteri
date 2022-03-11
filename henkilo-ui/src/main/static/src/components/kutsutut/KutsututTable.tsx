@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import moment from 'moment';
 import './KutsututTable.css';
 import Table from '../common/table/Table';
@@ -27,12 +28,17 @@ type OwnProps = {
     cancelInvitation: (arg0: any) => any;
 };
 
-type Props = OwnProps & {
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
-    renewKutsu: (arg0: number) => void;
+type StateProps = {
     L: Localisations;
     locale: Locale;
 };
+
+type DispatchProps = {
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
+    renewKutsu: (arg0: number) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     sorted: Array<any>;
@@ -202,7 +208,7 @@ class KutsututTable extends React.Component<Props, State> {
         );
     }
 
-    onTableFetch(tableState: any, instance: any) {
+    onTableFetch(tableState: any) {
         const newSort = tableState.sorted[0];
         const stateSort = this.state.sorted[0];
         // Update sort state
@@ -225,12 +231,12 @@ class KutsututTable extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     renewKutsu,
     addGlobalNotification,
 })(KutsututTable);

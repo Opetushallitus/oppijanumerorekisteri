@@ -83,7 +83,7 @@ class Table extends React.Component<Props> {
                         sortMethod: heading.sortMethod,
                         show: !heading.hide,
                     }))}
-                    getTrProps={(state, rowInfo, column) => ({
+                    getTrProps={(_state, rowInfo, _column) => ({
                         className: rowInfo.row.HIGHLIGHT ? 'fadeOutBackgroundColor' : null,
                     })}
                     getTdProps={this.props.getTdProps}
@@ -102,14 +102,14 @@ class Table extends React.Component<Props> {
                     delayedCall
                     partialVisibility
                 >
-                    {({ isVisible }) => <div style={{ visibility: 'hidden' }}>invisible</div>}
+                    {() => <div style={{ visibility: 'hidden' }}>invisible</div>}
                 </VisibilitySensor>
                 {this.props.isLoading ? <Loader /> : null}
             </div>
         );
     }
 
-    getHeaderProps(state: any, rowInfo: any, column: any) {
+    getHeaderProps(state: any, _rowInfo: any, column: any) {
         const sorting =
             state.sorted && state.sorted.length
                 ? state.sorted.filter((sorting) => column.id === sorting.id)[0]

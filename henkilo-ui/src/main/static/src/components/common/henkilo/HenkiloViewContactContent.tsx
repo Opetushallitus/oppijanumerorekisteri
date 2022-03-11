@@ -1,6 +1,7 @@
 import './HenkiloViewContactContent.css';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import Columns from 'react-columns';
 import Field from '../field/Field';
 import Button from '../button/Button';
@@ -20,7 +21,7 @@ import { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
 
 type OwnProps = {
@@ -30,14 +31,19 @@ type OwnProps = {
     view: string;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
     locale: Locale;
-    updateHenkiloAndRefetch: (arg0: Henkilo, arg1?: GlobalNotificationConfig) => void;
     omattiedot: OmattiedotState;
 };
 
-type ContactInfo = {
+type DispatchProps = {
+    updateHenkiloAndRefetch: (arg0: Henkilo, arg1?: GlobalNotificationConfig) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
+
+export type ContactInfo = {
     id?: number;
     type: string;
     henkiloUiId?: string;
@@ -115,8 +121,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 this.henkiloUpdate,
                 this.contactInfoTemplate,
                 this.props.koodisto.yhteystietotyypit,
-                this.props.locale,
-                []
+                this.props.locale
             ),
             yhteystietoRemoveList: [],
             isContactInfoValid: true,
@@ -227,7 +232,6 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                         <EditButtons
                             discardAction={this._discard.bind(this)}
                             updateAction={this._update.bind(this)}
-                            L={this.props.L}
                             isValidForm={this.state.modified && this.state.contactInfoErrorFields.length === 0}
                         />
                     </div>
@@ -275,7 +279,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         this.props.updateHenkiloAndRefetch(this.henkiloUpdate);
     }
 
-    _updateModelField(contactInfo: any, event: ReactSelectOption & React.SyntheticEvent<HTMLInputElement>) {
+    _updateModelField(contactInfo: any, event: Option<string> & React.SyntheticEvent<HTMLInputElement>) {
         const isContactInfoValid = this.validateContactInfo(contactInfo.label, event.currentTarget.value);
         StaticUtils.updateFieldByDotAnnotation(this.henkiloUpdate, event);
         let contactInfoErrorFields = this.state.contactInfoErrorFields;
@@ -329,8 +333,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             inputValue?: string;
         }>,
         yhteystietotyypit: Array<any>,
-        locale: string,
-        yhteystietoRemoveList: Array<any>
+        locale: string
     ): Array<any> =>
         henkiloUpdate.yhteystiedotRyhma.map((yhteystiedotRyhma, idx) => {
             const yhteystietoFlatList = this.createFlatYhteystieto(
@@ -388,12 +391,12 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     omattiedot: state.omattiedot,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     updateHenkiloAndRefetch,
 })(HenkiloViewContactContent);

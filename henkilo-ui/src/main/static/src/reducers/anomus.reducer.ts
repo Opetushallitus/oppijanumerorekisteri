@@ -7,15 +7,15 @@ import {
 } from '../actions/actiontypes';
 import { HaettuKayttooikeusryhma } from '../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 
-export type haetutKayttooikeusryhmatState = {
+export type HaetutKayttooikeusryhmatState = {
     readonly isLoading: boolean;
     readonly data: Array<HaettuKayttooikeusryhma>;
 };
 
 export const haetutKayttooikeusryhmat = (
-    state: haetutKayttooikeusryhmatState = { isLoading: true, data: [] },
+    state: HaetutKayttooikeusryhmatState = { isLoading: true, data: [] },
     action: any
-): haetutKayttooikeusryhmatState => {
+): HaetutKayttooikeusryhmatState => {
     switch (action.type) {
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST:
             return { ...state, isLoading: true };

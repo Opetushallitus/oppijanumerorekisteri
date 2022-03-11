@@ -1,6 +1,7 @@
 import './LoaderWithText.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { Localisations } from '../../../types/localisation.type';
 import Loader from '../icons/Loader';
 
@@ -9,9 +10,11 @@ type OwnProps = {
     labelkey: string | null | undefined;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 const LoaderWithText = (props: Props) => (
     <div className="loader-with-text">
@@ -20,8 +23,8 @@ const LoaderWithText = (props: Props) => (
     </div>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(LoaderWithText);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(LoaderWithText);

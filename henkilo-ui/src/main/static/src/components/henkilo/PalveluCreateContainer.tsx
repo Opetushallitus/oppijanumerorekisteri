@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { http } from '../../http';
 import { urls } from 'oph-urls-js';
 import PalveluCreateForm from './PalveluCreateForm';
@@ -11,9 +12,11 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 type State = {
     error?: string;
@@ -59,10 +62,8 @@ class PalveluCreateContainer extends React.Component<Props, State> {
     };
 }
 
-const mapStateToProps = (state) => {
-    return {
-        L: state.l10n.localisations[state.locale],
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    L: state.l10n.localisations[state.locale],
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(PalveluCreateContainer);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(PalveluCreateContainer);

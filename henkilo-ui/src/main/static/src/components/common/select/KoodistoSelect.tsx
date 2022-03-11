@@ -1,7 +1,8 @@
 import React from 'react';
 import Select from 'react-virtualized-select';
 import { connect } from 'react-redux';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { RootState } from '../../../reducers';
+import type { Options, Option } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { Koodisto, Koodi } from '../../../types/domain/koodisto/koodisto.types';
 import { toLocalizedText } from '../../../localizabletext';
@@ -11,13 +12,15 @@ type OwnProps = {
     className?: string;
     placeholder: string;
     koodisto: Koodisto;
-    value: string | null | undefined;
-    onChange: (arg0: string | null | undefined) => void;
+    value?: string;
+    onChange: (arg0: string) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: Locale;
 };
+
+type Props = OwnProps & StateProps;
 
 /**
  * Komponentti koodiston koodin valitsemiseen.
@@ -36,7 +39,7 @@ class KoodistoSelect extends React.Component<Props> {
         );
     }
 
-    getOptions = (koodisto: Koodisto): Array<ReactSelectOption> => {
+    getOptions = (koodisto: Koodisto): Options<string> => {
         return koodisto.map(this.getOption).sort((a, b) => a.label.localeCompare(b.label));
     };
 
@@ -48,16 +51,16 @@ class KoodistoSelect extends React.Component<Props> {
         };
     };
 
-    onChange = (selected: ReactSelectOption) => {
+    onChange = (selected: Option<string>) => {
         const value = selected ? selected.value : null;
         this.props.onChange(value);
     };
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: RootState): StateProps => {
     return {
         locale: state.locale,
     };
 };
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(KoodistoSelect);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(KoodistoSelect);

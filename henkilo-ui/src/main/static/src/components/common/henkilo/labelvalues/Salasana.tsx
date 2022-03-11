@@ -1,7 +1,8 @@
 import React from 'react';
+import type { RootState } from '../../../../reducers';
 import { connect } from 'react-redux';
 import LabelValue from './LabelValue';
-import { Localisations } from '../../../../types/localisation.type';
+import type { Localisations } from '../../../../types/localisation.type';
 
 type OwnProps = {
     disabled: boolean;
@@ -9,9 +10,11 @@ type OwnProps = {
     updateModelFieldAction: (arg0: any) => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 const Salasana = (props: Props) => (
     <div>
@@ -51,8 +54,8 @@ const Salasana = (props: Props) => (
     </div>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Salasana);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Salasana);

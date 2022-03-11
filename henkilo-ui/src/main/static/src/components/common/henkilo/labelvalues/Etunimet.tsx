@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
@@ -9,9 +10,11 @@ type OwnProps = {
     updateModelFieldAction?: () => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
 };
+
+type Props = OwnProps & StateProps;
 
 const Etunimet = (props: Props) => (
     <LabelValue
@@ -26,8 +29,8 @@ const Etunimet = (props: Props) => (
     />
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Etunimet);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Etunimet);

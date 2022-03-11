@@ -1,7 +1,8 @@
 import React from 'react';
 import Select from 'react-virtualized-select';
 import { connect } from 'react-redux';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { RootState } from '../../../reducers';
+import type { OnChangeHandler, Options, Option } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { Koodisto, Koodi } from '../../../types/domain/koodisto/koodisto.types';
 import { toLocalizedText } from '../../../localizabletext';
@@ -12,12 +13,14 @@ type OwnProps = {
     placeholder: string;
     koodisto: Koodisto;
     value: any;
-    onChange: (arg0: Array<string> | null | undefined) => void;
+    onChange: OnChangeHandler<string, Options<string> | Option<string>>;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: Locale;
 };
+
+type Props = OwnProps & StateProps;
 
 /**
  * Komponentti koodiston koodien valitsemiseen.
@@ -32,12 +35,12 @@ class KoodistoMultiSelect extends React.Component<Props> {
                 noResultsText=""
                 options={this.getOptions(this.props.koodisto)}
                 value={this.props.value}
-                onChange={this.onChange}
+                onChange={this.props.onChange}
             />
         );
     }
 
-    getOptions = (koodisto: Koodisto): Array<ReactSelectOption> => {
+    getOptions = (koodisto: Koodisto): Options<string> => {
         return koodisto.map(this.getOption).sort((a, b) => a.label.localeCompare(b.label));
     };
 
@@ -48,17 +51,10 @@ class KoodistoMultiSelect extends React.Component<Props> {
             label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo),
         };
     };
-
-    onChange = (selected: Array<ReactSelectOption>) => {
-        const value = selected ? selected.map((a) => a.value) : null;
-        this.props.onChange(value);
-    };
 }
 
-const mapStateToProps = (state) => {
-    return {
-        locale: state.locale,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    locale: state.locale,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(KoodistoMultiSelect);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(KoodistoMultiSelect);

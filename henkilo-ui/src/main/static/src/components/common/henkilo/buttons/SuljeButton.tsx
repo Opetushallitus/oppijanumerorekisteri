@@ -5,7 +5,6 @@ import ConfirmButton from '../../button/ConfirmButton';
 const SuljeButton = ({ L, suljeAction, disabled }) => (
     <ConfirmButton
         action={suljeAction}
-        cancel
         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE']}
         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_SULJE_CONFIRM']}
         key="sulje"

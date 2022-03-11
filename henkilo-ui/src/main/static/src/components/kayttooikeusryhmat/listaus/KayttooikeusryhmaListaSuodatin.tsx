@@ -8,7 +8,7 @@ import OphInline from '../../common/forms/OphInline';
 type Props = {
     L: Localisations;
     muokkausoikeus: boolean;
-    onFilterEvent: (event: React.SyntheticEvent<HTMLInputElement>) => void;
+    onFilterEvent: (event: React.ChangeEvent<HTMLInputElement>) => void;
     router: any;
     naytaVainPalvelulleSallitut: boolean;
     setNaytaVainSallitut: () => void;

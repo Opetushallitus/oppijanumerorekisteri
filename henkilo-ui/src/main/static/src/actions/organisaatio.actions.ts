@@ -132,7 +132,7 @@ const receiveOrganisations = (json) => ({
 export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch: Dispatch, getState: GetState) => {
     if (!oidOrganisations) {
         console.error('Can not fetch null organisations');
-        return;
+        return Promise.resolve();
     }
     oidOrganisations = R.uniq(oidOrganisations);
     dispatch(requestOrganisations(oidOrganisations));

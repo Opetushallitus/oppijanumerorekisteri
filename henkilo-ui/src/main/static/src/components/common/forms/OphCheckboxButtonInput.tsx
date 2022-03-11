@@ -1,15 +1,15 @@
 import React from 'react';
 
-type OphCheckboxButtonInputProps = {
+type Props = {
     idName: string;
     value: string;
     label: string;
     checked: boolean;
     disabled?: boolean;
-    action: (arg0: React.SyntheticEvent<HTMLInputElement>) => void;
+    action: React.ReactEventHandler<HTMLInputElement>;
 };
 
-class OphCheckboxButtonInput extends React.Component<OphCheckboxButtonInputProps> {
+class OphCheckboxButtonInput extends React.Component<Props> {
     render() {
         return (
             <label htmlFor={this.props.idName}>

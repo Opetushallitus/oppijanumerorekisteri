@@ -1,6 +1,7 @@
 import './HenkiloViewCreateKayttooikeus.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component';
 import CKKohde from './createkayttooikeus/CKKohde';
@@ -8,6 +9,7 @@ import CKKesto from './createkayttooikeus/CKKesto';
 import CKKayttooikeudet, { ValittuKayttooikeusryhma } from './createkayttooikeus/CKKayttooikeudet';
 import CKHaeButton from './createkayttooikeus/CKHaeButton';
 import {
+    Kayttooikeus,
     addKayttooikeusToHenkilo,
     fetchAllowedKayttooikeusryhmasForOrganisation,
 } from '../../../actions/kayttooikeusryhma.actions';
@@ -26,23 +28,18 @@ type OwnProps = {
     isPalvelukayttaja: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     organisaatios: Array<OrganisaatioHenkilo>;
-    fetchAllowedKayttooikeusryhmasForOrganisation: (arg0: string, arg1: string) => void;
     L: Localisations;
     locale: Locale;
-    oidHenkilo: string;
-    addKayttooikeusToHenkilo: (
-        arg0: string,
-        arg1: string,
-        arg2: Array<{
-            id: number;
-            kayttoOikeudenTila: string;
-            alkupvm: string;
-            loppupvm: string;
-        }>
-    ) => void;
 };
+
+type DispatchProps = {
+    fetchAllowedKayttooikeusryhmasForOrganisation: (oidHenkilo: string, oidOrganisaatio: string) => void;
+    addKayttooikeusToHenkilo: (henkiloOid: string, organisaatioOid: string, payload: Kayttooikeus[]) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type KayttooikeusModel = {
     kayttokohdeOrganisationOid: string;
@@ -271,13 +268,13 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     organisaatios: state.omattiedot.organisaatios,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchAllowedKayttooikeusryhmasForOrganisation,
     addKayttooikeusToHenkilo,
 })(HenkiloViewCreateKayttooikeus);

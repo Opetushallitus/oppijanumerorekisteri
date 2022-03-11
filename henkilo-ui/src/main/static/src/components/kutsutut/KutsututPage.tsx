@@ -16,6 +16,7 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import CloseButton from '../common/button/CloseButton';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import { Option } from 'react-select';
 
 type Payload = {
     searchTerm: string;
@@ -23,8 +24,8 @@ type Payload = {
     tilas: Array<string>;
     sortBy: string;
     direction: string;
-    view: string | null | undefined;
-    kayttooikeusryhmaIds: number | null | undefined;
+    view?: string;
+    kayttooikeusryhmaIds?: string;
     subOrganisations?: boolean;
 };
 
@@ -59,7 +60,7 @@ type Sort = {
 
 type State = {
     allFetched: boolean;
-    confirmDeleteFor: Kutsu | null | undefined;
+    confirmDeleteFor?: Kutsu;
     payload: Payload;
     organisaatioSelection: string;
 };
@@ -112,7 +113,7 @@ export default class KutsututPage extends React.Component<Props, State> {
         await this.props.fetchOmattiedotOrganisaatios();
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(_prevProps: Props, prevState: State) {
         // Update kutsus if payload changes. Basically payload.view change sets this for initial fetch.
         if (Object.keys(this.state.payload).some((key) => this.state.payload[key] !== prevState.payload[key])) {
             this.fetchKutsus();
@@ -184,10 +185,8 @@ export default class KutsututPage extends React.Component<Props, State> {
                 </div>
                 <KutsututTable
                     fetchKutsus={this.fetchKutsus.bind(this)}
-                    L={this.L}
                     kutsus={kutsuResponse.result}
                     cancelInvitation={this.cancelInvitationAction.bind(this)}
-                    locale={this.props.locale}
                     allFetched={this.state.allFetched}
                     isLoading={this.props.kutsuListLoading}
                 />
@@ -301,11 +300,11 @@ export default class KutsututPage extends React.Component<Props, State> {
         });
     }
 
-    onKayttooikeusryhmaChange(newKayttooikeusId: number) {
+    onKayttooikeusryhmaChange(kayttooikeusOption: Option<string>) {
         this.setState({
             payload: {
                 ...this.state.payload,
-                kayttooikeusryhmaIds: newKayttooikeusId,
+                kayttooikeusryhmaIds: kayttooikeusOption.value,
             },
         });
     }

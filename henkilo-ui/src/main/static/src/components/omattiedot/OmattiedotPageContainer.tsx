@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { fetchOmattiedot } from '../../actions/omattiedot.actions';
 import { fetchHenkilo, fetchHenkiloOrgs, fetchKayttajatieto, clearHenkilo } from '../../actions/henkilo.actions';
 import {
@@ -33,7 +34,7 @@ type OwnProps = {
     location: any;
 };
 
-type OmattiedotPageContainerProps = OwnProps & {
+type StateProps = {
     path: string;
     omattiedot: OmattiedotState;
     henkilo: HenkiloState;
@@ -46,6 +47,9 @@ type OmattiedotPageContainerProps = OwnProps & {
     organisaatioCache: OrganisaatioCache;
     organisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
     notifications: any;
+};
+
+type DispatchProps = {
     fetchOmattiedot: () => void;
     fetchHenkilo: (arg0: string) => void;
     fetchHenkiloOrgs: (arg0: string) => void;
@@ -53,18 +57,25 @@ type OmattiedotPageContainerProps = OwnProps & {
     fetchKieliKoodisto: () => void;
     fetchKansalaisuusKoodisto: () => void;
     fetchKayttajatieto: (arg0: string) => void;
-    fetchAllKayttooikeusryhmasForHenkilo: () => void;
+    fetchAllKayttooikeusryhmasForHenkilo: (oid?: string) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
-    updateHaettuKayttooikeusryhma: () => void;
+    updateHaettuKayttooikeusryhma: (
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        oidHenkilo: { oid: string },
+        hylkaysperuste: string
+    ) => void;
     fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
     fetchAllRyhmas: () => void;
     fetchAllHierarchialOrganisaatios: () => void;
     clearHenkilo: () => void;
 };
 
-type OmattiedotPageContainerState = {};
+type Props = OwnProps & StateProps & DispatchProps;
 
-class OmattiedotPageContainer extends React.Component<OmattiedotPageContainerProps, OmattiedotPageContainerState> {
+class OmattiedotPageContainer extends React.Component<Props> {
     async componentDidMount() {
         this.props.clearHenkilo();
 
@@ -88,24 +99,22 @@ class OmattiedotPageContainer extends React.Component<OmattiedotPageContainerPro
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        path: ownProps.location.pathname,
-        omattiedot: state.omattiedot,
-        henkilo: state.henkilo,
-        l10n: state.l10n.localisations,
-        koodisto: state.koodisto,
-        locale: state.locale,
-        kayttooikeus: state.kayttooikeus,
-        organisaatios: state.organisaatio,
-        ryhmas: state.ryhmatState,
-        organisaatioCache: state.organisaatio.cached,
-        organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat,
-        notifications: state.notifications,
-    };
-};
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
+    path: ownProps.location.pathname,
+    omattiedot: state.omattiedot,
+    henkilo: state.henkilo,
+    l10n: state.l10n.localisations,
+    koodisto: state.koodisto,
+    locale: state.locale,
+    kayttooikeus: state.kayttooikeus,
+    organisaatios: state.organisaatio,
+    ryhmas: state.ryhmatState,
+    organisaatioCache: state.organisaatio.cached,
+    organisaatioKayttooikeusryhmat: state.OrganisaatioKayttooikeusryhmat,
+    notifications: state.notifications,
+});
 
-export default connect<OmattiedotPageContainerProps, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchOmattiedot,
     fetchHenkilo,
     fetchHenkiloOrgs,

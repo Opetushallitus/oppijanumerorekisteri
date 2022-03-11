@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { http } from '../../../http';
 import { urls } from 'oph-urls-js';
 import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
@@ -16,11 +17,16 @@ type OwnProps = {
     kayttooikeusryhmaId: string | null | undefined;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
     valittuKayttooikeusryhma: Kayttooikeusryhma | null | undefined;
 };
+
+type DispatchProps = {
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     isWaitingRequest: boolean;
@@ -137,11 +143,11 @@ class ToggleKayttooikeusryhmaStateModal extends React.Component<Props, State> {
     closeModalAction = () => this.setState({ showPassivoiModal: false });
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     valittuKayttooikeusryhma: state.kayttooikeus.kayttooikeusryhma,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     addGlobalNotification,
 })(ToggleKayttooikeusryhmaStateModal);

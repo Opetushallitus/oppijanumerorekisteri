@@ -161,10 +161,7 @@ export const organisaatioHierarchyRoots = (
     return roots;
 };
 
-export const organizationsFlatInHierarchyOrder = (
-    organizationHierarchyRoots: Array<OrganisaatioWithChildren>,
-    locale: Locale
-) => {
+export const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: Array<OrganisaatioWithChildren>) => {
     const result = [];
     const map = (org) => {
         result.push(org);
@@ -182,7 +179,7 @@ export const getOrganisaatios = (
     locale: Locale
 ): Array<OrganisaatioWithChildren> => {
     const hierarchyRoots = organisaatioHierarchyRoots(organisaatios, locale);
-    return organizationsFlatInHierarchyOrder(hierarchyRoots, locale);
+    return organizationsFlatInHierarchyOrder(hierarchyRoots);
 };
 
 export const mapOrganisaatio = (

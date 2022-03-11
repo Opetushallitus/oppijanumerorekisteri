@@ -1,11 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import * as R from 'ramda';
 import './AddedOrganization.css';
 import {
-    kutsuAddOrganisaatio,
     kutsuRemoveOrganisaatio,
-    kutsuClearOrganisaatios,
     kutsuSetOrganisaatio,
     kutsuOrganisaatioSetProperties,
     addOrganisaatioPermission,
@@ -30,19 +29,23 @@ import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.t
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
 
 type OwnProps = {
-    addedOrgs: Array<KutsuOrganisaatio>;
+    addedOrgs: readonly KutsuOrganisaatio[];
     addedOrg: KutsuOrganisaatio;
     index: number;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     locale: string;
     L: Localisations;
     omatOrganisaatios: Array<OrganisaatioHenkilo>;
+    currentHenkiloOid: string;
+    ryhmatState: any;
+};
+
+type DispatchProps = {
     kutsuRemoveOrganisaatio: (arg0: number) => void;
     kutsuSetOrganisaatio: (arg0: number, arg1: OrganisaatioSelectObject | null | undefined) => void;
     fetchAllowedKayttooikeusryhmasForOrganisation: (arg0: string, arg1: string) => void;
-    currentHenkiloOid: string;
     addOrganisaatioPermission: (arg0: string, arg1: MyonnettyKayttooikeusryhma | null | undefined) => void;
     removeOrganisaatioPermission: (arg0: string, arg1: MyonnettyKayttooikeusryhma) => void;
     kutsuOrganisaatioSetProperties: (
@@ -51,8 +54,9 @@ type Props = OwnProps & {
             [key: string]: any;
         }
     ) => void;
-    ryhmatState: any;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     organisaatioSelection: string;
@@ -206,7 +210,7 @@ class AddedOrganization extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     currentHenkiloOid: state.omattiedot.data.oid,
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
@@ -214,11 +218,9 @@ const mapStateToProps = (state) => ({
     ryhmatState: state.ryhmatState,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
-    kutsuAddOrganisaatio,
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     kutsuSetOrganisaatio,
     kutsuRemoveOrganisaatio,
-    kutsuClearOrganisaatios,
     fetchAllowedKayttooikeusryhmasForOrganisation,
     kutsuOrganisaatioSetProperties,
     addOrganisaatioPermission,

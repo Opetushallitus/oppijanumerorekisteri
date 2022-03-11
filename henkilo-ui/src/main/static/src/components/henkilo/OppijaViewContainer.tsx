@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { fetchHenkilo, fetchHenkiloSlaves, fetchHenkiloYksilointitieto } from '../../actions/henkilo.actions';
 import {
     fetchKansalaisuusKoodisto,
@@ -22,16 +23,21 @@ type OwnProps = {
     locale: Locale;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
+    koodisto: KoodistoState;
+};
+
+type DispatchProps = {
     fetchHenkiloSlaves: (oid: string) => void;
     fetchHenkilo: (oid: string) => void;
     fetchYhteystietotyypitKoodisto: () => void;
     fetchKieliKoodisto: () => void;
     fetchKansalaisuusKoodisto: () => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
-    koodisto: KoodistoState;
 };
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 class OppijaViewContainer extends React.Component<Props> {
     async componentDidMount() {
@@ -70,14 +76,12 @@ class OppijaViewContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        henkilo: state.henkilo,
-        koodisto: state.koodisto,
-    };
-};
+const mapStateToProps = (state: RootState): StateProps => ({
+    henkilo: state.henkilo,
+    koodisto: state.koodisto,
+});
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchHenkilo,
     fetchHenkiloSlaves,
     fetchYhteystietotyypitKoodisto,

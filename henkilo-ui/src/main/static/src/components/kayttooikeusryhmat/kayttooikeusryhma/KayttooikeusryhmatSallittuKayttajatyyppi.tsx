@@ -1,23 +1,22 @@
 import './KayttooikeusryhmatSallittuKayttajatyyppi.css';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { SallitutKayttajatyypit } from './KayttooikeusryhmaPage';
 import { Localisations } from '../../../types/localisation.type';
 
 type OwnProps = {
-    kayttajaTyyppi: SallitutKayttajatyypit | null | undefined;
+    kayttajaTyyppi?: SallitutKayttajatyypit;
     setSallittuKayttajatyyppi: () => void;
 };
 
-type KayttooikeusryhmatSallittuKayttajatyyppiProps = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
 
-const KayttooikeusryhmatSallittuKayttajatyyppi = ({
-    kayttajaTyyppi,
-    L,
-    setSallittuKayttajatyyppi,
-}: KayttooikeusryhmatSallittuKayttajatyyppiProps) => {
+type Props = OwnProps & StateProps;
+
+const KayttooikeusryhmatSallittuKayttajatyyppi = ({ kayttajaTyyppi, L, setSallittuKayttajatyyppi }: Props) => {
     return (
         <div className="kayttooikeusryhmat-sallittu-kayttajatyyppi-wrapper">
             <span className="oph-h4 oph-bold">{L['KAYTTOOIKEUSRYHMAT_KAYTTAJATYYPPI_OTSIKKO']}</span>
@@ -35,11 +34,8 @@ const KayttooikeusryhmatSallittuKayttajatyyppi = ({
     );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<KayttooikeusryhmatSallittuKayttajatyyppiProps, OwnProps>(
-    mapStateToProps,
-    {}
-)(KayttooikeusryhmatSallittuKayttajatyyppi);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(KayttooikeusryhmatSallittuKayttajatyyppi);

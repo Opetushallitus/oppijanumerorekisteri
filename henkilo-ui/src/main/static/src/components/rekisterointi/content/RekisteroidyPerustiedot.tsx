@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import Etunimet from '../../common/henkilo/labelvalues/Etunimet';
 import Sukunimi from '../../common/henkilo/labelvalues/Sukunimi';
 import Kutsumanimi from '../../common/henkilo/labelvalues/Kutsumanimi';
 import Kayttajanimi from '../../common/henkilo/labelvalues/Kayttajanimi';
 import Salasana from '../../common/henkilo/labelvalues/Salasana';
 import Asiointikieli from '../../common/henkilo/labelvalues/Asiointikieli';
-import { Localisations } from '../../../types/localisation.type';
+import type { Localisations } from '../../../types/localisation.type';
+import type { Notification } from '../../../reducers/notifications.reducer';
 
 type OwnProps = {
     henkilo: {
@@ -32,10 +34,12 @@ type OwnProps = {
     isKutsumanimiError: boolean;
 };
 
-type Props = OwnProps & {
-    notifications: Array<{ id: string; type: string; errorType: string }>;
+type StateProps = {
+    notifications: Notification[];
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 class RekisteroidyPerustiedot extends React.Component<Props> {
     render() {
@@ -48,7 +52,6 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
                         <Sukunimi readOnly={true} />
                         <Kutsumanimi
                             readOnly={false}
-                            autoFocus
                             defaultValue={this.props.henkilo.henkilo.kutsumanimi}
                             updateModelFieldAction={this.props.updatePayloadModel}
                             isError={this.props.isKutsumanimiError}
@@ -67,7 +70,6 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
                         <Asiointikieli
                             henkiloUpdate={this.props.henkilo.henkilo}
                             updateModelFieldAction={this.props.updatePayloadModel}
-                            isError={this.props.isLanguageError}
                         />
                     </div>
                 )}
@@ -91,9 +93,9 @@ class RekisteroidyPerustiedot extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     notifications: state.notifications.buttonNotifications,
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(RekisteroidyPerustiedot);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(RekisteroidyPerustiedot);

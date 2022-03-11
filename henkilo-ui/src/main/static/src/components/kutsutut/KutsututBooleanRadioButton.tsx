@@ -1,20 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import KutsuViews from './KutsuViews';
+import { Localisations } from '../../types/localisation.type';
 
 type OwnProps = {
-    view: string | null | void;
+    view?: string;
     setView: (newView: string) => void;
 };
 
-type Props = OwnProps & {
-    L: {
-        [key: string]: string;
-    };
+type StateProps = {
+    L: Localisations;
     isAdmin: boolean;
     isOphVirkailija: boolean;
 };
+
+type Props = OwnProps & StateProps;
 
 type State = {
     radioButtonValue: boolean;
@@ -74,10 +76,10 @@ class KutsututBooleanRadioButton extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     isAdmin: state.omattiedot.isAdmin,
     isOphVirkailija: state.omattiedot.isOphVirkailija,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(KutsututBooleanRadioButton);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(KutsututBooleanRadioButton);

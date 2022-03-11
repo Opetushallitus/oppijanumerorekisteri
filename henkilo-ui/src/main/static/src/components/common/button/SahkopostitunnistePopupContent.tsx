@@ -5,6 +5,7 @@ import './SahkopostitunnistePopupContent.css';
 import { Localisations } from '../../../types/localisation.type';
 import Loader from '../icons/Loader';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../reducers';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
@@ -15,9 +16,11 @@ type OwnProps = {
     L: Localisations;
 };
 
-type Props = OwnProps & {
+type DispatchProps = {
     addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
 };
+
+type Props = OwnProps & DispatchProps;
 
 type State = {
     tunnisteet: Identification[];
@@ -162,6 +165,6 @@ class SahkopostitunnistePopupContent extends React.Component<Props, State> {
     }
 }
 
-export default connect<Props, OwnProps>(() => ({}), {
+export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
     addGlobalNotification,
 })(SahkopostitunnistePopupContent);

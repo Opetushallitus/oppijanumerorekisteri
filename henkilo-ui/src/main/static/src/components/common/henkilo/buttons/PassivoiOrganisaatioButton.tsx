@@ -7,7 +7,6 @@ const PassivoiOrganisaatioButton = ({ passive, id, L, passivoiOrgAction, disable
     !passive ? (
         <ConfirmButton
             key="passivoiOrg"
-            cancel
             action={() => passivoiOrgAction(id)}
             confirmLabel={L['HENKILO_ORG_PASSIVOI_CONFIRM']}
             normalLabel={L['HENKILO_ORG_PASSIVOI']}

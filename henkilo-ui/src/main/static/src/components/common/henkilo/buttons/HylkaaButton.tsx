@@ -1,11 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import ConfirmButton from '../../button/ConfirmButton';
+import { Localisations } from '../../../../types/localisation.type';
 
-const HylkaaButton = ({ L, hylkaaAction, henkilo, disabled }) => (
+type Props = {
+    L: Localisations;
+    hylkaaAction: () => void;
+    disabled: boolean;
+};
+
+const HylkaaButton = ({ L, hylkaaAction, disabled }: Props) => (
     <ConfirmButton
         action={hylkaaAction}
-        cancel
         confirmLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA_CONFIRM']}
         normalLabel={L['HENKILO_KAYTTOOIKEUSANOMUS_HYLKAA']}
         key="hylkaa"
@@ -13,11 +18,5 @@ const HylkaaButton = ({ L, hylkaaAction, henkilo, disabled }) => (
         disabled={disabled}
     />
 );
-
-HylkaaButton.propTypes = {
-    L: PropTypes.object,
-    hylkaaAction: PropTypes.func,
-    henkilo: PropTypes.object,
-};
 
 export default HylkaaButton;

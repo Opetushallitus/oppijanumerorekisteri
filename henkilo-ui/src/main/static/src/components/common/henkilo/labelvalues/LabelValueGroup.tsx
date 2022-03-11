@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import Columns from 'react-columns';
 import { Localisations } from '../../../../types/localisation.type';
 
@@ -8,9 +9,11 @@ type OwnProps = {
     valueGroup: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 const LabelValueGroup = ({ label, L, valueGroup }: Props) => (
     <div id={label}>
@@ -21,8 +24,8 @@ const LabelValueGroup = ({ label, L, valueGroup }: Props) => (
     </div>
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(LabelValueGroup);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(LabelValueGroup);

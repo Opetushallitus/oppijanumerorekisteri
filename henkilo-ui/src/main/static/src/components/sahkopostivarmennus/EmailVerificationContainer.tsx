@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import { Locale } from '../../types/locale.type';
 import { EmailVerificationPage } from './EmailVerificationPage';
 import { Localisations } from '../../types/localisation.type';
@@ -13,11 +14,13 @@ type OwnProps = {
     router: any;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     loginToken: string;
     locale: Locale;
     L: Localisations;
 };
+
+type Props = OwnProps & StateProps;
 
 type State = {
     loading: boolean;
@@ -60,10 +63,10 @@ class EmailVerificationContainer extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     L: state.l10n.localisations[ownProps.params['locale'].toLowerCase()],
     loginToken: ownProps.params['loginToken'],
     locale: ownProps.params['locale'],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(EmailVerificationContainer);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(EmailVerificationContainer);

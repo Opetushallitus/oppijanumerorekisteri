@@ -4,7 +4,7 @@ import AddedOrganization from './AddedOrganization';
 import { KutsuOrganisaatio } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type Props = {
-    addedOrgs: Array<KutsuOrganisaatio>;
+    addedOrgs: readonly KutsuOrganisaatio[];
 };
 
 export const AddedOrganizations = (props: Props) => (

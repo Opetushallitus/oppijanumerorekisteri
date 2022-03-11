@@ -25,7 +25,7 @@ import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 
 const requestDeleteKutsu = (id) => ({ type: DELETE_KUTSU_REQUEST, id });
-const receiveDeleteKutsu = (id, json) => ({
+const receiveDeleteKutsu = (id) => ({
     type: DELETE_KUTSU_SUCCESS,
     id,
     receivedAt: Date.now(),
@@ -33,7 +33,7 @@ const receiveDeleteKutsu = (id, json) => ({
 export const deleteKutsu = (id) => (dispatch) => {
     dispatch(requestDeleteKutsu(id));
     const url = urls.url('kayttooikeus-service.peruutaKutsu', id);
-    http.delete(url).then((json) => dispatch(receiveDeleteKutsu(id, json)));
+    http.delete(url).then(() => dispatch(receiveDeleteKutsu(id)));
 };
 
 export const renewKutsu = (id) => async (dispatch) => {

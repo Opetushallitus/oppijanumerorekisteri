@@ -19,9 +19,7 @@ export const createEmailOptions = (
     const emailOptions = parseEmailOptions(henkilo?.henkilo.yhteystiedotRyhma);
     if (emailOptions.length === 1) {
         return {
-            emailSelection: kayttooikeusryhmat
-                .filter(filterKayttooikeusRyhma)
-                .map((uusittavaKayttooikeusRyhma) => emailOptions[0]),
+            emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).map(() => emailOptions[0]),
             missingEmail: false,
             showMissingEmailNotification: false,
             emailOptions,
@@ -31,18 +29,14 @@ export const createEmailOptions = (
             missingEmail: false,
             showMissingEmailNotification: false,
             emailOptions,
-            emailSelection: kayttooikeusryhmat
-                .filter(filterKayttooikeusRyhma)
-                .map((uusittavaKayttooikeusRyhma) => ({ value: '' })),
+            emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).map(() => ({ value: '' })),
         };
     }
     return {
         missingEmail: true,
         showMissingEmailNotification: true,
         emailOptions,
-        emailSelection: kayttooikeusryhmat
-            .filter(filterKayttooikeusRyhma)
-            .map((uusittavaKayttooikeusRyhma) => ({ value: '' })),
+        emailSelection: kayttooikeusryhmat.filter(filterKayttooikeusRyhma).map(() => ({ value: '' })),
     };
 };
 

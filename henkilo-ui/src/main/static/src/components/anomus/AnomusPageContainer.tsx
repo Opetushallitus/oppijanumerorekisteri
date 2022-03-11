@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../reducers';
 import AnomusPage, { FetchHaetutKayttooikeusryhmatParameters } from './AnomusPage';
 import { clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat } from '../../actions/anomus.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
@@ -17,9 +18,7 @@ import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuK
 import { GlobalNotificationConfig } from '../../types/notification.types';
 import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
 
-type OwnProps = {};
-
-type Props = OwnProps & {
+type StateProps = {
     l10n: L10n;
     locale: Locale;
     kayttooikeusAnomus: Array<HaettuKayttooikeusryhma>;
@@ -28,22 +27,26 @@ type Props = OwnProps & {
     haetutKayttooikeusryhmatLoading: boolean;
     rootOrganisaatioOid: string;
     isAdmin: boolean;
+};
+
+type DispatchProps = {
     fetchHaetutKayttooikeusryhmat: (arg0: FetchHaetutKayttooikeusryhmatParameters) => void;
     fetchAllOrganisaatios: (criteria?: OrganisaatioCriteria) => void;
     fetchAllRyhmas: () => void;
     updateHaettuKayttooikeusryhmaInAnomukset: (
-        arg0: number,
-        arg1: string,
-        arg2: string,
-        arg3: string,
-        arg4: string | null | undefined
-    ) => Promise<any>;
+        id: number,
+        kayttoOikeudenTila: string,
+        alkupvm: string,
+        loppupvm: string,
+        hylkaysperuste: string
+    ) => void;
     clearHaettuKayttooikeusryhma: (arg0: number) => void;
     clearHaetutKayttooikeusryhmat: () => void;
     fetchOmattiedotOrganisaatios: () => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
 
+type Props = StateProps & DispatchProps;
 class AnomusPageContainer extends React.Component<Props> {
     render() {
         const L = this.props.l10n[this.props.locale];
@@ -56,7 +59,7 @@ class AnomusPageContainer extends React.Component<Props> {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: RootState): StateProps => {
     return {
         l10n: state.l10n.localisations,
         locale: state.locale,
@@ -69,7 +72,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, undefined, RootState>(mapStateToProps, {
     fetchHaetutKayttooikeusryhmat,
     fetchAllOrganisaatios,
     fetchAllRyhmas,

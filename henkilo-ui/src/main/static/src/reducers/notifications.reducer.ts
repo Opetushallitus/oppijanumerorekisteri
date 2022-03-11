@@ -9,6 +9,22 @@ import {
     CREATE_HENKILOBYTOKEN_FAILURE,
 } from '../actions/actiontypes';
 
+export type Notification = {
+    id: string;
+    type: string;
+    errorType: string;
+    notL10nMessage: string;
+    notL10nText: string;
+};
+
+export type NotificationsState = {
+    existingKayttooikeus: Notification[];
+    buttonNotifications: Notification[];
+    updatePassword: Notification[];
+    henkilohakuNotifications: Notification[];
+    duplicatesNotifications: Notification[];
+};
+
 type ErrorMessage = {
     notL10nMessage: string;
     notL10nText: string;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import ConfirmButton from '../../button/ConfirmButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { yksiloiHenkilo } from '../../../../actions/henkilo.actions';
@@ -9,11 +10,16 @@ type OwnProps = {
     disabled?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     L: Localisations;
-    yksiloiHenkilo: (arg0: string) => void;
 };
+
+type DispatchProps = {
+    yksiloiHenkilo: (oid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 const YksiloiHetutonButton = (props: Props) =>
     !props.henkilo.henkilo.yksiloityVTJ && !props.henkilo.henkilo.hetu && !props.henkilo.henkilo.yksiloity ? (
@@ -27,11 +33,11 @@ const YksiloiHetutonButton = (props: Props) =>
         />
     ) : null;
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     L: state.l10n.localisations[state.locale],
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     yksiloiHenkilo,
 })(YksiloiHetutonButton);

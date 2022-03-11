@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactSelectOption } from '../../../types/react-select.types';
+import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
 import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -42,7 +42,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
         setOid(selectedOrganisation[0] && selectedOrganisation[0].oid);
     }, [setOid, selectedOrganisation]);
 
-    const filterOptions: ReactSelectOption[] = filterValues.map((name) => ({ label: name, value: name }));
+    const filterOptions: Options<string> = filterValues.map((name) => ({ label: name, value: name }));
 
     return (
         <div>
@@ -70,7 +70,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                             placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                             value={filter}
                             clearable
-                            onChange={(option: ReactSelectOption) => setFilter(option && option.value)}
+                            onChange={(option: Option) => setFilter(option && option.value)}
                         />
                     </div>
                 </div>

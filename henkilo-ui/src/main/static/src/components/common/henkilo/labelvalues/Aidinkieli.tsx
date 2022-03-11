@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import LabelValue from './LabelValue';
 import StaticUtils from '../../StaticUtils';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
-import { ReactSelectOption } from '../../../../types/react-select.types';
+import type { Options } from 'react-select';
 import { Locale } from '../../../../types/locale.type';
 import { Henkilo } from '../../../../types/domain/oppijanumerorekisteri/henkilo.types';
 
@@ -13,13 +14,15 @@ type OwnProps = {
     updateModelFieldAction: () => void;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     koodisto: {
-        kieli: Array<ReactSelectOption>;
+        kieli: Options<string>;
     };
     locale: Locale;
 };
+
+type Props = OwnProps & StateProps;
 
 const Aidinkieli = (props: Props) => (
     <LabelValue
@@ -38,10 +41,10 @@ const Aidinkieli = (props: Props) => (
     />
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     locale: state.locale,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {})(Aidinkieli);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(Aidinkieli);

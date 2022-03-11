@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import type { RootState } from '../../../../reducers';
 import ConfirmButton from '../../button/ConfirmButton';
 import { HenkiloState } from '../../../../reducers/henkilo.reducer';
 import { Localisations } from '../../../../types/localisation.type';
@@ -9,11 +10,16 @@ type OwnProps = {
     disabled?: boolean;
 };
 
-type Props = OwnProps & {
+type StateProps = {
     henkilo: HenkiloState;
     L: Localisations;
-    overrideHenkiloVtjData: (arg0: string) => void;
 };
+
+type DispatchProps = {
+    overrideHenkiloVtjData: (oid: string) => void;
+};
+
+type Props = OwnProps & StateProps & DispatchProps;
 
 const VtjOverrideButton = (props: Props) => {
     return props.henkilo.henkilo.yksiloityVTJ && props.henkilo.henkilo.hetu ? (
@@ -28,11 +34,11 @@ const VtjOverrideButton = (props: Props) => {
     ) : null;
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     henkilo: state.henkilo,
 });
 
-export default connect<Props, OwnProps>(mapStateToProps, {
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     overrideHenkiloVtjData,
 })(VtjOverrideButton);
