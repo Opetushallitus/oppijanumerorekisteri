@@ -5,9 +5,9 @@ import { validateEmail } from '../validation/EmailValidator';
 /*
  * Palauttaa true jos kaikki sähköpostikentät YhteystiedotRyhma-listassa ovat valideja sähköpostiosoitteita
  */
-export const validateYhteystiedotRyhmaEmails = (yhteystiedotRyhma: Array<YhteystietoRyhma>): boolean => {
-    return yhteystiedotRyhma.map(validYhteystietoRyhma).reduce((prev: boolean, curr: boolean) => prev && curr, true);
-};
+export const validateYhteystiedotRyhmaEmails = (yhteystiedotRyhma: YhteystietoRyhma[]): boolean =>
+    !!yhteystiedotRyhma?.length &&
+    yhteystiedotRyhma.map(validYhteystietoRyhma).reduce((prev: boolean, curr: boolean) => prev && curr, true);
 
 /*
  * Palauttaa true jos kaikki sähköpostikentät yksittäisessä YhteystiedotRyhma:ssa ovat valideja sähköpostiosoitteita

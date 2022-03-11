@@ -22,6 +22,7 @@ type Props = {
     henkilo: Henkilo;
     loginToken: string;
     router: any;
+    errorNotification: (title: string) => void;
 };
 
 type State = {
@@ -118,7 +119,10 @@ export class EmailVerificationPage extends React.Component<Props, State> {
             );
         } else {
             const emailVerificationUrl = urls.url('kayttooikeus-service.cas.emailverification', this.props.loginToken);
-            const redirectParams = await http.post(emailVerificationUrl, this.state.henkilo);
+            const redirectParams = await http.post(emailVerificationUrl, this.state.henkilo).catch((error) => {
+                this.props.errorNotification(this.props.L['REKISTEROIDY_ILLEGALARGUMENT_OTSIKKO']);
+                throw error;
+            });
             const redirectUrl = urls.url('cas.login', redirectParams);
             window.location.replace(redirectUrl);
         }

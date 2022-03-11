@@ -30,9 +30,8 @@ export class EmailVerificationList extends React.Component<Props> {
                                 ? 'oph-input email-verification-field'
                                 : 'oph-input oph-input-has-error email-verification-field';
                             return (
-                                <span>
+                                <span key={`${ryhmaIndex}-${yhteystietoIndex}`}>
                                     <input
-                                        key={`${ryhmaIndex}-${yhteystietoIndex}`}
                                         className={classNames}
                                         value={yhteystieto.yhteystietoArvo}
                                         type="text"
