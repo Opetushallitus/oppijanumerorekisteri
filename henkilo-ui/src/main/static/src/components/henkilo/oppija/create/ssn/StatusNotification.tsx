@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import type { ExistenceCheckState } from '../../../../../reducers/existence.reducer';
-import { Link } from 'react-router';
-import Button from '../../../../common/button/Button';
 import ReactMarkdown from 'react-markdown';
+import Button from '../../../../common/button/Button';
+import CopyToClipboard from './CopyToClipboard';
 import './DetailsForm.css';
 
 type Props = Omit<ExistenceCheckState, 'loading'> & {
@@ -22,7 +22,7 @@ const StatusNotification: React.FC<Props> = ({ translate, create, msgKey, status
                 })}
             >
                 <ReactMarkdown>{translate(msgKey)}</ReactMarkdown>
-                {status === 200 && <Link to={`/oppija/${oid}`}>{oid}</Link>}
+                {status === 200 && <CopyToClipboard text={oid} translate={translate} />}
                 {status === 204 && <Button action={create}>{translate('HENKILO_LUOYHTEYSTIETO')}</Button>}
             </div>
         ) : null}
