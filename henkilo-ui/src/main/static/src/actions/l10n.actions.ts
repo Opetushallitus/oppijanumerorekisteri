@@ -6,7 +6,11 @@ import { L10n } from '../types/localisation.type';
 const mapLocalisationsByLocale = (localisations: Array<any>): L10n => {
     const result = { fi: {}, sv: {}, en: {} };
     localisations.forEach((localisation: any) => {
-        result[localisation.locale][localisation.key] = localisation.value;
+        try {
+            result[localisation.locale][localisation.key] = localisation.value;
+        } catch {
+            // nop, survive malformed data from localization service
+        }
     });
     return result;
 };
