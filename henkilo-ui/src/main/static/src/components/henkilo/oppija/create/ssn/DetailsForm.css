@@ -15,3 +15,15 @@
 .float-right {
     float: right;
 }
+
+.copy-to-clipboard {
+    display: flex;
+}
+
+.copy-to-clipboard input {
+    width: 16rem;
+}
+
+.copy-to-clipboard button:active {
+    filter: brightness(0.75);
+}
