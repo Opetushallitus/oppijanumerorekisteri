@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import classnames from 'classnames';
 import Button from '../../../../common/button/Button';
 import './DetailsForm.css';
 
@@ -8,10 +9,22 @@ type Props = {
 };
 
 const CopyToClipboard: React.FC<Props> = ({ text, translate }) => {
+    const [copied, setCopied] = useState<boolean>(false);
+    const copyToCliplboard = () => {
+        try {
+            navigator.clipboard.writeText(text);
+            setCopied(true);
+        } catch (e) {
+            console.log('Failed to copy oid to the clipboard', e);
+        }
+    };
     return (
         <div className="oph-field copy-to-clipboard">
             <input type="text" className="oph-input" value={text || ''} readOnly />
-            <Button action={() => navigator.clipboard.writeText(text)}>{translate('KOPIOI')}</Button>
+            <Button action={copyToCliplboard}>
+                <i className={classnames('fa', copied ? 'fa-check' : 'fa-copy')} aria-hidden="true" />
+                {translate('KOPIOI')}
+            </Button>
         </div>
     );
 };

@@ -27,3 +27,7 @@
 .copy-to-clipboard button:active {
     filter: brightness(0.75);
 }
+
+.copy-to-clipboard i {
+    margin-right: 0.5rem;
+}
