@@ -41,7 +41,7 @@ public class YleistunnisteController {
 
     protected static final String REQUEST_MAPPING = "/yleistunniste";
     private static final String NATIONALITY_CODE = "999"; // e.g. "Unknown"
-    private static final String ACCESS_RIGHT_LITERAL = "YLEISTUNNISTE_LUONTI";
+    public static final String ACCESS_RIGHT_LITERAL = "YLEISTUNNISTE_LUONTI";
     private static final String ACCESS_RIGHT_SERVICE = "OPPIJANUMEROREKISTERI";
     public static final String ACCESS_RIGHT = "APP_" + ACCESS_RIGHT_SERVICE + "_" + ACCESS_RIGHT_LITERAL;
 

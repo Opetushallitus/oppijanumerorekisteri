@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
@@ -233,7 +234,11 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     @Override
     public Set<String> getOrganisaatioOidsByKayttaja() {
-        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
+        Set<String> oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
+        if ( oids.isEmpty() ) {
+            oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YleistunnisteController.ACCESS_RIGHT_LITERAL);
+        }
+        return oids;
     }
 
     @Override
