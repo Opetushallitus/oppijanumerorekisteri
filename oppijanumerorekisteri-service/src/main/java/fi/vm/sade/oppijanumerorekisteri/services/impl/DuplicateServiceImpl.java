@@ -86,22 +86,6 @@ public class DuplicateServiceImpl implements DuplicateService {
         String kayttajaOid = this.userDetailsHelper.getCurrentUserOid();
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
                 .stream().filter(henkiloDuplicate -> !henkiloDuplicate.getOidHenkilo().equals(kayttajaOid)).collect(toList()); // remove current user from duplicate search results
-        Set<String> duplicateOids = henkiloDuplicateDtos.stream().map(HenkiloDuplicateDto::getOidHenkilo).collect(toSet());
-        Map<String, List<HakemusDto>> hakuAppHakemukset = hakuappClient.fetchApplicationsByOid(duplicateOids);
-        Map<String, List<HakemusDto>> ataruHakemukset = ataruClient.fetchApplicationsByOid(duplicateOids);
-
-        henkiloDuplicateDtos.forEach(duplicate -> {
-            String oidHenkilo = duplicate.getOidHenkilo();
-            List<HakemusDto> hakemusDtos = new ArrayList<>();
-            if (hakuAppHakemukset.get(oidHenkilo) != null) {
-                hakemusDtos.addAll(hakuAppHakemukset.get(oidHenkilo));
-            }
-            if (ataruHakemukset.get(oidHenkilo) != null) {
-                hakemusDtos.addAll(ataruHakemukset.get(oidHenkilo));
-            }
-            duplicate.setHakemukset(hakemusDtos);
-        });
-
         return henkiloDuplicateDtos;
     }
 
