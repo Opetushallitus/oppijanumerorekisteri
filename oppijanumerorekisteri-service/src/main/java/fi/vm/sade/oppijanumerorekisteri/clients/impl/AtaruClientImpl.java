@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.Authentication
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
+import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,7 @@ public class AtaruClientImpl implements AtaruClient{
     }
 
     @Override
+    @LogExecutionTime
     public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
         TypeReference<List<Map<String, Object>>> hakemusType = new TypeReference<List<Map<String, Object>>>() {};
         return oids.stream().collect(Collectors.toMap(Function.identity(), oid -> fetchByOid(oid, hakemusType)));

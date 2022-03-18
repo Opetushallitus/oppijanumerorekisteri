@@ -5,11 +5,11 @@ import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.filter.AuditLogRead;
+import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -430,6 +430,7 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
+    @LogExecutionTime
     public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
             @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.duplicateService.findDuplicates(oid);
