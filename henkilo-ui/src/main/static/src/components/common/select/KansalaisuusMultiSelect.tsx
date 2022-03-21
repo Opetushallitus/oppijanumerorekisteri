@@ -29,7 +29,7 @@ class KansalaisuusMultiSelect extends React.Component<KansalaisuusMultiSelectPro
     }
 
     onChange: OnChangeHandler<string, Options<string> | Option<string>> = (values) => {
-        this.props.onChange(values?.map((value) => ({ kansalaisuusKoodi: value } as Kansalaisuus)));
+        this.props.onChange(values?.map((value) => ({ kansalaisuusKoodi: value.value } as Kansalaisuus)));
     };
 }
 
