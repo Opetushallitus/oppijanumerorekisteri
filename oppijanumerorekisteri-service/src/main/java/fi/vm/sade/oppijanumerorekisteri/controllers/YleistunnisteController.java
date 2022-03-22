@@ -36,14 +36,11 @@ import java.util.stream.Collectors;
 @RequestMapping(YleistunnisteController.REQUEST_MAPPING)
 @RequiredArgsConstructor
 @Validated
-@PreAuthorize("hasAnyRole(T(fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController).ACCESS_RIGHT)")
+@PreAuthorize("hasAnyRole(T(fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl).YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)")
 public class YleistunnisteController {
 
     protected static final String REQUEST_MAPPING = "/yleistunniste";
     private static final String NATIONALITY_CODE = "999"; // e.g. "Unknown"
-    public static final String ACCESS_RIGHT_LITERAL = "YLEISTUNNISTE_LUONTI";
-    private static final String ACCESS_RIGHT_SERVICE = "OPPIJANUMEROREKISTERI";
-    public static final String ACCESS_RIGHT = "APP_" + ACCESS_RIGHT_SERVICE + "_" + ACCESS_RIGHT_LITERAL;
 
     private final OppijaService oppijaService;
 

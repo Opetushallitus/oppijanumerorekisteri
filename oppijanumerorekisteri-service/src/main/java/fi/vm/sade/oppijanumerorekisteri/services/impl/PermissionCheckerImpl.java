@@ -28,6 +28,9 @@ import static java.util.stream.Collectors.toSet;
 @Service("permissionChecker")
 @RequiredArgsConstructor
 public class PermissionCheckerImpl implements PermissionChecker {
+    public static final String YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL = "YLEISTUNNISTE_LUONTI";
+    private static final String YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_SERVICE = "OPPIJANUMEROREKISTERI";
+    public static final String YLEISTUNNISTE_LUONTI_ACCESS_RIGHT = "APP_" + YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_SERVICE + "_" + YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL;
     public static final String ROLE_OPPIJANUMEROREKISTERI_PREFIX = "ROLE_APP_OPPIJANUMEROREKISTERI_";
     private static final String ROLE_OPPIJOIDENTUONTI = "ROLE_APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI";
     private static final String ORGANISAATIO_OID_PREFIX = "1.2.246.562.10";

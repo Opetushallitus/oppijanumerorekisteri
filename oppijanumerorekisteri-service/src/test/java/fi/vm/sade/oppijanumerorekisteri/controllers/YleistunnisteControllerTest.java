@@ -94,7 +94,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void putOppijaShouldWork() throws Exception {
         YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
 
@@ -109,7 +109,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
         YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         dto.setSahkoposti(null);
@@ -212,7 +212,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void getTuontiPerustiedot() throws Exception {
         OppijaTuontiPerustiedotReadDto result = new OppijaTuontiPerustiedotReadDto(37337L, 1000, 1000, true);
         when(oppijaServiceMock.getTuontiById(anyLong())).thenReturn(result);
@@ -240,7 +240,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void getTuontiPerustiedotNotFound() throws Exception {
         when(oppijaServiceMock.getTuontiById(anyLong())).thenThrow(new NotFoundException());
 
@@ -254,7 +254,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void create() throws Exception {
         OppijaTuontiPerustiedotReadDto result = new OppijaTuontiPerustiedotReadDto(37337L, 1000, 1000, true);
         when(oppijaServiceMock.create(anyLong())).thenReturn(result);
@@ -282,7 +282,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void createNotFound() throws Exception {
         when(oppijaServiceMock.create(anyLong())).thenThrow(new NotFoundException());
 
@@ -308,7 +308,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void getOppijatByTuontiIdNotFound() throws Exception {
         when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenThrow(new NotFoundException());
 
@@ -322,7 +322,7 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = YleistunnisteController.ACCESS_RIGHT)
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void getOppijatByTuontiId() throws Exception {
         OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 1, 1, true,
                 singletonList(new OppijaTuontiRiviReadDto("tunniste", new OppijaReadDto())));

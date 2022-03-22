@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.models.Identification.SAHKOPOSTI_IDP_ENTITY_ID;
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
 import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -236,7 +235,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     public Set<String> getOrganisaatioOidsByKayttaja() {
         Set<String> oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
         if ( oids.isEmpty() ) {
-            oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YleistunnisteController.ACCESS_RIGHT_LITERAL);
+            oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL);
         }
         return oids;
     }
