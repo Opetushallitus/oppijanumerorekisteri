@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.ConfigEnums;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.AuthenticationProperties;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
+import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
@@ -48,6 +49,7 @@ public class HakuappClientImpl implements HakuappClient {
     }
 
     @Override
+    @LogExecutionTime
     public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
         String url = this.urlConfiguration.url("haku-app.applications");
         OphHttpRequest request = OphHttpRequest.Builder.post(url)
