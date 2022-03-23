@@ -501,9 +501,9 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
         return results;
     }
 
-    private String getNamesAndBirthDate(HenkiloDuplikaattiCriteria criteria) {
+    protected static String getNamesAndBirthDate(HenkiloDuplikaattiCriteria criteria) {
         String syntymaaika = criteria.getSyntymaaika() != null
-                ? criteria.getSyntymaaika().format(DateTimeFormatter.BASIC_ISO_DATE) : "";
+                ? criteria.getSyntymaaika().format(DateTimeFormatter.ISO_LOCAL_DATE) : "";
         return Stream.of(
                     criteria.getEtunimet(),
                     criteria.getKutsumanimi(),
