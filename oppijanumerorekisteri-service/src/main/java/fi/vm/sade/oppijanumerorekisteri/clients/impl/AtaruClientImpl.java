@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,8 +44,11 @@ public class AtaruClientImpl implements AtaruClient{
     @Override
     @LogExecutionTime
     public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
-        TypeReference<List<Map<String, Object>>> hakemusType = new TypeReference<List<Map<String, Object>>>() {};
-        return oids.stream().collect(Collectors.toMap(Function.identity(), oid -> fetchByOid(oid, hakemusType)));
+        TypeReference<List<Map<String, Object>>> hakemusType = new TypeReference<>() {
+        };
+        return oids.parallelStream()
+                .map(oid -> new AbstractMap.SimpleEntry<>(oid, fetchByOid(oid, hakemusType)))
+                .collect(Collectors.toConcurrentMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
     }
 
     private List<HakemusDto> fetchByOid(String oid, TypeReference<List<Map<String, Object>>> hakemusType) {
@@ -66,11 +69,10 @@ public class AtaruClientImpl implements AtaruClient{
 
     private List<HakemusDto> jsonToHakemusDtoList(String json, TypeReference<List<Map<String, Object>>> hakemusType) throws IOException {
         List<Map<String, Object>> hakemukset = objectMapper.readValue(json, hakemusType);
-        List<HakemusDto> hakemusList = hakemukset.stream().map(hakemusData -> {
+        return hakemukset.stream().map(hakemusData -> {
             hakemusData.put("service", "ataru");
             return new HakemusDto(hakemusData);
         }).collect(Collectors.toList());
-        return hakemusList;
     }
 
     private OphHttpClient createOphHttpClient() {
