@@ -48,14 +48,17 @@ public class DuplicateServiceImpl implements DuplicateService {
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow( () -> new NotFoundException("User with oid " + oid + " was not found") );
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), henkilo.getSyntymaaika());
-        List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream().filter(duplicate -> filterDuplicate(henkilo, duplicate)).collect(toList());
+        List<String> linked = henkiloViiteRepository.findBySlaveOid(oid).stream().map(HenkiloViite::getMasterOid).collect(toList());
+        List<Henkilo> candidates = this.henkiloDataRepository.findDuplikaatit(criteria).stream()
+                .filter(duplicate -> filterDuplicate(henkilo, duplicate))
+                .filter(duplicate -> !linked.contains(duplicate.getOidHenkilo()))
+                .collect(toList());
         return getHenkiloDuplicateDtoList(candidates);
     }
 
     public boolean filterDuplicate(Henkilo henkilo, Henkilo duplicate){
         boolean notSameOid =  !duplicate.getOidHenkilo().equals(henkilo.getOidHenkilo());
         boolean ytjIdentifiedfilter = !henkilo.isYksiloityVTJ() || henkilo.getHetu() == null || !duplicate.isYksiloityVTJ();
-
         return notSameOid && ytjIdentifiedfilter;
     }
 
