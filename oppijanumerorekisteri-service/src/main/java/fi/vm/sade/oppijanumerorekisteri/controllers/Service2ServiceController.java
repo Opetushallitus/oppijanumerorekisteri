@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.Min;
 import java.net.URI;
@@ -110,6 +111,7 @@ public class Service2ServiceController {
         }
     }
 
+    @ApiIgnore
     @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
             notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/perustiedot")
@@ -131,6 +133,7 @@ public class Service2ServiceController {
         return henkiloService.findByMunicipalAndBirthdate(municipal, birthdate, page);
     }
 
+    @ApiIgnore
     @ApiOperation(value = "Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä",
             notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/yhteystiedot")
