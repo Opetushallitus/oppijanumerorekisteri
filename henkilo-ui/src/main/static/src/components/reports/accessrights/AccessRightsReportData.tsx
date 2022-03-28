@@ -40,7 +40,7 @@ export const columns: TableHeading[] = [
     },
     {
         key: 'organisationOid',
-        label: 'HENKILO_OID',
+        label: 'OID',
         maxWidth: 250,
     },
     {
