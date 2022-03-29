@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.criteria;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
@@ -13,12 +14,17 @@ import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 import static com.querydsl.core.types.dsl.Expressions.anyOf;
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
@@ -40,12 +46,14 @@ public class OppijaTuontiCriteria {
 
     private String nimiHaku;
 
-    public boolean setOrRetainOrganisaatioOids(Set<String> oids) {
+    private boolean sanitized = false;
+
+    public void setOrRetainOrganisaatioOids(Set<String> oids) {
         if (organisaatioOids == null || organisaatioOids.isEmpty()) {
             organisaatioOids = oids;
-            return true;
+        } else {
+            organisaatioOids.retainAll(oids);
         }
-        return organisaatioOids.retainAll(oids);
     }
 
     public boolean hasConditions() {
@@ -55,8 +63,8 @@ public class OppijaTuontiCriteria {
     /**
      * Palauttaa kyselyn tästä hakukriteeristä.
      *
-     * @param entityManager
-     * @param qHenkilo
+     * @param entityManager entity manager instance
+     * @param qHenkilo entity serializer
      * @return kysely
      */
     public JPAQuery<?> getQuery(EntityManager entityManager, QHenkilo qHenkilo) {
@@ -80,9 +88,8 @@ public class OppijaTuontiCriteria {
             query.join(qHenkilo.organisaatiot, qOrganisaatio);
             query.where(qOrganisaatio.oid.in(organisaatioOids));
         }
-        if (Boolean.TRUE.equals(vainVirheet)) {
-            query.where(qHenkilo.duplicate.isFalse(),  qHenkilo.passivoitu.isFalse());
-            query.where(anyOf(
+        if (sanitized || Boolean.TRUE.equals(vainVirheet)) {
+            List<BooleanExpression> conditions = Stream.of(
                     allOf(
                             qHenkilo.hetu.isNull(),
                             qHenkilo.yksiloity.isFalse(),
@@ -94,7 +101,14 @@ public class OppijaTuontiCriteria {
                             qHenkilo.yksiloityVTJ.isFalse(),
                             qHenkilo.yksilointiYritetty.isTrue()
                     )
-            ));
+            ).collect(toList());
+            if (sanitized) {
+                conditions.add(allOf(
+                        qTuonti.aikaleima.gt(getTimestamp(Period.ofMonths(2)))
+                ));
+            }
+            query.where(qHenkilo.duplicate.isFalse(), qHenkilo.passivoitu.isFalse());
+            query.where(anyOf(conditions.toArray(new BooleanExpression[0])));
         }
 
         if (StringUtils.hasLength(this.nimiHaku)) {
@@ -136,4 +150,7 @@ public class OppijaTuontiCriteria {
         return query;
     }
 
+    private Date getTimestamp(Period period) {
+        return java.sql.Timestamp.valueOf(LocalDateTime.now().minus(period));
+    }
 }
