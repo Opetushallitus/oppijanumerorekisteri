@@ -168,15 +168,15 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
     @Test
     public void findYhteystiedot() {
         populate(henkilo("1.2.3.4.5")
-            .withYhteystieto(ryhma("yhteystietotyyppi1")
-                    .alkupera("alkuperä")
-                .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
-                .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
-                .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
-            )
-            .withYhteystieto(ryhma("yhteystietotyyppi2").alkupera("alkuperä")
-                .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
-            )
+                .withYhteystieto(ryhma("yhteystietotyyppi1")
+                        .alkupera("alkuperä")
+                        .tieto(YHTEYSTIETO_KATUOSOITE, "Kotikatu 3")
+                        .tieto(YHTEYSTIETO_POSTINUMERO, "12345")
+                        .tieto(YHTEYSTIETO_KAUPUNKI, "Toijala")
+                )
+                .withYhteystieto(ryhma("yhteystietotyyppi2").alkupera("alkuperä")
+                        .tieto(YHTEYSTIETO_SAHKOPOSTI, "tyo@osoite.com")
+                )
         );
 
         List<YhteystietoHakuDto> tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria());
@@ -189,7 +189,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(tiedot.size()).isEqualTo(4);
 
         tiedot = this.dataRepository.findYhteystiedot(new YhteystietoCriteria().withHenkiloOid("1.2.3.4.5")
-                    .withRyhma("yhteystietotyyppi2"));
+                .withRyhma("yhteystietotyyppi2"));
         assertThat(tiedot.size()).isEqualTo(1);
         assertThat(tiedot.get(0).getArvo()).isEqualTo("tyo@osoite.com");
         assertThat(tiedot.get(0).getHenkiloOid()).isEqualTo("1.2.3.4.5");
@@ -312,12 +312,12 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), now.minusHours(1), null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo("MOMENT_AGO");
-        
+
         results = this.dataRepository.findOidsModifiedSince(HenkiloCriteria.builder()
                 .henkiloOids(new HashSet<>(asList("YESTERDAY", "LAST_WEEK"))).build(), yesterday, null, null);
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo("YESTERDAY");
-        
+
         results = this.dataRepository.findOidsModifiedSince(new HenkiloCriteria(), lastWeek, null, null);
         assertThat(results).hasSize(3);
     }
@@ -435,7 +435,73 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
         assertThat(dataRepository.countByYksilointiKeskeneraiset(criteria)).isEqualTo(0);
         assertThat(dataRepository.countByYksilointiVirheet(criteria)).isEqualTo(2);
         assertThat(dataRepository.countBy(criteria)).isEqualTo(2);
+    }
 
+    @Test
+    public void findByOppijaTuontiCriteriaSanitationTest() {
+        populate(tuonti(
+                henkilo("hetuton"),
+                henkilo("hetuton_yksiloity").yksiloity(),
+                henkilo("hetullinen").hetu("251098-9515"),
+                henkilo("hetullinen_yksilointi_yritetty").hetu("251098-991E").yksilointiYritetty(),
+                henkilo("hetullinen_yksiloity").hetu("251098-937P").yksiloityVtj(),
+                henkilo("passivoitu").passivoitu(),
+                henkilo("duplikaatti").duplikaatti()
+        ).aikaleima((new DateTime()).minusMonths(OppijaTuontiCriteria.SANITATION_THRESHOLD + 1).toDate())); // older than two months - subject to sanitation
+
+        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetuton_yksiloity", YksilointiTila.OK),
+                        tuple("hetullinen", YksilointiTila.KESKEN),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
+                        tuple("hetullinen_yksiloity", YksilointiTila.OK),
+                        tuple("passivoitu", YksilointiTila.OK),
+                        tuple("duplikaatti", YksilointiTila.OK));
+
+        criteria.setSanitized(true);
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE));
+    }
+
+    @Test
+    public void findByOppijaTuontiCriteriaSanitationSkipsRecentTest() {
+        populate(tuonti(
+                henkilo("hetuton"),
+                henkilo("hetuton_yksiloity").yksiloity(),
+                henkilo("hetullinen").hetu("251098-9515"),
+                henkilo("hetullinen_yksilointi_yritetty").hetu("251098-991E").yksilointiYritetty(),
+                henkilo("hetullinen_yksiloity").hetu("251098-937P").yksiloityVtj(),
+                henkilo("passivoitu").passivoitu(),
+                henkilo("duplikaatti").duplikaatti()
+        ).aikaleima((new DateTime()).minusMonths(OppijaTuontiCriteria.SANITATION_THRESHOLD - 1).toDate())); // newer than two months - no sanitation
+
+        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetuton_yksiloity", YksilointiTila.OK),
+                        tuple("hetullinen", YksilointiTila.KESKEN),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
+                        tuple("hetullinen_yksiloity", YksilointiTila.OK),
+                        tuple("passivoitu", YksilointiTila.OK),
+                        tuple("duplikaatti", YksilointiTila.OK));
+
+        criteria.setSanitized(true);
+        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
+                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
+                .containsExactlyInAnyOrder(
+                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
+                        tuple("hetuton_yksiloity", YksilointiTila.OK),
+                        tuple("hetullinen", YksilointiTila.KESKEN),
+                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
+                        tuple("hetullinen_yksiloity", YksilointiTila.OK));
     }
 
     private void persistHenkilo(Henkilo henkilo) {
@@ -460,7 +526,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
 
     @Test
     public void findByMunicipalityAndDobEmpty() {
-        List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 05), Long.MAX_VALUE, 0L);
+        List<HenkiloMunicipalDobDto> henkilos = dataRepository.findByMunicipalAndBirthdate("foo", LocalDate.of(2021, 11, 5), Long.MAX_VALUE, 0L);
         assertTrue(henkilos.isEmpty());
     }
 

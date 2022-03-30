@@ -14,8 +14,6 @@ import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +31,8 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OppijaTuontiCriteria {
+
+    public static final int SANITATION_THRESHOLD = 2;
 
     private Long tuontiId;
 
@@ -57,14 +57,14 @@ public class OppijaTuontiCriteria {
     }
 
     public boolean hasConditions() {
-        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || Boolean.TRUE.equals(this.vainVirheet) || StringUtils.hasLength(this.nimiHaku);
+        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || this.sanitized || Boolean.TRUE.equals(this.vainVirheet) || StringUtils.hasLength(this.nimiHaku);
     }
 
     /**
      * Palauttaa kyselyn tästä hakukriteeristä.
      *
      * @param entityManager entity manager instance
-     * @param qHenkilo entity serializer
+     * @param qHenkilo      entity serializer
      * @return kysely
      */
     public JPAQuery<?> getQuery(EntityManager entityManager, QHenkilo qHenkilo) {
@@ -93,22 +93,20 @@ public class OppijaTuontiCriteria {
                     allOf(
                             qHenkilo.hetu.isNull(),
                             qHenkilo.yksiloity.isFalse(),
-                            qHenkilo.yksiloityVTJ.isFalse()
-                    ),
+                            qHenkilo.yksiloityVTJ.isFalse()),
                     allOf(
                             qHenkilo.hetu.isNotNull(),
                             qHenkilo.yksiloity.isFalse(),
                             qHenkilo.yksiloityVTJ.isFalse(),
-                            qHenkilo.yksilointiYritetty.isTrue()
-                    )
+                            qHenkilo.yksilointiYritetty.isTrue())
             ).collect(toList());
             if (sanitized) {
-                conditions.add(allOf(
-                        qTuonti.aikaleima.gt(getTimestamp(Period.ofMonths(2)))
-                ));
+                conditions.add(qTuonti.aikaleima.goe(sanitationThreshold()));
             }
-            query.where(qHenkilo.duplicate.isFalse(), qHenkilo.passivoitu.isFalse());
-            query.where(anyOf(conditions.toArray(new BooleanExpression[0])));
+            query.where(allOf(
+                    qHenkilo.duplicate.isFalse(),
+                    qHenkilo.passivoitu.isFalse(),
+                    anyOf(conditions.toArray(new BooleanExpression[0]))));
         }
 
         if (StringUtils.hasLength(this.nimiHaku)) {
@@ -150,7 +148,7 @@ public class OppijaTuontiCriteria {
         return query;
     }
 
-    private Date getTimestamp(Period period) {
-        return java.sql.Timestamp.valueOf(LocalDateTime.now().minus(period));
+    private Date sanitationThreshold() {
+        return (new DateTime()).minusMonths(SANITATION_THRESHOLD).toDate();
     }
 }
