@@ -46,5 +46,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.2.3.Final</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
