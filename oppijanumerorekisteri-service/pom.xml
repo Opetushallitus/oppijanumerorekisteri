@@ -232,6 +232,11 @@
             <artifactId>json-path</artifactId>
             <version>2.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
