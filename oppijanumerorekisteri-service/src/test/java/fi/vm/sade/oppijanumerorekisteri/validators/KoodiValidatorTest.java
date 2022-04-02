@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.validation.Errors;
@@ -54,7 +54,7 @@ public class KoodiValidatorTest {
                 "field", "errorCode");
 
         verify(koodistoService).list(eq(Koodisto.SUKUPUOLI));
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class KoodiValidatorTest {
                 "field", "errorCode");
 
         verify(koodistoService).list(eq(Koodisto.YHTEYSTIETOJEN_ALKUPERA));
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test

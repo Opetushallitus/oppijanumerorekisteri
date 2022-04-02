@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.validation.Errors;
@@ -48,7 +48,7 @@ public class HenkiloUpdatePostValidatorTest {
 
         validator.validate(dto, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class HenkiloUpdatePostValidatorTest {
 
         validator.validate(dto, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class HenkiloUpdatePostValidatorTest {
 
         validator.validate(dto, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class HenkiloUpdatePostValidatorTest {
 
         validator.validate(dto, errors);
 
-        verifyZeroInteractions(errors);
+        verifyNoInteractions(errors);
         verify(henkiloRepository, never()).findByHetu(any());
     }
 
@@ -119,7 +119,7 @@ public class HenkiloUpdatePostValidatorTest {
 
         validator.validate(dto, errors);
 
-        verifyZeroInteractions(this.errors);
+        verifyNoInteractions(this.errors);
     }
 
     @Test

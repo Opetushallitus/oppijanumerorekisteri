@@ -87,7 +87,7 @@ public class HenkiloServiceImplTest {
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1"));
 
         assertThat(throwable).isInstanceOf(NotFoundException.class);
-        verifyZeroInteractions(permissionChecker);
+        verifyNoInteractions(permissionChecker);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class HenkiloServiceImplTest {
         Throwable throwable = catchThrowable(() -> impl.getByHakutermi("haku1"));
 
         assertThat(throwable).isInstanceOf(NotFoundException.class);
-        verifyZeroInteractions(permissionChecker);
+        verifyNoInteractions(permissionChecker);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class HenkiloServiceImplTest {
         assertThat(throwable).isInstanceOf(NotFoundException.class);
         verify(henkiloRepository).findMasterBySlaveOid(eq(oid));
         verify(henkiloRepository).findByOidHenkilo(eq(oid));
-        verifyZeroInteractions(orikaConfiguration);
+        verifyNoInteractions(orikaConfiguration);
     }
 
     @Test

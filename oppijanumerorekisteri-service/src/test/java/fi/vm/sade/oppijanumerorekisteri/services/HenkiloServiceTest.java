@@ -106,7 +106,7 @@ public class HenkiloServiceTest {
         Slice<HenkiloHakuDto> slice = service.list(criteria, 1, 20);
 
         assertThat(slice.getResults()).isEmpty();
-        verifyZeroInteractions(henkiloDataRepositoryMock);
+        verifyNoInteractions(henkiloDataRepositoryMock);
     }
 
     @Test

@@ -1,6 +1,7 @@
 spring:
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true # HuoltajaCreateDtoMapper
   jackson:
     serialization:
       write-dates-as-timestamps: true
@@ -18,8 +19,6 @@ host:
   host-cas: localhost
   host-virkailija: localhost
 oppijanumerorekisteri:
-  swagger:
-    enabled: false
   scheduling:
     enabled: false
 cas:

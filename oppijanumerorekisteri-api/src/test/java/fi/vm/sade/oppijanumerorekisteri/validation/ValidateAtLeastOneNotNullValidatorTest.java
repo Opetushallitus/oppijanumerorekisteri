@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @RunWith(SpringRunner.class)
 public class ValidateAtLeastOneNotNullValidatorTest {
@@ -64,7 +64,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(null, contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(TestClass.builder().build(), contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(TestClass.builder().integerValue(235).build(), contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ValidateAtLeastOneNotNullValidatorTest {
         boolean valid = validator.isValid(TestClass.builder().integerValue(764).build(), contextMock);
 
         assertThat(valid).isTrue();
-        verifyZeroInteractions(contextMock);
+        verifyNoInteractions(contextMock);
     }
 
     @Test

@@ -149,7 +149,7 @@ public class OppijaServiceImplTest {
         Throwable throwable = catchThrowable(() -> oppijaServiceImpl.listMastersBy(input, page, count));
 
         assertThat(throwable).isInstanceOf(ValidationException.class);
-        verifyZeroInteractions(henkiloRepositoryMock);
+        verifyNoInteractions(henkiloRepositoryMock);
     }
 
     @Test

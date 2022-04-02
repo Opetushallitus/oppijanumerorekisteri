@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class StaticController {
-    @RequestMapping({"/swagger", "/swagger/**"})
+    @RequestMapping({"/swagger", "/swagger/**", "/swagger-ui.html"})
     public String swagger() {
-        return "redirect:/swagger-ui.html";
+        return "redirect:/swagger-ui/";
     }
 }

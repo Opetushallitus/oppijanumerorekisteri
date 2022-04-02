@@ -11,12 +11,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class AssertPublished {
     public static void assertPublished(ObjectMapper objectMapper, AmazonSNS amazonSNS, int times, String... oids) {
         if (times == 0) {
-            verifyZeroInteractions(amazonSNS);
+            verifyNoInteractions(amazonSNS);
         } else {
             ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
             verify(amazonSNS, times(times)).publish(anyString(), argumentCaptor.capture());

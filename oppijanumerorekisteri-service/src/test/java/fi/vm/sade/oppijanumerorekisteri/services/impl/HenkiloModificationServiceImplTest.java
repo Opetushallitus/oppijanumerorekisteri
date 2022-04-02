@@ -614,7 +614,7 @@ public class HenkiloModificationServiceImplTest {
         Henkilo huoltaja = this.service.findOrCreateHuoltaja(huoltajaCreateDto, lapsi);
         verify(this.henkiloDataRepositoryMock, times(1)).findByHetu(eq("271198-9197"));
         verify(this.service, times(0)).createHenkilo(any(HuoltajaCreateDto.class));
-        verifyZeroInteractions(lapsi);
+        verifyNoInteractions(lapsi);
         assertThat(huoltaja)
                 .extracting(Henkilo::getEtunimet, Henkilo::getKutsumanimi, Henkilo::getSukunimi, Henkilo::getHetu, Henkilo::isYksiloityVTJ, Henkilo::getOidHenkilo, Henkilo::getSyntymaaika, Henkilo::getSukupuoli)
                 .containsExactly("etunimi", "etunimi", "sukunimi", "271198-9197", true, "oid", LocalDate.of(1998, 11, 27), "1");

@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.filter;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.ServletRequestPathUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,9 @@ public abstract class AuditLogFilter extends OncePerRequestFilter {
         return Optional.ofNullable(reqMap)
                 .map(mapping -> {
                     try {
+                        if (!ServletRequestPathUtils.hasParsedRequestPath(request)) {
+                            ServletRequestPathUtils.parseAndCache(request);
+                        }
                         return mapping.getHandler(request);
                     } catch (Exception e) {
                         return null;

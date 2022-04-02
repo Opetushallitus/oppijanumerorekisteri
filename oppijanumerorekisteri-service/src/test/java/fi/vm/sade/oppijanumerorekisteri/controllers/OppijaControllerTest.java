@@ -137,7 +137,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -187,7 +187,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -223,7 +223,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -241,7 +241,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -259,7 +259,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
@@ -280,7 +280,7 @@ public class OppijaControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(oppijaServiceMock);
+        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test

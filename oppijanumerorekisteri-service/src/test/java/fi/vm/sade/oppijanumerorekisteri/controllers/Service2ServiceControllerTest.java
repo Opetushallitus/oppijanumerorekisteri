@@ -42,7 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -287,7 +287,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -304,7 +304,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -321,7 +321,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
@@ -338,7 +338,7 @@ public class Service2ServiceControllerTest  {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isBadRequest());
-        verifyZeroInteractions(henkiloModificationService);
+        verifyNoInteractions(henkiloModificationService);
     }
 
     @Test
