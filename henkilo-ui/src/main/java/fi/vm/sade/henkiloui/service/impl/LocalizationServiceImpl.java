@@ -5,10 +5,6 @@ import fi.vm.sade.henkiloui.configurations.ExposedResourceMessageBundleSource;
 import fi.vm.sade.henkiloui.dto.LokalisointiCriteria;
 import fi.vm.sade.henkiloui.dto.LokalisointiDto;
 import fi.vm.sade.henkiloui.service.LocalizationService;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
-import static java.util.stream.Collectors.toSet;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +12,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor

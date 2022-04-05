@@ -5,6 +5,10 @@ management:
   health:
     diskspace:
       enabled: false
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 henkiloui:
   lokalisointi_synkronointi:
     aktiivinen: false

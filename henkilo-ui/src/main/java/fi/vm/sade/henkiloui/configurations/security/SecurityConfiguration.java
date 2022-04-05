@@ -24,8 +24,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private CasProperties casProperties;
-    private OphProperties ophProperties;
+    private final CasProperties casProperties;
+    private final OphProperties ophProperties;
 
     @Autowired
     public SecurityConfiguration(CasProperties casProperties,
@@ -104,29 +104,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .headers().disable()
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/buildversion.txt").permitAll()
-                    .antMatchers("/actuator/**").permitAll()
-                    .antMatchers("/swagger-ui.html").permitAll()
-                    .antMatchers("/swagger-resources/**").permitAll()
-                    .antMatchers("/webjars/springfox-swagger-ui/**").permitAll()
-                    .antMatchers("/v2/api-docs").permitAll()
-                    // To allow unauthorized user load the app where it's permitted
-                    .antMatchers("/favicon.ico").permitAll()
-                    .antMatchers("/static/js/*").permitAll()
-                    .antMatchers("/static/css/*").permitAll()
-                    .antMatchers("/static/media/*").permitAll()
-                    .antMatchers("/config/frontProperties").permitAll()
-                    .antMatchers("/l10n").permitAll()
-                    .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
-                    .antMatchers("/vahvatunnistusinfo/virhe/*/*").permitAll()
-                    .antMatchers("/uudelleenrekisterointi/**").permitAll()
-                    .antMatchers("/rekisteroidy").permitAll()
-                    .antMatchers("/salasananresetointi/*/*").permitAll()
-                    .antMatchers("/sahkopostivarmistus/*/*").permitAll()
-                    .antMatchers("/sahkopostivarmistus/virhe/*/*/*").permitAll()
-                    // Admin domain
-                    .antMatchers("/admin/**").hasRole("APP_HENKILONHALLINTA_OPHREKISTERI")
-                    .anyRequest().authenticated()
+                .antMatchers("/buildversion.txt").permitAll()
+                .antMatchers("/actuator/**").permitAll()
+                // To allow unauthorized user load the app where it's permitted
+                .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/static/js/*").permitAll()
+                .antMatchers("/static/css/*").permitAll()
+                .antMatchers("/static/media/*").permitAll()
+                .antMatchers("/config/frontProperties").permitAll()
+                .antMatchers("/l10n").permitAll()
+                .antMatchers("/vahvatunnistusinfo/*/*").permitAll()
+                .antMatchers("/vahvatunnistusinfo/virhe/*/*").permitAll()
+                .antMatchers("/uudelleenrekisterointi/**").permitAll()
+                .antMatchers("/rekisteroidy").permitAll()
+                .antMatchers("/salasananresetointi/*/*").permitAll()
+                .antMatchers("/sahkopostivarmistus/*/*").permitAll()
+                .antMatchers("/sahkopostivarmistus/virhe/*/*/*").permitAll()
+                // Admin domain
+                .antMatchers("/admin/**").hasRole("APP_HENKILONHALLINTA_OPHREKISTERI")
+                .anyRequest().authenticated()
                 .and()
                 .addFilter(casAuthenticationFilter())
                 .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint())
@@ -137,6 +133,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-        .authenticationProvider(casAuthenticationProvider());
+                .authenticationProvider(casAuthenticationProvider());
     }
 }

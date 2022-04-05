@@ -1,10 +1,11 @@
 package fi.vm.sade.henkiloui.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter

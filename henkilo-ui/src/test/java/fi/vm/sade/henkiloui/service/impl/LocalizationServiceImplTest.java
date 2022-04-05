@@ -3,22 +3,24 @@ package fi.vm.sade.henkiloui.service.impl;
 import fi.vm.sade.henkiloui.client.LokalisointiClient;
 import fi.vm.sade.henkiloui.configurations.ExposedResourceMessageBundleSource;
 import fi.vm.sade.henkiloui.dto.LokalisointiDto;
-import static java.util.Arrays.asList;
-import java.util.Collection;
-import java.util.Properties;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import static org.mockito.Matchers.any;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.core.env.Environment;
+
+import java.util.Collection;
+import java.util.Properties;
+
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocalizationServiceImplTest {

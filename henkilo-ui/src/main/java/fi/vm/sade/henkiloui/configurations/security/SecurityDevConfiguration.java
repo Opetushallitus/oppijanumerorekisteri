@@ -17,13 +17,14 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 @EnableGlobalMethodSecurity(jsr250Enabled = false, prePostEnabled = true, securedEnabled = true)
 @EnableWebSecurity
 public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
-    private DevProperties devProperties;
+    private final DevProperties devProperties;
 
     @SuppressWarnings("deprecation")
     @Bean
     public static NoOpPasswordEncoder passwordEncoder() {
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
     }
+
     @Autowired
     public SecurityDevConfiguration(DevProperties devProperties) {
         this.devProperties = devProperties;
@@ -32,14 +33,11 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic()
-        .and()
-        .headers().disable()
-        .csrf().disable()
+                .and()
+                .headers().disable()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/buildversion.txt").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
                 // To allow unauthorized user load the app where it's permitted
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/static/js/*").permitAll()
@@ -65,7 +63,7 @@ public class SecurityDevConfiguration extends WebSecurityConfigurerAdapter {
                 .withUser(devProperties.getUsername()).password(devProperties.getPassword())
                 .authorities("APP_HENKILONHALLINTA_OPHREKISTERI")
                 .and()
-                .withUser(devProperties.getUsername()+"1").password(devProperties.getPassword()+"1")
+                .withUser(devProperties.getUsername() + "1").password(devProperties.getPassword() + "1")
                 .authorities("USER");
     }
 }

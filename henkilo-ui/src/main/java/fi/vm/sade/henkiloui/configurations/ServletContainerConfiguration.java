@@ -2,7 +2,6 @@ package fi.vm.sade.henkiloui.configurations;
 
 import org.apache.catalina.connector.Connector;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -20,7 +19,7 @@ public class ServletContainerConfiguration {
      * Konfiguraatio kun palvelua ajetaan HTTPS proxyn läpi. Käytännössä tämä
      * muuttaa {@link javax.servlet.ServletRequest#getScheme()} palauttamaan
      * `https` jolloin palvelun kautta luodut urlit muodostuvat oikein.
-     *
+     * <p>
      * Aktivointi: `kayttooikeus.uses-ssl-proxy` arvoon `true`.
      *
      * @return EmbeddedServletContainerCustomizer jonka Spring automaattisesti
@@ -32,7 +31,7 @@ public class ServletContainerConfiguration {
         return (WebServerFactory container) -> {
             if (container instanceof ConfigurableServletWebServerFactory) {
                 TomcatServletWebServerFactory tomcat = (TomcatServletWebServerFactory) container;
-                tomcat.addConnectorCustomizers((TomcatConnectorCustomizer) (Connector connector) -> {
+                tomcat.addConnectorCustomizers((Connector connector) -> {
                     connector.setScheme("https");
                     connector.setSecure(true);
                 });

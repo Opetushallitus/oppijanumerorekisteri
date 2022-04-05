@@ -8,7 +8,7 @@ import org.springframework.util.StringUtils;
 
 @Configuration
 public class UrlConfiguration extends OphProperties {
-    private Environment environment;
+    private final Environment environment;
 
     @Autowired
     public UrlConfiguration(Environment environment) {
