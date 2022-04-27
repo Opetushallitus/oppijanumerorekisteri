@@ -93,4 +93,6 @@ public interface HenkiloService {
     HenkiloForceReadDto getByHetuForMuutostieto(String hetu);
 
     Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, int page);
+
+    default void removeContactInfo(String oid, String... removeTypes) {};
 }

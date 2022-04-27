@@ -12,6 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.IdentificationRepository;
+import fi.vm.sade.oppijanumerorekisteri.utils.YhteystietoryhmaUtils;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @IntegrationTest
@@ -53,6 +54,8 @@ public class HenkiloModificationServiceTest {
     private KayttooikeusClient kayttooikeusClient;
     @MockBean
     private KoodistoClient koodistoClient;
+    @MockBean
+    private HenkiloService henkiloService;
 
     @After
     public void cleanup() {
@@ -223,4 +226,13 @@ public class HenkiloModificationServiceTest {
         });
     }
 
+    @Test
+    @WithMockUser
+    public void removeAccessRights() {
+        henkiloModificationService.removeAccessRights("1.2.3.4.5");
+        verify(kayttooikeusClient, times(1))
+                .passivoiHenkilo(eq("1.2.3.4.5"), eq("user"));
+        verify(henkiloService, times(1))
+                .removeContactInfo(eq("1.2.3.4.5"), eq(YhteystietoryhmaUtils.TYYPPI_TYOOSOITE));
+    }
 }
