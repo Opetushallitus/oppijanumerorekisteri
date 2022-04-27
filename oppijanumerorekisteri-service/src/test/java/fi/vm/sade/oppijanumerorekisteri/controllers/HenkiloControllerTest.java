@@ -451,7 +451,7 @@ public class HenkiloControllerTest {
     public void removeAccessRights() throws Exception {
         mvc.perform(delete("/henkilo/{oid}/access", "6.7.8.9.10"))
                 .andExpect(status().isOk());
-        verify(henkiloModificationService, times(1)).removeAccessRights(eq("6.7.8.9.10"));
+        verify(henkiloModificationService, times(1)).removeAccessRights("6.7.8.9.10");
     }
 
     private void verifyReadAudit(String expected) {

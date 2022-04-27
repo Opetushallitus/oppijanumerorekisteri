@@ -94,5 +94,5 @@ public interface HenkiloService {
 
     Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, int page);
 
-    default void removeContactInfo(String oid, String... removeTypes) {};
+    void removeContactInfo(String oid, String... removeTypes);
 }

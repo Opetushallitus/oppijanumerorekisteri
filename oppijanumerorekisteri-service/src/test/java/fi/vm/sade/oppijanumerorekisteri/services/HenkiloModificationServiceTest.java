@@ -231,8 +231,8 @@ public class HenkiloModificationServiceTest {
     public void removeAccessRights() {
         henkiloModificationService.removeAccessRights("1.2.3.4.5");
         verify(kayttooikeusClient, times(1))
-                .passivoiHenkilo(eq("1.2.3.4.5"), eq("user"));
+                .passivoiHenkilo("1.2.3.4.5", "user");
         verify(henkiloService, times(1))
-                .removeContactInfo(eq("1.2.3.4.5"), eq(YhteystietoryhmaUtils.TYYPPI_TYOOSOITE));
+                .removeContactInfo("1.2.3.4.5", YhteystietoryhmaUtils.TYYPPI_TYOOSOITE);
     }
 }
