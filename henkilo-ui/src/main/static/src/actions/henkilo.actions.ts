@@ -245,7 +245,7 @@ const errorPoistaKayttajatunnus = () => ({
 });
 export const poistaKayttajatunnus = (oid) => (dispatch) => {
     dispatch(requestPoistaKayttajatunnus(oid));
-    const url = urls.url('kayttooikeus-service.henkilo.poista-kayttajatunnus', oid);
+    const url = urls.url('oppijanumerorekisteri-service.henkilo.poista-kayttajatunnus', oid);
     http.delete(url)
         .then(() => {
             dispatch(receivePoistaKayttajatunnus());

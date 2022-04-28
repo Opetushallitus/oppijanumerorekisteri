@@ -26,7 +26,6 @@ const urlConfig = {
     'kayttooikeus-service.henkilo.anomusilmoitus': 'kayttooikeus-service/henkilo/$1/anomusilmoitus',
     'kayttooikeus-service.henkilo.henkilohakucount': 'kayttooikeus-service/henkilo/henkilohakucount',
     'kayttooikeus-service.organisaatiohenkilo.passivoi': 'kayttooikeus-service/organisaatiohenkilo/$1/$2',
-    'kayttooikeus-service.henkilo.poista-kayttajatunnus': 'kayttooikeus-service/henkilo/$1/passivoi',
     'kayttooikeus-service.henkilo.kayttajatieto': 'kayttooikeus-service/henkilo/$1/kayttajatiedot',
     'kayttooikeus-service.henkilo.anomus-list': 'kayttooikeus-service/kayttooikeusanomus/$1',
     'kayttooikeus-service.henkilo.kayttooikeus-myonto': 'kayttooikeus-service/kayttooikeusanomus/$1/$2',
@@ -75,6 +74,7 @@ const urlConfig = {
 
     'oppijanumerorekisteri-service.baseUrl': '/',
     'oppijanumerorekisteri-service.henkilo.oid': 'oppijanumerorekisteri-service/henkilo/$1',
+    'oppijanumerorekisteri-service.henkilo.poista-kayttajatunnus': 'oppijanumerorekisteri-service/henkilo/$1/access',
     'oppijanumerorekisteri-service.henkilo.slaves': 'oppijanumerorekisteri-service/henkilo/$1/slaves',
     'oppijanumerorekisteri-service.henkilo.master': 'oppijanumerorekisteri-service/henkilo/$1/master',
     'oppijanumerorekisteri-service.henkilo.link': 'oppijanumerorekisteri-service/henkilo/$1/link',
