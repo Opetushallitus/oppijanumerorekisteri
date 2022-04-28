@@ -252,6 +252,7 @@ export const poistaKayttajatunnus = (oid) => (dispatch) => {
             dispatch(fetchKayttajatieto(oid));
             dispatch(fetchHenkiloOrgs(oid));
             dispatch(fetchAllKayttooikeusryhmasForHenkilo(oid));
+            dispatch(fetchHenkilo(oid));
         })
         .catch(() => dispatch(errorPoistaKayttajatunnus()));
 };
