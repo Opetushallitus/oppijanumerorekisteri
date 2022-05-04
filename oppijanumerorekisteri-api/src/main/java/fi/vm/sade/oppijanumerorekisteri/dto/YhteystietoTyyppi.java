@@ -4,6 +4,7 @@ import com.sanctionco.jmail.JMail;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public enum YhteystietoTyyppi {
     YHTEYSTIETO_SAHKOPOSTI(ReadableYhteystiedot::getSahkoposti, WritableYhteystiedot::setSahkoposti),
@@ -23,6 +24,9 @@ public enum YhteystietoTyyppi {
                 .disallowObsoleteWhitespace()
                 .disallowQuotedIdentifiers()
                 .isValid(email);
+
+        Pattern postalCode = Pattern.compile("^\\d{5}$");
+        YHTEYSTIETO_POSTINUMERO.validator = (code) -> postalCode.matcher(code).matches();
     }
 
     private final Function<ReadableYhteystiedot, String> getter;

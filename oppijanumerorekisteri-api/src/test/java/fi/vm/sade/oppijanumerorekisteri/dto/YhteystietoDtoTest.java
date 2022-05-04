@@ -38,9 +38,31 @@ class YhteystietoDtoTest {
         );
     }
 
+    private static Stream postalCodeParamsProvider() {
+        Function<String, YhteystietoDto> test = s -> YhteystietoDto.builder()
+                .yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_POSTINUMERO).yhteystietoArvo(s).build();
+        return Stream.of(
+                Arguments.of("Accept null", test.apply(null), true),
+                Arguments.of("Accept empty", test.apply(""), true),
+                Arguments.of("Accept valid postal code", test.apply("99999"), true),
+                Arguments.of("Reject random string", test.apply("test"), false),
+                Arguments.of("Reject if too many numbers", test.apply("123456"), false),
+                Arguments.of("Reject if not enough numbers", test.apply("1234"), false),
+                Arguments.of("Reject if contains whitespaces", test.apply("12 45"), false),
+                Arguments.of("Reject if starts with whitespace", test.apply(" 12345"), false),
+                Arguments.of("Reject if ends with whitespace", test.apply("12345 "), false)
+        );
+    }
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("emailParamsProvider")
     public void email(String description, YhteystietoDto dto, boolean expected) {
+        assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("postalCodeParamsProvider")
+    public void postalCode(String description, YhteystietoDto dto, boolean expected) {
         assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
     }
 }
