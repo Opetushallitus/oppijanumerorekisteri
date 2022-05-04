@@ -78,19 +78,19 @@ class YhteystietoDtoTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("emailParamsProvider")
-    public void email(String description, YhteystietoDto dto, boolean expected) {
+    void email(String description, YhteystietoDto dto, boolean expected) {
         assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("postalCodeParamsProvider")
-    public void postalCode(String description, YhteystietoDto dto, boolean expected) {
+    void postalCode(String description, YhteystietoDto dto, boolean expected) {
         assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("phoneNumberParamsProvider")
-    public void phoneNumber(String description, YhteystietoDto dto, boolean expected) {
+    void phoneNumber(String description, YhteystietoDto dto, boolean expected) {
         assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
     }
 }

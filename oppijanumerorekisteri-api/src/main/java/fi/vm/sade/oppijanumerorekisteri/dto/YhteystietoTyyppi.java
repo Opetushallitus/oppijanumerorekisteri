@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.sanctionco.jmail.EmailValidator;
 import com.sanctionco.jmail.JMail;
 
 import java.util.function.Function;
@@ -17,24 +18,24 @@ public enum YhteystietoTyyppi {
     YHTEYSTIETO_MAA(ReadableYhteystiedot::getMaa, WritableYhteystiedot::setMaa);
 
     static {
-        YHTEYSTIETO_SAHKOPOSTI.validator = (email) -> JMail
+        EmailValidator emailValidator = JMail
                 .strictValidator()
                 .requireTopLevelDomain()
                 .disallowExplicitSourceRouting()
                 .disallowObsoleteWhitespace()
-                .disallowQuotedIdentifiers()
-                .isValid(email);
+                .disallowQuotedIdentifiers();
+        YHTEYSTIETO_SAHKOPOSTI.validator = email -> emailValidator.isValid(email);
 
         Pattern postalCode = Pattern.compile("^\\d{5}$");
-        YHTEYSTIETO_POSTINUMERO.validator = (code) -> postalCode.matcher(code).matches();
+        YHTEYSTIETO_POSTINUMERO.validator = code -> postalCode.matcher(code).matches();
 
-        Pattern phoneNumber = Pattern.compile("^(\\+[1-9]\\d{2,3}|\\d)([ ]?\\d+)*$");
-        YHTEYSTIETO_MATKAPUHELINNUMERO.validator = YHTEYSTIETO_PUHELINNUMERO.validator = (number) -> phoneNumber.matcher(number).matches();
+        Pattern phoneNumber = Pattern.compile("^(\\+[1-9]\\d{2,3}|\\d)([ ]?\\d{1,10}){1,10}$");
+        YHTEYSTIETO_MATKAPUHELINNUMERO.validator = YHTEYSTIETO_PUHELINNUMERO.validator = number -> phoneNumber.matcher(number).matches();
     }
 
     private final Function<ReadableYhteystiedot, String> getter;
     private final Setter<WritableYhteystiedot, String> setter;
-    private Predicate<String> validator = (value) -> true;
+    private Predicate<String> validator = value -> true;
 
     YhteystietoTyyppi(Function<ReadableYhteystiedot, String> getter, Setter<WritableYhteystiedot, String> setter) {
         this.getter = getter;
