@@ -312,7 +312,7 @@ public class HenkiloControllerTest {
                 .readOnly(true)
                 .yhteystieto(YhteystietoDto.builder()
                         .yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI)
-                        .yhteystietoArvo("yhteystieto")
+                        .yhteystietoArvo("formally.correct@email.address")
                         .build())
                 .build()));
         HenkiloDto henkiloDtoOutput = DtoUtils.createHenkiloDto("arpa", "arpa", "kuutio", "081296-967T", "1.2.3.4.5",
