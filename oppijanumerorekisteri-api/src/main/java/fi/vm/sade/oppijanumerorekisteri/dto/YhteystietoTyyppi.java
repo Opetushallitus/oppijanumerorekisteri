@@ -24,7 +24,7 @@ public enum YhteystietoTyyppi {
                 .disallowExplicitSourceRouting()
                 .disallowObsoleteWhitespace()
                 .disallowQuotedIdentifiers();
-        YHTEYSTIETO_SAHKOPOSTI.validator = email -> emailValidator.isValid(email);
+        YHTEYSTIETO_SAHKOPOSTI.validator = emailValidator::isValid;
 
         Pattern postalCode = Pattern.compile("^\\d{5}$");
         YHTEYSTIETO_POSTINUMERO.validator = code -> postalCode.matcher(code).matches();
