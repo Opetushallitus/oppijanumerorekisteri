@@ -219,7 +219,7 @@ public class HenkiloControllerTest {
     public void updateHenkilo() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
-                "arpa@kuutio.fi");
+                "+358 50 555 7463");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
         this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -233,7 +233,7 @@ public class HenkiloControllerTest {
     public void updateHenkiloONRValidationException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
-                "arpa@kuutio.fi");
+                "+358 50 555 7463");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         BindException errors = new BindException(henkiloUpdateDto, "henkiloUpdateDTo");
         errors.rejectValue("hetu", henkiloUpdateDto.getHetu());
@@ -250,7 +250,7 @@ public class HenkiloControllerTest {
     public void updateHenkiloNotFoundException() throws Exception {
         HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
                 "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
-                "arpa@kuutio.fi");
+                "+358 50 555 7463");
         String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
         given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class))).willThrow(new NotFoundException());
         this.mvc.perform(put("/henkilo")
