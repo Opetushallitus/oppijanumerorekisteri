@@ -54,6 +54,28 @@ class YhteystietoDtoTest {
         );
     }
 
+    private static Stream phoneNumberParamsProvider() {
+        Function<String, YhteystietoDto> test = s -> YhteystietoDto.builder()
+                .yhteystietoTyyppi(YhteystietoTyyppi.YHTEYSTIETO_PUHELINNUMERO).yhteystietoArvo(s).build();
+        return Stream.of(
+                Arguments.of("Accept null", test.apply(null), true),
+                Arguments.of("Accept empty", test.apply(""), true),
+                Arguments.of("Accept valid number", test.apply("1234567890"), true),
+                Arguments.of("Accept valid number starting with 0", test.apply("0123456789"), true),
+                Arguments.of("Accept valid number with grouping", test.apply("123 456 7890"), true),
+                Arguments.of("Accept valid number exotic grouping", test.apply("1 2 3 4 5 6 7 8 9 0"), true),
+                Arguments.of("Accept number with country code", test.apply("+1234567890"), true),
+                Arguments.of("Reject random string", test.apply("test"), false),
+                Arguments.of("Reject if starts with whitespace", test.apply(" 12345"), false),
+                Arguments.of("Reject if ends with whitespace", test.apply("12345 "), false),
+                Arguments.of("Reject if grouped with multiple whitespace", test.apply("12345  67890"), false),
+                Arguments.of("Reject country code too short", test.apply("+12"), false),
+                Arguments.of("Reject malformed country code", test.apply("++1234567890"), false),
+                Arguments.of("Reject country code starting with 0", test.apply("+0123456789"), false),
+                Arguments.of("Reject malformed country code grouping", test.apply("+1 2 34567890"), false)
+        );
+    }
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("emailParamsProvider")
     public void email(String description, YhteystietoDto dto, boolean expected) {
@@ -63,6 +85,12 @@ class YhteystietoDtoTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("postalCodeParamsProvider")
     public void postalCode(String description, YhteystietoDto dto, boolean expected) {
+        assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("phoneNumberParamsProvider")
+    public void phoneNumber(String description, YhteystietoDto dto, boolean expected) {
         assertThat(validator.validate(dto).isEmpty()).isEqualTo(expected);
     }
 }

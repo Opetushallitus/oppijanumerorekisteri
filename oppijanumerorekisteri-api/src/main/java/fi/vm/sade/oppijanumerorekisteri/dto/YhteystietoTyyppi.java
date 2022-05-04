@@ -27,6 +27,9 @@ public enum YhteystietoTyyppi {
 
         Pattern postalCode = Pattern.compile("^\\d{5}$");
         YHTEYSTIETO_POSTINUMERO.validator = (code) -> postalCode.matcher(code).matches();
+
+        Pattern phoneNumber = Pattern.compile("^(\\+[1-9]\\d{2,3}|\\d)([ ]?\\d+)*$");
+        YHTEYSTIETO_MATKAPUHELINNUMERO.validator = YHTEYSTIETO_PUHELINNUMERO.validator = (number) -> phoneNumber.matcher(number).matches();
     }
 
     private final Function<ReadableYhteystiedot, String> getter;
