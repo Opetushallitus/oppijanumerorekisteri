@@ -227,6 +227,22 @@ public class HenkiloControllerTest {
         verifyReadNoAudit();
     }
 
+    // This verifies that API validates contact information to some extent
+    @Test
+    @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
+    public void updateHenkiloBadRequest() throws Exception {
+        HenkiloUpdateDto henkiloUpdateDto = DtoUtils.createHenkiloUpdateDto("arpa", "arpa", "kuutio",
+                "081296-967T", "1.2.3.4.5", "fi", "suomi", "246",
+                "This should be valid phone number");
+        String inputContent = this.objectMapper.writeValueAsString(henkiloUpdateDto);
+        given(this.henkiloModificationService.updateHenkilo(any(HenkiloUpdateDto.class))).willReturn(henkiloUpdateDto);
+        this.mvc.perform(put("/henkilo").content(inputContent).contentType(MediaType.APPLICATION_JSON_UTF8)
+                .with(csrf())
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+        verifyReadNoAudit();
+    }
+
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA" + ROOT_ORGANISATION_SUFFIX)
     public void updateHenkiloONRValidationException() throws Exception {
