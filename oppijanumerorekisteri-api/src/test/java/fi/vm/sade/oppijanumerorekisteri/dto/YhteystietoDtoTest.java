@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("YhteystietoDto input sanitation test")
+@DisplayName("YhteystietoDto input validation test")
 class YhteystietoDtoTest {
 
     private static final Validator javaxValidator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -26,14 +26,17 @@ class YhteystietoDtoTest {
                 Arguments.of("Accept null", test.apply(null), true),
                 Arguments.of("Accept empty", test.apply(""), true),
                 Arguments.of("Accept valid email", test.apply("test@test.test"), true),
+                Arguments.of("Accept valid email with multiple local parts", test.apply("test.test.test@test.test"), true),
+                Arguments.of("Accept valid email with nested domain names", test.apply("test@test.test.test"), true),
                 Arguments.of("Accept valid email with alias", test.apply("test+test@test.test"), true),
                 Arguments.of("Reject string without symbol", test.apply("test"), false),
                 Arguments.of("Reject string with multiple symbols", test.apply("test@test@test.test"), false),
                 Arguments.of("Reject string without domain", test.apply("test@"), false),
                 Arguments.of("Reject email domain without tld", test.apply("test@test"), false),
                 Arguments.of("Reject email without local part", test.apply("@test"), false),
-                Arguments.of("Reject email starting with dot", test.apply("@test"), false),
-                Arguments.of("Reject email with adjacent dots", test.apply("@test"), false),
+                Arguments.of("Reject email starting with dot", test.apply(".test@test"), false),
+                Arguments.of("Reject email ending with dot", test.apply("test@test.test."), false),
+                Arguments.of("Reject email with adjacent dots", test.apply("test..test@test"), false),
                 Arguments.of("Reject quoted addresses", test.apply("\"test <test@test.test>\""), false)
         );
     }
