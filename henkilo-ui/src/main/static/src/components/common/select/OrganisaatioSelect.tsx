@@ -1,27 +1,36 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import './OrganisaatioSelect.css';
 import * as R from 'ramda';
 import { List } from 'react-virtualized';
+import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
+import type { RootState } from '../../../reducers';
 
-type OrganisaatioSelectProps = {
+type OwnProps = {
     locale: Locale;
     L: Localisations;
-    organisaatiot: Array<OrganisaatioSelectObject>;
+    organisaatiot: OrganisaatioSelectObject[];
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
     onClose?: () => void;
 };
 
-type State = {
-    searchWord: string;
-    allOrganisaatiot: Array<OrganisaatioSelectObject>;
-    organisaatiot: Array<OrganisaatioSelectObject>;
+type StateProps = {
+    organisationNames: OrganisaatioNameLookup;
 };
 
-export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps, State> {
-    constructor(props: OrganisaatioSelectProps) {
+type State = {
+    searchWord: string;
+    allOrganisaatiot: OrganisaatioSelectObject[];
+    organisaatiot: OrganisaatioSelectObject[];
+};
+
+type Props = OwnProps & StateProps;
+
+class OrganisaatioSelect extends React.Component<Props, State> {
+    constructor(props: Props) {
         super(props);
         const allOrganisaatiot = this._sortAlphabetically(this.props.organisaatiot);
         this.state = {
@@ -92,10 +101,14 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
             : null;
     };
 
+    _resolveName = (oid: string, locale: string): string => this.props.organisationNames?.[oid]?.[locale] || oid;
+
     _renderParents = (organisaatio: OrganisaatioSelectObject): React.ReactNode => {
-        return organisaatio.parentNames.map((parent: string, index: number) => (
-            <span key={index} className="parent">
-                {parent} &gt;{' '}
+        const path = organisaatio.oidPath.split('/');
+        path.shift();
+        return path.map((oid) => (
+            <span key={oid} className="parent">
+                {this._resolveName(oid, this.props.locale)} &gt;{' '}
             </span>
         ));
     };
@@ -129,9 +142,9 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
     }
 
     _filterAndSortOrganisaatios(
-        organisaatiot: Array<OrganisaatioSelectObject>,
+        organisaatiot: OrganisaatioSelectObject[],
         searchWord: string
-    ): Array<OrganisaatioSelectObject> {
+    ): OrganisaatioSelectObject[] {
         const containsSearchword = (organisaatio: OrganisaatioSelectObject) =>
             organisaatio.name.toLowerCase().includes(searchWord.toLowerCase());
         const startsWithSearchWord = (organisaatio: OrganisaatioSelectObject) =>
@@ -155,18 +168,18 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
         return [...organisaatiotStartingWithSearchwordSortedByParentName, ...organisaatiotNotStartingWithSearchword];
     }
 
-    _sortAlphabetically(organisaatiot: Array<OrganisaatioSelectObject>): Array<OrganisaatioSelectObject> {
+    _sortAlphabetically(organisaatiot: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
         return R.sortBy(R.compose(R.toLower, R.prop('name')))(organisaatiot);
     }
 
     _organisaatiotFilteredBy(
-        organisaatiot: Array<OrganisaatioSelectObject>,
+        organisaatiot: OrganisaatioSelectObject[],
         func: (organisaatio: OrganisaatioSelectObject) => boolean
-    ): Array<OrganisaatioSelectObject> {
+    ): OrganisaatioSelectObject[] {
         return organisaatiot.filter(func);
     }
 
-    _sortOrganisaatiotByParentName(organisaatiot: Array<any>): Array<OrganisaatioSelectObject> {
+    _sortOrganisaatiotByParentName(organisaatiot: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
         const hasParent = (organisaatio: OrganisaatioSelectObject) =>
             organisaatio.parentNames && organisaatio.parentNames.length > 0;
         const noParent = (organisaatio: OrganisaatioSelectObject) =>
@@ -181,3 +194,9 @@ export class OrganisaatioSelect extends React.Component<OrganisaatioSelectProps,
         ];
     }
 }
+
+const mapStateToProps = (state: RootState): StateProps => ({
+    organisationNames: state.organisaatio.names,
+});
+
+export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(OrganisaatioSelect);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
-import { OrganisaatioSelect } from './OrganisaatioSelect';
+import OrganisaatioSelect from './OrganisaatioSelect';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import SelectModal from '../modal/SelectModal';
 

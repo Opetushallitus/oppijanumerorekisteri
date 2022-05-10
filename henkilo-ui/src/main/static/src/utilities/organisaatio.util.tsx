@@ -86,6 +86,7 @@ export const createOrganisaatioSelectObject = (
         name: getLocalization(organisaatio.nimi, locale),
         status: organisaatio.status,
         organisaatiotyypit: organisaatio.tyypit || [],
+        oidPath: organisaatio.parentOidPath,
     };
 };
 
