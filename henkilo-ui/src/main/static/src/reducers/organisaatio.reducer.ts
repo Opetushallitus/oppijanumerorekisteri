@@ -6,14 +6,19 @@ import {
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_REQUEST,
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_SUCCESS,
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE,
+    FETCH_ORGANISATION_NAMES,
 } from '../actions/actiontypes';
 
 import StaticUtils from '../components/common/StaticUtils';
 import { Organisaatio, OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 
+import type { Asiointikieli } from '../types/domain/kayttooikeus/Kutsu.types';
+
 export type OrganisaatioCache = {
     [key: string]: Organisaatio;
 };
+
+export type OrganisaatioNameLookup = Record<string, Record<Asiointikieli, string>>;
 
 export type OrganisaatioState = {
     organisaatioLoading: boolean;
@@ -21,6 +26,7 @@ export type OrganisaatioState = {
     cached: OrganisaatioCache;
     organisaatioHierarkiaLoading: boolean;
     organisaatioHierarkia?: OrganisaatioWithChildren;
+    names: OrganisaatioNameLookup;
 };
 
 const initialState = {
@@ -28,6 +34,7 @@ const initialState = {
     organisaatioLoaded: false,
     cached: {},
     organisaatioHierarkiaLoading: false,
+    names: {},
 };
 
 export const organisaatio = (state: OrganisaatioState = initialState, action: any) => {
@@ -63,6 +70,8 @@ export const organisaatio = (state: OrganisaatioState = initialState, action: an
             return Object.assign({}, state, {
                 cached: { ...state.cached, ...uncachedOrganisaatios },
             });
+        case FETCH_ORGANISATION_NAMES:
+            return { ...state, names: action.payload };
         default:
             return state;
     }

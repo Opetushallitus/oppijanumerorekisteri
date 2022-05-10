@@ -13,9 +13,10 @@ import {
     FETCH_ALL_ORGANISAATIOS_HIERARCHY_FAILURE,
     FETCH_ORGANISATIONS_REQUEST,
     FETCH_ORGANISATIONS_SUCCESS,
+    FETCH_ORGANISATION_NAMES,
 } from './actiontypes';
 import { Dispatch } from '../types/dispatch.type';
-import { OrganisaatioState } from '../reducers/organisaatio.reducer';
+import { OrganisaatioState, OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 import { RyhmatState } from '../reducers/ryhmat.reducer';
 import { OrganisaatioCriteria } from '../types/domain/organisaatio/organisaatio.types';
 
@@ -156,4 +157,16 @@ export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch
     return Promise.all(promises.map((p) => p.catch((e) => e)))
         .then((json) => dispatch(receiveOrganisations(json)))
         .catch((e) => console.error(e));
+};
+
+export const fetchOrganisationNames = () => async (dispatch: Dispatch) => {
+    const url = urls.url('kayttooikeus-service.organisaatio.names');
+    http.get<OrganisaatioNameLookup>(url)
+        .then((payload) =>
+            dispatch({
+                type: FETCH_ORGANISATION_NAMES,
+                payload,
+            })
+        )
+        .catch((error) => console.log('Nimien lataus epäonnistui', error));
 };

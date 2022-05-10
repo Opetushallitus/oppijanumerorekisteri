@@ -70,6 +70,7 @@ const urlConfig = {
     'kayttooikeus-service.organisaatio': 'kayttooikeus-service/organisaatio',
     'kayttooikeus-service.organisaatio.root': 'kayttooikeus-service/organisaatio/root',
     'kayttooikeus-service.organisaatio.by-oid': 'kayttooikeus-service/organisaatio/$1',
+    'kayttooikeus-service.organisaatio.names': 'kayttooikeus-service/organisaatio/names',
     'kayttooikeus-service.report.access-rights-for-organisaatio': 'kayttooikeus-service/reports/accessrights/$1',
 
     'oppijanumerorekisteri-service.baseUrl': '/',

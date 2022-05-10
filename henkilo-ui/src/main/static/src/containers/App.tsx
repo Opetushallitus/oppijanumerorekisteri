@@ -21,6 +21,7 @@ import { RouteType } from '../routes';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../types/notification.types';
 import { Localisations } from '../types/localisation.type';
+import { fetchOrganisationNames } from '../actions/organisaatio.actions';
 
 type OwnProps = {
     children: React.ReactNode;
@@ -46,6 +47,7 @@ type DispatchProps = {
     fetchFrontProperties: () => void;
     fetchPrequels: () => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
+    fetchOrganisationNames: () => void;
 };
 
 type AppProps = OwnProps & StateProps & DispatchProps;
@@ -100,6 +102,7 @@ class App extends React.Component<AppProps, AppState> {
 
     componentDidMount() {
         this.props.fetchFrontProperties();
+        this.props.fetchOrganisationNames();
         setInterval(this.props.fetchPrequels, fetchPrequelsIntervalInMillis);
     }
 
@@ -168,4 +171,5 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchPrequels,
     removeGlobalNotification,
     addGlobalNotification,
+    fetchOrganisationNames,
 })(App);
