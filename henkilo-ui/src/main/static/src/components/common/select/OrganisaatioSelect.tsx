@@ -10,8 +10,6 @@ import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.redu
 import type { RootState } from '../../../reducers';
 
 type OwnProps = {
-    locale: Locale;
-    L: Localisations;
     organisaatiot: OrganisaatioSelectObject[];
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
     onClose?: () => void;
@@ -19,6 +17,8 @@ type OwnProps = {
 
 type StateProps = {
     organisationNames: OrganisaatioNameLookup;
+    locale: Locale;
+    L: Localisations;
 };
 
 type State = {
@@ -197,6 +197,8 @@ class OrganisaatioSelect extends React.Component<Props, State> {
 
 const mapStateToProps = (state: RootState): StateProps => ({
     organisationNames: state.organisaatio.names,
+    locale: state.locale,
+    L: state.l10n.localisations[state.locale],
 });
 
 export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(OrganisaatioSelect);

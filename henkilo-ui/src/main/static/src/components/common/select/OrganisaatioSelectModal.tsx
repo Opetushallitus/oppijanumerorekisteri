@@ -8,7 +8,7 @@ import SelectModal from '../modal/SelectModal';
 type OrganisaatioSelectModalProps = {
     locale: Locale;
     L: Localisations;
-    organisaatiot: Array<OrganisaatioSelectObject>;
+    organisaatiot: OrganisaatioSelectObject[];
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
     disabled: boolean;
 };
@@ -29,8 +29,6 @@ export class OrganisaatioSelectModal extends React.Component<OrganisaatioSelectM
                 buttonText={this.props.L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
             >
                 <OrganisaatioSelect
-                    locale={this.props.locale}
-                    L={this.props.L}
                     organisaatiot={this.props.organisaatiot}
                     onSelect={(organisaatio) => {
                         this.props.onSelect(organisaatio);
