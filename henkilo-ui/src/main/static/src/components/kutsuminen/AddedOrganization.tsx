@@ -22,8 +22,9 @@ import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModa
 import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import moment from 'moment';
 import { fetchAllowedKayttooikeusryhmasForOrganisation } from '../../actions/kayttooikeusryhma.actions';
-import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
+import type { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
+import type { OrganisaatioNameLookup } from '../../reducers/organisaatio.reducer';
 
 type OwnProps = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -37,6 +38,7 @@ type StateProps = {
     omatOrganisaatios: Array<OrganisaatioHenkilo>;
     currentHenkiloOid: string;
     ryhmatState: any;
+    organisationNames: OrganisaatioNameLookup;
 };
 
 type DispatchProps = {
@@ -188,6 +190,7 @@ class AddedOrganization extends React.Component<Props, State> {
             : findOmattiedotOrganisatioOrRyhmaByOid(
                   selectedOrganisaatioOid,
                   this.props.omatOrganisaatios,
+                  this.props.organisationNames,
                   this.props.locale
               );
         if (isOrganisaatio && organisaatio) {
@@ -208,6 +211,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     omatOrganisaatios: state.omattiedot.organisaatios,
     ryhmatState: state.ryhmatState,
+    organisationNames: state.organisaatio.names,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

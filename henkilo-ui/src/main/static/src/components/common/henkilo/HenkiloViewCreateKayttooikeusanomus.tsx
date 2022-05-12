@@ -31,6 +31,7 @@ import { NOTIFICATIONTYPES } from '../Notification/notificationtypes';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import type { Option } from 'react-select';
+import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
 
 type OwnProps = {
     l10n: L10n;
@@ -43,6 +44,10 @@ type OwnProps = {
     organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;
 };
 
+type StateProps = {
+    organisationNames: OrganisaatioNameLookup;
+};
+
 type DispatchProps = {
     fetchOrganisaatioKayttooikeusryhmat: (arg0: string) => void;
     createKayttooikeusanomus: (arg0: any) => void;
@@ -50,7 +55,7 @@ type DispatchProps = {
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
 
-type Props = OwnProps & DispatchProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
     showInstructions: boolean;
@@ -382,7 +387,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
 
     _parseOrganisaatioSelectOptions(organisaatioState: OrganisaatioState) {
         return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia
-            ? organisaatioToOrganisaatioSelectObject(organisaatioState.organisaatioHierarkia, this.props.locale)
+            ? organisaatioToOrganisaatioSelectObject(
+                  organisaatioState.organisaatioHierarkia,
+                  this.props.organisationNames,
+                  this.props.locale
+              )
             : [];
     }
 
@@ -471,7 +480,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
     }
 }
 
-export default connect<{}, DispatchProps, OwnProps, RootState>(undefined, {
+const mapStateToProps = (state: RootState): StateProps => ({
+    organisationNames: state.organisaatio.names,
+});
+
+export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     fetchAllKayttooikeusAnomusForHenkilo,
     fetchOrganisaatioKayttooikeusryhmat,
     createKayttooikeusanomus,

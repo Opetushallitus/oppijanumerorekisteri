@@ -4,21 +4,24 @@ import { toLocalizedText } from '../localizabletext';
 import type { OrganisaatioHenkilo } from '../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioWithChildren } from '../types/domain/organisaatio/organisaatio.types';
 import type { Locale } from '../types/locale.type';
+import type { OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 import createFilterOptions from 'react-select-fast-filter-options';
 import { OrganisaatioSelectObject } from '../types/organisaatioselectobject.types';
 import { getLocalization } from './localisation.util';
-import PropertySingleton from '../globals/PropertySingleton';
 
 /*
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
  */
 export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
     organisaatiot: Array<OrganisaatioHenkilo>,
+    orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): Array<OrganisaatioSelectObject> => {
     const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
     const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> =
-        organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
+        organisaatiot.length > 0
+            ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
+            : [];
     const organisaatioSelectObjects = allOrganisaatioSelectObjects.filter(
         (organisaatio: OrganisaatioSelectObject) => !isRyhma(organisaatio)
     );
@@ -30,9 +33,10 @@ export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
  */
 export const organisaatioToOrganisaatioSelectObject = (
     organisaatio: OrganisaatioWithChildren,
+    orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): Array<OrganisaatioSelectObject> => {
-    return organisaatioHierarkiaToOrganisaatioSelectObject([organisaatio], locale);
+    return organisaatioHierarkiaToOrganisaatioSelectObject([organisaatio], orgNames, locale);
 };
 
 /*
@@ -40,10 +44,11 @@ export const organisaatioToOrganisaatioSelectObject = (
  */
 const organisaatioHierarkiaToOrganisaatioSelectObject = (
     organisaatioHierarkia: Array<OrganisaatioWithChildren>,
+    orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): Array<OrganisaatioSelectObject> => {
     const result = [];
-    mapOrganisaatioLevelsRecursively(organisaatioHierarkia, [], locale, result);
+    mapOrganisaatioLevelsRecursively(organisaatioHierarkia, orgNames, locale, result);
     return result;
 };
 
@@ -52,37 +57,39 @@ const organisaatioHierarkiaToOrganisaatioSelectObject = (
  */
 const mapOrganisaatioLevelsRecursively = (
     organisaatiot: Array<OrganisaatioWithChildren>,
-    parentNames: Array<string>,
+    orgNames: OrganisaatioNameLookup,
     locale: Locale,
     result: Array<OrganisaatioSelectObject>
 ): void => {
     organisaatiot.filter(Boolean).forEach((organisaatio: OrganisaatioWithChildren) => {
         const organisaatioSelectObject: OrganisaatioSelectObject = createOrganisaatioSelectObject(
             organisaatio,
-            parentNames,
+            orgNames,
             locale
         );
 
         result.push(organisaatioSelectObject);
 
         if (organisaatio.children) {
-            const parents =
-                organisaatio.oid === PropertySingleton.state.rootOrganisaatioOid
-                    ? []
-                    : [...organisaatioSelectObject.parentNames, organisaatioSelectObject.name];
-            mapOrganisaatioLevelsRecursively(organisaatio.children, parents, locale, result);
+            mapOrganisaatioLevelsRecursively(organisaatio.children, orgNames, locale, result);
         }
     });
 };
 
+const resolveParentNames = (parentOidPath: string, orgNames: OrganisaatioNameLookup, locale: Locale): string[] => {
+    const path = parentOidPath.split('/');
+    path.shift();
+    return path.map((oid) => orgNames[oid]?.[locale] || oid);
+};
+
 const createOrganisaatioSelectObject = (
     organisaatio: OrganisaatioWithChildren,
-    parentNames: Array<string>,
+    orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): OrganisaatioSelectObject => {
     return {
         oid: organisaatio.oid,
-        parentNames: parentNames,
+        parentNames: resolveParentNames(organisaatio.parentOidPath, orgNames, locale),
         name: getLocalization(organisaatio.nimi, locale),
         status: organisaatio.status,
         organisaatiotyypit: organisaatio.tyypit || [],
@@ -99,11 +106,14 @@ const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean =>
 export const findOmattiedotOrganisatioOrRyhmaByOid = (
     oid: string,
     organisaatiot: Array<OrganisaatioHenkilo>,
+    orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): OrganisaatioSelectObject | null | undefined => {
     const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
     const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> =
-        organisaatiot.length > 0 ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, locale) : [];
+        organisaatiot.length > 0
+            ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
+            : [];
     return R.find(R.propEq('oid', oid))(allOrganisaatioSelectObjects);
 };
 

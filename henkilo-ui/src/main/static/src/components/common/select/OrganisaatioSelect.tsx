@@ -204,6 +204,7 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     L: state.l10n.localisations[state.locale],
     options: omattiedotOrganisaatiotToOrganisaatioSelectObject(
         ownProps.organisaatiot ? ownProps.organisaatiot : state.omattiedot.organisaatios,
+        state.organisaatio.names,
         state.locale
     ),
 });

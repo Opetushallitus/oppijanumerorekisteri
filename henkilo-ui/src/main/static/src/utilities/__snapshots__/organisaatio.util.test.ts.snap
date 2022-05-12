@@ -1,21 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`omattiedotOrganisaatiotToOrganisaatioSelectObject resolve organisation hierarchy correctly 1`] = `
+exports[`omattiedotOrganisaatiotToOrganisaatioSelectObject oid as name if name is missing 1`] = `
 Array [
   Object {
-    "name": "b",
-    "oid": "2",
-    "oidPath": "1",
-    "organisaatiotyypit": Array [],
-    "parentNames": Array [],
-    "status": "AKTIIVINEN",
-  },
-  Object {
-    "name": "c",
+    "name": "",
     "oid": "3",
     "oidPath": "1/2",
     "organisaatiotyypit": Array [],
     "parentNames": Array [
+      "2",
+    ],
+    "status": "AKTIIVINEN",
+  },
+  Object {
+    "name": "",
+    "oid": "4",
+    "oidPath": "1/2/3",
+    "organisaatiotyypit": Array [],
+    "parentNames": Array [
+      "2",
+      "3",
+    ],
+    "status": "AKTIIVINEN",
+  },
+]
+`;
+
+exports[`omattiedotOrganisaatiotToOrganisaatioSelectObject resolve organisation hierarchy correctly 1`] = `
+Array [
+  Object {
+    "name": "",
+    "oid": "3",
+    "oidPath": "1/2",
+    "organisaatiotyypit": Array [],
+    "parentNames": Array [
+      "a",
+    ],
+    "status": "AKTIIVINEN",
+  },
+  Object {
+    "name": "",
+    "oid": "4",
+    "oidPath": "1/2/3",
+    "organisaatiotyypit": Array [],
+    "parentNames": Array [
+      "a",
       "b",
     ],
     "status": "AKTIIVINEN",
