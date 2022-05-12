@@ -106,15 +106,8 @@ class OrganisaatioSelect extends React.Component<Props, State> {
 
     _resolveName = (oid: string, locale: string): string => this.props.organisationNames?.[oid]?.[locale] || oid;
 
-    _renderParents = (organisaatio: OrganisaatioSelectObject): React.ReactNode => {
-        const path = organisaatio.oidPath.split('/');
-        path.shift();
-        return path.map((oid) => (
-            <span key={oid} className="parent">
-                {this._resolveName(oid, this.props.locale)} &gt;{' '}
-            </span>
-        ));
-    };
+    _renderParents = (organisaatio: OrganisaatioSelectObject): React.ReactNode =>
+        organisaatio.parentNames.map((name) => <span className="parent">{name} &gt; </span>);
 
     _renderSuunniteltuNote = (organisaatio: OrganisaatioSelectObject) =>
         organisaatio.status === 'SUUNNITELTU' ? (
