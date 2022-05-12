@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`omattiedotOrganisaatiotToOrganisaatioSelectObject resolve organisation hierarchy correctly 1`] = `
+Array [
+  Object {
+    "name": "b",
+    "oid": "2",
+    "oidPath": "1",
+    "organisaatiotyypit": Array [],
+    "parentNames": Array [],
+    "status": "AKTIIVINEN",
+  },
+  Object {
+    "name": "c",
+    "oid": "3",
+    "oidPath": "1/2",
+    "organisaatiotyypit": Array [],
+    "parentNames": Array [
+      "b",
+    ],
+    "status": "AKTIIVINEN",
+  },
+]
+`;
