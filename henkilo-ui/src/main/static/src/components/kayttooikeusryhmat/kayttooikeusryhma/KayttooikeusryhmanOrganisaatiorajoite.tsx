@@ -4,16 +4,13 @@ import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import { Locale } from '../../../types/locale.type';
 import type { Options } from 'react-select';
 import { Localisations } from '../../../types/localisation.type';
-import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { OrganisaatioSelectModal } from '../../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import OphCheckboxFieldset from '../../common/forms/OphCheckboxFieldset';
 import { toLocalizedText } from '../../../localizabletext';
-import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type Props = {
     L: Localisations;
-    organisaatios: Array<OrganisaatioHenkilo>;
     koodisto: any;
     locale: Locale;
     ryhmaRestriction: boolean;
@@ -75,14 +72,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
                         <OrganisaatioSelectModal
                             L={this.props.L}
                             locale={this.props.locale}
-                            disabled={
-                                this.props.omattiedotOrganisaatiosLoading || this.props.organisaatios.length === 0
-                            }
                             onSelect={this.props.organisaatioSelectAction}
-                            organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(
-                                this.props.organisaatios,
-                                this.props.locale
-                            )}
                         />
 
                         <ItemList

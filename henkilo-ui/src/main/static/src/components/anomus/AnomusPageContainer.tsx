@@ -9,7 +9,6 @@ import {
     clearHaettuKayttooikeusryhma,
 } from '../../actions/kayttooikeusryhma.actions';
 import PropertySingleton from '../../globals/PropertySingleton';
-import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import { addGlobalNotification } from '../../actions/notification.actions';
 import { L10n } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
@@ -42,7 +41,6 @@ type DispatchProps = {
     ) => void;
     clearHaettuKayttooikeusryhma: (arg0: number) => void;
     clearHaetutKayttooikeusryhmat: () => void;
-    fetchOmattiedotOrganisaatios: () => void;
     addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
 
@@ -79,6 +77,5 @@ export default connect<StateProps, DispatchProps, undefined, RootState>(mapState
     updateHaettuKayttooikeusryhmaInAnomukset,
     clearHaettuKayttooikeusryhma,
     clearHaetutKayttooikeusryhmat,
-    fetchOmattiedotOrganisaatios,
     addGlobalNotification,
 })(AnomusPageContainer);

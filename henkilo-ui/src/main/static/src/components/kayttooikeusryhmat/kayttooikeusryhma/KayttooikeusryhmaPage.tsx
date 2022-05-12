@@ -18,10 +18,8 @@ import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooike
 import * as R from 'ramda';
 import { Text } from '../../../types/domain/kayttooikeus/text.types';
 import { PalveluRooli } from '../../../types/domain/kayttooikeus/PalveluRooli.types';
-import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { SpinnerInButton } from '../../common/icons/SpinnerInButton';
 import { Localisations } from '../../../types/localisation.type';
-import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { getLocalization } from '../../../utilities/localisation.util';
@@ -59,7 +57,6 @@ export type KayttooikeusryhmaForm = {
 type Props = {
     L: Localisations;
     router: any;
-    organisaatios: Array<OrganisaatioHenkilo>;
     koodisto: KoodistoState;
     kayttooikeus: KayttooikeusRyhmaState;
     kayttooikeusState: KayttooikeusState;
@@ -111,15 +108,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
             const organisaatioViitteet =
                 R.path(['kayttooikeusryhma', 'organisaatioViite'], this.props.kayttooikeus) || [];
             const ryhmaRestrictionViite = this._parseExistingRyhmaRestrictionViite(organisaatioViitteet);
-            const organisaatios = omattiedotOrganisaatiotToOrganisaatioSelectObject(
-                this.props.organisaatios,
-                this.props.locale
-            );
             const isPassivoitu = !!R.path(['kayttooikeusryhma', 'passivoitu'], this.props.kayttooikeus);
             const newState = {
                 kayttooikeusryhmaForm,
                 ryhmaRestrictionViite,
-                organisaatios,
                 isPassivoitu,
             };
             this.setState(newState);

@@ -12,10 +12,7 @@ import {
 } from '../../actions/kutsuminen.actions';
 import { toLocalizedText } from '../../localizabletext';
 import RyhmaSelection from '../common/select/RyhmaSelection';
-import {
-    findOmattiedotOrganisatioOrRyhmaByOid,
-    omattiedotOrganisaatiotToOrganisaatioSelectObject,
-} from '../../utilities/organisaatio.util';
+import { findOmattiedotOrganisatioOrRyhmaByOid } from '../../utilities/organisaatio.util';
 import { KutsuOrganisaatio, OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Localisations } from '../../types/localisation.type';
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal';
@@ -104,11 +101,6 @@ class AddedOrganization extends React.Component<Props, State> {
                             locale={this.props.locale}
                             L={this.props.L}
                             onSelect={this.selectOrganisaatio.bind(this)}
-                            organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(
-                                this.props.omatOrganisaatios,
-                                this.props.locale
-                            )}
-                            disabled={false}
                         ></OrganisaatioSelectModal>
                     </div>
                     <div>

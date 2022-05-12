@@ -56,7 +56,7 @@ const mapOrganisaatioLevelsRecursively = (
     locale: Locale,
     result: Array<OrganisaatioSelectObject>
 ): void => {
-    organisaatiot.forEach((organisaatio: OrganisaatioWithChildren) => {
+    organisaatiot.filter(Boolean).forEach((organisaatio: OrganisaatioWithChildren) => {
         const organisaatioSelectObject: OrganisaatioSelectObject = createOrganisaatioSelectObject(
             organisaatio,
             parentNames,

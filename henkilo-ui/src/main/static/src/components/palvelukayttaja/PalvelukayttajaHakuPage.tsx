@@ -2,15 +2,10 @@ import React from 'react';
 import { Localisations } from '../../types/localisation.type';
 import { PalvelukayttajaCriteria } from '../../types/domain/kayttooikeus/palvelukayttaja.types';
 import { PalvelukayttajatState } from '../../reducers/palvelukayttaja.reducer';
-import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import PalvelukayttajaHakuTaulukko from './PalvelukayttajaHakuTaulukko';
 import SubOrganisationCheckbox from '../henkilohaku/criterias/SubOrganisationCheckbox';
 import './PalvelukayttajaHakuPage.css';
-import {
-    findOrganisaatioSelectObjectByOid,
-    omattiedotOrganisaatiotToOrganisaatioSelectObject,
-} from '../../utilities/organisaatio.util';
 import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { Locale } from '../../types/locale.type';
@@ -19,10 +14,8 @@ import CloseButton from '../common/button/CloseButton';
 type PalvelukayttajaHakuPageProps = {
     L: Localisations;
     locale: Locale;
-    organisaatiot: Array<OrganisaatioHenkilo>;
     onCriteriaChange: (critera: PalvelukayttajaCriteria) => void;
     palvelukayttajat: PalvelukayttajatState;
-    organisaatiotLoading: boolean;
 };
 
 class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPageProps> {
@@ -37,14 +30,6 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
     }
 
     renderCriteria() {
-        const organisaatiot = omattiedotOrganisaatiotToOrganisaatioSelectObject(
-            this.props.organisaatiot,
-            this.props.locale
-        );
-        const organisaatioSelection = this.props.palvelukayttajat.criteria.organisaatioOids
-            ? findOrganisaatioSelectObjectByOid(this.props.palvelukayttajat.criteria.organisaatioOids, organisaatiot)
-            : null;
-
         return (
             <div className="PalvelukayttajaHakuPage-criteria">
                 <DelayedSearchInput
@@ -58,7 +43,7 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
                         <input
                             className="oph-input flex-item-1 "
                             type="text"
-                            value={organisaatioSelection ? organisaatioSelection.name : ''}
+                            value={this.props.palvelukayttajat.criteria.selection?.name || ''}
                             placeholder={this.props.L['PALVELUKAYTTAJA_HAKU_ORGANISAATIOSUODATUS']}
                             readOnly
                         />
@@ -66,8 +51,6 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
                     <OrganisaatioSelectModal
                         L={this.props.L}
                         locale={this.props.locale}
-                        disabled={this.props.organisaatiotLoading}
-                        organisaatiot={organisaatiot}
                         onSelect={this.onOrganisationChange}
                     />
                     <CloseButton closeAction={() => this.onOrganisationChange(undefined)} />
@@ -102,10 +85,10 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
         });
     };
 
-    onOrganisationChange = (selection: OrganisaatioSelectObject | null | undefined) => {
+    onOrganisationChange = (selection?: OrganisaatioSelectObject) => {
         this.props.onCriteriaChange({
             ...this.props.palvelukayttajat.criteria,
-            organisaatioOids: selection ? selection.oid : null,
+            selection,
         });
     };
 }

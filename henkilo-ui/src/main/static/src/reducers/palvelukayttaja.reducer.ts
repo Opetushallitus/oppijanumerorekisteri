@@ -20,7 +20,7 @@ const initialState: PalvelukayttajatState = {
         subOrganisation: true,
         passivoitu: false,
         nameQuery: '',
-        organisaatioOids: null,
+        selection: null,
     },
     data: [],
 };

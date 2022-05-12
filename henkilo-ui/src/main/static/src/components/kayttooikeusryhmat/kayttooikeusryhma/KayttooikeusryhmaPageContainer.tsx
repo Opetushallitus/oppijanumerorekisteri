@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../../reducers';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
-import { fetchOmattiedotOrganisaatios } from '../../../actions/omattiedot.actions';
 import { fetchOppilaitostyypit, fetchOrganisaatiotyypit } from '../../../actions/koodisto.actions';
 import { fetchAllOrganisaatios } from '../../../actions/organisaatio.actions';
 import {
@@ -21,7 +20,6 @@ import { Localisations } from '../../../types/localisation.type';
 import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import { OrganisaatioCache } from '../../../reducers/organisaatio.reducer';
-import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { OrganisaatioCriteria } from '../../../types/domain/organisaatio/organisaatio.types';
 
 type OwnProps = {
@@ -31,7 +29,6 @@ type OwnProps = {
 
 type StateProps = {
     L: Localisations;
-    organisaatios: Array<OrganisaatioHenkilo>;
     organisaatioCache: OrganisaatioCache;
     koodisto: any;
     locale: Locale;
@@ -45,7 +42,6 @@ type StateProps = {
 type DispatchProps = {
     fetchKayttooikeusryhmaById: (id: string) => void;
     fetchPalveluRooliByKayttooikeusryhmaId: (id: string) => void;
-    fetchOmattiedotOrganisaatios: () => void;
     fetchOppilaitostyypit: () => void;
     fetchOrganisaatiotyypit: () => void;
     fetchAllKayttooikeusryhma: () => void;
@@ -61,7 +57,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 class KayttooikeusryhmaPageContainer extends React.Component<Props> {
     componentDidMount() {
         const kayttooikeusryhmaId: string | null | undefined = this.props.kayttooikeusryhmaId;
-        this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllKayttooikeusryhma();
         this.props.fetchOppilaitostyypit();
         this.props.fetchOrganisaatiotyypit();
@@ -95,7 +90,6 @@ class KayttooikeusryhmaPageContainer extends React.Component<Props> {
 const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     kayttooikeusryhmaId: ownProps.routeParams['id'],
     L: state.l10n.localisations[state.locale],
-    organisaatios: state.omattiedot.organisaatios,
     organisaatioCache: state.organisaatio.cached,
     koodisto: state.koodisto,
     locale: state.locale,
@@ -106,7 +100,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchOmattiedotOrganisaatios,
     fetchKayttooikeusryhmaById,
     fetchPalveluRooliByKayttooikeusryhmaId,
     fetchOppilaitostyypit,

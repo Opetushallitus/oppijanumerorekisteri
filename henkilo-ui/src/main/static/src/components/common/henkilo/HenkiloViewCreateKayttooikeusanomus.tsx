@@ -36,7 +36,6 @@ type OwnProps = {
     l10n: L10n;
     locale: Locale;
     omattiedot?: OmattiedotState;
-    organisaatios?: OrganisaatioState;
     ryhmas?: RyhmatState;
     henkilo: HenkiloState;
     ryhmaOptions: Array<{ label: string; value: string }>;
@@ -48,7 +47,7 @@ type DispatchProps = {
     fetchOrganisaatioKayttooikeusryhmat: (arg0: string) => void;
     createKayttooikeusanomus: (arg0: any) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
-    addGlobalNotification: (arg0: GlobalNotificationConfig) => any;
+    addGlobalNotification: (arg0: GlobalNotificationConfig) => void;
 };
 
 type Props = OwnProps & DispatchProps;
@@ -143,12 +142,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                             <OrganisaatioSelectModal
                                 locale={this.props.locale}
                                 L={L}
-                                organisaatiot={this._parseOrganisaatioSelectOptions.call(
-                                    this,
-                                    this.props.organisaatios
-                                )}
                                 onSelect={this._changeOrganisaatioSelection.bind(this)}
-                                disabled={this.props.organisaatios.organisaatioHierarkiaLoading}
                             />
                         </div>
                     </div>

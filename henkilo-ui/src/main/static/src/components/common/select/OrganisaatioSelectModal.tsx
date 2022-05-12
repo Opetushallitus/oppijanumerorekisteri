@@ -2,15 +2,16 @@ import React from 'react';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
 import OrganisaatioSelect from './OrganisaatioSelect';
+import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import SelectModal from '../modal/SelectModal';
 
 type OrganisaatioSelectModalProps = {
     locale: Locale;
     L: Localisations;
-    organisaatiot: OrganisaatioSelectObject[];
+    organisaatiot?: OrganisaatioHenkilo[];
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
-    disabled: boolean;
+    disabled?: boolean;
 };
 
 type State = {

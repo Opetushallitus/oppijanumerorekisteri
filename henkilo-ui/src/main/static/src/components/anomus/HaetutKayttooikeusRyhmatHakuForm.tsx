@@ -9,12 +9,10 @@ import './HaetutKayttooikeusRyhmatHakuForm.css';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import CloseButton from '../common/button/CloseButton';
 import OphSelect from '../common/select/OphSelect';
-import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import * as R from 'ramda';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
-import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { Option } from 'react-select';
@@ -34,11 +32,7 @@ type StateProps = {
     omattiedotOrganisaatiosLoading: boolean;
 };
 
-type DispatchProps = {
-    fetchOmattiedotOrganisaatios: () => any;
-};
-
-type Props = StateProps & DispatchProps & OwnProps;
+type Props = StateProps & OwnProps;
 
 type State = {
     searchTerm: string;
@@ -60,10 +54,6 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
             selectedOrganisaatio: null,
             selectedRyhma: undefined,
         };
-    }
-
-    componentDidMount() {
-        this.props.fetchOmattiedotOrganisaatios();
     }
 
     render() {
@@ -92,14 +82,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                         <OrganisaatioSelectModal
                             L={this.props.L}
                             locale={this.props.locale}
-                            disabled={
-                                this.props.omattiedotOrganisaatiosLoading || this.props.organisaatios.length === 0
-                            }
                             onSelect={this.onOrganisaatioChange.bind(this)}
-                            organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(
-                                this.props.organisaatios,
-                                this.props.locale
-                            )}
                         ></OrganisaatioSelectModal>
                         <span className="haetut-kayttooikeusryhmat-close-button">
                             <CloseButton closeAction={() => this.onClearOrganisaatio()} />
@@ -210,6 +193,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
     ryhmat: state.ryhmatState,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchOmattiedotOrganisaatios,
-})(HaetutKayttooikeusRyhmatHakuForm);
+export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(HaetutKayttooikeusRyhmatHakuForm);

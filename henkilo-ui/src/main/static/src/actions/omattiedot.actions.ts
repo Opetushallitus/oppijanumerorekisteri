@@ -70,6 +70,7 @@ export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetSta
         try {
             const omattiedot: Omattiedot = await http.get(url);
             dispatch(receiveOmattiedotSuccess(omattiedot));
+            dispatch(fetchOmattiedotOrganisaatios());
         } catch (error) {
             dispatch(receiveOmattiedotFailure(error));
             throw error;

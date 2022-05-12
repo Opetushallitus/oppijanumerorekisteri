@@ -2,20 +2,17 @@ import React from 'react';
 import type { Option, Options } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
-import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { OrganisaatioSelectModal } from '../../common/select/OrganisaatioSelectModal';
 import ItemList from '../../kayttooikeusryhmat/kayttooikeusryhma/ItemList';
 import OphSelect from '../../common/select/OphSelect';
 import Button from '../../common/button/Button';
 import DownloadIcon from '../../common/icons/DownloadIcon';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
-import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import './AccessRightsReportControls.css';
 
 type Props = {
     locale: Locale;
     L: Localisations;
-    organisations: OrganisaatioHenkilo[];
     disabled: boolean;
     filterValues: string[];
     filter: string;
@@ -28,7 +25,6 @@ const AccessRightsReportControls: React.FC<Props> = ({
     locale,
     L,
     disabled,
-    organisations,
     setOid,
     filter,
     filterValues,
@@ -48,13 +44,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
         <div>
             <div className="flex-horizontal">
                 <div className="flex-item-1 ">
-                    <OrganisaatioSelectModal
-                        locale={locale}
-                        L={L}
-                        organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(organisations, locale)}
-                        onSelect={onSelect}
-                        disabled={disabled}
-                    />
+                    <OrganisaatioSelectModal locale={locale} L={L} onSelect={onSelect} disabled={disabled} />
                     <ItemList
                         items={selectedOrganisation}
                         labelPath={['name']}

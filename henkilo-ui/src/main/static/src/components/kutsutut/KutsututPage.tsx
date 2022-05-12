@@ -13,9 +13,7 @@ import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organi
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
 import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
-import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../utilities/organisaatio.util';
 import CloseButton from '../common/button/CloseButton';
-import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import { Option } from 'react-select';
 
 type Payload = {
@@ -36,10 +34,7 @@ type Props = {
     deleteKutsu: (arg0: number) => void;
     fetchKutsus: (arg0: Payload, arg1: number, arg2: number) => void;
     kutsuListLoading: boolean;
-    organisaatiot: Array<OrganisaatioHenkilo>;
     clearKutsuList: () => void;
-    fetchOmattiedotOrganisaatios: () => void;
-    omattiedotOrganisaatiosLoading: boolean;
     isAdmin: boolean;
     isOphVirkailija: boolean;
 };
@@ -109,10 +104,6 @@ export default class KutsututPage extends React.Component<Props, State> {
         };
     }
 
-    async componentDidMount() {
-        await this.props.fetchOmattiedotOrganisaatios();
-    }
-
     componentDidUpdate(_prevProps: Props, prevState: State) {
         // Update kutsus if payload changes. Basically payload.view change sets this for initial fetch.
         if (Object.keys(this.state.payload).some((key) => this.state.payload[key] !== prevState.payload[key])) {
@@ -161,14 +152,6 @@ export default class KutsututPage extends React.Component<Props, State> {
                         <OrganisaatioSelectModal
                             L={this.L}
                             locale={this.props.locale}
-                            disabled={
-                                this.props.omattiedotOrganisaatiosLoading ||
-                                (this.props.organisaatiot && this.props.organisaatiot.length === 0)
-                            }
-                            organisaatiot={omattiedotOrganisaatiotToOrganisaatioSelectObject(
-                                this.props.organisaatiot,
-                                this.props.locale
-                            )}
                             onSelect={this.onOrganisaatioChange.bind(this)}
                         ></OrganisaatioSelectModal>
                         <CloseButton closeAction={() => this.clearOrganisaatioSelection()}></CloseButton>
@@ -279,10 +262,6 @@ export default class KutsututPage extends React.Component<Props, State> {
                 payload: { ...this.state.payload, searchTerm: hakutermi },
             });
         }
-    }
-
-    parseOrganisaatioSelectObjects(organisaatiot: Array<OrganisaatioHenkilo>): Array<OrganisaatioSelectObject> {
-        return omattiedotOrganisaatiotToOrganisaatioSelectObject(organisaatiot, this.props.locale);
     }
 
     clearOrganisaatioSelection(): void {

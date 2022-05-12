@@ -7,11 +7,8 @@ describe('AccessRightsReport', () => {
     const MINIMAL_PROPS = {
         l10n: {} as L10n,
         locale: '',
-        organisationsLoading: false,
-        organisations: [],
         reportLoading: false,
         reportData: undefined,
-        fetchOrgs: jest.fn(),
         fetchReport: jest.fn(),
         clearReport: jest.fn(),
     };
@@ -26,12 +23,6 @@ describe('AccessRightsReport', () => {
 
     test('renders without crashing', () => {
         expect(shallow(<AccessRightsReport {...MINIMAL_PROPS} />)).toMatchSnapshot();
-    });
-
-    test('invokes fetchOrgs on mount', () => {
-        expect(MINIMAL_PROPS.fetchOrgs).toHaveBeenCalledTimes(0);
-        shallow(<AccessRightsReport {...MINIMAL_PROPS} />);
-        expect(MINIMAL_PROPS.fetchOrgs).toHaveBeenCalledTimes(1);
     });
 
     test('invokes fetchReport on oid change', () => {

@@ -18,7 +18,6 @@ import { Locale } from '../../../types/locale.type';
 import { ValidationMessage } from '../../../types/validation.type';
 import PropertySingleton from '../../../globals/PropertySingleton';
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
-import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type OwnProps = {
     vuosia: number;
@@ -29,7 +28,6 @@ type OwnProps = {
 };
 
 type StateProps = {
-    organisaatios: Array<OrganisaatioHenkilo>;
     L: Localisations;
     locale: Locale;
 };
@@ -230,7 +228,6 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
                                     locale={this.props.locale}
                                     organisationValue={this.state.kayttooikeusModel.kayttokohdeOrganisationOid}
                                     organisationAction={this.organisationAction}
-                                    organisationData={this.props.organisaatios}
                                     selection={this.state.organisaatioSelection}
                                 />
                                 <CKKesto
@@ -271,7 +268,6 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
-    organisaatios: state.omattiedot.organisaatios,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {

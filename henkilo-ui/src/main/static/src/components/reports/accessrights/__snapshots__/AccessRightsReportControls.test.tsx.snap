@@ -13,7 +13,6 @@ exports[`AccessRightsReportControls renders without crashing 1`] = `
         disabled={false}
         locale=""
         onSelect={[Function]}
-        organisaatiot={Array []}
       />
       <Connect(ItemList)
         items={Array []}

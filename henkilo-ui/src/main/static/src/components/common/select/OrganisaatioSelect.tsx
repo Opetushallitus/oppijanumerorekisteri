@@ -3,19 +3,22 @@ import { connect } from 'react-redux';
 import { Locale } from '../../../types/locale.type';
 import { Localisations } from '../../../types/localisation.type';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
+import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import './OrganisaatioSelect.css';
 import * as R from 'ramda';
 import { List } from 'react-virtualized';
 import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
 import type { RootState } from '../../../reducers';
+import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 
 type OwnProps = {
-    organisaatiot: OrganisaatioSelectObject[];
+    organisaatiot: OrganisaatioHenkilo[];
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
     onClose?: () => void;
 };
 
 type StateProps = {
+    options: OrganisaatioSelectObject[];
     organisationNames: OrganisaatioNameLookup;
     locale: Locale;
     L: Localisations;
@@ -32,7 +35,7 @@ type Props = OwnProps & StateProps;
 class OrganisaatioSelect extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        const allOrganisaatiot = this._sortAlphabetically(this.props.organisaatiot);
+        const allOrganisaatiot = this._sortAlphabetically(this.props.options);
         this.state = {
             searchWord: '',
             allOrganisaatiot: allOrganisaatiot,
@@ -195,10 +198,14 @@ class OrganisaatioSelect extends React.Component<Props, State> {
     }
 }
 
-const mapStateToProps = (state: RootState): StateProps => ({
+const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     organisationNames: state.organisaatio.names,
     locale: state.locale,
     L: state.l10n.localisations[state.locale],
+    options: omattiedotOrganisaatiotToOrganisaatioSelectObject(
+        ownProps.organisaatiot ? ownProps.organisaatiot : state.omattiedot.organisaatios,
+        state.locale
+    ),
 });
 
 export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(OrganisaatioSelect);
