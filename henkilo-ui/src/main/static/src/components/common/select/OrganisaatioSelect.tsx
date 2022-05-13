@@ -100,8 +100,6 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
             : null;
     };
 
-    _resolveName = (oid: string, locale: string): string => this.props.organisationNames?.[oid]?.[locale] || oid;
-
     _renderParents = (organisaatio: OrganisaatioSelectObject): React.ReactNode =>
         organisaatio.parentNames.map((name) => <span className="parent">{name} &gt; </span>);
 
