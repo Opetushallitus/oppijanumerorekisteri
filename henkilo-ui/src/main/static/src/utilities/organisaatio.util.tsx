@@ -13,12 +13,12 @@ import { getLocalization } from './localisation.util';
  * Apufunktio kutsumaan organisaatioHierarkiaToOrganisaatioSelectObject:a käyttöoikeuspalvelusta haetuilla omilla organisaatioilla
  */
 export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
-    organisaatiot: Array<OrganisaatioHenkilo>,
+    organisaatiot: OrganisaatioHenkilo[],
     orgNames: OrganisaatioNameLookup,
     locale: Locale
-): Array<OrganisaatioSelectObject> => {
+): OrganisaatioSelectObject[] => {
     const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
-    const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> =
+    const allOrganisaatioSelectObjects: OrganisaatioSelectObject[] =
         organisaatiot.length > 0
             ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
             : [];
@@ -31,22 +31,11 @@ export const omattiedotOrganisaatiotToOrganisaatioSelectObject = (
 /*
  * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a
  */
-export const organisaatioToOrganisaatioSelectObject = (
-    organisaatio: OrganisaatioWithChildren,
-    orgNames: OrganisaatioNameLookup,
-    locale: Locale
-): Array<OrganisaatioSelectObject> => {
-    return organisaatioHierarkiaToOrganisaatioSelectObject([organisaatio], orgNames, locale);
-};
-
-/*
- * Parsii organisaatiohierarkiasta arrayn OrganisaatioSelectObject:a
- */
 const organisaatioHierarkiaToOrganisaatioSelectObject = (
-    organisaatioHierarkia: Array<OrganisaatioWithChildren>,
+    organisaatioHierarkia: OrganisaatioWithChildren[],
     orgNames: OrganisaatioNameLookup,
     locale: Locale
-): Array<OrganisaatioSelectObject> => {
+): OrganisaatioSelectObject[] => {
     const result = [];
     mapOrganisaatioLevelsRecursively(organisaatioHierarkia, orgNames, locale, result);
     return result;
@@ -56,10 +45,10 @@ const organisaatioHierarkiaToOrganisaatioSelectObject = (
  * Käy organisaatiohierarkian rekursiivisesti läpi ja palauttaa flatin listan OrganisaatioSelectObjecteja
  */
 const mapOrganisaatioLevelsRecursively = (
-    organisaatiot: Array<OrganisaatioWithChildren>,
+    organisaatiot: OrganisaatioWithChildren[],
     orgNames: OrganisaatioNameLookup,
     locale: Locale,
-    result: Array<OrganisaatioSelectObject>
+    result: OrganisaatioSelectObject[]
 ): void => {
     organisaatiot.filter(Boolean).forEach((organisaatio: OrganisaatioWithChildren) => {
         const organisaatioSelectObject: OrganisaatioSelectObject = createOrganisaatioSelectObject(
@@ -105,22 +94,19 @@ const isRyhma = (organisaatio: OrganisaatioSelectObject): boolean =>
  */
 export const findOmattiedotOrganisatioOrRyhmaByOid = (
     oid: string,
-    organisaatiot: Array<OrganisaatioHenkilo>,
+    organisaatiot: OrganisaatioHenkilo[],
     orgNames: OrganisaatioNameLookup,
     locale: Locale
 ): OrganisaatioSelectObject | null | undefined => {
     const omatOrganisaatiot = R.map(R.prop('organisaatio'))(organisaatiot);
-    const allOrganisaatioSelectObjects: Array<OrganisaatioSelectObject> =
+    const allOrganisaatioSelectObjects: OrganisaatioSelectObject[] =
         organisaatiot.length > 0
             ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
             : [];
     return R.find(R.propEq('oid', oid))(allOrganisaatioSelectObjects);
 };
 
-const organisaatioHierarchyRoots = (
-    orgs: Array<OrganisaatioHenkilo>,
-    locale: Locale
-): Array<OrganisaatioWithChildren> => {
+const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {
     // First sort by name:
     orgs = R.sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio.nimi), orgs);
     const byOid = {};
@@ -165,7 +151,7 @@ const organisaatioHierarchyRoots = (
     return roots;
 };
 
-const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: Array<OrganisaatioWithChildren>) => {
+const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: OrganisaatioWithChildren[]) => {
     const result = [];
     const map = (org) => {
         result.push(org);
@@ -178,10 +164,7 @@ const organizationsFlatInHierarchyOrder = (organizationHierarchyRoots: Array<Org
     return result;
 };
 
-const getOrganisaatios = (
-    organisaatios: Array<OrganisaatioHenkilo>,
-    locale: Locale
-): Array<OrganisaatioWithChildren> => {
+const getOrganisaatios = (organisaatios: OrganisaatioHenkilo[], locale: Locale): OrganisaatioWithChildren[] => {
     const hierarchyRoots = organisaatioHierarchyRoots(organisaatios, locale);
     return organizationsFlatInHierarchyOrder(hierarchyRoots);
 };
@@ -201,16 +184,16 @@ const mapOrganisaatio = (
 
 // Filter off organisations or ryhmas depending on isRyhma value.
 const getOrganisationsOrRyhmas = (
-    organisaatios: Array<OrganisaatioWithChildren>,
+    organisaatios: OrganisaatioWithChildren[],
     isRyhma: boolean
-): Array<OrganisaatioWithChildren> => {
+): OrganisaatioWithChildren[] => {
     return isRyhma
         ? organisaatios.filter((organisaatio) => organisaatio.tyypit.indexOf('Ryhma') !== -1)
         : organisaatios.filter((organisaatio) => organisaatio.tyypit.indexOf('Ryhma') === -1);
 };
 
 export const getOrganisaatioOptionsAndFilter = (
-    newOrganisaatios: Array<OrganisaatioHenkilo>,
+    newOrganisaatios: OrganisaatioHenkilo[],
     locale: Locale,
     isRyhma: boolean
 ): { options: any; filterOptions: any } => {

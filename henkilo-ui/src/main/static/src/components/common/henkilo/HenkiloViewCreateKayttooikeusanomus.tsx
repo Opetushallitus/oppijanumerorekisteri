@@ -19,7 +19,6 @@ import {
 import { addGlobalNotification } from '../../../actions/notification.actions';
 import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
-import { organisaatioToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { LocalNotification } from '../Notification/LocalNotification';
 import { L10n } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
@@ -32,6 +31,8 @@ import { GlobalNotificationConfig } from '../../../types/notification.types';
 import { OrganisaatioKayttooikeusryhmatState } from '../../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import type { Option } from 'react-select';
 import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
+import { OrganisaatioWithChildren } from '../../../types/domain/organisaatio/organisaatio.types';
+import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 
 type OwnProps = {
     l10n: L10n;
@@ -42,6 +43,7 @@ type OwnProps = {
     ryhmaOptions: Array<{ label: string; value: string }>;
     kayttooikeusryhmat: Array<any>;
     organisaatioKayttooikeusryhmat?: OrganisaatioKayttooikeusryhmatState;
+    organisaatios?: OrganisaatioState;
 };
 
 type StateProps = {
@@ -144,7 +146,11 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                                 placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
                                 readOnly
                             />
-                            <OrganisaatioSelectModal onSelect={this._changeOrganisaatioSelection.bind(this)} />
+                            <OrganisaatioSelectModal
+                                organisaatiot={this.flatten(this.props.organisaatios.organisaatioHierarkia)}
+                                disabled={this.props.organisaatios.organisaatioHierarkiaLoading}
+                                onSelect={this._changeOrganisaatioSelection.bind(this)}
+                            />
                         </div>
                     </div>
 
@@ -381,14 +387,8 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
         return this.state.perustelut === undefined || this.state.perustelut.length <= 255;
     }
 
-    _parseOrganisaatioSelectOptions(organisaatioState: OrganisaatioState) {
-        return !organisaatioState.organisaatioHierarkiaLoading && organisaatioState.organisaatioHierarkia
-            ? organisaatioToOrganisaatioSelectObject(
-                  organisaatioState.organisaatioHierarkia,
-                  this.props.organisationNames,
-                  this.props.locale
-              )
-            : [];
+    flatten(root: OrganisaatioWithChildren): OrganisaatioHenkilo[] {
+        return root ? [{ organisaatio: root }, ...root.children.flatMap((node) => this.flatten(node))] : [];
     }
 
     _resetAnomusFormFields() {
