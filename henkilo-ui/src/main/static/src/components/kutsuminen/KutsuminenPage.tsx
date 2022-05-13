@@ -3,7 +3,6 @@ import type { RootState } from '../../reducers';
 import BasicInfoForm from './BasicinfoForm';
 import React from 'react';
 import KutsuOrganisaatios from './KutsuOrganisaatios';
-import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import { fetchAllRyhmas } from '../../actions/organisaatio.actions';
 import { kutsuClearOrganisaatios, kutsuAddOrganisaatio } from '../../actions/kutsuminen.actions';
 import KutsuConfirmation from './KutsuConfirmation';
@@ -40,7 +39,6 @@ type StateProps = {
 
 type DispatchProps = {
     kutsuClearOrganisaatios: () => void;
-    fetchOmattiedotOrganisaatios: () => void;
     fetchAllRyhmas: () => void;
     kutsuAddOrganisaatio: (arg0: KutsuOrganisaatio) => void;
     fetchHenkilo: (oid: string) => void;
@@ -103,7 +101,6 @@ class KutsuminenPage extends React.Component<Props, State> {
 
     componentDidMount() {
         this.props.kutsuClearOrganisaatios();
-        this.props.fetchOmattiedotOrganisaatios();
         this.props.fetchAllRyhmas();
         this.props.fetchHenkilo(this.props.kayttajaOid);
     }
@@ -255,7 +252,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchOmattiedotOrganisaatios,
     kutsuClearOrganisaatios,
     kutsuAddOrganisaatio,
     fetchHenkilo,

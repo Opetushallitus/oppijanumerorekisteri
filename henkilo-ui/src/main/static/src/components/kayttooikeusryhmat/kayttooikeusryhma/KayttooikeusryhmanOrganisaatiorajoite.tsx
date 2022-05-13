@@ -22,7 +22,6 @@ type Props = {
     oppilaitostyypitSelectAction: (selection: React.ChangeEvent<HTMLInputElement>) => void;
     organisaatiotyypitSelections: Array<string>;
     organisaatiotyypitSelectAction: (selection: React.ChangeEvent<HTMLInputElement>) => void;
-    omattiedotOrganisaatiosLoading: boolean;
 };
 
 type State = {

@@ -22,7 +22,6 @@ import {
     getGrantablePrivileges,
     updateHaettuKayttooikeusryhma,
 } from '../../actions/kayttooikeusryhma.actions';
-import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
@@ -56,7 +55,6 @@ type DispatchProps = {
     fetchAllKayttooikeusryhmasForHenkilo: (arg0: string) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
-    fetchOmattiedotOrganisaatios: () => void;
     updateHaettuKayttooikeusryhma: (
         id: number,
         kayttoOikeudenTila: string,
@@ -95,7 +93,6 @@ class VirkailijaViewContainer extends React.Component<Props> {
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchAllKayttooikeusryhmasForHenkilo(oid);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
-        this.props.fetchOmattiedotOrganisaatios();
         this.props.getGrantablePrivileges(oid);
     }
 
@@ -128,7 +125,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma,
-    fetchOmattiedotOrganisaatios,
     getGrantablePrivileges,
     clearHenkilo,
 })(VirkailijaViewContainer);

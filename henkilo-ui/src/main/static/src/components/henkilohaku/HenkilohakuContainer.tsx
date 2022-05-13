@@ -2,7 +2,6 @@ import React from 'react';
 import HenkilohakuPage from './HenkilohakuPage';
 import { connect } from 'react-redux';
 import type { RootState } from '../../reducers';
-import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import Loader from '../common/icons/Loader';
 import { fetchAllKayttooikeusryhma } from '../../actions/kayttooikeusryhma.actions';
 import { clearHenkilohaku, henkilohaku, henkilohakuCount, updateFilters } from '../../actions/henkilohaku.actions';
@@ -33,7 +32,6 @@ type StateProps = {
 };
 
 type DispatchProps = {
-    fetchOmattiedotOrganisaatios: () => void;
     fetchAllKayttooikeusryhma: () => void;
     fetchAllRyhmas: () => void;
     henkilohaku: (arg0: HenkilohakuCriteria, arg1: HenkilohakuQueryparameters) => void;
@@ -53,8 +51,6 @@ class HenkilohakuContainer extends React.Component<Props> {
     };
 
     async componentWillMount() {
-        await this.props.fetchOmattiedotOrganisaatios();
-
         const kayttooikeudet = parsePalveluRoolit(this.props.omattiedot.organisaatiot);
         const vainOppijoidenTuonti =
             kayttooikeudet.every(
@@ -105,7 +101,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    fetchOmattiedotOrganisaatios,
     fetchAllKayttooikeusryhma,
     henkilohaku,
     updateFilters,

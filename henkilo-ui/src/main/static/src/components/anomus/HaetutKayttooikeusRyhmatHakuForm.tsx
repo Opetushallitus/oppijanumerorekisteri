@@ -29,7 +29,6 @@ type StateProps = {
     isOphVirkailija: boolean;
     haetutKayttooikeusryhmatLoading: boolean;
     ryhmat: { ryhmas: Array<{}> };
-    omattiedotOrganisaatiosLoading: boolean;
 };
 
 type Props = StateProps & OwnProps;
@@ -186,7 +185,6 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     organisaatios: state.omattiedot.organisaatios,
-    omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
     isAdmin: state.omattiedot.isAdmin,
     isOphVirkailija: state.omattiedot.isOphVirkailija,
     haetutKayttooikeusryhmatLoading: state.haetutKayttooikeusryhmat.isLoading,

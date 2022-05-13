@@ -103,7 +103,7 @@ const receiveOmattiedotOrganisaatiosFailure = (error) => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
     error,
 });
-export const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
     // Fetch only with the first call
     if (
         getState().omattiedot.organisaatios &&

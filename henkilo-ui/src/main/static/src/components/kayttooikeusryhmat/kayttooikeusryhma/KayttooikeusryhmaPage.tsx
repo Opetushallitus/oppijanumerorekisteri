@@ -63,7 +63,6 @@ type Props = {
     palvelutState: PalvelutState;
     locale: Locale;
     fetchPalveluKayttooikeus: (palveluName: string) => void;
-    omattiedotOrganisaatiosLoading: boolean;
     kayttooikeusryhmaId?: string;
     organisaatioCache: any;
     addGlobalNotification: (payload: GlobalNotificationConfig) => void;

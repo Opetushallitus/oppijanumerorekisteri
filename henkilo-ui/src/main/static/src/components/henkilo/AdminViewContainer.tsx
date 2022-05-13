@@ -20,7 +20,6 @@ import {
     fetchAllKayttooikeusryhmasForHenkilo,
     updateHaettuKayttooikeusryhma,
 } from '../../actions/kayttooikeusryhma.actions';
-import { fetchOmattiedotOrganisaatios } from '../../actions/omattiedot.actions';
 import HenkiloViewPage from './HenkiloViewPage';
 import { L10n } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
@@ -60,7 +59,6 @@ type DispatchProps = {
     fetchAllKayttooikeusryhmasForHenkilo: (arg0: string) => void;
     fetchAllKayttooikeusAnomusForHenkilo: (arg0: string) => void;
     fetchHenkiloYksilointitieto: (arg0: string) => void;
-    fetchOmattiedotOrganisaatios: () => any;
     updateHaettuKayttooikeusryhma: (
         id: number,
         kayttoOikeudenTila: string,
@@ -96,7 +94,6 @@ class AdminViewContainer extends React.Component<Props> {
         this.props.fetchYhteystietotyypitKoodisto();
         this.props.fetchAllKayttooikeusryhmasForHenkilo(oid);
         this.props.fetchAllKayttooikeusAnomusForHenkilo(oid);
-        this.props.fetchOmattiedotOrganisaatios();
     }
 
     render() {
@@ -124,7 +121,6 @@ export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateT
     fetchAllKayttooikeusryhmasForHenkilo,
     fetchAllKayttooikeusAnomusForHenkilo,
     updateHaettuKayttooikeusryhma,
-    fetchOmattiedotOrganisaatios,
     fetchHenkiloSlaves,
     clearHenkilo,
 })(AdminViewContainer);

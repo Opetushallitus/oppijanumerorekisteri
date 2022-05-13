@@ -35,7 +35,6 @@ type StateProps = {
     kayttooikeus: any;
     kayttooikeusState: KayttooikeusState;
     palvelutState: PalvelutState;
-    omattiedotOrganisaatiosLoading: boolean;
     kayttooikeusryhmaId?: string;
 };
 
@@ -96,7 +95,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     kayttooikeus: state.kayttooikeus,
     palvelutState: state.palvelutState,
     kayttooikeusState: state.kayttooikeusState,
-    omattiedotOrganisaatiosLoading: state.omattiedot.omattiedotOrganisaatiosLoading,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
