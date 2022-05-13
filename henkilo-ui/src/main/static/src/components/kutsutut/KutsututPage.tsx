@@ -11,7 +11,7 @@ import { Localisations, L10n } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import { OrganisaatioWithChildren } from '../../types/domain/organisaatio/organisaatio.types';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';
-import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CloseButton from '../common/button/CloseButton';
 import { Option } from 'react-select';
@@ -149,11 +149,7 @@ export default class KutsututPage extends React.Component<Props, State> {
                             placeholder={this.L['KUTSUTUT_ORGANISAATIOSUODATUS']}
                             readOnly
                         />
-                        <OrganisaatioSelectModal
-                            L={this.L}
-                            locale={this.props.locale}
-                            onSelect={this.onOrganisaatioChange.bind(this)}
-                        ></OrganisaatioSelectModal>
+                        <OrganisaatioSelectModal onSelect={this.onOrganisaatioChange.bind(this)} />
                         <CloseButton closeAction={() => this.clearOrganisaatioSelection()}></CloseButton>
                     </div>
                     <div className="flex-item-1 flex-inline" id="radiator">

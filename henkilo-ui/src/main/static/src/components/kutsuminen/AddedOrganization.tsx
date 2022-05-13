@@ -18,7 +18,7 @@ import { Localisations } from '../../types/localisation.type';
 import KayttooikeusryhmaSelectModal from '../common/select/KayttooikeusryhmaSelectModal';
 import { myonnettyToKayttooikeusryhma } from '../../utils/KayttooikeusryhmaUtils';
 import { Kayttooikeusryhma, MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import SimpleDatePicker from '../henkilo/SimpleDatePicker';
 import moment from 'moment';
 import { fetchAllowedKayttooikeusryhmasForOrganisation } from '../../actions/kayttooikeusryhma.actions';
@@ -99,11 +99,7 @@ class AddedOrganization extends React.Component<Props, State> {
                             placeholder={this.props.L['VIRKAILIJAN_LISAYS_ORGANISAATIO']}
                             readOnly
                         />
-                        <OrganisaatioSelectModal
-                            locale={this.props.locale}
-                            L={this.props.L}
-                            onSelect={this.selectOrganisaatio.bind(this)}
-                        ></OrganisaatioSelectModal>
+                        <OrganisaatioSelectModal onSelect={this.selectOrganisaatio.bind(this)} />
                     </div>
                     <div>
                         <RyhmaSelection

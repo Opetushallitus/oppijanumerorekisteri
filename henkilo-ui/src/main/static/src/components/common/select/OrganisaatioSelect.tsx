@@ -1,27 +1,23 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Locale } from '../../../types/locale.type';
-import { Localisations } from '../../../types/localisation.type';
-import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
-import { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
-import './OrganisaatioSelect.css';
+
 import * as R from 'ramda';
-import { List } from 'react-virtualized';
-import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
-import type { RootState } from '../../../reducers';
 import { omattiedotOrganisaatiotToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
+import { List } from 'react-virtualized';
 
-type OwnProps = {
+import type { Locale } from '../../../types/locale.type';
+import type { Localisations } from '../../../types/localisation.type';
+import type { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
+import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
+import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
+
+import './OrganisaatioSelect.css';
+
+type Props = {
     organisaatiot: OrganisaatioHenkilo[];
-    onSelect: (organisaatio: OrganisaatioSelectObject) => void;
-    onClose?: () => void;
-};
-
-type StateProps = {
-    options: OrganisaatioSelectObject[];
     organisationNames: OrganisaatioNameLookup;
     locale: Locale;
     L: Localisations;
+    onSelect: (organisaatio: OrganisaatioSelectObject) => void;
 };
 
 type State = {
@@ -30,12 +26,15 @@ type State = {
     organisaatiot: OrganisaatioSelectObject[];
 };
 
-type Props = OwnProps & StateProps;
-
-class OrganisaatioSelect extends React.Component<Props, State> {
+export default class OrganisaatioSelect extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        const allOrganisaatiot = this._sortAlphabetically(this.props.options);
+        const options = omattiedotOrganisaatiotToOrganisaatioSelectObject(
+            this.props.organisaatiot,
+            this.props.organisationNames,
+            this.props.locale
+        );
+        const allOrganisaatiot = this._sortAlphabetically(options);
         this.state = {
             searchWord: '',
             allOrganisaatiot: allOrganisaatiot,
@@ -85,9 +84,6 @@ class OrganisaatioSelect extends React.Component<Props, State> {
 
     makeSelection = (organisaatio: OrganisaatioSelectObject): void => {
         this.props.onSelect(organisaatio);
-        if (this.props.onClose) {
-            this.props.onClose();
-        }
     };
 
     _renderOrganisaatioNimi = (organisaatio: OrganisaatioSelectObject) => {
@@ -190,16 +186,3 @@ class OrganisaatioSelect extends React.Component<Props, State> {
         ];
     }
 }
-
-const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
-    organisationNames: state.organisaatio.names,
-    locale: state.locale,
-    L: state.l10n.localisations[state.locale],
-    options: omattiedotOrganisaatiotToOrganisaatioSelectObject(
-        ownProps.organisaatiot ? ownProps.organisaatiot : state.omattiedot.organisaatios,
-        state.organisaatio.names,
-        state.locale
-    ),
-});
-
-export default connect<StateProps, null, OwnProps, RootState>(mapStateToProps)(OrganisaatioSelect);

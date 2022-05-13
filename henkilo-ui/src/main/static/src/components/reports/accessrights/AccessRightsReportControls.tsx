@@ -1,8 +1,6 @@
 import React from 'react';
 import type { Option, Options } from 'react-select';
-import { Locale } from '../../../types/locale.type';
-import { Localisations } from '../../../types/localisation.type';
-import { OrganisaatioSelectModal } from '../../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../../common/select/OrganisaatioSelectModal';
 import ItemList from '../../kayttooikeusryhmat/kayttooikeusryhma/ItemList';
 import OphSelect from '../../common/select/OphSelect';
 import Button from '../../common/button/Button';
@@ -11,19 +9,17 @@ import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobjec
 import './AccessRightsReportControls.css';
 
 type Props = {
-    locale: Locale;
-    L: Localisations;
     disabled: boolean;
     filterValues: string[];
     filter: string;
     setFilter: (name: string) => void;
     setOid: (oid: string) => void;
     dataExport?: () => void;
+    translate: (key: string) => string;
 };
 
 const AccessRightsReportControls: React.FC<Props> = ({
-    locale,
-    L,
+    translate,
     disabled,
     setOid,
     filter,
@@ -44,7 +40,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
         <div>
             <div className="flex-horizontal">
                 <div className="flex-item-1 ">
-                    <OrganisaatioSelectModal locale={locale} L={L} onSelect={onSelect} disabled={disabled} />
+                    <OrganisaatioSelectModal onSelect={onSelect} disabled={disabled} />
                     <ItemList
                         items={selectedOrganisation}
                         labelPath={['name']}
@@ -57,7 +53,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                     <div className="flex-item-1 ">
                         <OphSelect
                             options={filterOptions}
-                            placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
+                            placeholder={translate('HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER')}
                             value={filter}
                             clearable
                             onChange={(option: Option<string>) => setFilter(option && option.value)}
@@ -69,7 +65,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                 <div className="flex-horizontal access-right-report-controls-row">
                     <div className="flex-item-1 ">
                         <Button action={dataExport}>
-                            {L['KAYTTOOIKEUSRAPORTTI_EXPORT'] || 'KAYTTOOIKEUSRAPORTTI_EXPORT'}
+                            {translate('KAYTTOOIKEUSRAPORTTI_EXPORT')}
                             <DownloadIcon />
                         </Button>
                     </div>

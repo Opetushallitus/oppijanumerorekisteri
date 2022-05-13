@@ -4,7 +4,7 @@ import './KayttooikeusryhmanOrganisaatiorajoite.css';
 import { Locale } from '../../../types/locale.type';
 import type { Options } from 'react-select';
 import { Localisations } from '../../../types/localisation.type';
-import { OrganisaatioSelectModal } from '../../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import OphCheckboxFieldset from '../../common/forms/OphCheckboxFieldset';
 import { toLocalizedText } from '../../../localizabletext';
@@ -68,12 +68,7 @@ export default class KayttooikeusryhmanOrganisaatiorajoite extends React.Compone
 
                 <div className="flex-horizontal">
                     <div className="flex-item-1 ">
-                        <OrganisaatioSelectModal
-                            L={this.props.L}
-                            locale={this.props.locale}
-                            onSelect={this.props.organisaatioSelectAction}
-                        />
-
+                        <OrganisaatioSelectModal onSelect={this.props.organisaatioSelectAction} />
                         <ItemList
                             items={this.props.organisaatioSelections}
                             labelPath={['name']}

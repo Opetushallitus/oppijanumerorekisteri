@@ -1,7 +1,7 @@
 import './CKKohde.css';
 import React from 'react';
 import RyhmaSelection from '../../select/RyhmaSelection';
-import { OrganisaatioSelectModal } from '../../select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../../select/OrganisaatioSelectModal';
 import { Localisations } from '../../../../types/localisation.type';
 import { Locale } from '../../../../types/locale.type';
 
@@ -13,7 +13,7 @@ type Props = {
     selection: string;
 };
 
-const CKKohde = ({ organisationAction, organisationValue, L, locale, selection }: Props) => (
+const CKKohde = ({ organisationAction, organisationValue, L, selection }: Props) => (
     <tr key="kayttokohdeField">
         <td>
             <span className="oph-bold">{L['HENKILO_LISAA_KAYTTOOIKEUDET_VALITSE']}</span>:
@@ -27,7 +27,7 @@ const CKKohde = ({ organisationAction, organisationValue, L, locale, selection }
                     placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
                     readOnly
                 />
-                <OrganisaatioSelectModal L={L} locale={locale} onSelect={organisationAction}></OrganisaatioSelectModal>
+                <OrganisaatioSelectModal onSelect={organisationAction} />
             </div>
 
             <div className="kohdeRyhma">

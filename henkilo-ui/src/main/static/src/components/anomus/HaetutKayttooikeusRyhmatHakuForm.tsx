@@ -12,7 +12,7 @@ import OphSelect from '../common/select/OphSelect';
 import * as R from 'ramda';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
-import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { Option } from 'react-select';
@@ -79,8 +79,6 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
                             readOnly
                         />
                         <OrganisaatioSelectModal
-                            L={this.props.L}
-                            locale={this.props.locale}
                             onSelect={this.onOrganisaatioChange.bind(this)}
                         ></OrganisaatioSelectModal>
                         <span className="haetut-kayttooikeusryhmat-close-button">

@@ -3,14 +3,13 @@ import AccessRightsReportControls from './AccessRightsReportControls';
 
 describe('AccessRightsReportControls', () => {
     const MINIMAL_PROPS = {
-        locale: '',
-        L: {},
         organisations: [],
         disabled: false,
         filterValues: [],
         filter: undefined,
         setFilter: jest.fn(),
         setOid: jest.fn(),
+        translate: (key: string) => key,
     };
 
     test('renders without crashing', () => {

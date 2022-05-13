@@ -6,7 +6,7 @@ import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import PalvelukayttajaHakuTaulukko from './PalvelukayttajaHakuTaulukko';
 import SubOrganisationCheckbox from '../henkilohaku/criterias/SubOrganisationCheckbox';
 import './PalvelukayttajaHakuPage.css';
-import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { Locale } from '../../types/locale.type';
 import CloseButton from '../common/button/CloseButton';
@@ -48,11 +48,7 @@ class PalvelukayttajaHakuPage extends React.Component<PalvelukayttajaHakuPagePro
                             readOnly
                         />
                     </div>
-                    <OrganisaatioSelectModal
-                        L={this.props.L}
-                        locale={this.props.locale}
-                        onSelect={this.onOrganisationChange}
-                    />
+                    <OrganisaatioSelectModal onSelect={this.onOrganisationChange} />
                     <CloseButton closeAction={() => this.onOrganisationChange(undefined)} />
                 </div>
 

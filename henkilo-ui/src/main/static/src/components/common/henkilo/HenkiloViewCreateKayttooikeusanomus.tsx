@@ -17,7 +17,7 @@ import {
     fetchAllKayttooikeusAnomusForHenkilo,
 } from '../../../actions/kayttooikeusryhma.actions';
 import { addGlobalNotification } from '../../../actions/notification.actions';
-import { OrganisaatioSelectModal } from '../select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import { organisaatioToOrganisaatioSelectObject } from '../../../utilities/organisaatio.util';
 import { LocalNotification } from '../Notification/LocalNotification';
@@ -144,11 +144,7 @@ class HenkiloViewCreateKayttooikeusanomus extends React.Component<Props, State> 
                                 placeholder={L['OMATTIEDOT_VALITSE_ORGANISAATIO']}
                                 readOnly
                             />
-                            <OrganisaatioSelectModal
-                                locale={this.props.locale}
-                                L={L}
-                                onSelect={this._changeOrganisaatioSelection.bind(this)}
-                            />
+                            <OrganisaatioSelectModal onSelect={this._changeOrganisaatioSelection.bind(this)} />
                         </div>
                     </div>
 

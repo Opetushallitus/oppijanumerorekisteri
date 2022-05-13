@@ -16,7 +16,7 @@ import CloseButton from '../common/button/CloseButton';
 import { Localisations } from '../../types/localisation.type';
 import { Locale } from '../../types/locale.type';
 import { HenkilohakuCriteria } from '../../types/domain/kayttooikeus/HenkilohakuCriteria.types';
-import { OrganisaatioSelectModal } from '../common/select/OrganisaatioSelectModal';
+import OrganisaatioSelectModal from '../common/select/OrganisaatioSelectModal';
 import { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import { Kayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { OrganisaatioHenkilo } from '../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
@@ -123,15 +123,13 @@ class HenkilohakuFilters extends React.Component<Props, State> {
                                     readOnly
                                 />
                                 <OrganisaatioSelectModal
-                                    L={this.props.L}
-                                    locale={this.props.locale}
                                     disabled={
                                         this.props.henkilohakuOrganisaatiotLoading ||
                                         this.props.henkilohakuOrganisaatiot.length === 0
                                     }
                                     onSelect={this.organisaatioSelectAction.bind(this)}
                                     organisaatiot={this.props.henkilohakuOrganisaatiot}
-                                ></OrganisaatioSelectModal>
+                                />
                                 <span className="henkilohaku-clear-select">
                                     <CloseButton closeAction={() => this.clearOrganisaatioSelection()} />
                                 </span>

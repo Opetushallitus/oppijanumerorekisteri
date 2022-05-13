@@ -8,10 +8,8 @@ exports[`AccessRightsReportControls renders without crashing 1`] = `
     <div
       className="flex-item-1 "
     >
-      <OrganisaatioSelectModal
-        L={Object {}}
+      <Connect(OrganisaatioSelectModal)
         disabled={false}
-        locale=""
         onSelect={[Function]}
       />
       <Connect(ItemList)

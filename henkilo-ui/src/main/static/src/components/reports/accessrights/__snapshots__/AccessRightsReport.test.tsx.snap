@@ -10,9 +10,9 @@ exports[`AccessRightsReport renders without crashing 1`] = `
   <AccessRightsReportControls
     disabled={false}
     filterValues={Array []}
-    locale=""
     setFilter={[Function]}
     setOid={[Function]}
+    translate={[Function]}
   />
 </div>
 `;
