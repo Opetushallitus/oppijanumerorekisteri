@@ -80,6 +80,16 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
+    @Transactional
+    public void removeContactInfo(String oid, String... removeTypes) {
+        Optional<Henkilo> henkilo = henkiloDataRepository.findByOidHenkilo(oid);
+        if ( henkilo.isPresent() ) {
+            henkilo.get().getYhteystiedotRyhma()
+                    .removeIf(contactInfo -> List.of(removeTypes).contains(contactInfo.getRyhmaKuvaus()));
+        }
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
         return this.henkiloDataRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);

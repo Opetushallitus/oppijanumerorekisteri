@@ -297,6 +297,13 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
     }
 
     @Override
+    public void removeAccessRights(String oid) {
+        String kasittelija = SecurityContextHolder.getContext().getAuthentication().getName();
+        kayttooikeusClient.passivoiHenkilo(oid, kasittelija);
+        henkiloService.removeContactInfo(oid, YhteystietoryhmaUtils.TYYPPI_TYOOSOITE);
+    }
+
+    @Override
     @Transactional
     public FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto) {
         return findHenkilo(henkiloPerustietoDto)

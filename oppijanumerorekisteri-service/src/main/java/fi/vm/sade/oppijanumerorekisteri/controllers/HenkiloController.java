@@ -202,6 +202,17 @@ public class HenkiloController {
         this.henkiloModificationService.disableHenkilo(oid);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
+    @DeleteMapping(path = "/{oid}/access")
+    @ApiOperation(value = "Poistaa henkilön käyttäjätunnuksen, käyttöoikeudet ja organisaatiot sekä työyhteystiedot.",
+            authorizations = {
+                    @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA"),
+                    @Authorization("ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU")})
+    public void removeAccessRights(@ApiParam("Henkilön OID") @PathVariable("oid") String oid) {
+        henkiloModificationService.removeAccessRights(oid);
+    }
+
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")

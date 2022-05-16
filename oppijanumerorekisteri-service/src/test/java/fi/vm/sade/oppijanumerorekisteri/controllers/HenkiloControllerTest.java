@@ -49,8 +49,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -440,6 +439,20 @@ public class HenkiloControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json(returnContent));
         verifyReadAudit("1.2.3.4.5");
+    }
+
+    @WithMockUser(username = "1.2.3.4.5")
+    public void removeAccessRightsNoAccess() throws Exception {
+        mvc.perform(delete("/henkilo/{oid}/access", "6.7.8.9.10"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(username = "1.2.3.4.5", roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void removeAccessRights() throws Exception {
+        mvc.perform(delete("/henkilo/{oid}/access", "6.7.8.9.10"))
+                .andExpect(status().isOk());
+        verify(henkiloModificationService, times(1)).removeAccessRights("6.7.8.9.10");
     }
 
     @Test

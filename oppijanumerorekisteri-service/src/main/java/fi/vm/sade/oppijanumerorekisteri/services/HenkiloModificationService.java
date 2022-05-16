@@ -17,6 +17,8 @@ public interface HenkiloModificationService {
 
     Henkilo disableHenkilo(String oid);
 
+    void removeAccessRights(String oid);
+
     FindOrCreateWrapper<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(HenkiloPerustietoDto henkiloPerustietoDto);
 
     List<HenkiloPerustietoDto> findOrCreateHenkiloFromPerustietoDto(List<HenkiloPerustietoDto> henkilot);
