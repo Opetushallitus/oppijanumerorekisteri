@@ -1,17 +1,17 @@
 import React from 'react';
-import SimpleDatePicker from './SimpleDatePicker';
+import SimpleDatePicker from '../../../SimpleDatePicker';
 import classNames from 'classnames';
-import { HenkiloCreate } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { Locale } from '../../types/locale.type';
-import { Koodisto } from '../../types/domain/koodisto/koodisto.types';
-import PropertySingleton from '../../globals/PropertySingleton';
-import KoodistoSelect from '../common/select/KoodistoSelect';
-import KielisyysSelect from '../common/select/KielisyysSelect';
-import KansalaisuusMultiSelect from '../common/select/KansalaisuusMultiSelect';
-import { isValidKutsumanimi } from '../../validation/KutsumanimiValidator';
-import { Localisations } from '../../types/localisation.type';
-import LoaderWithText from '../common/loadingbar/LoaderWithText';
-import { EMAIL } from '../../types/constants';
+import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { Locale } from '../../../../../types/locale.type';
+import { Koodisto } from '../../../../../types/domain/koodisto/koodisto.types';
+import PropertySingleton from '../../../../../globals/PropertySingleton';
+import KoodistoSelect from '../../../../common/select/KoodistoSelect';
+import KielisyysSelect from '../../../../common/select/KielisyysSelect';
+import KansalaisuusMultiSelect from '../../../../common/select/KansalaisuusMultiSelect';
+import { isValidKutsumanimi } from '../../../../../validation/KutsumanimiValidator';
+import { Localisations } from '../../../../../types/localisation.type';
+import LoaderWithText from '../../../../common/loadingbar/LoaderWithText';
+import { EMAIL } from '../../../../../types/constants';
 
 type Error = {
     name: string;
@@ -347,11 +347,11 @@ class OppijaCreateForm extends React.Component<OppijaCreateFormProps, State> {
         if (errors.length > 0) {
             this.setState({ submitted: true, errors: errors });
         } else {
-            await this.setState({ disabled: true, loading: true });
+            this.setState({ disabled: true, loading: true });
             try {
                 await this.props.tallenna(this.getHenkilo());
             } catch (error) {
-                await this.setState({ disabled: false, loading: true });
+                this.setState({ disabled: false, loading: true });
             }
         }
     };

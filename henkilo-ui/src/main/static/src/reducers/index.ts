@@ -32,6 +32,8 @@ import { kayttooikeusState, KayttooikeusState } from './kayttooikeus.reducer';
 import { notificationList, NotificationListState } from './notification.reducer';
 import { linkitykset, HenkiloLinkitysState } from './henkiloLinkitys.reducer';
 import { reportReducer, AccessRightsReportState } from './report.reducer';
+import existinceCheckReducer, { ExistenceCheckState } from './existence.reducer';
+import createPersonReducer, { CreatePersonState } from './create.reducer';
 
 export type RootState = {
     routing: unknown;
@@ -60,6 +62,8 @@ export type RootState = {
     kayttooikeusState: KayttooikeusState;
     linkitykset: HenkiloLinkitysState;
     report: AccessRightsReportState;
+    existenceCheck: ExistenceCheckState;
+    createPerson: CreatePersonState;
 };
 
 const rootReducer = combineReducers<RootState>({
@@ -89,6 +93,8 @@ const rootReducer = combineReducers<RootState>({
     kayttooikeusState,
     linkitykset,
     report: reportReducer,
+    existenceCheck: existinceCheckReducer,
+    createPerson: createPersonReducer,
 });
 
 export default rootReducer;

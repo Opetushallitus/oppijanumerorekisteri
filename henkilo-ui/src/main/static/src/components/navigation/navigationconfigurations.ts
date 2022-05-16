@@ -42,7 +42,7 @@ export const mainNavigation: Array<NaviTab> = [
     {
         path: '/oppija/luonti',
         label: 'NAVI_OPPIJAN_LUONTI',
-        sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI'],
+        sallitutRoolit: ['OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI', 'OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI'],
     },
     {
         path: '/oppijoidentuonti',

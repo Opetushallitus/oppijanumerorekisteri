@@ -19,8 +19,8 @@ type Props = {
     disabled: boolean;
     filterValues: string[];
     filter: string;
-    setFilter: (string) => void;
-    setOid: (string) => void;
+    setFilter: (name: string) => void;
+    setOid: (oid: string) => void;
     dataExport?: () => void;
 };
 
@@ -70,7 +70,7 @@ const AccessRightsReportControls: React.FC<Props> = ({
                             placeholder={L['HENKILOHAKU_FILTERS_KAYTTOOIKEUSRYHMA_PLACEHOLDER']}
                             value={filter}
                             clearable
-                            onChange={(option: Option) => setFilter(option && option.value)}
+                            onChange={(option: Option<string>) => setFilter(option && option.value)}
                         />
                     </div>
                 </div>

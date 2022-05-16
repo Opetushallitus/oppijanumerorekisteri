@@ -28,6 +28,10 @@ const resolveResponse = (response, resolve, reject) => {
     return reject(response.data);
 };
 
+const resolveResponseWithStatus = (response, resolve) => {
+    return resolve([response.data, response.status, response.ok]);
+};
+
 const getCommonOptions = () => ({
     mode: 'cors',
     headers: {
@@ -88,6 +92,24 @@ export const http = {
             })
                 .then(parseResponseBody)
                 .then((response: T) => resolveResponse(response, resolve, reject))
+                .catch((error) => reject({ networkError: error.message }))
+        ),
+};
+
+export const httpWithStatus = {
+    post: <T>(url: string, payload?: any): Promise<[T, number, boolean]> =>
+        new Promise<[T, number, boolean]>((resolve, reject) =>
+            fetch(url, {
+                ...getCommonOptions(),
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {
+                    ...getCommonOptions().headers,
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+            })
+                .then(parseResponseBody)
+                .then((response: T) => resolveResponseWithStatus(response, resolve))
                 .catch((error) => reject({ networkError: error.message }))
         ),
 };
