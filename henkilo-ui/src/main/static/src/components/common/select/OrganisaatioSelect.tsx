@@ -18,6 +18,7 @@ type Props = {
     locale: Locale;
     L: Localisations;
     onSelect: (organisaatio: OrganisaatioSelectObject) => void;
+    onClose?: () => void;
 };
 
 type State = {
@@ -84,6 +85,7 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
 
     makeSelection = (organisaatio: OrganisaatioSelectObject): void => {
         this.props.onSelect(organisaatio);
+        this.props.onClose && this.props.onClose();
     };
 
     _renderOrganisaatioNimi = (organisaatio: OrganisaatioSelectObject) => {
@@ -101,7 +103,11 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
     };
 
     _renderParents = (organisaatio: OrganisaatioSelectObject): React.ReactNode =>
-        organisaatio.parentNames.map((name) => <span className="parent">{name} &gt; </span>);
+        organisaatio.parentNames.map((name) => (
+            <span className="parent" key={name}>
+                {name} &gt;{' '}
+            </span>
+        ));
 
     _renderSuunniteltuNote = (organisaatio: OrganisaatioSelectObject) =>
         organisaatio.status === 'SUUNNITELTU' ? (
