@@ -40,12 +40,12 @@ import {
 } from '../actions/actiontypes';
 import StaticUtils from '../components/common/StaticUtils';
 import * as R from 'ramda';
-import { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
-import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
-import { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
-import { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
-import { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
-import { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
+import type { Henkilo } from '../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
+import type { HenkiloDuplicate } from '../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import type { Hakemus } from '../types/domain/oppijanumerorekisteri/Hakemus.type';
+import type { Kayttaja } from '../types/domain/kayttooikeus/kayttaja.types';
+import type { Yksilointitieto } from '../types/domain/oppijanumerorekisteri/yksilointitieto.types';
 
 export type HenkiloState = {
     readonly henkiloLoading: boolean;

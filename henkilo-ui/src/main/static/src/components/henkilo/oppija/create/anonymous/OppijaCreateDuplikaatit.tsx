@@ -1,23 +1,23 @@
 import React from 'react';
-import { Localisations } from '../../../../../types/localisation.type';
-import { Locale } from '../../../../../types/locale.type';
-import { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import type { Localisations } from '../../../../../types/localisation.type';
+import type { Locale } from '../../../../../types/locale.type';
+import type { HenkiloCreate } from '../../../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { HenkiloDuplicate } from '../../../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import HenkiloViewDuplikaatit from '../../../../../components/henkilo/duplikaatit/HenkiloViewDuplikaatit';
 
-type OppijaCreateDuplikaatitProps = {
+type Props = {
     locale: Locale;
     L: Localisations;
     tallenna: (oppija: HenkiloCreate) => any;
     peruuta: () => any;
     oppija: HenkiloCreate;
-    duplikaatit: Array<HenkiloDuplicate>;
+    duplikaatit: HenkiloDuplicate[];
 };
 
 /**
  * Oppijoiden luonnissa näytettävät duplikaattihenkilöt.
  */
-class OppijaCreateDuplikaatit extends React.Component<OppijaCreateDuplikaatitProps> {
+class OppijaCreateDuplikaatit extends React.Component<Props> {
     render() {
         const henkilo = {
             henkilo: {

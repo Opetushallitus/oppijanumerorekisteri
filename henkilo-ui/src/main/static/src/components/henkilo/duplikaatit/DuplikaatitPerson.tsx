@@ -5,14 +5,15 @@ import classNames from 'classnames';
 import './DuplikaatitPerson.css';
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
-import { Localisations } from '../../../types/localisation.type';
-import { Locale } from '../../../types/locale.type';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
-import { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
-import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
+import type { Localisations } from '../../../types/localisation.type';
+import type { Locale } from '../../../types/locale.type';
+import type { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
+import type { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
+import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
 type Props = {
-    henkilo: any;
+    henkilo: HenkiloDuplicate;
     L: Localisations;
     locale: Locale;
     koodisto: KoodistoState;
@@ -29,6 +30,16 @@ type Props = {
 type State = {
     checkboxValue: boolean;
 };
+
+type CellProps = React.HTMLAttributes<HTMLSpanElement> & {
+    data?: any;
+    render?: (data: any) => React.ReactFragment;
+    hakemus?: boolean;
+};
+
+const DataCell: React.FC<CellProps> = ({ data, render = (data) => data || '', className, hakemus }: CellProps) => (
+    <span className={classNames(className, { hakemus: hakemus && render(data) })}>{render(data)}</span>
+);
 
 export default class DuplikaatitPerson extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -52,80 +63,114 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
 
         return (
             <div className={styleClasses}>
-                <span className="type">{L[this.props.header]}</span>
-                <span>{henkilo.hetu}</span>
-                <span>
-                    {henkilo.yksiloity || henkilo.yksiloityVTJ ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}
-                </span>
-                <span>{henkilo.kutsumanimi}</span>
-                <span>{henkilo.etunimet}</span>
-                <span>{henkilo.sukunimi}</span>
-                <span>{this.renderSukupuoli(henkilo.sukupuoli)}</span>
-                <span>{henkilo.syntymaaika}</span>
-                <span>
-                    <Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>
-                        {henkilo.oidHenkilo}
-                    </Link>
-                </span>
-                <span>{hakemus.kansalaisuus || ''}</span>
-                <span>{hakemus.aidinkieli || ''}</span>
-                <span>{hakemus.matkapuhelinnumero || ''}</span>
-                <span>{hakemus.sahkoposti || ''}</span>
-                <span>{hakemus.lahiosoite || ''}</span>
-                <span>{hakemus.postinumero || ''}</span>
-                <span>{hakemus.passinumero || ''}</span>
-                <span>{hakemus.kansallinenIdTunnus || ''}</span>
-                <span>{hakemus.state || ''}</span>
-                <span>
-                    {hakemus.href ? (
-                        <a className="oph-link" href={hakemus.href}>
-                            {hakemus.oid}
-                        </a>
-                    ) : (
-                        ''
+                <DataCell className="type" data={L[this.props.header]} />
+                <DataCell data={henkilo.hetu} />
+                <DataCell render={() => (henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI'])} />
+                <DataCell data={henkilo.kutsumanimi} />
+                <DataCell data={henkilo.etunimet} />
+                <DataCell data={henkilo.sukunimi} />
+                <DataCell
+                    render={() => {
+                        switch (henkilo.sukupuoli) {
+                            case '1':
+                                return this.props.L['HENKILO_YHTEISET_MIES'];
+                            case '2':
+                                return this.props.L['HENKILO_YHTEISET_NAINEN'];
+                            default:
+                                return '';
+                        }
+                    }}
+                />
+                <DataCell data={henkilo.syntymaaika} />
+                <DataCell
+                    render={() => (
+                        <Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>
+                            {henkilo.oidHenkilo}
+                        </Link>
                     )}
-                </span>
-                <span>
-                    {muutHakemukset.length > 0 ? (
-                        <DuplikaatitApplicationsPopup
-                            popupContent={
-                                <DuplikaatitPersonOtherApplications
-                                    hakemukset={muutHakemukset}
-                                    koodisto={this.props.koodisto}
-                                    locale={this.props.locale}
-                                    L={this.props.L}
-                                />
-                            }
-                        >
-                            {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
-                        </DuplikaatitApplicationsPopup>
-                    ) : null}
-                </span>
+                />
+                <DataCell data={henkilo.email} />
+                <DataCell render={() => (henkilo.passinumerot || []).join(', ')} />
+                <DataCell
+                    render={() =>
+                        (henkilo.kansalaisuus || [])
+                            .map((x) =>
+                                this._koodistoLabel(
+                                    x.kansalaisuusKoodi,
+                                    this.props.koodisto.kansalaisuus,
+                                    this.props.locale
+                                )
+                            )
+                            .filter(Boolean)
+                            .join(', ')
+                    }
+                />
+                <DataCell
+                    render={() =>
+                        this._koodistoLabel(
+                            henkilo.aidinkieli?.kieliKoodi,
+                            this.props.koodisto.kieli,
+                            this.props.locale
+                        )
+                    }
+                />
+                <DataCell hakemus data={hakemus.kansalaisuus} />
+                <DataCell hakemus data={hakemus.aidinkieli} />
+                <DataCell hakemus data={hakemus.matkapuhelinnumero} />
+                <DataCell hakemus data={hakemus.sahkoposti} />
+                <DataCell hakemus data={hakemus.lahiosoite} />
+                <DataCell hakemus data={hakemus.postinumero} />
+                <DataCell hakemus data={hakemus.passinumero} />
+                <DataCell hakemus data={hakemus.kansallinenIdTunnus} />
+                <DataCell hakemus data={hakemus.state} />
+                <DataCell
+                    hakemus
+                    render={() =>
+                        hakemus.href ? (
+                            <a className="oph-link" href={hakemus.href}>
+                                {hakemus.oid}
+                            </a>
+                        ) : (
+                            ''
+                        )
+                    }
+                />
+                <DataCell
+                    hakemus
+                    render={() =>
+                        muutHakemukset.length > 0 ? (
+                            <DuplikaatitApplicationsPopup
+                                popupContent={
+                                    <DuplikaatitPersonOtherApplications
+                                        hakemukset={muutHakemukset}
+                                        koodisto={this.props.koodisto}
+                                        locale={this.props.locale}
+                                        L={this.props.L}
+                                    />
+                                }
+                            >
+                                {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
+                            </DuplikaatitApplicationsPopup>
+                        ) : null
+                    }
+                />
                 {!this.props.vainLuku && (
-                    <span>
-                        <input
-                            type="checkbox"
-                            disabled={
-                                this.props.isMaster || (this.props.yksiloitySelected && this.props.henkilo.yksiloity)
-                            }
-                            checked={this.state.checkboxValue}
-                            onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}
-                        />
-                    </span>
+                    <DataCell
+                        render={() => (
+                            <input
+                                type="checkbox"
+                                disabled={
+                                    this.props.isMaster ||
+                                    (this.props.yksiloitySelected && this.props.henkilo.yksiloity)
+                                }
+                                checked={this.state.checkboxValue}
+                                onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}
+                            />
+                        )}
+                    />
                 )}
             </div>
         );
-    }
-
-    renderSukupuoli(sukupuoli: string | null | undefined) {
-        switch (sukupuoli) {
-            case '1':
-                return this.props.L['HENKILO_YHTEISET_MIES'];
-            case '2':
-                return this.props.L['HENKILO_YHTEISET_NAINEN'];
-            default:
-                return '';
-        }
     }
 
     _onCheck(oid: string) {
@@ -202,7 +247,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         };
     }
 
-    _koodistoLabel(koodi: any, koodisto: any, locale: Locale): string | null | undefined {
+    _koodistoLabel(koodi: any, koodisto: any, locale: Locale): string | null {
         const koodistoItem = R.find((koodistoItem) => koodistoItem.value === koodi, koodisto);
         return koodistoItem ? koodistoItem[locale] : null;
     }

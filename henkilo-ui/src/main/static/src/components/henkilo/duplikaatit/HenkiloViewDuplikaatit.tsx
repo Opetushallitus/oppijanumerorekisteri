@@ -9,19 +9,20 @@ import Loader from '../../common/icons/Loader';
 import { Notification } from '../../common/notifications/Notifications';
 import { FloatingBar } from './FloatingBar';
 import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
-import { Locale } from '../../../types/locale.type';
-import { Localisations } from '../../../types/localisation.type';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { Locale } from '../../../types/locale.type';
+import type { Localisations } from '../../../types/localisation.type';
+import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
 import { linkHenkilos } from '../../../actions/henkilo.actions';
+import type { HenkiloDuplicateLenient } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 
 type OwnProps = {
     router?: any;
     oidHenkilo?: string;
-    henkilo: any; // HenkiloState | HenkiloCreate
+    henkilo: HenkiloDuplicateLenient;
     henkiloType: string;
-    notifications?: Array<Notification>;
+    notifications?: Notification[];
     removeNotification?: (arg0: string, arg1: string, arg2: string | null | undefined) => void;
     vainLuku: boolean;
 };
@@ -52,13 +53,17 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
         this.state = {
             notifications: [],
             selectedDuplicates: [],
-            yksiloitySelected: this.props.henkilo.henkilo.yksiloity || this.props.henkilo.henkilo.yksiloityVTJ,
+            yksiloitySelected: this.props.henkilo.henkilo['yksiloity'] || this.props.henkilo.henkilo['yksiloityVTJ'],
         };
     }
 
     render() {
         const master: any = this.props.henkilo.henkilo;
-        master.hakemukset = this.props.henkilo.hakemukset;
+        master.email = (this.props.henkilo.henkilo.yhteystiedotRyhma || [])
+            .flatMap((ryhma) => ryhma.yhteystieto)
+            .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
+            .map((yhteysTieto) => yhteysTieto.yhteystietoArvo)[0];
+        master.hakemukset = this.props.henkilo['hakemukset'];
         const duplicates = this.props.henkilo.duplicates;
         const koodisto = this.props.koodisto;
         const locale = this.props.locale;
@@ -75,17 +80,21 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
                         <span>{this.props.L['DUPLIKAATIT_SUKUPUOLI']}</span>
                         <span>{this.props.L['DUPLIKAATIT_SYNTYMAAIKA']}</span>
                         <span>{this.props.L['DUPLIKAATIT_OIDHENKILO']}</span>
+                        <span>{this.props.L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
+                        <span>{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
                         <span>{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
                         <span>{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_OSOITE']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_POSTINUMERO']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_KANSALLINENID']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_HAKEMUKSENTILA']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
-                        <span>{this.props.L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_OSOITE']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_POSTINUMERO']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_KANSALLINENID']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_HAKEMUKSENTILA']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
+                        <span className="hakemus">{this.props.L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
                     </div>
                     <DuplikaatitPerson
                         henkilo={master}
