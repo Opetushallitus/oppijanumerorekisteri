@@ -1,7 +1,6 @@
 import { Kielisyys } from './kielisyys.types';
 import { Kansalaisuus } from './kansalaisuus.types';
-import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import type { HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { Henkilo, HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
 
 export type HenkiloDuplicateLenient = {

@@ -21,7 +21,7 @@ export default class DuplikaatitApplicationsPopup extends React.Component<Props,
     }
 
     render() {
-        const wrapperStyle: Partial<CSS.Properties> = { position: 'relative' };
+        const wrapperStyle: Partial<CSS.Properties> = { position: 'relative', display: 'inline-block' };
         return (
             <div style={wrapperStyle}>
                 <TextButton action={this.show.bind(this)}>{this.props.children}</TextButton>

@@ -32,14 +32,17 @@ type State = {
 };
 
 type CellProps = React.HTMLAttributes<HTMLSpanElement> & {
-    data?: any;
-    render?: (data: any) => React.ReactFragment;
     hakemus?: boolean;
 };
 
-const DataCell: React.FC<CellProps> = ({ data, render = (data) => data || '', className, hakemus }: CellProps) => (
-    <span className={classNames(className, { hakemus: hakemus && render(data) })}>{render(data)}</span>
+const DataCell: React.FC<CellProps> = ({ children, className, hakemus }: CellProps) => (
+    <span className={classNames(className, { hakemus: hakemus && children })}>{children}</span>
 );
+
+const sukupuolet = {
+    1: 'HENKILO_YHTEISET_MIES',
+    2: 'HENKILO_YHTEISET_NAINEN',
+};
 
 export default class DuplikaatitPerson extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -63,111 +66,80 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
 
         return (
             <div className={styleClasses}>
-                <DataCell className="type" data={L[this.props.header]} />
-                <DataCell data={henkilo.hetu} />
-                <DataCell render={() => (henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI'])} />
-                <DataCell data={henkilo.kutsumanimi} />
-                <DataCell data={henkilo.etunimet} />
-                <DataCell data={henkilo.sukunimi} />
-                <DataCell
-                    render={() => {
-                        switch (henkilo.sukupuoli) {
-                            case '1':
-                                return this.props.L['HENKILO_YHTEISET_MIES'];
-                            case '2':
-                                return this.props.L['HENKILO_YHTEISET_NAINEN'];
-                            default:
-                                return '';
-                        }
-                    }}
-                />
-                <DataCell data={henkilo.syntymaaika} />
-                <DataCell
-                    render={() => (
-                        <Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>
-                            {henkilo.oidHenkilo}
-                        </Link>
-                    )}
-                />
-                <DataCell data={henkilo.email} />
-                <DataCell render={() => (henkilo.passinumerot || []).join(', ')} />
-                <DataCell
-                    render={() =>
-                        (henkilo.kansalaisuus || [])
-                            .map((x) =>
-                                this._koodistoLabel(
-                                    x.kansalaisuusKoodi,
-                                    this.props.koodisto.kansalaisuus,
-                                    this.props.locale
-                                )
+                <DataCell className="type">{L[this.props.header]}</DataCell>
+                <DataCell>{henkilo.hetu}</DataCell>
+                <DataCell>{henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</DataCell>
+                <DataCell>{henkilo.kutsumanimi}</DataCell>
+                <DataCell>{henkilo.etunimet}</DataCell>
+                <DataCell>{henkilo.sukunimi}</DataCell>
+
+                <DataCell>{this.props.L[sukupuolet[henkilo.sukupuoli]]}</DataCell>
+                <DataCell>{henkilo.syntymaaika}</DataCell>
+                <DataCell>
+                    <Link className="oph-link" to={`/${targetPage}/${henkilo.oidHenkilo}`}>
+                        {henkilo.oidHenkilo}
+                    </Link>
+                </DataCell>
+                <DataCell>{henkilo.email}</DataCell>
+                <DataCell>{(henkilo.passinumerot || []).join(', ')}</DataCell>
+                <DataCell>
+                    {(henkilo.kansalaisuus || [])
+                        .map((x) =>
+                            this._koodistoLabel(
+                                x.kansalaisuusKoodi,
+                                this.props.koodisto.kansalaisuus,
+                                this.props.locale
                             )
-                            .filter(Boolean)
-                            .join(', ')
-                    }
-                />
-                <DataCell
-                    render={() =>
-                        this._koodistoLabel(
-                            henkilo.aidinkieli?.kieliKoodi,
-                            this.props.koodisto.kieli,
-                            this.props.locale
                         )
-                    }
-                />
-                <DataCell hakemus data={hakemus.kansalaisuus} />
-                <DataCell hakemus data={hakemus.aidinkieli} />
-                <DataCell hakemus data={hakemus.matkapuhelinnumero} />
-                <DataCell hakemus data={hakemus.sahkoposti} />
-                <DataCell hakemus data={hakemus.lahiosoite} />
-                <DataCell hakemus data={hakemus.postinumero} />
-                <DataCell hakemus data={hakemus.passinumero} />
-                <DataCell hakemus data={hakemus.kansallinenIdTunnus} />
-                <DataCell hakemus data={hakemus.state} />
-                <DataCell
-                    hakemus
-                    render={() =>
-                        hakemus.href ? (
-                            <a className="oph-link" href={hakemus.href}>
-                                {hakemus.oid}
-                            </a>
-                        ) : (
-                            ''
-                        )
-                    }
-                />
-                <DataCell
-                    hakemus
-                    render={() =>
-                        muutHakemukset.length > 0 ? (
-                            <DuplikaatitApplicationsPopup
-                                popupContent={
-                                    <DuplikaatitPersonOtherApplications
-                                        hakemukset={muutHakemukset}
-                                        koodisto={this.props.koodisto}
-                                        locale={this.props.locale}
-                                        L={this.props.L}
-                                    />
-                                }
-                            >
-                                {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
-                            </DuplikaatitApplicationsPopup>
-                        ) : null
-                    }
-                />
+                        .filter(Boolean)
+                        .join(', ')}
+                </DataCell>
+                <DataCell>
+                    {this._koodistoLabel(henkilo.aidinkieli?.kieliKoodi, this.props.koodisto.kieli, this.props.locale)}
+                </DataCell>
+                <DataCell hakemus>{hakemus.kansalaisuus}</DataCell>
+                <DataCell hakemus>{hakemus.aidinkieli}</DataCell>
+                <DataCell hakemus>{hakemus.matkapuhelinnumero}</DataCell>
+                <DataCell hakemus>{hakemus.sahkoposti}</DataCell>
+                <DataCell hakemus>{hakemus.lahiosoite}</DataCell>
+                <DataCell hakemus>{hakemus.postinumero}</DataCell>
+                <DataCell hakemus>{hakemus.passinumero}</DataCell>
+                <DataCell hakemus>{hakemus.kansallinenIdTunnus}</DataCell>
+                <DataCell hakemus>{hakemus.state}</DataCell>
+                <DataCell hakemus>
+                    {hakemus.href && (
+                        <a className="oph-link" href={hakemus.href}>
+                            {hakemus.oid}
+                        </a>
+                    )}
+                </DataCell>
+                <DataCell hakemus>
+                    {!!muutHakemukset.length && (
+                        <DuplikaatitApplicationsPopup
+                            popupContent={
+                                <DuplikaatitPersonOtherApplications
+                                    hakemukset={muutHakemukset}
+                                    koodisto={this.props.koodisto}
+                                    locale={this.props.locale}
+                                    L={this.props.L}
+                                />
+                            }
+                        >
+                            {L['DUPLIKAATIT_MUUTHAKEMUKSET']}
+                        </DuplikaatitApplicationsPopup>
+                    )}
+                </DataCell>
                 {!this.props.vainLuku && (
-                    <DataCell
-                        render={() => (
-                            <input
-                                type="checkbox"
-                                disabled={
-                                    this.props.isMaster ||
-                                    (this.props.yksiloitySelected && this.props.henkilo.yksiloity)
-                                }
-                                checked={this.state.checkboxValue}
-                                onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}
-                            />
-                        )}
-                    />
+                    <DataCell>
+                        <input
+                            type="checkbox"
+                            disabled={
+                                this.props.isMaster || (this.props.yksiloitySelected && this.props.henkilo.yksiloity)
+                            }
+                            checked={this.state.checkboxValue}
+                            onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}
+                        />
+                    </DataCell>
                 )}
             </div>
         );
