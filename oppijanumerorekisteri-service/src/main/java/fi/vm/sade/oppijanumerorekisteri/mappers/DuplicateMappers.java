@@ -11,8 +11,10 @@ import ma.glasnost.orika.metadata.ClassMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Configuration
 public class DuplicateMappers {
@@ -24,15 +26,14 @@ public class DuplicateMappers {
                 .customize(new CustomMapper<>() {
                     @Override
                     public void mapAtoB(Henkilo henkilo, HenkiloDuplicateDto duplicate, MappingContext context) {
-                        String email = henkilo.getYhteystiedotRyhma().stream()
+                        List<String> emails = henkilo.getYhteystiedotRyhma().stream()
                                 .flatMap(group -> group.getYhteystieto().stream())
                                 .filter(info -> info.getYhteystietoTyyppi() == YhteystietoTyyppi.YHTEYSTIETO_SAHKOPOSTI)
                                 .map(Yhteystieto::getYhteystietoArvo)
                                 .filter(Objects::nonNull)
                                 .filter(Predicate.not(String::isBlank))
-                                .findFirst()
-                                .orElse(null);
-                        duplicate.setEmail(email);
+                                .collect(Collectors.toList());
+                        duplicate.setEmails(emails);
                     }
                 })
                 .toClassMap();

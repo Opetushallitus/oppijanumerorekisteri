@@ -90,7 +90,7 @@ public class OppijaMappersTest {
         assertThat(dto).isNotNull();
         assertThat(dto.getOidHenkilo()).isEqualTo("oid");
         assertThat(dto.getHetu()).isEqualTo("hetu");
-        assertThat(dto.getEmail()).isEqualTo("email");
+        assertThat(dto.getEmails()).hasSize(1).contains("email");
         assertThat(dto.getKansalaisuus()).hasSize(1);
         assertThat(dto.getPassinumerot()).contains("passinumero");
     }
