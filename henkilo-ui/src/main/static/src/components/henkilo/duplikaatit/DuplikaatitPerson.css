@@ -60,6 +60,3 @@
     line-height: 30px;
 }
 
-.hakemus::before {
-    content: "* ";
- }

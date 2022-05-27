@@ -19,7 +19,3 @@
 .person.header > span:nth-child(2n) {
     background: #fbfbfb;
 }
-
-.hakemus::before {
-    content: "* ";
- }

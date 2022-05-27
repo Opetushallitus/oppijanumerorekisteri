@@ -24,6 +24,7 @@ export type HenkiloDuplicate = {
     syntymaaika: string;
     passivoitu: boolean;
     email: string;
+    emails: string[];
     yksiloity: boolean;
     aidinkieli: Kielisyys;
     asiointiKieli: Kielisyys;

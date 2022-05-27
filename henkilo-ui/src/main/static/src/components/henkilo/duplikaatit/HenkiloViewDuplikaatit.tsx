@@ -41,8 +41,8 @@ type DispatchProps = {
 type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
-    selectedDuplicates: Array<string>;
-    notifications: Array<Notification>;
+    selectedDuplicates: string[];
+    notifications: Notification[];
     yksiloitySelected: boolean;
 };
 
@@ -59,10 +59,10 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
 
     render() {
         const master: any = this.props.henkilo.henkilo;
-        master.email = (this.props.henkilo.henkilo.yhteystiedotRyhma || [])
+        master.emails = (this.props.henkilo.henkilo.yhteystiedotRyhma || [])
             .flatMap((ryhma) => ryhma.yhteystieto)
             .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
-            .map((yhteysTieto) => yhteysTieto.yhteystietoArvo)[0];
+            .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
         master.hakemukset = this.props.henkilo['hakemukset'];
         const duplicates = this.props.henkilo.duplicates;
         const koodisto = this.props.koodisto;
@@ -71,6 +71,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
             <div className="duplicates-view">
                 <div id="duplicates">
                     <div className="person header">
+                        <span />
                         <span />
                         <span>{this.props.L['DUPLIKAATIT_HENKILOTUNNUS']}</span>
                         <span>{this.props.L['DUPLIKAATIT_YKSILOITY']}</span>
@@ -84,6 +85,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
                         <span>{this.props.L['DUPLIKAATIT_PASSINUMERO']}</span>
                         <span>{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
                         <span>{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
+                        <span />
                         <span className="hakemus">{this.props.L['DUPLIKAATIT_KANSALAISUUS']}</span>
                         <span className="hakemus">{this.props.L['DUPLIKAATIT_AIDINKIELI']}</span>
                         <span className="hakemus">{this.props.L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>

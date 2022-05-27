@@ -67,6 +67,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         return (
             <div className={styleClasses}>
                 <DataCell className="type">{L[this.props.header]}</DataCell>
+                <DataCell className="type">{L['DUPLIKAATIT_ONR']}</DataCell>
                 <DataCell>{henkilo.hetu}</DataCell>
                 <DataCell>{henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</DataCell>
                 <DataCell>{henkilo.kutsumanimi}</DataCell>
@@ -80,7 +81,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                         {henkilo.oidHenkilo}
                     </Link>
                 </DataCell>
-                <DataCell>{henkilo.email}</DataCell>
+                <DataCell>{(henkilo.emails || []).join(', ')}</DataCell>
                 <DataCell>{(henkilo.passinumerot || []).join(', ')}</DataCell>
                 <DataCell>
                     {(henkilo.kansalaisuus || [])
@@ -97,6 +98,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                 <DataCell>
                     {this._koodistoLabel(henkilo.aidinkieli?.kieliKoodi, this.props.koodisto.kieli, this.props.locale)}
                 </DataCell>
+                <DataCell className="type">{L['DUPLIKAATIT_HAKEMUS']}</DataCell>
                 <DataCell hakemus>{hakemus.kansalaisuus}</DataCell>
                 <DataCell hakemus>{hakemus.aidinkieli}</DataCell>
                 <DataCell hakemus>{hakemus.matkapuhelinnumero}</DataCell>
