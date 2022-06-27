@@ -486,8 +486,8 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch, getState)
         dispatch(requestHenkiloDuplicatesFailure());
         let errorMessage = localizeWithState('NOTIFICATION_DUPLIKAATIT_VIRHE', getState()) + ' ' + oidHenkilo;
         if (
-            error.message.startsWith('Failed to read response from ataru') ||
-            error.message.startsWith('Failed to fetch applications from ataru')
+            error.message?.startsWith('Failed to read response from ataru') ||
+            error.message?.startsWith('Failed to fetch applications from ataru')
         ) {
             errorMessage =
                 localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE', getState()) + ' ' + oidHenkilo;

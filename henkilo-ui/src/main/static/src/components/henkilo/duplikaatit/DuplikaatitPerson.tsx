@@ -197,7 +197,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
      * @params Hakemus
      */
     _parseHakuappHakemus(hakemus: any): any {
-        const henkilotiedot = hakemus.answers.henkilotiedot;
+        const henkilotiedot = hakemus.answers?.henkilotiedot || {};
         const aidinkieliKoodi = (henkilotiedot.aidinkieli || '').toLocaleLowerCase();
         const aidinkieli = this._koodistoLabel(aidinkieliKoodi, this.props.koodisto.kieli, this.props.locale);
         const kansalaisuusKoodi = (henkilotiedot.kansalaisuus || '').toLocaleLowerCase();
