@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.auditlog.Target;
+import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
 import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
@@ -33,9 +34,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.BindException;
 
 import javax.validation.ValidationException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
@@ -474,7 +472,7 @@ public class HenkiloControllerTest {
         given(yksilointiService.exists(any())).willReturn(Optional.of("1.2.3.4.5"));
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/henkilo/existenceCheckOnr.json"), true));
+                .andExpect(content().json(FilesystemHelper.getFixture("/controller/henkilo/existenceCheckOnr.json"), true));
     }
 
     @Test
@@ -512,10 +510,6 @@ public class HenkiloControllerTest {
 
     private HenkiloExistenceCheckDto existenceCheckDto() {
         return new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d");
-    }
-
-    private String getFixture(String fileName) throws Exception {
-        return Files.readString(Paths.get(getClass().getResource(fileName).toURI()), StandardCharsets.UTF_8);
     }
 
     private void verifyReadAudit(String expected) {

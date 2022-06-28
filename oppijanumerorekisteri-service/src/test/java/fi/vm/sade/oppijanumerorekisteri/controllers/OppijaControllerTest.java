@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
@@ -22,9 +23,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
@@ -87,10 +85,6 @@ public class OppijaControllerTest {
                 .sukunimi("suku")
                 .kansalaisuus(Stream.of("kansalaisuus1").map(KoodiUpdateDto::new).collect(toSet()))
                 .build();
-    }
-
-    private String getFixture(String fileName) throws Exception {
-        return Files.readString(Paths.get(getClass().getResource(fileName).toURI()), StandardCharsets.UTF_8);
     }
 
     @Test
@@ -308,7 +302,7 @@ public class OppijaControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(getFixture("/controller/oppija/tuontiOppijat.json"), true));
+                .andExpect(content().json(FilesystemHelper.getFixture("/controller/oppija/tuontiOppijat.json"), true));
 
         verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
     }

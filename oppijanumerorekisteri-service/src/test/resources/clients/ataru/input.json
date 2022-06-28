@@ -1,0 +1,14 @@
+[
+  {
+    "oid": "foo-1",
+    "henkiloOid": "foo"
+  },
+  {
+    "oid": "foo-2",
+    "henkiloOid": "foo"
+  },
+  {
+    "oid": "bar-1",
+    "henkiloOid": "bar"
+  }
+]

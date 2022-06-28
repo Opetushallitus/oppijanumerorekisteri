@@ -1,0 +1,24 @@
+{
+  "foo": [
+    {
+      "hakemusData": {
+        "oid": "foo-1",
+        "henkiloOid": "foo"
+      }
+    },
+    {
+      "hakemusData": {
+        "oid": "foo-2",
+        "henkiloOid": "foo"
+      }
+    }
+  ],
+  "bar": [
+    {
+      "hakemusData": {
+        "oid": "bar-1",
+        "henkiloOid": "bar"
+      }
+    }
+  ]
+}

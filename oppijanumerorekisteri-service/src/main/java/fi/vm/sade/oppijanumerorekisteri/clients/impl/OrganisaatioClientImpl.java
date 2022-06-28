@@ -1,22 +1,20 @@
 package fi.vm.sade.oppijanumerorekisteri.clients.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.javautils.httpclient.OphHttpClient;
 import fi.vm.sade.javautils.httpclient.OphHttpResponse;
 import fi.vm.sade.oppijanumerorekisteri.clients.OrganisaatioClient;
-
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-
 import fi.vm.sade.oppijanumerorekisteri.dto.OrganisaatioTilat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Collections.singletonMap;
 
@@ -27,6 +25,7 @@ public class OrganisaatioClientImpl implements OrganisaatioClient {
 
     private static final int MAX_RETRY_COUNT = 3;
 
+    @Qualifier("anonymousClient")
     private final OphHttpClient httpClient;
     private final ObjectMapper objectMapper;
 
