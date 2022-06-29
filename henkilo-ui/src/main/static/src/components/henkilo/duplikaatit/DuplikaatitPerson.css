@@ -20,6 +20,7 @@
 }
 
 .person > span.type {
+    filter: brightness(0.9);
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.66);
     font-weight: normal;
