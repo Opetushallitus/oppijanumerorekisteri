@@ -491,7 +491,7 @@ export const fetchHenkiloDuplicates = (oidHenkilo) => async (dispatch, getState)
         ) {
             errorMessage =
                 localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_ATARU_VIRHE', getState()) + ' ' + oidHenkilo;
-        } else if (error.message.startsWith('Failed fetching hakemuksetDto for henkilos')) {
+        } else if (error.message?.startsWith('Failed fetching hakemuksetDto for henkilos')) {
             errorMessage =
                 localizeWithState('NOTIFICATION_DUPLIKAATIT_HAKEMUKSET_HAKUAPP_VIRHE', getState()) + ' ' + oidHenkilo;
         }
