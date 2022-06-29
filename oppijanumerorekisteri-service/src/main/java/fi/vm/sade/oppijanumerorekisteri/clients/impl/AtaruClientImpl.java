@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.ioExceptionToRestClientException;
@@ -27,6 +26,8 @@ import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.ioExc
 @RequiredArgsConstructor
 public class AtaruClientImpl implements AtaruClient {
 
+    private static final long ATARU_REQUEST_LIMIT = 1000;
+
     @Qualifier("ataruClient")
     private final OphHttpClient ophHttpClient;
     private final UrlConfiguration urlConfiguration;
@@ -34,11 +35,15 @@ public class AtaruClientImpl implements AtaruClient {
 
     @Override
     @LogExecutionTime
-    public Map<String, List<HakemusDto>> fetchApplicationsByOid(Set<String> oids) {
+    public Map<String, List<HakemusDto>> fetchApplicationsByOid(List<String> oids) {
         return this.ophHttpClient.<Map<String, List<HakemusDto>>>execute(OphHttpRequest.Builder
                         .post(urlConfiguration.url("ataru.applications"))
                         .setEntity(new OphHttpEntity.Builder()
-                                .content(ioExceptionToRestClientException(() -> objectMapper.writeValueAsString(oids)))
+                                .content(ioExceptionToRestClientException(() ->
+                                        objectMapper.writeValueAsString(
+                                                oids.stream()
+                                                        .limit(ATARU_REQUEST_LIMIT)
+                                                        .collect(Collectors.toList()))))
                                 .contentType(ContentType.APPLICATION_JSON)
                                 .build())
                         .build())
