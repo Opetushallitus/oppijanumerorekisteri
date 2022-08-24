@@ -36,6 +36,10 @@ public class ClientConfiguration {
                 .addSpringSecSuffix(false)
                 .build();
 
-        return new fi.vm.sade.javautils.http.OphHttpClient.Builder(ConfigEnums.CALLER_ID.value()).authenticator(authenticator).build();
+        return new fi.vm.sade.javautils.http.OphHttpClient
+                .Builder(ConfigEnums.CALLER_ID.value())
+                .timeoutMs(60000)
+                .setSocketTimeoutMs(60000)
+                .authenticator(authenticator).build();
     }
 }

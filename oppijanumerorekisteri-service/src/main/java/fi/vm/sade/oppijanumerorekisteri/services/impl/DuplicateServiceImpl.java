@@ -21,6 +21,7 @@ import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import fi.vm.sade.oppijanumerorekisteri.utils.OptionalUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DuplicateServiceImpl implements DuplicateService {
@@ -91,13 +93,18 @@ public class DuplicateServiceImpl implements DuplicateService {
     }
 
     protected Map<String, List<HakemusDto>> getApplications(List<String> oids) {
-        return oids.isEmpty() ? Collections.emptyMap() : Stream.concat(
-                        hakuappClient.fetchApplicationsByOid(oids).entrySet().stream(),
-                        ataruClient.fetchApplicationsByOid(oids).entrySet().stream())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (haku, ataru) -> Stream.concat(haku.stream(), ataru.stream()).collect(toList())));
+        try {
+            return oids.isEmpty() ? Collections.emptyMap() : Stream.concat(
+                            hakuappClient.fetchApplicationsByOid(oids).entrySet().stream(),
+                            ataruClient.fetchApplicationsByOid(oids).entrySet().stream())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (haku, ataru) -> Stream.concat(haku.stream(), ataru.stream()).collect(toList())));
+        } catch (Exception e) {
+            log.error("Failed to fetch applications for oids: {}", oids, e);
+            return Collections.emptyMap();
+        }
     }
 
     @Override

@@ -26,7 +26,7 @@ import static fi.vm.sade.oppijanumerorekisteri.clients.impl.HttpClientUtil.ioExc
 @RequiredArgsConstructor
 public class AtaruClientImpl implements AtaruClient {
 
-    private static final long ATARU_REQUEST_LIMIT = 1000;
+    private static final long ATARU_API_LIMIT = 1000;
 
     @Qualifier("ataruClient")
     private final OphHttpClient ophHttpClient;
@@ -42,7 +42,7 @@ public class AtaruClientImpl implements AtaruClient {
                                 .content(ioExceptionToRestClientException(() ->
                                         objectMapper.writeValueAsString(
                                                 oids.stream()
-                                                        .limit(ATARU_REQUEST_LIMIT)
+                                                        .limit(ATARU_API_LIMIT)
                                                         .collect(Collectors.toList()))))
                                 .contentType(ContentType.APPLICATION_JSON)
                                 .build())
