@@ -55,8 +55,14 @@ public class AtaruClientImpl implements AtaruClient {
     protected Map<String, List<HakemusDto>> fromJson(String json) throws IOException {
         return objectMapper.readValue(json, new TypeReference<List<Map<String, Object>>>() {
                 }).stream()
+                .map(this::setServiceName)
                 .map(HakemusDto::new)
                 .collect(Collectors.groupingBy(
                         dto -> dto.getHakemusData().get("henkiloOid").toString()));
+    }
+
+    private Map<String, Object> setServiceName(Map<String, Object> hakemusData) {
+        hakemusData.put("service", "ataru");
+        return hakemusData;
     }
 }
