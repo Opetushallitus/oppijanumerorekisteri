@@ -54,7 +54,10 @@ export const AccessRightsReport: React.FC<Props> = ({
 
     const translate = (key: string) => l10n[locale][key] || key;
 
-    const report = reportData && reportData.filter((row) => !filter || row.accessRightName === filter);
+    const report = React.useMemo(
+        () => reportData && reportData.filter((row) => !filter || row.accessRightName === filter),
+        [reportData, filter]
+    );
 
     return (
         <div className="wrapper">
