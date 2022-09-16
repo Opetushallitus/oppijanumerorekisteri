@@ -103,8 +103,8 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
     };
 
     _renderParents = (organisaatio: OrganisaatioSelectObject): React.ReactNode =>
-        organisaatio.parentNames.map((name) => (
-            <span className="parent" key={name}>
+        organisaatio.parentNames.map((name, i) => (
+            <span className="parent" key={i}>
                 {name} &gt;{' '}
             </span>
         ));

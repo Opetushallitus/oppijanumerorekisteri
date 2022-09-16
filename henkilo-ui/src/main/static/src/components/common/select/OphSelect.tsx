@@ -14,7 +14,6 @@ import type { OnChangeHandler, Option, Options } from 'react-select';
 type OwnProps = {
     id?: string;
     onChange: OnChangeHandler<string, Option<string> | Options<string>>;
-    //onChange: (arg0: { label: string; value: string; optionsName: string }) => void;
     className?: string;
     options: Options<string>;
     value?: string | string[];
