@@ -26,8 +26,8 @@ addons:
       secure: "BtE/SP2vhEgNAE9Im3Dg/9Qe1Ueb6fFIHAD+vt2IrKxwmFUd47ObRFXgPhrZzSZIB+Q29bO1+5Igcb/mmVmpkBi6TjX12azh0rjL1QBZenmEAl5J65sQat9Ip1lXhrBpfTt4w8HEN8l6gs8hZB9+uKTz7waCDJwxNa5vU9nRt8hB+5IDJBRM0UZrG3St+mlHSMotEpwmEQ8kDaoNwt0wRQtu7Afck03ydZOZdX3cskT6TPQv+Z3C7Wk/US/RyDa95WHx7PnG4ywwSZimUi4y38gC0GNSb+39rdUfrs3v/Fb+upS0LpK7yAtYbS+wI5bbaQJKkzoReeWmHuR/+Md6OCt2JgsXJDLQF3MmUKVHK3k0QF6rwOS1vuqRQYl3R8490dogBAVvi0ov/uK1pOFJzAsmu8L4wnqOHqoocmL+0vRSXOOv/KnXGiIC9GEIFrKmoU1AMm0OF2KMMqdaqzFYTkrqwM9J54qEKlsdhxRq2Zxp8W+Ptvg9m+3is2AUxqYjBBiSMnqWhUxfp5+xQcKAZ3rjSS7GMwPoGqph3Ui/U4CzYT6Xj8PhSwIWT2yqSh318OW3N51AOcfQCMuoI3Fit5SCdJZ5YOc22Wq7bec7fZRSFytGr8pwtPHAK+1UpQ8MhzpuJ5YcWnGNFy6vhkNbGOLxNqs1J4Z/MPF+nOu5iVg="
 
 before_install:
-  - nvm install 12.18.1
-  - nvm use 12.18.1
+  - nvm install 14.20.0
+  - nvm use 14.20.0
 
 install:
   - git clone https://github.com/Opetushallitus/ci-tools.git
