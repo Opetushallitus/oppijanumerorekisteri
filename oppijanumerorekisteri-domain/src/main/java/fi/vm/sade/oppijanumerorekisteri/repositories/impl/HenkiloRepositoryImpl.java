@@ -11,7 +11,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.enums.CleanupStep;
-import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloJpaRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
@@ -484,7 +483,6 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     // NOTE: native postgres query
     @SuppressWarnings("unchecked")
     @Override
-    @LogExecutionTime
     public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
         this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_SIMILARITY_THRESHOLD)
                 .executeUpdate();

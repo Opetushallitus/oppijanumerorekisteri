@@ -9,7 +9,6 @@ import fi.vm.sade.oppijanumerorekisteri.clients.AtaruClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.UrlConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.dto.HakemusDto;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.HttpConnectionException;
-import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +33,6 @@ public class AtaruClientImpl implements AtaruClient {
     private final ObjectMapper objectMapper;
 
     @Override
-    @LogExecutionTime
     public Map<String, List<HakemusDto>> fetchApplicationsByOid(List<String> oids) {
         return this.ophHttpClient.<Map<String, List<HakemusDto>>>execute(OphHttpRequest.Builder
                         .post(urlConfiguration.url("ataru.applications"))
