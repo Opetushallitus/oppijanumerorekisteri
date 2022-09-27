@@ -10,7 +10,6 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDuplikaattiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
-import fi.vm.sade.oppijanumerorekisteri.logging.LogExecutionTime;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.HenkiloViite;
@@ -48,7 +47,6 @@ public class DuplicateServiceImpl implements DuplicateService {
 
     @Override
     @Transactional(readOnly = true)
-    @LogExecutionTime
     public List<HenkiloDuplicateDto> findDuplicates(String oid) {
         Henkilo henkilo = this.henkiloDataRepository.findByOidHenkilo(oid).orElseThrow(() -> new NotFoundException("User with oid " + oid + " was not found"));
         HenkiloDuplikaattiCriteria criteria = new HenkiloDuplikaattiCriteria(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), henkilo.getSyntymaaika());
@@ -60,7 +58,6 @@ public class DuplicateServiceImpl implements DuplicateService {
         return getHenkiloDuplicateDtoList(candidates);
     }
 
-    @LogExecutionTime
     public boolean filterDuplicate(Henkilo henkilo, Henkilo duplicate) {
         boolean notSameOid = !duplicate.getOidHenkilo().equals(henkilo.getOidHenkilo());
         boolean ytjIdentifiedfilter = !henkilo.isYksiloityVTJ() || henkilo.getHetu() == null || !duplicate.isYksiloityVTJ();
@@ -79,7 +76,6 @@ public class DuplicateServiceImpl implements DuplicateService {
         return getHenkiloDuplicateDtoList(henkilot);
     }
 
-    @LogExecutionTime
     private List<HenkiloDuplicateDto> getHenkiloDuplicateDtoList(List<Henkilo> candidates) {
         String kayttajaOid = this.userDetailsHelper.getCurrentUserOid();
         List<HenkiloDuplicateDto> henkiloDuplicateDtos = this.mapper.mapAsList(candidates, HenkiloDuplicateDto.class)
