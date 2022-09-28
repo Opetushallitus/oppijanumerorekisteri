@@ -18,6 +18,7 @@ import fi.vm.sade.oppijanumerorekisteri.validators.KutsumanimiValidator;
 import fi.vm.sade.rajapinnat.vtj.api.Huoltaja;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.apache.lucene.search.spell.StringDistance;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class YksilointiServiceImpl implements YksilointiService {
@@ -676,7 +678,14 @@ public class YksilointiServiceImpl implements YksilointiService {
     private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
         if (detailsMatch(henkilo.getEtunimi(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), details))
             return Optional.empty();
+        reportConflict(henkilo, details);
         throw new ConflictException();
+    }
+
+    private void reportConflict(YksiloityHenkilo henkilo, HenkiloExistenceCheckDto details) {
+        log.info("VTJ name comparison failed! input: \"{}, {}, {}\" vtj: \"{}, {}, {}\"",
+                details.getEtunimet(), details.getKutsumanimi(), details.getSukunimi(),
+                henkilo.getEtunimi(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
     }
 
     private boolean detailsMatch(final String firstName, final String nickName, final String lastName, final HenkiloExistenceCheckDto details) {

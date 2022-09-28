@@ -15,14 +15,10 @@ import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.*;
-import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
-import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
-import fi.vm.sade.oppijanumerorekisteri.services.MockVtjClient;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.TextUtils;
 import fi.vm.sade.rajapinnat.vtj.api.YksiloityHenkilo;
+import nl.altindag.log.LogCaptor;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +33,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -44,50 +41,36 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 public class YksilointiServiceImplTest {
 
+    private final String henkiloOid = "1.2.246.562.24.27470134096";
     @InjectMocks
     private YksilointiServiceImpl yksilointiService;
-
     @Mock
     private VtjClient vtjClient;
-
     @Mock
     private HenkiloRepository henkiloRepository;
-
     @Mock
     private HenkiloService henkiloService;
-
     @Mock
     private HenkiloModificationService henkiloModificationService;
-
     @Mock
     private KoodistoService koodistoService;
-
     @Mock
     private YksilointitietoRepository yksilointitietoRepository;
-
     @Mock
     private YksilointivirheRepository yksilointivirheRepository;
-
     @Mock
     private KayttooikeusClient kayttooikeusClientMock;
-
     @Mock
     private KielisyysRepository kielisyysRepository;
-
     @Mock
     private KansalaisuusRepository kansalaisuusRepository;
-
     @Spy
     private OppijanumerorekisteriProperties oppijanumerorekisteriProperties = new OppijanumerorekisteriProperties();
-
     @Mock
     private OrikaConfiguration orikaConfiguration;
-
     @Mock
     private DuplicateService duplicateService;
-
-    private Gson gson = new Gson();
-    private final String henkiloOid = "1.2.246.562.24.27470134096";
+    private final Gson gson = new Gson();
     private Henkilo henkilo;
 
     @Before
@@ -451,9 +434,9 @@ public class YksilointiServiceImplTest {
     }
 
     @Test
-    public void yksilointiVTJNimienNormalisointiToimii(){
+    public void yksilointiVTJNimienNormalisointiToimii() {
         String fromSpecial = TextUtils.normalize("Éva Nõmm Noël Hélène Ðông Bùi");
-        String fromNormal  = TextUtils.normalize("Eva Nomm Noel Helene Dong Bui");
+        String fromNormal = TextUtils.normalize("Eva Nomm Noel Helene Dong Bui");
 
         assertThat(fromSpecial).isEqualTo(fromNormal);
     }
@@ -506,8 +489,12 @@ public class YksilointiServiceImplTest {
         assertThat(yksilointiService.exists(existenceCheckDto())).isEmpty();
     }
 
-    @Test(expected = ConflictException.class)
+    @Test
     public void existsInVtjButConflicts() {
+        LogCaptor logCaptor = LogCaptor.forClass(YksilointiServiceImpl.class);
+        logCaptor.clearLogs();
+        logCaptor.setLogLevelToInfo();
+
         YksiloityHenkilo henkilo = mock(YksiloityHenkilo.class);
         when(henkilo.getEtunimi()).thenReturn("very different name");
         when(henkilo.getKutsumanimi()).thenReturn("b");
@@ -516,7 +503,15 @@ public class YksilointiServiceImplTest {
         when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
         when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
 
-        yksilointiService.exists(existenceCheckDto());
+        HenkiloExistenceCheckDto details = existenceCheckDto();
+
+        try {
+            yksilointiService.exists(details);
+            fail("Exception should have been thrown");
+        } catch (ConflictException ce) {
+            assertThat(logCaptor.getInfoLogs()).isNotEmpty();
+            assertThat(logCaptor.getInfoLogs().get(0)).endsWith("VTJ name comparison failed! input: \"a b c, b, d\" vtj: \"very different name, b, d\"");
+        }
     }
 
     private HenkiloExistenceCheckDto existenceCheckDto() {
