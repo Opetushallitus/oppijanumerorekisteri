@@ -676,7 +676,9 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
-        if (detailsMatch(henkilo.getEtunimi(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), details))
+        // VTJ data might not contain nickname - skip nickname comparison by falling back to one in details in that case
+        String kutsumanimi = Optional.ofNullable(henkilo.getKutsumanimi()).filter(Predicate.not(String::isBlank)).orElse(details.getKutsumanimi());
+        if (detailsMatch(henkilo.getEtunimi(), kutsumanimi, henkilo.getSukunimi(), details))
             return Optional.empty();
         reportConflict(henkilo, details);
         throw new ConflictException();

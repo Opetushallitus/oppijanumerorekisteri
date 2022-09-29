@@ -514,6 +514,36 @@ public class YksilointiServiceImplTest {
         }
     }
 
+    @Test
+    public void existsInVtjWithEmptyNickname() {
+        YksiloityHenkilo henkilo = mock(YksiloityHenkilo.class);
+        when(henkilo.getEtunimi()).thenReturn("a b c");
+        when(henkilo.getKutsumanimi()).thenReturn("");
+        when(henkilo.getSukunimi()).thenReturn("d");
+
+        when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
+        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+
+        HenkiloExistenceCheckDto details = existenceCheckDto();
+
+        assertThat(yksilointiService.exists(details)).isEmpty();
+    }
+
+    @Test
+    public void existsInVtjWithNullNickname() {
+        YksiloityHenkilo henkilo = mock(YksiloityHenkilo.class);
+        when(henkilo.getEtunimi()).thenReturn("a b c");
+        when(henkilo.getKutsumanimi()).thenReturn(null);
+        when(henkilo.getSukunimi()).thenReturn("d");
+
+        when(henkiloRepository.findByHetu(any())).thenReturn(Optional.empty());
+        when(vtjClient.fetchHenkilo(any())).thenReturn(Optional.of(henkilo));
+
+        HenkiloExistenceCheckDto details = existenceCheckDto();
+
+        assertThat(yksilointiService.exists(details)).isEmpty();
+    }
+
     private HenkiloExistenceCheckDto existenceCheckDto() {
         return new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d");
     }
