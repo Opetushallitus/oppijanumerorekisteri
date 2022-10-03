@@ -303,8 +303,7 @@
                                     <port>${database.port}:5432</port>
                                 </ports>
                                 <wait>
-                                    <!-- kantayhteyttä ei saa heti, pakko odotella hetki -->
-                                    <time>1750</time>
+                                    <log>PostgreSQL init process complete; ready for start up.</log>
                                 </wait>
                             </run>
                         </image>
