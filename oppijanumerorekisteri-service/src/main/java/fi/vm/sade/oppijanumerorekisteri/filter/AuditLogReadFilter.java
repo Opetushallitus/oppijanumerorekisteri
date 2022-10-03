@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.audit.OnrOperation;
 import fi.vm.sade.oppijanumerorekisteri.audit.VirkailijaAuditLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class AuditLogReadFilter extends AuditLogFilter {
     private final VirkailijaAuditLogger auditLogger;
 
     @Autowired
-    public AuditLogReadFilter(RequestMappingHandlerMapping reqMap, VirkailijaAuditLogger auditLogger) {
+    public AuditLogReadFilter(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping reqMap, VirkailijaAuditLogger auditLogger) {
         super(reqMap);
         this.auditLogger = auditLogger;
     }

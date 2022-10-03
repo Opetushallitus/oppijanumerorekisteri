@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -17,7 +18,7 @@ import java.io.IOException;
 public class CachingBodyFilter extends AuditLogFilter {
 
     @Autowired
-    public CachingBodyFilter(RequestMappingHandlerMapping reqMap) {
+    public CachingBodyFilter(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping reqMap) {
         super(reqMap);
     }
 
