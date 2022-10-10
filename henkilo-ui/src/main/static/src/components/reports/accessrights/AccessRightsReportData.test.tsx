@@ -1,21 +1,24 @@
 import { shallow } from 'enzyme';
 import AccessRightsReportData, { AccessRightsReport, formatDate } from './AccessRightsReportData';
 
+// mock translation functionality
+const translate = (x: string) => x;
+
 describe('AccessRightsReportData', () => {
     test('Should not render anything when report is undefined', () => {
-        expect(shallow(<AccessRightsReportData report={undefined} translate={jest.fn()} />)).toMatchInlineSnapshot(
+        expect(shallow(<AccessRightsReportData report={undefined} translate={translate} />)).toMatchInlineSnapshot(
             '""'
         );
     });
 
     test('Should render (empty) report without crashing', () => {
-        expect(shallow(<AccessRightsReportData report={[]} translate={jest.fn()} />)).toMatchSnapshot();
+        expect(shallow(<AccessRightsReportData report={[]} translate={translate} />)).toMatchSnapshot();
     });
 });
 
 describe('AccessRightsReport', () => {
     test('Should render (empty) report without crashing', () => {
-        expect(shallow(<AccessRightsReport report={[]} translate={jest.fn()} />)).toMatchSnapshot();
+        expect(shallow(<AccessRightsReport report={[]} translate={translate} />)).toMatchSnapshot();
     });
 });
 

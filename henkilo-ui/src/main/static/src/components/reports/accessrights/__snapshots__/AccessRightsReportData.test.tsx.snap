@@ -9,51 +9,53 @@ exports[`AccessRightsReport Should render (empty) report without crashing 1`] = 
   >
     <Table
       data={Array []}
-      fetchMoreSettings={Object {}}
       headings={
         Array [
           Object {
             "key": "personName",
-            "label": undefined,
+            "label": "HENKILO_NIMI",
             "maxWidth": 300,
           },
           Object {
             "Cell": [Function],
             "key": "personOid",
-            "label": undefined,
+            "label": "HENKILO_OPPIJANUMERO",
             "maxWidth": 250,
           },
           Object {
             "key": "organisationName",
-            "label": undefined,
+            "label": "HENKILO_KAYTTOOIKEUS_ORGANISAATIO_TEHTAVA",
             "maxWidth": 300,
           },
           Object {
             "key": "organisationOid",
-            "label": undefined,
+            "label": "OID",
             "maxWidth": 250,
           },
           Object {
             "key": "accessRightName",
-            "label": undefined,
+            "label": "HENKILO_KAYTTOOIKEUS_KAYTTOOIKEUS",
           },
           Object {
             "Cell": [Function],
             "key": "startDate",
-            "label": undefined,
+            "label": "HENKILO_KAYTTOOIKEUS_ALKUPVM",
             "maxWidth": 120,
           },
           Object {
             "Cell": [Function],
             "key": "endDate",
-            "label": undefined,
+            "label": "HENKILO_KAYTTOOIKEUS_LOPPUPVM",
             "maxWidth": 135,
           },
         ]
       }
       highlight={true}
+      noDataText="HENKILO_KAYTTOOIKEUS_VOIMASSAOLEVAT_TYHJA"
+      pageSize={20}
       resizable={true}
       striped={true}
+      translate={[Function]}
     />
   </div>
 </div>
@@ -62,6 +64,6 @@ exports[`AccessRightsReport Should render (empty) report without crashing 1`] = 
 exports[`AccessRightsReportData Should render (empty) report without crashing 1`] = `
 <AccessRightsReport
   report={Array []}
-  translate={[MockFunction]}
+  translate={[Function]}
 />
 `;

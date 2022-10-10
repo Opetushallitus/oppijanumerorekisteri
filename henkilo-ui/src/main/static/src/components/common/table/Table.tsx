@@ -27,96 +27,104 @@ type Props = {
         isActive?: boolean;
     };
     isLoading?: boolean;
+    pageSize?: number;
+    translate?: (key: string) => string;
 };
 
-class Table extends React.Component<Props> {
-    static defaultProps = {
-        fetchMoreSettings: {},
-        resizable: false,
-    };
+const getHeaderProps = (state: any, _rowInfo: any, column: any) => {
+    const sorting =
+        state.sorted && state.sorted.length ? state.sorted.filter((sorting) => column.id === sorting.id)[0] : undefined;
+    column.sorting = { desc: sorting && sorting.desc };
+    return {};
+};
 
-    render() {
-        const classname = classNames({
-            table: true,
-            '-striped': this.props.striped,
-            '-highlight': this.props.highlight,
-        });
-        return (
-            <div>
-                <ReactTable
-                    className={classname}
-                    showPagination={false}
-                    resizable={this.props.resizable}
-                    manual={this.props.manual}
-                    pageSize={this.props.data.length}
-                    defaultSorted={this.props.defaultSorted || []}
-                    loadingText=""
-                    noDataText={this.props.noDataText || ''}
-                    data={this.props.data}
-                    SubComponent={this.props.subComponent}
-                    freezeWhenExpanded={this.props.subComponent ? true : false}
-                    columns={this.props.headings.map((heading) => ({
-                        getHeaderProps: this.getHeaderProps,
-                        Header: (props) => {
-                            return (
-                                <span className="oph-bold">
-                                    {heading.label}{' '}
-                                    {props.column.sortable ? (
-                                        props.column.sorting.desc !== undefined ? (
-                                            props.column.sorting.desc ? (
-                                                <SortAscIcon />
-                                            ) : (
-                                                <SortDescIcon />
-                                            )
+const Table: React.FC<Props> = ({
+    fetchMoreSettings = {},
+    resizable = false,
+    translate = (key: string) => key,
+    ...props
+}) => {
+    const [pageSize, setPageSize] = React.useState<number>(0);
+
+    React.useEffect(() => {
+        setPageSize(Math.min(...[props.pageSize, props.data.length].filter((x) => x !== undefined)));
+    }, [props.pageSize, props.data]);
+
+    const classname = classNames({
+        table: true,
+        '-striped': props.striped,
+        '-highlight': props.highlight,
+    });
+    return (
+        <div>
+            <ReactTable
+                onPageSizeChange={setPageSize}
+                className={classname}
+                showPagination={props.data.length > props.pageSize}
+                resizable={resizable}
+                manual={props.manual}
+                pageSize={pageSize}
+                defaultSorted={props.defaultSorted || []}
+                loadingText=""
+                noDataText={props.noDataText || ''}
+                data={props.data}
+                SubComponent={props.subComponent}
+                freezeWhenExpanded={props.subComponent ? true : false}
+                columns={props.headings.map((heading) => ({
+                    getHeaderProps: getHeaderProps,
+                    Header: (props) => {
+                        return (
+                            <span className="oph-bold">
+                                {heading.label}{' '}
+                                {props.column.sortable ? (
+                                    props.column.sorting.desc !== undefined ? (
+                                        props.column.sorting.desc ? (
+                                            <SortAscIcon />
                                         ) : (
-                                            <SortIconNone />
+                                            <SortDescIcon />
                                         )
-                                    ) : null}
-                                </span>
-                            );
-                        },
-                        Cell: heading.Cell,
-                        accessor: heading.key,
-                        sortable: !heading.notSortable,
-                        maxWidth: heading.maxWidth || undefined,
-                        minWidth: heading.minWidth || 100,
-                        sortMethod: heading.sortMethod,
-                        show: !heading.hide,
-                    }))}
-                    getTrProps={(_state, rowInfo, _column) => ({
-                        className: rowInfo.row.HIGHLIGHT ? 'fadeOutBackgroundColor' : null,
-                    })}
-                    getTdProps={this.props.getTdProps}
-                    onFetchData={this.props.onFetchData}
-                />
-                <VisibilitySensor
-                    onChange={(isVisible) => {
-                        if (isVisible) {
-                            this.props.fetchMoreSettings &&
-                                this.props.fetchMoreSettings.fetchMoreAction &&
-                                this.props.fetchMoreSettings.fetchMoreAction();
-                        }
-                    }}
-                    active={this.props.fetchMoreSettings && this.props.fetchMoreSettings.isActive}
-                    resizeDelay={500}
-                    delayedCall
-                    partialVisibility
-                >
-                    {() => <div style={{ visibility: 'hidden' }}>invisible</div>}
-                </VisibilitySensor>
-                {this.props.isLoading ? <Loader /> : null}
-            </div>
-        );
-    }
-
-    getHeaderProps(state: any, _rowInfo: any, column: any) {
-        const sorting =
-            state.sorted && state.sorted.length
-                ? state.sorted.filter((sorting) => column.id === sorting.id)[0]
-                : undefined;
-        column.sorting = { desc: sorting && sorting.desc };
-        return {};
-    }
-}
+                                    ) : (
+                                        <SortIconNone />
+                                    )
+                                ) : null}
+                            </span>
+                        );
+                    },
+                    Cell: heading.Cell,
+                    accessor: heading.key,
+                    sortable: !heading.notSortable,
+                    maxWidth: heading.maxWidth || undefined,
+                    minWidth: heading.minWidth || 100,
+                    sortMethod: heading.sortMethod,
+                    show: !heading.hide,
+                }))}
+                getTrProps={(_state, rowInfo, _column) => ({
+                    className: rowInfo?.row.HIGHLIGHT ? 'fadeOutBackgroundColor' : null,
+                })}
+                getTdProps={props.getTdProps}
+                onFetchData={props.onFetchData}
+                previousText={translate('TAULUKKO_EDELLINEN')}
+                nextText={translate('TAULUKKO_SEURAAVA')}
+                pageText={translate('TAULUKKO_SIVU')}
+                ofText="/"
+                rowsText={translate('TAULUKKO_RIVIA')}
+            />
+            <VisibilitySensor
+                onChange={(isVisible) => {
+                    if (isVisible) {
+                        fetchMoreSettings && fetchMoreSettings.fetchMoreAction && fetchMoreSettings.fetchMoreAction();
+                    }
+                }}
+                active={fetchMoreSettings && fetchMoreSettings.isActive}
+                resizeDelay={500}
+                delayedCall
+                partialVisibility
+            >
+                {() => <div style={{ visibility: 'hidden' }}>invisible</div>}
+            </VisibilitySensor>
+            {props.isLoading ? <Loader /> : null}
+        </div>
+    );
+};
 
 export default Table;

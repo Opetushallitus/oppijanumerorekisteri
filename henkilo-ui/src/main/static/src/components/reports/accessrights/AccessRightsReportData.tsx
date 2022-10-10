@@ -71,6 +71,8 @@ export const AccessRightsReport: React.FC<Props> = ({ report, translate }) => (
                 resizable
                 striped
                 highlight
+                pageSize={20}
+                translate={translate}
             />
         </div>
     </div>

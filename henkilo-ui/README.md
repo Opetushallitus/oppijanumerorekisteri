@@ -67,30 +67,6 @@ Voidaan käyttää suoraan backendin kautta mutta kehityksessä on parempi käyt
 
 Mikäli kehityksesssä tarvitsee tehdä kutsuja taustajärjestelmiin, sen pitäisi onnistua helposti [näillä ohjeilla](nginx):
 
-### Flowjs
-
-Voit ajaa tyyppitarkistukset lokaalisti komennolla `npm run flowrun`. Tämä ei kuitenkaa seuraa muutoksia, vaan prosessi päättyy heti ajon jälkeen. Kannattanee asentaa omaan IDEn plugin, joka hoitaa jatkuvan tyyppitarkistuksen.
-
-### Riippuvuudet
-
-Varmista että npm 5 (tai uudempi) on käytössä
-
-`npm --version`
-
-Uuden riippuvuuden lisääminen
-
-`npm install <riippuvuus> --save`
-
-Päivittäminen
-
-`npm install <riippuvuus>@<versio>`
-
-Poistaminen
-
-`npm uninstall <riippuvuus> --save`
-
-Commitoi sekä package.json että package-lock.json -tiedostot.
-
 ### CORS
 
 Integraatiopalvelinta vastaan kehitettäessä on käytettävästä
