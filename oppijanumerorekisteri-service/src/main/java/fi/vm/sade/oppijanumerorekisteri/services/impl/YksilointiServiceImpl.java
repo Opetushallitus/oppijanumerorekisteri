@@ -241,8 +241,12 @@ public class YksilointiServiceImpl implements YksilointiService {
         return TextUtils.normalize(input).toLowerCase();
     }
 
+    private String name(String input) {
+        return Optional.ofNullable(input).map(this::normalize).orElse("");
+    }
+
     private boolean isSimilar(String a, String b) {
-        return isSimilar(a, b, oppijanumerorekisteriProperties.getEtunimiThreshold());
+        return isSimilar(name(a), name(b), oppijanumerorekisteriProperties.getEtunimiThreshold());
     }
 
     private boolean isSimilar(String a, String b, float threshold) {
