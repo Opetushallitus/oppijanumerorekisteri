@@ -165,4 +165,9 @@ public class HenkiloMapperTest {
                 .containsExactlyInAnyOrder(tuple("key", "value1"), tuple("key", "value2"));
     }
 
+    @Test
+    public void henkiloReadDto() {
+        assertThat(modelmapper.map(Henkilo.builder().build(), HenkiloReadDto.class).getYksiloityVTJ()).isFalse();
+        assertThat(modelmapper.map(Henkilo.builder().yksiloityVTJ(true).build(), HenkiloReadDto.class).getYksiloityVTJ()).isTrue();
+    }
 }
