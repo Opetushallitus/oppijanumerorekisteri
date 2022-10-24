@@ -37,7 +37,8 @@ class HenkiloExistenceCheckDtoTest {
                 Arguments.of("Validates lastName for trailing spaces", new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d "), false),
                 Arguments.of("Should be valid (special chars)", new HenkiloExistenceCheckDto("230668-003A", "X Æ A-12", "Æ", "Musk"), true),
                 Arguments.of("Should be valid (case insensitive nick)", new HenkiloExistenceCheckDto("230668-003A", "a b c", "B", "d"), true),
-                Arguments.of("No partial match for nickname", new HenkiloExistenceCheckDto("230668-003A", "X Æ A-12", "-", "Musk"), false)
+                Arguments.of("Partial match of nickname", new HenkiloExistenceCheckDto("230668-003A", "X Æ A-12", "12", "Musk"), true),
+                Arguments.of("Full match of nickname", new HenkiloExistenceCheckDto("230668-003A", "X Æ A-12", "A-12", "Musk"), true)
         );
     }
 
