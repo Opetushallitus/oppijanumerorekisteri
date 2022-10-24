@@ -21,6 +21,8 @@ describe('DetailsForm', () => {
             ['Rejects multiple nicks', { ...valid, kutsumanimi: 'X Æ A-12' }, false],
             ['Accepts multiple lastNames', { ...valid, sukunimi: 'X Æ A-12' }, true],
             ['Case-insensitive nick comparison', { ...valid, kutsumanimi: 'x' }, true],
+            ['Partial match', { ...valid, kutsumanimi: 'A' }, true],
+            ['Full match', { ...valid, kutsumanimi: 'A-12' }, true],
         ])('%s', (_, input, expected) => {
             expect(!!!schema.validate(input).error).toEqual(expected);
         });
