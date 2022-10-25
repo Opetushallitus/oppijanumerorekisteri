@@ -10,6 +10,9 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Generated
 @Getter
@@ -35,6 +38,16 @@ public class HenkiloExistenceCheckDto {
     @JsonIgnore
     @AssertTrue(message = "Nick name must be one of the first names")
     public boolean isNicknameOk() {
-        return etunimet != null && kutsumanimi != null && Arrays.asList(etunimet.toLowerCase().split(" ")).contains(kutsumanimi.toLowerCase());
+        if ( etunimet == null || kutsumanimi == null ) {
+            return false;
+        }
+        String nickname = kutsumanimi.toLowerCase();
+        List<String> names = Arrays.asList(etunimet.toLowerCase().split("\\s"));
+        List<String> splittedNames = names.stream()
+                .filter(s -> s.contains("-"))
+                .map(s -> Arrays.asList(s.split("-")))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        return names.contains(nickname) || splittedNames.contains(nickname);
     }
 }
