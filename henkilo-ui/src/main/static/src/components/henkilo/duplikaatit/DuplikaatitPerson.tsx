@@ -69,7 +69,9 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                 <DataCell className="type">{L[this.props.header]}</DataCell>
                 <DataCell className="type">{L['DUPLIKAATIT_ONR']}</DataCell>
                 <DataCell>{henkilo.hetu}</DataCell>
-                <DataCell>{henkilo.yksiloity ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}</DataCell>
+                <DataCell>
+                    {henkilo.yksiloity || henkilo.yksiloityVTJ ? L['HENKILO_YHTEISET_KYLLA'] : L['HENKILO_YHTEISET_EI']}
+                </DataCell>
                 <DataCell>{henkilo.kutsumanimi}</DataCell>
                 <DataCell>{henkilo.etunimet}</DataCell>
                 <DataCell>{henkilo.sukunimi}</DataCell>
