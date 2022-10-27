@@ -1,9 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri;
 
-import fi.vm.sade.oppijanumerorekisteri.configurations.AccessLogConfiguration;
-import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +20,7 @@ import static org.junit.Assert.assertEquals;
  * This test boots up tomcat server and tests masking of sensitive
  * information in access log produced. Behavior is same as in
  * final product, but access log format is more terse for brevity.
- *
+ * <p>
  * check <a href="file:../resources/logback-access.xml">logback-access.xml</a>
  * in test resources to see the tested regexp.
  */
@@ -60,6 +56,12 @@ public class AccessLogTest {
     public void sensitiveInformationInPathIsMasked() {
         restTemplate.getForEntity("/123456+7890", String.class);
         assertEquals("GET /123456+**** HTTP/1.1", resolveLog(output));
+    }
+
+    @Test
+    public void sensitiveInformationInPathIsMaskedNewSpec() {
+        restTemplate.getForEntity("/123456X7890", String.class);
+        assertEquals("GET /123456X**** HTTP/1.1", resolveLog(output));
     }
 
     @Test

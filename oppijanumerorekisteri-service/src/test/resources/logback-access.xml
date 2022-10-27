@@ -10,7 +10,7 @@
                 This file is just for testing the regexp. In case of any changes,
                 make sure to make them also in "real" resources.
             -->
-            <pattern>%replace(%r){'\b(\d{6}[-\\+A])\d{3}\w(\W)', '$1****$2'}</pattern>
+            <pattern>%replace(%r){'\b(\d{6}[-\\+ABCDEFYXWVU])\d{3}\w(\W)', '$1****$2'}</pattern>
         </encoder>
     </appender>
 
