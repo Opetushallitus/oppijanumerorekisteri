@@ -60,8 +60,9 @@ public class LogSanitationTest {
                 new String[]{"Multiple matches (whitespace separator)", "123456+7890 123456-7890", "123456+**** 123456-****"},
                 new String[]{"Rest of the line remains as is", "foo 123456+7890 bar", "foo 123456+**** bar"},
                 new String[]{"Not a hetu (birth time)", "1123456+7890", "1123456+7890"},
-                new String[]{"Not a hetu (suffix)", "123456+78900", "123456+78900"}
-                );
+                new String[]{"Not a hetu (suffix)", "123456+78900", "123456+78900"},
+                new String[]{"Hetu with separator from new spec", "123456B7890", "123456B****"}
+        );
     }
 
     @After
