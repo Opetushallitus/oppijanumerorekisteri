@@ -20,7 +20,7 @@ type Props = ExistenceCheckState & {
 export const schema = Joi.object({
     hetu: Joi.string()
         .trim(true)
-        .regex(/^\d{6}[A+-]\d{3}[0-9A-z]$/)
+        .regex(/^\d{6}[ABCDEFYXWVU+-]\d{3}[0123456789ABCDEFHJKLMNPRSTUVWXY]$/)
         .required(),
     etunimet: Joi.string().trim(true).required(),
     kutsumanimi: Joi.string()

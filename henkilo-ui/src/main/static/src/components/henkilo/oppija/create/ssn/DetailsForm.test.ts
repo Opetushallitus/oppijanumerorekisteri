@@ -23,6 +23,8 @@ describe('DetailsForm', () => {
             ['Case-insensitive nick comparison', { ...valid, kutsumanimi: 'x' }, true],
             ['Partial match', { ...valid, kutsumanimi: 'A' }, true],
             ['Full match', { ...valid, kutsumanimi: 'A-12' }, true],
+            ['Accept SSN with new spec', { ...valid, hetu: '010594Y9032' }, true],
+            ['Discard SSN with incorrect checkchar', { ...valid, hetu: '010594Y903O' }, false],
         ])('%s', (_, input, expected) => {
             expect(!!!schema.validate(input).error).toEqual(expected);
         });
