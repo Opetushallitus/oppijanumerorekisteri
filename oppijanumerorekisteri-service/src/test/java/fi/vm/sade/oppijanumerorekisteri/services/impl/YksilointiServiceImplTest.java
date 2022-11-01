@@ -510,7 +510,7 @@ public class YksilointiServiceImplTest {
             fail("Exception should have been thrown");
         } catch (ConflictException ce) {
             assertThat(logCaptor.getInfoLogs()).isNotEmpty();
-            assertThat(logCaptor.getInfoLogs().get(0)).endsWith("VTJ name comparison failed! input: \"a b c, b, d\" vtj: \"very different name, b, d\"");
+            assertThat(logCaptor.getInfoLogs().get(0)).endsWith("VTJ name comparison failed! input: \"a b c, d\" vtj: \"very different name, d\"");
         }
     }
 

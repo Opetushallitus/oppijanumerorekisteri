@@ -96,16 +96,7 @@ class YksilointiServiceImplExistenceCheckTest {
                         new HenkiloExistenceCheckDto("", null, null, null)),
                 Arguments.of("Conflicting details",
                         new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "x y z", "i", "l")),
-                Arguments.of("Kutsumanimi empty in ONR data",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "", "d")),
-                Arguments.of("Kutsumanimi blank in ONR data",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", " ", "d")),
-                Arguments.of("Kutsumanimi null in ONR data (should not happen in reality)",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", null, "d"))
+                        new HenkiloExistenceCheckDto("", "x y z", "i", "l"))
         );
     }
 

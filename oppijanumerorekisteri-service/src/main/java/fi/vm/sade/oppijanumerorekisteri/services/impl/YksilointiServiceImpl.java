@@ -674,29 +674,26 @@ public class YksilointiServiceImpl implements YksilointiService {
     }
 
     private Optional<String> compareOnrDetails(final Henkilo henkilo, final HenkiloExistenceCheckDto details) {
-        if (detailsMatch(henkilo.getEtunimet(), henkilo.getKutsumanimi(), henkilo.getSukunimi(), details))
+        if (detailsMatch(henkilo.getEtunimet(), henkilo.getSukunimi(), details))
             return Optional.of(henkilo.getOidHenkilo());
         throw new ConflictException();
     }
 
     private Optional<String> compareVtjDetails(final YksiloityHenkilo henkilo, final HenkiloExistenceCheckDto details) {
-        // VTJ data might not contain nickname - skip nickname comparison by falling back to one in details in that case
-        String kutsumanimi = Optional.ofNullable(henkilo.getKutsumanimi()).filter(Predicate.not(String::isBlank)).orElse(details.getKutsumanimi());
-        if (detailsMatch(henkilo.getEtunimi(), kutsumanimi, henkilo.getSukunimi(), details))
+        if (detailsMatch(henkilo.getEtunimi(), henkilo.getSukunimi(), details))
             return Optional.empty();
         reportConflict(henkilo, details);
         throw new ConflictException();
     }
 
     private void reportConflict(YksiloityHenkilo henkilo, HenkiloExistenceCheckDto details) {
-        log.info("VTJ name comparison failed! input: \"{}, {}, {}\" vtj: \"{}, {}, {}\"",
-                details.getEtunimet(), details.getKutsumanimi(), details.getSukunimi(),
-                henkilo.getEtunimi(), henkilo.getKutsumanimi(), henkilo.getSukunimi());
+        log.info("VTJ name comparison failed! input: \"{}, {}\" vtj: \"{}, {}\"",
+                details.getEtunimet(), details.getSukunimi(),
+                henkilo.getEtunimi(), henkilo.getSukunimi());
     }
 
-    private boolean detailsMatch(final String firstName, final String nickName, final String lastName, final HenkiloExistenceCheckDto details) {
+    private boolean detailsMatch(final String firstName, final String lastName, final HenkiloExistenceCheckDto details) {
         return isSimilar(firstName, details.getEtunimet()) &&
-                isSimilar(nickName, details.getKutsumanimi()) &&
                 isSimilar(lastName, details.getSukunimi());
     }
 
