@@ -87,7 +87,7 @@ public class OppijaController {
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation(value = "Oppijoiden haku")
+    @ApiOperation(value = "Oppijoiden tuontien virheet")
     public Page<OppijaListDto> list(
             OppijaTuontiCriteria criteria,
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
