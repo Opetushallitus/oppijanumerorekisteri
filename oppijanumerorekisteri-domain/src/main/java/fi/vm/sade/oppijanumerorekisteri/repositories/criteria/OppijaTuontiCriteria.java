@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -44,8 +43,6 @@ public class OppijaTuontiCriteria {
 
     private String nimiHaku;
 
-    private boolean sanitized;
-
     public void setOrRetainOrganisaatioOids(Set<String> oids) {
         if (organisaatioOids == null || organisaatioOids.isEmpty()) {
             organisaatioOids = oids;
@@ -55,7 +52,7 @@ public class OppijaTuontiCriteria {
     }
 
     public boolean hasConditions() {
-        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || this.sanitized || Boolean.TRUE.equals(this.vainVirheet) || StringUtils.hasLength(this.nimiHaku);
+        return tuontiId != null || muokattuJalkeen != null || this.organisaatioOids != null || this.vainVirheet || StringUtils.hasLength(this.nimiHaku);
     }
 
     /**
@@ -86,7 +83,7 @@ public class OppijaTuontiCriteria {
             query.join(qHenkilo.organisaatiot, qOrganisaatio);
             query.where(qOrganisaatio.oid.in(organisaatioOids));
         }
-        if (sanitized || vainVirheet) {
+        if (vainVirheet) {
             List<BooleanExpression> conditions = Stream.of(
                     allOf(
                             qHenkilo.hetu.isNull(),

@@ -461,7 +461,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                         tuple("passivoitu", YksilointiTila.OK),
                         tuple("duplikaatti", YksilointiTila.OK));
 
-        criteria.setSanitized(true);
+        criteria.setVainVirheet(true);
         assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
                 .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
                 .containsExactlyInAnyOrder(
