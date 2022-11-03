@@ -13,7 +13,6 @@ public class OppijaListDto {
     private String oppijanumero;
     private Date luotu;
     private Date muokattu;
-    private String hetu;
     private LocalDate syntymaaika;
     private String etunimet;
     private String kutsumanimi;
