@@ -32,8 +32,6 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class OppijaTuontiCriteria {
 
-    public static final int SANITATION_THRESHOLD = 2;
-
     private Long tuontiId;
 
     @ApiModelProperty("ISO 8601 -muodossa, esim. 2017-09-05T10:04:59Z")
@@ -42,11 +40,11 @@ public class OppijaTuontiCriteria {
     @ApiModelProperty(hidden = true)
     private Set<String> organisaatioOids;
 
-    private Boolean vainVirheet;
+    private boolean vainVirheet;
 
     private String nimiHaku;
 
-    private boolean sanitized = false;
+    private boolean sanitized;
 
     public void setOrRetainOrganisaatioOids(Set<String> oids) {
         if (organisaatioOids == null || organisaatioOids.isEmpty()) {
@@ -88,7 +86,7 @@ public class OppijaTuontiCriteria {
             query.join(qHenkilo.organisaatiot, qOrganisaatio);
             query.where(qOrganisaatio.oid.in(organisaatioOids));
         }
-        if (sanitized || Boolean.TRUE.equals(vainVirheet)) {
+        if (sanitized || vainVirheet) {
             List<BooleanExpression> conditions = Stream.of(
                     allOf(
                             qHenkilo.hetu.isNull(),
@@ -100,9 +98,6 @@ public class OppijaTuontiCriteria {
                             qHenkilo.yksiloityVTJ.isFalse(),
                             qHenkilo.yksilointiYritetty.isTrue())
             ).collect(toList());
-            if (sanitized) {
-                conditions.add(qTuonti.aikaleima.goe(sanitationThreshold()));
-            }
             query.where(allOf(
                     qHenkilo.duplicate.isFalse(),
                     qHenkilo.passivoitu.isFalse(),
@@ -146,9 +141,5 @@ public class OppijaTuontiCriteria {
         }
 
         return query;
-    }
-
-    private Date sanitationThreshold() {
-        return (new DateTime()).minusMonths(SANITATION_THRESHOLD).toDate();
     }
 }

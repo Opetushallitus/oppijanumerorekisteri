@@ -447,7 +447,7 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 henkilo("hetullinen_yksiloity").hetu("251098-937P").yksiloityVtj(),
                 henkilo("passivoitu").passivoitu(),
                 henkilo("duplikaatti").duplikaatti()
-        ).aikaleima((new DateTime()).minusMonths(OppijaTuontiCriteria.SANITATION_THRESHOLD + 1).toDate())); // older than two months - subject to sanitation
+        ).aikaleima((new DateTime()).minusMonths(3).toDate())); // older than two months - subject to sanitation
 
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
@@ -467,41 +467,6 @@ public class HenkiloRepositoryTests extends AbstractRepositoryTest {
                 .containsExactlyInAnyOrder(
                         tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
                         tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE));
-    }
-
-    @Test
-    public void findByOppijaTuontiCriteriaSanitationSkipsRecentTest() {
-        populate(tuonti(
-                henkilo("hetuton"),
-                henkilo("hetuton_yksiloity").yksiloity(),
-                henkilo("hetullinen").hetu("251098-9515"),
-                henkilo("hetullinen_yksilointi_yritetty").hetu("251098-991E").yksilointiYritetty(),
-                henkilo("hetullinen_yksiloity").hetu("251098-937P").yksiloityVtj(),
-                henkilo("passivoitu").passivoitu(),
-                henkilo("duplikaatti").duplikaatti()
-        ).aikaleima((new DateTime()).minusMonths(OppijaTuontiCriteria.SANITATION_THRESHOLD - 1).toDate())); // newer than two months - no sanitation
-
-        OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
-        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
-                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
-                .containsExactlyInAnyOrder(
-                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
-                        tuple("hetuton_yksiloity", YksilointiTila.OK),
-                        tuple("hetullinen", YksilointiTila.KESKEN),
-                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
-                        tuple("hetullinen_yksiloity", YksilointiTila.OK),
-                        tuple("passivoitu", YksilointiTila.OK),
-                        tuple("duplikaatti", YksilointiTila.OK));
-
-        criteria.setSanitized(true);
-        assertThat(dataRepository.findBy(criteria, Integer.MAX_VALUE, 0, null))
-                .extracting(Henkilo::getOidHenkilo, Henkilo::getYksilointiTila)
-                .containsExactlyInAnyOrder(
-                        tuple("hetuton", YksilointiTila.HETU_PUUTTUU),
-                        tuple("hetuton_yksiloity", YksilointiTila.OK),
-                        tuple("hetullinen", YksilointiTila.KESKEN),
-                        tuple("hetullinen_yksilointi_yritetty", YksilointiTila.VIRHE),
-                        tuple("hetullinen_yksiloity", YksilointiTila.OK));
     }
 
     private void persistHenkilo(Henkilo henkilo) {
