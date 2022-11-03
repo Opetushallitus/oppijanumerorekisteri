@@ -4,7 +4,6 @@ import ReactTable from 'react-table';
 import '../../oph-table.css';
 import moment from 'moment';
 import TableLoader from '../common/icons/TableLoader';
-import YksilointiTilaIkoni from './YksilointiTilaIkoni';
 import './OppijoidenTuontiListaus.css';
 import { Localisations } from '../../types/localisation.type';
 import { TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
@@ -29,15 +28,14 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
     render() {
         const columns = [
             {
-                Header: this.renderHeader('OPPIJOIDEN_TUONTI_YKSILOINTI_TILA'),
-                accessor: (henkilo: OppijaList) => this.renderYksilointiTilaIcon(henkilo.yksilointiTila),
-                id: 'tila',
-                className: 'yksilointi-tila-sarake',
-            },
-            {
                 Header: this.renderSortableHeader('OPPIJOIDEN_TUONTI_LUONTIAIKA', 'CREATED'),
                 accessor: (henkilo: OppijaList) => this.renderAikaleima(henkilo.luotu),
                 id: 'luotu',
+            },
+            {
+                Header: this.renderHeader('OPPIJOIDEN_TUONTI_OID'),
+                accessor: (henkilo: OppijaList) => henkilo.oid,
+                id: 'oid',
             },
             {
                 Header: this.renderHeader('OPPIJOIDEN_TUONTI_HENKILOTUNNUS_SYNTYMAIKA'),
@@ -102,16 +100,12 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
         return this.props.sortDirection === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
     }
 
-    renderYksilointiTilaIcon(arvo: string) {
-        return <YksilointiTilaIkoni value={arvo}></YksilointiTilaIkoni>;
-    }
-
     renderAikaleima(arvo: string) {
         return moment(arvo).format('l LT');
     }
 
     renderHetuTaiSyntymaaika(henkilo: OppijaList) {
-        return henkilo.hetu || (henkilo.syntymaaika ? moment(henkilo.syntymaaika).format('l') : null);
+        return henkilo.syntymaaika ? moment(henkilo.syntymaaika).format('l') : null;
     }
 
     renderYksilointiTilaText(arvo: string) {

@@ -5,7 +5,6 @@ export type OppijaList = {
     oppijanumero: string;
     luotu: string;
     muokattu: string;
-    hetu: string;
     syntymaaika: string;
     etunimet: string;
     kutsumanimi: string;

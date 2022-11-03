@@ -4,7 +4,6 @@ import type { RootState } from '../../reducers';
 import { fetchOppijoidenTuontiYhteenveto, fetchOppijoidenTuontiListaus } from '../../actions/oppijoidentuonti.actions';
 import OppijoidenTuontiYhteenveto from './OppijoidenTuontiYhteenveto';
 import OppijoidenTuontiListaus from './OppijoidenTuontiListaus';
-import BooleanRadioButtonGroup from '../common/radiobuttongroup/BooleanRadioButtonGroup';
 import { Localisations } from '../../types/localisation.type';
 import { TuontiYhteenvetoState, TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
 import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
@@ -12,7 +11,6 @@ import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 type SearchCriteria = {
     page: number;
     count: number;
-    vainVirheet: boolean;
     sortDirection: string;
     sortKey: string;
     nimiHaku: string | null | undefined;
@@ -47,7 +45,6 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
             criteria: {
                 page: 1,
                 count: 20,
-                vainVirheet: false,
                 sortDirection: 'DESC',
                 sortKey: 'CREATED',
                 nimiHaku: null,
@@ -63,14 +60,6 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
 
                 <div className="flex-horizontal" style={{ margin: '20px 0' }}>
                     <h1 className="flex-item-1">{this.props.L['OPPIJOIDEN_TUONTI_OPPIJAT_OTSIKKO']}</h1>
-                    <div className="flex-item-1 flex-align-right">
-                        <BooleanRadioButtonGroup
-                            value={this.state.criteria.vainVirheet}
-                            onChange={this.onVainVirheetChange}
-                            trueLabel={this.props.L['OPPIJOIDEN_TUONTI_NAYTA_VIRHEET']}
-                            falseLabel={this.props.L['OPPIJOIDEN_TUONTI_NAYTA_KAIKKI']}
-                        ></BooleanRadioButtonGroup>
-                    </div>
                 </div>
 
                 <DelayedSearchInput
@@ -96,15 +85,6 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
     componentDidMount() {
         this.props.fetchOppijoidenTuontiYhteenveto();
     }
-
-    onVainVirheetChange = (value: boolean) => {
-        const criteria: SearchCriteria = {
-            ...this.state.criteria,
-            vainVirheet: value,
-        };
-        this.setState({ criteria: criteria });
-        this.props.fetchOppijoidenTuontiListaus(criteria);
-    };
 
     onChangeSorting = (sortKey: string, sortDirection: string) => {
         const page = this.state.criteria.page;
