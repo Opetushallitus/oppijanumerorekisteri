@@ -94,6 +94,7 @@ public class OppijaController {
             @RequestParam(required = false, defaultValue = "20") @Min(1) int count,
             @RequestParam(required = false, defaultValue = "CREATED") OppijaTuontiSortKey sortKey,
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction sortDirection) {
+        criteria.setVainVirheet(true);
         criteria.setSanitized(true);
         return oppijaService.list(criteria, page, count, sortKey, sortDirection);
     }
