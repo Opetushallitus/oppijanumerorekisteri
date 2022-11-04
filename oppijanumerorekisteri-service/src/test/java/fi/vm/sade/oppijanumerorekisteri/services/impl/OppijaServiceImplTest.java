@@ -40,8 +40,6 @@ public class OppijaServiceImplTest {
     private OppijaServiceImpl oppijaServiceImpl;
 
     @Mock
-    private HenkiloService henkiloServiceMock;
-    @Mock
     private HenkiloModificationService henkiloModificationServiceMock;
     @Mock
     private OrganisaatioService organisaatioServiceMock;
@@ -81,7 +79,7 @@ public class OppijaServiceImplTest {
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);
         oppijaServiceImpl = new OppijaServiceImpl(oppijaTuontiServiceImpl,
-                oppijaTuontiServiceAsyncImpl, henkiloServiceMock, henkiloModificationServiceMock,
+                oppijaTuontiServiceAsyncImpl, henkiloModificationServiceMock,
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
                 organisaatioRepositoryMock, userDetailsHelperMock,
@@ -173,7 +171,7 @@ public class OppijaServiceImplTest {
                     OppijaReadDto dto = new OppijaReadDto();
                     dto.setOid(entity.getOidHenkilo());
                     return dto;
-        });
+                });
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         int page = 1;
         int count = 20;
