@@ -19,6 +19,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactor
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -130,6 +133,20 @@ public class OppijaServiceImpl implements OppijaService {
         List<Henkilo> henkilot = henkiloRepository.findBy(criteria, limit, offset, sort);
         long total = henkiloRepository.countBy(criteria);
         return Page.of(page, count, mapper.mapAsList(henkilot, OppijaListDto.class), total);
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination) {
+        final boolean isSuperUser = permissionChecker.isSuperUser();
+        Set<String> userOrgs = isSuperUser ? Set.of() : resolveTuontiOrganisations();
+        return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, pagination);
+    }
+
+    private Set<String> resolveTuontiOrganisations() {
+        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
+                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
+                .collect(toSet());
     }
 
     @Override

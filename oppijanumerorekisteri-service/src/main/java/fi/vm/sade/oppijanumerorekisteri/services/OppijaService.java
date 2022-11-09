@@ -2,7 +2,9 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Oppijoiden tuontiin liittyvät toiminnot.
@@ -71,6 +73,8 @@ public interface OppijaService {
      * @return henkilöt
      */
     Page<OppijaListDto> list(OppijaTuontiCriteria criteria, int page, int count, OppijaTuontiSortKey sortKey, Sort.Direction sortDirection);
+
+    org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination);
 
     /**
      * Palauttaa annettujen hakukriteerien mukaisen henkilöiden master-tiedot.

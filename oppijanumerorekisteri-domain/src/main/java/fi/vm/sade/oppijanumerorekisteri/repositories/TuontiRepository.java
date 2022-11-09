@@ -1,11 +1,16 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
+
 
 public interface TuontiRepository extends CrudRepository<Tuonti, Long>, TuontiRepositoryCustom {
 
@@ -26,9 +31,26 @@ public interface TuontiRepository extends CrudRepository<Tuonti, Long>, TuontiRe
             nativeQuery = true)
     Optional<ServiceUser> getServiceUserForImportedPerson(@Param("oid") String oid);
 
+    @Query(value = "select distinct id, kayttaja, aikaleima, total, successful from tuontikooste where " +
+            "true = :isSuperUser or org in :userOrgs ",
+            countQuery = "select count(distinct id) from tuontikooste where " +
+                    "true = :isSuperUser or org in :userOrgs ",
+            nativeQuery = true)
+    Page<TuontiKooste> getTuontiKooste(@Param("isSuperUser") boolean isSuperUser, @Param("userOrgs") Set<String> userOrgs, Pageable pagination);
+
     interface ServiceUser {
         String getOid();
 
         String getName();
+    }
+
+    interface TuontiKooste {
+        String getKayttaja();
+
+        Date getAikaleima();
+
+        long getTotal();
+
+        long getSuccessful();
     }
 }
