@@ -33,6 +33,14 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
                 id: 'luotu',
             },
             {
+                Header: this.renderHeader('OPPIJOIDEN_TUONTI_KASITTELIJA'),
+                accessor: (henkilo: OppijaList) =>
+                    henkilo.serviceUserOid ? (
+                        <Link to={`virkailija/${henkilo.serviceUserOid}`}>{henkilo.serviceUserName}</Link>
+                    ) : null,
+                id: 'kasittelija',
+            },
+            {
                 Header: this.renderHeader('OPPIJOIDEN_TUONTI_OID'),
                 accessor: (henkilo: OppijaList) => henkilo.oid,
                 id: 'oid',

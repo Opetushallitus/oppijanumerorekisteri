@@ -10,4 +10,6 @@ export type OppijaList = {
     kutsumanimi: string;
     sukunimi: string;
     yksilointiTila: YksilointiTila;
+    serviceUserOid: string;
+    serviceUserName: string;
 };
