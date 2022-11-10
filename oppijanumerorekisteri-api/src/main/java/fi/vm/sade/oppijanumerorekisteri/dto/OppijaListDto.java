@@ -18,5 +18,7 @@ public class OppijaListDto {
     private String kutsumanimi;
     private String sukunimi;
     private YksilointiTila yksilointiTila;
+    private String serviceUserOid;
+    private String serviceUserName;
 
 }

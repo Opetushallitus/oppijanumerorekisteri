@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
@@ -168,6 +167,53 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         return henkilotByHetu;
     }
 
+    @Override
+    public Set<String> getOrganisaatioOidsByKayttaja() {
+        Set<String> oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
+        if (oids.isEmpty()) {
+            oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL);
+        }
+        return oids;
+    }
+
+    @Override
+    public Set<Organisaatio> getOrCreateOrganisaatioByKayttaja() {
+        // haetaan käyttäjän organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
+        Set<String> organisaatioOids = getOrganisaatioOidsByKayttaja();
+        return organisaatioOids.stream()
+                .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
+                        .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
+                .collect(toSet());
+    }
+
+    @Override
+    @Transactional
+    public void handleOppijaTuontiIlmoitus() {
+        List<Tuonti> tuontiList = tuontiRepository.findTuontiWithIlmoitustarve();
+        Set<String> sahkopostiosoitteet = tuontiList.stream()
+                .map(Tuonti::getSahkoposti)
+                .collect(Collectors.toSet());
+        if (sahkopostiosoitteet.size() > 0) {
+            emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
+        }
+
+        // Asettaa ilmoitustarvekasitelty-tiedon trueksi tuonneille, joiden yhteyssähköpostiin on lähetetty ilmoitus ja
+        // joille sitä ei tarvitse lähettää
+        List<Tuonti> tuonnitWithoutIlmoitusTarve = tuontiRepository.findNotKasiteltyTuontiWithoutIlmoitustarve();
+        tuontiList.addAll(tuonnitWithoutIlmoitusTarve);
+        for (Tuonti tuonti : tuontiList) {
+            tuonti.setIlmoitustarveKasitelty(true);
+        }
+
+        log.info("Oppijatuontien tilat käsitelty. Virheilmoitussähköposteja lähetetty " + sahkopostiosoitteet.size() + " ja tuonteja asetettu käsittelyiksi " + tuontiList.size());
+
+    }
+
+    @Override
+    public Optional<TuontiRepository.ServiceUser> getServiceUserForImportedPerson(String oid) {
+        return tuontiRepository.getServiceUserForImportedPerson(oid);
+    }
+
     @RequiredArgsConstructor
     private class TuontiRiviMapper {
 
@@ -230,47 +276,4 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         }
 
     }
-
-    @Override
-    public Set<String> getOrganisaatioOidsByKayttaja() {
-        Set<String> oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
-        if ( oids.isEmpty() ) {
-            oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL);
-        }
-        return oids;
-    }
-
-    @Override
-    public Set<Organisaatio> getOrCreateOrganisaatioByKayttaja() {
-        // haetaan käyttäjän organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
-        Set<String> organisaatioOids = getOrganisaatioOidsByKayttaja();
-        return organisaatioOids.stream()
-                .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
-                        .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))
-                .collect(toSet());
-    }
-
-    @Override
-    @Transactional
-    public void handleOppijaTuontiIlmoitus() {
-        List<Tuonti> tuontiList = tuontiRepository.findTuontiWithIlmoitustarve();
-        Set<String> sahkopostiosoitteet = tuontiList.stream()
-                .map(t -> t.getSahkoposti())
-                .collect(Collectors.toSet());
-        if(sahkopostiosoitteet.size() > 0) {
-            emailService.sendTuontiKasiteltyWithErrorsEmail(sahkopostiosoitteet);
-        }
-
-        // Asettaa ilmoitustarvekasitelty-tiedon trueksi tuonneille, joiden yhteyssähköpostiin on lähetetty ilmoitus ja
-        // joille sitä ei tarvitse lähettää
-        List<Tuonti> tuonnitWithoutIlmoitusTarve = tuontiRepository.findNotKasiteltyTuontiWithoutIlmoitustarve();
-        tuontiList.addAll(tuonnitWithoutIlmoitusTarve);
-        for ( Tuonti tuonti : tuontiList) {
-            tuonti.setIlmoitustarveKasitelty(true);
-        }
-
-        log.info("Oppijatuontien tilat käsitelty. Virheilmoitussähköposteja lähetetty " + sahkopostiosoitteet.size() + " ja tuonteja asetettu käsittelyiksi " + tuontiList.size());
-
-    }
-
 }
