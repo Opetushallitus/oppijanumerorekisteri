@@ -1,0 +1,24 @@
+{
+  "number": 1,
+  "size": 20,
+  "results": [
+    {
+      "oid": "tuonti1",
+      "oppijanumero": null,
+      "luotu": 1668412800000,
+      "muokattu": 1668412800000,
+      "syntymaaika": null,
+      "etunimet": "tuonti1",
+      "kutsumanimi": "tuonti1",
+      "sukunimi": "tuonti1",
+      "yksilointiTila": "HETU_PUUTTUU",
+      "serviceUserOid": "tuonti1",
+      "serviceUserName": "tuonti1 tuonti1"
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1,
+  "numberOfElements": 1,
+  "first": true,
+  "last": true
+}
