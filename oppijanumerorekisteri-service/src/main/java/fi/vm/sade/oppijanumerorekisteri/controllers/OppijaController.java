@@ -99,7 +99,7 @@ public class OppijaController {
         return oppijaService.list(criteria, page, count, sortKey, sortDirection);
     }
 
-    @GetMapping("/tuontiKooste")
+    @GetMapping("/tuontikooste")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")

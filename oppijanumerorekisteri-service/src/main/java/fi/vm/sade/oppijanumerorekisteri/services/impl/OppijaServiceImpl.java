@@ -137,7 +137,7 @@ public class OppijaServiceImpl implements OppijaService {
 
     @Override
     public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination) {
-        final boolean isSuperUser = permissionChecker.isSuperUser();
+        final boolean isSuperUser = permissionChecker.isSuperUserOrCanReadAll();
         Set<String> userOrgs = isSuperUser ? Set.of() : resolveTuontiOrganisations();
         return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, pagination);
     }

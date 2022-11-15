@@ -12,15 +12,15 @@ import javax.validation.constraints.Min;
 @Setter
 public class TuontiKoosteRequest {
 
-    @Min(0)
-    private int page = 0;
+    @Min(1)
+    private int page = 1;
     @Min(1)
     private int pageSize = 20;
     private Direction sort = Direction.DESC;
     private SortField field = SortField.aikaleima;
 
     public Pageable forPage() {
-        return PageRequest.of(page, pageSize, sort, field.name(), "id");
+        return PageRequest.of(page - 1, pageSize, sort, field.name(), "id");
     }
 
     // Enum matching sortable (exposed) fields to ease up bind validation

@@ -1,8 +1,7 @@
 --
 -- View for easily query data for tuontikooste (KJHH-2219)
 --
-CREATE OR REPLACE VIEW tuontikooste AS
-SELECT
+CREATE OR REPLACE VIEW tuontikooste AS SELECT
     t.id,
     t.kasittelija_oid AS kayttaja,
     t.aikaleima,
@@ -19,4 +18,4 @@ GROUP BY
     t.id,
     t.kasittelija_oid,
     t.aikaleima,
-    org.oid
+    org.oid;
