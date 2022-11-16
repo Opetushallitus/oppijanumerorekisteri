@@ -54,7 +54,7 @@ export type HenkiloState = {
     readonly kayttajatietoLoading: boolean;
     readonly henkiloKayttoEstetty: boolean;
     readonly henkilo: Henkilo;
-    readonly kayttaja: Kayttaja | any;
+    readonly kayttaja: Kayttaja;
     readonly henkiloOrgs: Array<any>;
     readonly kayttajatieto: KayttajatiedotRead | any;
     readonly buttonNotifications: any;
@@ -78,12 +78,12 @@ export type HenkiloState = {
 
 const initialState: HenkiloState = {
     henkiloLoading: true,
-    kayttajaLoading: true,
+    kayttajaLoading: false,
     henkiloOrgsLoading: true,
     kayttajatietoLoading: false,
     henkiloKayttoEstetty: false,
     henkilo: {} as Henkilo,
-    kayttaja: {},
+    kayttaja: {} as Kayttaja,
     henkiloOrgs: [],
     kayttajatieto: {},
     buttonNotifications: {},
