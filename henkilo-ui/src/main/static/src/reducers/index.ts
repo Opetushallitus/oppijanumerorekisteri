@@ -26,6 +26,7 @@ import {
     oppijoidenTuontiListaus,
     TuontiListausState,
 } from './oppijoidentuonti.reducer';
+import { tuontiKoosteReducer, TuontiKoosteState } from './tuontikooste.reducer';
 import { palvelukayttajat, PalvelukayttajatState } from './palvelukayttaja.reducer';
 import { palvelutState, PalvelutState } from './palvelut.reducer';
 import { kayttooikeusState, KayttooikeusState } from './kayttooikeus.reducer';
@@ -57,6 +58,7 @@ export type RootState = {
     cas: CasState;
     oppijoidenTuontiYhteenveto: TuontiYhteenvetoState;
     oppijoidenTuontiListaus: TuontiListausState;
+    tuontikooste: TuontiKoosteState;
     palvelukayttajat: PalvelukayttajatState;
     palvelutState: PalvelutState;
     kayttooikeusState: KayttooikeusState;
@@ -88,6 +90,7 @@ const rootReducer = combineReducers<RootState>({
     cas,
     oppijoidenTuontiYhteenveto,
     oppijoidenTuontiListaus,
+    tuontikooste: tuontiKoosteReducer,
     palvelukayttajat,
     palvelutState,
     kayttooikeusState,
