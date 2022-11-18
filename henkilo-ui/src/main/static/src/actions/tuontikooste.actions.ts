@@ -4,7 +4,7 @@ import { addGlobalNotification } from './notification.actions';
 import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { FETCH_TUONTIKOOSTE_REQUEST, FETCH_TUONTIKOOSTE_SUCCESS, FETCH_TUONTIKOOSTE_FAILURE } from './actiontypes';
-import { TuontiKooste } from '../types/tuontikooste.types';
+import { TuontiKooste, TuontiKoosteCriteria } from '../types/tuontikooste.types';
 
 type RequestAction = {
     type: typeof FETCH_TUONTIKOOSTE_REQUEST;
@@ -34,11 +34,12 @@ const requestTuontiKoosteFailure = (): FailureAction => ({
     type: FETCH_TUONTIKOOSTE_FAILURE,
 });
 
-export const fetchTuontiKooste = () => async (dispatch, state: () => any) => {
+export const fetchTuontiKooste = (criteria: TuontiKoosteCriteria) => async (dispatch, state: () => any) => {
     dispatch(requestTuontiKooste());
     try {
+        const query = new URLSearchParams((criteria as unknown) as Record<string, string>).toString();
         const url = urls.url('oppijanumerorekisteri-service.oppija.tuontikooste');
-        const payload = await http.get<TuontiKooste>(url);
+        const payload = await http.get<TuontiKooste>(`${url}?${query}`);
         dispatch(requestTuontiKoosteSuccess(payload));
     } catch (error) {
         dispatch(requestTuontiKoosteFailure());

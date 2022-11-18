@@ -27,11 +27,18 @@ type Paged<T> = {
     totalPages: number;
 };
 
-type TuontikoosteRivi = {
+export type TuontiKoosteRivi = {
     aikaleima: number;
     kayttaja: string;
     successful: number;
     total: number;
 };
 
-export type TuontiKooste = Paged<TuontikoosteRivi>;
+export type TuontiKoosteCriteria = {
+    page: number;
+    pageSize: number;
+    field: 'aikaleima' | 'kayttaja' | 'successful' | 'total';
+    sort: 'ASC' | 'DESC';
+};
+
+export type TuontiKooste = Paged<TuontiKoosteRivi>;
