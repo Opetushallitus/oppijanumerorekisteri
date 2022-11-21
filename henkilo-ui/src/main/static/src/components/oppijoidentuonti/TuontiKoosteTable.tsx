@@ -18,11 +18,16 @@ type Props = {
 };
 
 const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, loading, data, translate }) => {
-    const skip = React.useRef(true);
+    const firstRender = React.useRef(true);
+
+    const skipFetchOnMount = () => (firstRender.current = false);
 
     React.useEffect(() => {
-        skip.current ? (skip.current = false) : fetch(criteria);
+        firstRender.current ? skipFetchOnMount() : fetch(criteria);
     }, [fetch, criteria]);
+
+    const renderSortIcon = (sort: TuontiKoosteCriteria['sort']) =>
+        sort === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
 
     const TableHeader: React.FC<{ field: TuontiKoosteCriteria['field']; translationKey: string }> = ({
         field,
@@ -40,20 +45,25 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
             className="oph-bold sortable-header"
         >
             {translate(translationKey)}
-            {criteria.field === field ? criteria.sort === 'ASC' ? <SortAscIcon /> : <SortDescIcon /> : <SortIconNone />}
+            {criteria.field === field ? renderSortIcon(criteria.sort) : <SortIconNone />}
         </span>
     );
 
     const columns = [
         {
-            Header: <TableHeader field="aikaleima" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA" />,
-            accessor: (tuonti: TuontiKoosteRivi) => moment(tuonti.aikaleima).format('l LT'),
-            id: 'aikaleima',
+            Header: <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
+            accessor: (tuonti: TuontiKoosteRivi) => tuonti.id,
+            id: 'id',
         },
         {
-            Header: <TableHeader field="kayttaja" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.kayttaja,
-            id: 'kayttaja',
+            Header: <TableHeader field="timestamp" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_AIKALEIMA" />,
+            accessor: (tuonti: TuontiKoosteRivi) => moment(tuonti.timestamp).format('l LT'),
+            id: 'timestamp',
+        },
+        {
+            Header: <TableHeader field="author" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />,
+            accessor: (tuonti: TuontiKoosteRivi) => tuonti.author,
+            id: 'author',
         },
         {
             Header: <TableHeader field="total" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_TOTAL" />,
@@ -64,6 +74,11 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
             Header: <TableHeader field="successful" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ONNISTUNEET" />,
             accessor: (tuonti: TuontiKoosteRivi) => tuonti.successful,
             id: 'successful',
+        },
+        {
+            Header: <TableHeader field="failures" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_VIRHEET" />,
+            accessor: (tuonti: TuontiKoosteRivi) => tuonti.failures,
+            id: 'failures',
         },
     ];
 

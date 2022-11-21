@@ -60,34 +60,12 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
             tuontikoosteCriteria: {
                 page: 1,
                 pageSize: 20,
-                field: 'aikaleima',
-                sort: 'ASC',
+                field: 'id',
+                sort: 'DESC',
             },
             tuontikooste: false,
         };
     }
-
-    VirheTable = (): React.ReactElement => (
-        <>
-            <DelayedSearchInput
-                setSearchQueryAction={this.onChangeNimiHaku}
-                loading={this.props.isOppijaHakuLoading}
-                defaultNameQuery={this.state.criteria.nimiHaku}
-                minSearchValueLength={2}
-                placeholder={this.props.translate('OPPIJOIDEN_TUONTI_HAE_HENKILOITA')}
-            />
-
-            <OppijoidenTuontiListaus
-                loading={this.props.isOppijaHakuLoading}
-                state={this.props.listaus}
-                onFetchData={this.onFetchData}
-                onChangeSorting={this.onChangeSorting}
-                sortDirection={this.state.criteria.sortDirection}
-                sortKey={this.state.criteria.sortKey}
-                translate={this.props.translate}
-            ></OppijoidenTuontiListaus>
-        </>
-    );
 
     setTuontiKoostiCriteria(criteria: TuontiKoosteCriteria) {
         this.setState({ ...this.state, tuontikoosteCriteria: criteria });
@@ -123,7 +101,25 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                         translate={this.props.translate}
                     />
                 ) : (
-                    <this.VirheTable />
+                    <>
+                        <DelayedSearchInput
+                            setSearchQueryAction={this.onChangeNimiHaku}
+                            loading={this.props.isOppijaHakuLoading}
+                            defaultNameQuery={this.state.criteria.nimiHaku}
+                            minSearchValueLength={2}
+                            placeholder={this.props.translate('OPPIJOIDEN_TUONTI_HAE_HENKILOITA')}
+                        />
+
+                        <OppijoidenTuontiListaus
+                            loading={this.props.isOppijaHakuLoading}
+                            state={this.props.listaus}
+                            onFetchData={this.onFetchData}
+                            onChangeSorting={this.onChangeSorting}
+                            sortDirection={this.state.criteria.sortDirection}
+                            sortKey={this.state.criteria.sortKey}
+                            translate={this.props.translate}
+                        ></OppijoidenTuontiListaus>
+                    </>
                 )}
             </div>
         );

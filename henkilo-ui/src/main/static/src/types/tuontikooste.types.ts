@@ -28,16 +28,19 @@ type Paged<T> = {
 };
 
 export type TuontiKoosteRivi = {
-    aikaleima: number;
-    kayttaja: string;
+    id: number;
+    timestamp: number;
+    oid: string;
+    author: string;
     successful: number;
+    failures: number;
     total: number;
 };
 
 export type TuontiKoosteCriteria = {
     page: number;
     pageSize: number;
-    field: 'aikaleima' | 'kayttaja' | 'successful' | 'total';
+    field: 'id' | 'timestamp' | 'author' | 'successful' | 'failures' | 'total';
     sort: 'ASC' | 'DESC';
 };
 
