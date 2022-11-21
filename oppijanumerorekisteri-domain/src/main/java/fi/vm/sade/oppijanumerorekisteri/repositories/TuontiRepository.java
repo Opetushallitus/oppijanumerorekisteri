@@ -31,7 +31,7 @@ public interface TuontiRepository extends CrudRepository<Tuonti, Long>, TuontiRe
             nativeQuery = true)
     Optional<ServiceUser> getServiceUserForImportedPerson(@Param("oid") String oid);
 
-    @Query(value = "select distinct id, kayttaja, aikaleima, total, successful from tuontikooste where " +
+    @Query(value = "select distinct id, oid, author, timestamp, total, successful, failures from tuontikooste where " +
             "true = :isSuperUser or org in :userOrgs ",
             countQuery = "select count(distinct id) from tuontikooste where " +
                     "true = :isSuperUser or org in :userOrgs ",
@@ -45,12 +45,18 @@ public interface TuontiRepository extends CrudRepository<Tuonti, Long>, TuontiRe
     }
 
     interface TuontiKooste {
-        String getKayttaja();
+        long getId();
 
-        Date getAikaleima();
+        String getOid();
+
+        String getAuthor();
+
+        Date getTimestamp();
 
         long getTotal();
 
         long getSuccessful();
+
+        long getFailures();
     }
 }

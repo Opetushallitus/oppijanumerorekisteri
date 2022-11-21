@@ -47,7 +47,7 @@ class OppijaControllerIntegrationTest {
             new Customization("results[*].luotu", (o1, o2) -> true),
             new Customization("results[*].muokattu", (o1, o2) -> true));
     private final JSONComparator koosteComparator = new CustomComparator(JSONCompareMode.STRICT,
-            new Customization("content[*].aikaleima", (o1, o2) -> true));
+            new Customization("content[*].timestamp", (o1, o2) -> true));
     @MockBean
     KayttooikeusClient kayttooikeusClient;
     @MockBean
@@ -68,7 +68,7 @@ class OppijaControllerIntegrationTest {
         // If one needs to access in-memory database during development, enable following log statement
         // to access H2 mgmt console. connection settings: jdbc:h2:mem:db with empty credentials.
         // Set breakpoint somewhere. Be sure to only stop the current thread instead of all.
-        //log.info("H2 debug console listening at http://localhost:{}/h2-console", randomPort);
+        log.info("H2 debug console listening at http://localhost:{}/h2-console", randomPort);
     }
 
     @Test
@@ -120,21 +120,21 @@ class OppijaControllerIntegrationTest {
         assertThat(get(KOOSTE))
                 .contains("\"numberOfElements\":2");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=aikaleima&sort=ASC"))
+        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=ASC"))
                 .contains("\"numberOfElements\":1")
-                .contains("\"kayttaja\":\"tuonti1\"");
+                .contains("\"author\":\"tuonti1, tuonti1\"");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=aikaleima&sort=DESC"))
+        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=DESC"))
                 .contains("\"numberOfElements\":1")
-                .contains("\"kayttaja\":\"\"");
+                .contains("\"author\":null");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=2&field=aikaleima&sort=ASC"))
+        assertThat(get(KOOSTE + "?pageSize=1&page=2&field=timestamp&sort=ASC"))
                 .contains("\"numberOfElements\":1")
-                .contains("\"kayttaja\":\"\"");
+                .contains("\"author\":null");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=kayttaja&sort=ASC"))
+        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=author&sort=ASC"))
                 .contains("\"numberOfElements\":1")
-                .contains("\"kayttaja\":\"\"");
+                .contains("\"author\":null");
     }
 
     private String get(String url) {

@@ -1,16 +1,22 @@
 {
   "content": [
     {
-      "total": 1,
       "successful": 0,
-      "kayttaja": "",
-      "aikaleima": 1668416400000
+      "total": 1,
+      "author": null,
+      "oid": "",
+      "timestamp": 1668416400000,
+      "failures": 1,
+      "id": 2
     },
     {
-      "total": 1,
       "successful": 0,
-      "kayttaja": "tuonti1",
-      "aikaleima": 1668412800000
+      "total": 1,
+      "author": "tuonti1, tuonti1",
+      "oid": "tuonti1",
+      "timestamp": 1668412800000,
+      "failures": 1,
+      "id": 1
     }
   ],
   "pageable": {
@@ -29,6 +35,7 @@
   "totalElements": 2,
   "last": true,
   "numberOfElements": 2,
+  "first": true,
   "size": 20,
   "number": 0,
   "sort": {
@@ -36,6 +43,5 @@
     "sorted": true,
     "empty": false
   },
-  "first": true,
   "empty": false
 }
