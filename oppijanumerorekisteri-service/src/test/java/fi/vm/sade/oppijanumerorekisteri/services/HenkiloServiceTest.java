@@ -344,13 +344,13 @@ public class HenkiloServiceTest {
         given(this.oppijanumerorekisteriProperties.getHenkiloViiteSplitSize()).willReturn(5000);
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(singletonList(
                 new HenkiloViiteDto("OID", "MASTER")));
-        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        List<HenkiloViiteDto> results = this.service.findHenkiloViittees(new HenkiloCriteria().getHenkiloOids());
         assertThat(results.size()).isEqualTo(1);
         assertThat(results.get(0).getHenkiloOid()).isEqualTo("OID");
         assertThat(results.get(0).getMasterOid()).isEqualTo("MASTER");
 
         given(this.henkiloViiteRepositoryMock.findBy(any())).willReturn(emptyList());
-        results = this.service.findHenkiloViittees(new HenkiloCriteria());
+        results = this.service.findHenkiloViittees(new HenkiloCriteria().getHenkiloOids());
         assertThat(results.size()).isEqualTo(0);
 
         // Assert split works as intended
@@ -360,7 +360,7 @@ public class HenkiloServiceTest {
         HenkiloCriteria criteria = new HenkiloCriteria() {{
             setHenkiloOids(Sets.newHashSet("OID1", "OID2"));
         }};
-        results = this.service.findHenkiloViittees(criteria);
+        results = this.service.findHenkiloViittees(criteria.getHenkiloOids());
         assertThat(results).size().isEqualTo(2);
     }
 

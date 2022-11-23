@@ -63,7 +63,7 @@ public class Service2ServiceController {
             "'APP_OPPIJANUMEROREKISTERI_DUPLICATE_READ')")
     @RequestMapping(value = "/duplicateHenkilos", method = RequestMethod.POST)
     public List<HenkiloViiteDto> findDuplicateHenkilos(@RequestBody HenkiloCriteria criteria) {
-        return this.henkiloService.findHenkiloViittees(criteria);
+        return this.henkiloService.findHenkiloViittees(criteria.getHenkiloOids());
     }
 
     @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä aikajärjestyksessä",
