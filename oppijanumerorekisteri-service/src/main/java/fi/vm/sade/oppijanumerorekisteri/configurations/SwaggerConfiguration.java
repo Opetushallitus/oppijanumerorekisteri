@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.condition.PathPatternsRequestConditio
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.RequestHandlerProvider;
@@ -37,7 +38,10 @@ public class SwaggerConfiguration {
                 .apiInfo(apiInfo())
                 .directModelSubstitute(Date.class, Integer.class) // unix time
                 .directModelSubstitute(Object.class, java.lang.Void.class) // 204 empty
-                .useDefaultResponseMessages(false);
+                .useDefaultResponseMessages(false)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("fi.vm.sade.oppijanumerorekisteri.controllers"))
+                .build();
     }
 
     @Bean

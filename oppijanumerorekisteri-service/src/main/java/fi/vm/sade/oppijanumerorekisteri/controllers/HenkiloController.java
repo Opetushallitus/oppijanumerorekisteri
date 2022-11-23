@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -52,7 +53,9 @@ public class HenkiloController {
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
+    @ApiIgnore
     @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
+            authorizations = @Authorization("onr"),
             notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @Deprecated // riippuvuus käyttöoikeuspalveluun
     @AuditLogRead(jsonPath = "$..oidHenkilo")
@@ -70,6 +73,7 @@ public class HenkiloController {
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @ApiOperation(value = "Hakee henkilön hakutermin perusteella.",
+            authorizations = @Authorization("onr"),
             notes = "Hakutermillä haetaan henkilön nimen, henkilötunnuksen ja OID:n mukaan."
                     + " Jos henkilöitä löytyy useita, palautetaan niistä nimen mukaan ensimmäinen."
                     + " Tämä on ensisijaisesti tehty suoritusrekisterin käyttöliittymälle.")
@@ -83,7 +87,7 @@ public class HenkiloController {
     @GetMapping("/yhteystieto={arvo}/oid")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @ApiOperation(value = "Hakee henkilöiden OID:t yhteystiedon perusteella.")
+    @ApiOperation(value = "Hakee henkilöiden OID:t yhteystiedon perusteella.", authorizations = @Authorization("onr"))
     public Iterable<String> getByYhteystieto(@PathVariable String arvo) {
         return henkiloService.listOidByYhteystieto(arvo);
     }
@@ -91,13 +95,13 @@ public class HenkiloController {
     @PostMapping("/yhteystiedot")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @ApiOperation("Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä")
+    @ApiOperation(value = "Hakee henkilöiden perustiedot sekä yhteystiedot annetuilla hakukriteereillä", authorizations = @Authorization("onr"))
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     public Iterable<HenkiloYhteystiedotDto> getYhteystiedot(@RequestBody HenkiloCriteria criteria) {
         return henkiloService.listWithYhteystiedotAsAdmin(criteria);
     }
 
-    @ApiOperation("Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä")
+    @ApiOperation(value = "Palauttaa tiedon, onko kirjautuneella käyttäjällä henkilötunnus järjestelmässä", authorizations = @Authorization("onr"))
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/current/hasHetu", method = RequestMethod.GET)
     public Boolean hasHetu() {
@@ -105,7 +109,7 @@ public class HenkiloController {
         return henkiloService.getHasHetu();
     }
 
-    @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella")
+    @ApiOperation(value = "Hakee henkilön OID:n, HeTu:n ja nimet henkilötunnuksen perusteella", authorizations = @Authorization("onr"))
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/henkiloPerusByHetu/{hetu}", method = RequestMethod.GET)
@@ -114,7 +118,7 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloOidHetuNimiByHetu(hetu);
     }
 
-    @ApiOperation("Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
+    @ApiOperation(value = "Hakee annetun henkilö OID listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
@@ -132,6 +136,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Henkilötietojen päivitys",
+            authorizations = @Authorization("onr"),
             notes = "Päivittää kutsussa annetuun OID:n täsmäävän henkilön tiedot")
     @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#henkiloUpdateDto.oidHenkilo, {'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}, 'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "", method = RequestMethod.PUT)
@@ -141,7 +146,7 @@ public class HenkiloController {
         return this.henkiloModificationService.updateHenkilo(henkiloUpdateDto).getOidHenkilo();
     }
 
-    @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
+    @ApiOperation(value = "Hakee annetun henkilön kaikki yhteystiedot", authorizations = @Authorization("onr"))
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/yhteystiedot", method = RequestMethod.GET)
     public HenkilonYhteystiedotViewDto getAllHenkiloYhteystiedot(
@@ -151,7 +156,7 @@ public class HenkiloController {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
-    @ApiOperation("Hakee annetun henkilön yhteystietoryhmän yhteystiedot")
+    @ApiOperation(value = "Hakee annetun henkilön yhteystietoryhmän yhteystiedot", authorizations = @Authorization("onr"))
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/yhteystiedot/{tyyppi}", method = RequestMethod.GET)
     public YhteystiedotDto getHenkiloYhteystiedot(@ApiParam("Henkilön OID") @PathVariable("oid") String oid,
@@ -163,6 +168,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
+            authorizations = @Authorization("onr"),
             notes = "Hakee henkilön tiedot annetun OID:n pohjalta, sisältään kaikki henkilön tiedot.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
@@ -176,6 +182,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Palauttaa, onko annettu henkilö OID järjestelmässä",
+            authorizations = @Authorization("onr"),
             notes = "Jos henkilö löytyy, palautuu ok (200), muuten not found (404)")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
@@ -213,6 +220,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Henkilön haku OID:n perusteella.",
+            authorizations = @Authorization("onr"),
             notes = "Palauttaa henkilön master version jos annettu OID on duplikaatin henkilön slave versio.")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/master", method = RequestMethod.GET)
@@ -223,7 +231,7 @@ public class HenkiloController {
         return henkiloService.getMasterByOid(oid);
     }
 
-    @ApiOperation("Henkilön haku henkilötunnuksen perusteella.")
+    @ApiOperation(value = "Henkilön haku henkilötunnuksen perusteella.", authorizations = @Authorization("onr"))
     @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
     @RequestMapping(value = "/hetu={hetu}", method = RequestMethod.GET)
     @AuditLogRead(jsonPath = "$..oidHenkilo")
@@ -234,6 +242,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Henkilö luonti",
+            authorizations = @Authorization("onr"),
             notes = "Luo uuden henkilön annetun henkilö DTO:n pohjalta.")
     @ApiResponses(value = {@ApiResponse(code = 400, message = "bad input")})
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', " +
@@ -246,6 +255,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Henkilön olemassaolon tarkistus",
+            authorizations = @Authorization("onr"),
             notes = "Tarkistaa henkilön olemassa olon annetun syötteen pohjalta.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = ExistenceCheckResult.class),
@@ -261,12 +271,13 @@ public class HenkiloController {
                                                                @RequestBody @Validated HenkiloExistenceCheckDto details) {
         Optional<String> oid = yksilointiService.exists(details);
         return oid.isPresent() ?
-            new ResponseEntity<>(new ExistenceCheckResult(oid.get()), HttpStatus.OK) :
+                new ResponseEntity<>(new ExistenceCheckResult(oid.get()), HttpStatus.OK) :
                 ResponseEntity.noContent().build();
     }
 
 
     @ApiOperation(value = "Henkilöiden haku OID:ien perusteella.",
+            authorizations = @Authorization("onr"),
             notes = "Hakee henkilöiden tiedot annetun OID:ien pohjalta, sisältään kaikkien henkilön kaikki tiedot.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA',"
@@ -284,6 +295,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Henkilöiden master tietojen haku OID:ien perusteella max 5000 kerrallaan.",
+            authorizations = @Authorization("onr"),
             notes = "Hakee henkilöiden master tiedot annetun OID:ien pohjalta max 5000 kerrallaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
@@ -300,6 +312,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Hakee henkilön tiedot annetun tunnistetiedon avulla.",
+            authorizations = @Authorization("onr"),
             notes = "Hakee henkilön tiedot annetun tunnistetiedon avulla.")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PostAuthorize("@permissionChecker.isAllowedToReadPerson(returnObject.oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, null)")
@@ -311,7 +324,7 @@ public class HenkiloController {
     }
 
     @GetMapping("/{oid}/identification")
-    @ApiOperation("Henkilön tunnistetietojen haku.")
+    @ApiOperation(value = "Henkilön tunnistetietojen haku.", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     public Iterable<IdentificationDto> getIdentifications(@PathVariable String oid) {
@@ -319,7 +332,7 @@ public class HenkiloController {
     }
 
     @PostMapping("/{oid}/identification")
-    @ApiOperation("Henkilön tunnistetietojen lisääminen.")
+    @ApiOperation(value = "Henkilön tunnistetietojen lisääminen.", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     public Iterable<IdentificationDto> addIdentification(@PathVariable String oid,
                                                          @RequestBody @Validated IdentificationDto identification) {
@@ -327,7 +340,7 @@ public class HenkiloController {
     }
 
     @DeleteMapping("/{oid}/identification/{idpEntityId}/{identifier}")
-    @ApiOperation("Henkilön tunnistetietojen poistaminen")
+    @ApiOperation(value = "Henkilön tunnistetietojen poistaminen", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA', 'ROLE_APP_HENKILONHALLINTA_OPHREKISTERI')")
     public Iterable<IdentificationDto> removeIdentification(@PathVariable String oid,
                                                             @PathVariable String idpEntityId,
@@ -337,6 +350,7 @@ public class HenkiloController {
 
 
     @ApiOperation(value = "Listaa sallitut henkilötyypit henkilöiden luontiin liittyen.",
+            authorizations = @Authorization("onr"),
             notes = "Listaa ne henkilötyypit joita kirjautunt käyttäjä saa luoda henkilöhallintaan.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
@@ -382,14 +396,14 @@ public class HenkiloController {
 
     @PutMapping("/{oid}/yksilointitiedot")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation("Päivittään yksilöidyn henkilön tiedot VTJ:stä")
+    @ApiOperation(value = "Päivittään yksilöidyn henkilön tiedot VTJ:stä", authorizations = @Authorization("onr"))
     public void paivitaYksilointitiedot(@PathVariable String oid) {
         yksilointiService.paivitaYksilointitiedot(oid);
     }
 
     @GetMapping("/{oid}/yksilointitiedot")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
-    @ApiOperation("Hakee henkilön yksilöintitiedot oidin perusteella")
+    @ApiOperation(value = "Hakee henkilön yksilöintitiedot oidin perusteella", authorizations = @Authorization("onr"))
     public YksilointitietoDto getYksilointitiedot(@PathVariable String oid,
                                                   @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return yksilointiService.getYksilointiTiedot(oid);
@@ -397,7 +411,7 @@ public class HenkiloController {
 
     @PutMapping("/{oid}/yksilointitiedot/yliajayksiloimaton")
     @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#oid, {'OPPIJANUMEROREKISTERI': {'VTJ_VERTAILUNAKYMA'}}, #permissionService)")
-    @ApiOperation("Yliajaa henkilön tiedot yksilöintitiedoilla. Tarkoitettu henkilöille, joiden VTJ-yksilöinti on epäonnistunut")
+    @ApiOperation(value = "Yliajaa henkilön tiedot yksilöintitiedoilla. Tarkoitettu henkilöille, joiden VTJ-yksilöinti on epäonnistunut", authorizations = @Authorization("onr"))
     public void yliajaHenkilonTiedot(@PathVariable String oid,
                                      @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         yksilointiService.yliajaHenkilonTiedot(oid);
@@ -406,7 +420,7 @@ public class HenkiloController {
     @GetMapping("/yksilointitiedot")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @ApiOperation("Hakee epäonnistuneet yksilöinnit")
+    @ApiOperation(value = "Hakee epäonnistuneet yksilöinnit", authorizations = @Authorization("onr"))
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     public Page<YksilointiVertailuDto> listYksilointitiedot(
             @RequestParam(required = false, defaultValue = "1") @Min(1) int page,
@@ -417,42 +431,42 @@ public class HenkiloController {
     @GetMapping("/{oid}/asiayhteys/palvelu/")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
-    @ApiOperation("Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle")
+    @ApiOperation(value = "Listaa palvelutunnisteet joilla yksilöinti on aktiivinen henkilölle", authorizations = @Authorization("onr"))
     public Iterable<String> listPalvelutunnisteet(@PathVariable String oid) {
         return yksilointiService.listPalvelutunnisteet(oid);
     }
 
     @PutMapping("/{oid}/asiayhteys/palvelu/{palvelutunniste}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation("Aktivoi yksilöinnin annetulle palvelutunnisteelle")
+    @ApiOperation(value = "Aktivoi yksilöinnin annetulle palvelutunnisteelle", authorizations = @Authorization("onr"))
     public void enableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.enableYksilointi(oid, palvelutunniste);
     }
 
     @DeleteMapping("/{oid}/asiayhteys/palvelu/{palvelutunniste}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation("Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta")
+    @ApiOperation(value = "Kytkee yksilöinnin pois päältä annetulta palvelutunnisteelta", authorizations = @Authorization("onr"))
     public void disableYksilointi(@PathVariable String oid, @PathVariable String palvelutunniste) {
         yksilointiService.disableYksilointi(oid, palvelutunniste);
     }
 
     @PostMapping("/{oid}/asiayhteys/hakemus")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation("Aktivoi yksilöinnin annetulle hakemukselle")
+    @ApiOperation(value = "Aktivoi yksilöinnin annetulle hakemukselle", authorizations = @Authorization("onr"))
     public void enableYksilointi(@PathVariable String oid, @Valid @RequestBody AsiayhteysHakemusDto dto) {
         yksilointiService.enableYksilointi(oid, dto);
     }
 
     @PutMapping("/{oid}/asiayhteys/kayttooikeus")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation("Aktivoi yksilöinnin käyttöoikeuden perusteella")
+    @ApiOperation(value = "Aktivoi yksilöinnin käyttöoikeuden perusteella", authorizations = @Authorization("onr"))
     public void enableYksilointi(@PathVariable String oid, @Valid @RequestBody AsiayhteysKayttooikeusDto dto) {
         yksilointiService.enableYksilointi(oid, dto);
     }
 
     @GetMapping("/{oid}/slaves")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}}, #permissionService)")
-    @ApiOperation("Hakee henkilön duplikaatit oidin perusteella")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hakee henkilön duplikaatit oidin perusteella")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     public List<HenkiloReadDto> findSlavesByMasterOid(
             @PathVariable String oid,
@@ -462,7 +476,7 @@ public class HenkiloController {
 
     @GetMapping("/{oid}/duplicates")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
-    @ApiOperation("Hakee henkilon duplikaatit nimeä vertailemalla")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hakee henkilon duplikaatit nimeä vertailemalla")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     public List<HenkiloDuplicateDto> findDuplicates(@PathVariable String oid,
                                                     @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
@@ -471,7 +485,7 @@ public class HenkiloController {
 
     @GetMapping("/{oid}/hakemukset")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
-    @ApiOperation("Hakee henkilön hakemukset haku-app:sta ja atarusta.")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hakee henkilön hakemukset haku-app:sta ja atarusta.")
     public List<HakemusDto> getApplications(@PathVariable String oid, @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.duplicateService.getApplications(oid);
     }
@@ -480,7 +494,7 @@ public class HenkiloController {
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
-    @ApiOperation("Hakee duplikaatit nimeä vertailemalla")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hakee duplikaatit nimeä vertailemalla")
     @AuditLogRead(jsonPath = "$..oidHenkilo")
     public List<HenkiloDuplicateDto> getDuplikaatit(
             @RequestParam String etunimet,
@@ -493,7 +507,7 @@ public class HenkiloController {
 
     @PostMapping("/{oid}/link")
     @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#oid, {'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
-    @ApiOperation("Linkittää henkilöön annetun joukon duplikaatteja")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Linkittää henkilöön annetun joukon duplikaatteja")
     public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
                                        @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
         return this.henkiloModificationService.linkHenkilos(oid, slaveOids);
@@ -501,12 +515,12 @@ public class HenkiloController {
 
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
-    @ApiOperation("Poistaa henkilöltä linkityksen toiseen henkilöön")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Poistaa henkilöltä linkityksen toiseen henkilöön")
     public void unlinkHenkilo(@PathVariable String oid, @PathVariable String slaveOid) {
         this.henkiloModificationService.unlinkHenkilo(oid, slaveOid);
     }
 
-    @ApiOperation("Hae käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hae käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oidHenkilo, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oidHenkilo}/asiointiKieli", method = RequestMethod.GET)
     public String getAsiointikieli(@PathVariable String oidHenkilo,
@@ -515,21 +529,21 @@ public class HenkiloController {
         return this.henkiloService.getAsiointikieli(oidHenkilo);
     }
 
-    @ApiOperation("Hae kirjautuneen käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hae kirjautuneen käyttäjän asiointikieli tai jos ei ole asetettu oletuksena suomi")
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/current/asiointiKieli", method = RequestMethod.GET)
     public String getCurrentUserAsiointikieli() {
         return this.henkiloService.getCurrentUserAsiointikieli();
     }
 
-    @ApiOperation("Hae kirjautuneen käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hae kirjautuneen käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/current/omattiedot", method = RequestMethod.GET)
     public HenkiloOmattiedotDto getCurrentUserOmatTiedot() {
         return this.henkiloService.getOmatTiedot();
     }
 
-    @ApiOperation("Hae käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hae käyttäjän omat tiedot. Asiointikieleksi annetaan suomi jos ei asetettu.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/{oidHenkilo}/omattiedot", method = RequestMethod.GET)
@@ -537,7 +551,7 @@ public class HenkiloController {
         return this.henkiloService.getOmatTiedot(oidHenkilo);
     }
 
-    @ApiOperation("Hakee annetun henkilötunnus-listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hakee annetun henkilötunnus-listaa vastaavien henkilöiden perustiedot. Rajapinnasta saa hakea enintään 5000 henkilön tietoja kerralla.")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
             + "'ROLE_APP_OPPIJANUMEROREKISTERI_HENKILON_RU')")
@@ -551,7 +565,7 @@ public class HenkiloController {
                 permissionService);
     }
 
-    @ApiOperation("Hae käyttäjän huoltajat oidin perusteella")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hae käyttäjän huoltajat oidin perusteella")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/huoltajat", method = RequestMethod.GET)
     @AuditLogRead(jsonPath = "$..oidHenkilo")
@@ -559,7 +573,7 @@ public class HenkiloController {
         return this.henkiloService.getHenkiloHuoltajat(oid);
     }
 
-    @ApiOperation("Hae huoltajasuhteiden muutokset tietyltä aikaväliltä")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Hae huoltajasuhteiden muutokset tietyltä aikaväliltä")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/huoltajasuhdemuutokset", method = RequestMethod.GET)
     @AuditLogRead(jsonPath = "$.*")
@@ -574,6 +588,7 @@ public class HenkiloController {
     }
 
     @ApiOperation(value = "Hakee huoltajasuhteiden muutokset annetusta päivämäärästä aikajärjestyksessä",
+            authorizations = @Authorization("onr"),
             notes = "Sivutusta käytettäessä OID:t eivät välttämättä ole aikajärjestyksessä. Palauttaa maksimissaan 10000 OID:a.")
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @RequestMapping(value = "/huoltajasuhdemuutokset/alkaen/{at}", method = RequestMethod.GET)
