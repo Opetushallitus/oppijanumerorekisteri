@@ -76,7 +76,9 @@ class HenkiloViewPage extends React.Component<Props> {
                 </div>
                 {this.props.henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
                     <div className="wrapper">
-                        {this.props.henkilo.henkiloLoading || this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
+                        {this.props.henkilo.henkiloLoading ||
+                        this.props.henkilo.kayttajaLoading ||
+                        this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
                             <Loader />
                         ) : (
                             <HenkiloViewContactContent {...this.props} readOnly={true} />

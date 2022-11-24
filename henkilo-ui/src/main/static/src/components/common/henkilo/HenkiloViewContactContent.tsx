@@ -12,14 +12,15 @@ import AddIcon from '../icons/AddIcon';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';
 import { updateHenkiloAndRefetch } from '../../../actions/henkilo.actions';
-import { Localisations } from '../../../types/localisation.type';
-import { Locale } from '../../../types/locale.type';
-import { HenkiloState } from '../../../reducers/henkilo.reducer';
-import { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
-import { GlobalNotificationConfig } from '../../../types/notification.types';
-import { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { Localisations } from '../../../types/localisation.type';
+import type { Locale } from '../../../types/locale.type';
+import type { HenkiloState } from '../../../reducers/henkilo.reducer';
+import type { Henkilo } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
+import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
+import type { GlobalNotificationConfig } from '../../../types/notification.types';
+import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
-import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
+import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { validateEmail } from '../../../validation/EmailValidator';
 import type { Option } from 'react-select';
 import { WORK_ADDRESS, EMAIL } from '../../../types/constants';
@@ -41,7 +42,7 @@ type DispatchProps = {
     updateHenkiloAndRefetch: (arg0: Henkilo, arg1?: GlobalNotificationConfig) => void;
 };
 
-type Props = OwnProps & StateProps & DispatchProps;
+export type Props = OwnProps & StateProps & DispatchProps;
 
 export type ContactInfo = {
     id?: number;
@@ -49,6 +50,7 @@ export type ContactInfo = {
     henkiloUiId?: string;
     name: string;
     readOnly: boolean;
+    alkupera: string;
     value: Array<{ label: string; value: string; inputValue: string }>;
 };
 
@@ -88,7 +90,14 @@ export const isLastWorkEmail = (
     removeList: Array<number | string>
 ): boolean => isWorkEmail(infoGroup) && resolveWorkAddresses(contactInfo, removeList).length === 1;
 
-class HenkiloViewContactContent extends React.Component<Props, State> {
+const isNotSuperuser = (omattiedot: OmattiedotState): boolean => !omattiedot.isAdmin;
+
+const isVirkailija = (kayttaja: Kayttaja): boolean =>
+    kayttaja.kayttajaTyyppi === undefined || kayttaja.kayttajaTyyppi === 'VIRKAILIJA';
+
+const isFromVTJ = (group: ContactInfo): boolean => group.alkupera === PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VTJ;
+
+export class HenkiloViewContactContentComponent extends React.Component<Props, State> {
     henkiloUpdate: Henkilo;
     contactInfoTemplate: Array<{
         label: string;
@@ -130,9 +139,15 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         };
     }
 
+    isHidden = (group: ContactInfo): boolean =>
+        isNotSuperuser(this.props.omattiedot) && isVirkailija(this.props.henkilo.kayttaja) && isFromVTJ(group);
+
+    isVisible = (group: ContactInfo): boolean => !this.isHidden(group);
+
     createContent() {
         const defaultWorkAddress = resolveDefaultWorkAddress(this.state.contactInfo, this.state.yhteystietoRemoveList);
         const content: Array<React.ReactNode> = this.state.contactInfo
+            .filter(this.isVisible)
             .filter(excludeRemovedItems(this.state.yhteystietoRemoveList))
             .map((yhteystiedotRyhmaFlat, idx) => (
                 <div key={idx}>
@@ -209,6 +224,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
                 {this.props.L['MUOKKAA_LINKKI']}
             </Button>
         ) : null;
+
         return (
             <div className="henkiloViewUserContentWrapper contact-content">
                 <div>
@@ -298,7 +314,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
         const henkiloUiId = 'henkilo_ui_id_' + PropertySingleton.getNewId();
         const newYhteystiedotRyhma = {
             readOnly: false,
-            ryhmaAlkuperaTieto: 'alkupera2', // Virkailija
+            ryhmaAlkuperaTieto: PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VIRKAILIJA_UI,
             ryhmaKuvaus: yhteystietoryhmaTyyppi,
             yhteystieto: this.contactInfoTemplate.map((template) => ({
                 yhteystietoTyyppi: template.label,
@@ -380,6 +396,7 @@ class HenkiloViewContactContent extends React.Component<Props, State> {
             id: yhteystiedotRyhma.id,
             henkiloUiId: henkiloUiId,
             type: yhteystiedotRyhma.ryhmaKuvaus,
+            alkupera: yhteystiedotRyhma.ryhmaAlkuperaTieto,
         };
     }
 
@@ -399,4 +416,4 @@ const mapStateToProps = (state: RootState): StateProps => ({
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     updateHenkiloAndRefetch,
-})(HenkiloViewContactContent);
+})(HenkiloViewContactContentComponent);
