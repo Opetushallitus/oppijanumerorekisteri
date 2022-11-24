@@ -2,9 +2,10 @@ package fi.vm.sade.oppijanumerorekisteri.repositories;
 
 import fi.vm.sade.oppijanumerorekisteri.models.AsiayhteysPalvelu;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import org.springframework.data.repository.CrudRepository;
+
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.repository.CrudRepository;
 
 public interface AsiayhteysPalveluRepository extends CrudRepository<AsiayhteysPalvelu, Long> {
 

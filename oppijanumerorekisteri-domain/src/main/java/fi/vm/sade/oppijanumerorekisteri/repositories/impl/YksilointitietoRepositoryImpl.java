@@ -4,8 +4,9 @@ import fi.vm.sade.oppijanumerorekisteri.models.QYksilointitieto;
 import fi.vm.sade.oppijanumerorekisteri.models.Yksilointitieto;
 import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepositoryCustom;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.YksilointitietoCriteria;
-import javax.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaContext;
+
+import javax.persistence.EntityManager;
 
 public class YksilointitietoRepositoryImpl implements YksilointitietoRepositoryCustom {
 

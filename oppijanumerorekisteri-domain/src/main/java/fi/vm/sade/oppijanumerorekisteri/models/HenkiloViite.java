@@ -1,10 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
-import javax.persistence.*;
-
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloViiteDto;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
 
 /**
  * Duplikaattien henkilöiden tunnistamiseen.

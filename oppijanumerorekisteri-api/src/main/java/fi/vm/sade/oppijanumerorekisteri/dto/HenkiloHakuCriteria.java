@@ -1,9 +1,10 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Set;
 
 /**
  * Henkilöhaku kohdistuu oppijanumerorekisterin lisäksi käyttöoikeuspalveluun.

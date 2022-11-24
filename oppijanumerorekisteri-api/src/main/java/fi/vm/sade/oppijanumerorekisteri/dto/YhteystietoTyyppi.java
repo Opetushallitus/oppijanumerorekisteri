@@ -1,9 +1,5 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.ReadableYhteystiedot;
-import fi.vm.sade.oppijanumerorekisteri.dto.Setter;
-import fi.vm.sade.oppijanumerorekisteri.dto.WritableYhteystiedot;
-
 import java.util.function.Function;
 
 public enum YhteystietoTyyppi {

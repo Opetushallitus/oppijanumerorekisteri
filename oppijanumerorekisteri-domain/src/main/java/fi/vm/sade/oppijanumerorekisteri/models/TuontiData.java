@@ -1,14 +1,11 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
+import lombok.*;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Oppijoiden tuonnin tiedot käsittelemättömänä.

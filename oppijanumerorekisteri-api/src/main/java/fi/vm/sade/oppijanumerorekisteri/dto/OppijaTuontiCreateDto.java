@@ -1,16 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import java.util.List;
+import lombok.Setter;
+import lombok.*;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter

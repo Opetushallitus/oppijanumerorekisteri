@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.*;
 import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 

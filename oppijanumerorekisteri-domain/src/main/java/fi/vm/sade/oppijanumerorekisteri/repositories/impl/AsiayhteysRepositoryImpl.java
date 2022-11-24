@@ -4,18 +4,16 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
-import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import fi.vm.sade.oppijanumerorekisteri.models.QAsiayhteysHakemus;
-import fi.vm.sade.oppijanumerorekisteri.models.QAsiayhteysKayttooikeus;
-import fi.vm.sade.oppijanumerorekisteri.models.QAsiayhteysPalvelu;
-import fi.vm.sade.oppijanumerorekisteri.models.QHenkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.AsiayhteysRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.AsiayhteysCriteria;
-import static java.util.Arrays.asList;
-import java.util.List;
-import javax.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @Repository
 public class AsiayhteysRepositoryImpl implements AsiayhteysRepository {

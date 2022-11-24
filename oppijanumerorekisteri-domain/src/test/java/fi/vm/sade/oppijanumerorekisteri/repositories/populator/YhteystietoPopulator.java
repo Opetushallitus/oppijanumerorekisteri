@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.repositories.populator;
 
-import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoTyyppi;
+import fi.vm.sade.oppijanumerorekisteri.models.Yhteystieto;
 
 import javax.persistence.EntityManager;
 

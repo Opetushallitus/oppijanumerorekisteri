@@ -1,14 +1,17 @@
 package fi.vm.sade.oppijanumerorekisteri.models;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import static java.util.Objects.requireNonNull;
 import java.util.Set;
-import org.hibernate.annotations.BatchSize;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Yhteystietojen ryhmä (esimerkiksi kotiosoite tai työosoite).

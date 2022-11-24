@@ -3,9 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**

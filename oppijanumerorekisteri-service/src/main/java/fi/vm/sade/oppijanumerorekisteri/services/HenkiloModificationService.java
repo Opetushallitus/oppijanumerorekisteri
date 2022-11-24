@@ -2,7 +2,6 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

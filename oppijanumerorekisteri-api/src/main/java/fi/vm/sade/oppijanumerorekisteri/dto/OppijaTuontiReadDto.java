@@ -1,11 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import java.util.Collection;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Getter;
 import lombok.Setter;
+import lombok.*;
+
+import java.util.Collection;
 
 @Getter
 @Setter

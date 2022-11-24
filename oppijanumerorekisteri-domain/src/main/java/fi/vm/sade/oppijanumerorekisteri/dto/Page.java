@@ -1,13 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import static java.util.Collections.emptyList;
-import java.util.Iterator;
-import java.util.List;
-import static java.util.Objects.requireNonNull;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.util.Iterator;
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Malli sivutukselle.

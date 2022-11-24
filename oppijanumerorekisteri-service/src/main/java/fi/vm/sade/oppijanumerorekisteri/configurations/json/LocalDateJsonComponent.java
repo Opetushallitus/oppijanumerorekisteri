@@ -9,10 +9,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import org.springframework.boot.jackson.JsonComponent;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import org.springframework.boot.jackson.JsonComponent;
 
 /**
  * Jackson-konfiguraatio {@link LocalDate}:lle.

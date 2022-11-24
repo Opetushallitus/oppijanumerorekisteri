@@ -4,14 +4,16 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystiedotDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloYhteystietoDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystiedotRyhmaDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YhteystietoDto;
-import java.util.LinkedHashMap;
-import java.util.List;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import ma.glasnost.orika.CustomConverter;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.metadata.Type;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class HenkiloYhteystiedotDtoMapper extends CustomConverter<List<HenkiloYhteystietoDto>, List<HenkiloYhteystiedotDto>> {

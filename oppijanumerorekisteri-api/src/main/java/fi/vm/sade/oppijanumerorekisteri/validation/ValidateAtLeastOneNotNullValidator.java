@@ -1,13 +1,14 @@
 package fi.vm.sade.oppijanumerorekisteri.validation;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
-import static java.util.stream.Collectors.joining;
 import java.util.stream.Stream;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Validoi että ainakin yksi annetuista kentistä on syötetty (!= null).

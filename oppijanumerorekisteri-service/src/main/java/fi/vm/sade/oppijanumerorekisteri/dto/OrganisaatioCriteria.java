@@ -1,13 +1,15 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
 import static java.util.stream.Collectors.joining;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Henkilöiden hakemiseen käyttöoikeuspalvelusta henkilön organisaatioiden ja
