@@ -5,7 +5,6 @@ import '../../oph-table.css';
 import moment from 'moment';
 import TableLoader from '../common/icons/TableLoader';
 import './OppijoidenTuontiListaus.css';
-import { Localisations } from '../../types/localisation.type';
 import { TuontiListausState } from '../../reducers/oppijoidentuonti.reducer';
 import { OppijaList } from '../../types/domain/oppijanumerorekisteri/oppijalist.types';
 import SortIconNone from '../common/icons/SortIconNone';
@@ -13,12 +12,13 @@ import SortAscIcon from '../common/icons/SortAscIcon';
 import SortDescIcon from '../common/icons/SortDescIcon';
 
 type Props = {
-    L: Localisations;
+    translate: (key: string) => string;
     state: TuontiListausState;
     onFetchData: (arg0: number, arg1: number) => void;
     onChangeSorting: (arg0: string, arg1: string) => void;
     sortKey: string;
     sortDirection: string;
+    loading: boolean;
 };
 
 /**
@@ -68,13 +68,13 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
                     pages={this.props.state.data.totalPages}
                     columns={columns}
                     sortable={false}
-                    previousText={this.props.L['TAULUKKO_EDELLINEN']}
-                    nextText={this.props.L['TAULUKKO_SEURAAVA']}
-                    noDataText={this.props.L['TAULUKKO_EI_RIVEJA']}
-                    pageText={this.props.L['TAULUKKO_SIVU']}
+                    previousText={this.props.translate('TAULUKKO_EDELLINEN')}
+                    nextText={this.props.translate('TAULUKKO_SEURAAVA')}
+                    noDataText={this.props.translate('TAULUKKO_EI_RIVEJA')}
+                    pageText={this.props.translate('TAULUKKO_SIVU')}
                     ofText="/"
-                    rowsText={this.props.L['TAULUKKO_RIVIA']}
-                    loading={this.props.state.loading}
+                    rowsText={this.props.translate('TAULUKKO_RIVIA')}
+                    loading={this.props.loading}
                     LoadingComponent={TableLoader}
                     className="OppijoidenTuontiListaus table -striped"
                     manual
@@ -94,14 +94,14 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
                 onClick={() => this.props.onChangeSorting(headerKey, newSortDirection)}
                 className="oph-bold sortable-header"
             >
-                {this.props.L[localizationKey]}{' '}
+                {this.props.translate(localizationKey)}{' '}
                 {this.props.sortKey === headerKey ? this.renderSortIcon() : <SortIconNone></SortIconNone>}
             </span>
         );
     }
 
     renderHeader(localizationKey: string) {
-        return <span className="oph-bold">{this.props.L[localizationKey]}</span>;
+        return <span className="oph-bold">{this.props.translate(localizationKey)}</span>;
     }
 
     renderSortIcon() {
@@ -117,7 +117,7 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
     }
 
     renderYksilointiTilaText(arvo: string) {
-        return YKSILOINTI_TILAT[arvo] ? YKSILOINTI_TILAT[arvo](this.props.L) : '';
+        return YKSILOINTI_TILAT[arvo] ? YKSILOINTI_TILAT[arvo](this.props.translate) : '';
     }
 
     renderOppijaLinkki(henkilo: OppijaList) {
@@ -128,10 +128,10 @@ class OppijoidenTuontiListaus extends React.Component<Props> {
 }
 
 const YKSILOINTI_TILAT = {
-    OK: (_) => '',
-    VIRHE: (L) => L['YKSILOINTI_TILA_VIRHE'],
-    KESKEN: (L) => L['YKSILOINTI_TILA_KESKEN'],
-    HETU_PUUTTUU: (L) => L['YKSILOINTI_TILA_HETU_PUUTTUU'],
+    OK: () => '',
+    VIRHE: (translate: (key: string) => string) => translate('YKSILOINTI_TILA_VIRHE'),
+    KESKEN: (translate: (key: string) => string) => translate('YKSILOINTI_TILA_KESKEN'),
+    HETU_PUUTTUU: (translate: (key: string) => string) => translate('YKSILOINTI_TILA_HETU_PUUTTUU'),
 };
 
 export default OppijoidenTuontiListaus;
