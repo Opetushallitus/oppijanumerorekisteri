@@ -62,6 +62,9 @@ public class HenkiloServiceTest {
     @Autowired
     private OrikaConfiguration mapper;
 
+    @MockBean
+    private OppijaTuontiService tuontiService;
+
     @Spy
     @InjectMocks
     private HenkiloServiceImpl service;

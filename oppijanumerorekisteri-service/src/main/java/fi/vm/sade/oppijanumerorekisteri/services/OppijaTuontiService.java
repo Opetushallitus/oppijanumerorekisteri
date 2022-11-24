@@ -3,6 +3,9 @@ package fi.vm.sade.oppijanumerorekisteri.services;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiPerustiedotReadDto;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -27,15 +30,15 @@ public interface OppijaTuontiService {
      * Tallentaa oppijoiden tuonnin henkilöinä kantaan. Tämä on oppijoiden
      * tuonnin vaihe 2.
      *
-     * @param id oppijoiden tuonnin id
+     * @param id      oppijoiden tuonnin id
      * @param eräkoko kuinka monta riviä käsitellään
      * @return true jos oppijoiden tuonti on käsitelty kokonaan
-     *
      */
     boolean create(long id, int eräkoko);
 
     /**
      * Palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.
+     *
      * @return aktiiviset organisaatiot
      */
     Set<String> getOrganisaatioOidsByKayttaja();
@@ -55,4 +58,11 @@ public interface OppijaTuontiService {
      */
     void handleOppijaTuontiIlmoitus();
 
+    /**
+     * Resolve who initiated tuonti for henkilo
+     *
+     * @param oid identifier for henkilo
+     * @return oid of the creator
+     */
+    Optional<TuontiRepository.ServiceUser> getServiceUserForImportedPerson(String oid);
 }

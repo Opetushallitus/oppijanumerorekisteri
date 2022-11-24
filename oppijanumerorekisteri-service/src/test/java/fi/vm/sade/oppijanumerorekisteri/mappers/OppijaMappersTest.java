@@ -4,6 +4,7 @@ import fi.vm.sade.oppijanumerorekisteri.KoodistoServiceMock;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class OppijaMappersTest {
 
     @MockBean
     private KansalaisuusRepository kansalaisuusRepository;
+
+    @MockBean
+    private OppijaTuontiService tuontiService;
 
     @Test
     public void mapperShouldMapOid() {

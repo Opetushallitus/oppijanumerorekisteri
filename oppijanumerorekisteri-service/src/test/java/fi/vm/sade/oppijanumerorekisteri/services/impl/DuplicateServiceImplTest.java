@@ -16,6 +16,7 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
+import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
 import org.assertj.core.groups.Tuple;
 import org.junit.Test;
@@ -38,6 +39,9 @@ import static org.mockito.Mockito.mock;
 public class DuplicateServiceImplTest {
     @Autowired
     private OrikaConfiguration mapper;
+
+    @MockBean
+    private OppijaTuontiService tuontiService;
 
     @Autowired
     private DuplicateService duplicateService;
