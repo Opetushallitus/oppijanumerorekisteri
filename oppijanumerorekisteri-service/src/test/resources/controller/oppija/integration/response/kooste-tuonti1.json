@@ -1,0 +1,38 @@
+{
+  "content": [
+    {
+      "timestamp": 1668412800000,
+      "failures": 1,
+      "author": "tuonti1, tuonti1",
+      "total": 1,
+      "oid": "tuonti1",
+      "successful": 0,
+      "id": 1
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": true,
+      "unsorted": false,
+      "empty": false
+    },
+    "pageNumber": 0,
+    "pageSize": 20,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalPages": 1,
+  "totalElements": 1,
+  "last": true,
+  "numberOfElements": 1,
+  "sort": {
+    "sorted": true,
+    "unsorted": false,
+    "empty": false
+  },
+  "size": 20,
+  "number": 0,
+  "first": true,
+  "empty": false
+}

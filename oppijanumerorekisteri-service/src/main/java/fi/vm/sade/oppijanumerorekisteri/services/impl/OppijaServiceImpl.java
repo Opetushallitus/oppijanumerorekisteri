@@ -18,8 +18,8 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactory;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,19 +30,19 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class OppijaServiceImpl implements OppijaService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OppijaServiceImpl.class);
-
     private final OppijaTuontiService oppijaTuontiService;
     private final OppijaTuontiAsyncService oppijaTuontiAsyncService;
-    private final HenkiloService henkiloService;
     private final HenkiloModificationService henkiloModificationService;
     private final OrganisaatioService organisaatioService;
     private final OrikaConfiguration mapper;
@@ -113,7 +113,7 @@ public class OppijaServiceImpl implements OppijaService {
     @Transactional(readOnly = true)
     public OppijaTuontiYhteenvetoDto getYhteenveto(OppijaTuontiCriteria criteria) {
         prepare(criteria);
-        LOGGER.info("Haetaan oppijoiden tuonnin yhteenveto {}", criteria);
+        log.info("Haetaan oppijoiden tuonnin yhteenveto {}", criteria);
         OppijaTuontiYhteenvetoDto dto = new OppijaTuontiYhteenvetoDto();
         dto.setOnnistuneet(henkiloRepository.countByYksilointiOnnistuneet(criteria));
         dto.setVirheet(henkiloRepository.countByYksilointiVirheet(criteria));
@@ -127,7 +127,7 @@ public class OppijaServiceImpl implements OppijaService {
         prepare(criteria);
 
         OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(sortDirection, sortKey);
-        LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
+        log.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
         List<Henkilo> henkilot = henkiloRepository.findBy(criteria, limit, offset, sort);
@@ -136,12 +136,26 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     @Override
+    public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination) {
+        final boolean isSuperUser = permissionChecker.isSuperUserOrCanReadAll();
+        Set<String> userOrgs = isSuperUser ? Set.of() : resolveTuontiOrganisations();
+        return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, pagination);
+    }
+
+    private Set<String> resolveTuontiOrganisations() {
+        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
+                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
+                .collect(toSet());
+    }
+
+    @Override
     public Page<MasterHenkiloDto<OppijaReadDto>> listMastersBy(OppijaTuontiCriteria criteria, int page, int count) {
         // haetaan henkilöt
         prepare(criteria);
 
         OppijaTuontiSort sort = OppijaTuontiSortFactory.getOppijaTuontiSort(Sort.Direction.ASC, OppijaTuontiSortKey.MODIFIED);
-        LOGGER.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
+        log.info("Haetaan oppijat {}, {} (sivu: {}, määrä: {})", criteria, sort, page, count);
         int limit = count;
         int offset = (page - 1) * count;
         List<Henkilo> slaves = henkiloRepository.findBy(criteria, limit, offset, sort);
@@ -155,24 +169,6 @@ public class OppijaServiceImpl implements OppijaService {
         HenkiloToMasterDto toMasterDto = new HenkiloToMasterDto(mastersBySlaveOid, mapper);
         List<MasterHenkiloDto<OppijaReadDto>> masters = slaves.stream().map(toMasterDto).collect(toList());
         return Page.of(page, count, masters, total);
-    }
-
-    @RequiredArgsConstructor
-    private static class HenkiloToMasterDto implements Function<Henkilo, MasterHenkiloDto<OppijaReadDto>> {
-
-        private final Map<String, Henkilo> mastersBySlaveOid;
-        private final OrikaConfiguration mapper;
-
-        @Override
-        public MasterHenkiloDto<OppijaReadDto> apply(Henkilo slave) {
-            MasterHenkiloDto<OppijaReadDto> dto = new MasterHenkiloDto<>();
-            String slaveOid = slave.getOidHenkilo();
-            dto.setOid(slaveOid);
-            Henkilo master = mastersBySlaveOid.getOrDefault(slaveOid, slave);
-            dto.setMaster(mapper.map(master, OppijaReadDto.class));
-            return dto;
-        }
-
     }
 
     @Override
@@ -230,6 +226,24 @@ public class OppijaServiceImpl implements OppijaService {
             }
             criteria.setOrRetainOrganisaatioOids(organisaatioOidsByKayttaja);
         }
+    }
+
+    @RequiredArgsConstructor
+    private static class HenkiloToMasterDto implements Function<Henkilo, MasterHenkiloDto<OppijaReadDto>> {
+
+        private final Map<String, Henkilo> mastersBySlaveOid;
+        private final OrikaConfiguration mapper;
+
+        @Override
+        public MasterHenkiloDto<OppijaReadDto> apply(Henkilo slave) {
+            MasterHenkiloDto<OppijaReadDto> dto = new MasterHenkiloDto<>();
+            String slaveOid = slave.getOidHenkilo();
+            dto.setOid(slaveOid);
+            Henkilo master = mastersBySlaveOid.getOrDefault(slaveOid, slave);
+            dto.setMaster(mapper.map(master, OppijaReadDto.class));
+            return dto;
+        }
+
     }
 
 }

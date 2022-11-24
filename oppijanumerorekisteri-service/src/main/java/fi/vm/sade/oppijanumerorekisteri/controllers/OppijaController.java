@@ -2,6 +2,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import io.swagger.annotations.ApiOperation;
@@ -96,6 +97,15 @@ public class OppijaController {
             @RequestParam(required = false, defaultValue = "ASC") Sort.Direction sortDirection) {
         criteria.setVainVirheet(true);
         return oppijaService.list(criteria, page, count, sortKey, sortDirection);
+    }
+
+    @GetMapping("/tuontikooste")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @ApiOperation(value = "Kooste oppijoiden tuonneista")
+    org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(@Valid TuontiKoosteRequest tuontiKoosteRequest) {
+        return oppijaService.tuontiKooste(tuontiKoosteRequest.forPage());
     }
 
     @GetMapping("/muuttuneet")
