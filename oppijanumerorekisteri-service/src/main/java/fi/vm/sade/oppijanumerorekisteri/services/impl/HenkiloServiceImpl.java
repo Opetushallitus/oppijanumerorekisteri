@@ -279,21 +279,16 @@ public class HenkiloServiceImpl implements HenkiloService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HenkiloViiteDto> findHenkiloViittees(HenkiloCriteria criteria) {
+    public List<HenkiloViiteDto> findHenkiloViittees(Set<String> oids) {
         List<HenkiloViiteDto> henkiloViiteDtoList = new ArrayList<>();
-        if(criteria.getHenkiloOids() != null) {
-            List<List<String>> henkiloOidListSplit = Lists.partition(
-                    new ArrayList<>(criteria.getHenkiloOids()),
-                    oppijanumerorekisteriProperties.getHenkiloViiteSplitSize());
-            henkiloOidListSplit.forEach(henkiloOidList -> {
-                criteria.setHenkiloOids(new HashSet<>(henkiloOidList));
-                henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
-            });
+        if (oids != null) {
+            Lists.partition(
+                            new ArrayList<>(oids),
+                            oppijanumerorekisteriProperties.getHenkiloViiteSplitSize())
+                    .forEach(henkiloOidList -> henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(new HashSet<>(henkiloOidList))));
+        } else {
+            henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(Set.of()));
         }
-        else {
-            henkiloViiteDtoList.addAll(this.henkiloViiteRepository.findBy(criteria));
-        }
-
         return henkiloViiteDtoList;
     }
 
