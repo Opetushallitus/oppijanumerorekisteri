@@ -71,6 +71,15 @@ const VahvaTunnistusInfoContainer: React.FC<Props> = (props: Props) => {
                 buttonText="REKISTEROIDY_KIRJAUTUMISSIVULLE"
             />
         );
+    } else if (props.loginToken === 'vanhakutsu') {
+        return (
+            <VirhePage
+                theme="gray"
+                topic="VAHVATUNNISTUSINFO_VIRHE_VANHA_KUTSU_OTSIKKO"
+                text="VAHVATUNNISTUSINFO_VIRHE_VANHA_KUTSU_TEKSTI"
+                buttonText=""
+            />
+        );
     } else if (props.virhe) {
         return <VirhePage topic="VAHVATUNNISTUSINFO_VIRHE_OTSIKKO" text="VAHVATUNNISTUSINFO_VIRHE_TEKSTI" />;
     } else {
