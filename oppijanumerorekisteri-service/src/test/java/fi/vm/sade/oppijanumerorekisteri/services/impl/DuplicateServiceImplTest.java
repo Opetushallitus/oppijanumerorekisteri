@@ -15,6 +15,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.DuplicateService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
 import fi.vm.sade.oppijanumerorekisteri.services.UserDetailsHelper;
@@ -41,7 +42,7 @@ public class DuplicateServiceImplTest {
     private OrikaConfiguration mapper;
 
     @MockBean
-    private OppijaTuontiService tuontiService;
+    private TuontiRepository tuontiRepository;
 
     @Autowired
     private DuplicateService duplicateService;

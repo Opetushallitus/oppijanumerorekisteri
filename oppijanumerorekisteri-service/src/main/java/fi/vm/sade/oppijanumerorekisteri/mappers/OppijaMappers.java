@@ -5,6 +5,7 @@ import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.models.Kielisyys;
+import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
@@ -27,7 +28,7 @@ import static java.util.stream.Collectors.toSet;
 public class OppijaMappers {
 
     @Bean
-    public ClassMap<Henkilo, OppijaListDto> oppijaListDtoClassMap(MapperFactory mapperFactory, OppijaTuontiService tuontiService) {
+    public ClassMap<Henkilo, OppijaListDto> oppijaListDtoClassMap(MapperFactory mapperFactory, TuontiRepository tuontiRepository) {
         return mapperFactory.classMap(Henkilo.class, OppijaListDto.class)
                 .byDefault()
                 .field("oidHenkilo", "oid")
@@ -36,7 +37,7 @@ public class OppijaMappers {
                 .customize(new CustomMapper<Henkilo, OppijaListDto>() {
                     @Override
                     public void mapAtoB(Henkilo henkilo, OppijaListDto oppijaListDto, MappingContext context) {
-                        tuontiService.getServiceUserForImportedPerson(henkilo.getOidHenkilo()).ifPresent(serviceUser -> {
+                        tuontiRepository.getServiceUserForImportedPerson(henkilo.getOidHenkilo()).ifPresent(serviceUser -> {
                             oppijaListDto.setServiceUserOid(serviceUser.getOid());
                             oppijaListDto.setServiceUserName(serviceUser.getName());
                         });

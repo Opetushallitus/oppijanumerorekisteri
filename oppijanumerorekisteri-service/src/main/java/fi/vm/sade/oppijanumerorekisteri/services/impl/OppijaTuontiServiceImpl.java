@@ -209,11 +209,6 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     }
 
-    @Override
-    public Optional<TuontiRepository.ServiceUser> getServiceUserForImportedPerson(String oid) {
-        return tuontiRepository.getServiceUserForImportedPerson(oid);
-    }
-
     @RequiredArgsConstructor
     private class TuontiRiviMapper {
 

@@ -57,12 +57,4 @@ public interface OppijaTuontiService {
      *
      */
     void handleOppijaTuontiIlmoitus();
-
-    /**
-     * Resolve who initiated tuonti for henkilo
-     *
-     * @param oid identifier for henkilo
-     * @return oid of the creator
-     */
-    Optional<TuontiRepository.ServiceUser> getServiceUserForImportedPerson(String oid);
 }

@@ -11,10 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.EntityUtils;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.*;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KansalaisuusRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.KielisyysRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.YksilointitietoRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.utils.DtoUtils;
 import fi.vm.sade.oppijanumerorekisteri.validators.HenkiloCreatePostValidator;
@@ -53,7 +50,7 @@ public class HenkiloModificationServiceImplTest {
     private OrikaConfiguration mapper;
 
     @MockBean
-    private OppijaTuontiService tuontiService;
+    private TuontiRepository tuontiRepository;
 
     @Spy
     @InjectMocks
