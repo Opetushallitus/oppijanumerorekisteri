@@ -46,6 +46,7 @@ public class YleistunnisteController {
 
     @PutMapping
     @ApiOperation(value = "Useamman oppijan luonti",
+            authorizations = @Authorization("yleistunniste"),
             notes = "Käynnistää oppijoiden luonnin tausta-ajona, jonka tilaa voi seurata palautettavan tuonnin id:n avulla. Lisää automaattisesti oppijat käyttäjän organisaatioihin.")
     public OppijaTuontiPerustiedotReadDto create(@Valid @RequestBody YleistunnisteInput input) {
         return oppijaService.create(input.mapToDto());
@@ -53,6 +54,7 @@ public class YleistunnisteController {
 
     @GetMapping("/tuonti={id}")
     @ApiOperation(value = "Oppijoiden tuonnin kaikki tiedot",
+            authorizations = @Authorization("yleistunniste"),
             notes = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat")
     @ApiResponses(value = {@ApiResponse(code = HttpURLConnection.HTTP_OK,
             message = "Perustietojen lisäksi palauttaa tuontiin liittyvät oppijat",
@@ -63,6 +65,7 @@ public class YleistunnisteController {
 
     @PostMapping("/tuonti={id}")
     @ApiOperation(value = "Käynnistää oppijoiden tuonnin käsittelyn",
+            authorizations = @Authorization("yleistunniste"),
             notes = "Tarvitaan vain jos oppijoiden tuonnin automaattinen käsittely on keskeytynyt syystä tai toisesta.")
     public OppijaTuontiPerustiedotReadDto create(@PathVariable Long id) {
         return oppijaService.create(id);
@@ -70,6 +73,7 @@ public class YleistunnisteController {
 
     @GetMapping("/tuonti={id}/perustiedot")
     @ApiOperation(value = "Oppijoiden tuonnin perustiedot",
+            authorizations = @Authorization("yleistunniste"),
             notes = "Tämän avulla voi seurata oppijoiden tuonnin edistymistä.")
     public OppijaTuontiPerustiedotReadDto getTuontiById(@PathVariable Long id) {
         return oppijaService.getTuontiById(id);

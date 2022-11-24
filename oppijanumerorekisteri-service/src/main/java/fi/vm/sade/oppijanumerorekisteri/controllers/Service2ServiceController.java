@@ -33,7 +33,7 @@ public class Service2ServiceController {
 
     private final Environment environment;
 
-    @ApiOperation("Hakee annettua henkilötunnusta vastaavan henkilö OID:n")
+    @ApiOperation(value = "Hakee annettua henkilötunnusta vastaavan henkilö OID:n", authorizations = @Authorization("onr"))
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
@@ -42,7 +42,7 @@ public class Service2ServiceController {
         return this.henkiloService.getOidByHetu(hetu);
     }
 
-    @ApiOperation(value = "Hakee hetu & oid -yhdistelmät")
+    @ApiOperation(value = "Hakee hetu & oid -yhdistelmät", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/hetusAndOids", method = RequestMethod.GET)
@@ -57,7 +57,7 @@ public class Service2ServiceController {
         return this.henkiloService.getHetusAndOids(syncedBeforeTimestamp, offset, limit);
     }
 
-    @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla")
+    @ApiOperation(value = "Hakee henkilöviittaukset oid-listalla ja/tai muokkausaikaleimalla", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ'," +
             "'APP_OPPIJANUMEROREKISTERI_DUPLICATE_READ')")
@@ -67,6 +67,7 @@ public class Service2ServiceController {
     }
 
     @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä aikajärjestyksessä",
+            authorizations = @Authorization("onr"),
             notes = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
@@ -77,6 +78,7 @@ public class Service2ServiceController {
     }
 
     @ApiOperation(value = "Hakee muuttuneet henkilöt annetusta päivämäärästä hakuehdoilla aikajärjestyksessä",
+            authorizations = @Authorization("onr"),
             notes = "Sivutusta käytettäessä OID:t palautetaan vanhemmasta uudempaan mutta sivun sisäinen järjestys voi muuttua matkalla!")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
@@ -88,6 +90,7 @@ public class Service2ServiceController {
     }
 
     @ApiOperation(value = "Hakee tai luo uuden henkilön annetuista henkilön perustiedoista",
+            authorizations = @Authorization("onr"),
             notes = "Henkilöllä on neljä erilaista tunnistetietoa: OID, hetu, external id ja identification."
                     + " Jos OID on annettu ja henkilöä ei löydy sillä, palautetaan 404."
                     + " Muussa tapauksessa henkilöä yritetään etsiä muilla tunnistetiedoilla."
@@ -113,6 +116,7 @@ public class Service2ServiceController {
 
     @ApiIgnore
     @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä",
+            authorizations = @Authorization("onr"),
             notes = "Korvaava rajapinta: POST /kayttooikeus-service/virkailija/haku")
     @PostMapping("/henkilo/perustiedot")
     @Deprecated // riippuvuus käyttöoikeuspalveluun
@@ -123,7 +127,8 @@ public class Service2ServiceController {
     }
 
     @ApiOperation(value = "Hakee henkilöiden perustiedot kunnan ja syntymäajan mukaan",
-            notes="Tulosjoukko on sivutettu " + HenkiloServiceImpl.MAX_FETCH_PERSONS + " henkilön kokoisiin paloihin.")
+            authorizations = @Authorization("onr"),
+            notes = "Tulosjoukko on sivutettu " + HenkiloServiceImpl.MAX_FETCH_PERSONS + " henkilön kokoisiin paloihin.")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @GetMapping("/henkilo/list/{municipal}/{birthdate}")
     public Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(
@@ -142,14 +147,14 @@ public class Service2ServiceController {
         return henkiloService.listWithYhteystiedot(criteria);
     }
 
-    @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista")
+    @ApiOperation(value = "Hakee tai luo uudet henkilöt annetuista henkilöiden perustiedoista", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @RequestMapping(value = "/henkilo/findOrCreateMultiple", method = RequestMethod.POST)
     public List<HenkiloPerustietoDto> findOrCreate(@Validated @RequestBody ValidList<HenkiloPerustietoDto> henkilot) {
         return henkiloModificationService.findOrCreateHenkiloFromPerustietoDto(henkilot);
     }
 
-    @ApiOperation("Hakee annetun henkilön kaikki yhteystiedot")
+    @ApiOperation(value = "Hakee annetun henkilön kaikki yhteystiedot", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @RequestMapping(value = "/yhteystiedot/{oid}", method = RequestMethod.GET)
@@ -157,7 +162,7 @@ public class Service2ServiceController {
         return henkiloService.getHenkiloYhteystiedot(oid);
     }
 
-    @ApiOperation("Hakee henkilöiden perustiedot annetuilla hakukriteereillä")
+    @ApiOperation(value = "Hakee henkilöiden perustiedot annetuilla hakukriteereillä", authorizations = @Authorization("onr"))
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ')")
     @PostMapping("/henkilo/perustiedotAsAdmin")
@@ -169,12 +174,13 @@ public class Service2ServiceController {
 
     @GetMapping("/henkilo/hetu={hetu}")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
-    @ApiOperation("Palauttaa henkilön tiedot muutostietopalvelua varten")
+    @ApiOperation(value = "Palauttaa henkilön tiedot muutostietopalvelua varten", authorizations = @Authorization("onr"))
     public HenkiloForceReadDto getByHetuForMuutostieto(@PathVariable String hetu) {
         return henkiloService.getByHetuForMuutostieto(hetu);
     }
 
     @ApiOperation(value = "Päivittää henkilön tietoja muutostietopalvelun antamilla muutoksilla.",
+            authorizations = @Authorization("onr"),
             notes = "Päivittää kutsussa annettuun OID:n täsmäävän henkilön tiedot")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_MUUTOSTIETOPALVELU')")
     @RequestMapping(value = "/henkilo/muutostiedot", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
