@@ -68,7 +68,7 @@ class OppijaControllerIntegrationTest {
         // If one needs to access in-memory database during development, enable following log statement
         // to access H2 mgmt console. connection settings: jdbc:h2:mem:db with empty credentials.
         // Set breakpoint somewhere. Be sure to only stop the current thread instead of all.
-        log.info("H2 debug console listening at http://localhost:{}/h2-console", randomPort);
+        // log.info("H2 debug console listening at http://localhost:{}/h2-console", randomPort);
     }
 
     @Test

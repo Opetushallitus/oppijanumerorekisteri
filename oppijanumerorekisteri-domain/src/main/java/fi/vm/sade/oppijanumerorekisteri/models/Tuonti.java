@@ -48,7 +48,7 @@ public class Tuonti extends IdentifiableAndVersionedEntity {
     @Column(name = "kasittelija_oid")
     private String kasittelijaOid;
 
-    @Column(name = "aikaleima", updatable = false)
+    @Column(name = "aikaleima", nullable = false, insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date aikaleima;
     /*
