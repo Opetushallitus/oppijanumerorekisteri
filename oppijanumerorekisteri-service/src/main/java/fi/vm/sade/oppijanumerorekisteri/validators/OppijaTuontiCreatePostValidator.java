@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.validators;
 import fi.vm.sade.oppijanumerorekisteri.dto.KoodiUpdateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
 import fi.vm.sade.oppijanumerorekisteri.services.Koodisto;
 import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,19 @@ public class OppijaTuontiCreatePostValidator {
                             .collect(toSet()))
                     .ifPresent(koodit -> koodiValidator.validate(Koodisto.MAAT_JA_VALTIOT_2, koodit,
                             "kansalaisuus", "invalid.kansalaisuus"));
+
+            Optional.ofNullable(henkilo.getKansalaisuus())
+                    .map(list -> list.stream()
+                            .filter(Objects::nonNull)
+                            .map(KoodiUpdateDto::getKoodi)
+                            .filter(Objects::nonNull)
+                            .anyMatch(Kansalaisuus.SUOMI::equals))
+                    .ifPresent(isFinnish -> {
+                        if (Boolean.TRUE.equals(isFinnish) && henkilo.getHetu() == null) {
+                            errors.rejectValue("hetu", "hetu.required.for.finnish");
+                        }
+                    });
+
 
             errors.popNestedPath();
         });

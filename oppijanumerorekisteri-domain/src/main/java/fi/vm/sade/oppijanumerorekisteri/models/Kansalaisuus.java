@@ -19,6 +19,8 @@ import javax.persistence.Entity;
 public class Kansalaisuus extends IdentifiableAndVersionedEntity {
     private static final long serialVersionUID = 1807970088588578536L;
 
+    public static final String SUOMI = "246";
+
     @Column(name = "kansalaisuuskoodi", nullable = false, unique = true)
     private String kansalaisuusKoodi;
 
