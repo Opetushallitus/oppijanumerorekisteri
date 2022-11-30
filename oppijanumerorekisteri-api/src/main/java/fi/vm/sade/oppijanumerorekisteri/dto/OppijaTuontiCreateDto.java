@@ -6,7 +6,7 @@ import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -17,12 +17,12 @@ import java.util.List;
 @AllArgsConstructor
 public class OppijaTuontiCreateDto {
 
+    @Size(min = 1)
     @Email
     @ApiModelProperty(value = "Sähköposti, johon lähetetään hälytyksiä, kun virkailijalta tarvitaan toimenpiteitä")
     private String sahkoposti;
 
-    @NotNull
-    @Size(min = 1)
+    @NotEmpty
     @Valid
     private List<OppijaTuontiRiviCreateDto> henkilot;
 
