@@ -90,7 +90,7 @@ export const isLastWorkEmail = (
     removeList: Array<number | string>
 ): boolean => isWorkEmail(infoGroup) && resolveWorkAddresses(contactInfo, removeList).length === 1;
 
-const isNotSuperuser = (omattiedot: OmattiedotState): boolean => !omattiedot.isAdmin;
+const isUnprivileged = (omattiedot: OmattiedotState): boolean => !omattiedot.isAdmin;
 
 const isVirkailija = (kayttaja: Kayttaja): boolean =>
     kayttaja.kayttajaTyyppi === undefined || kayttaja.kayttajaTyyppi === 'VIRKAILIJA';
@@ -140,7 +140,7 @@ export class HenkiloViewContactContentComponent extends React.Component<Props, S
     }
 
     isHidden = (group: ContactInfo): boolean =>
-        isNotSuperuser(this.props.omattiedot) && isVirkailija(this.props.henkilo.kayttaja) && isFromVTJ(group);
+        isUnprivileged(this.props.omattiedot) && isVirkailija(this.props.henkilo.kayttaja) && isFromVTJ(group);
 
     isVisible = (group: ContactInfo): boolean => !this.isHidden(group);
 
