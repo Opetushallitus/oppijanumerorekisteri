@@ -58,7 +58,7 @@ class AnomusIlmoitus extends React.Component<Props, State> {
                     selectValue: this.props.henkiloUpdate.anomusilmoitus,
                     data: this.state.vastuukayttajaRyhmat.map((vastuukayttajaRyhma) => ({
                         value: vastuukayttajaRyhma.id,
-                        label: localizeTextGroup(vastuukayttajaRyhma.nimi.texts, this.props.locale),
+                        label: localizeTextGroup(vastuukayttajaRyhma.nimi?.texts, this.props.locale),
                         optionsName: 'anomusilmoitus',
                     })),
                     multiselect: true,

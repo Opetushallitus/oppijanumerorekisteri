@@ -127,7 +127,7 @@ class HenkiloViewExpiredKayttooikeus extends React.Component<Props, State> {
                         StaticUtils.defaultOrganisaatio(vanhentunutKayttooikeus.organisaatioOid, this.props.l10n)
                     ).nimi
                 ),
-                [headingList[1]]: vanhentunutKayttooikeus.ryhmaNames.texts.filter(
+                [headingList[1]]: vanhentunutKayttooikeus.ryhmaNames?.texts.filter(
                     (text) => text.lang === this.props.locale.toUpperCase()
                 )[0].text,
                 [headingList[2]]: this.L[vanhentunutKayttooikeus.tila],

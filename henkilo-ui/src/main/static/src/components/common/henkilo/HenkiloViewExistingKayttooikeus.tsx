@@ -194,7 +194,7 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                         toLocalizedText(this.props.locale, organisaatio.nimi) +
                         ' ' +
                         StaticUtils.getOrganisaatiotyypitFlat(organisaatio.tyypit, this.L),
-                    [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames.texts.filter(
+                    [headingList[1]]: uusittavaKayttooikeusRyhma.ryhmaNames?.texts.filter(
                         (text) => text.lang === this.props.locale.toUpperCase()
                     )[0].text,
                     [headingList[2]]: moment(
@@ -351,9 +351,9 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
 
     showAccessRightGroupDetails(accessRightGroup) {
         const accessRight: AccessRight = {
-            name: localizeTextGroup(accessRightGroup.ryhmaNames.texts, this.props.locale),
+            name: localizeTextGroup(accessRightGroup.ryhmaNames?.texts, this.props.locale),
             description: localizeTextGroup(
-                [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...accessRightGroup.ryhmaNames.texts],
+                [...(accessRightGroup.ryhmaKuvaus?.texts || []), ...(accessRightGroup.ryhmaNames?.texts || [])],
                 this.props.locale
             ),
             onClose: () => this.setState(() => ({ accessRight: null })),
