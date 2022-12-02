@@ -8,7 +8,8 @@
       "tunniste": "tunniste",
       "henkilo": {
         "oid": null,
-        "oppijanumero": null
+        "oppijanumero": null,
+        "passivoitu": false
       }
     }
   ]

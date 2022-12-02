@@ -20,7 +20,8 @@
         "aidinkieli": null,
         "kansalaisuus": null,
         "kotikunta": null,
-        "yhteystiedotRyhma": null
+        "yhteystiedotRyhma": null,
+        "passivoitu": false
       }
     }
   ]

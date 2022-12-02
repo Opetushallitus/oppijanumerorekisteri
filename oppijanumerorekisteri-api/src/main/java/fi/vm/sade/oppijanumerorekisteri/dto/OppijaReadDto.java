@@ -26,5 +26,5 @@ public class OppijaReadDto {
     private Collection<KoodiNimiReadDto> kansalaisuus;
     private KoodiNimiReadDto kotikunta;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
-
+    private boolean passivoitu;
 }
