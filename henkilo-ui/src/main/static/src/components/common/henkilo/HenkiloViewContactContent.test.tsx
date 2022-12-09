@@ -33,7 +33,9 @@ describe('HenkiloViewContactContent', () => {
                     },
                 ],
             },
-            kayttaja: {},
+            kayttaja: {
+                kayttajaTyyppi: 'VIRKAILIJA',
+            },
         },
         locale: 'fi',
         L: {},
@@ -67,6 +69,12 @@ describe('HenkiloViewContactContent', () => {
             );
             expect(component.find('.midHeader')).toHaveLength(1);
             expect(component.contains('foo@bar.qux')).toBeFalsy();
+        });
+
+        test('VTJ data shown if kayttajatyyppi cannot be resolved', () => {
+            const component = shallow(<HenkiloViewContactContentComponent {...{ ...MINIMAL_PROPS, kayttaja: {} }} />);
+            expect(component.find('.midHeader')).toHaveLength(2);
+            expect(component.contains('foo@bar.qux')).toBeTruthy();
         });
     });
 });

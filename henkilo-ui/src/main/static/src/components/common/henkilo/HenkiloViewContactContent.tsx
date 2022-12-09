@@ -92,8 +92,7 @@ export const isLastWorkEmail = (
 
 const isNotSuperuser = (omattiedot: OmattiedotState): boolean => !omattiedot.isAdmin;
 
-const isVirkailija = (kayttaja: Kayttaja): boolean =>
-    kayttaja.kayttajaTyyppi === undefined || kayttaja.kayttajaTyyppi === 'VIRKAILIJA';
+const isVirkailija = (kayttaja: Kayttaja): boolean => kayttaja.kayttajaTyyppi === 'VIRKAILIJA';
 
 const isFromVTJ = (group: ContactInfo): boolean => group.alkupera === PropertySingleton.state.YHTEYSTIETO_ALKUPERA_VTJ;
 
