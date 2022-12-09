@@ -2,6 +2,8 @@ package fi.vm.sade.oppijanumerorekisteri.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -13,6 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HetuUtilsTest {
 
     private static Stream<Fixture> valid() {
+        return Stream.concat(generated(), excel());
+    }
+
+    private static Stream<Fixture> generated() {
         // generated list: https://www.telepartikkeli.net/tunnusgeneraattori
         return Stream.of(
                 new Fixture("140689V3161", LocalDate.of(1989, 6, 14), "2"),
@@ -35,8 +41,13 @@ class HetuUtilsTest {
                 new Fixture("130482X592V", LocalDate.of(1982, 4, 13), "2"),
                 new Fixture("050456U420E", LocalDate.of(1956, 4, 5), "2"),
                 new Fixture("120574W8144", LocalDate.of(1974, 5, 12), "2"),
-                new Fixture("221077V162B", LocalDate.of(1977, 10, 22), "2"),
-                // Data from provided official test excel
+                new Fixture("221077V162B", LocalDate.of(1977, 10, 22), "2")
+        );
+    }
+
+    private static Stream<Fixture> excel() {
+        // Data from provided official test excel
+        return Stream.of(
                 new Fixture("010594Y9032", LocalDate.of(1994, 5, 1), "1"),
                 new Fixture("010594Y9021", LocalDate.of(1994, 5, 1), "2"),
                 new Fixture("020594X903P", LocalDate.of(1994, 5, 2), "1"),
@@ -71,10 +82,23 @@ class HetuUtilsTest {
         );
     }
 
+    @AfterEach
+    public void reset(){
+        // Make sure that HetuUtils is restored to default state
+        HetuUtils.allowFake = HetuUtils.ALLOW_FAKE_DEFAULT;
+    }
+
     @ParameterizedTest
     @MethodSource("valid")
     void testValid(Fixture fixture) {
         assertThat(HetuUtils.hetuIsValid(fixture.getHetu())).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource("excel")
+    void testDisallowFakes(Fixture fixture) {
+        HetuUtils.allowFake = !HetuUtils.ALLOW_FAKE_DEFAULT;
+        assertThat(HetuUtils.hetuIsValid(fixture.getHetu())).isFalse();
     }
 
     @ParameterizedTest
