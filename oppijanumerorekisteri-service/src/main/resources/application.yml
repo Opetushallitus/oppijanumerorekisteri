@@ -102,6 +102,7 @@ oppijanumerorekisteri:
   scheduling:
     vtjsync:
       asiayhteysKaytossa: false
+  allow-fake-ssn: true
 aws:
   region: eu-west-1
   henkiloModifiedTopic:
