@@ -16,7 +16,7 @@ public class HetuUtilConfiguration implements ApplicationListener<ApplicationRea
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        HetuUtils.allowFake = this.allowFake;
-        log.info("Accept fake SSN: {}", HetuUtils.allowFake);
+        HetuUtils.setAllowFake(allowFake);
+        log.info("Accept fake SSN: {}", allowFake);
     }
 }

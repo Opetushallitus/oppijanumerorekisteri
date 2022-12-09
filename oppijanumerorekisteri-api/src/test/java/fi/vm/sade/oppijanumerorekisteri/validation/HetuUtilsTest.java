@@ -85,7 +85,7 @@ class HetuUtilsTest {
     @AfterEach
     public void reset(){
         // Make sure that HetuUtils is restored to default state
-        HetuUtils.allowFake = HetuUtils.ALLOW_FAKE_DEFAULT;
+        HetuUtils.setAllowFake(HetuUtils.ALLOW_FAKE_DEFAULT);
     }
 
     @ParameterizedTest
@@ -97,7 +97,7 @@ class HetuUtilsTest {
     @ParameterizedTest
     @MethodSource("excel")
     void testDisallowFakes(Fixture fixture) {
-        HetuUtils.allowFake = !HetuUtils.ALLOW_FAKE_DEFAULT;
+        HetuUtils.setAllowFake(!HetuUtils.ALLOW_FAKE_DEFAULT);
         assertThat(HetuUtils.hetuIsValid(fixture.getHetu())).isFalse();
     }
 

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class HetuUtils {
     public static final boolean ALLOW_FAKE_DEFAULT = true;
-    public static boolean allowFake = ALLOW_FAKE_DEFAULT;
+    private static boolean allowFake = ALLOW_FAKE_DEFAULT;
     private static final char[] tarkistusmerkit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y'};
     private static final Map<String, String> vuosisataByErotinmerkki = Map.of(
                     "18", List.of("+"),
@@ -20,6 +20,10 @@ public class HetuUtils {
             .flatMap(erotinByVuosisata -> erotinByVuosisata.getValue().stream().map(erotin -> Map.entry(erotin, erotinByVuosisata.getKey())))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+
+    public static void setAllowFake(final boolean allow) {
+        allowFake = allow;
+    }
 
     public static boolean hetuIsValid(String hetu) {
         if (hetu != null && hetu.length() == 11) {
