@@ -102,6 +102,13 @@ class HetuUtilsTest {
     }
 
     @ParameterizedTest
+    @MethodSource("generated")
+    void testDisallowFakesAcceptValid(Fixture fixture) {
+        HetuUtils.setAllowFake(!HetuUtils.ALLOW_FAKE_DEFAULT);
+        assertThat(HetuUtils.hetuIsValid(fixture.getHetu())).isTrue();
+    }
+
+    @ParameterizedTest
     @MethodSource("valid")
     void testInvalid(Fixture fixture) {
         // Replace checksum with "O" to be sure that hetu is invalid
