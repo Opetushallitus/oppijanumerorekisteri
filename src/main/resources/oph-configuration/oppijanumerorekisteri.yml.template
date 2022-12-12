@@ -57,6 +57,7 @@ oppijanumerorekisteri:
     vtjsync:
       enabled: {{oppijanumerorekisteri_vtjsync_enabled | default('true')}}
       asiayhteysKaytossa: {{oppijanumerorekisteri_asiayhteys_kaytossa | default('false')}}
+  allow-fake-ssn: {{oppijanumerorekisteri_allow_fake_ssn | default('true')}}
 aws:
   region: {{aws_region}}
   henkiloModifiedTopic:
