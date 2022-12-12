@@ -15,11 +15,13 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
 
 @Builder(builderClassName = "builder")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -95,7 +97,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     @NotNull
     @Column(name = "modified")
-    @Temporal(TemporalType.TIMESTAMP) 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date modified;
 
     @Column(name = "vtjsync_timestamp")
@@ -165,12 +167,12 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     private String kotikunta; // kunta-koodisto
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
     private Set<Identification> identifications = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "henkilo_id", nullable = false)
     @NotAudited
     private Set<ExternalId> externalIds = new HashSet<>();
@@ -182,7 +184,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
      * Oppijan organisaatiot. Huom! virkailijan organisaatiot ovat
      * käyttöoikeuspalvelussa.
      */
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "henkilo_organisaatio",
             joinColumns = @JoinColumn(name = "henkilo_id", referencedColumnName = "id"),
             foreignKey = @ForeignKey(name = "fk_henkilo_organisaatio_henkilo"),
@@ -203,6 +205,23 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     @OneToMany(mappedBy = "lapsi", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @NotAudited
     private Set<HenkiloHuoltajaSuhde> huoltajat = new HashSet<>();
+
+    /**
+     * If turvaKielto is flagged certain data should be removed from database
+     * <a href="https://jira.eduuni.fi/browse/KJHH-2231">...</a>
+     */
+    @PreUpdate
+    @PrePersist
+    void handleTurvaKielto() {
+        if (Boolean.TRUE.equals(this.turvakielto)) {
+            yhteystiedotRyhma.removeIf(isFromVTJ());
+            this.kotikunta = null;
+        }
+    }
+
+    private static Predicate<YhteystiedotRyhma> isFromVTJ() {
+        return a -> a.getRyhmaAlkuperaTieto().equals("alkupera1");
+    }
 
     public void clearYhteystiedotRyhmas() {
         this.yhteystiedotRyhma.clear();
@@ -308,14 +327,13 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     public void setHuoltajat(Set<HenkiloHuoltajaSuhde> huoltajat) {
         if (this.huoltajat != null) {
             this.huoltajat.clear();
-        }
-        else {
+        } else {
             this.huoltajat = new HashSet<>();
         }
         this.huoltajat.addAll(huoltajat);
     }
 
-    public Set<HenkiloHuoltajaSuhde> getHuoltajat(){
+    public Set<HenkiloHuoltajaSuhde> getHuoltajat() {
         return this.huoltajat;
     }
 
@@ -326,7 +344,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
     }
 
     public String getOppijanumero() {
-        if(this.yksiloity || this.yksiloityVTJ) {
+        if (this.yksiloity || this.yksiloityVTJ) {
             return oidHenkilo;
         }
 
@@ -335,7 +353,7 @@ public class Henkilo extends IdentifiableAndVersionedEntity {
 
     public void setKutsumanimi(String kutsumanimi) {
         this.kutsumanimi = kutsumanimi;
-        if(StringUtils.isEmpty(this.kutsumanimi)) {
+        if (StringUtils.isEmpty(this.kutsumanimi)) {
             this.kutsumanimi = this.etunimet;
         }
     }

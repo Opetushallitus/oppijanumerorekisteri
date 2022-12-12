@@ -1,7 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
-import fi.vm.sade.oppijanumerorekisteri.TestApplication;
+import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
@@ -35,7 +35,7 @@ import static org.mockito.BDDMockito.given;
 
 @Slf4j
 @ActiveProfiles("dev")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {TestApplication.class, DevProperties.class, H2Configuration.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
 @Sql("/controller/oppija/integration/fixture/truncate-tables.sql")
 @Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
 @Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
