@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table';
+import { Link } from 'react-router';
 import moment from 'moment';
 import { TuontiKooste, TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
 import TableLoader from '../common/icons/TableLoader';
@@ -62,7 +63,7 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
         },
         {
             Header: <TableHeader field="author" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KASITTELIJA" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.author,
+            accessor: (tuonti: TuontiKoosteRivi) => <Link to={`virkailija/${tuonti.oid}`}>{tuonti.author}</Link>,
             id: 'author',
         },
         {
