@@ -200,10 +200,12 @@ public class YleistunnisteController {
     static class FilteredStudent {
         private final String oid;
         private final String oppijanumero;
+        private final boolean passivoitu;
 
         public FilteredStudent(OppijaReadDto dto) {
             oid = dto.getOid();
             oppijanumero = dto.getOppijanumero();
+            passivoitu = dto.isPassivoitu();
         }
     }
 }

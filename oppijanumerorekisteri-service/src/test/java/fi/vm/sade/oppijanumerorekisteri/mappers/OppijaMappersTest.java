@@ -33,12 +33,13 @@ public class OppijaMappersTest {
     @Test
     public void mapperShouldMapOid() {
         TuontiRivi entity = TuontiRivi.builder()
-                .henkilo(Henkilo.builder().oidHenkilo("oid123").build())
+                .henkilo(Henkilo.builder().oidHenkilo("oid123").passivoitu(true).build())
                 .build();
 
         OppijaTuontiRiviReadDto dto = mapper.map(entity, OppijaTuontiRiviReadDto.class);
 
         assertThat(dto.getHenkilo().getOid()).isEqualTo("oid123");
+        assertThat(dto.getHenkilo().isPassivoitu()).isTrue();
     }
 
     @Test
