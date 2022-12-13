@@ -131,19 +131,19 @@ public class YleistunnisteController {
     @Builder
     @AllArgsConstructor
     static class YleistunnisteInputPerson {
-        @NotNull(message = "Cannot be empty")
+        @NotEmpty(message = "Cannot be empty")
         @ValidateHetu
         private String hetu;
 
-        @NotNull(message = "Cannot be empty")
+        @NotEmpty(message = "Cannot be empty")
         @Pattern(message = "Invalid pattern. Must contain a character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
         private String etunimet;
 
-        @NotNull(message = "Cannot be empty")
+        @NotEmpty(message = "Cannot be empty")
         @Pattern(message = "Invalid pattern. Must contain a character", regexp = "(?U)^\\p{Graph}+$")
         private String kutsumanimi;
 
-        @NotNull(message = "Cannot be empty")
+        @NotEmpty(message = "Cannot be empty")
         @Pattern(message = "Invalid pattern. Must contain a character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
         private String sukunimi;
 

@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController.REQUEST_MAPPING;
@@ -194,6 +195,24 @@ public class YleistunnisteControllerTest {
         // oppijaCreateDto.getHenkilo().setPassinumero(null);
         // oppijaCreateDto.getHenkilo().setSahkoposti(null);
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+
+        mvc.perform(put(REQUEST_MAPPING)
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(oppijaServiceMock);
+    }
+
+    @Test
+    @WithMockUser("user1")
+    public void putOppijaShouldValidateEmptyHetu() throws Exception {
+        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+        YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
+        oppijaCreateDto.getHenkilo().setHetu("");
+        dto.setHenkilot(List.of(oppijaCreateDto));
 
         mvc.perform(put(REQUEST_MAPPING)
                         .with(csrf())
