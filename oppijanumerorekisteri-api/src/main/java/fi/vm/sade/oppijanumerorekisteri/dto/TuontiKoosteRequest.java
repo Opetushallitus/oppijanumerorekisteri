@@ -32,6 +32,7 @@ public class TuontiKoosteRequest {
         author,
         total,
         successful,
-        failures
+        failures,
+        inProgress
     }
 }

@@ -39,6 +39,7 @@ import static org.mockito.BDDMockito.given;
 @Sql("/controller/oppija/integration/fixture/truncate-tables.sql")
 @Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
 @Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
+@Sql("/db/migration/V20221215120000000__tuontikooste_fix.sql")
 class OppijaControllerIntegrationTest {
 
     private static final String BASE_PATH = "/oppija";
@@ -118,7 +119,7 @@ class OppijaControllerIntegrationTest {
         given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
 
         assertThat(get(KOOSTE))
-                .contains("\"numberOfElements\":2");
+                .contains("\"numberOfElements\":3");
 
         assertThat(get(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=ASC"))
                 .contains("\"numberOfElements\":1")
