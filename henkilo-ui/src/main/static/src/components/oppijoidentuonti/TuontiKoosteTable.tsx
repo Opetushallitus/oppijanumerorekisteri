@@ -81,6 +81,11 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
             accessor: (tuonti: TuontiKoosteRivi) => tuonti.failures,
             id: 'failures',
         },
+        {
+            Header: <TableHeader field="inProgress" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS" />,
+            accessor: (tuonti: TuontiKoosteRivi) => (tuonti.inProgress ? null : <i className="fa fa-check" />),
+            id: 'inProgress',
+        },
     ];
 
     return (
