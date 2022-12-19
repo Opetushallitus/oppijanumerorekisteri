@@ -17,9 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
 
-    // määrittää kuinka monta riviä käsitellään yhdessä transaktiossa
-    protected static final int ERAKOKO = 100;
-    // määrittää kuinka monta kertaa erää koitetaan uudestaan
     protected static final int MAX_RETRIES = 5;
 
     private final OppijaTuontiService oppijaTuontiService;
@@ -37,7 +34,7 @@ public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
         while (retry++ < MAX_RETRIES) {
             try {
                 log.info("Batch: {} / Part: {} / Try: {}", id, part, retry);
-                if (oppijaTuontiService.create(id, ERAKOKO)) {
+                if (oppijaTuontiService.create(id)) {
                     break;
                 }
                 part++;

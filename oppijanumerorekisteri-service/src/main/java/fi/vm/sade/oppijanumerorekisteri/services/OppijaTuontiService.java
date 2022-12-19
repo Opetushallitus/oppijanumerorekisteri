@@ -29,10 +29,9 @@ public interface OppijaTuontiService {
      * tuonnin vaihe 2.
      *
      * @param id      oppijoiden tuonnin id
-     * @param eräkoko kuinka monta riviä käsitellään
      * @return true jos oppijoiden tuonti on käsitelty kokonaan
      */
-    boolean create(long id, int eräkoko);
+    boolean create(long id);
 
     /**
      * Palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.

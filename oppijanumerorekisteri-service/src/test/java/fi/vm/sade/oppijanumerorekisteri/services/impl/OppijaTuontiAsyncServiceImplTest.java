@@ -9,7 +9,7 @@ import static org.mockito.Mockito.*;
 
 class OppijaTuontiAsyncServiceImplTest {
 
-    private static final long batchId = 1L;
+    private static final long BATCH_ID = 1L;
 
     OppijaTuontiService service;
     OppijaTuontiAsyncServiceImpl batchJob;
@@ -22,64 +22,64 @@ class OppijaTuontiAsyncServiceImplTest {
 
     @Test
     void handleBatchInOneGo() {
-        when(service.create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO)).thenReturn(true);
+        when(service.create(BATCH_ID)).thenReturn(true);
 
-        batchJob.create(batchId);
+        batchJob.create(BATCH_ID);
 
-        verify(service, times(1)).create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO);
+        verify(service, times(1)).create(BATCH_ID);
     }
 
     @Test
     void handleBatchInMultipleParts() {
-        when(service.create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO))
+        when(service.create(BATCH_ID))
                 .thenReturn(false)
                 .thenReturn(true);
 
-        batchJob.create(batchId);
+        batchJob.create(BATCH_ID);
 
-        verify(service, times(2)).create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO);
+        verify(service, times(2)).create(BATCH_ID);
     }
 
     @Test
     void retryFailedBatch() {
-        when(service.create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO))
+        when(service.create(BATCH_ID))
                 .thenThrow(ObjectOptimisticLockingFailureException.class)
                 .thenReturn(true);
 
-        batchJob.create(batchId);
+        batchJob.create(BATCH_ID);
 
-        verify(service, times(2)).create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO);
+        verify(service, times(2)).create(BATCH_ID);
     }
 
     @Test
     void resetsRetryCounterOnFailure() {
-        when(service.create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO))
+        when(service.create(BATCH_ID))
                 .thenThrow(ObjectOptimisticLockingFailureException.class)
                 .thenReturn(false)
                 .thenThrow(ObjectOptimisticLockingFailureException.class);
 
-        batchJob.create(batchId);
+        batchJob.create(BATCH_ID);
 
-        verify(service, times(OppijaTuontiAsyncServiceImpl.MAX_RETRIES + 2)).create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO);
+        verify(service, times(OppijaTuontiAsyncServiceImpl.MAX_RETRIES + 2)).create(BATCH_ID);
     }
 
     @Test
     void stopAfterRetryLimit() {
-        when(service.create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO))
+        when(service.create(BATCH_ID))
                 .thenThrow(ObjectOptimisticLockingFailureException.class);
 
-        batchJob.create(batchId);
+        batchJob.create(BATCH_ID);
 
-        verify(service, times(OppijaTuontiAsyncServiceImpl.MAX_RETRIES)).create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO);
+        verify(service, times(OppijaTuontiAsyncServiceImpl.MAX_RETRIES)).create(BATCH_ID);
     }
 
     @Test
     void stopOnUnexpectedErrors() {
-        when(service.create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO))
+        when(service.create(BATCH_ID))
                 .thenThrow(RuntimeException.class);
 
-        batchJob.create(batchId);
+        batchJob.create(BATCH_ID);
 
-        verify(service, times(1)).create(batchId, OppijaTuontiAsyncServiceImpl.ERAKOKO);
+        verify(service, times(1)).create(BATCH_ID);
     }
 }
