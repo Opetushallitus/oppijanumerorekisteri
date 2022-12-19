@@ -40,6 +40,9 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
+    // määrittää kuinka monta riviä käsitellään yhdessä transaktiossa
+    private static final int ERAKOKO = 100;
+
     private final HenkiloModificationService henkiloModificationService;
     private final OrikaConfiguration mapper;
     private final HenkiloRepository henkiloRepository;
@@ -86,7 +89,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean create(long id, int erakoko) {
+    public boolean create(long id) {
         Tuonti tuonti = tuontiRepository.findForUpdateById(id)
                 .orElseThrow(DataInconsistencyException::new);
         if (tuonti.isKasitelty()) {
@@ -106,7 +109,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
         }
 
         int fromIndex = tuonti.getKasiteltyja();
-        int toIndex = fromIndex + erakoko;
+        int toIndex = fromIndex + ERAKOKO;
         int size = dto.getHenkilot().size();
         if (toIndex > size) {
             toIndex = size;
