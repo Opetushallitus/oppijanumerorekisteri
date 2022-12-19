@@ -42,9 +42,13 @@ public class OppijaTuontiAsyncServiceImpl implements OppijaTuontiAsyncService {
             } catch (ObjectOptimisticLockingFailureException optimisticLockingException) {
                 log.info("Batch: {}. Expected failure, retrying.", id, optimisticLockingException);
             } catch (Exception e) {
-                log.error("Batch: {}. Unexpected failure. Stopping execution.", id, e);
+                log.info("Batch: {}. Unexpected failure. Stopping execution.", id, e);
                 retry = MAX_RETRIES;
             }
+        }
+
+        if (retry >= MAX_RETRIES) {
+            log.error("Batch: {}. Failed, need to be manually restarted for conclusion", id);
         }
     }
 }
