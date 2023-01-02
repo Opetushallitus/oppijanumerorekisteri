@@ -61,6 +61,8 @@ public class OppijaServiceImplTest {
     private EmailService emailService;
     @Mock
     private OppijaTuontiCreatePostValidator oppijaTuontiCreatePostValidatorMock;
+    @Mock
+    private YksilointiService yksilointiService;
 
     @Before
     public void setup() {
@@ -74,7 +76,8 @@ public class OppijaServiceImplTest {
                 permissionCheckerMock,
                 objectMapperMock,
                 emailService,
-                oppijaTuontiCreatePostValidatorMock);
+                oppijaTuontiCreatePostValidatorMock,
+                yksilointiService);
 
         OppijaTuontiAsyncServiceImpl oppijaTuontiServiceAsyncImpl = new OppijaTuontiAsyncServiceImpl(
                 oppijaTuontiServiceImpl);

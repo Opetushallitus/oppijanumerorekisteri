@@ -245,7 +245,8 @@ public class YksilointiServiceImpl implements YksilointiService {
         return Optional.ofNullable(input).map(this::normalize).orElse("");
     }
 
-    private boolean isSimilar(String a, String b) {
+    @Override
+    public boolean isSimilar(String a, String b) {
         return isSimilar(name(a), name(b), oppijanumerorekisteriProperties.getEtunimiThreshold());
     }
 

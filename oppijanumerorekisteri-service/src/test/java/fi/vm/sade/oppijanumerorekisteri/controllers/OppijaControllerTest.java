@@ -23,10 +23,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROLE_OPPIJANUMEROREKISTERI_PREFIX;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.mockito.ArgumentMatchers.any;
@@ -293,8 +295,9 @@ public class OppijaControllerTest {
     @Test
     @WithMockUser(authorities = ROLE_OPPIJANUMEROREKISTERI_PREFIX + "REKISTERINPITAJA")
     public void getOppijatByTuontiId() throws Exception {
-        OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 1, 1, true,
-                singletonList(new OppijaTuontiRiviReadDto("tunniste", new OppijaReadDto())));
+        OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 2, 2, true,
+                List.of(new OppijaTuontiRiviReadDto("tunniste1", new OppijaReadDto(), null),
+                        new OppijaTuontiRiviReadDto("tunniste2", new OppijaReadDto(), true)));
         when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenReturn(result);
 
         mvc.perform(get("/oppija/tuonti=37337")

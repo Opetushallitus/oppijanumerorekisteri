@@ -53,6 +53,7 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
     private final OppijaTuontiCreatePostValidator validator;
+    private final YksilointiService yksilointiService;
 
     @Override
     public OppijaTuontiPerustiedotReadDto create(OppijaTuontiCreateDto dto) {
@@ -247,8 +248,17 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
                     .ifPresent(sahkoposti -> henkilotBySahkoposti.put(sahkoposti, henkilo));
 
             TuontiRivi rivi = mapper.map(oppija, TuontiRivi.class);
+            if (hasNameConflict(oppija.getHenkilo(), henkilo)) {
+                rivi.setConflict(true);
+            }
             rivi.setHenkilo(henkilo);
             return rivi;
+        }
+
+        private boolean hasNameConflict(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto imported, Henkilo onr) {
+            return !yksilointiService.isSimilar(
+                    String.format("%s %s %s", imported.getEtunimet(), imported.getKutsumanimi(), imported.getSukunimi()),
+                    String.format("%s %s %s", onr.getEtunimet(), onr.getKutsumanimi(), onr.getSukunimi()));
         }
 
         private Henkilo createHenkilo(OppijaTuontiRiviCreateDto oppija) {

@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController.REQUEST_MAPPING;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -190,10 +189,7 @@ public class YleistunnisteControllerTest {
     public void putOppijaShouldValidateHenkilo() throws Exception {
         YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
         YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
-        // oppijaCreateDto.getHenkilo().setOid(null);
         oppijaCreateDto.getHenkilo().setHetu(null);
-        // oppijaCreateDto.getHenkilo().setPassinumero(null);
-        // oppijaCreateDto.getHenkilo().setSahkoposti(null);
         dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
@@ -337,8 +333,9 @@ public class YleistunnisteControllerTest {
     @Test
     @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
     public void getOppijatByTuontiId() throws Exception {
-        OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 1, 1, true,
-                singletonList(new OppijaTuontiRiviReadDto("tunniste", new OppijaReadDto())));
+        OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 2, 2, true,
+                List.of(new OppijaTuontiRiviReadDto("tunniste1", new OppijaReadDto(), null),
+                        new OppijaTuontiRiviReadDto("tunniste2", new OppijaReadDto(), true)));
         when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenReturn(result);
 
         mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))

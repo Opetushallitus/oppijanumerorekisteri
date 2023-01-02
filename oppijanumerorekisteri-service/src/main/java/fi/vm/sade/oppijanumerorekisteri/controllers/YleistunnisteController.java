@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
@@ -188,10 +189,13 @@ public class YleistunnisteController {
     static class FilteredRow {
         private final String tunniste;
         private final FilteredStudent henkilo;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private final Boolean conflict;
 
         public FilteredRow(OppijaTuontiRiviReadDto dto) {
             tunniste = dto.getTunniste();
             henkilo = new FilteredStudent(dto.getHenkilo());
+            conflict = dto.getConflict();
         }
     }
 

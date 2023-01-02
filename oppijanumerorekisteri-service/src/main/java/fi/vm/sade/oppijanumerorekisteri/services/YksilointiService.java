@@ -36,6 +36,14 @@ public interface YksilointiService {
     Henkilo hetuttomanYksilointi(String henkiloOid);
 
     /**
+     * Check if two stings can be considered similar
+     * @param a string to compare
+     * @param b string to compare
+     * @return boolean indicating whether strings can be considered similar
+     */
+    boolean isSimilar(String a, String b);
+
+    /**
      * Purkaa virkailijan käsin yksilöimän henkilön yksilöinnin
      * @param henkiloOid Henkilön oid
      * @return Yksilöimätön henkilö

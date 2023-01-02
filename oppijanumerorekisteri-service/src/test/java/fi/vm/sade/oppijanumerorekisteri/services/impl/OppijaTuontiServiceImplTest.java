@@ -1,26 +1,36 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.OppijaTuontiRiviCreateDto;
+import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
+import fi.vm.sade.oppijanumerorekisteri.models.*;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.EmailService;
+import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
+import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
+import static java.util.Set.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OppijaTuontiServiceImplTest {
+
+    private static final String HETU = "hetu";
 
     @InjectMocks
     private OppijaTuontiServiceImpl oppijaTuontiServiceImpl;
@@ -29,6 +39,23 @@ public class OppijaTuontiServiceImplTest {
     private TuontiRepository tuontiRepositoryMock;
     @Mock
     private EmailService emailService;
+    @Mock
+    private ObjectMapper objectMapper;
+    @Mock
+    private HenkiloRepository henkiloRepository;
+    @Mock
+    private HenkiloModificationService henkiloModificationService;
+    @Mock
+    private OrikaConfiguration orikaConfiguration;
+    @Mock
+    private YksilointiServiceImpl yksilointiService;
+    @Mock
+    private Henkilo henkilo;
+    @Mock
+    private TuontiRivi tuontiRivi;
+
+    @Captor
+    private ArgumentCaptor<Set<String>> emailCaptor;
 
     @Test
     public void handleOppijaTuontiIlmoitusTest() {
@@ -43,12 +70,67 @@ public class OppijaTuontiServiceImplTest {
         oppijaTuontiServiceImpl.handleOppijaTuontiIlmoitus();
 
         assertThat(tuonti1.isIlmoitustarveKasitelty() && tuonti2.isIlmoitustarveKasitelty() && tuonti3.isIlmoitustarveKasitelty() && tuonti4.isIlmoitustarveKasitelty()).isTrue();
-        ArgumentCaptor<Set> argumentCaptor = ArgumentCaptor.forClass(Set.class);
-        verify(emailService).sendTuontiKasiteltyWithErrorsEmail(argumentCaptor.capture());
-        Set output = argumentCaptor.getValue();
-        assertThat(output.size()).isEqualTo(3);
-
+        verify(emailService).sendTuontiKasiteltyWithErrorsEmail(emailCaptor.capture());
+        assertThat(emailCaptor.getValue()).hasSize(3);
     }
 
+    @Test
+    public void detectONRConflictsNone() throws Exception {
+        initMocks();
+        when(yksilointiService.isSimilar(any(), any())).thenReturn(true);
 
+        oppijaTuontiServiceImpl.create(1L);
+
+        verify(tuontiRivi, times(0)).setConflict(any());
+    }
+
+    @Test
+    public void detectONRConflictsSome() throws Exception {
+        initMocks();
+        when(yksilointiService.isSimilar(any(), any())).thenReturn(false);
+
+        oppijaTuontiServiceImpl.create(1L);
+
+        verify(tuontiRivi, times(1)).setConflict(true);
+    }
+
+    @Test
+    public void detectONRConflictsNotFound() throws Exception {
+        initMocks();
+        when(yksilointiService.isSimilar(any(), any())).thenReturn(true);
+
+        oppijaTuontiServiceImpl.create(1L);
+
+        verify(tuontiRivi, times(0)).setConflict(any());
+    }
+
+    private void initMocks() throws IOException {
+        when(henkilo.getHetu()).thenReturn(HETU);
+        when(tuontiRepositoryMock.findForUpdateById(any())).thenReturn(tuonti());
+        when(tuontiRepositoryMock.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(objectMapper.readValue((byte[]) null, OppijaTuontiCreateDto.class)).thenReturn(tuontiDto());
+        when(henkiloRepository.findByHetuIn(any())).thenReturn(List.of(henkilo));
+        when(henkiloModificationService.update(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(orikaConfiguration.map(any(), any())).thenReturn(tuontiRivi);
+    }
+
+    @NotNull
+    private Optional<Tuonti> tuonti() {
+        return Optional.of(Tuonti.builder().ilmoitustarveKasitelty(false).kasiteltavia(1).kasiteltyja(0)
+                .organisaatiot(of(Organisaatio.builder().build()))
+                .data(TuontiData.builder().build())
+                .henkilot(new HashSet<>())
+                .build());
+    }
+
+    private OppijaTuontiCreateDto tuontiDto() {
+        return OppijaTuontiCreateDto.builder()
+                .henkilot(List.of(
+                        OppijaTuontiRiviCreateDto.builder()
+                                .henkilo(OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto.builder()
+                                        .hetu(HETU)
+                                        .build())
+                                .build()))
+                .build();
+    }
 }
