@@ -82,6 +82,11 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
             id: 'failures',
         },
         {
+            Header: <TableHeader field="conflicts" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_KONFLIKTIT" />,
+            accessor: (tuonti: TuontiKoosteRivi) => tuonti.conflicts,
+            id: 'conflicts',
+        },
+        {
             Header: <TableHeader field="inProgress" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_STATUS" />,
             accessor: (tuonti: TuontiKoosteRivi) => (tuonti.inProgress ? null : <i className="fa fa-check" />),
             id: 'inProgress',

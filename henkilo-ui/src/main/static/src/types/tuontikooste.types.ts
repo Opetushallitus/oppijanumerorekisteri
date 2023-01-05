@@ -36,12 +36,13 @@ export type TuontiKoosteRivi = {
     failures: number;
     total: number;
     inProgress: number;
+    conflicts: number;
 };
 
 export type TuontiKoosteCriteria = {
     page: number;
     pageSize: number;
-    field: 'id' | 'timestamp' | 'author' | 'successful' | 'failures' | 'total' | 'inProgress';
+    field: keyof Omit<TuontiKoosteRivi, 'oid'>;
     sort: 'ASC' | 'DESC';
 };
 
