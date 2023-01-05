@@ -40,6 +40,7 @@ import static org.mockito.BDDMockito.given;
 @Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
 @Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
 @Sql("/db/migration/V20221215120000000__tuontikooste_fix.sql")
+@Sql("/db/migration/V20230105120000000__tuontikooste_add_conflicts.sql")
 class OppijaControllerIntegrationTest {
 
     private static final String BASE_PATH = "/oppija";

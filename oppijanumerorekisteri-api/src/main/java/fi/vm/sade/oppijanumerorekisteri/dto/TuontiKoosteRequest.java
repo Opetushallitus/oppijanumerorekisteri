@@ -33,6 +33,7 @@ public class TuontiKoosteRequest {
         total,
         successful,
         failures,
-        inProgress
+        inProgress,
+        conflicts
     }
 }
