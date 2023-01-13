@@ -101,6 +101,7 @@ const urlConfig = {
         'oppijanumerorekisteri-service/henkilo/$1/identification/$2/$3',
     'oppijanumerorekisteri-service.oppija.yhteenveto': 'oppijanumerorekisteri-service/oppija/yhteenveto',
     'oppijanumerorekisteri-service.oppija.tuontikooste': 'oppijanumerorekisteri-service/oppija/tuontikooste',
+    'oppijanumerorekisteri-service.oppija.tuontidata': 'oppijanumerorekisteri-service/oppija/tuontidata',
     'oppijanumerorekisteri-service.oppija': 'oppijanumerorekisteri-service/oppija',
     'oppijanumerorekisteri-service.prequel': 'oppijanumerorekisteri-service/cas/prequel',
 
