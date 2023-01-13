@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 /**
  * Oppijoiden tuontiin liittyvät toiminnot. Oppijoita tuodaan
@@ -112,6 +113,15 @@ public class OppijaController {
     @ApiOperation(value = "Kooste oppijoiden tuonneista")
     org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(@Valid TuontiKoosteRequest tuontiKoosteRequest) {
         return oppijaService.tuontiKooste(tuontiKoosteRequest.forPage());
+    }
+
+    @GetMapping("/tuontidata/{tuontiId}")
+    @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
+            "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
+            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+    @ApiOperation(value = "Tuontiin liittyvä tuontidata")
+    List<OppijaTuontiRiviCreateDto> tuontiData(@PathVariable final long  tuontiId) {
+        return oppijaService.tuontiData(tuontiId);
     }
 
     @GetMapping("/muuttuneet")

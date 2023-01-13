@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateAtLeastOneNotNull;
 import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,6 +20,7 @@ import java.util.Collection;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OppijaTuontiRiviCreateDto {
 
     @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
@@ -28,12 +30,22 @@ public class OppijaTuontiRiviCreateDto {
     @Valid
     private OppijaTuontiRiviHenkiloCreateDto henkilo;
 
+    @ApiModelProperty(hidden = true)
+    private String henkiloOid;
+
+    @ApiModelProperty(hidden = true)
+    private String henkiloNimi;
+
+    @ApiModelProperty(hidden = true)
+    private boolean conflict;
+
     @Getter
     @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     @ValidateAtLeastOneNotNull({"oid", "hetu", "passinumero", "sahkoposti"})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class OppijaTuontiRiviHenkiloCreateDto {
 
         @Size(min = 1)
@@ -71,7 +83,6 @@ public class OppijaTuontiRiviCreateDto {
         @ApiModelProperty("Koodisto 'maatjavaltiot2'")
         @NotEmpty
         private Collection<@Valid @NotNull KoodiUpdateDto> kansalaisuus;
-
     }
 
 }
