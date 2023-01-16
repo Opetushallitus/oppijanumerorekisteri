@@ -5,6 +5,8 @@ import moment from 'moment';
 import { TuontiKooste, TuontiKoosteRivi, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
 import TableLoader from '../common/icons/TableLoader';
 import '../../oph-table.css';
+import TextButton from '../common/button/TextButton';
+import TuontiDetails from './TuontiDetails';
 import SortIconNone from '../common/icons/SortIconNone';
 import SortAscIcon from '../common/icons/SortAscIcon';
 import SortDescIcon from '../common/icons/SortDescIcon';
@@ -20,6 +22,8 @@ type Props = {
 
 const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, loading, data, translate }) => {
     const firstRender = React.useRef(true);
+    const [showDetails, setShowDetails] = React.useState<number>(undefined);
+    const onClose = () => setShowDetails(undefined);
 
     const skipFetchOnMount = () => (firstRender.current = false);
 
@@ -53,7 +57,9 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
     const columns = [
         {
             Header: <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
-            accessor: (tuonti: TuontiKoosteRivi) => tuonti.id,
+            accessor: (tuonti: TuontiKoosteRivi) => (
+                <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
+            ),
             id: 'id',
         },
         {
@@ -95,6 +101,7 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
 
     return (
         <div className="oph-table">
+            {!!showDetails && <TuontiDetails tuontiId={showDetails} onClose={onClose} />}
             <ReactTable
                 data={data?.content}
                 pages={data?.totalPages}
