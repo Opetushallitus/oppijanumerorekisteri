@@ -57,12 +57,9 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
     const columns = [
         {
             Header: <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
-            accessor: (tuonti: TuontiKoosteRivi) =>
-                tuonti.conflicts ? (
-                    <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
-                ) : (
-                    tuonti.id
-                ),
+            accessor: (tuonti: TuontiKoosteRivi) => (
+                <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
+            ),
             id: 'id',
         },
         {
