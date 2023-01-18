@@ -35,10 +35,10 @@ const TuontiDetails: React.FC<Props> = ({ tuontiId, translate, onClose, fetchDat
     const headings = [
         { key: 'tunniste', label: translate('TUONTIDATA_TUNNISTE') },
         {
-            key: 'henkiloOid',
-            label: translate('HENKILO_OID'),
+            key: 'henkiloNimi',
+            label: translate('OPPIJOIDEN_TUONTI_NIMI'),
             Cell: (cellProps) => (
-                <Link to={`/oppija/${cellProps.value}`} target="_blank">
+                <Link to={`/oppija/${cellProps.original.henkiloOid}`} target="_blank">
                     {cellProps.value}
                 </Link>
             ),
