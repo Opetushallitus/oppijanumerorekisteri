@@ -41,6 +41,7 @@
         "universal-cookie": "4.0.2"
     },
     "devDependencies": {
+        "@playwright/test": "1.29.2",
         "@types/enzyme": "3.10.11",
         "@types/jest": "26.0.19",
         "concurrently": "6.1.0",
