@@ -24,7 +24,7 @@
 
         <maven.compiler.release>11</maven.compiler.release>
 
-        <frontend-plugin.version>1.6</frontend-plugin.version>
+        <frontend-plugin.version>1.12.1</frontend-plugin.version>
         <nodejs.version>v14.20.0</nodejs.version>
 
         <buildNumber>default buildnumber</buildNumber>
@@ -211,6 +211,36 @@
                                 <CI>true</CI>
                             </environmentVariables>
                             <arguments>run test</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>install mock-api deps</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>--prefix mock-api ci</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>playwright install browsers</id>
+                        <goals>
+                            <goal>npx</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>playwright install chromium</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>playwright</id>
+                        <goals>
+                            <goal>npx</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>playwright test</arguments>
                         </configuration>
                     </execution>
 
