@@ -1,6 +1,6 @@
 .eslintcache
 coverage/
 node_modules/
-/test-results/
 /playwright-report/
+/playwright-results/
 /playwright/.cache/
