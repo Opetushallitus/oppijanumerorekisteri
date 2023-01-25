@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from 'playwright-test-coverage';
 
 const userInfo = {
     oidHenkilo: '1.2.246.562.24.00000000007',

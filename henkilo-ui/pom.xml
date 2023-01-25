@@ -215,35 +215,25 @@
                     </execution>
 
                     <execution>
-                        <id>install mock-api deps</id>
+                        <id>install e2e dependencies</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>--prefix mock-api ci</arguments>
+                            <arguments>run e2e:install-deps</arguments>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>playwright install browsers</id>
+                        <id>run e2e tests</id>
                         <goals>
-                            <goal>npx</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>playwright install chromium</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>playwright</id>
-                        <goals>
-                            <goal>npx</goal>
+                            <goal>npm</goal>
                         </goals>
                         <configuration>
                             <environmentVariables>
                                 <CI>true</CI>
                             </environmentVariables>
-                            <arguments>playwright test</arguments>
+                            <arguments>run e2e:ci</arguments>
                         </configuration>
                     </execution>
 
