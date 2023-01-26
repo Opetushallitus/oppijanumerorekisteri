@@ -67,7 +67,7 @@
     "scripts": {
         "dev": "concurrently --kill-others 'npm start' 'npm run nginx'",
         "nginx": "docker-compose -f ../../../nginx/docker-compose.yml up",
-        "start": "BROWSER=none react-app-rewired start",
+        "start": "BROWSER=none react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test --env=jsdom --coverage --watchAll=false",
         "lint": "eslint --ext .ts,.tsx src",
@@ -78,7 +78,8 @@
         "test:debug": "react-scripts --inspect-brk test --runInBand",
         "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
         "e2e:mock-api": "npm --prefix mock-api run mock-api",
-        "e2e:serve": "concurrently -k 'nyc --reporter=lcov npm start' 'npm:e2e:mock-api'",
+        "e2e:app": "BROWSER=none react-app-rewired start",
+        "e2e:serve": "concurrently -k 'nyc --no-clean --reporter=lcov npm run e2e:app' 'npm:e2e:mock-api'",
         "e2e:test": "wait-port -t 120000 http://:3000/henkilo-ui && playwright test",
         "e2e:ci": "concurrently -s first -k 'npm:e2e:serve' 'npm:e2e:test'"
     },
