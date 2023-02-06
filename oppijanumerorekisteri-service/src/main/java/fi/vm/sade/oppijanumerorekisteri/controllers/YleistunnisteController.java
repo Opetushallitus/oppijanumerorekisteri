@@ -132,18 +132,22 @@ public class YleistunnisteController {
     @Builder
     @AllArgsConstructor
     static class YleistunnisteInputPerson {
+        @ApiModelProperty(required = true)
         @NotEmpty(message = "Cannot be empty")
         @ValidateHetu
         private String hetu;
 
+        @ApiModelProperty(required = true)
         @NotEmpty(message = "Cannot be empty")
         @Pattern(message = "Invalid pattern. Must contain a character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
         private String etunimet;
 
+        @ApiModelProperty(value="Kutsumanimen tulee olla jokin etunimistä", required = true)
         @NotEmpty(message = "Cannot be empty")
         @Pattern(message = "Invalid pattern. Must contain a character", regexp = "(?U)^\\p{Graph}+$")
         private String kutsumanimi;
 
+        @ApiModelProperty(required = true)
         @NotEmpty(message = "Cannot be empty")
         @Pattern(message = "Invalid pattern. Must contain a character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
         private String sukunimi;

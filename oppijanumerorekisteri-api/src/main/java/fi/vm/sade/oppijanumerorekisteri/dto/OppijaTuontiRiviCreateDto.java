@@ -36,25 +36,32 @@ public class OppijaTuontiRiviCreateDto {
     @ValidateAtLeastOneNotNull({"oid", "hetu", "passinumero", "sahkoposti"})
     public static class OppijaTuontiRiviHenkiloCreateDto {
 
+        @ApiModelProperty(value = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
         @Size(min = 1)
         private String oid;
 
+        @ApiModelProperty(value = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
         @ValidateHetu
         private String hetu;
 
+        @ApiModelProperty(value = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
         @Size(min = 1)
         private String passinumero;
 
+        @ApiModelProperty(value = "Vähintään yksi yksilöivä tunniste vaaditaan", required = true)
         @Size(min = 1)
         @Email
         private String sahkoposti;
 
+        @ApiModelProperty(required = true)
         @NotEmpty
         private String etunimet;
 
+        @ApiModelProperty(value = "Kutsumanimen tulee olla yksi etunimistä", required = true)
         @NotEmpty
         private String kutsumanimi;
 
+        @ApiModelProperty(required = true)
         @NotEmpty
         private String sukunimi;
 
@@ -68,7 +75,7 @@ public class OppijaTuontiRiviCreateDto {
         @Valid
         private KoodiUpdateDto aidinkieli;
 
-        @ApiModelProperty("Koodisto 'maatjavaltiot2'")
+        @ApiModelProperty(value = "Koodisto 'maatjavaltiot2'", required = true)
         @NotEmpty
         private Collection<@Valid @NotNull KoodiUpdateDto> kansalaisuus;
 

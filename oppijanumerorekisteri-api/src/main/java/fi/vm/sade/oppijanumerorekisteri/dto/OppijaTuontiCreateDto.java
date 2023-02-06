@@ -24,6 +24,7 @@ public class OppijaTuontiCreateDto {
 
     @NotEmpty
     @Valid
+    @ApiModelProperty(required = true)
     private List<OppijaTuontiRiviCreateDto> henkilot;
 
 }
