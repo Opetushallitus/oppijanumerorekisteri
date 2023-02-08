@@ -83,7 +83,7 @@ const urlConfig = {
     'oppijanumerorekisteri-service.henkilo.hakemukset': 'oppijanumerorekisteri-service/henkilo/$1/hakemukset',
     'oppijanumerorekisteri-service.henkilo.duplicates': 'oppijanumerorekisteri-service/henkilo/$1/duplicates',
     'oppijanumerorekisteri-service.henkilo.duplikaatit':
-        'oppijanumerorekisteri-service/henkilo/duplikaatit?etunimet=$1&kutsumanimi=$2&sukunimi=$3',
+        'oppijanumerorekisteri-service/henkilo/duplikaatit?etunimet=$1&kutsumanimi=$2&sukunimi=$3&syntymaaika=$4',
     'oppijanumerorekisteri-service.henkilo': 'oppijanumerorekisteri-service/henkilo',
     'oppijanumerorekisteri-service.henkilo.exists': 'oppijanumerorekisteri-service/henkilo/exists',
     'oppijanumerorekisteri-service.henkilo.delete': 'oppijanumerorekisteri-service/henkilo/$1',

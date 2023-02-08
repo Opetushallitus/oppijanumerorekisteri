@@ -139,7 +139,8 @@ class OppijaCreateContainer extends React.Component<Props, State> {
             'oppijanumerorekisteri-service.henkilo.duplikaatit',
             oppija.etunimet,
             oppija.kutsumanimi,
-            oppija.sukunimi
+            oppija.sukunimi,
+            oppija.syntymaaika
         );
         return http.get(url);
     };
