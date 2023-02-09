@@ -509,7 +509,12 @@ public class HenkiloControllerTest {
     }
 
     private HenkiloExistenceCheckDto existenceCheckDto() {
-        return new HenkiloExistenceCheckDto("230668-003A", "a b c", "b", "d");
+        return HenkiloExistenceCheckDto.builder()
+                .hetu("230668-003A")
+                .etunimet("a b c")
+                .kutsumanimi("b")
+                .sukunimi("d")
+                .build();
     }
 
     private void verifyReadAudit(String expected) {

@@ -1,21 +1,22 @@
 package fi.vm.sade.oppijanumerorekisteri.controllers;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
-import fi.vm.sade.oppijanumerorekisteri.validation.ValidateHetu;
 import io.swagger.annotations.*;
 import lombok.Setter;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -129,41 +130,19 @@ public class YleistunnisteController {
     @Generated
     @Getter
     @Setter
-    @Builder
-    @AllArgsConstructor
-    static class YleistunnisteInputPerson {
-        @ApiModelProperty(required = true)
-        @NotEmpty(message = "Cannot be empty")
-        @ValidateHetu
-        private String hetu;
+    @SuperBuilder
+    static class YleistunnisteInputPerson extends HenkiloExistenceCheckDto {
 
-        @ApiModelProperty(required = true)
-        @NotEmpty(message = "Cannot be empty")
-        @Pattern(message = "Invalid pattern. Must contain a character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
-        private String etunimet;
-
-        @ApiModelProperty(value="Kutsumanimen tulee olla jokin etunimistä", required = true)
-        @NotEmpty(message = "Cannot be empty")
-        @Pattern(message = "Invalid pattern. Must contain a character", regexp = "(?U)^\\p{Graph}+$")
-        private String kutsumanimi;
-
-        @ApiModelProperty(required = true)
-        @NotEmpty(message = "Cannot be empty")
-        @Pattern(message = "Invalid pattern. Must contain a character.", regexp = "(?U)^\\p{Graph}+( \\p{Graph}+)*+$")
-        private String sukunimi;
-
-        @JsonIgnore
-        @AssertTrue(message = "Kutsumanimi must be one of the etunimet")
-        public boolean isNicknameOk() {
-            return etunimet != null && kutsumanimi != null && Arrays.asList(etunimet.toLowerCase().split(" ")).contains(kutsumanimi.toLowerCase());
+        public YleistunnisteInputPerson() {
+            super(null, null, null, null);
         }
 
         public OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto mapToDto() {
             OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto dto = new OppijaTuontiRiviCreateDto.OppijaTuontiRiviHenkiloCreateDto();
-            dto.setHetu(hetu);
-            dto.setEtunimet(etunimet);
-            dto.setKutsumanimi(kutsumanimi);
-            dto.setSukunimi(sukunimi);
+            dto.setHetu(getHetu());
+            dto.setEtunimet(getEtunimet());
+            dto.setKutsumanimi(getKutsumanimi());
+            dto.setSukunimi(getSukunimi());
             dto.setKansalaisuus(Collections.singleton(new KoodiUpdateDto(NATIONALITY_CODE)));
             return dto;
         }
