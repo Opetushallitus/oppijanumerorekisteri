@@ -486,13 +486,12 @@ public class HenkiloRepositoryImpl implements HenkiloJpaRepository {
     public List<Henkilo> findDuplikaatit(HenkiloDuplikaattiCriteria criteria) {
         this.entityManager.createNativeQuery("SET pg_trgm.similarity_threshold = " + DUPLICATE_QUERY_SIMILARITY_THRESHOLD)
                 .executeUpdate();
-        Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT " +
-                "h1.* \n" +
-                "FROM henkilo AS h1 \n" +
-                "WHERE (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi || ' ' || date_to_char(h1.syntymaaika)) % :namesAndBirthDate \n" +
-                "  AND h1.passivoitu = FALSE \n" +
-                "  AND h1.duplicate = FALSE \n" +
-                "ORDER BY (h1.etunimet || ' ' || h1.kutsumanimi || ' ' || h1.sukunimi || ' ' || date_to_char(h1.syntymaaika)) <-> :namesAndBirthDate ASC \n",
+        Query henkiloTypedQuery = this.entityManager.createNativeQuery("SELECT * " +
+                "FROM henkilo " +
+                "WHERE duplicate_search_str % duplicate_search_fmt(:namesAndBirthDate) " +
+                "AND passivoitu = FALSE " +
+                "AND duplicate = FALSE " +
+                "ORDER BY duplicate_search_str <-> duplicate_search_fmt(:namesAndBirthDate) ASC",
                 Henkilo.class).setParameter("namesAndBirthDate", getNamesAndBirthDate(criteria));
         return henkiloTypedQuery.getResultList();
     }

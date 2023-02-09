@@ -291,7 +291,7 @@
                     <images>
                         <image>
                             <alias>database</alias>
-                            <name>postgres:10-alpine</name>
+                            <name>postgres:12-alpine</name>
                             <run>
                                 <env>
                                     <POSTGRES_USER>${database.user}</POSTGRES_USER>
