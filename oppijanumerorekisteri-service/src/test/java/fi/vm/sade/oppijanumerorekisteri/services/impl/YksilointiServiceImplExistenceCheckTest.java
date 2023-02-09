@@ -60,96 +60,105 @@ class YksilointiServiceImplExistenceCheckTest {
     private static Stream<Arguments> matchingOnrData() {
         return Stream.of(
                 Arguments.of("Identical details",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "a b c", "b", "d")),
                 Arguments.of("Is case insensitive",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "A B C", "B", "D")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "A B C", "B", "D")),
                 Arguments.of("Handles umlauts",
-                        new HenkiloExistenceCheckDto("", "a b c", "äyrämö", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "äyrämö", "d")),
+                        fixture("", "a b c", "äyrämö", "d"),
+                        fixture("", "a b c", "äyrämö", "d")),
                 Arguments.of("Handles accents",
-                        new HenkiloExistenceCheckDto("", "a b c", "Amélie", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "Amélie", "d")),
+                        fixture("", "a b c", "Amélie", "d"),
+                        fixture("", "a b c", "Amélie", "d")),
                 Arguments.of("Fuzzy match on firstname (string distance " + THRESHOLD + ")",
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karhu"),
-                        new HenkiloExistenceCheckDto("", "Eelis Tapani", "Hurja", "Karhu")),
+                        fixture("", "Elias Tapani", "Hurja", "Karhu"),
+                        fixture("", "Eelis Tapani", "Hurja", "Karhu")),
                 Arguments.of("Fuzzy match on nickname (string distance " + THRESHOLD + ")",
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karhu"),
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Kurja", "Karhu")),
+                        fixture("", "Elias Tapani", "Hurja", "Karhu"),
+                        fixture("", "Elias Tapani", "Kurja", "Karhu")),
                 Arguments.of("Fuzzy match on lastname (string distance " + THRESHOLD + ")",
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karhu"),
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karju")),
+                        fixture("", "Elias Tapani", "Hurja", "Karhu"),
+                        fixture("", "Elias Tapani", "Hurja", "Karju")),
                 Arguments.of("Handles special characters",
-                        new HenkiloExistenceCheckDto("", "Renée Nöel Zoë", "Zoë", "Søren"),
-                        new HenkiloExistenceCheckDto("", "Renee Noel Zoe", "Zoe", "Soren")),
+                        fixture("", "Renée Nöel Zoë", "Zoë", "Søren"),
+                        fixture("", "Renee Noel Zoe", "Zoe", "Soren")),
                 Arguments.of("Handles hyphens",
-                        new HenkiloExistenceCheckDto("", "Eva-Kaarina", "Nyrkki-Kyllikki", "Halla-aho"),
-                        new HenkiloExistenceCheckDto("", "eva kaarina", "nyrkkikyllikki", "hallaaho"))
+                        fixture("", "Eva-Kaarina", "Nyrkki-Kyllikki", "Halla-aho"),
+                        fixture("", "eva kaarina", "nyrkkikyllikki", "hallaaho"))
         );
     }
 
     private static Stream<Arguments> conflictingOnrData() {
         return Stream.of(
                 Arguments.of("Handles null:s (artificial test case)",
-                        new HenkiloExistenceCheckDto("", null, null, null),
-                        new HenkiloExistenceCheckDto("", null, null, null)),
+                        fixture("", null, null, null),
+                        fixture("", null, null, null)),
                 Arguments.of("Conflicting details",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "x y z", "i", "l"))
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "x y z", "i", "l"))
         );
     }
 
     private static Stream<Arguments> conflictingVtjData() {
         return Stream.of(
                 Arguments.of("Handles null:s (artificial test case)",
-                        new HenkiloExistenceCheckDto("", null, null, null),
-                        new HenkiloExistenceCheckDto("", null, null, null)),
+                        fixture("", null, null, null),
+                        fixture("", null, null, null)),
                 Arguments.of("Conflicting details",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "x y z", "i", "l"))
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "x y z", "i", "l"))
         );
     }
 
     private static Stream<Arguments> matchingVtjData() {
         return Stream.of(
                 Arguments.of("Identical details",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "a b c", "b", "d")),
                 Arguments.of("Kutsumanimi empty in VTJ data",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "", "d")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "a b c", "", "d")),
                 Arguments.of("Kutsumanimi blank in VTJ data",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", " ", "d")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "a b c", " ", "d")),
                 Arguments.of("Kutsumanimi null in VTJ data (should not happen in reality)",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", null, "d")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "a b c", null, "d")),
                 Arguments.of("Is case insensitive",
-                        new HenkiloExistenceCheckDto("", "a b c", "b", "d"),
-                        new HenkiloExistenceCheckDto("", "A B C", "B", "D")),
+                        fixture("", "a b c", "b", "d"),
+                        fixture("", "A B C", "B", "D")),
                 Arguments.of("Handles umlauts",
-                        new HenkiloExistenceCheckDto("", "a b c", "äyrämö", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "äyrämö", "d")),
+                        fixture("", "a b c", "äyrämö", "d"),
+                        fixture("", "a b c", "äyrämö", "d")),
                 Arguments.of("Handles accents",
-                        new HenkiloExistenceCheckDto("", "a b c", "Amélie", "d"),
-                        new HenkiloExistenceCheckDto("", "a b c", "Amélie", "d")),
+                        fixture("", "a b c", "Amélie", "d"),
+                        fixture("", "a b c", "Amélie", "d")),
                 Arguments.of("Fuzzy match on firstname (string distance " + THRESHOLD + ")",
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karhu"),
-                        new HenkiloExistenceCheckDto("", "Eelis Tapani", "Hurja", "Karhu")),
+                        fixture("", "Elias Tapani", "Hurja", "Karhu"),
+                        fixture("", "Eelis Tapani", "Hurja", "Karhu")),
                 Arguments.of("Fuzzy match on nickname (string distance " + THRESHOLD + ")",
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karhu"),
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Kurja", "Karhu")),
+                        fixture("", "Elias Tapani", "Hurja", "Karhu"),
+                        fixture("", "Elias Tapani", "Kurja", "Karhu")),
                 Arguments.of("Fuzzy match on lastname (string distance " + THRESHOLD + ")",
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karhu"),
-                        new HenkiloExistenceCheckDto("", "Elias Tapani", "Hurja", "Karju")),
+                        fixture("", "Elias Tapani", "Hurja", "Karhu"),
+                        fixture("", "Elias Tapani", "Hurja", "Karju")),
                 Arguments.of("Handles special characters",
-                        new HenkiloExistenceCheckDto("", "Renée Nöel Zoë", "Zoë", "Søren"),
-                        new HenkiloExistenceCheckDto("", "Renee Noel Zoe", "Zoe", "Soren")),
+                        fixture("", "Renée Nöel Zoë", "Zoë", "Søren"),
+                        fixture("", "Renee Noel Zoe", "Zoe", "Soren")),
                 Arguments.of("Handles hyphens",
-                        new HenkiloExistenceCheckDto("", "Eva-Kaarina", "Nyrkki-Kyllikki", "Halla-aho"),
-                        new HenkiloExistenceCheckDto("", "eva kaarina", "nyrkkikyllikki", "hallaaho"))
+                        fixture("", "Eva-Kaarina", "Nyrkki-Kyllikki", "Halla-aho"),
+                        fixture("", "eva kaarina", "nyrkkikyllikki", "hallaaho"))
         );
+    }
+
+    static HenkiloExistenceCheckDto fixture(String hetu, String etunimet, String kutsumanimi, String sukunimi) {
+        return HenkiloExistenceCheckDto.builder()
+                .hetu(hetu)
+                .etunimet(etunimet)
+                .kutsumanimi(kutsumanimi)
+                .sukunimi(sukunimi)
+                .build();
     }
 
     @BeforeEach
