@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,7 @@ public class OppijaCreateDto {
 
     private LocalDate syntymaaika;
 
+    @ApiModelProperty(value = "Koodisto: 'sukupuoli'", required = true)
     private String sukupuoli;
 
     private KielisyysDto aidinkieli;
