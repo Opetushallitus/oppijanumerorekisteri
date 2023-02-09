@@ -40,10 +40,12 @@ import static org.mockito.BDDMockito.given;
 @Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
 @Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
 @Sql("/db/migration/V20221215120000000__tuontikooste_fix.sql")
+@Sql("/db/migration/V20230105120000000__tuontikooste_add_conflicts.sql")
 class OppijaControllerIntegrationTest {
 
     private static final String BASE_PATH = "/oppija";
     private static final String KOOSTE = "/oppija/tuontikooste";
+    private static final String TUONTIDATA = "/oppija/tuontidata/";
     private final JSONComparator listComparator = new CustomComparator(JSONCompareMode.STRICT,
             new Customization("results[*].luotu", (o1, o2) -> true),
             new Customization("results[*].muokattu", (o1, o2) -> true));
@@ -136,6 +138,31 @@ class OppijaControllerIntegrationTest {
         assertThat(get(KOOSTE + "?pageSize=1&page=1&field=author&sort=ASC"))
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":null");
+    }
+
+    @Test
+    void tuontidataHappyPath() throws Exception {
+        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/tuontidata.json"), get(TUONTIDATA + 1), true);
+    }
+
+    @Test
+    void tuontidataAccessDenied() {
+        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of());
+
+        ResponseEntity<String> response = httpBasic().getForEntity(TUONTIDATA + 1, String.class);
+
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+    }
+
+    @Test
+    void tuontidataNotFound() {
+        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of());
+
+        ResponseEntity<String> response = httpBasic().getForEntity(TUONTIDATA + 100, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     private String get(String url) {

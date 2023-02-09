@@ -1,6 +1,9 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.DataInconsistencyException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ForbiddenException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
@@ -19,21 +22,24 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactor
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
 import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import static java.util.function.UnaryOperator.identity;
+import static java.util.stream.Collectors.*;
 
 @Slf4j
 @Service
@@ -51,6 +57,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final OrganisaatioRepository organisaatioRepository;
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
+    private final ObjectMapper objectMapper;
 
     @Override
     public String create(OppijaCreateDto dto) {
@@ -96,17 +103,22 @@ public class OppijaServiceImpl implements OppijaService {
         Tuonti entity = getTuontiEntity(id);
 
         // ladataan rivit yhdellä haulla
+        getTuontiRivit(id);
+
+        // rivit on jo ladattu valmiiksi joten tämä ei aiheuta kyselyä/rivi
+        return mapper.map(entity, OppijaTuontiReadDto.class);
+    }
+
+    private List<TuontiRivi> getTuontiRivit(final long tuontiId) {
         Set<String> organisaatioOids = oppijaTuontiService.getOrganisaatioOidsByKayttaja();
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
-        criteria.setTuontiId(id);
+        criteria.setTuontiId(tuontiId);
         criteria.setOrganisaatioOids(organisaatioOids);
         List<TuontiRivi> rivit = tuontiRepository.findRiviBy(criteria, this.permissionChecker.isSuperUserOrCanReadAll());
         if (rivit.isEmpty()) {
             throw new ForbiddenException("Oppijoiden tuonnin tietoihin ei oikeuksia");
         }
-
-        // rivit on jo ladattu valmiiksi joten tämä ei aiheuta kyselyä/rivi
-        return mapper.map(entity, OppijaTuontiReadDto.class);
+        return rivit;
     }
 
     @Override
@@ -147,6 +159,34 @@ public class OppijaServiceImpl implements OppijaService {
                 .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
                         organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
                 .collect(toSet());
+    }
+
+    @Override
+    public List<OppijaTuontiRiviCreateDto> tuontiData(long tuontiId) {
+        Tuonti tuonti = tuontiRepository.findById(tuontiId).orElseThrow(() -> new NotFoundException("tuntematon tuonti"));
+        Map<String, TuontiRivi> tuontiRivit = getTuontiRivit(tuontiId).stream().collect(toMap(TuontiRivi::getTunniste, identity(), (found, duplicate) -> found));
+        OppijaTuontiCreateDto tuontiData = resolveTuontiData(tuonti.getData().getData());
+        tuontiData.getHenkilot().forEach(riviData -> {
+            Optional<TuontiRivi> tuontiRivi = Optional.ofNullable(tuontiRivit.get(riviData.getTunniste()));
+            if (tuontiRivi.isPresent()) {
+                riviData.setHenkiloOid(tuontiRivi.get().getHenkilo().getOidHenkilo());
+                riviData.setHenkiloNimi(getNimiForHenkilo(tuontiRivi.get().getHenkilo()));
+                riviData.setConflict(Optional.ofNullable(tuontiRivi.get().getConflict()).orElse(false));
+            }
+        });
+        return tuontiData.getHenkilot();
+    }
+
+    private OppijaTuontiCreateDto resolveTuontiData(final byte[] bytes) {
+        try {
+            return objectMapper.readValue(new String(bytes, StandardCharsets.UTF_8), OppijaTuontiCreateDto.class);
+        } catch (JsonProcessingException jpe) {
+            throw new DataInconsistencyException("Could not deserialize tuonti data", jpe);
+        }
+    }
+
+    private String getNimiForHenkilo(Henkilo henkilo) {
+        return Stream.of(henkilo.getSukunimi(), henkilo.getEtunimet()).collect(joining(", "));
     }
 
     @Override

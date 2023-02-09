@@ -8,7 +8,8 @@
       "oid": "",
       "timestamp": 1668416400000,
       "failures": 1,
-      "id": 2
+      "id": 2,
+      "conflicts": 0
     },
     {
       "successful": 0,
@@ -18,7 +19,8 @@
       "oid": "",
       "timestamp": 1668416400000,
       "failures": 1,
-      "id": 3
+      "id": 3,
+      "conflicts": 0
     },
     {
       "successful": 0,
@@ -28,7 +30,8 @@
       "oid": "tuonti1",
       "timestamp": 1668412800000,
       "failures": 1,
-      "id": 1
+      "id": 1,
+      "conflicts": 0
     }
   ],
   "pageable": {

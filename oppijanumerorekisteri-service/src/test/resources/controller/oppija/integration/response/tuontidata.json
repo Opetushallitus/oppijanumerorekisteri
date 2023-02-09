@@ -1,0 +1,19 @@
+[
+  {
+    "tunniste": "tunniste",
+    "henkilo": {
+      "hetu": "240784-9105",
+      "etunimet": "Uuno",
+      "kutsumanimi": "Yksikkö",
+      "sukunimi": "Testaaja",
+      "kansalaisuus": [
+        {
+          "koodi": "246"
+        }
+      ]
+    },
+    "henkiloOid": "tuonti1",
+    "henkiloNimi":"tuonti1, tuonti1",
+    "conflict": false
+  }
+]
