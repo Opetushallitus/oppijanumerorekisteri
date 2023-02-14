@@ -1,12 +1,13 @@
 {
     "extends": [
-        "react-app",
-        "react-app/jest",
+        "eslint:recommended",
+        "plugin:react/recommended",
         "prettier"
     ],
     "parser": "babel-eslint",
     "plugins": [
-        "react"
+        "react",
+        "jest"
     ],
     "overrides": [
         {
@@ -23,6 +24,7 @@
           }
     ],
     "env": {
+        "jest/globals": true,
         "browser": true
     },
     "rules": {
