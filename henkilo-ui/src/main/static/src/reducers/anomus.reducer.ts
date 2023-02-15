@@ -19,11 +19,12 @@ export const haetutKayttooikeusryhmat = (
     switch (action.type) {
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_REQUEST:
             return { ...state, isLoading: true };
-        case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS:
+        case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_SUCCESS: {
             const uudet = action.haetutKayttooikeusryhmat.filter((uusi: HaettuKayttooikeusryhma) =>
                 state.data.every((vanha: HaettuKayttooikeusryhma) => vanha.id !== uusi.id)
             );
             return { ...state, isLoading: false, data: [...state.data, ...uudet] };
+        }
         case FETCH_HAETUT_KAYTTOOIKEUSRYHMAT_FAILURE:
             return { ...state, isLoading: false };
         case CLEAR_HAETUT_KAYTTOOIKEUSRYHMAT:

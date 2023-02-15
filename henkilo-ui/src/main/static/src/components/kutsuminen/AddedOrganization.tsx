@@ -179,7 +179,7 @@ class AddedOrganization extends React.Component<Props, State> {
         if (!selection) {
             return;
         }
-        const isOrganisaatio = selection.hasOwnProperty('oid');
+        const isOrganisaatio = Object.prototype.hasOwnProperty.call(selection, 'oid');
         const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
         const organisaatio = isOrganisaatio
             ? selection

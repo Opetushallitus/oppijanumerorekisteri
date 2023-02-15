@@ -73,7 +73,7 @@ const omattiedot = (state: OmattiedotState = initialState, action: any) => {
             return Object.assign({}, state, {
                 omattiedotOrganisaatiosLoading: true,
             });
-        case FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS:
+        case FETCH_OMATTIEDOT_ORGANISAATIOS_SUCCESS: {
             const newRyhmaOptions = getOrganisaatioOptionsAndFilter(action.organisaatios, action.locale, true);
             return {
                 ...state,
@@ -82,6 +82,7 @@ const omattiedot = (state: OmattiedotState = initialState, action: any) => {
                 organisaatioRyhmaOptions: newRyhmaOptions.options,
                 organisaatioRyhmaFilter: newRyhmaOptions.filterOptions,
             };
+        }
         case FETCH_HENKILOHAKUORGANISAATIOT_REQUEST:
             return { ...state, henkilohakuOrganisaatiotLoading: true };
         case FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS:

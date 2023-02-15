@@ -26,7 +26,7 @@ export const kutsuminenOrganisaatios = (
         case KUTSU_ADD_ORGANISAATIO:
             newOrganisaatios.push(action.organisaatio);
             return newOrganisaatios;
-        case KUTSU_SET_ORGANISAATIO:
+        case KUTSU_SET_ORGANISAATIO: {
             const properties = {
                 oid: action.organisaatio.oid,
                 organisation: action.organisaatio,
@@ -39,12 +39,13 @@ export const kutsuminenOrganisaatios = (
                 ...properties,
             };
             return newOrganisaatios;
+        }
         case KUTSU_REMOVE_ORGANISAATIO:
             newOrganisaatios.splice(action.index, 1);
             return [...newOrganisaatios];
         case KUTSU_CLEAR_ORGANISAATIOS:
             return [];
-        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST:
+        case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_REQUEST: {
             const propeq = propEq('oid', action.oidOrganisation);
             kutsu = find(propeq)(newOrganisaatios);
 
@@ -53,6 +54,7 @@ export const kutsuminenOrganisaatios = (
             }
 
             return newOrganisaatios;
+        }
         case FETCH_ALLOWED_KAYTTOOIKEUS_FOR_ORGANISATION_SUCCESS:
             kutsu = find(propEq('oid', action.oidOrganisation))(newOrganisaatios);
 

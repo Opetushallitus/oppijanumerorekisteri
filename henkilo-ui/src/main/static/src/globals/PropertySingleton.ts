@@ -55,4 +55,6 @@ class PropertySingleton {
     }
 }
 
-export default new PropertySingleton();
+const singleton = new PropertySingleton();
+
+export default singleton;
