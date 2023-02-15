@@ -19,7 +19,7 @@ export default class VtjVertailuListaus extends React.Component<Props> {
 
         const data = [
             { ...henkiloData, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' },
-            { ...yksilointitiedot, palvelu: 'HENKILO_VTJ_VRKPALVELU' }
+            { ...yksilointitiedot, palvelu: 'HENKILO_VTJ_VRKPALVELU' },
         ];
 
         const columns = [

@@ -182,7 +182,9 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
 
         return [
             ...organisaatiotNotHavingParents,
-            ...R.sortBy<OrganisaatioSelectObject>(R.compose(R.toLower, R.last, R.prop('parentNames')))(organisaatiotHavingParents),
+            ...R.sortBy<OrganisaatioSelectObject>(R.compose(R.toLower, R.last, R.prop('parentNames')))(
+                organisaatiotHavingParents
+            ),
         ];
     }
 }

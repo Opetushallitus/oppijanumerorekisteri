@@ -56,9 +56,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
     render() {
         const henkilo = this.props.henkilo;
         const targetPage = this.props.henkiloType;
-        const hakemukset = henkilo.hakemukset
-            ? henkilo.hakemukset.map((hakemus) => this._parseHakemus(hakemus))
-            : [];
+        const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map((hakemus) => this._parseHakemus(hakemus)) : [];
         const hakemus = hakemukset[0];
         const muutHakemukset = (hakemukset && R.tail(hakemukset)) || [];
         const styleClasses = classNames(this.props.classNames);

@@ -133,7 +133,9 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         }
     }
 
-    _parseExistingRyhmaRestrictionViite = (organisaatioViitteet: OrganisaatioViite[]): OrganisaatioViite | undefined => {
+    _parseExistingRyhmaRestrictionViite = (
+        organisaatioViitteet: OrganisaatioViite[]
+    ): OrganisaatioViite | undefined => {
         return organisaatioViitteet.find((viite) => this._isRyhmaOid(viite.organisaatioTyyppi));
     };
 
