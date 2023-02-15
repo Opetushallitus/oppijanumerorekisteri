@@ -11,7 +11,7 @@ const localisationFromAllKeys = (priorityLang: string, allKeys: Array<string>, d
                     .map((lang) => data1[lang][key] || data2[lang][key])
                     .filter((localisation) => localisation !== undefined)[0] || key,
         }))
-        .reduce((acc, current) => ({ ...acc, ...current }));
+        .reduce((acc, current) => ({ ...acc, ...current }), {});
 };
 
 const mapLocalisations = (data: L10n, localisationData: L10n): L10n => {
