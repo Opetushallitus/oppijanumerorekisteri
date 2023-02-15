@@ -3,10 +3,11 @@ import ReactTable from 'react-table';
 import * as R from 'ramda';
 import 'react-table/react-table.css';
 import './VtjVertailuListaus.css';
+import { HenkiloState } from '../../../reducers/henkilo.reducer';
 
 type Props = {
     L: Record<string, string>;
-    henkilo: {};
+    henkilo: HenkiloState;
 };
 export default class VtjVertailuListaus extends React.Component<Props> {
     render() {
@@ -14,12 +15,12 @@ export default class VtjVertailuListaus extends React.Component<Props> {
             ['etunimet', 'sukunimi', 'kutsumanimi', 'sukupuoli', 'yhteystiedotRyhma'],
             R.path(['henkilo'], this.props.henkilo)
         );
-        henkiloData.palvelu = 'HENKILO_VTJ_HENKILOPALVELU';
+        const yksilointitiedot = this.props.henkilo?.yksilointitiedot;
 
-        const yksilointitiedot = R.path(['yksilointitiedot'], this.props.henkilo);
-        yksilointitiedot.palvelu = 'HENKILO_VTJ_VRKPALVELU';
-
-        const data = [henkiloData, yksilointitiedot];
+        const data = [
+            { ...henkiloData, palvelu: 'HENKILO_VTJ_HENKILOPALVELU' },
+            { ...yksilointitiedot, palvelu: 'HENKILO_VTJ_VRKPALVELU' }
+        ];
 
         const columns = [
             {

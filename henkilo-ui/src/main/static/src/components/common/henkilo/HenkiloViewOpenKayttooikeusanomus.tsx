@@ -17,7 +17,6 @@ import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/Haet
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import * as R from 'ramda';
 import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import { TableCellProps, TableHeading } from '../../../types/react-table.types';
@@ -465,8 +464,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         );
     };
 
-    _findAnojaKayttooikeusData = (anojaOid: string): AnojaKayttooikeusryhmaData | null | undefined => {
-        return R.find(R.propEq('anojaOid', anojaOid))(this.state.kayttooikeusRyhmatByAnoja);
+    _findAnojaKayttooikeusData = (anojaOid: string): AnojaKayttooikeusryhmaData | undefined => {
+        return this.state.kayttooikeusRyhmatByAnoja.find((ryhma) => ryhma.anojaOid === anojaOid);
     };
 
     showAccessRightGroupDetails(accessRightGroup) {

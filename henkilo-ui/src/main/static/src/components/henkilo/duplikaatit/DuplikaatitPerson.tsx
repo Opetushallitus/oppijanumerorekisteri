@@ -57,9 +57,9 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         const henkilo = this.props.henkilo;
         const targetPage = this.props.henkiloType;
         const hakemukset = henkilo.hakemukset
-            ? henkilo.hakemukset.map((hakemus: any) => this._parseHakemus(hakemus))
-            : undefined;
-        const hakemus = (hakemukset && R.head(hakemukset)) || {};
+            ? henkilo.hakemukset.map((hakemus) => this._parseHakemus(hakemus))
+            : [];
+        const hakemus = hakemukset[0];
         const muutHakemukset = (hakemukset && R.tail(hakemukset)) || [];
         const styleClasses = classNames(this.props.classNames);
         const L = this.props.L;
@@ -101,19 +101,19 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                     {this._koodistoLabel(henkilo.aidinkieli?.kieliKoodi, this.props.koodisto.kieli, this.props.locale)}
                 </DataCell>
                 <DataCell className="type">{L['DUPLIKAATIT_HAKEMUS']}</DataCell>
-                <DataCell hakemus>{hakemus.kansalaisuus}</DataCell>
-                <DataCell hakemus>{hakemus.aidinkieli}</DataCell>
-                <DataCell hakemus>{hakemus.matkapuhelinnumero}</DataCell>
-                <DataCell hakemus>{hakemus.sahkoposti}</DataCell>
-                <DataCell hakemus>{hakemus.lahiosoite}</DataCell>
-                <DataCell hakemus>{hakemus.postinumero}</DataCell>
-                <DataCell hakemus>{hakemus.passinumero}</DataCell>
-                <DataCell hakemus>{hakemus.kansallinenIdTunnus}</DataCell>
-                <DataCell hakemus>{hakemus.state}</DataCell>
+                <DataCell hakemus>{hakemus?.kansalaisuus}</DataCell>
+                <DataCell hakemus>{hakemus?.aidinkieli}</DataCell>
+                <DataCell hakemus>{hakemus?.matkapuhelinnumero}</DataCell>
+                <DataCell hakemus>{hakemus?.sahkoposti}</DataCell>
+                <DataCell hakemus>{hakemus?.lahiosoite}</DataCell>
+                <DataCell hakemus>{hakemus?.postinumero}</DataCell>
+                <DataCell hakemus>{hakemus?.passinumero}</DataCell>
+                <DataCell hakemus>{hakemus?.kansallinenIdTunnus}</DataCell>
+                <DataCell hakemus>{hakemus?.state}</DataCell>
                 <DataCell hakemus>
-                    {hakemus.href && (
-                        <a className="oph-link" href={hakemus.href}>
-                            {hakemus.oid}
+                    {hakemus?.href && (
+                        <a className="oph-link" href={hakemus?.href}>
+                            {hakemus?.oid}
                         </a>
                     )}
                 </DataCell>
@@ -224,7 +224,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
     }
 
     _koodistoLabel(koodi: any, koodisto: any, locale: Locale): string | null {
-        const koodistoItem = R.find((koodistoItem) => koodistoItem.value === koodi, koodisto);
+        const koodistoItem = R.find((koodistoItem: any) => koodistoItem.value === koodi, koodisto);
         return koodistoItem ? koodistoItem[locale] : null;
     }
 }

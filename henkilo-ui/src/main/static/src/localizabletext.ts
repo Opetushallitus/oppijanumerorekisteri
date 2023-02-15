@@ -19,7 +19,7 @@ const FORMATS = [
         // used (at least) in henkilöpalvelu
         isValid: (localizableText) => Array.isArray(localizableText.texts) && localizableText.texts.length > 0,
         getValue: (localizableText: TextGroup, uiLang: Locale) => {
-            const value = R.find(R.propEq('lang', uiLang.toUpperCase()))(localizableText.texts);
+            const value = localizableText.texts.find((u) => u.lang === uiLang.toUpperCase());
             return value ? value.text : value;
         },
         getFallbackValue: (localizableText) =>

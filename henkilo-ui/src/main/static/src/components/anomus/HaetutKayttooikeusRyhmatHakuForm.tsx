@@ -28,7 +28,7 @@ type StateProps = {
     isAdmin: boolean;
     isOphVirkailija: boolean;
     haetutKayttooikeusryhmatLoading: boolean;
-    ryhmat: { ryhmas: Array<{}> };
+    ryhmat: { ryhmas: Array<Record<string, any>> };
 };
 
 type Props = StateProps & OwnProps;
@@ -129,7 +129,7 @@ class HaetutKayttooikeusRyhmatHakuForm extends React.Component<Props, State> {
         );
     }
 
-    _parseRyhmas(ryhmatState: { ryhmas: Array<{}> }): Array<{ label: string; value: string }> {
+    _parseRyhmas(ryhmatState: { ryhmas: Array<Record<string, any>> }): Array<{ label: string; value: string }> {
         const ryhmat = R.path(['ryhmas'], ryhmatState);
         return ryhmat
             ? ryhmat

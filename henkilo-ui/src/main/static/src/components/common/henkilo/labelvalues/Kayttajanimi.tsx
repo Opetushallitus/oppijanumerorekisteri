@@ -25,7 +25,7 @@ const Kayttajanimi = (props: Props) => {
             readOnly={props.readOnly}
             values={{
                 label: 'HENKILO_KAYTTAJANIMI',
-                value: props.defaultValue || props.henkilo.kayttajatieto.username,
+                value: props.defaultValue || props.henkilo.kayttajatieto?.username,
                 inputValue: 'kayttajanimi',
                 disabled: props.disabled,
                 isError: props.isError,

@@ -166,7 +166,7 @@ class AddedOrganization extends React.Component<Props, State> {
     };
 
     addPermission(selectablePermissions: Array<MyonnettyKayttooikeusryhma>, kayttooikeusryhma: Kayttooikeusryhma) {
-        const selectedPermission = R.find(R.propEq('ryhmaId', kayttooikeusryhma.id))(selectablePermissions);
+        const selectedPermission = selectablePermissions.find((s) => s.ryhmaId === kayttooikeusryhma.id);
         this.props.addOrganisaatioPermission(this.props.addedOrg.oid, selectedPermission);
     }
 
