@@ -118,7 +118,7 @@ public class OppijaController {
     @GetMapping("/tuontidata/{tuontiId}")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+            + "'APP_OPPIJANUMEROREKISTERI_TUONTIDATA_READ')")
     @ApiOperation(value = "Tuontiin liittyvä tuontidata")
     List<OppijaTuontiRiviCreateDto> tuontiData(@PathVariable final long  tuontiId) {
         return oppijaService.tuontiData(tuontiId);

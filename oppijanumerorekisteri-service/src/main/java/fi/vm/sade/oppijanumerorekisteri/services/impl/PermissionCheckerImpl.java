@@ -37,6 +37,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
     public static final String ROOT_ORGANISATION_SUFFIX = "_" + ORGANISAATIO_OID_PREFIX + ".00000000001";
     public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
     public static final String KAYTTOOIKEUS_OPPIJOIDENTUONTI = "OPPIJOIDENTUONTI";
+    public static final String KAYTTOOIKEUS_TUONTIDATA_READ = "TUONTIDATA_READ";
     public static final String KAYTTOOIKEUS_HENKILON_RU = "HENKILON_RU";
     public static final String KAYTTOOIKEUS_READ = "READ";
 
