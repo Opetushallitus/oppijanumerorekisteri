@@ -36,8 +36,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
 import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.*;
 
@@ -155,15 +154,17 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private Set<String> resolveTuontiOrganisations() {
-        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
-                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+        return Stream.concat(
+                        permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream(),
+                        permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT).stream()
+                ).flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
                         organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
                 .collect(toSet());
     }
 
     @Override
     public List<OppijaTuontiRiviCreateDto> tuontiData(long tuontiId) {
-        Tuonti tuonti = tuontiRepository.findById(tuontiId).orElseThrow(() -> new NotFoundException("tuntematon tuonti"));
+        Tuonti tuonti = getTuonti(tuontiId);
         Map<String, TuontiRivi> tuontiRivit = getTuontiRivit(tuontiId).stream().collect(toMap(TuontiRivi::getTunniste, identity(), (found, duplicate) -> found));
         OppijaTuontiCreateDto tuontiData = resolveTuontiData(tuonti.getData().getData());
         tuontiData.getHenkilot().forEach(riviData -> {
@@ -175,6 +176,21 @@ public class OppijaServiceImpl implements OppijaService {
             }
         });
         return tuontiData.getHenkilot();
+    }
+
+    private Tuonti getTuonti(long tuontiId) {
+        Tuonti tuonti = tuontiRepository.findById(tuontiId).orElseThrow(() -> new NotFoundException("tuntematon tuonti"));
+        if ( permissionChecker.isSuperUserOrCanReadAll() || canRead(tuonti) ) {
+            return tuonti;
+        }
+        throw new ForbiddenException("ei lukuoikeutta");
+    }
+
+    private boolean canRead(Tuonti tuonti) {
+        Set<String> grantedOrgs = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_TUONTIDATA_READ);
+        Set<String> tuontiOrgs = tuonti.getOrganisaatiot().stream().map(org -> org.getOid()).collect(toSet());
+        tuontiOrgs.retainAll(grantedOrgs);
+        return !tuontiOrgs.isEmpty();
     }
 
     private OppijaTuontiCreateDto resolveTuontiData(final byte[] bytes) {
