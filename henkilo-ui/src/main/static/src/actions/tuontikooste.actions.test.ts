@@ -7,12 +7,12 @@ jest.mock('oph-urls-js');
 jest.mock('../http');
 jest.mock('../utilities/localisation.util');
 
-const criteria = {
+const criteria: TuontiKoosteCriteria = {
     page: 1,
     pageSize: 1,
     field: 'timestamp',
     sort: 'ASC',
-} as TuontiKoosteCriteria;
+};
 
 afterAll(() => {
     jest.clearAllMocks();
