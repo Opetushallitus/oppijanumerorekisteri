@@ -154,10 +154,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     @Override
     public Set<String> getAllOrganisaatioOids(final String palvelu, final String... oikeudet) {
-        return Arrays.asList(oikeudet).stream()
-                .map(accessRight -> getOrganisaatioOids(palvelu, accessRight).stream())
-                .reduce(Stream::concat)
-                .orElse(Stream.empty())
+        return getOrganisaatioOidsByKayttaja(palvelu, oikeudet).stream()
                 .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
                         organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
                 .collect(toSet());
