@@ -22,17 +22,13 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactor
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -187,7 +183,10 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private boolean canRead(Tuonti tuonti) {
-        Set<String> grantedOrgs = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_TUONTIDATA_READ);
+        Set<String> grantedOrgs = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_TUONTIDATA_READ).stream()
+                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
+                .collect(toSet());
         Set<String> tuontiOrgs = tuonti.getOrganisaatiot().stream().map(org -> org.getOid()).collect(toSet());
         tuontiOrgs.retainAll(grantedOrgs);
         return !tuontiOrgs.isEmpty();
