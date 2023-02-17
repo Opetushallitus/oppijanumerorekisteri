@@ -143,6 +143,26 @@ public class PermissionCheckerImpl implements PermissionChecker {
         return getOrganisaatioOids(kayttajanRooli -> kayttajanRooli.startsWith(haluttuRooli));
     }
 
+    @Override
+    public Set<String> getOrganisaatioOidsByKayttaja(final String palvelu, final String... oikeudet) {
+        return Arrays.asList(oikeudet).stream()
+                .map(kayttooikeus -> getOrganisaatioOids(palvelu, kayttooikeus).stream())
+                .reduce(Stream::concat)
+                .orElse(Stream.empty())
+                .collect(toSet());
+    }
+
+    @Override
+    public Set<String> getAllOrganisaatioOids(final String palvelu, final String... oikeudet) {
+        return Arrays.asList(oikeudet).stream()
+                .map(accessRight -> getOrganisaatioOids(palvelu, accessRight).stream())
+                .reduce(Stream::concat)
+                .orElse(Stream.empty())
+                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
+                .collect(toSet());
+    }
+
     private Set<String> getOrganisaatioOids(Predicate<String> rooliPredicate) {
         return getCasRoles().stream()
                 .filter(rooliPredicate)

@@ -34,13 +34,6 @@ public interface OppijaTuontiService {
     boolean create(long id);
 
     /**
-     * Palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.
-     *
-     * @return aktiiviset organisaatiot
-     */
-    Set<String> getOrganisaatioOidsByKayttaja();
-
-    /**
      * Luo ja palauttaa käyttäjän aktiiviset oppijan tuontiin liittyvät organisaatiot.
      *
      * @return aktiiviset organisaatiot
