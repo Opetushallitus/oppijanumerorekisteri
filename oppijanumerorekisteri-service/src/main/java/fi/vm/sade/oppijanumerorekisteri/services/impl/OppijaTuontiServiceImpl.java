@@ -172,18 +172,9 @@ public class OppijaTuontiServiceImpl implements OppijaTuontiService {
     }
 
     @Override
-    public Set<String> getOrganisaatioOidsByKayttaja() {
-        Set<String> oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI);
-        if (oids.isEmpty()) {
-            oids = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL);
-        }
-        return oids;
-    }
-
-    @Override
     public Set<Organisaatio> getOrCreateOrganisaatioByKayttaja() {
         // haetaan käyttäjän organisaatiot ja luodaan niistä organisaatio oppijanumerorekisteriin
-        Set<String> organisaatioOids = getOrganisaatioOidsByKayttaja();
+        Set<String> organisaatioOids = permissionChecker.getOrganisaatioOidsByKayttaja(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL);
         return organisaatioOids.stream()
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
                         .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))))

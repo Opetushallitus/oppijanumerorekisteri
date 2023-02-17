@@ -105,7 +105,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private List<TuontiRivi> getTuontiRivit(final long tuontiId) {
-        Set<String> organisaatioOids = oppijaTuontiService.getOrganisaatioOidsByKayttaja();
+        Set<String> organisaatioOids = permissionChecker.getOrganisaatioOidsByKayttaja(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setTuontiId(tuontiId);
         criteria.setOrganisaatioOids(organisaatioOids);
@@ -145,17 +145,8 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination) {
         final boolean isSuperUser = permissionChecker.isSuperUserOrCanReadAll();
-        Set<String> userOrgs = isSuperUser ? Set.of() : resolveTuontiOrganisations();
+        Set<String> userOrgs = isSuperUser ? Set.of() : permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
         return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, pagination);
-    }
-
-    private Set<String> resolveTuontiOrganisations() {
-        return Stream.concat(
-                        permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream(),
-                        permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT).stream()
-                ).flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
-                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
-                .collect(toSet());
     }
 
     @Override
@@ -183,10 +174,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private boolean canRead(Tuonti tuonti) {
-        Set<String> grantedOrgs = permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_TUONTIDATA_READ).stream()
-                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
-                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
-                .collect(toSet());
+        Set<String> grantedOrgs = permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_TUONTIDATA_READ);
         Set<String> tuontiOrgs = tuonti.getOrganisaatiot().stream().map(org -> org.getOid()).collect(toSet());
         tuontiOrgs.retainAll(grantedOrgs);
         return !tuontiOrgs.isEmpty();
@@ -273,9 +261,7 @@ public class OppijaServiceImpl implements OppijaService {
         // muut käyttäjät ainoastaan omista organisaatioista
         if (!permissionChecker.isSuperUserOrCanReadAll()) {
             String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-            Set<String> organisaatioOidsByKayttaja = oppijaTuontiService.getOrganisaatioOidsByKayttaja().stream()
-                    .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid), organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
-                    .collect(toSet());
+            Set<String> organisaatioOidsByKayttaja = permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
             if (organisaatioOidsByKayttaja.isEmpty()) {
                 throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid));
             }
