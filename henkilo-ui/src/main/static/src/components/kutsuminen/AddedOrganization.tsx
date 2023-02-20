@@ -150,7 +150,9 @@ class AddedOrganization extends React.Component<Props, State> {
                             className="oph-input"
                             value={addedOrg.voimassaLoppuPvm}
                             onChange={this.selectVoimassaLoppuPvm}
-                            filterDate={(date) => moment(date).isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
+                            filterDate={(date) =>
+                                moment(date).isBetween(moment(), moment().add(1, 'years'), 'day', '[]')
+                            }
                         />
                     </div>
                 </div>

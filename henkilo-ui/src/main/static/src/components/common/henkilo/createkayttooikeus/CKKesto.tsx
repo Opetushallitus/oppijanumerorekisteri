@@ -6,13 +6,13 @@ import PropertySingleton from '../../../../globals/PropertySingleton';
 import { Localisations } from '../../../../types/localisation.type';
 
 type CKKestoProps = {
-    alkaaPvmAction: (arg0: moment.Moment) => void
-    alkaaInitValue: moment.Moment
-    paattyyPvmAction: (arg0: moment.Moment) => void
-    paattyyInitValue: moment.Moment
-    L: Localisations
-    vuosia: number
-}
+    alkaaPvmAction: (arg0: moment.Moment) => void;
+    alkaaInitValue: moment.Moment;
+    paattyyPvmAction: (arg0: moment.Moment) => void;
+    paattyyInitValue: moment.Moment;
+    L: Localisations;
+    vuosia: number;
+};
 
 const CKKesto = ({ alkaaPvmAction, alkaaInitValue, paattyyPvmAction, paattyyInitValue, L, vuosia }: CKKestoProps) => (
     <tr key="kayttooikeusKestoField">
