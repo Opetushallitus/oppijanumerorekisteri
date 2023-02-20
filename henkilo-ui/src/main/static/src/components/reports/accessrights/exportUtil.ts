@@ -8,7 +8,7 @@ const DELIMITER = ';';
 
 const isDate = (value) => String(value).match(/^\d{4}-\d{2}-\d{2}/);
 
-const formatDate = (date) => moment(date).format(PropertySingleton.state.PVM_FORMAATTI);
+const formatDate = (date: Date) => moment(date).format(PropertySingleton.state.PVM_MOMENT_FORMAATTI);
 
 const format: (any) => any = (value) => (isDate(value) ? formatDate(value) : value);
 

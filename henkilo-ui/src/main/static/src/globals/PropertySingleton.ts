@@ -13,7 +13,8 @@ type State = {
     externalPermissionService: string;
     rootOrganisaatioOid: string;
 
-    PVM_FORMAATTI: string;
+    PVM_MOMENT_FORMAATTI: string;
+    PVM_DATEPICKER_FORMAATTI: string;
     PVM_DBFORMAATTI: string;
     PVM_DATE_TIME_FORMAATTI: string;
 };
@@ -33,7 +34,8 @@ class PropertySingleton {
             numberRegex: /\d/,
             characterRegex: /[a-zA-Z]/,
             minimunPasswordLength: 8,
-            PVM_FORMAATTI: 'D.M.YYYY',
+            PVM_MOMENT_FORMAATTI: 'D.M.YYYY',
+            PVM_DATEPICKER_FORMAATTI: 'd.M.yyyy',
             PVM_DBFORMAATTI: 'YYYY-MM-DD',
             PVM_DATE_TIME_FORMAATTI: 'D.M.YYYY H:mm',
         };

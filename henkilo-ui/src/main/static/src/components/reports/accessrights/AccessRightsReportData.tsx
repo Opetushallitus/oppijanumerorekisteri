@@ -12,7 +12,7 @@ type Props = {
     report: AccessRightsReportRow[];
 };
 
-export const formatDate: (string) => string = (value) => moment(value).format(PropertySingleton.state.PVM_FORMAATTI);
+export const formatDate: (string) => string = (value) => moment(value).format(PropertySingleton.state.PVM_MOMENT_FORMAATTI);
 
 export const formatDateTime: (string) => string = (value) =>
     moment(value).format(PropertySingleton.state.PVM_DATE_TIME_FORMAATTI);

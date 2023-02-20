@@ -74,8 +74,7 @@ class App extends React.Component<AppProps, AppState> {
     render() {
         if (this.isInitialized()) {
             moment.locale(this.props.locale);
-            // flow-typed fails to generate this for some reason
-            (moment as any).defaultFormat = PropertySingleton.getState().PVM_FORMAATTI;
+            moment.defaultFormat = PropertySingleton.getState().PVM_MOMENT_FORMAATTI;
         }
         return this.isInitialized() ? (
             <div className="oph-typography mainContainer">
