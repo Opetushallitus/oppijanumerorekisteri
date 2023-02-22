@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Table from '../table/Table';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
 import StaticUtils from '../StaticUtils';
 import MyonnaButton from './buttons/MyonnaButton';
@@ -38,7 +38,7 @@ export type AnojaKayttooikeusryhmaData = {
 };
 
 type State = {
-    dates: Array<{ alkupvm: any; loppupvm: any }>;
+    dates: Array<{ alkupvm: Moment; loppupvm: Moment }>;
     kayttooikeusRyhmatByAnoja: Array<AnojaKayttooikeusryhmaData>;
     showHylkaysPopup: boolean;
     disabledHylkaaButtons: {
@@ -172,9 +172,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         });
     }
 
-    loppupvmAction(value: any, idx: number) {
+    loppupvmAction(value: Date, idx: number) {
         const dates = [...this.state.dates];
-        dates[idx].loppupvm = value;
+        dates[idx].loppupvm = moment(value);
         this.setState({
             dates: dates,
         });
@@ -212,7 +212,7 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                     <DatePicker
                         className="oph-input"
                         onChange={(value) => this.loppupvmAction(value, idx)}
-                        selected={this.state.dates[idx].loppupvm}
+                        selected={this.state.dates[idx].loppupvm.toDate()}
                         showYearDropdown
                         showWeekNumbers
                         disabled={this.hasNoPermission(
