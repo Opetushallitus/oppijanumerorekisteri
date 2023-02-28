@@ -65,6 +65,7 @@ const MfaUnregistered = ({ setMfaSetup, L }: MfaUnregisteredProps) => {
                         <button
                             className={`oph-button oph-button-primary ${styles.setupButton}`}
                             onClick={() => setMfaSetup(true)}
+                            data-test-id="start-mfa-setup"
                         >
                             {L.MFA_OTA_KAYTTOON}
                         </button>
@@ -91,7 +92,11 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
         return <Loader />;
     }
     if (!isSuccess) {
-        return <div className="error-txt">{L.MFA_TIETOJEN_HAKU_EPAONNISTUI}</div>;
+        return (
+            <div className="error-txt" data-test-id="setup-error">
+                {L.MFA_TIETOJEN_HAKU_EPAONNISTUI}
+            </div>
+        );
     }
 
     const handleMfaEnable = async (token: string) => {
@@ -202,15 +207,19 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                                 disabled={isPostLoading}
                             />
                             {isPostLoading && <div>{L.MFA_OTETAAN_KAYTTOON}</div>}
-                            {setupError && <div className="error-txt">{setupError}</div>}
+                            {setupError && (
+                                <div className="error-txt" data-test-id="token-error">
+                                    {setupError}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
             <hr />
-            <span className={styles.greyInfo}>
-                {L.MFA_KOODI_VAIHTOEHTO_INFO} {data.secretKey}
-            </span>
+            <div className={styles.greyInfo}>
+                {L.MFA_KOODI_VAIHTOEHTO_INFO} <span data-test-id="secret-key">{data.secretKey}</span>
+            </div>
         </div>
     );
 };
@@ -230,7 +239,7 @@ const Mfa = () => {
                     {isMfaSetup && ` - ${L.MFA_KAYTTOONOTTO}`}
                 </span>
                 {!isMfaSetup && (
-                    <span className={styles.mfaEnabled}>
+                    <span className={styles.mfaEnabled} data-test-id="mfa-status">
                         {omattiedot.mfaProvider ? L.MFA_KAYTOSSA : L.MFA_EI_KAYTOSSA}
                     </span>
                 )}

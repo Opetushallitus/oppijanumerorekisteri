@@ -162,4 +162,4 @@ export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: Dispatch
 export const setMfaProvider = (mfaProvider: string) => ({
     type: SET_MFA_PROVIDER,
     mfaProvider,
-})
+});

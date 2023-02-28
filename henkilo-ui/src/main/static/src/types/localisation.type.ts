@@ -1,4 +1,4 @@
-import { Locale } from "./locale.type";
+import { Locale } from './locale.type';
 
 export type Localisations = Record<string, string>;
 
