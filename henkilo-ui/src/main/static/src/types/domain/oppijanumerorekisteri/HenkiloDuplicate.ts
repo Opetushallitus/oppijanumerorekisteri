@@ -2,6 +2,7 @@ import { Kielisyys } from './kielisyys.types';
 import { Kansalaisuus } from './kansalaisuus.types';
 import type { Henkilo, HenkiloCreate } from '../../../types/domain/oppijanumerorekisteri/henkilo.types';
 import type { Kayttaja } from '../../../types/domain/kayttooikeus/kayttaja.types';
+import { Hakemus } from './Hakemus.type';
 
 export type HenkiloDuplicateLenient = {
     henkilo: HenkiloCreate | Henkilo;
@@ -29,7 +30,7 @@ export type HenkiloDuplicate = {
     yksiloityVTJ: boolean;
     aidinkieli: Kielisyys;
     asiointiKieli: Kielisyys;
-    hakemukset: any[];
+    hakemukset?: Hakemus[];
     passinumerot: string[];
     kansalaisuus: Kansalaisuus[];
 };

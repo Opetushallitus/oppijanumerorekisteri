@@ -96,7 +96,7 @@ class HenkiloViewCreateKayttooikeus extends React.Component<Props, State> {
         };
 
         this.organisationAction = (value) => {
-            const isOrganisaatio = value.hasOwnProperty('oid');
+            const isOrganisaatio = Object.prototype.hasOwnProperty.call(value, 'oid');
             const oid = isOrganisaatio ? value.oid : value.value;
 
             // ryhmaName -muuttujaa ei näytetä missään. Sitä käytetään vain käyttöoikeuden valintamodalin enablointiin

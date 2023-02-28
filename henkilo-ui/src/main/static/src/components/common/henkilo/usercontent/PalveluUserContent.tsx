@@ -12,7 +12,6 @@ import Loader from '../../icons/Loader';
 import Oid from '../labelvalues/Oid';
 import Kayttajanimi from '../labelvalues/Kayttajanimi';
 import PasswordButton from '../buttons/PasswordButton';
-import * as R from 'ramda';
 import PassivoiButton from '../buttons/PassivoiButton';
 import AktivoiButton from '../buttons/AktivoiButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
@@ -47,7 +46,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class PalveluUserContent extends React.Component<Props> {
     componentDidMount() {
-        if (!this.props.henkilo.kayttajatieto.username && !this.props.henkilo.kayttajatietoLoading) {
+        if (!this.props.henkilo.kayttajatieto?.username && !this.props.henkilo.kayttajatietoLoading) {
             this.props.fetchKayttajatieto(this.props.oidHenkilo);
         }
     }
@@ -81,7 +80,7 @@ class PalveluUserContent extends React.Component<Props> {
             [
                 <Oid {...props} />,
                 <Kayttajanimi
-                    disabled={!this.props.isAdmin && !!R.path(['kayttajatieto', 'username'], this.props.henkilo)}
+                    disabled={!this.props.isAdmin && !!this.props.henkilo.kayttajatieto?.username}
                     {...props}
                 />,
             ],
@@ -92,7 +91,7 @@ class PalveluUserContent extends React.Component<Props> {
     createReadOnlyButtons = () => {
         const duplicate = this.props.henkilo.henkilo.duplicate;
         const passivoitu = this.props.henkilo.henkilo.passivoitu;
-        const kayttajatunnukseton = !R.path(['kayttajatieto', 'username'], this.props.henkilo);
+        const kayttajatunnukseton = !this.props.henkilo.kayttajatieto?.username;
         return [
             <EditButton editAction={this.props.edit} disabled={duplicate || passivoitu} />,
             this.props.isAdmin ? <PassivoiButton disabled={duplicate || passivoitu} /> : null,

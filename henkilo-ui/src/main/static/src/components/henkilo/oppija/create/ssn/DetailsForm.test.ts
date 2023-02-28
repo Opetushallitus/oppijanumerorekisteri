@@ -26,7 +26,7 @@ describe('DetailsForm', () => {
             ['Accept SSN with new spec', { ...valid, hetu: '010594Y9032' }, true],
             ['Discard SSN with incorrect checkchar', { ...valid, hetu: '010594Y903O' }, false],
         ])('%s', (_, input, expected) => {
-            expect(!!!schema.validate(input).error).toEqual(expected);
+            expect(!schema.validate(input).error).toEqual(expected);
         });
     });
 });

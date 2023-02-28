@@ -30,6 +30,7 @@ import KayttooikeusryhmatSallittuKayttajatyyppi from './KayttooikeusryhmatSallit
 import { KayttooikeusRyhmaState } from '../../../reducers/kayttooikeusryhma.reducer';
 import ToggleKayttooikeusryhmaStateModal from './ToggleKayttooikeusryhmaStateModal';
 import PropertySingleton from '../../../globals/PropertySingleton';
+import { OrganisaatioViite } from '../../../types/domain/kayttooikeus/organisaatioviite.types';
 
 type Locales = 'FI' | 'SV' | 'EN';
 
@@ -132,8 +133,10 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         }
     }
 
-    _parseExistingRyhmaRestrictionViite = (organisaatioViitteet: any): any => {
-        return R.find((viite) => this._isRyhmaOid(viite.organisaatioTyyppi))(organisaatioViitteet);
+    _parseExistingRyhmaRestrictionViite = (
+        organisaatioViitteet: OrganisaatioViite[]
+    ): OrganisaatioViite | undefined => {
+        return organisaatioViitteet.find((viite) => this._isRyhmaOid(viite.organisaatioTyyppi));
     };
 
     render() {
@@ -355,26 +358,26 @@ export default class KayttooikeusryhmaPage extends React.Component<Props, State>
         return input.split('.')[4] !== undefined && input.split('.')[4] !== '10';
     };
 
-    _parseExistingOppilaitostyyppiData = (organisaatioViitteet: any): Array<string> => {
+    _parseExistingOppilaitostyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
         const oppilaitostyypit: Array<string> = this.props.koodisto.oppilaitostyypit.map(
             (oppilaitostyyppiKoodi) => oppilaitostyyppiKoodi.value
         );
-        const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite: any) =>
+        const oppilaitosOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
             this._isOppilaitosId(organisaatioViite.organisaatioTyyppi)
         );
-        const ids = oppilaitosOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
-        return oppilaitostyypit.filter((oppilaitostyyppi: string) => R.contains(oppilaitostyyppi, ids));
+        const ids = oppilaitosOrganisaatioViiteet.map((item) => item.organisaatioTyyppi);
+        return oppilaitostyypit.filter((oppilaitostyyppi) => ids.includes(oppilaitostyyppi));
     };
 
-    _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: any): Array<string> => {
+    _parseExistingOrganisaatiotyyppiData = (organisaatioViitteet: OrganisaatioViite[]): Array<string> => {
         const organisaatiotyypit: Array<string> = this.props.koodisto.organisaatiotyyppiKoodisto.map(
             (organisaatiotyyppiKoodi) => organisaatiotyyppiKoodi.koodiUri
         );
-        const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite: any) =>
+        const organisaatiotyyppiOrganisaatioViiteet = organisaatioViitteet.filter((organisaatioViite) =>
             this._isOrganisaatiotyyppi(organisaatioViite.organisaatioTyyppi)
         );
-        const ids = organisaatiotyyppiOrganisaatioViiteet.map((item: any) => item.organisaatioTyyppi);
-        return organisaatiotyypit.filter((organisaatiotyyppi: string) => R.contains(organisaatiotyyppi, ids));
+        const ids = organisaatiotyyppiOrganisaatioViiteet.map((item) => item.organisaatioTyyppi);
+        return organisaatiotyypit.filter((organisaatiotyyppi) => ids.includes(organisaatiotyyppi));
     };
 
     _parseExistingPalvelutRoolitData = (palvelutRoolit: Array<PalveluRooli>): Array<any> => {

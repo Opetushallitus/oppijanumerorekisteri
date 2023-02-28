@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Table from '../table/Table';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import DatePicker from 'react-datepicker';
 import StaticUtils from '../StaticUtils';
 import MyonnaButton from './buttons/MyonnaButton';
@@ -17,7 +17,6 @@ import { HaettuKayttooikeusryhma } from '../../../types/domain/kayttooikeus/Haet
 import { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { AnojaKayttooikeusryhmat } from '../../anomus/AnojaKayttooikeusryhmat';
 import { MyonnettyKayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
-import * as R from 'ramda';
 import { localize, localizeTextGroup } from '../../../utilities/localisation.util';
 import './HenkiloViewOpenKayttooikeusanomus.css';
 import { TableCellProps, TableHeading } from '../../../types/react-table.types';
@@ -39,7 +38,7 @@ export type AnojaKayttooikeusryhmaData = {
 };
 
 type State = {
-    dates: Array<{ alkupvm: any; loppupvm: any }>;
+    dates: Array<{ alkupvm: Moment; loppupvm: Moment }>;
     kayttooikeusRyhmatByAnoja: Array<AnojaKayttooikeusryhmaData>;
     showHylkaysPopup: boolean;
     disabledHylkaaButtons: {
@@ -173,9 +172,9 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         });
     }
 
-    loppupvmAction(value: any, idx: number) {
+    loppupvmAction(value: Date, idx: number) {
         const dates = [...this.state.dates];
-        dates[idx].loppupvm = value;
+        dates[idx].loppupvm = moment(value);
         this.setState({
             dates: dates,
         });
@@ -213,15 +212,15 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
                     <DatePicker
                         className="oph-input"
                         onChange={(value) => this.loppupvmAction(value, idx)}
-                        selected={this.state.dates[idx].loppupvm}
+                        selected={this.state.dates[idx].loppupvm.toDate()}
                         showYearDropdown
                         showWeekNumbers
                         disabled={this.hasNoPermission(
                             haettuKayttooikeusRyhma.anomus.organisaatioOid,
                             haettuKayttooikeusRyhma.kayttoOikeusRyhma.id
                         )}
-                        filterDate={(date) => date.isBefore(moment().add(1, 'years'))}
-                        dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
+                        filterDate={(date) => moment(date).isBefore(moment().add(1, 'years'))}
+                        dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                     />
                 ),
                 [headingList[8]]: this.L[haettuKayttooikeusRyhma.anomus.anomusTyyppi],
@@ -465,8 +464,8 @@ class HenkiloViewOpenKayttooikeusanomus extends React.Component<Props, State> {
         );
     };
 
-    _findAnojaKayttooikeusData = (anojaOid: string): AnojaKayttooikeusryhmaData | null | undefined => {
-        return R.find(R.propEq('anojaOid', anojaOid))(this.state.kayttooikeusRyhmatByAnoja);
+    _findAnojaKayttooikeusData = (anojaOid: string): AnojaKayttooikeusryhmaData | undefined => {
+        return this.state.kayttooikeusRyhmatByAnoja.find((ryhma) => ryhma.anojaOid === anojaOid);
     };
 
     showAccessRightGroupDetails(accessRightGroup) {

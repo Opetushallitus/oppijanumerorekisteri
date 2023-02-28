@@ -99,7 +99,7 @@ export const notifications = (
                     },
                 ],
             };
-        case NOTIFICATION_REMOVED:
+        case NOTIFICATION_REMOVED: {
             let removeNotifications; // For button notifications (remove all)
 
             removeNotifications = state[action.group].filter((notification) => notification.id === action.id); // For kayttooikeus table notifications (remove single one)
@@ -120,6 +120,7 @@ export const notifications = (
                     (notification) => removeNotifications.indexOf(notification) === -1
                 ),
             });
+        }
         case PASSIVOI_HENKILO_FAILURE:
         case YKSILOI_HENKILO_FAILURE:
         case DELETE_HENKILOORGS_FAILURE:
@@ -131,7 +132,7 @@ export const notifications = (
                     createButtonNotification('error', action.buttonNotification),
                 ],
             };
-        case CREATE_HENKILOBYTOKEN_FAILURE:
+        case CREATE_HENKILOBYTOKEN_FAILURE: {
             const errorMessage = mapErrorTypeToErrorMessage(action.error.errorType);
             return {
                 ...state,
@@ -145,6 +146,7 @@ export const notifications = (
                     }),
                 ],
             };
+        }
         default:
             return state;
     }

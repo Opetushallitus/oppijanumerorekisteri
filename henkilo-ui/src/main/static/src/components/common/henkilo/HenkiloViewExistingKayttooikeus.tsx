@@ -220,8 +220,8 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                             >
                                 <DatePicker
                                     className="oph-input"
-                                    onChange={(value) => this.loppupvmAction(value, idx)}
-                                    selected={this.state.dates[idx].loppupvm}
+                                    onChange={(date) => this.loppupvmAction(moment(date), idx)}
+                                    selected={this.state.dates[idx].loppupvm.toDate()}
                                     showYearDropdown
                                     showWeekNumbers
                                     disabled={this.hasNoPermission(
@@ -230,10 +230,10 @@ class HenkiloViewExistingKayttooikeus extends React.Component<Props, State> {
                                     )}
                                     filterDate={(date) =>
                                         Number.isInteger(this.props.vuosia)
-                                            ? date.isBefore(moment().add(this.props.vuosia, 'years'))
+                                            ? moment(date).isBefore(moment().add(this.props.vuosia, 'years'))
                                             : true
                                     }
-                                    dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
+                                    dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
                                 />
                             </div>
                             <div style={{ display: 'table-cell' }}>

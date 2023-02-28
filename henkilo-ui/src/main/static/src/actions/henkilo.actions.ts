@@ -1,5 +1,6 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
+import { Dispatch } from 'redux';
 import {
     DELETE_HENKILOORGS_FAILURE,
     DELETE_HENKILOORGS_REQUEST,
@@ -158,7 +159,7 @@ const errorKayttajatieto = () => ({
     type: FETCH_KAYTTAJATIETO_FAILURE,
     kayttajatieto: {},
 });
-export const fetchKayttajatieto = (oid) => (dispatch) => {
+export const fetchKayttajatieto = (oid: string) => (dispatch: Dispatch) => {
     dispatch(requestKayttajatieto(oid));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
     http.get(url)

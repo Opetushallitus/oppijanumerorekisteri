@@ -167,7 +167,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
     }
 
     setSelection(oid: string) {
-        const selectedDuplicates = R.contains(oid, this.state.selectedDuplicates)
+        const selectedDuplicates = this.state.selectedDuplicates.includes(oid)
             ? R.reject((duplicateOid) => duplicateOid === oid, this.state.selectedDuplicates)
             : R.append(oid, this.state.selectedDuplicates);
         this.setState({ selectedDuplicates });

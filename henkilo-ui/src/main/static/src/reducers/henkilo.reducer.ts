@@ -56,7 +56,7 @@ export type HenkiloState = {
     readonly henkilo: Henkilo;
     readonly kayttaja: Kayttaja;
     readonly henkiloOrgs: Array<any>;
-    readonly kayttajatieto: KayttajatiedotRead | any;
+    readonly kayttajatieto?: KayttajatiedotRead;
     readonly buttonNotifications: any;
     readonly notifications: Array<any>;
     readonly henkiloOrganisaatiosLoading: boolean;
@@ -85,7 +85,7 @@ const initialState: HenkiloState = {
     henkilo: {} as Henkilo,
     kayttaja: {} as Kayttaja,
     henkiloOrgs: [],
-    kayttajatieto: {},
+    kayttajatieto: undefined,
     buttonNotifications: {},
     notifications: [],
     henkiloOrganisaatiosLoading: true,
@@ -212,9 +212,10 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             return Object.assign({}, state, { slavesLoading: false, slaves: [] });
         case UPDATE_HENKILO_UNLINK_REQUEST:
             return Object.assign({}, state, { unlinkingLoading: true });
-        case UPDATE_HENKILO_UNLINK_SUCCESS:
+        case UPDATE_HENKILO_UNLINK_SUCCESS: {
             const slaves = R.filter((slave) => slave.oidHenkilo !== action.unlinkedSlaveOid, state.slaves);
             return Object.assign({}, state, { unlinkingLoading: false, slaves });
+        }
         case UPDATE_HENKILO_UNLINK_FAILURE:
             return Object.assign({}, state, { unlinkingLoading: false });
         case FETCH_HENKILO_DUPLICATES_REQUEST:

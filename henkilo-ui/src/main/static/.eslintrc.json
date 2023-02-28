@@ -1,13 +1,11 @@
 {
     "extends": [
+        "eslint:recommended",
         "react-app",
         "react-app/jest",
         "prettier"
     ],
     "parser": "babel-eslint",
-    "plugins": [
-        "react"
-    ],
     "overrides": [
         {
             "files": ["**/*.ts", "**/*.tsx"],

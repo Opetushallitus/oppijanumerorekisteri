@@ -1,5 +1,4 @@
 import React from 'react';
-import * as R from 'ramda';
 import Modal from '../common/modal/Modal';
 import Button from '../common/button/Button';
 import { toLocalizedText } from '../../localizabletext';
@@ -117,13 +116,13 @@ export default class KutsuConfirmation extends React.Component<Props, State> {
             sahkoposti,
             asiointikieli: this.props.basicInfo.languageCode,
             saate: this.props.basicInfo.saate ? this.props.basicInfo.saate : undefined,
-            organisaatiot: R.map((addedOrg) => ({
+            organisaatiot: this.props.addedOrgs.map((addedOrg) => ({
                 organisaatioOid: addedOrg.oid,
                 voimassaLoppuPvm: addedOrg.voimassaLoppuPvm,
-                kayttoOikeusRyhmat: R.map((selectedPermission) => ({
+                kayttoOikeusRyhmat: addedOrg.selectedPermissions.map((selectedPermission) => ({
                     id: selectedPermission.ryhmaId,
-                }))(addedOrg.selectedPermissions),
-            }))(this.props.addedOrgs),
+                })),
+            })),
         };
 
         try {

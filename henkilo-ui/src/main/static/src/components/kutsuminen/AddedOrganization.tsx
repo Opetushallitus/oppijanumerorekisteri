@@ -150,7 +150,9 @@ class AddedOrganization extends React.Component<Props, State> {
                             className="oph-input"
                             value={addedOrg.voimassaLoppuPvm}
                             onChange={this.selectVoimassaLoppuPvm}
-                            filterDate={(date) => date.isBetween(moment(), moment().add(1, 'years'), 'day', '[]')}
+                            filterDate={(date) =>
+                                moment(date).isBetween(moment(), moment().add(1, 'years'), 'day', '[]')
+                            }
                         />
                     </div>
                 </div>
@@ -166,7 +168,7 @@ class AddedOrganization extends React.Component<Props, State> {
     };
 
     addPermission(selectablePermissions: Array<MyonnettyKayttooikeusryhma>, kayttooikeusryhma: Kayttooikeusryhma) {
-        const selectedPermission = R.find(R.propEq('ryhmaId', kayttooikeusryhma.id))(selectablePermissions);
+        const selectedPermission = selectablePermissions.find((s) => s.ryhmaId === kayttooikeusryhma.id);
         this.props.addOrganisaatioPermission(this.props.addedOrg.oid, selectedPermission);
     }
 
@@ -179,7 +181,7 @@ class AddedOrganization extends React.Component<Props, State> {
         if (!selection) {
             return;
         }
-        const isOrganisaatio = selection.hasOwnProperty('oid');
+        const isOrganisaatio = Object.prototype.hasOwnProperty.call(selection, 'oid');
         const selectedOrganisaatioOid = isOrganisaatio ? selection.oid : selection.value;
         const organisaatio = isOrganisaatio
             ? selection

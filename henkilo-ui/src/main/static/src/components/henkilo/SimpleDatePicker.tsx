@@ -12,7 +12,7 @@ type SimpleDatePickerProps = {
     onChange: (value: string | null | undefined) => void;
     format?: string;
     disabled?: boolean;
-    filterDate?: (date: Moment.Moment) => boolean;
+    filterDate?: (date: Date) => boolean;
 };
 
 /**
@@ -23,7 +23,7 @@ class SimpleDatePicker extends React.Component<SimpleDatePickerProps> {
         return (
             <DatePicker
                 className={this.props.className}
-                placeholder={this.props.placeholder}
+                placeholderText={this.props.placeholder}
                 selected={this.getMomentValue()}
                 onChange={this.onChange}
                 showYearDropdown
@@ -31,21 +31,21 @@ class SimpleDatePicker extends React.Component<SimpleDatePickerProps> {
                 dropdownMode="select"
                 disabled={this.props.disabled}
                 filterDate={this.props.filterDate}
-                dateFormat={PropertySingleton.getState().PVM_FORMAATTI}
+                dateFormat={PropertySingleton.getState().PVM_DATEPICKER_FORMAATTI}
             />
         );
     }
 
-    getMomentValue = (): Moment.Moment | undefined => {
-        return this.props.value ? Moment(this.props.value, this.getModelFormat()) : null;
+    getMomentValue = (): Date | undefined => {
+        return this.props.value ? Moment(this.props.value, this.getModelFormat()).toDate() : null;
     };
 
     getModelFormat = (): string => {
         return this.props.format ? this.props.format : DEFAULT_MODEL_FORMAT;
     };
 
-    onChange = (value?: Moment.Moment) => {
-        this.props.onChange(value ? value.format(this.getModelFormat()) : null);
+    onChange = (value?: Date) => {
+        this.props.onChange(value ? Moment(value).format(this.getModelFormat()) : null);
     };
 }
 

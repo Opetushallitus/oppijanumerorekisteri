@@ -103,7 +103,7 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
         organisaatiot.length > 0
             ? organisaatioHierarkiaToOrganisaatioSelectObject(omatOrganisaatiot, orgNames, locale)
             : [];
-    return R.find(R.propEq('oid', oid))(allOrganisaatioSelectObjects);
+    return allOrganisaatioSelectObjects.find((o) => o.oid === oid);
 };
 
 const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {

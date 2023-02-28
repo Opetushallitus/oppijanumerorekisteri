@@ -165,7 +165,7 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
     }
 
     _sortAlphabetically(organisaatiot: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
-        return R.sortBy(R.compose(R.toLower, R.prop('name')))(organisaatiot);
+        return R.sortBy<OrganisaatioSelectObject>(R.compose(R.toLower, R.prop('name')))(organisaatiot);
     }
 
     _organisaatiotFilteredBy(
@@ -176,17 +176,15 @@ export default class OrganisaatioSelect extends React.Component<Props, State> {
     }
 
     _sortOrganisaatiotByParentName(organisaatiot: OrganisaatioSelectObject[]): OrganisaatioSelectObject[] {
-        const hasParent = (organisaatio: OrganisaatioSelectObject) =>
-            organisaatio.parentNames && organisaatio.parentNames.length > 0;
-        const noParent = (organisaatio: OrganisaatioSelectObject) =>
-            !organisaatio.parentNames || organisaatio.parentNames.length === 0;
-
-        const organisaatiotHavingParents: any = this._organisaatiotFilteredBy(organisaatiot, hasParent);
-        const organisaatiotNotHavingParents = this._organisaatiotFilteredBy(organisaatiot, noParent);
+        const [organisaatiotHavingParents, organisaatiotNotHavingParents] = R.partition(
+            (o: OrganisaatioSelectObject) => o.parentNames && o.parentNames.length > 0
+        )(organisaatiot);
 
         return [
             ...organisaatiotNotHavingParents,
-            ...R.sortBy(R.compose(R.toLower, R.last, R.prop('parentNames')))(organisaatiotHavingParents),
+            ...R.sortBy<OrganisaatioSelectObject>(R.compose(R.toLower, R.last, R.prop('parentNames')))(
+                organisaatiotHavingParents
+            ),
         ];
     }
 }
