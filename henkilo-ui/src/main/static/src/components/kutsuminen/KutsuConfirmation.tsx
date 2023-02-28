@@ -10,6 +10,7 @@ import { L10n, Localisations } from '../../types/localisation.type';
 import { MyonnettyKayttooikeusryhma } from '../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { LocalNotification } from '../common/Notification/LocalNotification';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
+import { Locale } from '../../types/locale.type';
 
 type Props = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -17,7 +18,7 @@ type Props = {
     modalOpen: boolean;
     basicInfo: KutsuBasicInfo;
     resetFormValues: () => void;
-    locale: string;
+    locale: Locale;
     l10n: L10n;
 };
 

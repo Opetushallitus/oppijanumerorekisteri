@@ -19,6 +19,7 @@ import {
     FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
     FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
     FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
+    SET_MFA_PROVIDER,
 } from './actiontypes';
 import { Dispatch } from '../types/dispatch.type';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
@@ -68,7 +69,7 @@ export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetSta
         dispatch(requestOmattiedot());
         const url = urls.url('kayttooikeus-service.henkilo.current.omattiedot');
         try {
-            const omattiedot: Omattiedot = await http.get(url);
+            const omattiedot = await http.get<Omattiedot>(url);
             dispatch(receiveOmattiedotSuccess(omattiedot));
             dispatch(fetchOmattiedotOrganisaatios());
         } catch (error) {
@@ -157,3 +158,8 @@ export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: Dispatch
         }
     }
 };
+
+export const setMfaProvider = (mfaProvider: string) => ({
+    type: SET_MFA_PROVIDER,
+    mfaProvider,
+})

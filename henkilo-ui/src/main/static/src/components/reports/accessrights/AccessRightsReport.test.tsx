@@ -2,11 +2,12 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import type { L10n } from '../../../types/localisation.type';
 import { AccessRightsReport } from './AccessRightsReport';
+import { Locale } from '../../../types/locale.type';
 
 describe('AccessRightsReport', () => {
     const MINIMAL_PROPS = {
         l10n: {} as L10n,
-        locale: '',
+        locale: 'fi' as Locale,
         reportLoading: false,
         reportData: undefined,
         fetchReport: jest.fn(),

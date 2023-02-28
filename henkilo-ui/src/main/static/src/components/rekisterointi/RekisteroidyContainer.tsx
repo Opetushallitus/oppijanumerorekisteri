@@ -18,7 +18,7 @@ type StateProps = {
     l10n: Record<string, Record<string, string>>;
     koodistoLoading: boolean;
     koodisto: KoodistoState;
-    temporaryToken: string;
+    temporaryToken: string | string[];
     tokenLoading: boolean;
     kutsu: any;
     loginFailed: any;
@@ -30,7 +30,7 @@ type StateProps = {
 
 type DispatchProps = {
     fetchKieliKoodisto: () => void;
-    fetchKutsuByToken: (token: string) => void;
+    fetchKutsuByToken: (token: string | string[]) => void;
     removeNotification: (status: string, group: string, id: string) => any;
     createHenkiloByToken: (temporaryToken: string, payload: any) => any;
 };

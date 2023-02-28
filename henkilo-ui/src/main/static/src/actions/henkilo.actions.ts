@@ -67,6 +67,7 @@ import { addGlobalNotification } from './notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { localizeWithState } from '../utilities/localisation.util';
 import { GlobalNotificationConfig } from '../types/notification.types';
+import { KayttajatiedotRead } from '../types/domain/kayttooikeus/KayttajatiedotRead';
 
 const requestHenkilo = (oid) => ({ type: FETCH_HENKILO_REQUEST, oid });
 const receiveHenkilo = (json) => ({
@@ -149,20 +150,20 @@ export const fetchKayttaja = (oid) => async (dispatch) => {
     }
 };
 
-const requestKayttajatieto = (oid) => ({ type: FETCH_KAYTTAJATIETO_REQUEST, oid });
-const receiveKayttajatieto = (json) => ({
+const requestKayttajatieto = (oid: string) => ({ type: FETCH_KAYTTAJATIETO_REQUEST, oid });
+const receiveKayttajatieto = (kayttajatieto: KayttajatiedotRead) => ({
     type: FETCH_KAYTTAJATIETO_SUCCESS,
-    kayttajatieto: json,
+    kayttajatieto,
     receivedAt: Date.now(),
 });
 const errorKayttajatieto = () => ({
     type: FETCH_KAYTTAJATIETO_FAILURE,
-    kayttajatieto: {},
+    kayttajatieto: undefined,
 });
 export const fetchKayttajatieto = (oid: string) => (dispatch: Dispatch) => {
     dispatch(requestKayttajatieto(oid));
     const url = urls.url('kayttooikeus-service.henkilo.kayttajatieto', oid);
-    http.get(url)
+    http.get<KayttajatiedotRead>(url)
         .then((json) => {
             dispatch(receiveKayttajatieto(json));
         })

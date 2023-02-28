@@ -32,7 +32,7 @@ const resolveResponseWithStatus = (response, resolve) => {
     return resolve([response.data, response.status, response.ok]);
 };
 
-const getCommonOptions = () => ({
+export const getCommonOptions: () => RequestInit = () => ({
     mode: 'cors',
     headers: {
         'Caller-Id': '1.2.246.562.10.00000000001.henkilo-ui',

@@ -13,14 +13,15 @@ import { L10n } from '../../types/localisation.type';
 import HenkiloViewCreateKayttooikeusanomus from '../common/henkilo/HenkiloViewCreateKayttooikeusanomus';
 import VirheKayttoEstetty from '../virhe/VirheKayttoEstetty';
 import { OrganisaatioCache, OrganisaatioState } from '../../reducers/organisaatio.reducer';
-import { path } from 'ramda';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { RyhmatState } from '../../reducers/ryhmat.reducer';
 import { HenkiloState } from '../../reducers/henkilo.reducer';
 import { OrganisaatioKayttooikeusryhmatState } from '../../reducers/organisaatiokayttooikeusryhmat.reducer';
 import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer';
 import { KoodistoState } from '../../reducers/koodisto.reducer';
+import Mfa from './Mfa';
 
+type View = 'OMATTIEDOT' | 'VIRKAILIJA' | 'ADMIN' | 'OPPIJA';
 type Props = {
     l10n: L10n;
     locale: Locale;
@@ -36,7 +37,7 @@ type Props = {
     omattiedot?: OmattiedotState;
     fetchAllKayttooikeusAnomusForHenkilo?: (arg0: string) => void;
     oidHenkilo: string;
-    view: string;
+    view: View;
     organisaatios?: OrganisaatioState;
     organisaatioCache: OrganisaatioCache;
     ryhmas?: RyhmatState;
@@ -47,103 +48,114 @@ class HenkiloViewPage extends React.Component<Props> {
 
     constructor(props: Props) {
         super(props);
-
         this.existingKayttooikeusRef = {};
     }
 
     render() {
-        if (this.props.henkilo.henkiloKayttoEstetty) {
-            return <VirheKayttoEstetty L={this.props.l10n[this.props.locale]} />;
+        const {
+            henkilo,
+            view,
+            kayttooikeus,
+            koodisto,
+            locale,
+            l10n,
+            organisaatioKayttooikeusryhmat,
+            oidHenkilo,
+            createBasicInfo,
+            readOnlyButtons,
+        } = this.props;
+        const L = l10n[locale];
+        if (henkilo.henkiloKayttoEstetty) {
+            return <VirheKayttoEstetty L={l10n[locale]} />;
         }
 
-        const kayttooikeusryhmat: Array<any> = path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat)
-            ? path(['kayttooikeusryhmat'], this.props.organisaatioKayttooikeusryhmat)
-            : [];
-
-        const kayttooikeusState = this.props.kayttooikeus || ({} as KayttooikeusRyhmaState);
+        const kayttooikeusryhmat = organisaatioKayttooikeusryhmat.kayttooikeusryhmat ?? [];
 
         return (
             <div>
                 <div className="wrapper">
-                    {
-                        <UserContentContainer
-                            basicInfo={this.props.createBasicInfo}
-                            readOnlyButtons={this.props.readOnlyButtons}
-                            oidHenkilo={this.props.oidHenkilo}
-                            view={this.props.view}
-                        />
-                    }
+                    <UserContentContainer
+                        basicInfo={createBasicInfo}
+                        readOnlyButtons={readOnlyButtons}
+                        oidHenkilo={oidHenkilo}
+                        view={view}
+                    />
                 </div>
-                {this.props.henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
+                {view === 'OMATTIEDOT' && (
                     <div className="wrapper">
-                        {this.props.henkilo.henkiloLoading ||
-                        this.props.henkilo.kayttajaLoading ||
-                        this.props.koodisto.yhteystietotyypitKoodistoLoading ? (
+                        <div className="header">
+                            <p className="oph-h2 oph-bold">{L.TIETOTURVA_ASETUKSET_OTSIKKO}</p>
+                        </div>
+                        <Mfa />
+                    </div>
+                )}
+                {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
+                    <div className="wrapper">
+                        {henkilo.henkiloLoading ||
+                        henkilo.kayttajaLoading ||
+                        koodisto.yhteystietotyypitKoodistoLoading ? (
                             <Loader />
                         ) : (
                             <HenkiloViewContactContent {...this.props} readOnly={true} />
                         )}
                     </div>
                 )}
-                {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA' && (
+                {view !== 'OMATTIEDOT' && view !== 'OPPIJA' && (
                     <div className="wrapper">
-                        {this.props.henkilo.henkiloOrgsLoading ? (
+                        {henkilo.henkiloOrgsLoading ? (
                             <Loader />
                         ) : (
                             <HenkiloViewOrganisationContent {...this.props} readOnly={true} />
                         )}
                     </div>
                 )}
-                {this.props.view !== 'OPPIJA' && (
+                {view !== 'OPPIJA' && (
                     <div className="wrapper" ref={(ref) => (this.existingKayttooikeusRef = ref)}>
-                        {kayttooikeusState.kayttooikeusLoading ? (
+                        {kayttooikeus.kayttooikeusLoading ? (
                             <Loader />
                         ) : (
                             <HenkiloViewExistingKayttooikeus
                                 {...this.props}
-                                vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.kayttaja)}
-                                oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
-                                isOmattiedot={this.props.view === 'OMATTIEDOT'}
+                                vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
+                                oidHenkilo={henkilo.henkilo.oidHenkilo}
+                                isOmattiedot={view === 'OMATTIEDOT'}
                             />
                         )}
                     </div>
                 )}
-                {this.props.henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && this.props.view !== 'OPPIJA' && (
+                {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && view !== 'OPPIJA' && (
                     <div className="wrapper">
-                        {kayttooikeusState.kayttooikeusAnomusLoading ? (
+                        {kayttooikeus.kayttooikeusAnomusLoading ? (
                             <Loader />
                         ) : (
-                            <HenkiloViewOpenKayttooikeusanomus
-                                {...this.props}
-                                isOmattiedot={this.props.view === 'OMATTIEDOT'}
-                            />
+                            <HenkiloViewOpenKayttooikeusanomus {...this.props} isOmattiedot={view === 'OMATTIEDOT'} />
                         )}
                     </div>
                 )}
-                {this.props.view !== 'OPPIJA' && (
+                {view !== 'OPPIJA' && (
                     <div className="wrapper">
-                        {kayttooikeusState.kayttooikeusLoading ? (
+                        {kayttooikeus.kayttooikeusLoading ? (
                             <Loader />
                         ) : (
                             <HenkiloViewExpiredKayttooikeus
                                 {...this.props}
-                                oidHenkilo={this.props.henkilo.henkilo.oidHenkilo}
-                                isOmattiedot={this.props.view === 'OMATTIEDOT'}
+                                oidHenkilo={henkilo.henkilo.oidHenkilo}
+                                isOmattiedot={view === 'OMATTIEDOT'}
                             />
                         )}
                     </div>
                 )}
-                {this.props.view !== 'OMATTIEDOT' && this.props.view !== 'OPPIJA' && (
+                {view !== 'OMATTIEDOT' && view !== 'OPPIJA' && (
                     <div className="wrapper">
                         <HenkiloViewCreateKayttooikeus
                             {...this.props}
-                            vuosia={StaticUtils.getKayttooikeusKestoVuosissa(this.props.henkilo.kayttaja)}
+                            vuosia={StaticUtils.getKayttooikeusKestoVuosissa(henkilo.kayttaja)}
                             existingKayttooikeusRef={this.existingKayttooikeusRef}
-                            isPalvelukayttaja={this.props.henkilo.kayttaja.kayttajaTyyppi === 'PALVELU'}
+                            isPalvelukayttaja={henkilo.kayttaja.kayttajaTyyppi === 'PALVELU'}
                         />
                     </div>
                 )}
-                {this.props.view === 'OMATTIEDOT' && (
+                {view === 'OMATTIEDOT' && (
                     <div className="wrapper">
                         <HenkiloViewCreateKayttooikeusanomus
                             {...this.props}
@@ -157,8 +169,8 @@ class HenkiloViewPage extends React.Component<Props> {
     }
 
     _parseRyhmaOptions(): Array<{ label: string; value: string }> {
-        return this.props.ryhmas
-            ? this.props.ryhmas.ryhmas.map((ryhma) => ({
+        return this.props.ryhmas?.ryhmas
+            ? this.props.ryhmas?.ryhmas.map((ryhma) => ({
                   label:
                       ryhma.nimi[this.props.locale] || ryhma.nimi['fi'] || ryhma.nimi['sv'] || ryhma.nimi['en'] || '',
                   value: ryhma.oid,

@@ -167,3 +167,12 @@ body h2 {
 hr {
     background: #AEAEAE;
 }
+
+.pincode-input-container {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.pincode-input-text:not(:last-of-type) {
+    margin-right: 12px !important;
+}

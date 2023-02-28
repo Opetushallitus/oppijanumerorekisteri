@@ -18,6 +18,7 @@ import { LocalNotification } from '../common/Notification/LocalNotification';
 import { OrganisaatioState } from '../../reducers/organisaatio.reducer';
 import { KutsuBasicInfo } from '../../types/KutsuBasicInfo.types';
 import { validateEmail } from '../../validation/EmailValidator';
+import { Locale } from '../../types/locale.type';
 
 type OwnProps = {
     ryhmaState: any;
@@ -27,7 +28,7 @@ type OwnProps = {
 type StateProps = {
     L: Localisations;
     l10n: L10n;
-    locale: string;
+    locale: Locale;
     addedOrgs: readonly KutsuOrganisaatio[];
     kayttajaOid: string;
     henkilo: Henkilo;

@@ -108,7 +108,7 @@ export const findOmattiedotOrganisatioOrRyhmaByOid = (
 
 const organisaatioHierarchyRoots = (orgs: OrganisaatioHenkilo[], locale: Locale): Array<OrganisaatioWithChildren> => {
     // First sort by name:
-    orgs = R.sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio.nimi), orgs);
+    orgs = R.sortBy((org: OrganisaatioHenkilo) => toLocalizedText(locale, org.organisaatio?.nimi), orgs);
     const byOid = {};
     // Determine direct parent oid and map by oid:
     const mapOrg = (org) => {
