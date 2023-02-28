@@ -10,6 +10,8 @@ import TuontiDetails from './TuontiDetails';
 import SortIconNone from '../common/icons/SortIconNone';
 import SortAscIcon from '../common/icons/SortAscIcon';
 import SortDescIcon from '../common/icons/SortDescIcon';
+import { hasAnyPalveluRooli } from '../../utilities/palvelurooli.util';
+import type { KayttooikeusOrganisaatiot } from '../../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
 
 type Props = {
     criteria: TuontiKoosteCriteria;
@@ -18,9 +20,18 @@ type Props = {
     loading: boolean;
     data: TuontiKooste;
     translate: (key: string) => string;
+    kayttooikeudet: KayttooikeusOrganisaatiot[];
 };
 
-const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, loading, data, translate }) => {
+const TuontiKoosteTable: React.FC<Props> = ({
+    fetch,
+    criteria,
+    setCriteria,
+    loading,
+    data,
+    translate,
+    kayttooikeudet,
+}) => {
     const firstRender = React.useRef(true);
     const [showDetails, setShowDetails] = React.useState<number>(undefined);
     const onClose = () => setShowDetails(undefined);
@@ -33,6 +44,11 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
 
     const renderSortIcon = (sort: TuontiKoosteCriteria['sort']) =>
         sort === 'ASC' ? <SortAscIcon /> : <SortDescIcon />;
+
+    const canViewDetails = hasAnyPalveluRooli(kayttooikeudet, [
+        'OPPIJANUMEROREKISTERI_TUONTIDATA_READ',
+        'OPPIJANUMEROREKISTERI_REKISTERINPITAJA',
+    ]);
 
     const TableHeader: React.FC<{ field: TuontiKoosteCriteria['field']; translationKey: string }> = ({
         field,
@@ -57,9 +73,12 @@ const TuontiKoosteTable: React.FC<Props> = ({ fetch, criteria, setCriteria, load
     const columns = [
         {
             Header: <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
-            accessor: (tuonti: TuontiKoosteRivi) => (
-                <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
-            ),
+            accessor: (tuonti: TuontiKoosteRivi) =>
+                canViewDetails ? (
+                    <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
+                ) : (
+                    tuonti.id
+                ),
             id: 'id',
         },
         {

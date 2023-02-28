@@ -10,6 +10,7 @@ import DelayedSearchInput from '../henkilohaku/DelayedSearchInput';
 import TuontiKoosteTable from './TuontiKoosteTable';
 import { TuontiKooste, TuontiKoosteCriteria } from '../../types/tuontikooste.types';
 import { fetchTuontiKooste } from '../../actions/tuontikooste.actions';
+import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 
 type SearchCriteria = {
     page: number;
@@ -25,6 +26,7 @@ type StateProps = {
     isOppijaHakuLoading: boolean;
     tuontiKooste?: TuontiKooste;
     tuontiKoosteLoading: boolean;
+    omattiedot: OmattiedotState;
     translate: (key: string) => string;
 };
 
@@ -99,6 +101,7 @@ class OppijoidenTuontiContainer extends React.Component<Props, State> {
                         loading={this.props.tuontiKoosteLoading}
                         data={this.props.tuontiKooste}
                         translate={this.props.translate}
+                        kayttooikeudet={this.props.omattiedot.organisaatiot}
                     />
                 ) : (
                     <>
@@ -165,6 +168,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     isOppijaHakuLoading: state.oppijoidenTuontiListaus.loading,
     tuontiKooste: state.tuontikooste.payload,
     tuontiKoosteLoading: state.tuontikooste.loading,
+    omattiedot: state.omattiedot,
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
 });
 
