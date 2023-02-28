@@ -36,11 +36,6 @@ const MfaRegistered = ({ L }: MfaRegisteredProps) => {
                 </div>
                 <div>
                     <p className={styles.infoText}>{L.MFA_REKISTEROITY_INFO}</p>
-                    <div>
-                        <button className={`oph-button oph-button-primary ${styles.setupButton}`}>
-                            {L.MFA_POISTA_KAYTOSTA}
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
