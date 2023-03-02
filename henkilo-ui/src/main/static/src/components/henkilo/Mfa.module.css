@@ -53,6 +53,14 @@
   max-width: 220px;
 }
 
+.secretKey {
+  word-wrap: none;
+}
+
+.secretKeyChunk {
+  margin-right: 4px;
+}
+
 @media (max-width: 940px) {
   .setupContainer {
     flex-direction: column;

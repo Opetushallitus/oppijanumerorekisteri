@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PinInput from 'react-pin-input';
 
@@ -130,6 +130,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
     const [setupError, setSetupError] = useState<string>('');
     const dispatch = useDispatch();
+    const pinInput = useRef(null);
 
     if (isGetLoading) {
         return <Loader />;
@@ -155,7 +156,13 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                 }
             })
             .catch((e) => {
-                setSetupError(e.data.message === 'Invalid token' ? L.MFA_VAARA_KOODI : L.MFA_VIRHE);
+                if (e.data.message === 'Invalid token') {
+                    setSetupError(L.MFA_VAARA_KOODI);
+                    pinInput.current.clear();
+                    pinInput.current.focus();
+                } else {
+                    setSetupError(L.MFA_VIRHE);
+                }
             });
     };
 
@@ -208,6 +215,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                         onComplete={handleMfaEnable}
                         regexCriteria={/^[0-9]*$/}
                         disabled={isPostLoading}
+                        ref={pinInput}
                     />
                     {isPostLoading && <div>{L.MFA_OTETAAN_KAYTTOON}</div>}
                     {setupError && (
@@ -219,7 +227,14 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
             </div>
             <hr />
             <div className={styles.greyInfo}>
-                {L.MFA_KOODI_VAIHTOEHTO_INFO} <span data-test-id="secret-key">{data.secretKey}</span>
+                {L.MFA_KOODI_VAIHTOEHTO_INFO}{' '}
+                <span className={styles.secretKey} data-test-id="secret-key">
+                    {data.secretKey?.match(/.{1,4}/g).map((chunk, idx) => (
+                        <span className={styles.secretKeyChunk} key={idx}>
+                            {chunk}
+                        </span>
+                    ))}
+                </span>
             </div>
         </div>
     );
