@@ -69,7 +69,7 @@ class HenkiloViewPage extends React.Component<Props> {
             return <VirheKayttoEstetty L={l10n[locale]} />;
         }
 
-        const kayttooikeusryhmat = organisaatioKayttooikeusryhmat.kayttooikeusryhmat ?? [];
+        const kayttooikeusryhmat = organisaatioKayttooikeusryhmat?.kayttooikeusryhmat ?? [];
 
         return (
             <div>
