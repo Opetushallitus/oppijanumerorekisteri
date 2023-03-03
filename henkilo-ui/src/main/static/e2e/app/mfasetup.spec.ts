@@ -27,8 +27,8 @@ test.describe('mfa setup', () => {
 
         await inputToken(page, '123456');
 
-        await expect(page.locator('[data-test-id="success-notification"]')).toHaveText(
-            /.*otettu onnistuneesti käyttöön.*/
+        await expect(page.locator('[data-test-id="success-notification"] .oph-alert-title')).toContainText(
+            'otettu onnistuneesti käyttöön'
         );
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
     });
