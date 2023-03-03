@@ -259,7 +259,7 @@ const Mfa = ({ view }: MfaProps) => {
     return (
         <div>
             {isSetupSuccess && (
-                <div className={styles.setupSuccessContainer}>
+                <div className={styles.setupSuccessContainer} data-test-id="success-notification">
                     <WideGreenNotification message={L.MFA_OTETTU_KAYTTOON} closeAction={() => setSetupSuccess(false)} />
                 </div>
             )}

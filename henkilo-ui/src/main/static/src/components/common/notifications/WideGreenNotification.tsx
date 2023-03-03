@@ -1,9 +1,9 @@
 import React from 'react';
 
 type WideGreenNotificationProps = {
-    message: string
-    closeAction: () => void
-}
+    message: string;
+    closeAction: () => void;
+};
 
 const WideGreenNotification = ({ message, closeAction }: WideGreenNotificationProps) => (
     <div className="oph-alert oph-alert-success">
