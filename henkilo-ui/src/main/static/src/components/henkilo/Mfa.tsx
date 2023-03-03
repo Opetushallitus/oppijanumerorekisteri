@@ -11,9 +11,10 @@ import { RootState } from '../../reducers';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { Locale } from '../../types/locale.type';
 import { L10n, Localisations } from '../../types/localisation.type';
+import { View } from './HenkiloViewPage';
+import WideGreenNotification from '../common/notifications/WideGreenNotification';
 
 import styles from './Mfa.module.css';
-import { View } from './HenkiloViewPage';
 
 const PhoneIcon = () => (
     <svg width="17" height="23" viewBox="0 0 17 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -123,10 +124,11 @@ const MfaSetupStep = ({ icon, info, children }: MfaSetupStepProps) => {
 
 type MfaSetupProps = {
     setMfaSetup: (b: boolean) => void;
+    setSetupSuccess: (b: boolean) => void;
     L: Localisations;
 };
 
-const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
+const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
     const { data, isLoading: isGetLoading, isSuccess } = useGetMfaSetupQuery();
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
     const [setupError, setSetupError] = useState<string>('');
@@ -152,6 +154,7 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
                 if (enabled) {
                     dispatch(setMfaProvider('GAUTH'));
                     setMfaSetup(false);
+                    setSetupSuccess(true);
                 } else {
                     setSetupError(L.MFA_VIRHE);
                 }
@@ -250,10 +253,16 @@ const Mfa = ({ view }: MfaProps) => {
     const locale = useSelector<RootState, Locale>((state) => state.locale);
     const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
     const [isMfaSetup, setMfaSetup] = useState(false);
+    const [isSetupSuccess, setSetupSuccess] = useState(false);
     const L = l10n[locale];
 
     return (
         <div>
+            {isSetupSuccess && (
+                <div className={styles.setupSuccessContainer}>
+                    <WideGreenNotification message={L.MFA_OTETTU_KAYTTOON} closeAction={() => setSetupSuccess(false)} />
+                </div>
+            )}
             <div className={styles.infoTitle}>
                 <span className={styles.mfaTitle}>
                     {L.MFA_TUNNISTAUTUMINEN}
@@ -270,7 +279,7 @@ const Mfa = ({ view }: MfaProps) => {
             ) : !isMfaSetup ? (
                 <MfaUnregistered setMfaSetup={setMfaSetup} L={L} />
             ) : (
-                <MfaSetup setMfaSetup={setMfaSetup} L={L} />
+                <MfaSetup setMfaSetup={setMfaSetup} setSetupSuccess={setSetupSuccess} L={L} />
             )}
         </div>
     );
