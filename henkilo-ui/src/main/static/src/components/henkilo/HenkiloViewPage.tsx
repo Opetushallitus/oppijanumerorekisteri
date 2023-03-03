@@ -21,7 +21,7 @@ import { KayttooikeusRyhmaState } from '../../reducers/kayttooikeusryhma.reducer
 import { KoodistoState } from '../../reducers/koodisto.reducer';
 import Mfa from './Mfa';
 
-type View = 'OMATTIEDOT' | 'VIRKAILIJA' | 'ADMIN' | 'OPPIJA';
+export type View = 'OMATTIEDOT' | 'VIRKAILIJA' | 'ADMIN' | 'OPPIJA';
 type Props = {
     l10n: L10n;
     locale: Locale;
@@ -81,14 +81,12 @@ class HenkiloViewPage extends React.Component<Props> {
                         view={view}
                     />
                 </div>
-                {view === 'OMATTIEDOT' && (
-                    <div className="wrapper">
-                        <div className="header">
-                            <p className="oph-h2 oph-bold">{L.TIETOTURVA_ASETUKSET_OTSIKKO}</p>
-                        </div>
-                        <Mfa />
+                <div className="wrapper">
+                    <div className="header">
+                        <p className="oph-h2 oph-bold">{L.TIETOTURVA_ASETUKSET_OTSIKKO}</p>
                     </div>
-                )}
+                    <Mfa view={view} />
+                </div>
                 {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
                     <div className="wrapper">
                         {henkilo.henkiloLoading ||

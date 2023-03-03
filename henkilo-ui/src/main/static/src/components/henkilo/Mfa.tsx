@@ -13,6 +13,7 @@ import { Locale } from '../../types/locale.type';
 import { L10n, Localisations } from '../../types/localisation.type';
 
 import styles from './Mfa.module.css';
+import { View } from './HenkiloViewPage';
 
 const PhoneIcon = () => (
     <svg width="17" height="23" viewBox="0 0 17 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -240,7 +241,11 @@ const MfaSetup = ({ setMfaSetup, L }: MfaSetupProps) => {
     );
 };
 
-const Mfa = () => {
+type MfaProps = {
+    view: View;
+};
+
+const Mfa = ({ view }: MfaProps) => {
     const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
     const locale = useSelector<RootState, Locale>((state) => state.locale);
     const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
@@ -260,7 +265,7 @@ const Mfa = () => {
                     </span>
                 )}
             </div>
-            {omattiedot.mfaProvider ? (
+            {view !== 'OMATTIEDOT' ? undefined : omattiedot.mfaProvider ? (
                 <MfaRegistered L={L} />
             ) : !isMfaSetup ? (
                 <MfaUnregistered setMfaSetup={setMfaSetup} L={L} />
