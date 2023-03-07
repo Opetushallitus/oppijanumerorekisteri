@@ -105,7 +105,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private List<TuontiRivi> getTuontiRivit(final long tuontiId) {
-        Set<String> organisaatioOids = permissionChecker.getOrganisaatioOidsByKayttaja(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
+        Set<String> organisaatioOids = permissionChecker.getOrganisaatioOidsByKayttaja(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL, KAYTTOOIKEUS_TUONTIDATA_READ);
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setTuontiId(tuontiId);
         criteria.setOrganisaatioOids(organisaatioOids);
