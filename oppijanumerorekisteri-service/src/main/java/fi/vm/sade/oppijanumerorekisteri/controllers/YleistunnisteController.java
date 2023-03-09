@@ -3,6 +3,7 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
+import fi.vm.sade.oppijanumerorekisteri.services.YleistunnisteService;
 import io.swagger.annotations.*;
 import lombok.Setter;
 import lombok.*;
@@ -45,6 +46,23 @@ public class YleistunnisteController {
     private static final String NATIONALITY_CODE = "999"; // e.g. "Unknown"
 
     private final OppijaService oppijaService;
+
+    private final YleistunnisteService yleistunnisteService;
+
+    @ApiOperation(value = "Oppijanumeron haku yksittäiselle henkilölle",
+            authorizations = @Authorization("onr"),
+            notes = "Hakee tai luo oppijanumeron yksittäiselle henkilölle annetun syötteen pohjalta.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = HenkiloController.ExistenceCheckResult.class),
+            @ApiResponse(code = 400, message = "Viallinen syöte"),
+            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
+            @ApiResponse(code = 409, message = "Henkilön tiedot virheelliset"),
+    })
+    @PostMapping(value = "/hae")
+    public YleistunnisteDto yleistunnisteenHaku(@ApiParam("Henkilön yksilöivät tiedot.")
+                                                @RequestBody @Validated HenkiloExistenceCheckDto details) {
+        return yleistunnisteService.hae(details);
+    }
 
     @PutMapping
     @ApiOperation(value = "Useamman oppijan luonti",
