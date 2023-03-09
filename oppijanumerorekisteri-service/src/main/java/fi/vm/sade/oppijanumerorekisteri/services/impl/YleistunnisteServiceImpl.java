@@ -4,15 +4,16 @@ import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
 import fi.vm.sade.oppijanumerorekisteri.dto.YleistunnisteDto;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
-import fi.vm.sade.oppijanumerorekisteri.services.YleistunnisteService;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
+import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
+import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Transactional
 @Service
@@ -25,8 +26,28 @@ public class YleistunnisteServiceImpl implements YleistunnisteService {
 
     private final HenkiloModificationService henkiloModificationService;
 
+    private final OppijaTuontiService oppijaTuontiService;
+
+    private final OrganisaatioRepository organisaatioRepository;
+
     @Override
     public YleistunnisteDto hae(HenkiloExistenceCheckDto details) {
+        return associateToOrganisations(findOrCreate(details));
+    }
+
+    private YleistunnisteDto associateToOrganisations(YleistunnisteDto dto) {
+        Henkilo henkilo = henkiloService.getEntityByOid(dto.getOid());
+        resolveOrganisations().forEach(henkilo::addOrganisaatio);
+        return dto;
+    }
+
+    private Stream<Organisaatio> resolveOrganisations() {
+        return oppijaTuontiService.getOrganisaatioOidsByKayttaja().stream()
+                .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
+                        .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))));
+    }
+
+    private YleistunnisteDto findOrCreate(HenkiloExistenceCheckDto details) {
         Optional<String> oid = yksilointiService.exists(details);
         return oid.isPresent() ? returnOnrDetails(oid.get()) : create(details);
     }
