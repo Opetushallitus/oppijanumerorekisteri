@@ -6,10 +6,12 @@ import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
+import fi.vm.sade.oppijanumerorekisteri.services.YleistunnisteService;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
 import org.junit.Test;
@@ -45,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class YleistunnisteControllerTest {
 
     private static final String WRONG_ACCESS_RIGHT = "PIGGLYWIGGLY";
+    private static final String hae = REQUEST_MAPPING + "/hae";
 
     @MockBean
     private OppijaService oppijaServiceMock;
@@ -63,6 +66,9 @@ public class YleistunnisteControllerTest {
 
     @MockBean
     private OrganisaatioService organisaatioService;
+
+    @MockBean
+    private YleistunnisteService yleistunnisteService;
 
     private YleistunnisteController.YleistunnisteInput getValidYleistunnisteInput() {
         return YleistunnisteController.YleistunnisteInput.builder()
@@ -346,5 +352,58 @@ public class YleistunnisteControllerTest {
                 .andExpect(content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijat.json"), true));
 
         verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
+    }
+
+    @Test
+    public void haeRequiresAuthentication() throws Exception {
+        mvc.perform(post(hae)).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(roles = WRONG_ACCESS_RIGHT)
+    public void haeRequiresAccessRights() throws Exception {
+        mvc.perform(post(hae)).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
+    public void haeValidatesInput() throws Exception {
+        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
+    public void haeNotFound() throws Exception {
+        when(yleistunnisteService.hae(any())).thenThrow(NotFoundException.class);
+
+        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON)
+                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInput.json")))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
+    public void haeConflicts() throws Exception {
+        when(yleistunnisteService.hae(any())).thenThrow(ConflictException.class);
+
+        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON)
+                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInput.json")))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
+    public void haeFound() throws Exception {
+        when(yleistunnisteService.hae(any())).thenReturn(YleistunnisteDto.builder()
+                .oid("1.2.3.4.5")
+                .oppijanumero("6.7.8.9.0")
+                .build());
+
+        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON)
+                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInput.json")))
+                .andExpectAll(
+                        status().isOk(),
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/haeOutput.json"))
+                );
     }
 }
