@@ -8,10 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloModificationService;
-import fi.vm.sade.oppijanumerorekisteri.services.HenkiloService;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaTuontiService;
-import fi.vm.sade.oppijanumerorekisteri.services.YksilointiService;
+import fi.vm.sade.oppijanumerorekisteri.services.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -45,7 +42,7 @@ class YleistunnisteServiceImplTest {
     HenkiloModificationService henkiloModificationService;
 
     @Mock
-    OppijaTuontiService oppijaTuontiService;
+    PermissionChecker permissionChecker;
 
     @Mock
     OrganisaatioRepository organisaatioRepository;
@@ -71,7 +68,7 @@ class YleistunnisteServiceImplTest {
         given(yksilointiService.exists(any(HenkiloExistenceCheckDto.class))).willReturn(Optional.of(OID));
         given(henkiloService.getMasterByOid(OID)).willReturn(henkilo);
         given(henkiloService.getEntityByOid(OID)).willReturn(mock(Henkilo.class));
-        given(oppijaTuontiService.getOrganisaatioOidsByKayttaja()).willReturn(Set.of("organisaatio"));
+        given(permissionChecker.getOrganisaatioOidsByKayttaja(any(), any())).willReturn(Set.of("organisaatio"));
 
         assertThat(yleistunnisteService.hae(HenkiloExistenceCheckDto.builder().build())).hasFieldOrPropertyWithValue("oppijanumero", OID);
     }
@@ -83,7 +80,7 @@ class YleistunnisteServiceImplTest {
         given(yksilointiService.exists(any(HenkiloExistenceCheckDto.class))).willReturn(Optional.empty());
         given(henkiloModificationService.createHenkilo(any(HenkiloCreateDto.class))).willReturn(henkilo);
         given(henkiloService.getEntityByOid(OID)).willReturn(mock(Henkilo.class));
-        given(oppijaTuontiService.getOrganisaatioOidsByKayttaja()).willReturn(Set.of("organisaatio"));
+        given(permissionChecker.getOrganisaatioOidsByKayttaja(any(), any())).willReturn(Set.of("organisaatio"));
 
         assertThat(yleistunnisteService.hae(HenkiloExistenceCheckDto.builder().build())).hasFieldOrPropertyWithValue("oppijanumero", OID);
     }

@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class YleistunnisteServiceImpl implements YleistunnisteService {
 
     private final HenkiloModificationService henkiloModificationService;
 
-    private final OppijaTuontiService oppijaTuontiService;
+    private final PermissionChecker permissionChecker;
 
     private final OrganisaatioRepository organisaatioRepository;
 
@@ -42,7 +45,7 @@ public class YleistunnisteServiceImpl implements YleistunnisteService {
     }
 
     private Stream<Organisaatio> resolveOrganisations() {
-        return oppijaTuontiService.getOrganisaatioOidsByKayttaja().stream()
+        return permissionChecker.getOrganisaatioOidsByKayttaja(PALVELU_OPPIJANUMEROREKISTERI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL).stream()
                 .map(organisaatioOid -> organisaatioRepository.findByOid(organisaatioOid)
                         .orElseGet(() -> organisaatioRepository.save(new Organisaatio(organisaatioOid))));
     }
