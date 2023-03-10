@@ -384,7 +384,7 @@ public class HenkiloController {
     }
 
 
-    @PreAuthorize("@permissionChecker.isSuperUser()")
+    @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#henkiloOid, {'OPPIJANUMEROREKISTERI': {'REKISTERINPITAJA', 'YKSILOINNIN_PURKU'}}, #permissionService)")
     @RequestMapping(value = "/{oid}/purayksilointi", method = RequestMethod.POST)
     @ApiOperation(value = "Henkilön yksilöinnin purku.",
             notes = "Purkaa hetuttoman henkilön yksilöinnin",
