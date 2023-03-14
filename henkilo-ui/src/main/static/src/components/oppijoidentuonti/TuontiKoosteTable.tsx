@@ -74,7 +74,7 @@ const TuontiKoosteTable: React.FC<Props> = ({
         {
             Header: <TableHeader field="id" translationKey="OPPIJOIDEN_TUONTI_TUONTIKOOSTE_ID" />,
             accessor: (tuonti: TuontiKoosteRivi) =>
-                canViewDetails ? (
+                tuonti.conflicts && canViewDetails ? (
                     <TextButton action={() => setShowDetails(tuonti.id)}>{tuonti.id}</TextButton>
                 ) : (
                     tuonti.id
