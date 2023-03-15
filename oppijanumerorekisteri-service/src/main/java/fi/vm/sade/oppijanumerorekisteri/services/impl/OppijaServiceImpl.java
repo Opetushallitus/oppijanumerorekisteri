@@ -22,22 +22,17 @@ import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactor
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.KAYTTOOIKEUS_OPPIJOIDENTUONTI;
-import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.PALVELU_OPPIJANUMEROREKISTERI;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.*;
 import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.*;
 
@@ -110,7 +105,7 @@ public class OppijaServiceImpl implements OppijaService {
     }
 
     private List<TuontiRivi> getTuontiRivit(final long tuontiId) {
-        Set<String> organisaatioOids = oppijaTuontiService.getOrganisaatioOidsByKayttaja();
+        Set<String> organisaatioOids = permissionChecker.getOrganisaatioOidsByKayttaja(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT_LITERAL, KAYTTOOIKEUS_TUONTIDATA_READ);
         OppijaTuontiCriteria criteria = new OppijaTuontiCriteria();
         criteria.setTuontiId(tuontiId);
         criteria.setOrganisaatioOids(organisaatioOids);
@@ -150,20 +145,13 @@ public class OppijaServiceImpl implements OppijaService {
     @Override
     public org.springframework.data.domain.Page<TuontiRepository.TuontiKooste> tuontiKooste(Pageable pagination) {
         final boolean isSuperUser = permissionChecker.isSuperUserOrCanReadAll();
-        Set<String> userOrgs = isSuperUser ? Set.of() : resolveTuontiOrganisations();
+        Set<String> userOrgs = isSuperUser ? Set.of() : permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
         return tuontiRepository.getTuontiKooste(isSuperUser, userOrgs, pagination);
-    }
-
-    private Set<String> resolveTuontiOrganisations() {
-        return permissionChecker.getOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI).stream()
-                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
-                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
-                .collect(toSet());
     }
 
     @Override
     public List<OppijaTuontiRiviCreateDto> tuontiData(long tuontiId) {
-        Tuonti tuonti = tuontiRepository.findById(tuontiId).orElseThrow(() -> new NotFoundException("tuntematon tuonti"));
+        Tuonti tuonti = getTuonti(tuontiId);
         Map<String, TuontiRivi> tuontiRivit = getTuontiRivit(tuontiId).stream().collect(toMap(TuontiRivi::getTunniste, identity(), (found, duplicate) -> found));
         OppijaTuontiCreateDto tuontiData = resolveTuontiData(tuonti.getData().getData());
         tuontiData.getHenkilot().forEach(riviData -> {
@@ -175,6 +163,21 @@ public class OppijaServiceImpl implements OppijaService {
             }
         });
         return tuontiData.getHenkilot();
+    }
+
+    private Tuonti getTuonti(long tuontiId) {
+        Tuonti tuonti = tuontiRepository.findById(tuontiId).orElseThrow(() -> new NotFoundException("tuntematon tuonti"));
+        if ( permissionChecker.isSuperUserOrCanReadAll() || canRead(tuonti) ) {
+            return tuonti;
+        }
+        throw new ForbiddenException("ei lukuoikeutta");
+    }
+
+    private boolean canRead(Tuonti tuonti) {
+        Set<String> grantedOrgs = permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_TUONTIDATA_READ);
+        Set<String> tuontiOrgs = tuonti.getOrganisaatiot().stream().map(org -> org.getOid()).collect(toSet());
+        tuontiOrgs.retainAll(grantedOrgs);
+        return !tuontiOrgs.isEmpty();
     }
 
     private OppijaTuontiCreateDto resolveTuontiData(final byte[] bytes) {
@@ -258,9 +261,7 @@ public class OppijaServiceImpl implements OppijaService {
         // muut käyttäjät ainoastaan omista organisaatioista
         if (!permissionChecker.isSuperUserOrCanReadAll()) {
             String kayttajaOid = userDetailsHelper.getCurrentUserOid();
-            Set<String> organisaatioOidsByKayttaja = oppijaTuontiService.getOrganisaatioOidsByKayttaja().stream()
-                    .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid), organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
-                    .collect(toSet());
+            Set<String> organisaatioOidsByKayttaja = permissionChecker.getAllOrganisaatioOids(PALVELU_OPPIJANUMEROREKISTERI, KAYTTOOIKEUS_OPPIJOIDENTUONTI, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, KAYTTOOIKEUS_TUONTIDATA_READ);
             if (organisaatioOidsByKayttaja.isEmpty()) {
                 throw new ValidationException(String.format("Käyttäjällä %s ei ole yhtään organisaatiota joista oppijoita haetaan", kayttajaOid));
             }

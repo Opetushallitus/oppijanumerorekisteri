@@ -37,6 +37,7 @@ public class PermissionCheckerImpl implements PermissionChecker {
     public static final String ROOT_ORGANISATION_SUFFIX = "_" + ORGANISAATIO_OID_PREFIX + ".00000000001";
     public static final String PALVELU_OPPIJANUMEROREKISTERI = "OPPIJANUMEROREKISTERI";
     public static final String KAYTTOOIKEUS_OPPIJOIDENTUONTI = "OPPIJOIDENTUONTI";
+    public static final String KAYTTOOIKEUS_TUONTIDATA_READ = "TUONTIDATA_READ";
     public static final String KAYTTOOIKEUS_HENKILON_RU = "HENKILON_RU";
     public static final String KAYTTOOIKEUS_READ = "READ";
 
@@ -140,6 +141,23 @@ public class PermissionCheckerImpl implements PermissionChecker {
     public Set<String> getOrganisaatioOids(String palvelu, String kayttooikeus) {
         final String haluttuRooli = String.format("ROLE_APP_%s_%s", palvelu, kayttooikeus);
         return getOrganisaatioOids(kayttajanRooli -> kayttajanRooli.startsWith(haluttuRooli));
+    }
+
+    @Override
+    public Set<String> getOrganisaatioOidsByKayttaja(final String palvelu, final String... oikeudet) {
+        return Arrays.asList(oikeudet).stream()
+                .map(kayttooikeus -> getOrganisaatioOids(palvelu, kayttooikeus).stream())
+                .reduce(Stream::concat)
+                .orElse(Stream.empty())
+                .collect(toSet());
+    }
+
+    @Override
+    public Set<String> getAllOrganisaatioOids(final String palvelu, final String... oikeudet) {
+        return getOrganisaatioOidsByKayttaja(palvelu, oikeudet).stream()
+                .flatMap(organisaatioOid -> Stream.concat(Stream.of(organisaatioOid),
+                        organisaatioService.getChildOids(organisaatioOid, true, OrganisaatioTilat.aktiivisetJaLakkautetut()).stream()))
+                .collect(toSet());
     }
 
     private Set<String> getOrganisaatioOids(Predicate<String> rooliPredicate) {

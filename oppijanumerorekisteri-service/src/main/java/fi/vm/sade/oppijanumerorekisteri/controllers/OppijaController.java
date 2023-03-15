@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Oppijoiden tuontiin liittyvät toiminnot. Oppijoita tuodaan
@@ -118,10 +119,20 @@ public class OppijaController {
     @GetMapping("/tuontidata/{tuontiId}")
     @PreAuthorize("hasAnyRole('APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA'," +
             "'APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA_READ',"
-            + "'APP_OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI')")
+            + "'APP_OPPIJANUMEROREKISTERI_TUONTIDATA_READ')")
     @ApiOperation(value = "Tuontiin liittyvä tuontidata")
     List<OppijaTuontiRiviCreateDto> tuontiData(@PathVariable final long  tuontiId) {
-        return oppijaService.tuontiData(tuontiId);
+        return oppijaService.tuontiData(tuontiId).stream()
+                .map(this::sanitizeHetu)
+                .collect(Collectors.toList());
+
+    }
+
+    private OppijaTuontiRiviCreateDto sanitizeHetu(OppijaTuontiRiviCreateDto dto) {
+        if ( dto.getHenkilo().getHetu() != null ) {
+            dto.getHenkilo().setHetu(dto.getHenkilo().getHetu().replaceFirst(".{4}$", "****"));
+        }
+        return dto;
     }
 
     @GetMapping("/muuttuneet")

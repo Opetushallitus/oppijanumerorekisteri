@@ -40,6 +40,22 @@ public interface PermissionChecker {
     Set<String> getOrganisaatioOids(String palvelu, String kayttooikeus);
 
     /**
+     * Palauttaa käyttäjän voimassaolevat organisaatiot annettuun käyttöoikeuteen.
+     * @param palvelu palvelu
+     * @param kayttooikeus käyttöoikeus
+     * @return organisaatiot
+     */
+    Set<String> getOrganisaatioOidsByKayttaja(String palvelu, String... kayttooikeus);
+
+    /**
+     * Palauttaa rekursiivisesti kaikki käyttäjän voimassaolevat organisaatiot annettuun käyttöoikeuteen.
+     * @param palvelu palvelu
+     * @param oikeudet käyttöoikeus
+     * @return organisaatiot
+     */
+    Set<String> getAllOrganisaatioOids(String palvelu, String... oikeudet);
+
+    /**
      * Rekisterinpitäjä, joka pystyy tekemään mitä tahansa
      * @return Onko kirjautunut käyttäjä rekisterinpitäjä
      */

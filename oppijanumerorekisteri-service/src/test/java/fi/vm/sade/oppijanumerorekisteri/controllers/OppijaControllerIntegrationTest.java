@@ -83,7 +83,7 @@ class OppijaControllerIntegrationTest {
 
     @Test
     void listNormalUsersSeesOnlyOwn() throws Exception {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-tuonti1.json"), get(BASE_PATH), listComparator);
     }
@@ -91,6 +91,7 @@ class OppijaControllerIntegrationTest {
     @Test
     void listEmpty() throws Exception {
         given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("makkara"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("makkara"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-empty.json"), get(BASE_PATH), listComparator);
     }
@@ -104,14 +105,14 @@ class OppijaControllerIntegrationTest {
 
     @Test
     void koosteNormalUsersSeesOnlyOwn() throws Exception {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-tuonti1.json"), get(KOOSTE), koosteComparator);
     }
 
     @Test
     void koosteEmpty() throws Exception {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("makkara"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("makkara"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-empty.json"), get(KOOSTE), koosteComparator);
     }
@@ -142,14 +143,15 @@ class OppijaControllerIntegrationTest {
 
     @Test
     void tuontidataHappyPath() throws Exception {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
+        given(permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any(), any())).willReturn(Set.of("tuonti1"));
 
         JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/tuontidata.json"), get(TUONTIDATA + 1), true);
     }
 
     @Test
     void tuontidataAccessDenied() {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of());
+        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of());
 
         ResponseEntity<String> response = httpBasic().getForEntity(TUONTIDATA + 1, String.class);
 
@@ -158,7 +160,7 @@ class OppijaControllerIntegrationTest {
 
     @Test
     void tuontidataNotFound() {
-        given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of());
+        given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of());
 
         ResponseEntity<String> response = httpBasic().getForEntity(TUONTIDATA + 100, String.class);
 
