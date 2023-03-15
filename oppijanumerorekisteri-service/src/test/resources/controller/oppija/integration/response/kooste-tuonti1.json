@@ -8,7 +8,8 @@
       "inProgress": 0,
       "oid": "tuonti1",
       "successful": 0,
-      "id": 1
+      "id": 1,
+      "conflicts": 0
     }
   ],
   "pageable": {
