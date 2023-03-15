@@ -27,6 +27,7 @@ export type OmattiedotState = {
     readonly anomusilmoitus: boolean;
     readonly isOphVirkailija: boolean;
     readonly mfaProvider?: string;
+    readonly idpEntityId?: string;
     readonly organisaatioRyhmaOptions: Array<any>;
     readonly organisaatioRyhmaFilter: Array<any>;
     readonly organisaatiot: Array<KayttooikeusOrganisaatiot>;
@@ -64,6 +65,7 @@ const omattiedot = (state: OmattiedotState = initialState, action) => {
                 isAdmin: action.omattiedot.isAdmin,
                 isOphVirkailija: action.omattiedot.isMiniAdmin,
                 mfaProvider: action.omattiedot.mfaProvider,
+                idpEntityId: action.omattiedot.idpEntityId,
                 organisaatiot: action.omattiedot.organisaatiot,
                 initialized: true,
                 anomusilmoitus: action.omattiedot.anomusilmoitus,
