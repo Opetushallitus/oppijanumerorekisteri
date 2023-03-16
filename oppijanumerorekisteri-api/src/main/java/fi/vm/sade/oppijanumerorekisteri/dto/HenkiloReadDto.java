@@ -39,6 +39,7 @@ public class HenkiloReadDto {
     private KielisyysReadDto aidinkieli;
     private Set<KansalaisuusReadDto> kansalaisuus;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
+    private Set<String> passinumerot;
 
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {
