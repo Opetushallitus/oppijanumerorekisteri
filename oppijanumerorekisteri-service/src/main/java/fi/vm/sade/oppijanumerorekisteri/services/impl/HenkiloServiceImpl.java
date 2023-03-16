@@ -90,6 +90,13 @@ public class HenkiloServiceImpl implements HenkiloService {
     }
 
     @Override
+    @Transactional
+    public Set<String> setPassportNumbers(String oid, Set<String> passinumerot) {
+        getEntityByOid(oid).setPassinumerot(passinumerot);
+        return passinumerot;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Iterable<HenkiloHakuPerustietoDto> list(HenkiloHakuCriteriaDto criteria, Long offset, Long limit) {
         return this.henkiloDataRepository.findPerustietoBy(this.createHenkiloCriteria(criteria), limit, offset);

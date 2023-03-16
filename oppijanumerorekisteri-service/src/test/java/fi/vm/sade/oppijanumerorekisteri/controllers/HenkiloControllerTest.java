@@ -11,6 +11,7 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
 import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
@@ -498,6 +499,78 @@ public class HenkiloControllerTest {
         given(yksilointiService.exists(any())).willThrow(new ConflictException());
         mvc.perform(postRequest("/henkilo/exists", existenceCheckDto()))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void getPassinumerotRequiresAuthentication() throws Exception {
+        mvc.perform(get("/henkilo/oid/passinumerot"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void getPassinumerotNotFound() throws Exception {
+        given(henkiloService.getEntityByOid("oid")).willThrow(new NotFoundException());
+        mvc.perform(get("/henkilo/oid/passinumerot"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void getPassinumerotHappyPath() throws Exception {
+        given(henkiloService.getEntityByOid("oid")).willReturn(Henkilo.builder().passinumerot(Set.of("makkara")).build());
+        mvc.perform(get("/henkilo/oid/passinumerot"))
+                .andExpectAll(
+                        status().isOk(),
+                        content().string("[\"makkara\"]"));
+    }
+
+    @Test
+    public void setPassinumerotRequiresAuthentication() throws Exception {
+        mvc.perform(postRequest("/henkilo/oid/passinumerot", Set.of()))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void setPassinumerotValidateCollectionNotNull() throws Exception {
+        mvc.perform(postRequest("/henkilo/oid/passinumerot", null))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void setPassinumerotValidateCollectionElementNotNull() throws Exception {
+        mvc.perform(postRequest("/henkilo/oid/passinumerot", null))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void setPassinumerotValidateCollectionElementNotEmpty() throws Exception {
+        mvc.perform(postRequest("/henkilo/oid/passinumerot", Set.of("")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void setPassinumerotValidateCollectionMayBeEmpty() throws Exception {
+        given(henkiloService.setPassportNumbers("oid", Set.of())).willReturn(Set.of());
+        mvc.perform(postRequest("/henkilo/oid/passinumerot", Set.of()))
+                .andExpectAll(
+                        status().isOk(),
+                        content().string("[]"));
+    }
+
+    @Test
+    @WithMockUser(roles = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA")
+    public void setPassinumerotHappyPath() throws Exception {
+        Set<String> passinumerot = Set.of("makkara");
+        given(henkiloService.setPassportNumbers("oid", passinumerot)).willReturn(passinumerot);
+        mvc.perform(postRequest("/henkilo/oid/passinumerot", passinumerot))
+                .andExpectAll(
+                        status().isOk(),
+                        content().string("[\"makkara\"]"));
     }
 
     private MockHttpServletRequestBuilder postRequest(String endpoint, Object payload) throws Exception {
