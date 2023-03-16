@@ -102,10 +102,10 @@ const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) 
                             <>
                                 <a
                                     className={`oph-button oph-button-primary ${styles.setupButton}`}
-                                    href="/service-provider/saml/logout"
+                                    href="/service-provider-app/saml/logout"
                                     data-test-id="login-suomifi"
                                 >
-                                    {L.MFA_OTA_KAYTTOON}
+                                    {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
                                 </a>
                                 <span className={styles.greyInfo}>{L.MFA_SUOMIFI}</span>
                             </>

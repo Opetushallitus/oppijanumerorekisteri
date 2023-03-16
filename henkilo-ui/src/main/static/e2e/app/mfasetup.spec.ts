@@ -43,7 +43,7 @@ test.skip('mfa setup', () => {
         await expect(page.locator('[data-test-id="start-mfa-setup"]')).toBeHidden();
         await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
             'href',
-            '/service-provider/saml/logout'
+            '/service-provider-app/saml/logout'
         );
     });
 
