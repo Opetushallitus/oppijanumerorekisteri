@@ -159,6 +159,10 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
         );
     }
 
+    const copySecretKey = () => {
+        navigator?.clipboard?.writeText(data.secretKey);
+    };
+
     const handleMfaEnable = async (token: string) => {
         setSetupError(undefined);
         return await postMfaEnable(token)
@@ -242,10 +246,10 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
                     )}
                 </MfaSetupStep>
             </div>
-            <hr />
+            <hr className={styles.hr} />
             <div className={styles.greyInfo}>
                 {L.MFA_KOODI_VAIHTOEHTO_INFO}{' '}
-                <span className={styles.secretKey} data-test-id="secret-key">
+                <span className={styles.secretKey} data-test-id="secret-key" onClick={copySecretKey}>
                     {data.secretKey?.match(/.{1,4}/g).map((chunk, idx) => (
                         <span className={styles.secretKeyChunk} key={`secret-key-${idx}`}>
                             {chunk}
