@@ -36,6 +36,7 @@ import { linkitykset, HenkiloLinkitysState } from './henkiloLinkitys.reducer';
 import { reportReducer, AccessRightsReportState } from './report.reducer';
 import existinceCheckReducer, { ExistenceCheckState } from './existence.reducer';
 import createPersonReducer, { CreatePersonState } from './create.reducer';
+import { passinumeroReducer, PassinumeroState } from './passinumero.reducer';
 import { Locale } from '../types/locale.type';
 
 export type RootState = {
@@ -69,6 +70,7 @@ export type RootState = {
     report: AccessRightsReportState;
     existenceCheck: ExistenceCheckState;
     createPerson: CreatePersonState;
+    passinumerot: PassinumeroState;
 };
 
 const rootReducer = {
@@ -102,6 +104,7 @@ const rootReducer = {
     report: reportReducer,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
+    passinumerot: passinumeroReducer,
 };
 
 export default rootReducer;

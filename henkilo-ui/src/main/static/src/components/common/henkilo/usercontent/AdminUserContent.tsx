@@ -32,6 +32,7 @@ import { hasAnyPalveluRooli } from '../../../../utilities/palvelurooli.util';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import Sukupuoli from '../labelvalues/Sukupuoli';
 import SahkopostitunnisteButton from '../buttons/SahkopostitunnisteButton';
+import PassinumeroButton from '../buttons/PassinumeroButton';
 import PoistaKayttajatunnusButton from '../buttons/PoistaKayttajatunnusButton';
 
 type OwnProps = {
@@ -168,6 +169,9 @@ class AdminUserContent extends React.Component<Props> {
                 styles={buttonPopupStyles}
             ></SahkopostitunnisteButton>
         ) : null;
+        const passinumeroButton = isOnrRekisterinpitaja ? (
+            <PassinumeroButton oid={this.props.oidHenkilo} styles={buttonPopupStyles}></PassinumeroButton>
+        ) : null;
         const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
         const passwordButton = (
             <PasswordButton
@@ -186,6 +190,7 @@ class AdminUserContent extends React.Component<Props> {
             aktivoiButton,
             hakaButton,
             sahkopostiTunnisteButton,
+            passinumeroButton,
             vtjOverrideButton,
             passwordButton,
         ];

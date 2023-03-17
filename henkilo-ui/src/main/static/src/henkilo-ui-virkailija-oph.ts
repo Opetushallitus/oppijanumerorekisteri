@@ -99,6 +99,7 @@ const urlConfig = {
     'oppijanumerorekisteri-service.henkilo.identification': 'oppijanumerorekisteri-service/henkilo/$1/identification',
     'oppijanumerorekisteri-service.henkilo.identification.remove':
         'oppijanumerorekisteri-service/henkilo/$1/identification/$2/$3',
+    'oppijanumerorekisteri-service.henkilo.passinumerot': 'oppijanumerorekisteri-service/henkilo/$1/passinumerot',
     'oppijanumerorekisteri-service.oppija.yhteenveto': 'oppijanumerorekisteri-service/oppija/yhteenveto',
     'oppijanumerorekisteri-service.oppija.tuontikooste': 'oppijanumerorekisteri-service/oppija/tuontikooste',
     'oppijanumerorekisteri-service.oppija.tuontidata': 'oppijanumerorekisteri-service/oppija/tuontidata',
