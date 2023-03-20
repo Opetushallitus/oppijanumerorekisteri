@@ -7,6 +7,7 @@ import StaticUtils from '../StaticUtils';
 import { fetchAllKayttooikeusryhma } from '../../../actions/kayttooikeusryhma.actions';
 import { Localisations } from '../../../types/localisation.type';
 import { Kayttooikeusryhma } from '../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
+import { Locale } from '../../../types/locale.type';
 
 type OwnProps = {
     kayttooikeusSelectionAction: OnChangeHandler<string, Options<string> | Option<string>>;
@@ -15,7 +16,7 @@ type OwnProps = {
 
 type StateProps = {
     L: Localisations;
-    locale: string;
+    locale: Locale;
     kayttooikeusRyhmas: Array<Kayttooikeusryhma>;
     kayttooikeusLoading: boolean;
 };

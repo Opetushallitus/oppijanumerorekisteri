@@ -44,10 +44,9 @@ class KoodistoSelect extends React.Component<Props> {
     };
 
     getOption = (koodi: Koodi) => {
-        const locale = this.props.locale.toUpperCase();
         return {
             value: koodi.koodiArvo,
-            label: toLocalizedText(locale, koodi.metadata, koodi.koodiArvo),
+            label: toLocalizedText(this.props.locale, koodi.metadata, koodi.koodiArvo),
         };
     };
 

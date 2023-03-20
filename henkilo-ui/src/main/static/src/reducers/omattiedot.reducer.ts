@@ -10,6 +10,7 @@ import {
     FETCH_HENKILOHAKUORGANISAATIOT_REQUEST,
     FETCH_HENKILOHAKUORGANISAATIOT_SUCCESS,
     FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
+    SET_MFA_PROVIDER,
 } from '../actions/actiontypes';
 import { getOrganisaatioOptionsAndFilter } from '../utilities/organisaatio.util';
 import { KayttooikeusOrganisaatiot } from '../types/domain/kayttooikeus/KayttooikeusPerustiedot.types';
@@ -25,6 +26,7 @@ export type OmattiedotState = {
     readonly isAdmin: boolean;
     readonly anomusilmoitus: boolean;
     readonly isOphVirkailija: boolean;
+    readonly mfaProvider?: string;
     readonly organisaatioRyhmaOptions: Array<any>;
     readonly organisaatioRyhmaFilter: Array<any>;
     readonly organisaatiot: Array<KayttooikeusOrganisaatiot>;
@@ -37,6 +39,7 @@ const initialState: OmattiedotState = {
     data: undefined,
     isAdmin: false,
     isOphVirkailija: false,
+    mfaProvider: undefined,
     anomusilmoitus: false,
     initialized: false,
     omattiedotOrganisaatiosLoading: false,
@@ -49,7 +52,7 @@ const initialState: OmattiedotState = {
     henkilohakuOrganisaatiot: [],
 };
 
-const omattiedot = (state: OmattiedotState = initialState, action: any) => {
+const omattiedot = (state: OmattiedotState = initialState, action) => {
     switch (action.type) {
         case FETCH_OMATTIEDOT_REQUEST:
             return Object.assign({}, state, { omattiedotLoading: true });
@@ -60,6 +63,7 @@ const omattiedot = (state: OmattiedotState = initialState, action: any) => {
                 data: { oid: action.omattiedot.oidHenkilo },
                 isAdmin: action.omattiedot.isAdmin,
                 isOphVirkailija: action.omattiedot.isMiniAdmin,
+                mfaProvider: action.omattiedot.mfaProvider,
                 organisaatiot: action.omattiedot.organisaatiot,
                 initialized: true,
                 anomusilmoitus: action.omattiedot.anomusilmoitus,
@@ -101,6 +105,8 @@ const omattiedot = (state: OmattiedotState = initialState, action: any) => {
             return Object.assign({}, state, { casMeSuccess: true });
         case UPDATE_ANOMUSILMOITUS:
             return { ...state, anomusilmoitus: action.value };
+        case SET_MFA_PROVIDER:
+            return { ...state, mfaProvider: action.mfaProvider };
         default:
             return state;
     }

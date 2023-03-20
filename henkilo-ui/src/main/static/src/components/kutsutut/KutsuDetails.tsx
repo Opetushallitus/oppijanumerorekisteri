@@ -13,7 +13,7 @@ type Props = {
 
 export const resolveInvitationRights = (
     kutsu: Kutsu | null | undefined,
-    locale: string
+    locale: Locale
 ): Array<{ organisaatio: string; ryhma: string }> =>
     kutsu
         ? kutsu.organisaatiot.flatMap((organisaatio) =>

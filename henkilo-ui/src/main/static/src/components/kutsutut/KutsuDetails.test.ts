@@ -76,7 +76,7 @@ describe('KutsuDetails', () => {
 
         // @ts-ignore
         it.each(testcase)('%s', (_, fixture, expected) => {
-            expect(resolveInvitationRights(fixture as Kutsu, 'test')).toEqual(expected);
+            expect(resolveInvitationRights(fixture as Kutsu, 'fi')).toEqual(expected);
         });
     });
 });

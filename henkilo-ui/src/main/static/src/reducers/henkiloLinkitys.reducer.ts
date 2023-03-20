@@ -1,3 +1,4 @@
+import { AnyAction } from '@reduxjs/toolkit';
 import {
     FETCH_HENKILO_LINKITYKSET_FAILURE,
     FETCH_HENKILO_LINKITYKSET_REQUEST,
@@ -11,13 +12,7 @@ export type HenkiloLinkitysState = {
     };
 };
 
-type HenkiloLinkitysAction = {
-    type: string;
-    oidHenkilo: string;
-    linkityksetByOid: HenkiloLinkitysState;
-};
-
-export const linkitykset = (state: HenkiloLinkitysState = {}, action: HenkiloLinkitysAction): HenkiloLinkitysState => {
+export const linkitykset = (state: HenkiloLinkitysState = {}, action: AnyAction): HenkiloLinkitysState => {
     switch (action.type) {
         case FETCH_HENKILO_LINKITYKSET_REQUEST:
             return { ...state, [action.oidHenkilo]: {} };

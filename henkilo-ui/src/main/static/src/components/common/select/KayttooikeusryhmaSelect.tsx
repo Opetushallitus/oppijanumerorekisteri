@@ -75,7 +75,7 @@ class KayttooikeusryhmaSelect extends React.Component<Props, State> {
     };
 
     getKielistetty = (kayttooikeusryhma: Kayttooikeusryhma): KielistettyKayttooikeusryhma => {
-        const locale = this.props.locale.toUpperCase();
+        const locale = this.props.locale;
         return {
             id: kayttooikeusryhma.id,
             nimi: toLocalizedText(locale, kayttooikeusryhma.nimi, ''),

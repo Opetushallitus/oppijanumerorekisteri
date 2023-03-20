@@ -25,6 +25,7 @@ import { fetchAllowedKayttooikeusryhmasForOrganisation } from '../../actions/kay
 import type { OrganisaatioSelectObject } from '../../types/organisaatioselectobject.types';
 import CrossCircleIcon from '../common/icons/CrossCircleIcon';
 import type { OrganisaatioNameLookup } from '../../reducers/organisaatio.reducer';
+import { Locale } from '../../types/locale.type';
 
 type OwnProps = {
     addedOrgs: readonly KutsuOrganisaatio[];
@@ -33,7 +34,7 @@ type OwnProps = {
 };
 
 type StateProps = {
-    locale: string;
+    locale: Locale;
     L: Localisations;
     omatOrganisaatios: Array<OrganisaatioHenkilo>;
     currentHenkiloOid: string;

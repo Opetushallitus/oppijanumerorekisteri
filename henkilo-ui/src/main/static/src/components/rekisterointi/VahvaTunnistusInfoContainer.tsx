@@ -6,7 +6,7 @@ import { RootState } from '../../reducers';
 import { Location } from 'history';
 import type { Localisations } from '../../types/localisation.type';
 
-type OwnProps = Location;
+type OwnProps = Location & { params: any; route: any };
 
 type StateProps = {
     L: Localisations;

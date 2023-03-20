@@ -15,13 +15,13 @@ const fixtures: { title: string; userInfo: any; expected: string[] }[] = [
         title: 'admin',
         userInfo: { ...userInfo, isAdmin: true },
         expected: [
-            'NAVI_KAYTTOOIKEUSANOMUKSET ',
-            'NAVI_KUTSUTUT ',
-            'NAVI_VIRKAILIJAN_KUTSUMINEN ',
-            'NAVI_HENKILOHAKU ',
-            'KAYTTOOIKEUSRAPORTTI_TITLE ',
-            'NAVI_OPPIJAN_LUONTI ',
-            'NAVI_OPPIJOIDEN_TUONTI ',
+            'Käyttöoikeusanomukset ',
+            'Kutsutut ',
+            'Virkailijan kutsuminen Opintopolkuun ',
+            'Henkilöhaku ',
+            'Käyttöoikeusraportti ',
+            'Oppijanumeron luonti ja haku ',
+            'Oppijoiden tuontiraportti ',
         ],
     },
     {
@@ -40,12 +40,7 @@ const fixtures: { title: string; userInfo: any; expected: string[] }[] = [
                 },
             ],
         },
-        expected: [
-            'NAVI_KAYTTOOIKEUSANOMUKSET ',
-            'NAVI_KUTSUTUT ',
-            'NAVI_VIRKAILIJAN_KUTSUMINEN ',
-            'NAVI_HENKILOHAKU ',
-        ],
+        expected: ['Käyttöoikeusanomukset ', 'Kutsutut ', 'Virkailijan kutsuminen Opintopolkuun ', 'Henkilöhaku '],
     },
     {
         title: 'KAYTTOOIKEUS_ACCESS_RIGHTS_REPORT',
@@ -58,7 +53,7 @@ const fixtures: { title: string; userInfo: any; expected: string[] }[] = [
                 },
             ],
         },
-        expected: ['NAVI_HENKILOHAKU ', 'KAYTTOOIKEUSRAPORTTI_TITLE '],
+        expected: ['Henkilöhaku ', 'Käyttöoikeusraportti '],
     },
     {
         title: 'OPPIJANUMEROREKISTERI_OPPIJOIDENTUONTI',
@@ -71,7 +66,7 @@ const fixtures: { title: string; userInfo: any; expected: string[] }[] = [
                 },
             ],
         },
-        expected: ['NAVI_OPPIJAN_LUONTI ', 'NAVI_OPPIJOIDEN_TUONTI '],
+        expected: ['Oppijanumeron luonti ja haku ', 'Oppijoiden tuontiraportti '],
     },
     {
         title: 'OPPIJANUMEROREKISTERI_YLEISTUNNISTE_LUONTI',
@@ -84,7 +79,7 @@ const fixtures: { title: string; userInfo: any; expected: string[] }[] = [
                 },
             ],
         },
-        expected: ['NAVI_OPPIJAN_LUONTI'],
+        expected: ['Oppijanumeron luonti ja haku '],
     },
 ];
 
@@ -95,7 +90,7 @@ fixtures.forEach((fixture) => {
         });
 
         await page.goto('/');
-        const tabs = await page.locator('#topNavigation ul.tabs li a');
+        const tabs = page.locator('#topNavigation ul.tabs li a');
         await expect(tabs).toHaveText(fixture.expected);
     });
 });

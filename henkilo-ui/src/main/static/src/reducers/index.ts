@@ -1,5 +1,5 @@
 import { routerReducer as routing } from 'react-router-redux';
-import { combineReducers } from 'redux';
+
 import l10n, { LocalisationState } from './l10n.reducer';
 import { frontProperties, FrontPropertiesState } from './frontProperties.reducer';
 import kutsuList, { KutsuListState } from './kutsuList.reducer';
@@ -36,9 +36,10 @@ import { linkitykset, HenkiloLinkitysState } from './henkiloLinkitys.reducer';
 import { reportReducer, AccessRightsReportState } from './report.reducer';
 import existinceCheckReducer, { ExistenceCheckState } from './existence.reducer';
 import createPersonReducer, { CreatePersonState } from './create.reducer';
+import { Locale } from '../types/locale.type';
 
 export type RootState = {
-    routing: unknown;
+    routing: any;
     kutsuList: KutsuListState;
     frontProperties: FrontPropertiesState;
     l10n: LocalisationState;
@@ -47,7 +48,7 @@ export type RootState = {
     prequels: PrequelsState;
     omattiedot: OmattiedotState;
     kutsuminenOrganisaatios: KutsuminenOrganisaatiosState;
-    locale: string;
+    locale: Locale;
     kayttooikeus: KayttooikeusRyhmaState;
     ryhmatState: RyhmatState;
     OrganisaatioKayttooikeusryhmat: OrganisaatioKayttooikeusryhmatState;
@@ -70,7 +71,7 @@ export type RootState = {
     createPerson: CreatePersonState;
 };
 
-const rootReducer = combineReducers<RootState>({
+const rootReducer = {
     routing,
     kutsuList,
     frontProperties,
@@ -101,6 +102,6 @@ const rootReducer = combineReducers<RootState>({
     report: reportReducer,
     existenceCheck: existinceCheckReducer,
     createPerson: createPersonReducer,
-});
+};
 
 export default rootReducer;
