@@ -25,6 +25,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -309,6 +311,22 @@ public class HenkiloController {
                 Collections.singletonMap(PALVELU_OPPIJANUMEROREKISTERI, Arrays.asList(KAYTTOOIKEUS_READ, KAYTTOOIKEUS_HENKILON_RU)),
                 permissionService
         );
+    }
+
+    @GetMapping("/{oid}/passinumerot")
+    @ApiOperation(value = "Henkilön passinumeroiden haku.", authorizations = @Authorization("onr"))
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    public Set<String> getPassportNumbers(@PathVariable String oid) {
+        return henkiloService.getEntityByOid(oid).getPassinumerot();
+    }
+
+    @PostMapping("/{oid}/passinumerot")
+    @ApiOperation(value = "Henkilön passinumeroiden asetus.", authorizations = @Authorization("onr"))
+    @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
+    public Set<String> setPassportNumbers(
+            @PathVariable String oid,
+            @RequestBody @NotNull Set<@NotBlank String> passinumerot) {
+        return henkiloService.setPassportNumbers(oid, passinumerot);
     }
 
     @ApiOperation(value = "Hakee henkilön tiedot annetun tunnistetiedon avulla.",
