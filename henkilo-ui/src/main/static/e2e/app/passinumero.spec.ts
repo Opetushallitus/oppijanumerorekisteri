@@ -20,6 +20,16 @@ test.describe('Person page', () => {
             });
         });
 
+        await page.route(
+            '/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000007357/passinumerot',
+            async (route) =>
+                (await route.request().method()) === 'POST'
+                    ? route.fulfill({
+                          json: route.request().postDataJSON(),
+                      })
+                    : route.continue()
+        );
+
         const passinumeroButton = await test.step('Page contains passinumero button', async () => {
             await page.goto('/virkailija/1.2.246.562.24.00000007357');
             const button = await page.locator('#passinumero-button');
@@ -35,15 +45,6 @@ test.describe('Person page', () => {
         });
 
         await test.step('Form can be edited & submitted', async () => {
-            await page.route(
-                '/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000007357/passinumerot',
-                async (route) => {
-                    await route.fulfill({
-                        json: route.request().postDataJSON(),
-                    });
-                }
-            );
-
             await expect(content.locator('li')).toHaveCount(0);
             await content.locator('button').isDisabled();
 
@@ -52,6 +53,11 @@ test.describe('Person page', () => {
 
             await expect(content.locator('li')).toHaveCount(1);
             await expect(content.locator('li')).toHaveText('testi-passinumero');
+        });
+
+        await test.step('Passinumero can be removed', async () => {
+            await content.locator('.fa-trash').click();
+            await expect(content.locator('li')).toHaveCount(0);
         });
 
         await test.step('Show error dialog on error', async () => {
