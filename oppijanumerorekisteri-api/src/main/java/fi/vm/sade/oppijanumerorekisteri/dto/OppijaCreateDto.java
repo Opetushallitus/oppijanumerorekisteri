@@ -18,18 +18,22 @@ import java.util.Set;
 @AllArgsConstructor
 public class OppijaCreateDto {
 
+    @ApiModelProperty(required = true)
     @NotEmpty
     private String etunimet;
 
+    @ApiModelProperty(required = true)
     @NotEmpty
     private String kutsumanimi;
 
+    @ApiModelProperty(required = true)
     @NotEmpty
     private String sukunimi;
 
     // mahdollistaa hetuttoman yksilöinnin luonnin yhteydessä
     private boolean yksiloity;
 
+    @ApiModelProperty(required = true)
     @NotNull
     private LocalDate syntymaaika;
 
@@ -37,9 +41,11 @@ public class OppijaCreateDto {
     @NotEmpty
     private String sukupuoli;
 
+    @ApiModelProperty(required = true)
     @Valid
     private KielisyysDto aidinkieli;
 
+    @ApiModelProperty(required = true)
     @Valid
     @NotEmpty
     private Set<KansalaisuusDto> kansalaisuus = new HashSet<>();
