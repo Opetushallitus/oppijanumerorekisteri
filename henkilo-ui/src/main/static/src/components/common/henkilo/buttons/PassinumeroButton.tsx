@@ -35,6 +35,7 @@ const PassinumeroButton = ({
     writePassinumerot,
 }: Props) => (
     <PopupButton
+        id="passinumero-button"
         popupStyle={styles}
         popupTitle={
             <span className="oph-h3 oph-strong" style={{ textAlign: 'left' }}>
