@@ -486,6 +486,11 @@ public class YksilointiServiceImpl implements YksilointiService {
     @Transactional
     public Henkilo puraHeikkoYksilointi(final String henkiloOid) {
         Henkilo henkilo = getHenkiloByOid(henkiloOid);
+        validateYksiloinninPurku(henkilo);
+        return puraYksilointi(henkilo);
+    }
+
+    private void validateYksiloinninPurku(Henkilo henkilo) {
         if (!henkilo.isYksiloity()) {
             throw new ValidationException("Yksilöintiä ei voi purkaa koska henkilöä ei ole yksilöity");
         }
@@ -493,7 +498,9 @@ public class YksilointiServiceImpl implements YksilointiService {
         if (!StringUtils.isEmpty(henkilo.getHetu()) || henkilo.isYksiloityVTJ()) {
             throw new ValidationException("Henkilöllä on hetu tai se on VTJ yksilöity, yksilöintiä ei voida purkaa");
         }
+    }
 
+    private Henkilo puraYksilointi(Henkilo henkilo) {
         henkilo.setYksiloity(false);
         return henkiloModificationService.update(henkilo);
     }
