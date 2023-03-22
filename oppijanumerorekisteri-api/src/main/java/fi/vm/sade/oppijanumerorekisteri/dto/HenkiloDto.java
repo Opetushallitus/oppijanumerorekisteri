@@ -69,6 +69,8 @@ public class HenkiloDto implements Serializable {
 
     private Set<YksilointiVirheDto> yksilointivirheet = new HashSet<>();
 
+    private Set<String> passinumerot;
+
     @Deprecated
     public HenkiloTyyppi getHenkiloTyyppi() {
         return HenkiloTyyppi.OPPIJA;
