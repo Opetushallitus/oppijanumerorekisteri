@@ -1,30 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../../../common/button/Button';
 import Loader from '../../../common/icons/Loader';
+import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../../api/oppijanumerorekisteri';
 import './PassinumeroPopupContent.css';
 
 type Props = {
     oid: string;
-    loading: boolean;
-    passinumerot: string[];
     translate: (key: string) => string;
-    readPassinumerot: (oid: string) => void;
-    writePassinumerot: (oid: string, passinumerot: string[]) => void;
 };
 
-const PassinumeroPopupContent = ({
-    oid,
-    passinumerot,
-    readPassinumerot,
-    writePassinumerot,
-    loading,
-    translate,
-}: Props) => {
-    useEffect(() => {
-        readPassinumerot(oid);
-    }, [readPassinumerot, oid]);
-
+const PassinumeroPopupContent = ({ oid, translate }: Props) => {
+    const { data: passinumerot = [], isLoading: isReading } = useGetPassinumerotQuery(oid);
+    const [setPassinumerot, { isLoading: isUpdating }] = useSetPassinumerotMutation();
     const {
         register,
         handleSubmit,
@@ -33,17 +21,14 @@ const PassinumeroPopupContent = ({
     } = useForm<{ passinumero: string }>({ mode: 'onChange' });
 
     const onSubmit = ({ passinumero }: { passinumero: string }): void => {
-        writePassinumerot(oid, [...passinumerot, passinumero]);
+        setPassinumerot({ oid, passinumerot: [...passinumerot, passinumero] });
         reset();
     };
 
     const remove = (removed: string) =>
-        writePassinumerot(
-            oid,
-            [...passinumerot].filter((passinumero) => passinumero !== removed)
-        );
+        setPassinumerot({ oid, passinumerot: [...passinumerot].filter((passinumero) => passinumero !== removed) });
 
-    return loading ? (
+    return isReading || isUpdating ? (
         <Loader />
     ) : (
         <>

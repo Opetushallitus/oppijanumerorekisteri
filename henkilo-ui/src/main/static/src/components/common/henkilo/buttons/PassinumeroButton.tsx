@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import type { RootState } from '../../../../reducers';
 import PopupButton from '../../button/PopupButton';
 import PassinumeroPopupContent from './PassinumeroPopupContent';
-import { readPassinumerot, writePassinumerot } from '../../../../actions/passinumerot.actions';
 
 type OwnProps = {
     oid: string;
@@ -12,28 +11,12 @@ type OwnProps = {
 };
 
 type StateProps = {
-    payload: string[];
-    loading: boolean;
     translate: (key: string) => string;
 };
 
-type DispatchProps = {
-    readPassinumerot: (oid: string) => void;
-    writePassinumerot: (oid: string, passinumerot: string[]) => void;
-};
+type Props = OwnProps & StateProps;
 
-type Props = OwnProps & StateProps & DispatchProps;
-
-const PassinumeroButton = ({
-    oid,
-    styles,
-    translate,
-    disabled,
-    loading,
-    payload,
-    readPassinumerot,
-    writePassinumerot,
-}: Props) => (
+const PassinumeroButton = ({ oid, styles, disabled, translate }: Props) => (
     <PopupButton
         id="passinumero-button"
         popupStyle={styles}
@@ -45,27 +28,14 @@ const PassinumeroButton = ({
         popupClass={'oph-popup-default oph-popup-bottom'}
         disabled={disabled}
         popupButtonWrapperPositioning={'relative'}
-        popupContent={
-            <PassinumeroPopupContent
-                oid={oid}
-                translate={translate}
-                loading={loading}
-                passinumerot={payload}
-                readPassinumerot={readPassinumerot}
-                writePassinumerot={writePassinumerot}
-            />
-        }
+        popupContent={<PassinumeroPopupContent oid={oid} translate={translate} />}
     >
         {translate('HALLITSE_PASSINUMEROITA')}
     </PopupButton>
 );
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    ...state.passinumerot,
     translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
 });
 
-export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
-    readPassinumerot,
-    writePassinumerot,
-})(PassinumeroButton);
+export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(PassinumeroButton);
