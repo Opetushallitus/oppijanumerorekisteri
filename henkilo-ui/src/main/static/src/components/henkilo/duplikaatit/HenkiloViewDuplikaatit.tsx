@@ -58,7 +58,7 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
     }
 
     render() {
-        const master: any = this.props.henkilo.master;
+        const master: any = this.props.henkilo.henkilo;
         master.emails = (this.props.henkilo.henkilo.yhteystiedotRyhma || [])
             .flatMap((ryhma) => ryhma.yhteystieto)
             .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
