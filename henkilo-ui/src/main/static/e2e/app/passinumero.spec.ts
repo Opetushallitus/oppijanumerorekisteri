@@ -4,7 +4,7 @@ import { test, expect } from 'playwright-test-coverage';
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 
 test.describe('Person page', () => {
-    test('Passinumero can be edited', async ({ page }) => {
+    test('Passinumerot', async ({ page }) => {
         await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
             await route.fulfill({
                 json: {
@@ -25,8 +25,8 @@ test.describe('Person page', () => {
             async (route, request) => {
                 const method = await request.method();
                 if (method === 'POST') {
-                    // const postData = await request.postData();
-                    // expect(postData).toEqual(['Tampere!']);
+                    //const postData = await request.postDataJSON(); // Does not resolve correctly on chromium?
+                    //passinumerot = [...postData];
                     passinumerot = ['testi-passinumero'];
                 }
                 await route.fulfill({
@@ -60,11 +60,12 @@ test.describe('Person page', () => {
             await expect(content.locator('li')).toHaveText('testi-passinumero');
         });
 
-        /*
+        /* TODO: Ivestigate chromium POST request mock compatibility
         await test.step('Passinumero can be removed', async () => {
             await content.locator('.fa-trash').click();
             await expect(content.locator('li')).toHaveCount(0);
         });
+        */
 
         await test.step('Show error dialog on error', async () => {
             await page.route(
@@ -75,7 +76,7 @@ test.describe('Person page', () => {
             await content.locator('button').click();
             await expect(page.locator('.oph-alert')).toHaveCount(1);
         });
-*/
+
         await test.step('Popup can be closed', async () => {
             await close.click();
             await expect(page.locator('.oph-popup')).toHaveCount(0);

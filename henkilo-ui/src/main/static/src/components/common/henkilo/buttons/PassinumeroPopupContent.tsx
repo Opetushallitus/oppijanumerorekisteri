@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import Button from '../../../common/button/Button';
 import Loader from '../../../common/icons/Loader';
 import { useGetPassinumerotQuery, useSetPassinumerotMutation } from '../../../../api/oppijanumerorekisteri';
+import { addGlobalNotification } from '../../../../actions/notification.actions';
 import './PassinumeroPopupContent.css';
 
 type Props = {
@@ -11,8 +13,20 @@ type Props = {
 };
 
 const PassinumeroPopupContent = ({ oid, translate }: Props) => {
-    const { data: passinumerot = [], isLoading: isReading } = useGetPassinumerotQuery(oid);
-    const [setPassinumerot, { isLoading: isUpdating }] = useSetPassinumerotMutation();
+    const dispatch = useDispatch();
+    const { data: passinumerot = [], isLoading: isReading, isError: readError } = useGetPassinumerotQuery(oid);
+    const [setPassinumerot, { isLoading: isUpdating, isError: writeError }] = useSetPassinumerotMutation();
+
+    useEffect(() => {
+        if (readError || writeError) {
+            addGlobalNotification({
+                key: 'PASSINUMEROT_NETWORK_ERROR',
+                type: 'error',
+                title: translate('PASSINUMEROT_NETWORK_ERROR'),
+            })(dispatch);
+        }
+    }, [readError, writeError, dispatch, translate]);
+
     const {
         register,
         handleSubmit,
@@ -48,7 +62,7 @@ const PassinumeroPopupContent = ({ oid, translate }: Props) => {
                     placeholder={translate('LISAA_PASSINUMERO_PLACEHOLDER')}
                     {...register('passinumero', { required: true })}
                 />
-                <Button action={handleSubmit(onSubmit)} disabled={!isValid}>
+                <Button action={handleSubmit(onSubmit)} disabled={!isValid || readError || writeError}>
                     {translate('LISAA_PASSINUMERO')}
                 </Button>
             </form>
