@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Setter;
 import lombok.*;
 
@@ -14,9 +15,9 @@ import java.io.Serializable;
 public class KielisyysDto implements Serializable {
     private static final long serialVersionUID = 7217945009330980201L;
 
+    @ApiModelProperty(required = true)
     @NotEmpty
     private String kieliKoodi;
 
-    @NotEmpty
     private String kieliTyyppi;
 }
