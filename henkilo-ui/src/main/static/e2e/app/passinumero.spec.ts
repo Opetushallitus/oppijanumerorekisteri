@@ -19,18 +19,17 @@ test.describe('Person page', () => {
             });
         });
 
-        let passinumerot: string[] = [];
+        let passinumero: string[] = [];
+        const postResponses: string[][] = [['testi-passinumero']];
         await page.route(
             '/oppijanumerorekisteri-service/henkilo/1.2.246.562.24.00000007357/passinumerot',
             async (route, request) => {
                 const method = await request.method();
                 if (method === 'POST') {
-                    //const postData = await request.postDataJSON(); // Does not resolve correctly on chromium?
-                    //passinumerot = [...postData];
-                    passinumerot = ['testi-passinumero'];
+                    passinumero = postResponses.pop() || [];
                 }
                 await route.fulfill({
-                    json: passinumerot,
+                    json: passinumero,
                 });
             }
         );
@@ -60,12 +59,10 @@ test.describe('Person page', () => {
             await expect(content.locator('li')).toHaveText('testi-passinumero');
         });
 
-        /* TODO: Ivestigate chromium POST request mock compatibility
         await test.step('Passinumero can be removed', async () => {
             await content.locator('.fa-trash').click();
             await expect(content.locator('li')).toHaveCount(0);
         });
-        */
 
         await test.step('Show error dialog on error', async () => {
             await page.route(
