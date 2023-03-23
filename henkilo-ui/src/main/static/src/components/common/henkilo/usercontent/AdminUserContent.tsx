@@ -54,6 +54,7 @@ type StateProps = {
     L: Localisations;
     isAdmin: boolean;
     omattiedot: OmattiedotState;
+    translate: (key: string) => string;
 };
 
 type DispatchProps = {
@@ -170,7 +171,11 @@ class AdminUserContent extends React.Component<Props> {
             ></SahkopostitunnisteButton>
         ) : null;
         const passinumeroButton = isOnrRekisterinpitaja ? (
-            <PassinumeroButton oid={this.props.oidHenkilo} styles={buttonPopupStyles}></PassinumeroButton>
+            <PassinumeroButton
+                oid={this.props.oidHenkilo}
+                styles={buttonPopupStyles}
+                translate={this.props.translate}
+            ></PassinumeroButton>
         ) : null;
         const vtjOverrideButton = <VtjOverrideButton disabled={duplicate || passivoitu} />;
         const passwordButton = (
@@ -201,6 +206,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
     henkilo: state.henkilo,
     koodisto: state.koodisto,
     L: state.l10n.localisations[state.locale],
+    translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
     isAdmin: state.omattiedot.isAdmin,
     omattiedot: state.omattiedot,
 });

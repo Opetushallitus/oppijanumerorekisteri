@@ -1,20 +1,13 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import type { RootState } from '../../../../reducers';
 import PopupButton from '../../button/PopupButton';
 import PassinumeroPopupContent from './PassinumeroPopupContent';
 
-type OwnProps = {
+type Props = {
     oid: string;
     styles: any;
     disabled?: boolean;
-};
-
-type StateProps = {
     translate: (key: string) => string;
 };
-
-type Props = OwnProps & StateProps;
 
 const PassinumeroButton = ({ oid, styles, disabled, translate }: Props) => (
     <PopupButton
@@ -34,8 +27,4 @@ const PassinumeroButton = ({ oid, styles, disabled, translate }: Props) => (
     </PopupButton>
 );
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    translate: (key: string) => state.l10n.localisations[state.locale][key] || key,
-});
-
-export default connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(PassinumeroButton);
+export default PassinumeroButton;
