@@ -47,4 +47,5 @@ export type HenkiloCreate = {
     sukupuoli?: string;
     passinumerot?: Array<string>;
     yhteystiedotRyhma?: Array<YhteystietoRyhma>;
+    yksiloity?: boolean;
 };
