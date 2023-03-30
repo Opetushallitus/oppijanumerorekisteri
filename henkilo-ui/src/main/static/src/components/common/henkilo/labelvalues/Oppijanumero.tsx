@@ -21,7 +21,7 @@ const Oppijanumero = (props: Props) => (
         updateModelFieldAction={props.updateModelFieldAction}
         values={{
             label: 'HENKILO_OPPIJANUMERO',
-            value: props.henkilo.master.oppijanumero,
+            value: props.henkilo.master.oppijanumero || props.henkilo.henkilo.oppijanumero,
             inputValue: 'oppijanumero',
             readOnly: true,
         }}
