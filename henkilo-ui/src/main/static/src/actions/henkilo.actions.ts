@@ -613,9 +613,11 @@ const linkHenkilosSuccess = (slaveOids) => ({
 });
 const linkHenkilosFailure = () => ({ type: LINK_HENKILOS_FAILURE });
 
-export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) => async (dispatch) => {
+const linkHenkilosActionCreator = (endpoint: string) => (masterOid, slaveOids, successMessage, failMessage) => async (
+    dispatch
+) => {
     dispatch(linkHenkilosRequest(masterOid, slaveOids));
-    const url = urls.url('oppijanumerorekisteri-service.henkilo.link', masterOid);
+    const url = urls.url(endpoint, masterOid);
     try {
         await http.post(url, slaveOids);
         dispatch(linkHenkilosSuccess(slaveOids));
@@ -640,6 +642,9 @@ export const linkHenkilos = (masterOid, slaveOids, successMessage, failMessage) 
         throw error;
     }
 };
+
+export const linkHenkilos = linkHenkilosActionCreator('oppijanumerorekisteri-service.henkilo.link');
+export const forceLinkHenkilos = linkHenkilosActionCreator('oppijanumerorekisteri-service.henkilo.forcelink');
 
 const updateHenkiloUnlink = (masterOid: string, slaveOid: string) => ({
     type: UPDATE_HENKILO_UNLINK_REQUEST,

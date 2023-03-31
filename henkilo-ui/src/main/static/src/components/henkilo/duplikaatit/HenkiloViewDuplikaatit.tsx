@@ -14,8 +14,10 @@ import type { Localisations } from '../../../types/localisation.type';
 import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { linkHenkilos } from '../../../actions/henkilo.actions';
+import { linkHenkilos, forceLinkHenkilos } from '../../../actions/henkilo.actions';
 import type { HenkiloDuplicateLenient } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
+import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
+import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 
 type OwnProps = {
     router?: any;
@@ -32,15 +34,23 @@ type StateProps = {
     L: Localisations;
     koodisto: KoodistoState;
     ownOid: string;
+    omattiedot: OmattiedotState;
 };
 
 type DispatchProps = {
     linkHenkilos: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void;
+    forceLinkHenkilos: (
+        masterOid: string,
+        slaveOids: Array<string>,
+        successMessage: string,
+        failMessage: string
+    ) => void;
 };
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 type State = {
+    canForceLink: boolean;
     selectedDuplicates: string[];
     notifications: Notification[];
     yksiloitySelected: boolean;
@@ -50,10 +60,17 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        const canForceLink = hasAnyPalveluRooli(this.props.omattiedot.organisaatiot, [
+            'OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU',
+        ]);
+
         this.state = {
+            canForceLink,
             notifications: [],
             selectedDuplicates: [],
-            yksiloitySelected: this.props.henkilo.henkilo['yksiloity'] || this.props.henkilo.henkilo['yksiloityVTJ'],
+            yksiloitySelected: canForceLink
+                ? false
+                : this.props.henkilo.henkilo['yksiloity'] || this.props.henkilo.henkilo['yksiloityVTJ'],
         };
     }
 
@@ -146,24 +163,45 @@ class HenkiloViewDuplikaatit extends React.Component<Props, State> {
                                 ) ||
                                 this.props.oidHenkilo === this.props.ownOid
                             }
-                            action={this._link.bind(this)}
+                            action={this.createLinkAction(this.props.linkHenkilos).bind(this)}
                         >
                             {this.props.L['DUPLIKAATIT_YHDISTA']}
                         </Button>
+                        {this.state.canForceLink ? (
+                            <Button
+                                disabled={
+                                    this.state.selectedDuplicates.length === 0 ||
+                                    !enabledDuplikaattiView(
+                                        this.props.oidHenkilo,
+                                        this.props.henkilo.kayttaja,
+                                        this.props.henkilo.masterLoading,
+                                        this.props.henkilo.master.oidHenkilo
+                                    ) ||
+                                    this.props.oidHenkilo === this.props.ownOid
+                                }
+                                action={this.createLinkAction(this.props.forceLinkHenkilos).bind(this)}
+                            >
+                                {this.props.L['DUPLIKAATIT_PURA_YKSILOINNIT_JA_YHDISTA']}
+                            </Button>
+                        ) : null}
                     </FloatingBar>
                 )}
             </div>
         );
     }
 
-    async _link() {
-        const successMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'];
-        const failMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'];
-        const oid = this.props.oidHenkilo ? this.props.oidHenkilo : '';
-        await this.props.linkHenkilos(oid, this.state.selectedDuplicates, successMessage, failMessage);
-        if (this.props.router) {
-            this.props.router.push(`/${this.props.henkiloType}/${oid}`);
-        }
+    createLinkAction(
+        action: (masterOid: string, slaveOids: Array<string>, successMessage: string, failMessage: string) => void
+    ) {
+        return async () => {
+            const successMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'];
+            const failMessage = this.props.L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'];
+            const oid = this.props.oidHenkilo ? this.props.oidHenkilo : '';
+            await action(oid, this.state.selectedDuplicates, successMessage, failMessage);
+            if (this.props.router) {
+                this.props.router.push(`/${this.props.henkiloType}/${oid}`);
+            }
+        };
     }
 
     setSelection(oid: string) {
@@ -179,8 +217,10 @@ const mapStateToProps = (state: RootState): StateProps => ({
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     koodisto: state.koodisto,
+    omattiedot: state.omattiedot,
 });
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(mapStateToProps, {
     linkHenkilos,
+    forceLinkHenkilos: forceLinkHenkilos,
 })(HenkiloViewDuplikaatit);

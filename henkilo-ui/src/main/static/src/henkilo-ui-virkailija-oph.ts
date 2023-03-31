@@ -79,6 +79,7 @@ const urlConfig = {
     'oppijanumerorekisteri-service.henkilo.slaves': 'oppijanumerorekisteri-service/henkilo/$1/slaves',
     'oppijanumerorekisteri-service.henkilo.master': 'oppijanumerorekisteri-service/henkilo/$1/master',
     'oppijanumerorekisteri-service.henkilo.link': 'oppijanumerorekisteri-service/henkilo/$1/link',
+    'oppijanumerorekisteri-service.henkilo.forcelink': 'oppijanumerorekisteri-service/henkilo/$1/forcelink',
     'oppijanumerorekisteri-service.henkilo.unlink': 'oppijanumerorekisteri-service/henkilo/$1/unlink/$2',
     'oppijanumerorekisteri-service.henkilo.hakemukset': 'oppijanumerorekisteri-service/henkilo/$1/hakemukset',
     'oppijanumerorekisteri-service.henkilo.duplicates': 'oppijanumerorekisteri-service/henkilo/$1/duplicates',

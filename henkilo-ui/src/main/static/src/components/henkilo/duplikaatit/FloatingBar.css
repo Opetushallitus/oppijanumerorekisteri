@@ -9,7 +9,9 @@
 }
 
 #floating-bar .floating-bar-content {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
+    padding-top: 7px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
