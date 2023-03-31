@@ -40,4 +40,6 @@ public interface HenkiloModificationService {
     List<String> linkHenkilos(String henkiloOid, List<String> similarHenkiloOids);
 
     void unlinkHenkilo(String oid, String slaveOid);
+
+    List<String> forceLinkHenkilos(String master, List<String> duplicates);
 }

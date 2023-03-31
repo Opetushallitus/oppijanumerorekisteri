@@ -466,6 +466,29 @@ public class HenkiloModificationServiceImpl implements HenkiloModificationServic
         this.duplicateService.unlinkHenkilo(oid, slaveOid).forEachModified(this::update);
     }
 
+    @Override
+    @Transactional
+    public List<String> forceLinkHenkilos(String master, List<String> duplicates) {
+        List<Henkilo> candidates = henkiloDataRepository.findByOidHenkiloIsIn(duplicates);
+        validateForceLinkCandidates(candidates);
+        puraYksiloinnit(candidates);
+        return linkHenkilos(master, duplicates);
+    }
+
+    private void validateForceLinkCandidates(List<Henkilo> candidates) {
+        candidates.stream().filter(henkilo ->
+                henkilo.isYksiloityVTJ() || henkilo.getHetu() != null
+        ).findAny().ifPresent(henkilo -> {
+            throw new ValidationException();
+        });
+    }
+
+    private void puraYksiloinnit(List<Henkilo> candidates) {
+        candidates.stream()
+                .filter(Henkilo::isYksiloity)
+                .forEach(henkilo -> henkilo.setYksiloity(false));
+    }
+
     private String getFreePersonOid() {
         final String newOid = oidGenerator.generateOID();
         if (this.henkiloService.getOidExists(newOid)) {
