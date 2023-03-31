@@ -513,6 +513,14 @@ public class HenkiloController {
         return this.henkiloModificationService.linkHenkilos(oid, slaveOids);
     }
 
+    @PostMapping("/{oid}/forcelink")
+    @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#oid, {'OPPIJANUMEROREKISTERI': {'YKSILOINNIN_PURKU'}}, #permissionService)")
+    @ApiOperation(authorizations = @Authorization("onr"), value = "Linkittää henkilöön annetun joukon duplikaatteja. purkaa duplikaattien yksilöinnin tarvittaessa")
+    public List<String> forceLinkDuplicates(@PathVariable String oid, @RequestBody List<String> duplicates,
+                                       @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        return this.henkiloModificationService.forceLinkHenkilos(oid, duplicates);
+    }
+
     @DeleteMapping("/{oid}/unlink/{slaveOid}")
     @PreAuthorize("hasAnyRole('ROLE_APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA')")
     @ApiOperation(authorizations = @Authorization("onr"), value = "Poistaa henkilöltä linkityksen toiseen henkilöön")
