@@ -4,7 +4,7 @@ import { http } from '../../../../http';
 import LabelValue from './LabelValue';
 import { Localisations } from '../../../../types/localisation.type';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../reducers';
+import type { RootState } from '../../../../store';
 import { OmattiedotState } from '../../../../reducers/omattiedot.reducer';
 import { Kayttooikeusryhma } from '../../../../types/domain/kayttooikeus/kayttooikeusryhma.types';
 import { localizeTextGroup } from '../../../../utilities/localisation.util';

@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-virtualized-select';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import type { Options, Option } from 'react-select';
 import { Locale } from '../../../types/locale.type';
 import { Koodisto, Koodi } from '../../../types/domain/koodisto/koodisto.types';

@@ -18,6 +18,7 @@ import { HenkilohakuResult } from '../types/domain/kayttooikeus/HenkilohakuResul
 import { addGlobalNotification } from './notification.actions';
 import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
+import { AppDispatch, RootState } from '../store';
 
 const henkilohakuRequest = (filters: HenkilohakuCriteria) => ({
     type: HENKILOHAKU_REQUEST,
@@ -30,8 +31,8 @@ const henkilohakuSuccess = (data: HenkilohakuResult) => ({
 const henkilohakuFailure = (error: any) => ({ type: HENKILOHAKU_FAILURE, error });
 
 export const henkilohaku = (payload: HenkilohakuCriteria, queryParams: HenkilohakuQueryparameters) => async (
-    dispatch: any,
-    getState: () => any
+    dispatch: AppDispatch,
+    getState: () => RootState
 ) => {
     dispatch(henkilohakuRequest(payload));
     const url = urls.url('kayttooikeus-service.henkilo.henkilohaku', queryParams ? queryParams : {});
@@ -40,7 +41,7 @@ export const henkilohaku = (payload: HenkilohakuCriteria, queryParams: Henkiloha
         dispatch(henkilohakuSuccess(data));
     } catch (error) {
         dispatch(henkilohakuFailure(error));
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'HENKILOHAKU_ERROR',
                 title: localizeWithState('HENKILOHAKU_ERROR', getState()),
@@ -52,9 +53,9 @@ export const henkilohaku = (payload: HenkilohakuCriteria, queryParams: Henkiloha
     }
 };
 
-export const updateFilters = (filters: HenkilohakuCriteria) => (dispatch: any) =>
+export const updateFilters = (filters: HenkilohakuCriteria) => (dispatch: AppDispatch) =>
     dispatch({ type: UPDATE_HENKILOHAKU_FILTERS, filters });
-export const clearHenkilohaku = () => (dispatch: any) => dispatch({ type: CLEAR_HENKILOHAKU });
+export const clearHenkilohaku = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_HENKILOHAKU });
 
 const henkilohakuCountRequest = (criteria: HenkilohakuCriteria) => ({
     type: HENKILOHAKUCOUNT_REQUEST,
@@ -66,7 +67,7 @@ const henkilohakuCountSuccess = (count: number) => ({
 });
 const henkilohakuCountFailure = () => ({ type: HENKILOHAKUCOUNT_FAILURE });
 
-export const henkilohakuCount = (criteria: HenkilohakuCriteria) => async (dispatch: any) => {
+export const henkilohakuCount = (criteria: HenkilohakuCriteria) => async (dispatch: AppDispatch) => {
     dispatch(henkilohakuCountRequest(criteria));
     const url = urls.url('kayttooikeus-service.henkilo.henkilohakucount');
     try {

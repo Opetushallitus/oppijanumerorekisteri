@@ -37,7 +37,7 @@ const initialState = {
     names: {},
 };
 
-export const organisaatio = (state: OrganisaatioState = initialState, action: any) => {
+export const organisaatio = (state: OrganisaatioState = initialState, action: any): OrganisaatioState => {
     switch (action.type) {
         case FETCH_ALL_ORGANISAATIOS_REQUEST:
             return { ...state, organisaatioLoading: true };

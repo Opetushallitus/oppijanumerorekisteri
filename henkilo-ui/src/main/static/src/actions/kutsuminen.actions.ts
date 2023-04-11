@@ -1,3 +1,4 @@
+import { AppDispatch } from '../store';
 import {
     KUTSU_SET_ORGANISAATIO,
     KUTSU_ADD_ORGANISAATIO,
@@ -8,22 +9,23 @@ import {
     REMOVE_ORGANISAATIO_PERMISSION,
 } from './actiontypes';
 
-export const kutsuSetOrganisaatio = (index, organisaatio) => (dispatch) =>
+export const kutsuSetOrganisaatio = (index, organisaatio) => (dispatch: AppDispatch) =>
     dispatch({ type: KUTSU_SET_ORGANISAATIO, index, organisaatio });
-export const kutsuAddOrganisaatio = (organisaatio) => (dispatch) =>
+export const kutsuAddOrganisaatio = (organisaatio) => (dispatch: AppDispatch) =>
     dispatch({ type: KUTSU_ADD_ORGANISAATIO, organisaatio });
-export const kutsuRemoveOrganisaatio = (index) => (dispatch) => dispatch({ type: KUTSU_REMOVE_ORGANISAATIO, index });
-export const kutsuClearOrganisaatios = () => (dispatch) => dispatch({ type: KUTSU_CLEAR_ORGANISAATIOS });
+export const kutsuRemoveOrganisaatio = (index) => (dispatch: AppDispatch) =>
+    dispatch({ type: KUTSU_REMOVE_ORGANISAATIO, index });
+export const kutsuClearOrganisaatios = () => (dispatch: AppDispatch) => dispatch({ type: KUTSU_CLEAR_ORGANISAATIOS });
 
-export const addOrganisaatioPermission = (organisaatioOid, permission) => (dispatch) =>
+export const addOrganisaatioPermission = (organisaatioOid, permission) => (dispatch: AppDispatch) =>
     dispatch({ type: ADD_ORGANISAATIO_PERMISSION, organisaatioOid, permission });
 
-export const removeOrganisaatioPermission = (organisaatioOid, permission) => (dispatch) =>
+export const removeOrganisaatioPermission = (organisaatioOid, permission) => (dispatch: AppDispatch) =>
     dispatch({
         type: REMOVE_ORGANISAATIO_PERMISSION,
         organisaatioOid,
         permission,
     });
 
-export const kutsuOrganisaatioSetProperties = (index, properties) => (dispatch) =>
+export const kutsuOrganisaatioSetProperties = (index, properties) => (dispatch: AppDispatch) =>
     dispatch({ type: KUTSU_ORGANISAATIO_SET_PROPERTIES, index, properties });

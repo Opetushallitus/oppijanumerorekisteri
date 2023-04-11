@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import KayttooikeusryhmaPage from './KayttooikeusryhmaPage';
 import { fetchOppilaitostyypit, fetchOrganisaatiotyypit } from '../../../actions/koodisto.actions';
 import { fetchAllOrganisaatios } from '../../../actions/organisaatio.actions';

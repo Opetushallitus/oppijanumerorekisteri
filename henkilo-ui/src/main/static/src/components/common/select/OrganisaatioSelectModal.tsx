@@ -7,7 +7,7 @@ import type { Localisations } from '../../../types/localisation.type';
 import type { OrganisaatioHenkilo } from '../../../types/domain/kayttooikeus/OrganisaatioHenkilo.types';
 import type { OrganisaatioSelectObject } from '../../../types/organisaatioselectobject.types';
 import type { OrganisaatioNameLookup } from '../../../reducers/organisaatio.reducer';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 
 type OwnProps = {
     organisaatiot?: OrganisaatioHenkilo[];

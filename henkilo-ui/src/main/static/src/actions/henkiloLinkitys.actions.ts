@@ -1,16 +1,11 @@
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
-import { Dispatch } from '../types/dispatch.type';
 import {
     FETCH_HENKILO_LINKITYKSET_FAILURE,
     FETCH_HENKILO_LINKITYKSET_REQUEST,
     FETCH_HENKILO_LINKITYKSET_SUCCESS,
 } from './actiontypes';
-import { HenkiloLinkitysState } from '../reducers/henkiloLinkitys.reducer';
-
-type HenkiloLinkitysGetState = () => {
-    linkitykset: HenkiloLinkitysState;
-};
+import { AppDispatch, RootState } from '../store';
 
 const henkiloLinkitysRequest = (oidHenkilo) => ({
     type: FETCH_HENKILO_LINKITYKSET_REQUEST,
@@ -32,8 +27,8 @@ const henkiloLinkitysFailure = (oidHenkilo) => ({
  * @returns {Function}
  */
 export const fetchHenkiloLinkitykset = (oidHenkilo: string) => async (
-    dispatch: Dispatch,
-    getState: HenkiloLinkitysGetState
+    dispatch: AppDispatch,
+    getState: () => RootState
 ) => {
     if (!getState().linkitykset[oidHenkilo]) {
         dispatch(henkiloLinkitysRequest(oidHenkilo));

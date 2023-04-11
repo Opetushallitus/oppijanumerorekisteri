@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import type { Localisations } from '../../types/localisation.type';
 import ConfirmButton from '../common/button/ConfirmButton';
 

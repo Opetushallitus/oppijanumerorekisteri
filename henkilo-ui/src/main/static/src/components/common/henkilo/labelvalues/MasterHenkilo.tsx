@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../reducers';
+import type { RootState } from '../../../../store';
 import { Link } from 'react-router';
 import { fetchHenkilo, fetchHenkiloMaster, unlinkHenkilo } from '../../../../actions/henkilo.actions';
 import LabelValue from './LabelValue';

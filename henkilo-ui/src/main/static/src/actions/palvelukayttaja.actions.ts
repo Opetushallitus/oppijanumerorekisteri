@@ -1,5 +1,6 @@
 import { urls } from 'oph-urls-js';
 import { http } from '../http';
+import { AppDispatch } from '../store';
 import {
     SET_PALVELUKAYTTAJAT_CRITERIA,
     FETCH_PALVELUKAYTTAJAT_REQUEST,
@@ -7,11 +8,11 @@ import {
     FETCH_PALVELUKAYTTAJAT_SUCCESS,
 } from './actiontypes';
 
-export const setPalvelukayttajatCriteria = (criteria) => async (dispatch) => {
+export const setPalvelukayttajatCriteria = (criteria) => async (dispatch: AppDispatch) => {
     dispatch({ type: SET_PALVELUKAYTTAJAT_CRITERIA, criteria });
 };
 
-export const fetchPalvelukayttajat = (criteria) => async (dispatch) => {
+export const fetchPalvelukayttajat = (criteria) => async (dispatch: AppDispatch) => {
     dispatch({ type: FETCH_PALVELUKAYTTAJAT_REQUEST });
     const url = urls.url('kayttooikeus-service.palvelukayttaja', criteria);
     try {

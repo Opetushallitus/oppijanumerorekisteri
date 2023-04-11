@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../reducers';
+import type { RootState } from '../../../../store';
 import type { NotificationsState } from '../../../../reducers/notifications.reducer';
 import PopupButton from '../../button/PopupButton';
 import PasswordPopupContent from '../../button/PasswordPopupContent';

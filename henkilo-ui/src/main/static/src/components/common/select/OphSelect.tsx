@@ -4,7 +4,7 @@ import 'react-virtualized-select/styles.css';
 import './OphSelect.css';
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import Select from 'react-virtualized-select';
 import IconButton from '../button/IconButton';
 import CrossIcon from '../icons/CrossIcon';

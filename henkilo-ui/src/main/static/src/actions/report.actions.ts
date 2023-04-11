@@ -16,6 +16,7 @@ import type {
     SuccessAction,
     FailureAction,
 } from '../reducers/report.reducer';
+import { AppDispatch } from '../store';
 
 export const clearAccessRightsReport = (): ClearAction => ({
     type: CLEAR_ACCESS_RIGHT_REPORT,
@@ -32,7 +33,7 @@ const requestAccessRightsReportFailure = (): FailureAction => ({
     type: FETCH_ACCESS_RIGHT_REPORT_FAILURE,
 });
 
-export const fetchAccessRightsReport = (oid: string) => async (dispatch, state: () => any) => {
+export const fetchAccessRightsReport = (oid: string) => async (dispatch: AppDispatch, state: () => any) => {
     dispatch(requestAccessRightsReport());
     try {
         const url = urls.url('kayttooikeus-service.report.access-rights-for-organisaatio', oid);
@@ -40,7 +41,7 @@ export const fetchAccessRightsReport = (oid: string) => async (dispatch, state: 
         dispatch(requestAccessRightsReportSuccess(report));
     } catch (error) {
         dispatch(requestAccessRightsReportFailure());
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title: localizeWithState('KAYTTOOIKEUSRAPORTTI_ERROR', state()),

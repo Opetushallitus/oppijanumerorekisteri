@@ -21,16 +21,16 @@ import {
     FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
     SET_MFA_PROVIDER,
 } from './actiontypes';
-import { Dispatch } from '../types/dispatch.type';
 import { Omattiedot } from '../types/domain/kayttooikeus/Omattiedot.types';
 import { OmattiedotState } from '../reducers/omattiedot.reducer';
+import { AppDispatch } from '../store';
 
 type GetState = () => {
     omattiedot: OmattiedotState;
     locale: string;
 };
 
-export const fetchLocale = () => async (dispatch: Dispatch) => {
+export const fetchLocale = () => async (dispatch: AppDispatch) => {
     const url = urls.url('oppijanumerorekisteri-service.henkilo.current.asiointikieli');
     dispatch({ type: FETCH_HENKILO_ASIOINTIKIELI_REQUEST });
     try {
@@ -49,7 +49,7 @@ const updateAnomusilmoitusState = (value: boolean) => ({
     type: UPDATE_ANOMUSILMOITUS,
     value,
 });
-export const updateAnomusilmoitus = (value: boolean) => (dispatch: Dispatch) => {
+export const updateAnomusilmoitus = (value: boolean) => (dispatch: AppDispatch) => {
     dispatch(updateAnomusilmoitusState(value));
 };
 
@@ -64,14 +64,14 @@ const receiveOmattiedotFailure = (error) => ({
     type: FETCH_OMATTIEDOT_FAILURE,
     error,
 });
-export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetState) => {
+export const fetchOmattiedot = () => async (dispatch: AppDispatch, getState: GetState) => {
     if (!getState().omattiedot.data) {
         dispatch(requestOmattiedot());
         const url = urls.url('kayttooikeus-service.henkilo.current.omattiedot');
         try {
             const omattiedot = await http.get<Omattiedot>(url);
             dispatch(receiveOmattiedotSuccess(omattiedot));
-            dispatch(fetchOmattiedotOrganisaatios());
+            dispatch<any>(fetchOmattiedotOrganisaatios());
         } catch (error) {
             dispatch(receiveOmattiedotFailure(error));
             throw error;
@@ -80,7 +80,7 @@ export const fetchOmattiedot = () => async (dispatch: Dispatch, getState: GetSta
 };
 
 // Used only to determine if user has been synced to dlap
-export const fetchCasMe = () => async (dispatch: Dispatch) => {
+export const fetchCasMe = () => async (dispatch: AppDispatch) => {
     dispatch({ type: FETCH_CASME_REQUEST });
     try {
         const url = urls.url('cas.me');
@@ -104,7 +104,7 @@ const receiveOmattiedotOrganisaatiosFailure = (error) => ({
     type: FETCH_OMATTIEDOT_ORGANISAATIOS_FAILURE,
     error,
 });
-const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+const fetchOmattiedotOrganisaatios = () => async (dispatch: AppDispatch, getState: GetState) => {
     // Fetch only with the first call
     if (
         getState().omattiedot.organisaatios &&
@@ -114,7 +114,7 @@ const fetchOmattiedotOrganisaatios = () => async (dispatch: Dispatch, getState: 
         const oid = R.path(['omattiedot', 'data', 'oid'], getState());
         const omattiedotLoading = getState().omattiedot.omattiedotLoading;
         if (!oid && !omattiedotLoading) {
-            dispatch(fetchOmattiedot());
+            dispatch<any>(fetchOmattiedot());
         }
         const userOid = getState().omattiedot.data.oid;
         dispatch(requestOmattiedotOrganisaatios());
@@ -140,7 +140,7 @@ const receiveOmatHenkilohakuOrganisaatiotSuccess = (organisaatiot, locale) => ({
 const receiveOmatHenkilohakuOrganisaatiotFailure = () => ({
     type: FETCH_HENKILOHAKUORGANISAATIOT_FAILURE,
 });
-export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+export const fetchOmatHenkiloHakuOrganisaatios = () => async (dispatch: AppDispatch, getState: GetState) => {
     // Fetch only once
     if (
         getState().omattiedot.henkilohakuOrganisaatiot.length === 0 &&

@@ -23,6 +23,7 @@ import { urls } from 'oph-urls-js';
 import { addGlobalNotification } from './notification.actions';
 import { localizeWithState } from '../utilities/localisation.util';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
+import { AppDispatch, RootState } from '../store';
 
 const requestDeleteKutsu = (id) => ({ type: DELETE_KUTSU_REQUEST, id });
 const receiveDeleteKutsu = (id) => ({
@@ -30,21 +31,21 @@ const receiveDeleteKutsu = (id) => ({
     id,
     receivedAt: Date.now(),
 });
-export const deleteKutsu = (id) => (dispatch) => {
+export const deleteKutsu = (id) => (dispatch: AppDispatch) => {
     dispatch(requestDeleteKutsu(id));
     const url = urls.url('kayttooikeus-service.peruutaKutsu', id);
     http.delete(url).then(() => dispatch(receiveDeleteKutsu(id)));
 };
 
-export const renewKutsu = (id) => async (dispatch) => {
-    dispatch((id) => ({ type: RENEW_KUTSU_REQUEST, id }));
+export const renewKutsu = (id) => async (dispatch: AppDispatch) => {
+    dispatch({ type: RENEW_KUTSU_REQUEST, id });
     const url = urls.url('kayttooikeus-service.renewKutsu', id);
     try {
         await http.put(url);
-        dispatch((id) => ({ type: RENEW_KUTSU_SUCCESS, id }));
+        dispatch({ type: RENEW_KUTSU_SUCCESS, id });
     } catch (error) {
         console.error('Could not renew kutsu with id ' + id);
-        dispatch((id) => ({ type: RENEW_KUTSU_FAILURE, id }));
+        dispatch({ type: RENEW_KUTSU_FAILURE, id });
         throw error;
     }
 };
@@ -57,7 +58,7 @@ const receiveKutsus = (json) => ({
 });
 const requestKutsusFailure = () => ({ type: FETCH_KUTSU_FAILURE });
 
-export const fetchKutsus = (payload, offset, amount) => async (dispatch, getState) => {
+export const fetchKutsus = (payload, offset, amount) => async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(requestKutsus());
     const url = urls.url('kayttooikeus-service.kutsu', {
         ...payload,
@@ -68,7 +69,7 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch, getStat
         const kutsus = await http.get(url);
         dispatch(receiveKutsus(kutsus));
     } catch (error) {
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'KUTSUTUT_VIRKAILIJA_FETCHING_FAILED',
                 autoClose: 10000,
@@ -81,7 +82,7 @@ export const fetchKutsus = (payload, offset, amount) => async (dispatch, getStat
     }
 };
 
-export const clearKutsuList = () => (dispatch) => dispatch({ type: CLEAR_KUTSU_LIST });
+export const clearKutsuList = () => (dispatch: AppDispatch) => dispatch({ type: CLEAR_KUTSU_LIST });
 
 const kutsuByTokenRequest = () => ({ type: FETCH_KUTSUBYTOKEN_REQUEST });
 const kutsuByTokenSuccess = (kutsu) => ({
@@ -126,7 +127,7 @@ type kutsu = {
     tila: string; // should be enum
 };
 
-export const fetchKutsuByToken = (temporaryToken) => (dispatch) => {
+export const fetchKutsuByToken = (temporaryToken) => (dispatch: AppDispatch) => {
     dispatch(kutsuByTokenRequest());
     const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
     http.get<kutsu>(url)
@@ -163,7 +164,7 @@ const createHenkiloByTokenFailure = (error) => ({
     receivedAt: Date.now(),
     error,
 });
-export const createHenkiloByToken = (temporaryToken, payload) => (dispatch) => {
+export const createHenkiloByToken = (temporaryToken, payload) => (dispatch: AppDispatch) => {
     dispatch(createHenkiloByTokenRequest());
     const url = urls.url('kayttooikeus-service.kutsu.by-token', temporaryToken);
     http.post(url, payload).then(

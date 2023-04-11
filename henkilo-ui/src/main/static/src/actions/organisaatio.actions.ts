@@ -15,10 +15,10 @@ import {
     FETCH_ORGANISATIONS_SUCCESS,
     FETCH_ORGANISATION_NAMES,
 } from './actiontypes';
-import { Dispatch } from '../types/dispatch.type';
 import { OrganisaatioState, OrganisaatioNameLookup } from '../reducers/organisaatio.reducer';
 import { RyhmatState } from '../reducers/ryhmat.reducer';
 import { OrganisaatioCriteria } from '../types/domain/organisaatio/organisaatio.types';
+import { AppDispatch } from '../store';
 
 type GetState = () => {
     ryhmatState: RyhmatState;
@@ -41,7 +41,7 @@ export const fetchAllOrganisaatios = (
         tyyppi: 'ORGANISAATIO',
         tila: ['AKTIIVINEN'],
     }
-) => async (dispatch: Dispatch, getState: GetState) => {
+) => async (dispatch: AppDispatch, getState: GetState) => {
     // Fetch only with the first call
     if (!getState().organisaatio.organisaatioLoaded && !getState().organisaatio.organisaatioLoading) {
         const url = urls.url('kayttooikeus-service.organisaatio', criteria);
@@ -72,7 +72,7 @@ const requestAllHierarchialOrganisaatiosFailure = (error) => ({
     error,
 });
 
-export const fetchAllHierarchialOrganisaatios = () => async (dispatch: Dispatch, getState: GetState) => {
+export const fetchAllHierarchialOrganisaatios = () => async (dispatch: AppDispatch, getState: GetState) => {
     if (
         typeof getState().organisaatio.organisaatioHierarkia === 'undefined' &&
         !getState().organisaatio.organisaatioHierarkiaLoading
@@ -100,7 +100,7 @@ const requestRyhmasSuccess = (ryhmas) => ({
     ryhmas,
 });
 const requestRyhmasFailure = (error) => ({ type: FETCH_ALL_RYHMAT_FAILURE, error });
-export const fetchAllRyhmas = () => async (dispatch: Dispatch, getState: GetState) => {
+export const fetchAllRyhmas = () => async (dispatch: AppDispatch, getState: GetState) => {
     // Fetch only with first call
     if (
         getState().ryhmatState.ryhmas &&
@@ -130,7 +130,7 @@ const receiveOrganisations = (json) => ({
     organisations: json,
     receivedAt: Date.now(),
 });
-export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch: Dispatch, getState: GetState) => {
+export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch: AppDispatch, getState: GetState) => {
     if (!oidOrganisations) {
         console.error('Can not fetch null organisations');
         return Promise.resolve();
@@ -159,7 +159,7 @@ export const fetchOrganisations = (oidOrganisations: Array<string>) => (dispatch
         .catch((e) => console.error(e));
 };
 
-export const fetchOrganisationNames = () => async (dispatch: Dispatch) => {
+export const fetchOrganisationNames = () => async (dispatch: AppDispatch) => {
     const url = urls.url('kayttooikeus-service.organisaatio.names');
     http.get<OrganisaatioNameLookup>(url)
         .then((payload) =>

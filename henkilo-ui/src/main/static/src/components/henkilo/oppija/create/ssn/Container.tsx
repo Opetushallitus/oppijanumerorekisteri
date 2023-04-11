@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../../../reducers';
+import type { RootState } from '../../../../../store';
 import type { ExistenceCheckRequest, ExistenceCheckState } from '../../../../../reducers/existence.reducer';
 import { doExistenceCheck, clearExistenceCheck } from '../../../../../actions/existence.actions';
 import type { CreatePersonState } from '../../../../../reducers/create.reducer';

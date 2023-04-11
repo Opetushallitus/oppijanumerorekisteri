@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { clearKutsuList, deleteKutsu, fetchKutsus } from '../../actions/kutsu.actions';
 import KutsututPage from './KutsututPage';
 import { KutsuRead } from '../../types/domain/kayttooikeus/Kutsu.types';

@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
 import AnomusPage, { FetchHaetutKayttooikeusryhmatParameters } from './AnomusPage';
 import { clearHaetutKayttooikeusryhmat, fetchHaetutKayttooikeusryhmat } from '../../actions/anomus.actions';
 import { fetchAllOrganisaatios, fetchAllRyhmas } from '../../actions/organisaatio.actions';
@@ -16,6 +15,7 @@ import { OrganisaatioCache } from '../../reducers/organisaatio.reducer';
 import { HaettuKayttooikeusryhma } from '../../types/domain/kayttooikeus/HaettuKayttooikeusryhma.types';
 import { GlobalNotificationConfig } from '../../types/notification.types';
 import { OrganisaatioCriteria } from '../../types/domain/organisaatio/organisaatio.types';
+import { RootState } from '../../store';
 
 type StateProps = {
     l10n: L10n;

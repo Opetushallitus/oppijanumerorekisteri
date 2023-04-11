@@ -47,7 +47,7 @@ const l10n = (
         localisations: localisations,
     },
     action: any
-) => {
+): LocalisationState => {
     switch (action.type) {
         case FETCH_LOCALISATIONS_REQUEST:
             return { ...state, localisationsInitialized: false };

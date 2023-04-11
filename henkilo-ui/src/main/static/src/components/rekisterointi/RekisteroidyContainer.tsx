@@ -7,7 +7,7 @@ import { createHenkiloByToken, fetchKutsuByToken } from '../../actions/kutsu.act
 import { removeNotification } from '../../actions/notifications.actions';
 import VirhePage from '../common/page/VirhePage';
 import type { Location } from 'history';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import type { KoodistoState } from '../../reducers/koodisto.reducer';
 
 type OwnProps = {

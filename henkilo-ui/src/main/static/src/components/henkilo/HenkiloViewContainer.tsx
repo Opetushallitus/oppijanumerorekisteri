@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import AdminViewContainer from './AdminViewContainer';
 import VirkailijaViewContainer from './VirkailijaViewContainer';

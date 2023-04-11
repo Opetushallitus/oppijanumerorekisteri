@@ -2,7 +2,7 @@ import React from 'react';
 import OphSelect from './OphSelect';
 import type { OnChangeHandler, Options, Option } from 'react-select';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import { Localisations } from '../../../types/localisation.type';
 import { Locale } from '../../../types/locale.type';
 

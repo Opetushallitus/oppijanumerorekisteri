@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import VahvaTunnistusLisatiedotPage from './VahvaTunnistusLisatiedotPage';
 import { Form, Values, Metadata, Errors } from './VahvaTunnistusLisatiedotInputs';
 import { Locale } from '../../types/locale.type';

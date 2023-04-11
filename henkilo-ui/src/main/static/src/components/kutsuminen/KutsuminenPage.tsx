@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import BasicInfoForm from './BasicinfoForm';
 import React from 'react';
 import KutsuOrganisaatios from './KutsuOrganisaatios';

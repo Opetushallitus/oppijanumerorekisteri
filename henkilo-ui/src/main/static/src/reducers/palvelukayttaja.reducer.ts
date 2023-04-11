@@ -25,7 +25,7 @@ const initialState: PalvelukayttajatState = {
     data: [],
 };
 
-export const palvelukayttajat = (state: PalvelukayttajatState = initialState, action: any) => {
+export const palvelukayttajat = (state: PalvelukayttajatState = initialState, action: any): PalvelukayttajatState => {
     switch (action.type) {
         case SET_PALVELUKAYTTAJAT_CRITERIA: {
             const dirty = action.criteria.nameQuery !== '' || !!action.criteria.organisaatioOids;

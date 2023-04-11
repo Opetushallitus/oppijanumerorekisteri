@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import VahvaTunnistusInfoPage from './VahvaTunnistusInfoPage';
 import VirhePage from '../common/page/VirhePage';
-import { RootState } from '../../reducers';
+import { RootState } from '../../store';
 import { Location } from 'history';
 import type { Localisations } from '../../types/localisation.type';
 

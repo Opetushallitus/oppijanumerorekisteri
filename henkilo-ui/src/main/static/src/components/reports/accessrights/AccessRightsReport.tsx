@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import type { L10n } from '../../../types/localisation.type';
 import type { Locale } from '../../../types/locale.type';
 import type { AccessRightsReportRow } from '../../../reducers/report.reducer';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import { fetchAccessRightsReport, clearAccessRightsReport } from '../../../actions/report.actions';
 import Loader from '../../common/icons/Loader';
 import Controls from './AccessRightsReportControls';

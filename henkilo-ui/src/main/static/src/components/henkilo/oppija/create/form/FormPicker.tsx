@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { FormType } from './types';
 import type { Localisations } from '../../../../../types/localisation.type';
-import type { RootState } from '../../../../../reducers';
+import type { RootState } from '../../../../../store';
 import AccessRightCheck from '../../../../../access/AccessRightCheck';
 import Button from '../../../../common/button/Button';
 import './FormPicker.css';

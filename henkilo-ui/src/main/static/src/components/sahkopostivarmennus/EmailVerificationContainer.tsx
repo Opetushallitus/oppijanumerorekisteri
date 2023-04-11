@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { RootState } from '../../reducers';
+import type { RootState } from '../../store';
 import { Locale } from '../../types/locale.type';
 import { EmailVerificationPage } from './EmailVerificationPage';
 import { Localisations } from '../../types/localisation.type';
@@ -10,6 +10,7 @@ import { addGlobalNotification } from '../../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../../components/common/Notification/notificationtypes';
 import Loader from '../common/icons/Loader';
 import { Henkilo } from '../../types/domain/oppijanumerorekisteri/henkilo.types';
+import { AppDispatch } from '../../store';
 
 type OwnProps = {
     params: any;
@@ -80,9 +81,9 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     locale: ownProps.params['locale'],
 });
 
-const mapDispatchToProps = (dispatch): DispatchProps => ({
+const mapDispatchToProps = (dispatch: AppDispatch): DispatchProps => ({
     errorNotification: (title: string) =>
-        dispatch(
+        dispatch<any>(
             addGlobalNotification({
                 key: 'KAYTTOOIKEUSRAPORTTI_ERROR',
                 title,

@@ -6,7 +6,7 @@ import {
 import { http } from '../http';
 import { urls } from 'oph-urls-js';
 import { PalveluKayttooikeus } from '../types/domain/kayttooikeus/palvelukayttooikeus.types';
-import { Dispatch } from '../types/dispatch.type';
+import { AppDispatch } from '../store';
 
 export type PalveluKayttooikeusAction = {
     type: string;
@@ -26,7 +26,7 @@ const requestPalveluKayttooikeusFailure = (error): PalveluKayttooikeusAction => 
     error,
 });
 
-export const fetchPalveluKayttooikeus = (palveluName: string) => async (dispatch: Dispatch) => {
+export const fetchPalveluKayttooikeus = (palveluName: string) => async (dispatch: AppDispatch) => {
     dispatch(requestPalveluKayttooikeus());
     const url = urls.url('kayttooikeus-service.kayttooikeus.listaus', palveluName);
     try {

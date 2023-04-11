@@ -7,7 +7,7 @@ import { setMfaProvider } from '../../actions/omattiedot.actions';
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
 import Loader from '../common/icons/Loader';
-import { RootState } from '../../reducers';
+import { RootState } from '../../store';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { Locale } from '../../types/locale.type';
 import { L10n, Localisations } from '../../types/localisation.type';

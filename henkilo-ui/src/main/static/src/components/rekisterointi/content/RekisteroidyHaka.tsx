@@ -1,7 +1,7 @@
 import React from 'react';
 import { urls } from 'oph-urls-js';
 import { connect } from 'react-redux';
-import type { RootState } from '../../../reducers';
+import type { RootState } from '../../../store';
 import type { Localisations } from '../../../types/localisation.type';
 import Asiointikieli from '../../common/henkilo/labelvalues/Asiointikieli';
 import IconButton from '../../common/button/IconButton';
