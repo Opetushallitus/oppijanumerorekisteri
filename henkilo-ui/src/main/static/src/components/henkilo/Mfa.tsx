@@ -77,9 +77,10 @@ const MfaRegistered = ({ L }: MfaRegisteredProps) => {
 type MfaUnregisteredProps = {
     setMfaSetup: (b: boolean) => void;
     L: Localisations;
+    idpEntityId: string;
 };
 
-const MfaUnregistered = ({ setMfaSetup, L }: MfaUnregisteredProps) => {
+const MfaUnregistered = ({ setMfaSetup, L, idpEntityId }: MfaUnregisteredProps) => {
     return (
         <div>
             <div className={styles.infoBody}>
@@ -89,14 +90,26 @@ const MfaUnregistered = ({ setMfaSetup, L }: MfaUnregisteredProps) => {
                 <div>
                     <p className={styles.infoText}>{L.MFA_OTA_KAYTTOON_INFO}</p>
                     <div>
-                        <button
-                            className={`oph-button oph-button-primary ${styles.setupButton}`}
-                            onClick={() => setMfaSetup(true)}
-                            data-test-id="start-mfa-setup"
-                        >
-                            {L.MFA_OTA_KAYTTOON}
-                        </button>
-                        <span className={styles.greyInfo}>{L.MFA_SUOMIFI}</span>
+                        {idpEntityId === 'vetuma' ? (
+                            <button
+                                className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                onClick={() => setMfaSetup(true)}
+                                data-test-id="start-mfa-setup"
+                            >
+                                {L.MFA_OTA_KAYTTOON}
+                            </button>
+                        ) : (
+                            <>
+                                <a
+                                    className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                    href="/service-provider-app/saml/logout"
+                                    data-test-id="login-suomifi"
+                                >
+                                    {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
+                                </a>
+                                <span className={styles.greyInfo}>{L.MFA_SUOMIFI}</span>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
@@ -145,6 +158,10 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
             </div>
         );
     }
+
+    const copySecretKey = () => {
+        navigator?.clipboard?.writeText(data.secretKey);
+    };
 
     const handleMfaEnable = async (token: string) => {
         setSetupError(undefined);
@@ -217,7 +234,7 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
                         }}
                         inputFocusStyle={{ borderColor: '#137CA0' }}
                         onComplete={handleMfaEnable}
-                        regexCriteria={/^[0-9]*$/}
+                        regexCriteria={/^\d*$/}
                         disabled={isPostLoading}
                         ref={pinInput}
                     />
@@ -229,12 +246,12 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
                     )}
                 </MfaSetupStep>
             </div>
-            <hr />
+            <hr className={styles.hr} />
             <div className={styles.greyInfo}>
                 {L.MFA_KOODI_VAIHTOEHTO_INFO}{' '}
-                <span className={styles.secretKey} data-test-id="secret-key">
+                <span className={styles.secretKey} data-test-id="secret-key" onClick={copySecretKey}>
                     {data.secretKey?.match(/.{1,4}/g).map((chunk, idx) => (
-                        <span className={styles.secretKeyChunk} key={idx}>
+                        <span className={styles.secretKeyChunk} key={`secret-key-${idx}`}>
                             {chunk}
                         </span>
                     ))}
@@ -249,13 +266,19 @@ type MfaProps = {
 };
 
 const Mfa = ({ view }: MfaProps) => {
-    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const { mfaProvider, idpEntityId } = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
     const locale = useSelector<RootState, Locale>((state) => state.locale);
     const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
     const [isMfaSetup, setMfaSetup] = useState(false);
     const [isSetupSuccess, setSetupSuccess] = useState(false);
     const L = l10n[locale];
 
+    const mfaSetupComponent = isMfaSetup ? (
+        <MfaSetup setMfaSetup={setMfaSetup} setSetupSuccess={setSetupSuccess} L={L} />
+    ) : (
+        <MfaUnregistered setMfaSetup={setMfaSetup} L={L} idpEntityId={idpEntityId} />
+    );
+    const mfaStateComponent = mfaProvider ? <MfaRegistered L={L} /> : mfaSetupComponent;
     return (
         <div>
             {isSetupSuccess && (
@@ -270,17 +293,11 @@ const Mfa = ({ view }: MfaProps) => {
                 </span>
                 {!isMfaSetup && (
                     <span className={styles.mfaEnabled} data-test-id="mfa-status">
-                        {omattiedot.mfaProvider ? L.MFA_KAYTOSSA : L.MFA_EI_KAYTOSSA}
+                        {mfaProvider ? L.MFA_KAYTOSSA : L.MFA_EI_KAYTOSSA}
                     </span>
                 )}
             </div>
-            {view !== 'OMATTIEDOT' ? undefined : omattiedot.mfaProvider ? (
-                <MfaRegistered L={L} />
-            ) : !isMfaSetup ? (
-                <MfaUnregistered setMfaSetup={setMfaSetup} L={L} />
-            ) : (
-                <MfaSetup setMfaSetup={setMfaSetup} setSetupSuccess={setSetupSuccess} L={L} />
-            )}
+            {view === 'OMATTIEDOT' && mfaStateComponent}
         </div>
     );
 };

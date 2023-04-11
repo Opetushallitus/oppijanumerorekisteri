@@ -7,7 +7,6 @@
 
 .infoBody {
   display: flex;
-  max-width: 520px;
   font-size: 14px;
 }
 
@@ -27,11 +26,17 @@
 
 .infoText {
   margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.hr {
+  border: 0;
+  border-top: 2px solid #ECECEC;
 }
 
 .greyInfo {
   font-size: 15px;
-  color: #888;
+  color: #9A9A9A;
 }
 
 .setupButton {
@@ -54,7 +59,8 @@
 }
 
 .secretKey {
-  word-wrap: none;
+  word-wrap: unset;
+  cursor: copy;
 }
 
 .secretKeyChunk {

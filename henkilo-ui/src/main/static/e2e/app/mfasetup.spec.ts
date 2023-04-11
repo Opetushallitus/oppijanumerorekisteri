@@ -33,6 +33,20 @@ test.skip('mfa setup', () => {
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
     });
 
+    test('requires suomifi to be able to continue', async ({ page }) => {
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ json: { ...omattiedot, idpEntityId: 'haka' } });
+        });
+
+        await page.goto('/omattiedot');
+        await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
+        await expect(page.locator('[data-test-id="start-mfa-setup"]')).toBeHidden();
+        await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
+            'href',
+            '/service-provider-app/saml/logout'
+        );
+    });
+
     test('shows error when secret key retrieval fails', async ({ page }) => {
         await page.route('/kayttooikeus-service/mfasetup/gauth/setup', async (route) => {
             await route.abort('failed');
