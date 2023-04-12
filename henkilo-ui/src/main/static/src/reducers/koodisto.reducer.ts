@@ -16,17 +16,17 @@ import {
     FETCH_ORGANISAATIOTYYPIT_SUCCESS,
     FETCH_ORGANISAATIOTYYPIT_FAILURE,
 } from '../actions/actiontypes';
-import StaticUtils from '../components/common/StaticUtils';
 import { Koodisto } from '../types/domain/koodisto/koodisto.types';
 
-const mapKoodistoValuesByLocale = (koodisto: Koodisto): any =>
+export type KoodistoStateKoodi = {
+    value: string;
+    [kieli: string]: string;
+};
+
+const mapKoodistoValuesByLocale = (koodisto: Koodisto): KoodistoStateKoodi[] =>
     koodisto.map((koodi) => ({
         value: koodi.koodiArvo.toLowerCase(),
-        ...koodi.metadata
-            .map((kieliKoodi) => ({
-                [kieliKoodi.kieli.toLowerCase()]: kieliKoodi.nimi,
-            }))
-            .reduce(StaticUtils.reduceListToObject, {}),
+        ...Object.fromEntries(koodi.metadata.map((k) => [k.kieli.toLowerCase(), k.nimi])),
     }));
 
 export type KoodistoState = {
@@ -35,18 +35,18 @@ export type KoodistoState = {
     sukupuoliKoodistoLoading: boolean;
     yhteystietotyypitKoodistoLoading: boolean;
     yhteystietotyypit: Array<any>;
-    kieli: Array<any>;
+    kieli: Array<KoodistoStateKoodi>;
     kieliKoodisto: Koodisto;
-    kansalaisuus: Array<any>;
+    kansalaisuus: Array<KoodistoStateKoodi>;
     kansalaisuusKoodisto: Koodisto;
-    sukupuoli: Array<any>;
+    sukupuoli: Array<KoodistoStateKoodi>;
     sukupuoliKoodisto: Koodisto;
     oppilaitostyypitLoading: boolean;
-    oppilaitostyypit: Array<any>;
+    oppilaitostyypit: Array<KoodistoStateKoodi>;
     organisaatiotyyppiKoodistoLoading: boolean;
     organisaatiotyyppiKoodisto: Koodisto;
     maatjavaltiot1KoodistoLoading: boolean;
-    maatjavaltiot1: any;
+    maatjavaltiot1: Array<KoodistoStateKoodi>;
 };
 
 const koodisto = (

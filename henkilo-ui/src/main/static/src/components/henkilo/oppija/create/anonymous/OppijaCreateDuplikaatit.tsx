@@ -25,14 +25,12 @@ class OppijaCreateDuplikaatit extends React.Component<Props> {
             },
             duplicates: this.props.duplikaatit,
         };
-        const notifications = [];
 
         return (
             <div>
                 <div className="oph-field">{this.props.L['OPPIJAN_LUONTI_DUPLIKAATIT_OHJE']}</div>
                 <HenkiloViewDuplikaatit
                     henkilo={henkilo}
-                    notifications={notifications}
                     vainLuku={true}
                     henkiloType="oppija"
                 />

@@ -43,11 +43,6 @@ class StaticUtils {
         return obj;
     }
 
-    static reduceListToObject = (a: {}, b: {}) => {
-        a[Object.keys(b)[0]] = b[Object.keys(b)[0]];
-        return a;
-    };
-
     static findOrCreateYhteystiedotRyhmaFlat(
         henkiloUpdate: Henkilo,
         ryhmakuvaus: string,
