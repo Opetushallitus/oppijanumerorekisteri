@@ -21,7 +21,13 @@ class OphModal extends React.Component<OphModalProps> {
                 tabIndex={-1}
                 onClick={(e) => this.props.onOverlayClick && this.props.onOverlayClick(e)}
             >
-                <div className={classNames({ 'oph-modal': true }, { 'oph-modal-big': this.props.big })} role="document">
+                <div
+                    className={classNames('oph-modal', { 'oph-modal-big': this.props.big })}
+                    role="document"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
                     <button
                         className="oph-button oph-button-close"
                         type="button"
