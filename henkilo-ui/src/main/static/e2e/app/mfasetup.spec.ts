@@ -33,7 +33,7 @@ test.skip('mfa setup', () => {
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
     });
 
-    test('requires suomifi to be able to continue', async ({ page }) => {
+    test('requires suomifi to be able to enable', async ({ page }) => {
         await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
             await route.fulfill({ json: { ...omattiedot, idpEntityId: 'haka' } });
         });
@@ -92,5 +92,40 @@ test.skip('mfa setup', () => {
 
         await page.goto('/omattiedot');
         await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
+    });
+
+    test('requires suomifi to be able to disable', async ({ page }) => {
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ json: { ...omattiedot, mfaProvider: 'GAUTH' } });
+        });
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ json: { ...omattiedot, idpEntityId: 'haka' } });
+        });
+
+        await page.goto('/omattiedot');
+        await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
+        await expect(page.locator('[data-test-id="disable-mfa"]')).toBeHidden();
+        await expect(page.locator('[data-test-id="login-suomifi"]')).toHaveAttribute(
+            'href',
+            '/service-provider-app/saml/logout'
+        );
+    });
+
+    test('disables gauth', async ({ page }) => {
+        await page.route('/kayttooikeus-service/henkilo/current/omattiedot', async (route) => {
+            await route.fulfill({ json: { ...omattiedot, mfaProvider: 'GAUTH' } });
+        });
+        await page.route('/kayttooikeus-service/mfasetup/gauth/disable', async (route) => {
+            await route.fulfill({ json: true });
+        });
+
+        await page.goto('/omattiedot');
+        await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Käytössä');
+        await page.click('[data-test-id="disable-mfa"]');
+
+        await expect(page.locator('[data-test-id="success-notification"] .oph-alert-title')).toContainText(
+            'poistettu käytöstä'
+        );
+        await expect(page.locator('[data-test-id="mfa-status"]')).toHaveText('Ei käytössä');
     });
 });

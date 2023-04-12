@@ -2,7 +2,7 @@ import React, { ReactNode, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PinInput from 'react-pin-input';
 
-import { useGetMfaSetupQuery, usePostMfaEnableMutation } from '../../api/kayttooikeus';
+import { useGetMfaSetupQuery, usePostMfaDisableMutation, usePostMfaEnableMutation } from '../../api/kayttooikeus';
 import { setMfaProvider } from '../../actions/omattiedot.actions';
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
@@ -57,9 +57,28 @@ const StepThreeIcon = () => (
 
 type MfaRegisteredProps = {
     L: Localisations;
+    idpEntityId: string;
+    setSetupSuccess: (s: string) => void;
 };
 
-const MfaRegistered = ({ L }: MfaRegisteredProps) => {
+const MfaRegistered = ({ L, idpEntityId, setSetupSuccess }: MfaRegisteredProps) => {
+    const [postMfaDisable, { isLoading }] = usePostMfaDisableMutation();
+    const [setupError, setSetupError] = useState<string>();
+    const dispatch = useDispatch();
+
+    const handleMfaDisable = async () => {
+        setSetupError(undefined);
+        return await postMfaDisable()
+            .unwrap()
+            .then(() => {
+                dispatch(setMfaProvider(null));
+                setSetupSuccess(L.MFA_POISTETTU_KAYTOSTA);
+            })
+            .catch(() => {
+                setSetupError(L.MFA_VIRHE);
+            });
+    };
+
     return (
         <div>
             <div className={styles.infoBody}>
@@ -68,6 +87,32 @@ const MfaRegistered = ({ L }: MfaRegisteredProps) => {
                 </div>
                 <div>
                     <p className={styles.infoText}>{L.MFA_REKISTEROITY_INFO}</p>
+                    <div>
+                        {idpEntityId === 'vetuma' ? (
+                            <>
+                                <button
+                                    className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                    onClick={handleMfaDisable}
+                                    data-test-id="disable-mfa"
+                                    disabled={isLoading}
+                                >
+                                    {L.MFA_POISTA_KAYTOSTA}
+                                </button>
+                                {setupError && <span className="error-txt">{setupError}</span>}
+                            </>
+                        ) : (
+                            <>
+                                <a
+                                    className={`oph-button oph-button-primary ${styles.setupButton}`}
+                                    href="/service-provider-app/saml/logout"
+                                    data-test-id="login-suomifi"
+                                >
+                                    {L.MFA_KIRJAUDU_ULOS_SUOMIFI_TUNNISTUKSEEN}
+                                </a>
+                                <span className={styles.greyInfo}>{L.MFA_SUOMIFI_DISABLE}</span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,7 +182,7 @@ const MfaSetupStep = ({ icon, info, children }: MfaSetupStepProps) => {
 
 type MfaSetupProps = {
     setMfaSetup: (b: boolean) => void;
-    setSetupSuccess: (b: boolean) => void;
+    setSetupSuccess: (s: string) => void;
     L: Localisations;
 };
 
@@ -171,7 +216,7 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
                 if (enabled) {
                     dispatch(setMfaProvider('GAUTH'));
                     setMfaSetup(false);
-                    setSetupSuccess(true);
+                    setSetupSuccess(L.MFA_OTETTU_KAYTTOON);
                 } else {
                     setSetupError(L.MFA_VIRHE);
                 }
@@ -270,7 +315,7 @@ const Mfa = ({ view }: MfaProps) => {
     const locale = useSelector<RootState, Locale>((state) => state.locale);
     const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
     const [isMfaSetup, setMfaSetup] = useState(false);
-    const [isSetupSuccess, setSetupSuccess] = useState(false);
+    const [setupSuccess, setSetupSuccess] = useState<string>();
     const L = l10n[locale];
 
     const mfaSetupComponent = isMfaSetup ? (
@@ -278,12 +323,16 @@ const Mfa = ({ view }: MfaProps) => {
     ) : (
         <MfaUnregistered setMfaSetup={setMfaSetup} L={L} idpEntityId={idpEntityId} />
     );
-    const mfaStateComponent = mfaProvider ? <MfaRegistered L={L} /> : mfaSetupComponent;
+    const mfaStateComponent = mfaProvider ? (
+        <MfaRegistered L={L} idpEntityId={idpEntityId} setSetupSuccess={setSetupSuccess} />
+    ) : (
+        mfaSetupComponent
+    );
     return (
         <div>
-            {isSetupSuccess && (
+            {setupSuccess && (
                 <div className={styles.setupSuccessContainer} data-test-id="success-notification">
-                    <WideGreenNotification message={L.MFA_OTETTU_KAYTTOON} closeAction={() => setSetupSuccess(false)} />
+                    <WideGreenNotification message={setupSuccess} closeAction={() => setSetupSuccess(undefined)} />
                 </div>
             )}
             <div className={styles.infoTitle}>
