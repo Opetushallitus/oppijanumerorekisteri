@@ -19,11 +19,15 @@ export const store = configureStore({
             thunk: true,
             immutableCheck: false,
             serializableCheck: false,
-        }).concat(kayttooikeusApi.middleware),
+        })
+            .concat(kayttooikeusApi.middleware)
+            .concat(oppijanumerorekisteriApi.middleware),
     devTools: isDev && isClient,
 });
 
 setupListeners(store.dispatch);
+const useAppDispatch = () => store.dispatch;
 
+export { useAppDispatch };
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

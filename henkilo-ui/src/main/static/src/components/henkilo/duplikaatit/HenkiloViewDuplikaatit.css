@@ -1,8 +1,3 @@
-
-/*#duplikaatit tr:nth-child(odd) {*/
-    /*background-color: #F7F7F7;*/
-/*}*/
-
 #duplicates {
     padding: 1em;
     padding-top: 0;
@@ -18,4 +13,14 @@
 
 .person.header > span:nth-child(2n) {
     background: #fbfbfb;
+}
+
+.duplicate_confirm_p {
+    margin: 1rem 0;
+}
+
+.duplicate_confirm_buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0 0;
 }

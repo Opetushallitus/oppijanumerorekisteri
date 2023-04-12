@@ -62,7 +62,7 @@ export const organisaatio = (state: OrganisaatioState = initialState, action: an
         case FETCH_ORGANISATIONS_SUCCESS: {
             const uncachedOrganisaatios = action.organisations
                 .filter((organisaatio) => Object.keys(state.cached).indexOf(organisaatio.oid) === -1)
-                .map((organisaatio) => ([organisaatio.oid, organisaatio]));
+                .map((organisaatio) => [organisaatio.oid, organisaatio]);
             return Object.assign({}, state, {
                 cached: { ...state.cached, ...Object.fromEntries(uncachedOrganisaatios) },
             });

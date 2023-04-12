@@ -25,9 +25,6 @@ import {
     FETCH_HENKILO_DUPLICATES_REQUEST,
     FETCH_HENKILO_DUPLICATES_SUCCESS,
     FETCH_HENKILO_DUPLICATES_FAILURE,
-    LINK_HENKILOS_REQUEST,
-    LINK_HENKILOS_SUCCESS,
-    LINK_HENKILOS_FAILURE,
     FETCH_HENKILO_MASTER_REQUEST,
     FETCH_HENKILO_MASTER_SUCCESS,
     FETCH_HENKILO_MASTER_FAILURE,
@@ -227,12 +224,6 @@ export const henkilo = (state: HenkiloState = initialState, action: any): Henkil
             });
         case FETCH_HENKILO_DUPLICATES_FAILURE:
             return Object.assign({}, state, { duplicatesLoading: false });
-        case LINK_HENKILOS_REQUEST:
-            return Object.assign({}, state, { linkingLoading: true });
-        case LINK_HENKILOS_SUCCESS:
-            return Object.assign({}, state, { linkingLoading: false });
-        case LINK_HENKILOS_FAILURE:
-            return Object.assign({}, state, { linkingLoading: false });
         case FETCH_HENKILO_HAKEMUKSET.REQUEST:
             return { ...state, hakemuksetLoading: true };
         case FETCH_HENKILO_HAKEMUKSET.SUCCESS:

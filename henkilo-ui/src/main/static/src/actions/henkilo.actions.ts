@@ -42,9 +42,6 @@ import {
     UPDATE_HENKILO_UNLINK_SUCCESS,
     UPDATE_HENKILO_UNLINK_REQUEST,
     UPDATE_HENKILO_UNLINK_FAILURE,
-    LINK_HENKILOS_REQUEST,
-    LINK_HENKILOS_SUCCESS,
-    LINK_HENKILOS_FAILURE,
     FETCH_HENKILO_MASTER_FAILURE,
     FETCH_HENKILO_MASTER_SUCCESS,
     FETCH_HENKILO_MASTER_REQUEST,
@@ -607,50 +604,6 @@ export const fetchHenkiloMaster = (oidHenkilo: string) => async (dispatch: AppDi
         throw error;
     }
 };
-
-const linkHenkilosRequest = (masterOid: string, slaveOids: string[]) => ({
-    type: LINK_HENKILOS_REQUEST,
-    masterOid,
-    slaveOids,
-});
-const linkHenkilosSuccess = (slaveOids: string[]) => ({
-    type: LINK_HENKILOS_SUCCESS,
-    slaveOids,
-});
-const linkHenkilosFailure = () => ({ type: LINK_HENKILOS_FAILURE });
-
-const linkHenkilosActionCreator = (endpoint: string) => (masterOid, slaveOids, successMessage, failMessage) => async (
-    dispatch: AppDispatch
-) => {
-    dispatch(linkHenkilosRequest(masterOid, slaveOids));
-    const url = urls.url(endpoint, masterOid);
-    try {
-        await http.post(url, slaveOids);
-        dispatch(linkHenkilosSuccess(slaveOids));
-        dispatch<any>(
-            addGlobalNotification({
-                key: 'LINKED_DUPLICATES_SUCCESS',
-                type: NOTIFICATIONTYPES.SUCCESS,
-                title: successMessage,
-                autoClose: 10000,
-            })
-        );
-    } catch (error) {
-        dispatch(linkHenkilosFailure());
-        dispatch<any>(
-            addGlobalNotification({
-                key: 'LINKED_DUPLICATES_FAILURE',
-                type: NOTIFICATIONTYPES.ERROR,
-                title: failMessage,
-                autoClose: 10000,
-            })
-        );
-        throw error;
-    }
-};
-
-export const linkHenkilos = linkHenkilosActionCreator('oppijanumerorekisteri-service.henkilo.link');
-export const forceLinkHenkilos = linkHenkilosActionCreator('oppijanumerorekisteri-service.henkilo.forcelink');
 
 const updateHenkiloUnlink = (masterOid: string, slaveOid: string) => ({
     type: UPDATE_HENKILO_UNLINK_REQUEST,

@@ -1,5 +1,5 @@
 import React, { ReactNode, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PinInput from 'react-pin-input';
 
 import { useGetMfaSetupQuery, usePostMfaDisableMutation, usePostMfaEnableMutation } from '../../api/kayttooikeus';
@@ -7,7 +7,7 @@ import { setMfaProvider } from '../../actions/omattiedot.actions';
 import appleStore from '../../img/apple_store.svg';
 import googlePlay from '../../img/google_play.svg';
 import Loader from '../common/icons/Loader';
-import { RootState } from '../../store';
+import { RootState, useAppDispatch } from '../../store';
 import { OmattiedotState } from '../../reducers/omattiedot.reducer';
 import { Locale } from '../../types/locale.type';
 import { L10n, Localisations } from '../../types/localisation.type';
@@ -65,7 +65,7 @@ type MfaRegisteredProps = {
 const MfaRegistered = ({ L, idpEntityId, setSetupSuccess }: MfaRegisteredProps) => {
     const [postMfaDisable, { isLoading }] = usePostMfaDisableMutation();
     const [setupError, setSetupError] = useState<string>();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const handleMfaDisable = async () => {
         setSetupError(undefined);
@@ -191,7 +191,7 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
     const { data, isLoading: isGetLoading, isSuccess } = useGetMfaSetupQuery();
     const [postMfaEnable, { isLoading: isPostLoading }] = usePostMfaEnableMutation();
     const [setupError, setSetupError] = useState<string>('');
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const pinInput = useRef(null);
 
     if (isGetLoading) {

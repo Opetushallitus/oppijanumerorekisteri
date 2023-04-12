@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import type { RootState } from '../../../store';
-import './HenkiloViewDuplikaatit.css';
-import Button from '../../common/button/Button';
+import { connect } from 'react-redux';
 import * as R from 'ramda';
+
+import { RootState } from '../../../store';
+import Button from '../../common/button/Button';
 import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
 import { FloatingBar } from './FloatingBar';
@@ -13,7 +13,6 @@ import type { Localisations } from '../../../types/localisation.type';
 import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
-import { linkHenkilos, forceLinkHenkilos } from '../../../actions/henkilo.actions';
 import type {
     HenkiloDuplicate,
     HenkiloDuplicateLenient,
@@ -21,6 +20,10 @@ import type {
 import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
+import OphModal from '../../common/modal/OphModal';
+import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
+
+import './HenkiloViewDuplikaatit.css';
 
 type OwnProps = {
     router?: any;
@@ -53,7 +56,8 @@ const HenkiloViewDuplikaatit = ({
     ownOid,
 }: Props) => {
     const [selectedDuplicates, setSelectedDuplicates] = useState<string[]>([]);
-    const dispatch = useDispatch();
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
     const yksiloitySelected = canForceLink ? false : henkilo.henkilo['yksiloity'] || henkilo.henkilo['yksiloityVTJ'];
     const emails = (henkilo.henkilo.yhteystiedotRyhma || [])
@@ -70,14 +74,16 @@ const HenkiloViewDuplikaatit = ({
     };
 
     const _link = async (force: boolean) => {
-        const successMessage = L['DUPLIKAATIT_NOTIFICATION_ONNISTUI'];
-        const failMessage = L['DUPLIKAATIT_NOTIFICATION_EPAONNISTUI'];
-        const oid = oidHenkilo ?? '';
-        const action = force ? forceLinkHenkilos : linkHenkilos;
-        await dispatch<any>(action(oid, selectedDuplicates, successMessage, failMessage));
-        if (router) {
-            router.push(`/${henkiloType}/${oid}`);
-        }
+        const masterOid = oidHenkilo ?? '';
+        return await postLinkHenkilos({ masterOid, selectedDuplicates, L, force })
+            .unwrap()
+            .then(() => {
+                setShowConfirmation(false);
+                router?.push(`/${henkiloType}/${masterOid}`);
+            })
+            .catch(() => {
+                setShowConfirmation(false);
+            });
     };
 
     return (
@@ -163,7 +169,7 @@ const HenkiloViewDuplikaatit = ({
                     >
                         {L['DUPLIKAATIT_YHDISTA']}
                     </Button>
-                    {canForceLink ? (
+                    {canForceLink && (
                         <Button
                             disabled={
                                 selectedDuplicates.length === 0 ||
@@ -175,12 +181,27 @@ const HenkiloViewDuplikaatit = ({
                                 ) ||
                                 oidHenkilo === ownOid
                             }
-                            action={() => _link(true)}
+                            action={() => setShowConfirmation(true)}
                         >
                             {L['DUPLIKAATIT_PURA_YKSILOINNIT_JA_YHDISTA']}
                         </Button>
-                    ) : null}
+                    )}
                 </FloatingBar>
+            )}
+            {showConfirmation && (
+                <OphModal
+                    onClose={() => setShowConfirmation(false)}
+                    onOverlayClick={() => setShowConfirmation(false)}
+                    title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
+                >
+                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OLETKO_VARMA']}</p>
+                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OPPIJANUMERO']}</p>
+                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_HETU_EI_OLE']}</p>
+                    <div className="duplicate_confirm_buttons">
+                        <Button action={() => _link(true)}>{L['DUPLIKAATIT_VARMISTUS_YHDISTA']}</Button>
+                        <Button action={() => setShowConfirmation(false)}>{L['DUPLIKAATIT_VARMISTUS_PERUUTA']}</Button>
+                    </div>
+                </OphModal>
             )}
         </div>
     );
