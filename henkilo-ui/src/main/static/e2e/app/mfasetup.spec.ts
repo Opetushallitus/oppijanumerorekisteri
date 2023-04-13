@@ -13,7 +13,7 @@ const inputToken = async (page: Page, token: string) => {
     await page.locator('input[class="pincode-input-text"]').nth(5).type(token[5]);
 };
 
-test.skip('mfa setup', () => {
+test.describe('mfa setup', () => {
     test('happy flow', async ({ page }) => {
         await page.route('/kayttooikeus-service/mfasetup/gauth/enable', async (route) => {
             await route.fulfill({ json: true });
