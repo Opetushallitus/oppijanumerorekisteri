@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -188,9 +189,11 @@ public class YleistunnisteController {
     @Generated
     @Getter
     static class FilteredRow {
+        @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
         private final String tunniste;
         private final FilteredStudent henkilo;
         @JsonInclude(JsonInclude.Include.NON_NULL)
+        @ApiModelProperty("Indikoi jos henkilön nimivertailussa on tapahtunut virhe")
         private final Boolean conflict;
 
         public FilteredRow(OppijaTuontiRiviReadDto dto) {
@@ -203,14 +206,21 @@ public class YleistunnisteController {
     @Generated
     @Getter
     static class FilteredStudent {
+        @ApiModelProperty("Yksilöivä tunniste jäjestelmässä olevalle henkilölle")
         private final String oid;
+        @ApiModelProperty("Yksilöivä tunniste identiteetille")
         private final String oppijanumero;
+        @ApiModelProperty("Päällä mikäli henkilö on passivoitu järjestelmässä")
         private final boolean passivoitu;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @ApiModelProperty("Kaikkien linkitettyjen henkilöiden oid:t (master/slave)")
+        private final Set<String> linked;
 
         public FilteredStudent(OppijaReadDto dto) {
             oid = dto.getOid();
             oppijanumero = dto.getOppijanumero();
             passivoitu = dto.isPassivoitu();
+            linked = dto.getLinked();
         }
     }
 }

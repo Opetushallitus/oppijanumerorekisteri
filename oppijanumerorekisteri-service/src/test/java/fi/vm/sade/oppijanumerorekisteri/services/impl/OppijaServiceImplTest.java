@@ -8,6 +8,7 @@ import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.mappers.OrikaConfiguration;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloViiteRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
@@ -52,6 +53,8 @@ public class OppijaServiceImplTest {
     @Mock
     private OrganisaatioRepository organisaatioRepositoryMock;
     @Mock
+    private HenkiloViiteRepository henkiloViiteRepositoryMock;
+    @Mock
     private UserDetailsHelper userDetailsHelperMock;
     @Mock
     private PermissionChecker permissionCheckerMock;
@@ -85,7 +88,7 @@ public class OppijaServiceImplTest {
                 oppijaTuontiServiceAsyncImpl, henkiloModificationServiceMock,
                 organisaatioServiceMock, mapperMock, henkiloRepositoryMock,
                 tuontiRepositoryMock,
-                organisaatioRepositoryMock, userDetailsHelperMock,
+                organisaatioRepositoryMock, henkiloViiteRepositoryMock, userDetailsHelperMock,
                 permissionCheckerMock, objectMapperMock);
     }
 

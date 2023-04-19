@@ -1,5 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +28,6 @@ public class OppijaReadDto {
     private KoodiNimiReadDto kotikunta;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
     private boolean passivoitu;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<String> linked;
 }
