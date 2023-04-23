@@ -114,7 +114,8 @@ public class OppijaServiceImpl implements OppijaService {
         return henkilos.stream().map(OppijaReadDto::getOid).collect(toSet());
     }
 
-    private void decorateHenkilosWithLinkedOids(List<OppijaReadDto> henkilos) {
+    @Override
+    public void decorateHenkilosWithLinkedOids(List<OppijaReadDto> henkilos) {
         final Map<String, Set<String>> linked = henkiloViiteRepository.getLinked(resolveOidsFor(henkilos))
                 .stream().collect(groupingBy(HenkiloViiteRepository.Linked::getOid, mapping(HenkiloViiteRepository.Linked::getLinked, toSet())));
         henkilos.forEach(henkilo -> henkilo.setLinked(linked.getOrDefault(henkilo.getOid(), Set.of())));

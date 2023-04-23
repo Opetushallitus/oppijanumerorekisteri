@@ -50,6 +50,21 @@ public class YleistunnisteController {
 
     private final YleistunnisteService yleistunnisteService;
 
+    @ApiOperation(value = "OID:n tarkistus",
+            authorizations = @Authorization("onr"),
+            notes = "Tarkistaa onko annettu oid oppijanumero vai ei. Palauttaa myös mahdolliset linkitetyt oid:it.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = FilteredStudent.class),
+            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
+    })
+    @GetMapping(value = "/hae/{oid}")
+    public FilteredStudent tarkistaOid(@ApiParam("Tarkistettava OID")
+                                                @PathVariable final String oid) {
+        OppijaReadDto person = yleistunnisteService.tarkista(oid);
+        oppijaService.decorateHenkilosWithLinkedOids(List.of(person));
+        return new FilteredStudent(person);
+    }
+
     @ApiOperation(value = "Oppijanumeron haku yksittäiselle henkilölle",
             authorizations = @Authorization("onr"),
             notes = "Hakee tai luo oppijanumeron yksittäiselle henkilölle annetun syötteen pohjalta.")
