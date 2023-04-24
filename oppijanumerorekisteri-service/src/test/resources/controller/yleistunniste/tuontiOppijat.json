@@ -1,25 +1,17 @@
 {
-  "id": 37337,
-  "kasiteltavia": 2,
-  "kasiteltyja": 2,
+  "id": 1,
+  "kasiteltavia": 1,
+  "kasiteltyja": 1,
   "kasitelty": true,
   "henkilot": [
     {
-      "tunniste": "tunniste1",
+      "tunniste": "tunniste",
       "henkilo": {
-        "oid": null,
+        "oid": "tuonti1",
         "oppijanumero": null,
-        "passivoitu": false
+        "passivoitu": false,
+        "linked": []
       }
-    },
-    {
-      "tunniste": "tunniste2",
-      "henkilo": {
-        "oid": null,
-        "oppijanumero": null,
-        "passivoitu": false
-      },
-      "conflict": true
     }
   ]
 }
