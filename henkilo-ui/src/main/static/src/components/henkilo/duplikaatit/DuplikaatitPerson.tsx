@@ -17,12 +17,11 @@ type Props = {
     locale: Locale;
     koodisto: KoodistoState;
     setSelection: (arg0: string) => void;
-    classNames: any;
+    classNames: { person: boolean; master?: boolean };
     isMaster: boolean;
     header: string;
-    styleClasses?: any;
-    yksiloitySelected?: boolean;
-    vainLuku?: boolean;
+    canForceLink: boolean;
+    vainLuku: boolean;
     henkiloType: string;
 };
 
@@ -53,7 +52,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
     }
 
     render() {
-        const { henkilo, henkiloType, L, koodisto, locale, vainLuku, isMaster, yksiloitySelected } = this.props;
+        const { henkilo, henkiloType, L, koodisto, locale, vainLuku, isMaster, canForceLink } = this.props;
         const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map((hakemus) => this._parseHakemus(hakemus)) : [];
         const hakemus = hakemukset.shift();
 
@@ -122,9 +121,10 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                     <DataCell>
                         <input
                             type="checkbox"
-                            disabled={isMaster || (yksiloitySelected && henkilo.yksiloity)}
+                            disabled={isMaster || henkilo.yksiloityVTJ || (henkilo.yksiloity && !canForceLink)}
                             checked={this.state.checkboxValue}
                             onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}
+                            data-test-id={`check-duplicate-${henkilo.oidHenkilo}`}
                         />
                     </DataCell>
                 )}

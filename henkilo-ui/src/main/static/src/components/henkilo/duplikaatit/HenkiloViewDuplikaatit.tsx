@@ -59,7 +59,6 @@ const HenkiloViewDuplikaatit = ({
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
-    const yksiloitySelected = canForceLink ? false : henkilo.henkilo['yksiloity'] || henkilo.henkilo['yksiloityVTJ'];
     const emails = (henkilo.henkilo.yhteystiedotRyhma || [])
         .flatMap((ryhma) => ryhma.yhteystieto)
         .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
@@ -128,6 +127,7 @@ const HenkiloViewDuplikaatit = ({
                     vainLuku={vainLuku}
                     henkiloType={henkiloType}
                     setSelection={setSelection}
+                    canForceLink={canForceLink}
                 />
                 {henkilo.duplicates.map((duplicate) => (
                     <DuplikaatitPerson
@@ -142,8 +142,8 @@ const HenkiloViewDuplikaatit = ({
                         vainLuku={vainLuku}
                         henkiloType={henkiloType}
                         setSelection={setSelection}
-                        yksiloitySelected={yksiloitySelected}
-                    ></DuplikaatitPerson>
+                        canForceLink={canForceLink}
+                    />
                 ))}
                 {henkilo.duplicatesLoading ? <Loader /> : null}
                 <LocalNotification
@@ -166,6 +166,7 @@ const HenkiloViewDuplikaatit = ({
                             oidHenkilo === ownOid
                         }
                         action={() => _link(false)}
+                        dataTestId="yhdista-button"
                     >
                         {L['DUPLIKAATIT_YHDISTA']}
                     </Button>
@@ -182,6 +183,7 @@ const HenkiloViewDuplikaatit = ({
                                 oidHenkilo === ownOid
                             }
                             action={() => setShowConfirmation(true)}
+                            dataTestId="force-link-button"
                         >
                             {L['DUPLIKAATIT_PURA_YKSILOINNIT_JA_YHDISTA']}
                         </Button>
@@ -198,7 +200,9 @@ const HenkiloViewDuplikaatit = ({
                     <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OPPIJANUMERO']}</p>
                     <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_HETU_EI_OLE']}</p>
                     <div className="duplicate_confirm_buttons">
-                        <Button action={() => _link(true)}>{L['DUPLIKAATIT_VARMISTUS_YHDISTA']}</Button>
+                        <Button action={() => _link(true)} dataTestId="confirm-force-link">
+                            {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}
+                        </Button>
                         <Button action={() => setShowConfirmation(false)}>{L['DUPLIKAATIT_VARMISTUS_PERUUTA']}</Button>
                     </div>
                 </OphModal>
