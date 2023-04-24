@@ -31,6 +31,7 @@ export class GlobalNotifications extends React.Component<GlobalNotificationsProp
                             title={globalNotification.title}
                             key={globalNotification.key}
                             closeAction={() => this.props.removeGlobalNotification(globalNotification.key)}
+                            dataTestId={globalNotification.key}
                         />
                     );
                 })}
