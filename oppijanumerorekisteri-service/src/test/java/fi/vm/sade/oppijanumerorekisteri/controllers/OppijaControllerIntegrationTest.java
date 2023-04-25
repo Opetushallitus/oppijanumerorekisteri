@@ -7,8 +7,6 @@ import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
 import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
 import fi.vm.sade.oppijanumerorekisteri.services.PermissionChecker;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -17,31 +15,35 @@ import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Slf4j
-@ActiveProfiles("dev")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
 @Sql("/controller/oppija/integration/fixture/truncate-tables.sql")
 @Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
 @Sql("/db/migration/V20221109120000000__tuontikooste_view.sql")
 @Sql("/db/migration/V20221215120000000__tuontikooste_fix.sql")
 @Sql("/db/migration/V20230105120000000__tuontikooste_add_conflicts.sql")
+@ActiveProfiles("dev")
+@SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
+@AutoConfigureMockMvc
 class OppijaControllerIntegrationTest {
+
+    private static final String ACCESS_RIGHT = "APP_OPPIJANUMEROREKISTERI_REKISTERINPITAJA";
 
     private static final String BASE_PATH = "/oppija";
     private static final String KOOSTE = "/oppija/tuontikooste";
@@ -57,35 +59,27 @@ class OppijaControllerIntegrationTest {
     PermissionChecker permissionChecker;
     @MockBean
     OrganisaatioService organisaatioService;
-    @LocalServerPort
-    int randomPort;
+
     @Autowired
-    private TestRestTemplate restTemplate;
+    private MockMvc mvc;
+
     @Value("${dev.username}")
     private String username;
     @Value("${dev.password}")
     private String password;
 
-    @BeforeEach
-    void logRandomPortForH2Debug() {
-        // If one needs to access in-memory database during development, enable following log statement
-        // to access H2 mgmt console. connection settings: jdbc:h2:mem:db with empty credentials.
-        // Set breakpoint somewhere. Be sure to only stop the current thread instead of all.
-        // log.info("H2 debug console listening at http://localhost:{}/h2-console", randomPort);
-    }
-
     @Test
     void listAdminSeesAll() throws Exception {
         given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-superuser.json"), get(BASE_PATH), listComparator);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-superuser.json"), fetch(BASE_PATH), listComparator);
     }
 
     @Test
     void listNormalUsersSeesOnlyOwn() throws Exception {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-tuonti1.json"), get(BASE_PATH), listComparator);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-tuonti1.json"), fetch(BASE_PATH), listComparator);
     }
 
     @Test
@@ -93,50 +87,50 @@ class OppijaControllerIntegrationTest {
         given(permissionChecker.getOrganisaatioOids(any(), any())).willReturn(Set.of("makkara"));
         given(permissionChecker.getAllOrganisaatioOids(any(), any(), any(), any())).willReturn(Set.of("makkara"));
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-empty.json"), get(BASE_PATH), listComparator);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/list-empty.json"), fetch(BASE_PATH), listComparator);
     }
 
     @Test
     void koosteAdminSeesAll() throws Exception {
         given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-superuser.json"), get(KOOSTE), koosteComparator);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-superuser.json"), fetch(KOOSTE), koosteComparator);
     }
 
     @Test
     void koosteNormalUsersSeesOnlyOwn() throws Exception {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-tuonti1.json"), get(KOOSTE), koosteComparator);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-tuonti1.json"), fetch(KOOSTE), koosteComparator);
     }
 
     @Test
     void koosteEmpty() throws Exception {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("makkara"));
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-empty.json"), get(KOOSTE), koosteComparator);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/kooste-empty.json"), fetch(KOOSTE), koosteComparator);
     }
 
     @Test
-    void koosteTestPaging() {
+    void koosteTestPaging() throws Exception {
         given(permissionChecker.isSuperUserOrCanReadAll()).willReturn(true);
 
-        assertThat(get(KOOSTE))
+        assertThat(fetch(KOOSTE))
                 .contains("\"numberOfElements\":3");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=ASC"))
+        assertThat(fetch(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=ASC"))
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":\"tuonti1, tuonti1\"");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=DESC"))
+        assertThat(fetch(KOOSTE + "?pageSize=1&page=1&field=timestamp&sort=DESC"))
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":null");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=2&field=timestamp&sort=ASC"))
+        assertThat(fetch(KOOSTE + "?pageSize=1&page=2&field=timestamp&sort=ASC"))
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":null");
 
-        assertThat(get(KOOSTE + "?pageSize=1&page=1&field=author&sort=ASC"))
+        assertThat(fetch(KOOSTE + "?pageSize=1&page=1&field=author&sort=ASC"))
                 .contains("\"numberOfElements\":1")
                 .contains("\"author\":null");
     }
@@ -146,34 +140,29 @@ class OppijaControllerIntegrationTest {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of("tuonti1"));
         given(permissionChecker.getOrganisaatioOidsByKayttaja(any(), any(), any(), any())).willReturn(Set.of("tuonti1"));
 
-        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/tuontidata.json"), get(TUONTIDATA + 1), true);
+        JSONAssert.assertEquals(FilesystemHelper.getFixture("/controller/oppija/integration/response/tuontidata.json"), fetch(TUONTIDATA + 1), true);
     }
 
     @Test
-    void tuontidataAccessDenied() {
+    void tuontidataAccessDenied() throws Exception {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of());
-
-        ResponseEntity<String> response = httpBasic().getForEntity(TUONTIDATA + 1, String.class);
-
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        mvc.perform(get(TUONTIDATA + 1).with(user(username).password(password)))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
-    void tuontidataNotFound() {
+    void tuontidataNotFound() throws Exception {
         given(permissionChecker.getAllOrganisaatioOids(any(), any())).willReturn(Set.of());
-
-        ResponseEntity<String> response = httpBasic().getForEntity(TUONTIDATA + 100, String.class);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mvc.perform(get(TUONTIDATA + 1)
+                        .with(user(username).password(password).roles(ACCESS_RIGHT))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
     }
 
-    private String get(String url) {
-        ResponseEntity<String> response = httpBasic().getForEntity(url, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        return response.getBody();
-    }
-
-    private TestRestTemplate httpBasic() {
-        return restTemplate.withBasicAuth(username, password);
+    private String fetch(String url) throws Exception {
+        return mvc.perform(get(url)
+                        .with(user(username).password(password).roles(ACCESS_RIGHT))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
     }
 }
