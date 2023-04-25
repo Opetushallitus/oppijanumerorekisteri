@@ -24,11 +24,17 @@ INSERT INTO tuonti_organisaatio(tuonti_id, organisaatio_id) VALUES
 (1, 1),
 (1, 4),
 (2, 2),
+(2, 4),
 (3, 3);
 
 INSERT INTO henkilo_organisaatio(henkilo_id, organisaatio_id) VALUES
 (1, 1),
 (1, 4),
-(2, 2);
+(2, 2),
+(2, 4);                                                                     ;
+
+INSERT INTO henkiloviite(id, version, master_oid, slave_oid) VALUES
+(1, 1, 'tuonti1', 'tuonti2');
+
 
 ALTER SEQUENCE hibernate_sequence RESTART WITH 1000;

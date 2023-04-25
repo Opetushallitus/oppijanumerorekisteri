@@ -101,6 +101,7 @@ public class OppijaServiceImpl implements OppijaService {
         // rivit on jo ladattu valmiiksi joten tämä ei aiheuta kyselyä/rivi
         OppijaTuontiReadDto tuonti = mapper.map(entity, OppijaTuontiReadDto.class);
 
+        decorateHenkilosWithMaster(resolveHenkilosFor(tuonti));
         decorateHenkilosWithLinkedOids(resolveHenkilosFor(tuonti));
 
         return tuonti;
@@ -112,6 +113,14 @@ public class OppijaServiceImpl implements OppijaService {
 
     private Set<String> resolveOidsFor(List<OppijaReadDto> henkilos) {
         return henkilos.stream().map(OppijaReadDto::getOid).collect(toSet());
+    }
+
+    private void decorateHenkilosWithMaster(List<OppijaReadDto> henkilos) {
+        final Map<String, String> masters = henkiloViiteRepository.getMasters(resolveOidsFor(henkilos))
+                .stream().collect(toMap(HenkiloViiteRepository.Linked::getOid, HenkiloViiteRepository.Linked::getLinked));
+        henkilos.stream()
+                .filter(henkilo -> henkilo.getOppijanumero() == null)
+                .forEach(henkilo -> henkilo.setOppijanumero(masters.get(henkilo.getOid())));
     }
 
     @Override

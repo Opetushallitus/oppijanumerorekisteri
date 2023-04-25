@@ -28,6 +28,12 @@ public interface HenkiloViiteRepository extends QuerydslPredicateExecutor, JpaRe
             , nativeQuery = true)
     List<Linked> getLinked(@Param("oids") Set<String> oids);
 
+    @Query(value = "select distinct h.oidhenkilo as oid, hv.master_oid as linked " +
+            "from henkilo h " +
+            "join henkiloviite hv on hv.master_oid = h.oidhenkilo or hv.slave_oid = h.oidhenkilo " +
+            "where h.oidhenkilo in :oids", nativeQuery = true)
+    List<Linked> getMasters(@Param("oids") Set<String> oids);
+
     interface Linked {
         String getOid();
 

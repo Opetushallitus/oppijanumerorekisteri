@@ -8,9 +8,9 @@
       "tunniste": "tunniste",
       "henkilo": {
         "oid": "tuonti1",
-        "oppijanumero": null,
+        "oppijanumero": "tuonti1",
         "passivoitu": false,
-        "linked": []
+        "linked": ["tuonti2"]
       }
     }
   ]

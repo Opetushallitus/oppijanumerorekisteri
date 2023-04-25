@@ -232,7 +232,7 @@ class YleistunnisteControllerTest {
     }
 
     @Test
-    public void createNotFound() throws Exception {
+    void createNotFound() throws Exception {
         mvc.perform(post(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
                         .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -240,7 +240,7 @@ class YleistunnisteControllerTest {
     }
 
     @Test
-    public void getOppijatByTuontiIdNotFound() throws Exception {
+    void getOppijatByTuontiIdNotFound() throws Exception {
         mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
                         .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -248,13 +248,23 @@ class YleistunnisteControllerTest {
     }
 
     @Test
-    public void getOppijatByTuontiId() throws Exception {
+    void getOppijatByTuontiId() throws Exception {
         mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=1"))
                         .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT + ROOT_ORGANISATION_SUFFIX))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         status().isOk(),
-                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijat.json"), true));
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatMaster.json"), true));
+    }
+
+    @Test
+    void getOppijatByTuontiIdResolvesOppijanumero() throws Exception {
+        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=2"))
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT + ROOT_ORGANISATION_SUFFIX))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        status().isOk(),
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatDuplicate.json"), true));
     }
 
     @Test
@@ -267,7 +277,7 @@ class YleistunnisteControllerTest {
     }
 
     @Test
-    public void haeNotFound() throws Exception {
+    void haeNotFound() throws Exception {
         mvc.perform(post(hae)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
@@ -277,7 +287,7 @@ class YleistunnisteControllerTest {
 
 
     @Test
-    public void haeConflicts() throws Exception {
+    void haeConflicts() throws Exception {
         mvc.perform(post(hae)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
@@ -286,7 +296,7 @@ class YleistunnisteControllerTest {
     }
 
     @Test
-    public void haeFound() throws Exception {
+    void haeFound() throws Exception {
         mvc.perform(post(hae)
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
