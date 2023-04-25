@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -83,6 +84,7 @@ public class HenkiloMapperTest {
     public void henkiloToHenkiloDto() {
         Henkilo henkilo = EntityUtils.createHenkilo("arpa", "arpa", "kuutio", "123456-9999", "1.2.3.4.5", false,
                 "fi", "suomi", "246", new Date(), new Date(), "1.2.3.4.1", "arpa@kuutio.fi");
+        henkilo.setPassinumerot(Set.of("passinumero"));
         HenkiloDto henkiloDto = modelmapper.map(henkilo, HenkiloDto.class);
         assertThat(henkiloDto).isEqualToIgnoringGivenFields(henkilo,
                 "serialVersionUID", "aidinkieli", "asiointiKieli", "kielisyys", "kansalaisuus", "yhteystiedotRyhma");
@@ -90,6 +92,7 @@ public class HenkiloMapperTest {
         assertThat(henkiloDto.getAsiointiKieli()).isEqualToIgnoringGivenFields(henkilo.getAsiointiKieli(), "serialVersionUID");
         assertThat(henkiloDto.getKansalaisuus()).usingElementComparatorIgnoringFields("serialVersionUID")
                 .isEqualTo(henkilo.getKansalaisuus());
+        assertThat(henkiloDto.getPassinumerot()).isEqualTo(Set.of("passinumero"));
 
         assertThat(henkiloDto.getYhteystiedotRyhma().size()).isEqualTo(henkilo.getYhteystiedotRyhma().size()).isEqualTo(1);
         assertThat(henkiloDto.getYhteystiedotRyhma().iterator().next().getRyhmaAlkuperaTieto())

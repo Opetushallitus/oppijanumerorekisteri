@@ -65,7 +65,29 @@ public class OppijaMappersTest {
 
     @Test
     public void duplicateMapper() {
-        Henkilo henkilo = Henkilo.builder()
+        Henkilo henkilo = getHenkilo();
+
+        HenkiloDuplicateDto dto = mapper.map(henkilo, HenkiloDuplicateDto.class);
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.getOidHenkilo()).isEqualTo("oid");
+        assertThat(dto.getHetu()).isEqualTo("hetu");
+        assertThat(dto.getEmails()).hasSize(1).contains("email");
+        assertThat(dto.getKansalaisuus()).hasSize(1);
+        assertThat(dto.getPassinumerot()).contains("passinumero");
+    }
+
+    @Test
+    public void duplicateMasterMapper() {
+        Henkilo henkilo = getHenkilo();
+
+        HenkiloReadDto dto = mapper.map(henkilo, HenkiloReadDto.class);
+
+        assertThat(dto.getPassinumerot()).contains("passinumero");
+    }
+
+    private Henkilo getHenkilo() {
+        return Henkilo.builder()
                 .oidHenkilo("oid")
                 .etunimet("etunimet")
                 .kutsumanimi("kutsumanimi")
@@ -89,14 +111,5 @@ public class OppijaMappersTest {
                 .kansalaisuus(Set.of(new Kansalaisuus("kansalaisuus")))
                 .passinumerot(Set.of("passinumero"))
                 .build();
-
-        HenkiloDuplicateDto dto = mapper.map(henkilo, HenkiloDuplicateDto.class);
-
-        assertThat(dto).isNotNull();
-        assertThat(dto.getOidHenkilo()).isEqualTo("oid");
-        assertThat(dto.getHetu()).isEqualTo("hetu");
-        assertThat(dto.getEmails()).hasSize(1).contains("email");
-        assertThat(dto.getKansalaisuus()).hasSize(1);
-        assertThat(dto.getPassinumerot()).contains("passinumero");
     }
 }

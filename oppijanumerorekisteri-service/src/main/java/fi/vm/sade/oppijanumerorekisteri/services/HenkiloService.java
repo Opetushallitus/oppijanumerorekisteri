@@ -95,4 +95,6 @@ public interface HenkiloService {
     Slice<HenkiloMunicipalDobDto> findByMunicipalAndBirthdate(String municipal, LocalDate dob, int page);
 
     void removeContactInfo(String oid, String... removeTypes);
+
+    Set<String> setPassportNumbers(String oid, Set<String> passinumerot);
 }
