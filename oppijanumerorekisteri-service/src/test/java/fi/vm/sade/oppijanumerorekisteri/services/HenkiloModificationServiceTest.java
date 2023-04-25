@@ -6,6 +6,7 @@ import fi.vm.sade.oppijanumerorekisteri.IntegrationTest;
 import fi.vm.sade.oppijanumerorekisteri.KoodiTypeListBuilder;
 import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
 import fi.vm.sade.oppijanumerorekisteri.clients.KoodistoClient;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.ValidationException;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Identification;
 import fi.vm.sade.oppijanumerorekisteri.models.Kansalaisuus;
@@ -234,5 +235,53 @@ public class HenkiloModificationServiceTest {
                 .passivoiHenkilo("1.2.3.4.5", "user");
         verify(henkiloService, times(1))
                 .removeContactInfo("1.2.3.4.5", YhteystietoryhmaUtils.TYYPPI_TYOOSOITE);
+    }
+
+    @Test
+    @WithMockUser
+    public void testForceLinkHappyPath() {
+        Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
+        master = henkiloModificationService.createHenkilo(master);
+        Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).build();
+        slave = henkiloModificationService.createHenkilo(slave);
+
+        List<String> slaves = henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+
+        assertThat(slaves).containsExactly(slave.getOidHenkilo());
+    }
+
+    @Test
+    @WithMockUser
+    public void testForceLinkSlaveYksiloity() {
+        Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
+        master = henkiloModificationService.createHenkilo(master);
+        Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).yksiloity(true).build();
+        slave = henkiloModificationService.createHenkilo(slave);
+
+        List<String> slaves = henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+
+        assertThat(slaves).containsExactly(slave.getOidHenkilo());
+    }
+
+    @Test(expected = ValidationException.class)
+    @WithMockUser
+    public void testForceLinkSlaveVtjYksiloity() {
+        Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
+        master = henkiloModificationService.createHenkilo(master);
+        Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).yksiloityVTJ(true).build();
+        slave = henkiloModificationService.createHenkilo(slave);
+
+        henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
+    }
+
+    @Test(expected = ValidationException.class)
+    @WithMockUser
+    public void testForceLinkSlaveHasHetu() {
+        Henkilo master = Henkilo.builder().etunimet("master").kutsumanimi("master").sukunimi("master").sukupuoli(null).build();
+        master = henkiloModificationService.createHenkilo(master);
+        Henkilo slave = Henkilo.builder().etunimet("slave").kutsumanimi("slave").sukunimi("slave").sukupuoli(null).hetu("fakehetu").build();
+        slave = henkiloModificationService.createHenkilo(slave);
+
+        henkiloModificationService.forceLinkHenkilos(master.getOidHenkilo(), asList(slave.getOidHenkilo()));
     }
 }
