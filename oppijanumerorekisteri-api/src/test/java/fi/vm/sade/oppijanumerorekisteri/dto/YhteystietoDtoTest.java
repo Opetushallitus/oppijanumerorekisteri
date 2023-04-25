@@ -75,7 +75,10 @@ class YhteystietoDtoTest {
                 Arguments.of("Reject country code too short", test.apply("+12"), false),
                 Arguments.of("Reject malformed country code", test.apply("++1234567890"), false),
                 Arguments.of("Reject country code starting with 0", test.apply("+0123456789"), false),
-                Arguments.of("Reject malformed country code grouping", test.apply("+1 2 34567890"), false)
+                Arguments.of("Reject malformed country code grouping", test.apply("+1 2 34567890"), false),
+                Arguments.of("Accept area codes", test.apply("09 34567890"), true),
+                Arguments.of("Accept - as area code separator", test.apply("09-34567890"), true),
+                Arguments.of("Accept - as area country separator", test.apply("+358-34 567 890"), true)
         );
     }
 
