@@ -44,12 +44,12 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
         if (!isNoAuthenticationPage) {
             document.body.appendChild(script);
         }
-        
+
         return () => {
             if (!isNoAuthenticationPage) {
                 document.body.removeChild(script);
             }
-        }
+        };
     }, [isNoAuthenticationPage]);
 
     return (

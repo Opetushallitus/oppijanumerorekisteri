@@ -2,10 +2,8 @@
     "extends": [
         "eslint:recommended",
         "react-app",
-        "react-app/jest",
         "prettier"
     ],
-    "parser": "babel-eslint",
     "overrides": [
         {
             "files": ["**/*.ts", "**/*.tsx"],
