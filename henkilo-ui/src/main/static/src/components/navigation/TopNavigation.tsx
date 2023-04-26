@@ -1,5 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import type { RootState } from '../../store';
 import { Link } from 'react-router';
@@ -7,7 +6,6 @@ import classNames from 'classnames/bind';
 import ophLogo from '../../img/logo_oph.svg';
 import okmLogo from '../../img/logo_okm.png';
 import { Localisations } from '../../types/localisation.type';
-import Script from 'react-load-script';
 import { urls } from 'oph-urls-js';
 import './TopNavigation.css';
 import { parsePalveluRoolit } from '../../utilities/palvelurooli.util';
@@ -39,16 +37,31 @@ const TopNavigation = ({ pathName, L, isRekisterinpitaja, organisaatiot, route, 
     const organisaatioList = isNoAuthenticationPage || !Array.isArray(organisaatiot) ? [] : organisaatiot;
     const roolit: Array<string> = parsePalveluRoolit(organisaatioList);
     const naviTabs = route.getNaviTabs && route.getNaviTabs(params && params['oid'], henkilo, route.henkiloType);
+
+    useMemo(() => {
+        const script = document.createElement('script');
+        script.src = urls.url('virkailija-raamit.raamit.js');
+        if (!isNoAuthenticationPage) {
+            document.body.appendChild(script);
+        }
+        
+        return () => {
+            if (!isNoAuthenticationPage) {
+                document.body.removeChild(script);
+            }
+        }
+    }, [isNoAuthenticationPage]);
+
     return (
         <div id="topNavigation" className={classNames({ 'oph-bg-blue': !isNoAuthenticationPage })}>
-            {/* Virkailija-raamit looks bad in dev mode because styles are in wrong path. */}
-            {!isNoAuthenticationPage && <Script url={urls.url('virkailija-raamit.raamit.js')} />}
             {!isNoAuthenticationPage && (
                 <ul className="tabs">
                     {route.backButton ? (
                         <li>
                             <a
-                                onClick={() => {
+                                href="?"
+                                onClick={(e) => {
+                                    e.preventDefault();
                                     window.history.go(-1);
                                     return false;
                                 }}
