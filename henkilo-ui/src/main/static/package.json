@@ -5,19 +5,28 @@
     "dependencies": {
         "@hookform/resolvers": "^2.5.2",
         "@reduxjs/toolkit": "^1.9.3",
+        "bfj": "^7.0.2",
+        "browserslist": "^4.18.1",
+        "camelcase": "^6.2.1",
         "classnames": "2.2.5",
+        "dotenv": "^10.0.0",
+        "dotenv-expand": "^5.1.0",
+        "fs-extra": "^10.0.0",
         "history": "3.3.0",
         "isomorphic-fetch": "3.0.0",
         "joi": "^17.4.0",
         "moment": "^2.29.4",
-        "normalizr": "3.0.0",
+        "normalizr": "^3.0.1",
         "oph-urls-js": "github:Opetushallitus/oph-urls-js#master",
         "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles#master",
         "papaparse": "5.3.1",
+        "prompts": "^2.4.2",
         "ramda": "^0.28.0",
         "react": "16.14.0",
+        "react-app-polyfill": "^3.0.0",
         "react-columns": "1.2.0",
         "react-datepicker": "^4.10.0",
+        "react-dev-utils": "^12.0.1",
         "react-dom": "16.14.0",
         "react-hook-form": "7.8.4",
         "react-load-script": "0.0.6",
@@ -25,6 +34,7 @@
         "react-onclickoutside": "6.7.0",
         "react-pin-input": "^1.3.0",
         "react-redux": "^8.0.5",
+        "react-refresh": "^0.11.0",
         "react-router": "3.2.6",
         "react-router-redux": "4.0.8",
         "react-scroll-to-component": "1.0.2",
@@ -34,10 +44,14 @@
         "react-virtualized": "9.22.3",
         "react-virtualized-select": "3.1.3",
         "react-visibility-sensor": "3.11.0",
+        "resolve": "^1.20.0",
         "universal-cookie": "4.0.2"
     },
     "devDependencies": {
+        "@babel/core": "^7.16.0",
         "@playwright/test": "1.29.2",
+        "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+        "@svgr/webpack": "^5.5.0",
         "@types/enzyme": "3.10.11",
         "@types/jest": "26.0.19",
         "@types/node": "^18",
@@ -47,36 +61,65 @@
         "@types/react-dom": "17.0.0",
         "@types/react-router-redux": "^4",
         "@types/react-virtualized-select": "3.0.12",
+        "babel-jest": "^27.4.2",
+        "babel-loader": "^8.2.3",
+        "babel-plugin-named-asset-import": "^0.3.8",
+        "babel-preset-react-app": "^10.0.1",
+        "case-sensitive-paths-webpack-plugin": "^2.4.0",
         "concurrently": "6.1.0",
+        "css-loader": "^6.5.1",
+        "css-minimizer-webpack-plugin": "^3.2.0",
         "customize-cra": "1.0.0",
         "enzyme": "3.11.0",
         "enzyme-adapter-react-16": "1.15.6",
+        "eslint": "^8.3.0",
         "eslint-config-prettier": "6.11.0",
-        "eslint-config-react-app": "7.0.1",
+        "eslint-config-react-app": "^7.0.1",
+        "eslint-webpack-plugin": "^3.1.1",
+        "file-loader": "^6.2.0",
+        "html-webpack-plugin": "^5.5.0",
+        "identity-obj-proxy": "^3.0.0",
+        "jest": "^27.4.3",
         "jest-enzyme": "^7.1.2",
         "jest-react-hooks-shallow": "1.5.1",
+        "jest-resolve": "^27.4.2",
+        "jest-watch-typeahead": "^1.0.0",
+        "mini-css-extract-plugin": "^2.4.5",
         "nyc": "15.1.0",
         "playwright-test-coverage": "1.2.8",
+        "postcss": "^8.4.4",
+        "postcss-flexbugs-fixes": "^5.0.2",
+        "postcss-loader": "^6.2.1",
+        "postcss-normalize": "^10.0.1",
+        "postcss-preset-env": "^7.0.1",
         "prettier": "2.2.1",
         "react-app-rewired": "2.2.1",
-        "react-scripts": "^5.0.1",
         "request": "^2.88.0",
+        "resolve-url-loader": "^4.0.0",
+        "sass-loader": "^12.3.0",
         "shallow-equal-fuzzy": "0.0.2",
+        "semver": "^7.3.5",
+        "source-map-loader": "^3.0.0",
+        "style-loader": "^3.3.1",
+        "tailwindcss": "^3.0.2",
+        "terser-webpack-plugin": "^5.2.5",
         "typescript": "^4.9.5",
-        "wait-port": "1.0.4"
+        "wait-port": "1.0.4",
+        "webpack": "^5.64.4",
+        "webpack-dev-server": "^4.6.0",
+        "webpack-manifest-plugin": "^4.0.2",
+        "workbox-webpack-plugin": "^6.4.1"
     },
     "scripts": {
         "dev": "concurrently --kill-others 'npm start' 'npm run nginx'",
         "nginx": "docker-compose -f ../../../nginx/docker-compose.yml up",
-        "start": "BROWSER=none react-scripts start",
-        "build": "GENERATE_SOURCEMAP=false react-scripts build",
-        "test": "react-scripts test --env=jsdom --coverage --watchAll=false",
+        "start": "BROWSER=none node scripts/start.js",
+        "build": "GENERATE_SOURCEMAP=false node scripts/build.js",
+        "test": "node scripts/test.js --env=jsdom --coverage --watchAll=false",
         "lint": "eslint --ext .ts,.tsx src",
         "lint:fix": "eslint --ext .ts,.tsx src --fix",
         "prettier": "prettier --check 'src/**/*{ts,tsx}'",
         "prettier:fix": "prettier --write 'src/**/*{ts,tsx}'",
-        "eject": "react-scripts eject",
-        "test:debug": "react-scripts --inspect-brk test --runInBand",
         "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
         "e2e:mock-api": "npm --prefix mock-api run mock-api",
         "e2e:app": "BROWSER=none react-app-rewired start",
@@ -91,6 +134,55 @@
         "not dead"
     ],
     "jest": {
+        "roots": [
+            "<rootDir>/src"
+        ],
+        "collectCoverageFrom": [
+            "src/**/*.{js,jsx,ts,tsx}",
+            "!src/**/*.d.ts"
+        ],
+        "setupFiles": [
+            "react-app-polyfill/jsdom"
+        ],
+        "setupFilesAfterEnv": [
+            "<rootDir>/src/setupTests.js"
+        ],
+        "testMatch": [
+            "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+            "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+        ],
+        "testEnvironment": "jsdom",
+        "transform": {
+            "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
+            "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+            "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+        },
+        "transformIgnorePatterns": [
+            "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+            "^.+\\.module\\.(css|sass|scss)$"
+        ],
+        "modulePaths": [],
+        "moduleNameMapper": {
+            "^react-native$": "react-native-web",
+            "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+        },
+        "moduleFileExtensions": [
+            "web.js",
+            "js",
+            "web.ts",
+            "ts",
+            "web.tsx",
+            "tsx",
+            "json",
+            "web.jsx",
+            "jsx",
+            "node"
+        ],
+        "watchPlugins": [
+            "jest-watch-typeahead/filename",
+            "jest-watch-typeahead/testname"
+        ],
+        "resetMocks": true,
         "coverageReporters": [
             "text-summary",
             "html",
@@ -103,5 +195,13 @@
     "engines": {
         "npm": "^9",
         "node": "^18"
+    },
+    "babel": {
+        "presets": [
+            "react-app"
+        ]
+    },
+    "eslintConfig": {
+        "extends": "react-app"
     }
 }
