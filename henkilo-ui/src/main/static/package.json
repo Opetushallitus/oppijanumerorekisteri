@@ -6,7 +6,6 @@
         "@hookform/resolvers": "^2.5.2",
         "@reduxjs/toolkit": "^1.9.3",
         "classnames": "2.2.5",
-        "fs-extra": "^10.0.0",
         "history": "3.3.0",
         "isomorphic-fetch": "3.0.0",
         "joi": "^17.4.0",
@@ -57,13 +56,14 @@
         "eslint-config-react-app": "^7.0.1",
         "eslint-webpack-plugin": "^3.1.1",
         "file-loader": "^6.2.0",
+        "fs-extra": "^10.0.0",
         "html-webpack-plugin": "^5.5.0",
         "mini-css-extract-plugin": "^2.4.5",
         "nyc": "^15.1.0",
         "playwright-test-coverage": "^1.2.8",
         "prettier": "2.2.1",
         "react-dev-utils": "^12.0.1",
-        "react-refresh": "^0.11.0",
+        "react-refresh-typescript": "^2.0.9",
         "resolve": "^1.20.0",
         "source-map-loader": "^3.0.0",
         "style-loader": "^3.3.1",
@@ -72,8 +72,7 @@
         "wait-port": "1.0.4",
         "webpack": "^5.80.0",
         "webpack-dev-server": "^4.6.0",
-        "webpack-manifest-plugin": "^4.0.2",
-        "workbox-webpack-plugin": "^6.4.1"
+        "webpack-manifest-plugin": "^4.0.2"
     },
     "scripts": {
         "dev": "concurrently --kill-others 'npm start' 'npm run nginx'",
@@ -86,7 +85,7 @@
         "prettier:fix": "prettier --write 'src/**/*{ts,tsx}'",
         "e2e:install-deps": "playwright install chromium && npm --prefix mock-api ci",
         "e2e:mock-api": "npm --prefix mock-api run mock-api",
-        "e2e:serve": "concurrently -k 'nyc --no-clean --reporter=lcov npm start' 'npm:e2e:mock-api'",
+        "e2e:serve": "concurrently -k 'nyc --no-clean npm start' 'npm:e2e:mock-api'",
         "e2e:test": "wait-port -t 120000 http://:3000/henkilo-ui && playwright test",
         "e2e:ci": "concurrently -s first -k 'npm:e2e:serve' 'npm:e2e:test'"
     },
