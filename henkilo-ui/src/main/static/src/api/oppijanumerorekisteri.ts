@@ -11,7 +11,7 @@ type Passinumerot = string[];
 type LinkHenkilosRequest = {
     masterOid: string;
     force: boolean;
-    selectedDuplicates: string[];
+    duplicateOids: string[];
     L: Localisations;
 };
 
@@ -41,10 +41,10 @@ export const oppijanumerorekisteriApi = createApi({
             invalidatesTags: ['Passinumerot'],
         }),
         postLinkHenkilos: builder.mutation<void, LinkHenkilosRequest>({
-            query: ({ masterOid, selectedDuplicates, force }) => ({
+            query: ({ masterOid, duplicateOids, force }) => ({
                 url: force ? `henkilo/${masterOid}/forcelink` : `henkilo/${masterOid}/link`,
                 method: 'POST',
-                body: selectedDuplicates,
+                body: duplicateOids,
             }),
             async onQueryStarted({ L }, { dispatch, queryFulfilled }) {
                 try {

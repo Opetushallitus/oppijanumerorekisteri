@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import * as R from 'ramda';
 
 import { RootState } from '../../../store';
 import Button from '../../common/button/Button';
@@ -37,7 +36,6 @@ type StateProps = {
     locale: Locale;
     L: Localisations;
     koodisto: KoodistoState;
-    ownOid: string;
     omattiedot: OmattiedotState;
 };
 
@@ -53,9 +51,8 @@ const HenkiloViewDuplikaatit = ({
     router,
     oidHenkilo,
     omattiedot,
-    ownOid,
 }: Props) => {
-    const [selectedDuplicates, setSelectedDuplicates] = useState<string[]>([]);
+    const [selectedDuplicates, setSelectedDuplicates] = useState<HenkiloDuplicate[]>([]);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
@@ -64,17 +61,24 @@ const HenkiloViewDuplikaatit = ({
         .filter((yhteysTieto) => yhteysTieto.yhteystietoTyyppi === 'YHTEYSTIETO_SAHKOPOSTI')
         .map((yhteysTieto) => yhteysTieto.yhteystietoArvo);
     const master: HenkiloDuplicate = { ...henkilo.henkilo, emails, hakemukset: henkilo.hakemukset };
+    const isDuplicateViewDisabled =
+        !enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master.oidHenkilo) ||
+        oidHenkilo === omattiedot.data.oid;
+    const duplicatesIncludeYksiloity = selectedDuplicates.some((s) => s.yksiloity);
+    const isLinkDisabled = isDuplicateViewDisabled || !selectedDuplicates.length || duplicatesIncludeYksiloity;
+    const isForceLinkDisabled = isDuplicateViewDisabled || !selectedDuplicates.length || !duplicatesIncludeYksiloity;
 
-    const setSelection = (oid: string) => {
-        const newSelected = selectedDuplicates.includes(oid)
-            ? R.reject((duplicateOid) => duplicateOid === oid, selectedDuplicates)
-            : R.append(oid, selectedDuplicates);
+    const setSelection = (d: HenkiloDuplicate, add: boolean) => {
+        const newSelected = add
+            ? [...selectedDuplicates, d]
+            : selectedDuplicates.filter((s) => s.oidHenkilo !== d.oidHenkilo);
         setSelectedDuplicates(newSelected);
     };
 
     const _link = async (force: boolean) => {
         const masterOid = oidHenkilo ?? '';
-        return await postLinkHenkilos({ masterOid, selectedDuplicates, L, force })
+        const duplicateOids = selectedDuplicates.map((d) => d.oidHenkilo);
+        return await postLinkHenkilos({ masterOid, duplicateOids, L, force })
             .unwrap()
             .then(() => {
                 setShowConfirmation(false);
@@ -154,34 +158,12 @@ const HenkiloViewDuplikaatit = ({
             </div>
             {!vainLuku && oidHenkilo && (
                 <FloatingBar>
-                    <Button
-                        disabled={
-                            selectedDuplicates.length === 0 ||
-                            !enabledDuplikaattiView(
-                                oidHenkilo,
-                                henkilo.kayttaja,
-                                henkilo.masterLoading,
-                                henkilo.master.oidHenkilo
-                            ) ||
-                            oidHenkilo === ownOid
-                        }
-                        action={() => _link(false)}
-                        dataTestId="yhdista-button"
-                    >
+                    <Button disabled={isLinkDisabled} action={() => _link(false)} dataTestId="yhdista-button">
                         {L['DUPLIKAATIT_YHDISTA']}
                     </Button>
                     {canForceLink && (
                         <Button
-                            disabled={
-                                selectedDuplicates.length === 0 ||
-                                !enabledDuplikaattiView(
-                                    oidHenkilo,
-                                    henkilo.kayttaja,
-                                    henkilo.masterLoading,
-                                    henkilo.master.oidHenkilo
-                                ) ||
-                                oidHenkilo === ownOid
-                            }
+                            disabled={isForceLinkDisabled}
                             action={() => setShowConfirmation(true)}
                             dataTestId="force-link-button"
                         >
@@ -212,7 +194,6 @@ const HenkiloViewDuplikaatit = ({
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-    ownOid: state.omattiedot.data.oid,
     L: state.l10n.localisations[state.locale],
     locale: state.locale,
     koodisto: state.koodisto,

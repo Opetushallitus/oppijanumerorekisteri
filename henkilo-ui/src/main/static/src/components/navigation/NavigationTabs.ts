@@ -14,7 +14,7 @@ export const enabledDuplikaattiView = (
 ): boolean =>
     !masterLoading &&
     (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo) &&
-    (!kayttaja || kayttaja.kayttajaTyyppi !== 'PALVELU');
+    kayttaja?.kayttajaTyyppi !== 'PALVELU';
 export const enabledVtjVertailuView = (henkilo: Henkilo): boolean =>
     henkilo && henkilo.yksilointiYritetty && !henkilo.yksiloityVTJ && !henkilo.duplicate;
 export const vtjDataAvailable = (yksilointitieto: Yksilointitieto | null | undefined): boolean =>

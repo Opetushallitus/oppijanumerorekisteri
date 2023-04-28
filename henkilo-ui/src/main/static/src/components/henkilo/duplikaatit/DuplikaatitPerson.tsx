@@ -16,7 +16,7 @@ type Props = {
     L: Localisations;
     locale: Locale;
     koodisto: KoodistoState;
-    setSelection: (arg0: string) => void;
+    setSelection: (duplicate: HenkiloDuplicate, add: boolean) => void;
     classNames: { person: boolean; master?: boolean };
     isMaster: boolean;
     header: string;
@@ -123,7 +123,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                             type="checkbox"
                             disabled={isMaster || henkilo.yksiloityVTJ || (henkilo.yksiloity && !canForceLink)}
                             checked={this.state.checkboxValue}
-                            onChange={this._onCheck.bind(this, henkilo.oidHenkilo)}
+                            onChange={this._onCheck.bind(this, henkilo)}
                             data-test-id={`check-duplicate-${henkilo.oidHenkilo}`}
                         />
                     </DataCell>
@@ -132,11 +132,11 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         );
     }
 
-    _onCheck(oid: string) {
+    _onCheck(duplicate: HenkiloDuplicate) {
+        this.props.setSelection(duplicate, !this.state.checkboxValue);
         this.setState({
             checkboxValue: !this.state.checkboxValue,
         });
-        this.props.setSelection(oid);
     }
 
     _parseHakemus(hakemus: Hakemus): DuplikaatitHakemus {
