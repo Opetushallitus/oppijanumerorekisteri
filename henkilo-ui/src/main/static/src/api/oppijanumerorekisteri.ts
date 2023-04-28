@@ -4,6 +4,7 @@ import { getCommonOptions } from '../http';
 import { addGlobalNotification } from '../actions/notification.actions';
 import { NOTIFICATIONTYPES } from '../components/common/Notification/notificationtypes';
 import { Localisations } from '../types/localisation.type';
+import { permissionServiceHeaders } from '../permission-service';
 
 type Passinumerot = string[];
 
@@ -18,7 +19,11 @@ export const oppijanumerorekisteriApi = createApi({
     reducerPath: 'oppijanumerorekisteriApi',
     baseQuery: fetchBaseQuery({
         ...getCommonOptions(),
-        headers: { ...getCommonOptions().headers, 'Content-Type': 'application/json; charset=utf-8' },
+        headers: {
+            ...getCommonOptions().headers,
+            ...permissionServiceHeaders,
+            'Content-Type': 'application/json; charset=utf-8',
+        },
         baseUrl: '/oppijanumerorekisteri-service/',
     }),
     tagTypes: ['Passinumerot'],
