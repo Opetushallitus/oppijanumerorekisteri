@@ -4,6 +4,7 @@ import R from 'ramda';
 
 import omattiedot from '../../mock-api/src/api/kayttooikeus-service/henkilo/current/omattiedot/GET.json';
 import duplicates from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.3.4.5/duplicates/GET.json';
+import link from '../../mock-api/src/api/oppijanumerorekisteri-service/henkilo/1.2.3.4.5/link/POST.json'
 
 const groupedDuplicates = R.groupBy((h) => {
     return h.yksiloityVTJ ? 'yksiloityVtj' : h.yksiloity ? 'yksiloity' : 'yksiloimaton';
@@ -78,6 +79,22 @@ test.describe('Hae duplikaatit', () => {
         await page.click(`[data-test-id="check-duplicate-${groupedDuplicates.yksiloity[0].oidHenkilo}"]`);
         await page.click('[data-test-id="force-link-button"]');
         await page.click('[data-test-id="confirm-force-link"]');
+        await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
+            'Henkilöiden linkittäminen onnistui'
+        );
+    });
+
+    test('sends permission service header', async ({ page }) => {
+        await page.route('/oppijanumerorekisteri-service/henkilo/1.2.3.4.5/link', async (route) => {
+            expect(route.request().headers()['external-permission-service']).toEqual('ATARU');
+            await route.fulfill({
+                json: link,
+            });
+        })
+        await page.goto('/virkailija/1.2.3.4.5/duplikaatit?permissionCheckService=ATARU');
+        await page.click(`[data-test-id="check-duplicate-${groupedDuplicates.yksiloimaton[0].oidHenkilo}"]`);
+        await page.click(`[data-test-id="check-duplicate-${groupedDuplicates.yksiloimaton[1].oidHenkilo}"]`);
+        await page.click('[data-test-id="yhdista-button"]');
         await expect(page.locator('[data-test-id="LINKED_DUPLICATES_SUCCESS"] .oph-alert-title')).toHaveText(
             'Henkilöiden linkittäminen onnistui'
         );

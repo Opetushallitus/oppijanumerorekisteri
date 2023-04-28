@@ -16,13 +16,11 @@ import {
     fetchKieliKoodisto,
 } from '../../../actions/koodisto.actions';
 import type { HenkiloState } from '../../../reducers/henkilo.reducer';
-import PropertySingleton from '../../../globals/PropertySingleton';
 import type { KoodistoState } from '../../../reducers/koodisto.reducer';
 import type { Localisations } from '../../../types/localisation.type';
 
 type OwnProps = {
     params: any;
-    location: any;
     route: any;
 };
 
@@ -31,7 +29,6 @@ type StateProps = {
     henkilo: HenkiloState;
     koodisto: KoodistoState;
     henkiloType: string;
-    externalPermissionService: string;
     L: Localisations;
 };
 
@@ -51,11 +48,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 class VirkailijaDuplikaatitContainer extends React.Component<Props> {
     async componentDidMount() {
-        if (this.props.externalPermissionService) {
-            PropertySingleton.setState({
-                externalPermissionService: this.props.externalPermissionService,
-            });
-        }
         this.props.fetchHenkilo(this.props.oidHenkilo);
         this.props.fetchKayttaja(this.props.oidHenkilo);
         this.props.fetchOmattiedot();
@@ -74,7 +66,6 @@ class VirkailijaDuplikaatitContainer extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => ({
     oidHenkilo: ownProps.params['oid'],
-    externalPermissionService: ownProps.location.query.permissionCheckService,
     henkiloType: ownProps.route['henkiloType'],
     henkilo: state.henkilo,
     koodisto: state.koodisto,

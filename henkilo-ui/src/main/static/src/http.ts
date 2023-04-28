@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
-import PropertySingleton from './globals/PropertySingleton';
 import Cookies from 'universal-cookie';
+import { permissionServiceHeaders } from './permission-service';
 
 const cookies = new Cookies();
 
@@ -36,8 +36,8 @@ export const getCommonOptions: () => RequestInit = () => ({
     mode: 'cors',
     headers: {
         'Caller-Id': '1.2.246.562.10.00000000001.henkilo-ui',
-        'External-Permission-Service': PropertySingleton.getState().externalPermissionService || '',
         CSRF: cookies.get('CSRF'),
+        ...permissionServiceHeaders,
     },
     credentials: 'include',
 });
