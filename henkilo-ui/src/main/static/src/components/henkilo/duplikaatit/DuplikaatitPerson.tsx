@@ -19,6 +19,7 @@ type Props = {
     setSelection: (duplicate: HenkiloDuplicate, add: boolean) => void;
     classNames: { person: boolean; master?: boolean };
     isMaster: boolean;
+    isMasterPassivoitu: boolean;
     header: string;
     canForceLink: boolean;
     vainLuku: boolean;
@@ -61,6 +62,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
             locale,
             vainLuku,
             isMaster,
+            isMasterPassivoitu,
             canForceLink,
             duplicatesIncludeYksiloity,
         } = this.props;
@@ -68,6 +70,7 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
         const hakemus = hakemukset.shift();
         const isCheckboxDisabled =
             isMaster ||
+            isMasterPassivoitu ||
             henkilo.yksiloityVTJ ||
             (henkilo.yksiloity && !canForceLink) ||
             !henkilo.yksiloity === duplicatesIncludeYksiloity;
