@@ -64,7 +64,7 @@ const HenkiloViewDuplikaatit = ({
     const isDuplicateViewDisabled =
         !enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master.oidHenkilo) ||
         oidHenkilo === omattiedot.data.oid;
-    const duplicatesIncludeYksiloity = selectedDuplicates.some((s) => s.yksiloity);
+    const duplicatesIncludeYksiloity = selectedDuplicates.length && selectedDuplicates.some((s) => s.yksiloity);
     const isLinkDisabled = isDuplicateViewDisabled || !selectedDuplicates.length || duplicatesIncludeYksiloity;
     const isForceLinkDisabled = isDuplicateViewDisabled || !selectedDuplicates.length || !duplicatesIncludeYksiloity;
 
@@ -132,6 +132,7 @@ const HenkiloViewDuplikaatit = ({
                     henkiloType={henkiloType}
                     setSelection={setSelection}
                     canForceLink={canForceLink}
+                    duplicatesIncludeYksiloity={duplicatesIncludeYksiloity}
                 />
                 {henkilo.duplicates.map((duplicate) => (
                     <DuplikaatitPerson
@@ -147,6 +148,7 @@ const HenkiloViewDuplikaatit = ({
                         henkiloType={henkiloType}
                         setSelection={setSelection}
                         canForceLink={canForceLink}
+                        duplicatesIncludeYksiloity={duplicatesIncludeYksiloity}
                     />
                 ))}
                 {henkilo.duplicatesLoading ? <Loader /> : null}
