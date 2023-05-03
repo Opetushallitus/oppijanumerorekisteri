@@ -81,12 +81,14 @@ class HenkiloViewPage extends React.Component<Props> {
                         view={view}
                     />
                 </div>
-                <div className="wrapper">
-                    <div className="header">
-                        <p className="oph-h2 oph-bold">{L.TIETOTURVA_ASETUKSET_OTSIKKO}</p>
+                {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && !!henkilo.kayttajatieto?.username && (
+                    <div className="wrapper">
+                        <div className="header">
+                            <p className="oph-h2 oph-bold">{L.TIETOTURVA_ASETUKSET_OTSIKKO}</p>
+                        </div>
+                        <Mfa view={view} />
                     </div>
-                    <Mfa view={view} />
-                </div>
+                )}
                 {henkilo.kayttaja.kayttajaTyyppi !== 'PALVELU' && (
                     <div className="wrapper">
                         {henkilo.henkiloLoading ||

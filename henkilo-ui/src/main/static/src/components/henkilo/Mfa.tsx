@@ -13,6 +13,7 @@ import { Locale } from '../../types/locale.type';
 import { L10n, Localisations } from '../../types/localisation.type';
 import { View } from './HenkiloViewPage';
 import WideGreenNotification from '../common/notifications/WideGreenNotification';
+import { HenkiloState } from '../../reducers/henkilo.reducer';
 
 import styles from './Mfa.module.css';
 
@@ -68,7 +69,7 @@ const MfaRegistered = ({ L, idpEntityId, setSetupSuccess }: MfaRegisteredProps) 
 
     const handleMfaDisable = async () => {
         setSetupError(undefined);
-        return await postMfaDisable()
+        await postMfaDisable()
             .unwrap()
             .then(() => {
                 dispatch(setMfaProvider(null));
@@ -204,13 +205,13 @@ const MfaSetup = ({ setMfaSetup, setSetupSuccess, L }: MfaSetupProps) => {
         );
     }
 
-    const copySecretKey = () => {
-        navigator?.clipboard?.writeText(data.secretKey);
+    const copySecretKey = async () => {
+        await navigator?.clipboard?.writeText(data.secretKey);
     };
 
     const handleMfaEnable = async (token: string) => {
         setSetupError(undefined);
-        return await postMfaEnable(token)
+        await postMfaEnable(token)
             .unwrap()
             .then((enabled) => {
                 if (enabled) {
@@ -312,6 +313,8 @@ type MfaProps = {
 
 const Mfa = ({ view }: MfaProps) => {
     const { mfaProvider, idpEntityId } = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const henkilo = useSelector<RootState, HenkiloState>((state) => state.henkilo);
+    const userMfaProvider = view === 'OMATTIEDOT' ? mfaProvider : henkilo.kayttajatieto?.mfaProvider;
     const locale = useSelector<RootState, Locale>((state) => state.locale);
     const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
     const [isMfaSetup, setMfaSetup] = useState(false);
@@ -342,7 +345,7 @@ const Mfa = ({ view }: MfaProps) => {
                 </span>
                 {!isMfaSetup && (
                     <span className={styles.mfaEnabled} data-test-id="mfa-status">
-                        {mfaProvider ? L.MFA_KAYTOSSA : L.MFA_EI_KAYTOSSA}
+                        {userMfaProvider ? L.MFA_KAYTOSSA : L.MFA_EI_KAYTOSSA}
                     </span>
                 )}
             </div>
