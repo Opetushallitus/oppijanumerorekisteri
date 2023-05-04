@@ -1,0 +1,513 @@
+[
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi4",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi4",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi4",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "BDS Stadigvarande adress i hemlandet",
+                "kuvaus": "BDS Stadigvarande adress i hemlandet",
+                "lyhytNimi": "BDS Stadigv. adress i hemland.t",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            },
+            {
+                "nimi": "VTJ Vakinainen kotimainen osoite",
+                "kuvaus": "VTJ Vakinainen kotimainen osoite",
+                "lyhytNimi": "VTJ Vak. kotim. os.",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi3",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi3",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi3",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Fritidsadress",
+                "kuvaus": "Fritidsadress",
+                "lyhytNimi": "Fritidsadress",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            },
+            {
+                "nimi": "Vapaa-ajan osoite",
+                "kuvaus": "Vapaa-ajan osoite",
+                "lyhytNimi": "Vapaa-ajan osoite",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi6",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi6",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi6",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Hakemukselta tuleva yhteystieto",
+                "kuvaus": "Hakemukselta tuleva yhteystieto",
+                "lyhytNimi": "Hakemukselta tuleva yhteystieto",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "Kontaktinformation som härstammar från ansökan",
+                "kuvaus": "Kontaktinformation som härstammar från ansökan",
+                "lyhytNimi": "Kontaktinformation som härstammar från ansökan",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi10",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi10",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi10",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-10-15",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "VTJ tilapäinen ulkomainen osoite",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi5",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi5",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi5",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "BDS Stadigvarande adress utomlands",
+                "kuvaus": "BDS Stadigvarande adress utomlands",
+                "lyhytNimi": "BDS Stadigv. adress utomlands",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            },
+            {
+                "nimi": "VTJ Vakinainen ulkomainen osoite",
+                "kuvaus": "VTJ Vakinainen ulkomainen osoite",
+                "lyhytNimi": "VTJ Vak. ulkom. os.",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi9",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi9",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi9",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-10-15",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "VTJ tilapäinen kotimainen osoite",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi1",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi1",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi1",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Kotiosoite",
+                "kuvaus": "Kotiosoite",
+                "lyhytNimi": "Kotiosoite",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "Hemadress",
+                "kuvaus": "Hemadress",
+                "lyhytNimi": "Hemadress",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi12",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi12",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi12",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-10-15",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "VTJ ulkomainen postiosoite",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi8",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi8",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi8",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-09-08",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "VTJ Sähköinen osoite",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi11",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi11",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi11",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-10-15",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "VTJ kotimainen postiosoite",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi13",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi13",
+        "version": 0,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi13",
+        "paivitysPvm": "2017-01-13",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2017-01-01",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Oikeustulkkirekisterin yhteystiedot",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "EN"
+            },
+            {
+                "nimi": "Oikeustulkkirekisterin yhteystiedot",
+                "kuvaus": "Tehty oikeustulkkirekisterin yhteystietojen ylläpitämiseksi",
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "Oikeustulkkirekisterin yhteystiedot",
+                "kuvaus": null,
+                "lyhytNimi": null,
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi7",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi7",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi7",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Muu osoite",
+                "kuvaus": "Muu osoite",
+                "lyhytNimi": "Muu osoite",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "Annan adress",
+                "kuvaus": "Annan adress",
+                "lyhytNimi": "Annan adress",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            }
+        ]
+    },
+    {
+        "koodiUri": "yhteystietotyypit_yhteystietotyyppi2",
+        "resourceUri": "https://virkailija.testiopintopolku.fi/koodisto-service/rest/codeelement/yhteystietotyypit_yhteystietotyyppi2",
+        "version": 1,
+        "versio": 1,
+        "koodisto": {
+            "koodistoUri": "yhteystietotyypit",
+            "organisaatioOid": "1.2.246.562.10.00000000001",
+            "koodistoVersios": [1]
+        },
+        "koodiArvo": "yhteystietotyyppi2",
+        "paivitysPvm": "2014-10-15",
+        "paivittajaOid": null,
+        "voimassaAlkuPvm": "2014-04-07",
+        "voimassaLoppuPvm": null,
+        "tila": "LUONNOS",
+        "metadata": [
+            {
+                "nimi": "Työosoite",
+                "kuvaus": "Työosoite",
+                "lyhytNimi": "Työosoite",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "FI"
+            },
+            {
+                "nimi": "Arbetsadress",
+                "kuvaus": "Arbetsadress",
+                "lyhytNimi": "Arbetsadress",
+                "kayttoohje": null,
+                "kasite": null,
+                "sisaltaaMerkityksen": null,
+                "eiSisallaMerkitysta": null,
+                "huomioitavaKoodi": null,
+                "sisaltaaKoodiston": null,
+                "kieli": "SV"
+            }
+        ]
+    }
+]

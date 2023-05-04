@@ -16,6 +16,7 @@ type Props = {
     popupButtonWrapperPositioning?: CSS.Property.Position; // value for css-position attribute (defaults to relative)
     popupArrowStyles?: any; // css-styles to position arrow
     popupButtonClasses?: string; // css-classes for button (see oph style guide)
+    id?: string;
 };
 
 type State = {
@@ -52,6 +53,7 @@ class PopupButton extends React.Component<Props, State> {
                     className={popupButtonClasses}
                     type="button"
                     disabled={this.props.disabled}
+                    id={this.props.id}
                 >
                     {this.props.children}
                 </button>

@@ -12,6 +12,7 @@ import routes from './routes';
 import PropertySingleton from './globals/PropertySingleton';
 import rootReducer from './reducers';
 import { kayttooikeusApi } from './api/kayttooikeus';
+import { oppijanumerorekisteriApi } from './api/oppijanumerorekisteri';
 
 import './reset.css';
 import './general-style.css';
@@ -28,13 +29,16 @@ const App = () => {
         reducer: {
             ...rootReducer,
             [kayttooikeusApi.reducerPath]: kayttooikeusApi.reducer,
+            [oppijanumerorekisteriApi.reducerPath]: oppijanumerorekisteriApi.reducer,
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: true,
                 immutableCheck: false,
                 serializableCheck: false,
-            }).concat(kayttooikeusApi.middleware),
+            })
+                .concat(kayttooikeusApi.middleware)
+                .concat(oppijanumerorekisteriApi.middleware),
         devTools: isDev && isClient,
     });
     setupListeners(store.dispatch);
