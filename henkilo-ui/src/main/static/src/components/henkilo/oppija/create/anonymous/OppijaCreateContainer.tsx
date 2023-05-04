@@ -113,7 +113,7 @@ class OppijaCreateContainer extends React.Component<Props, State> {
                 });
             } else {
                 // luodaan oppija
-                this.luoOppijaJaNavigoi(oppija);
+                this.luoOppijaJaNavigoi({ ...oppija, yksiloity: true });
             }
         } catch (error) {
             this.props.addGlobalNotification({
