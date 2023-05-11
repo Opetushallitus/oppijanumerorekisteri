@@ -90,7 +90,12 @@
     background-color: #FFFFFF;
 }
 
-.link-to-button {
+.person button:first-of-type {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.person button:last-of-type {
     width: 100%;
     margin-bottom: 0.5rem;
 }

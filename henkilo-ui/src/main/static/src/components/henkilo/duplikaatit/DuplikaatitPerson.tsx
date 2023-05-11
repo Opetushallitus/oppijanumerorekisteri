@@ -11,6 +11,7 @@ import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types
 import type { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import Button from '../../common/button/Button';
+import { LinkRelation } from './HenkiloViewDuplikaatit';
 
 type Props = {
     henkilo: HenkiloDuplicate;
@@ -18,18 +19,14 @@ type Props = {
     L: Localisations;
     locale: Locale;
     koodisto: KoodistoState;
-    setSelection: (duplicate: HenkiloDuplicate, add: boolean) => void;
     isMaster: boolean;
     canForceLink: boolean;
     vainLuku: boolean;
     henkiloType: string;
-    duplicatesIncludeYksiloity: boolean;
-    setMasterToDuplicateOid: (oid: string) => void;
+    setLink: (link: LinkRelation) => void;
 };
 
-type State = {
-    checkboxValue: boolean;
-};
+type State = {};
 
 type CellProps = React.HTMLAttributes<HTMLSpanElement> & {
     hakemus?: boolean;
@@ -45,14 +42,6 @@ const sukupuolet = {
 };
 
 export default class DuplikaatitPerson extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            checkboxValue: this.props.isMaster,
-        };
-    }
-
     render() {
         const {
             henkilo,
@@ -64,17 +53,14 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
             vainLuku,
             isMaster,
             canForceLink,
-            duplicatesIncludeYksiloity,
-            setMasterToDuplicateOid,
+            setLink,
         } = this.props;
         const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map((hakemus) => this._parseHakemus(hakemus)) : [];
         const hakemus = hakemukset.shift();
-        const isCheckboxDisabled =
-            isMaster ||
-            master.passivoitu ||
-            henkilo.yksiloityVTJ ||
-            (henkilo.yksiloity && !canForceLink) ||
-            !henkilo.yksiloity === duplicatesIncludeYksiloity;
+        const canLinkHenkiloToMaster =
+            !master.passivoitu && !henkilo.yksiloityVTJ && (!henkilo.yksiloity || canForceLink);
+        const canLinkMasterToHenkilo =
+            !henkilo.passivoitu && !master.yksiloityVTJ && (!master.yksiloity || canForceLink);
 
         return (
             <div className={classNames({ person: true, master: isMaster })}>
@@ -139,46 +125,27 @@ export default class DuplikaatitPerson extends React.Component<Props, State> {
                         </DuplikaatitApplicationsPopup>
                     )}
                 </DataCell>
-                {!vainLuku && (
+                {!vainLuku && !isMaster && (
                     <DataCell>
-                        <div>
-                            <input
-                                id={henkilo.oidHenkilo}
-                                type="checkbox"
-                                disabled={isCheckboxDisabled}
-                                checked={this.state.checkboxValue}
-                                onChange={this._onCheck.bind(this, henkilo)}
-                                data-test-id={`check-duplicate-${henkilo.oidHenkilo}`}
-                            />
-                            <label htmlFor={henkilo.oidHenkilo} className={isCheckboxDisabled ? 'disabled' : ''}>
-                                {isMaster ? 'Yhdistetään tähän henkilöön' : 'Valitse yhdistettäväksi'}
-                            </label>
+                        <Button
+                            disabled={!canLinkHenkiloToMaster}
+                            action={() => setLink({ master, duplicate: henkilo })}
+                        >
+                            {'< Yhdistä tämä duplikaatti'}
+                        </Button>
+                        <div className="duplicate-separator-container">
+                            <span className="duplicate-separator">TAI</span>
                         </div>
-                        {!isMaster && (
-                            <>
-                                <div className="duplicate-separator-container">
-                                    <span className="duplicate-separator">TAI</span>
-                                </div>
-                                <Button
-                                    className="link-to-button"
-                                    disabled={master.passivoitu || master.yksiloityVTJ}
-                                    action={() => setMasterToDuplicateOid(henkilo.oidHenkilo)}
-                                >
-                                    Yhdistä tähän henkilöön
-                                </Button>
-                            </>
-                        )}
+                        <Button
+                            disabled={!canLinkMasterToHenkilo}
+                            action={() => setLink({ master: henkilo, duplicate: master })}
+                        >
+                            {'Yhdistä tähän henkilöön >'}
+                        </Button>
                     </DataCell>
                 )}
             </div>
         );
-    }
-
-    _onCheck(duplicate: HenkiloDuplicate) {
-        this.props.setSelection(duplicate, !this.state.checkboxValue);
-        this.setState({
-            checkboxValue: !this.state.checkboxValue,
-        });
     }
 
     _parseHakemus(hakemus: Hakemus): DuplikaatitHakemus {
