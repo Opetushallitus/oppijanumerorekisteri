@@ -20,7 +20,7 @@ import type { OmattiedotState } from '../../../reducers/omattiedot.reducer';
 import { hasAnyPalveluRooli } from '../../../utilities/palvelurooli.util';
 import { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemus.type';
 import OphModal from '../../common/modal/OphModal';
-import { usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
+import { LinkHenkilosRequest, usePostLinkHenkilosMutation } from '../../../api/oppijanumerorekisteri';
 
 import './HenkiloViewDuplikaatit.css';
 
@@ -54,6 +54,7 @@ const HenkiloViewDuplikaatit = ({
 }: Props) => {
     const [selectedDuplicates, setSelectedDuplicates] = useState<HenkiloDuplicate[]>([]);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [masterToDuplicateOid, setMasterToDuplicateOid] = useState<string>('');
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
     const emails = (henkilo.henkilo.yhteystiedotRyhma || [])
@@ -65,8 +66,10 @@ const HenkiloViewDuplikaatit = ({
         !enabledDuplikaattiView(oidHenkilo, henkilo.kayttaja, henkilo.masterLoading, henkilo.master.oidHenkilo) ||
         oidHenkilo === omattiedot.data.oid;
     const duplicatesIncludeYksiloity = selectedDuplicates.length && selectedDuplicates.some((s) => s.yksiloity);
-    const isLinkDisabled = isDuplicateViewDisabled || !selectedDuplicates.length || duplicatesIncludeYksiloity;
-    const isForceLinkDisabled = isDuplicateViewDisabled || !selectedDuplicates.length || !duplicatesIncludeYksiloity;
+    const isLinkDisabled =
+        isDuplicateViewDisabled || !selectedDuplicates.length || duplicatesIncludeYksiloity || !!masterToDuplicateOid;
+    const isForceLinkDisabled =
+        isDuplicateViewDisabled || !selectedDuplicates.length || !duplicatesIncludeYksiloity || !!masterToDuplicateOid;
 
     const setSelection = (d: HenkiloDuplicate, add: boolean) => {
         const newSelected = add
@@ -75,82 +78,88 @@ const HenkiloViewDuplikaatit = ({
         setSelectedDuplicates(newSelected);
     };
 
-    const _link = async (force: boolean) => {
-        const masterOid = oidHenkilo ?? '';
-        const duplicateOids = selectedDuplicates.map((d) => d.oidHenkilo);
-        return await postLinkHenkilos({ masterOid, duplicateOids, L, force })
+    const doLinkHenkilos = async (linkHenkilosRequest: LinkHenkilosRequest) => {
+        return await postLinkHenkilos(linkHenkilosRequest)
             .unwrap()
             .then(() => {
                 setShowConfirmation(false);
-                router?.push(`/${henkiloType}/${masterOid}`);
+                router?.push(`/${henkiloType}/${oidHenkilo}`);
             })
             .catch(() => {
                 setShowConfirmation(false);
             });
     };
 
+    const linkToMaster = async (force: boolean) => {
+        const masterOid = oidHenkilo ?? '';
+        const duplicateOids = selectedDuplicates.map((d) => d.oidHenkilo);
+        return await doLinkHenkilos({ masterOid, duplicateOids, L, force });
+    };
+
+    const linkMasterToDuplicate = async (duplicateOid: string, force: boolean) => {
+        return await doLinkHenkilos({ masterOid: duplicateOid, duplicateOids: [oidHenkilo], L, force });
+    };
+
     return (
         <div className="duplicates-view">
             <div id="duplicates">
                 <div className="person header">
-                    <span />
-                    <span />
-                    <span>{L['DUPLIKAATIT_HENKILOTUNNUS']}</span>
-                    <span>{L['DUPLIKAATIT_YKSILOITY']}</span>
-                    <span>{L['DUPLIKAATIT_KUTSUMANIMI']}</span>
-                    <span>{L['DUPLIKAATIT_ETUNIMET']}</span>
-                    <span>{L['DUPLIKAATIT_SUKUNIMI']}</span>
-                    <span>{L['DUPLIKAATIT_SUKUPUOLI']}</span>
-                    <span>{L['DUPLIKAATIT_SYNTYMAAIKA']}</span>
-                    <span>{L['DUPLIKAATIT_OIDHENKILO']}</span>
-                    <span>{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
-                    <span>{L['DUPLIKAATIT_PASSINUMERO']}</span>
-                    <span>{L['DUPLIKAATIT_KANSALAISUUS']}</span>
-                    <span>{L['DUPLIKAATIT_AIDINKIELI']}</span>
-                    <span />
-                    <span className="hakemus">{L['DUPLIKAATIT_KANSALAISUUS']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_AIDINKIELI']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_OSOITE']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_POSTINUMERO']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_PASSINUMERO']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_KANSALLINENID']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENTILA']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENOID']}</span>
-                    <span className="hakemus">{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</span>
+                    <div />
+                    <div />
+                    <div>{L['DUPLIKAATIT_HENKILOTUNNUS']}</div>
+                    <div>{L['DUPLIKAATIT_YKSILOITY']}</div>
+                    <div>{L['DUPLIKAATIT_KUTSUMANIMI']}</div>
+                    <div>{L['DUPLIKAATIT_ETUNIMET']}</div>
+                    <div>{L['DUPLIKAATIT_SUKUNIMI']}</div>
+                    <div>{L['DUPLIKAATIT_SUKUPUOLI']}</div>
+                    <div>{L['DUPLIKAATIT_SYNTYMAAIKA']}</div>
+                    <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
+                    <div>{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
+                    <div>{L['DUPLIKAATIT_PASSINUMERO']}</div>
+                    <div>{L['DUPLIKAATIT_KANSALAISUUS']}</div>
+                    <div>{L['DUPLIKAATIT_AIDINKIELI']}</div>
+                    <div />
+                    <div className="hakemus">{L['DUPLIKAATIT_KANSALAISUUS']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_AIDINKIELI']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_OSOITE']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_POSTINUMERO']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_PASSINUMERO']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_KANSALLINENID']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENTILA']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENOID']}</div>
+                    <div className="hakemus">{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</div>
                 </div>
                 <DuplikaatitPerson
                     henkilo={master}
+                    master={master}
                     koodisto={koodisto}
                     L={L}
-                    header={'DUPLIKAATIT_HENKILON_TIEDOT'}
                     locale={locale}
-                    classNames={{ person: true, master: true }}
                     isMaster={true}
-                    isMasterPassivoitu={master.passivoitu}
                     vainLuku={vainLuku}
                     henkiloType={henkiloType}
                     setSelection={setSelection}
                     canForceLink={canForceLink}
                     duplicatesIncludeYksiloity={duplicatesIncludeYksiloity}
+                    setMasterToDuplicateOid={setMasterToDuplicateOid}
                 />
                 {henkilo.duplicates.map((duplicate) => (
                     <DuplikaatitPerson
                         henkilo={duplicate}
+                        master={master}
                         koodisto={koodisto}
                         L={L}
-                        header={'DUPLIKAATIT_DUPLIKAATTI'}
                         locale={locale}
                         key={duplicate.oidHenkilo}
                         isMaster={false}
-                        isMasterPassivoitu={master.passivoitu}
-                        classNames={{ person: true }}
                         vainLuku={vainLuku}
                         henkiloType={henkiloType}
                         setSelection={setSelection}
                         canForceLink={canForceLink}
                         duplicatesIncludeYksiloity={duplicatesIncludeYksiloity}
+                        setMasterToDuplicateOid={setMasterToDuplicateOid}
                     />
                 ))}
                 {henkilo.duplicatesLoading ? <Loader /> : null}
@@ -162,7 +171,7 @@ const HenkiloViewDuplikaatit = ({
             </div>
             {!vainLuku && oidHenkilo && (
                 <FloatingBar>
-                    <Button disabled={isLinkDisabled} action={() => _link(false)} dataTestId="yhdista-button">
+                    <Button disabled={isLinkDisabled} action={() => linkToMaster(false)} dataTestId="yhdista-button">
                         {L['DUPLIKAATIT_YHDISTA']}
                     </Button>
                     {canForceLink && (
@@ -177,23 +186,38 @@ const HenkiloViewDuplikaatit = ({
                 </FloatingBar>
             )}
             {showConfirmation && (
-                <OphModal
-                    onClose={() => setShowConfirmation(false)}
-                    onOverlayClick={() => setShowConfirmation(false)}
-                    title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
-                >
-                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OLETKO_VARMA']}</p>
-                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OPPIJANUMERO']}</p>
-                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_HETU_EI_OLE']}</p>
-                    <div className="duplicate_confirm_buttons">
-                        <Button action={() => _link(true)} dataTestId="confirm-force-link">
-                            {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}
-                        </Button>
-                        <Button action={() => setShowConfirmation(false)}>{L['DUPLIKAATIT_VARMISTUS_PERUUTA']}</Button>
-                    </div>
-                </OphModal>
+                <ConfirmationModal L={L} hide={() => setShowConfirmation(false)} link={() => linkToMaster(true)} />
+            )}
+            {masterToDuplicateOid && (
+                <ConfirmationModal
+                    L={L}
+                    hide={() => setMasterToDuplicateOid('')}
+                    link={() => linkMasterToDuplicate(masterToDuplicateOid, true)}
+                />
             )}
         </div>
+    );
+};
+
+type ConfirmationModalProps = {
+    hide: () => void;
+    link: () => void;
+    L: Localisations;
+};
+
+const ConfirmationModal = ({ hide, link, L }: ConfirmationModalProps) => {
+    return (
+        <OphModal onClose={() => hide()} onOverlayClick={() => hide()} title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}>
+            <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OLETKO_VARMA']}</p>
+            <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OPPIJANUMERO']}</p>
+            <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_HETU_EI_OLE']}</p>
+            <div className="duplicate_confirm_buttons">
+                <Button action={() => link()} dataTestId="confirm-force-link">
+                    {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}
+                </Button>
+                <Button action={() => hide()}>{L['DUPLIKAATIT_VARMISTUS_PERUUTA']}</Button>
+            </div>
+        </OphModal>
     );
 };
 

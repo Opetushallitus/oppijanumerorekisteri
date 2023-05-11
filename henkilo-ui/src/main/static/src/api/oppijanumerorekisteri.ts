@@ -7,7 +7,7 @@ import { Localisations } from '../types/localisation.type';
 
 type Passinumerot = string[];
 
-type LinkHenkilosRequest = {
+export type LinkHenkilosRequest = {
     masterOid: string;
     force: boolean;
     duplicateOids: string[];
