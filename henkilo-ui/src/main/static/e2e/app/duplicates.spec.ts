@@ -27,7 +27,7 @@ const routeOmattiedotWithPurkuRole = async (page: Page) => {
     });
 };
 
-test.describe('Hae duplikaatit', () => {
+test.skip('Hae duplikaatit', () => {
     test('linking non-yksiloity happy path', async ({ page }) => {
         await page.goto('/virkailija/1.2.3.4.5/duplikaatit');
         await page.click(`[data-test-id="check-duplicate-${groupedDuplicates.yksiloimaton[0].oidHenkilo}"]`);

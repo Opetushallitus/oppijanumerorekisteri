@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { RootState } from '../../../store';
 import Button from '../../common/button/Button';
@@ -7,8 +7,7 @@ import DuplikaatitPerson from './DuplikaatitPerson';
 import Loader from '../../common/icons/Loader';
 import { enabledDuplikaattiView } from '../../navigation/NavigationTabs';
 import type { Locale } from '../../../types/locale.type';
-import type { Localisations } from '../../../types/localisation.type';
-import type { KoodistoState } from '../../../reducers/koodisto.reducer';
+import type { L10n } from '../../../types/localisation.type';
 import { LocalNotification } from '../../common/Notification/LocalNotification';
 import { NOTIFICATIONTYPES } from '../../common/Notification/notificationtypes';
 import type {
@@ -28,7 +27,7 @@ export type LinkRelation = {
     duplicate: HenkiloDuplicate;
 };
 
-type OwnProps = {
+type Props = {
     router?: any;
     oidHenkilo?: string;
     henkilo: HenkiloDuplicateLenient & { hakemukset?: Hakemus[] };
@@ -36,26 +35,11 @@ type OwnProps = {
     vainLuku: boolean;
 };
 
-type StateProps = {
-    locale: Locale;
-    L: Localisations;
-    koodisto: KoodistoState;
-    omattiedot: OmattiedotState;
-};
-
-type Props = OwnProps & StateProps;
-
-const HenkiloViewDuplikaatit = ({
-    henkilo,
-    koodisto,
-    locale,
-    L,
-    vainLuku,
-    henkiloType,
-    router,
-    oidHenkilo,
-    omattiedot,
-}: Props) => {
+const HenkiloViewDuplikaatit = ({ henkilo, vainLuku, henkiloType, router, oidHenkilo }: Props) => {
+    const omattiedot = useSelector<RootState, OmattiedotState>((state) => state.omattiedot);
+    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
+    const locale = useSelector<RootState, Locale>((state) => state.locale);
+    const L = l10n[locale];
     const [linkObj, setLink] = useState<LinkRelation>();
     const [postLinkHenkilos] = usePostLinkHenkilosMutation();
     const canForceLink = hasAnyPalveluRooli(omattiedot.organisaatiot, ['OPPIJANUMEROREKISTERI_YKSILOINNIN_PURKU']);
@@ -73,7 +57,7 @@ const HenkiloViewDuplikaatit = ({
             masterOid: linkObj.master.oidHenkilo,
             duplicateOids: [linkObj.duplicate.oidHenkilo],
             L,
-            force: linkObj.master.yksiloity,
+            force: linkObj.duplicate.yksiloity,
         })
             .unwrap()
             .then(() => {
@@ -117,9 +101,6 @@ const HenkiloViewDuplikaatit = ({
             <DuplikaatitPerson
                 henkilo={master}
                 master={master}
-                koodisto={koodisto}
-                L={L}
-                locale={locale}
                 isMaster={true}
                 vainLuku={vainLuku}
                 henkiloType={henkiloType}
@@ -130,9 +111,6 @@ const HenkiloViewDuplikaatit = ({
                 <DuplikaatitPerson
                     henkilo={duplicate}
                     master={master}
-                    koodisto={koodisto}
-                    L={L}
-                    locale={locale}
                     key={duplicate.oidHenkilo}
                     isMaster={false}
                     vainLuku={vainLuku}
@@ -154,8 +132,14 @@ const HenkiloViewDuplikaatit = ({
                     title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
                 >
                     <p className="duplicate_confirm_p">{`Oletko varma, että haluat yhdistää henkilöt?`}</p>
-                    <p className="duplicate_confirm_p">{`- Oppijanumero ${linkObj.master.oidHenkilo} (${linkObj.master.sukunimi}, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) jää voimaan`}</p>
-                    <p className="duplicate_confirm_p">{linkObj.duplicate.yksiloity ? `- Oppijalta ${linkObj.duplicate.oidHenkilo} puretaan yksilöinti` : ''}</p>
+                    <p className="duplicate_confirm_p">{`- Oppijanumero ${linkObj.master.oidHenkilo} (${
+                        linkObj.master.sukunimi
+                    }, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) jää voimaan`}</p>
+                    <p className="duplicate_confirm_p">
+                        {`- Oppija ${linkObj.duplicate.oidHenkilo} passivoidaan ${
+                            linkObj.duplicate.yksiloity ? 'ja häneltä puretaan yksilöinti' : ''
+                        } `}
+                    </p>
                     <div className="duplicate_confirm_buttons">
                         <Button action={() => link()} dataTestId="confirm-force-link">
                             {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}
@@ -168,11 +152,4 @@ const HenkiloViewDuplikaatit = ({
     );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-    L: state.l10n.localisations[state.locale],
-    locale: state.locale,
-    koodisto: state.koodisto,
-    omattiedot: state.omattiedot,
-});
-
-export default connect(mapStateToProps)(HenkiloViewDuplikaatit);
+export default HenkiloViewDuplikaatit;

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import './DuplikaatitPerson.css';
+import { useSelector } from 'react-redux';
+
 import DuplikaatitApplicationsPopup from './DuplikaatitApplicationsPopup';
 import DuplikaatitPersonOtherApplications from './DuplikaatitPersonOtherApplications';
-import type { Localisations } from '../../../types/localisation.type';
+import type { L10n } from '../../../types/localisation.type';
 import type { Locale } from '../../../types/locale.type';
 import type { KoodistoState, KoodistoStateKoodi } from '../../../reducers/koodisto.reducer';
 import type { DuplikaatitHakemus } from '../../../types/duplikaatithakemus.types';
@@ -12,13 +13,13 @@ import type { Hakemus } from '../../../types/domain/oppijanumerorekisteri/Hakemu
 import type { HenkiloDuplicate } from '../../../types/domain/oppijanumerorekisteri/HenkiloDuplicate';
 import Button from '../../common/button/Button';
 import { LinkRelation } from './HenkiloViewDuplikaatit';
+import { RootState } from '../../../store';
+
+import './DuplikaatitPerson.css';
 
 type DuplikaatitPersonProps = {
     henkilo: HenkiloDuplicate;
     master: HenkiloDuplicate;
-    L: Localisations;
-    locale: Locale;
-    koodisto: KoodistoState;
     isMaster: boolean;
     canForceLink: boolean;
     vainLuku: boolean;
@@ -40,7 +41,11 @@ const sukupuolet = {
 };
 
 const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
-    const { henkilo, master, henkiloType, L, koodisto, locale, vainLuku, isMaster, canForceLink, setLink } = props;
+    const { henkilo, master, henkiloType, vainLuku, isMaster, canForceLink, setLink } = props;
+    const koodisto = useSelector<RootState, KoodistoState>((state) => state.koodisto);
+    const l10n = useSelector<RootState, L10n>((state) => state.l10n.localisations);
+    const locale = useSelector<RootState, Locale>((state) => state.locale);
+    const L = l10n[locale];
     const hakemukset = henkilo.hakemukset ? henkilo.hakemukset.map(_parseHakemus(koodisto, locale)) : [];
     const hakemus = hakemukset.shift();
     const canLinkDuplicateToMaster =
