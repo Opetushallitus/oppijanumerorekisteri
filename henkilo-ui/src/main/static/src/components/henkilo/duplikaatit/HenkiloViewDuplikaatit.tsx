@@ -86,78 +86,76 @@ const HenkiloViewDuplikaatit = ({
 
     return (
         <div className="duplicates-view">
-            <div id="duplicates">
-                <div className="person header">
-                    <div />
-                    <div />
-                    <div>{L['DUPLIKAATIT_HENKILOTUNNUS']}</div>
-                    <div>{L['DUPLIKAATIT_YKSILOITY']}</div>
-                    <div>{L['DUPLIKAATIT_KUTSUMANIMI']}</div>
-                    <div>{L['DUPLIKAATIT_ETUNIMET']}</div>
-                    <div>{L['DUPLIKAATIT_SUKUNIMI']}</div>
-                    <div>{L['DUPLIKAATIT_SUKUPUOLI']}</div>
-                    <div>{L['DUPLIKAATIT_SYNTYMAAIKA']}</div>
-                    <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
-                    <div>{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
-                    <div>{L['DUPLIKAATIT_PASSINUMERO']}</div>
-                    <div>{L['DUPLIKAATIT_KANSALAISUUS']}</div>
-                    <div>{L['DUPLIKAATIT_AIDINKIELI']}</div>
-                    <div />
-                    <div className="hakemus">{L['DUPLIKAATIT_KANSALAISUUS']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_AIDINKIELI']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_OSOITE']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_POSTINUMERO']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_PASSINUMERO']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_KANSALLINENID']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENTILA']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENOID']}</div>
-                    <div className="hakemus">{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</div>
-                </div>
+            <div className="person header">
+                <div />
+                <div />
+                <div>{L['DUPLIKAATIT_HENKILOTUNNUS']}</div>
+                <div>{L['DUPLIKAATIT_YKSILOITY']}</div>
+                <div>{L['DUPLIKAATIT_KUTSUMANIMI']}</div>
+                <div>{L['DUPLIKAATIT_ETUNIMET']}</div>
+                <div>{L['DUPLIKAATIT_SUKUNIMI']}</div>
+                <div>{L['DUPLIKAATIT_SUKUPUOLI']}</div>
+                <div>{L['DUPLIKAATIT_SYNTYMAAIKA']}</div>
+                <div>{L['DUPLIKAATIT_OIDHENKILO']}</div>
+                <div>{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
+                <div>{L['DUPLIKAATIT_PASSINUMERO']}</div>
+                <div>{L['DUPLIKAATIT_KANSALAISUUS']}</div>
+                <div>{L['DUPLIKAATIT_AIDINKIELI']}</div>
+                <div />
+                <div className="hakemus">{L['DUPLIKAATIT_KANSALAISUUS']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_AIDINKIELI']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_MATKAPUHELINNUMERO']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_SAHKOPOSTIOSOITE']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_OSOITE']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_POSTINUMERO']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_PASSINUMERO']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_KANSALLINENID']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENTILA']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_HAKEMUKSENOID']}</div>
+                <div className="hakemus">{L['DUPLIKAATIT_MUUTHAKEMUKSET']}</div>
+            </div>
+            <DuplikaatitPerson
+                henkilo={master}
+                master={master}
+                koodisto={koodisto}
+                L={L}
+                locale={locale}
+                isMaster={true}
+                vainLuku={vainLuku}
+                henkiloType={henkiloType}
+                canForceLink={canForceLink}
+                setLink={setLink}
+            />
+            {henkilo.duplicates.map((duplicate) => (
                 <DuplikaatitPerson
-                    henkilo={master}
+                    henkilo={duplicate}
                     master={master}
                     koodisto={koodisto}
                     L={L}
                     locale={locale}
-                    isMaster={true}
+                    key={duplicate.oidHenkilo}
+                    isMaster={false}
                     vainLuku={vainLuku}
                     henkiloType={henkiloType}
                     canForceLink={canForceLink}
                     setLink={setLink}
                 />
-                {henkilo.duplicates.map((duplicate) => (
-                    <DuplikaatitPerson
-                        henkilo={duplicate}
-                        master={master}
-                        koodisto={koodisto}
-                        L={L}
-                        locale={locale}
-                        key={duplicate.oidHenkilo}
-                        isMaster={false}
-                        vainLuku={vainLuku}
-                        henkiloType={henkiloType}
-                        canForceLink={canForceLink}
-                        setLink={setLink}
-                    />
-                ))}
-                {henkilo.duplicatesLoading ? <Loader /> : null}
-                <LocalNotification
-                    title={L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']}
-                    type={NOTIFICATIONTYPES.INFO}
-                    toggle={!henkilo.duplicates}
-                ></LocalNotification>
-            </div>
+            ))}
+            {henkilo.duplicatesLoading ? <Loader /> : null}
+            <LocalNotification
+                title={L['DUPLIKAATIT_NOTIFICATION_EI_LOYTYNYT']}
+                type={NOTIFICATIONTYPES.INFO}
+                toggle={!henkilo.duplicates}
+            ></LocalNotification>
             {linkObj && linkingEnabled && (
                 <OphModal
                     onClose={() => setLink(undefined)}
                     onOverlayClick={() => setLink(undefined)}
                     title={L['DUPLIKAATIT_VARMISTUS_OTSIKKO']}
                 >
-                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OLETKO_VARMA']}</p>
-                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_OPPIJANUMERO']}</p>
-                    <p className="duplicate_confirm_p">{L['DUPLIKAATIT_VARMISTUS_HETU_EI_OLE']}</p>
+                    <p className="duplicate_confirm_p">{`Oletko varma, että haluat yhdistää henkilöt?`}</p>
+                    <p className="duplicate_confirm_p">{`- Oppijanumero ${linkObj.master.oidHenkilo} (${linkObj.master.sukunimi}, ${linkObj.master.kutsumanimi ?? linkObj.master.etunimet}) jää voimaan`}</p>
+                    <p className="duplicate_confirm_p">{linkObj.duplicate.yksiloity ? `- Oppijalta ${linkObj.duplicate.oidHenkilo} puretaan yksilöinti` : ''}</p>
                     <div className="duplicate_confirm_buttons">
                         <Button action={() => link()} dataTestId="confirm-force-link">
                             {L['DUPLIKAATIT_VARMISTUS_YHDISTA']}
