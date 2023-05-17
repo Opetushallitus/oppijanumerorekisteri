@@ -12,10 +12,7 @@ import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.models.Tuonti;
 import fi.vm.sade.oppijanumerorekisteri.models.TuontiRivi;
-import fi.vm.sade.oppijanumerorekisteri.repositories.HenkiloRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
-import fi.vm.sade.oppijanumerorekisteri.repositories.Sort;
-import fi.vm.sade.oppijanumerorekisteri.repositories.TuontiRepository;
+import fi.vm.sade.oppijanumerorekisteri.repositories.*;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.OppijaTuontiCriteria;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSort;
 import fi.vm.sade.oppijanumerorekisteri.repositories.sort.OppijaTuontiSortFactory;
@@ -50,6 +47,7 @@ public class OppijaServiceImpl implements OppijaService {
     private final HenkiloRepository henkiloRepository;
     private final TuontiRepository tuontiRepository;
     private final OrganisaatioRepository organisaatioRepository;
+    private final HenkiloViiteRepository henkiloViiteRepository;
     private final UserDetailsHelper userDetailsHelper;
     private final PermissionChecker permissionChecker;
     private final ObjectMapper objectMapper;
@@ -101,7 +99,35 @@ public class OppijaServiceImpl implements OppijaService {
         getTuontiRivit(id);
 
         // rivit on jo ladattu valmiiksi joten tämä ei aiheuta kyselyä/rivi
-        return mapper.map(entity, OppijaTuontiReadDto.class);
+        OppijaTuontiReadDto tuonti = mapper.map(entity, OppijaTuontiReadDto.class);
+
+        decorateHenkilosWithMaster(resolveHenkilosFor(tuonti));
+        decorateHenkilosWithLinkedOids(resolveHenkilosFor(tuonti));
+
+        return tuonti;
+    }
+
+    private List<OppijaReadDto> resolveHenkilosFor(OppijaTuontiReadDto tuonti) {
+        return tuonti.getHenkilot().stream().map(OppijaTuontiRiviReadDto::getHenkilo).collect(toList());
+    }
+
+    private Set<String> resolveOidsFor(List<OppijaReadDto> henkilos) {
+        return henkilos.stream().map(OppijaReadDto::getOid).collect(toSet());
+    }
+
+    private void decorateHenkilosWithMaster(List<OppijaReadDto> henkilos) {
+        final Map<String, String> masters = henkiloViiteRepository.getMasters(resolveOidsFor(henkilos))
+                .stream().collect(toMap(HenkiloViiteRepository.Linked::getOid, HenkiloViiteRepository.Linked::getLinked));
+        henkilos.stream()
+                .filter(henkilo -> henkilo.getOppijanumero() == null)
+                .forEach(henkilo -> henkilo.setOppijanumero(masters.get(henkilo.getOid())));
+    }
+
+    @Override
+    public void decorateHenkilosWithLinkedOids(List<OppijaReadDto> henkilos) {
+        final Map<String, Set<String>> linked = henkiloViiteRepository.getLinked(resolveOidsFor(henkilos))
+                .stream().collect(groupingBy(HenkiloViiteRepository.Linked::getOid, mapping(HenkiloViiteRepository.Linked::getLinked, toSet())));
+        henkilos.forEach(henkilo -> henkilo.setLinked(linked.getOrDefault(henkilo.getOid(), Set.of())));
     }
 
     private List<TuontiRivi> getTuontiRivit(final long tuontiId) {

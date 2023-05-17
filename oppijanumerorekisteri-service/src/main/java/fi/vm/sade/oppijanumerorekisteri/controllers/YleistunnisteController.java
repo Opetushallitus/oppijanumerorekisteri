@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +49,21 @@ public class YleistunnisteController {
     private final OppijaService oppijaService;
 
     private final YleistunnisteService yleistunnisteService;
+
+    @ApiOperation(value = "OID:n tarkistus",
+            authorizations = @Authorization("onr"),
+            notes = "Tarkistaa onko annettu oid oppijanumero vai ei. Palauttaa myös mahdolliset linkitetyt oid:it.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Henkilölle löytyi oppijanumero", response = FilteredStudent.class),
+            @ApiResponse(code = 404, message = "Henkilöä ei löydy annetuin tiedoin"),
+    })
+    @GetMapping(value = "/hae/{oid}")
+    public FilteredStudent tarkistaOid(@ApiParam("Tarkistettava OID")
+                                                @PathVariable final String oid) {
+        OppijaReadDto person = yleistunnisteService.tarkista(oid);
+        oppijaService.decorateHenkilosWithLinkedOids(List.of(person));
+        return new FilteredStudent(person);
+    }
 
     @ApiOperation(value = "Oppijanumeron haku yksittäiselle henkilölle",
             authorizations = @Authorization("onr"),
@@ -188,9 +204,11 @@ public class YleistunnisteController {
     @Generated
     @Getter
     static class FilteredRow {
+        @ApiModelProperty("Lähdejärjestelmän käyttämä tunniste henkilölle")
         private final String tunniste;
         private final FilteredStudent henkilo;
         @JsonInclude(JsonInclude.Include.NON_NULL)
+        @ApiModelProperty("Indikoi jos henkilön nimivertailussa on tapahtunut virhe")
         private final Boolean conflict;
 
         public FilteredRow(OppijaTuontiRiviReadDto dto) {
@@ -203,14 +221,21 @@ public class YleistunnisteController {
     @Generated
     @Getter
     static class FilteredStudent {
+        @ApiModelProperty("Yksilöivä tunniste jäjestelmässä olevalle henkilölle")
         private final String oid;
+        @ApiModelProperty("Yksilöivä tunniste identiteetille")
         private final String oppijanumero;
+        @ApiModelProperty("Päällä mikäli henkilö on passivoitu järjestelmässä")
         private final boolean passivoitu;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @ApiModelProperty("Kaikkien linkitettyjen henkilöiden oid:t (master/slave)")
+        private final Set<String> linked;
 
         public FilteredStudent(OppijaReadDto dto) {
             oid = dto.getOid();
             oppijanumero = dto.getOppijanumero();
             passivoitu = dto.isPassivoitu();
+            linked = dto.getLinked();
         }
     }
 }

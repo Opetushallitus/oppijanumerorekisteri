@@ -3,54 +3,44 @@ package fi.vm.sade.oppijanumerorekisteri.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.vm.sade.oppijanumerorekisteri.FilesystemHelper;
 import fi.vm.sade.oppijanumerorekisteri.OppijanumerorekisteriServiceApplication;
-import fi.vm.sade.oppijanumerorekisteri.clients.KayttooikeusClient;
+import fi.vm.sade.oppijanumerorekisteri.clients.VtjClient;
+import fi.vm.sade.oppijanumerorekisteri.configurations.H2Configuration;
 import fi.vm.sade.oppijanumerorekisteri.configurations.properties.DevProperties;
-import fi.vm.sade.oppijanumerorekisteri.dto.*;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.ConflictException;
-import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
-import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
-import fi.vm.sade.oppijanumerorekisteri.services.OppijaService;
-import fi.vm.sade.oppijanumerorekisteri.services.OrganisaatioService;
-import fi.vm.sade.oppijanumerorekisteri.services.YleistunnisteService;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl;
-import fi.vm.sade.oppijanumerorekisteri.services.impl.UserDetailsHelperImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import fi.vm.sade.oppijanumerorekisteri.services.KoodistoService;
+import fi.vm.sade.oppijanumerorekisteri.validators.OppijaTuontiCreatePostValidator;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 import static fi.vm.sade.oppijanumerorekisteri.controllers.YleistunnisteController.REQUEST_MAPPING;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.ROOT_ORGANISATION_SUFFIX;
+import static fi.vm.sade.oppijanumerorekisteri.services.impl.PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Sql("/controller/oppija/integration/fixture/truncate-tables.sql")
+@Sql("/controller/oppija/integration/fixture/tuonti-test-fixture.sql")
 @ActiveProfiles("dev")
-@RunWith(SpringRunner.class)
-@WebMvcTest(YleistunnisteController.class)
-@ContextConfiguration(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, PermissionCheckerImpl.class, UserDetailsHelperImpl.class})
-public class YleistunnisteControllerTest {
+@SpringBootTest(classes = {OppijanumerorekisteriServiceApplication.class, DevProperties.class, H2Configuration.class})
+@AutoConfigureMockMvc
+class YleistunnisteControllerTest {
 
     private static final String WRONG_ACCESS_RIGHT = "PIGGLYWIGGLY";
     private static final String hae = REQUEST_MAPPING + "/hae";
-
-    @MockBean
-    private OppijaService oppijaServiceMock;
 
     @Autowired
     private MockMvc mvc;
@@ -58,17 +48,21 @@ public class YleistunnisteControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private KayttooikeusClient kayttooikeusClient;
+    @Value("${dev.username}")
+    private String username;
+
+    @Value("${dev.password}")
+    private String password;
 
     @MockBean
-    private OrganisaatioRepository organisaatioRepository;
+    private KoodistoService koodistoService;
 
     @MockBean
-    private OrganisaatioService organisaatioService;
+    private VtjClient vtjClient;
 
     @MockBean
-    private YleistunnisteService yleistunnisteService;
+    private OppijaTuontiCreatePostValidator tuontiValidator;
+
 
     private YleistunnisteController.YleistunnisteInput getValidYleistunnisteInput() {
         return YleistunnisteController.YleistunnisteInput.builder()
@@ -94,313 +88,219 @@ public class YleistunnisteControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void putOppijaShouldWork() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+    void requiresAuthentication() throws Exception {
+        mvc.perform(post(hae))
+                .andExpect(status().is4xxClientError());
+    }
+
+
+    @Test
+    void requiresAuthorization() throws Exception {
+        mvc.perform(post(hae)
+                        .with(user(username).password(password).roles(WRONG_ACCESS_RIGHT)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void putOppijaShouldWork() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT + ROOT_ORGANISATION_SUFFIX))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk());
-
-        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
     }
 
     @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        dto.setSahkoposti(null);
+    void putOppijaShouldWorkWithoutSahkoposti() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
+        input.setSahkoposti(null);
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT + ROOT_ORGANISATION_SUFFIX))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk());
-
-        verify(oppijaServiceMock).create(any(OppijaTuontiCreateDto.class));
     }
 
     @Test
-    @WithMockUser("user1")
-    public void putOppijaShouldValidateSahkoposti() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        dto.setSahkoposti("lsdkjd");
+    void putOppijaShouldValidateSahkoposti() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
+        input.setSahkoposti("lsdkjd");
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
-    @WithMockUser("user1")
-    public void putOppijaShouldRequireHenkilot() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        dto.setHenkilot(null);
+    void putOppijaShouldRequireHenkilot() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
+        input.setHenkilot(null);
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
-    @WithMockUser("user1")
-    public void putOppijaShouldContainHenkilot() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
-        dto.setHenkilot(emptyList());
+    void putOppijaShouldContainHenkilot() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
+        input.setHenkilot(emptyList());
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
-    @WithMockUser("user1")
-    public void putOppijaShouldValidateHetu() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+    void putOppijaShouldValidateHetu() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
         YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
         oppijaCreateDto.getHenkilo().setHetu("hetu1");
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+        input.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
-    @WithMockUser("user1")
-    public void putOppijaShouldValidateHenkilo() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+    void putOppijaShouldValidateHenkilo() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
         YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
         oppijaCreateDto.getHenkilo().setHetu(null);
-        dto.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
+        input.setHenkilot(Stream.of(oppijaCreateDto).collect(toList()));
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
     }
 
     @Test
-    @WithMockUser("user1")
-    public void putOppijaShouldValidateEmptyHetu() throws Exception {
-        YleistunnisteController.YleistunnisteInput dto = getValidYleistunnisteInput();
+    void putOppijaShouldValidateEmptyHetu() throws Exception {
+        YleistunnisteController.YleistunnisteInput input = getValidYleistunnisteInput();
         YleistunnisteController.YleistunnisteInputRow oppijaCreateDto = getValidYleistunnisteInputRow();
         oppijaCreateDto.getHenkilo().setHetu("");
-        dto.setHenkilot(List.of(oppijaCreateDto));
+        input.setHenkilot(List.of(oppijaCreateDto));
 
         mvc.perform(put(REQUEST_MAPPING)
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(oppijaServiceMock);
     }
 
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void getTuontiPerustiedot() throws Exception {
-        OppijaTuontiPerustiedotReadDto result = new OppijaTuontiPerustiedotReadDto(37337L, 1000, 1000, true);
-        when(oppijaServiceMock.getTuontiById(anyLong())).thenReturn(result);
 
-        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337/perustiedot"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+    @Test
+    void getTuontiPerustiedot() throws Exception {
+        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=1/perustiedot"))
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
-
-        verify(oppijaServiceMock, times(1)).getTuontiById(37337L);
+                .andExpectAll(
+                        status().isOk(),
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
     }
 
     @Test
-    @WithMockUser(authorities = WRONG_ACCESS_RIGHT)
-    public void getTuontiPerustiedotAccessDenied() throws Exception {
-        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337/perustiedot"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void getTuontiPerustiedotNotFound() throws Exception {
-        when(oppijaServiceMock.getTuontiById(anyLong())).thenThrow(new NotFoundException());
-
-        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337/perustiedot"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+    void getTuontiPerustiedotNotFound() throws Exception {
+        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=4/perustiedot"))
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-
-        verify(oppijaServiceMock, times(1)).getTuontiById(37337L);
     }
 
     @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void create() throws Exception {
-        OppijaTuontiPerustiedotReadDto result = new OppijaTuontiPerustiedotReadDto(37337L, 1000, 1000, true);
-        when(oppijaServiceMock.create(anyLong())).thenReturn(result);
+    void create() throws Exception {
+        mvc.perform(post(String.format("%s%s", REQUEST_MAPPING, "/tuonti=1"))
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        status().isOk(),
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
+    }
 
+    @Test
+    void createNotFound() throws Exception {
         mvc.perform(post(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiPerustiedot.json"), true));
-
-        verify(oppijaServiceMock, times(1)).create(37337L);
-    }
-
-    @Test
-    @WithMockUser(roles = WRONG_ACCESS_RIGHT)
-    public void createAccessDenied() throws Exception {
-        mvc.perform(post(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void createNotFound() throws Exception {
-        when(oppijaServiceMock.create(anyLong())).thenThrow(new NotFoundException());
-
-        mvc.perform(post(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-
-        verify(oppijaServiceMock, times(1)).create(37337L);
     }
 
     @Test
-    @WithMockUser(roles = WRONG_ACCESS_RIGHT)
-    public void getOppijatByTuontiIdAccessDenied() throws Exception {
+    void getOppijatByTuontiIdNotFound() throws Exception {
         mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
-
-        verifyNoInteractions(oppijaServiceMock);
-    }
-
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void getOppijatByTuontiIdNotFound() throws Exception {
-        when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenThrow(new NotFoundException());
-
-        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-
-        verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
-    }
-
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void getOppijatByTuontiId() throws Exception {
-        OppijaTuontiReadDto result = new OppijaTuontiReadDto(37337L, 2, 2, true,
-                List.of(new OppijaTuontiRiviReadDto("tunniste1", new OppijaReadDto(), null),
-                        new OppijaTuontiRiviReadDto("tunniste2", new OppijaReadDto(), true)));
-        when(oppijaServiceMock.getOppijatByTuontiId(anyLong())).thenReturn(result);
-
-        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=37337"))
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijat.json"), true));
-
-        verify(oppijaServiceMock, times(1)).getOppijatByTuontiId(37337L);
-    }
-
-    @Test
-    public void haeRequiresAuthentication() throws Exception {
-        mvc.perform(post(hae)).andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    @WithMockUser(roles = WRONG_ACCESS_RIGHT)
-    public void haeRequiresAccessRights() throws Exception {
-        mvc.perform(post(hae)).andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void haeValidatesInput() throws Exception {
-        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void haeNotFound() throws Exception {
-        when(yleistunnisteService.hae(any())).thenThrow(NotFoundException.class);
-
-        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON)
-                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInput.json")))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void haeConflicts() throws Exception {
-        when(yleistunnisteService.hae(any())).thenThrow(ConflictException.class);
+    void getOppijatByTuontiId() throws Exception {
+        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=1"))
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT + ROOT_ORGANISATION_SUFFIX))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        status().isOk(),
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatMaster.json"), true));
+    }
 
-        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON)
-                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInput.json")))
+    @Test
+    void getOppijatByTuontiIdResolvesOppijanumero() throws Exception {
+        mvc.perform(get(String.format("%s%s", REQUEST_MAPPING, "/tuonti=2"))
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT, YLEISTUNNISTE_LUONTI_ACCESS_RIGHT + ROOT_ORGANISATION_SUFFIX))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        status().isOk(),
+                        content().json(FilesystemHelper.getFixture("/controller/yleistunniste/tuontiOppijatDuplicate.json"), true));
+    }
+
+    @Test
+    void haeValidatesInput() throws Exception {
+        mvc.perform(post(hae)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void haeNotFound() throws Exception {
+        mvc.perform(post(hae)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
+                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInputNotFound.json")))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    void haeConflicts() throws Exception {
+        mvc.perform(post(hae)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
+                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInputConflict.json")))
                 .andExpect(status().isConflict());
     }
 
     @Test
-    @WithMockUser(roles = PermissionCheckerImpl.YLEISTUNNISTE_LUONTI_ACCESS_RIGHT)
-    public void haeFound() throws Exception {
-        when(yleistunnisteService.hae(any())).thenReturn(YleistunnisteDto.builder()
-                .oid("1.2.3.4.5")
-                .oppijanumero("6.7.8.9.0")
-                .build());
-
-        mvc.perform(post(hae).contentType(MediaType.APPLICATION_JSON)
-                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInput.json")))
+    void haeFound() throws Exception {
+        mvc.perform(post(hae)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user(username).password(password).roles(YLEISTUNNISTE_LUONTI_ACCESS_RIGHT))
+                        .content(FilesystemHelper.getFixture("/controller/yleistunniste/haeInputFound.json")))
                 .andExpectAll(
                         status().isOk(),
                         content().json(FilesystemHelper.getFixture("/controller/yleistunniste/haeOutput.json"))

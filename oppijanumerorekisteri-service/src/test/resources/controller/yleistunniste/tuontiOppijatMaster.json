@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "kasiteltavia": 1,
+  "kasiteltyja": 1,
+  "kasitelty": true,
+  "henkilot": [
+    {
+      "tunniste": "tunniste",
+      "henkilo": {
+        "oid": "tuonti1",
+        "oppijanumero": "tuonti1",
+        "passivoitu": false,
+        "linked": ["tuonti2"]
+      }
+    }
+  ]
+}

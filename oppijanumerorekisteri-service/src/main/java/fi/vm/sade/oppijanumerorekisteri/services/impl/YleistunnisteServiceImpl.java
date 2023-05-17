@@ -1,9 +1,6 @@
 package fi.vm.sade.oppijanumerorekisteri.services.impl;
 
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloCreateDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.HenkiloExistenceCheckDto;
-import fi.vm.sade.oppijanumerorekisteri.dto.YleistunnisteDto;
+import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.models.Henkilo;
 import fi.vm.sade.oppijanumerorekisteri.models.Organisaatio;
 import fi.vm.sade.oppijanumerorekisteri.repositories.OrganisaatioRepository;
@@ -36,6 +33,15 @@ public class YleistunnisteServiceImpl implements YleistunnisteService {
     @Override
     public YleistunnisteDto hae(HenkiloExistenceCheckDto details) {
         return associateToOrganisations(findOrCreate(details));
+    }
+
+    @Override
+    public OppijaReadDto tarkista(String oid) {
+        return OppijaReadDto.builder()
+                .oid(oid)
+                .oppijanumero(henkiloService.getMasterByOid(oid).getOppijanumero())
+                .passivoitu(henkiloService.getEntityByOid(oid).isPassivoitu())
+                .build();
     }
 
     private YleistunnisteDto associateToOrganisations(YleistunnisteDto dto) {

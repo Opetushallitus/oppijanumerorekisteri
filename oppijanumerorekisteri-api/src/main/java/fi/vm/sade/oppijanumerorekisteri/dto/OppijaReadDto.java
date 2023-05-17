@@ -1,6 +1,7 @@
 package fi.vm.sade.oppijanumerorekisteri.dto;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -10,6 +11,9 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OppijaReadDto {
 
     private String oid;
@@ -27,4 +31,6 @@ public class OppijaReadDto {
     private KoodiNimiReadDto kotikunta;
     private Set<YhteystiedotRyhmaDto> yhteystiedotRyhma;
     private boolean passivoitu;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Set<String> linked;
 }

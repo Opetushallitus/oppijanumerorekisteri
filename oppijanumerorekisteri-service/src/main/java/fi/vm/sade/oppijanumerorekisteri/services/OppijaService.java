@@ -58,6 +58,8 @@ public interface OppijaService {
      */
     OppijaTuontiReadDto getOppijatByTuontiId(Long id);
 
+    void decorateHenkilosWithLinkedOids(List<OppijaReadDto> henkilos);
+
     /**
      * Palauttaa oppijoiden tuonnin yhteenvedon.
      *
