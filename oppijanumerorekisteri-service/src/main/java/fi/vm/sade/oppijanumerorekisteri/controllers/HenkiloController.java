@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import fi.vm.sade.kayttooikeus.dto.permissioncheck.ExternalPermissionService;
 import fi.vm.sade.oppijanumerorekisteri.dto.*;
 import fi.vm.sade.oppijanumerorekisteri.exceptions.NotFoundException;
+import fi.vm.sade.oppijanumerorekisteri.exceptions.UnauthorizedException;
 import fi.vm.sade.oppijanumerorekisteri.filter.AuditLogRead;
 import fi.vm.sade.oppijanumerorekisteri.repositories.criteria.HenkiloCriteria;
 import fi.vm.sade.oppijanumerorekisteri.services.*;
@@ -189,7 +190,7 @@ public class HenkiloController {
     @PreAuthorize("@permissionChecker.isAllowedToReadPerson(#oid, {'OPPIJANUMEROREKISTERI': {'READ', 'HENKILON_RU'}, 'KAYTTOOIKEUS': {'PALVELUKAYTTAJA_CRUD'}}, #permissionService)")
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Not Found")})
     @RequestMapping(value = "/{oid}", method = RequestMethod.HEAD)
-    public ResponseEntity oidExists(@PathVariable String oid,
+    public ResponseEntity<Object> oidExists(@PathVariable String oid,
                                     @RequestHeader(value = "External-Permission-Service", required = false)
                                             ExternalPermissionService permissionService) {
         if (this.henkiloService.getOidExists(oid)) {
@@ -523,19 +524,37 @@ public class HenkiloController {
         return this.duplicateService.getDuplikaatit(criteria);
     }
 
+    private void checkLinkPermission(String main, List<String> duplicates, String permission, ExternalPermissionService permissionService) {
+        Map<String, List<String>> allowedPalveluRooli = Map.of("OPPIJANUMEROREKISTERI", List.of(permission));
+        try {
+            if (duplicates.size() == 1) {
+                if (!permissionChecker.isAllowedToModifyPerson(main, allowedPalveluRooli, permissionService) &&
+                    !permissionChecker.isAllowedToModifyPerson(duplicates.get(0), allowedPalveluRooli, permissionService)) {
+                    throw new UnauthorizedException();
+                }
+            } else {
+                if (!permissionChecker.isAllowedToModifyPerson(main, allowedPalveluRooli, permissionService)) {
+                    throw new UnauthorizedException();
+                }
+            }
+        } catch (IOException e) {
+            throw new UnauthorizedException();
+        }
+    }
+
     @PostMapping("/{oid}/link")
-    @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#oid, {'OPPIJANUMEROREKISTERI': {'DUPLIKAATTINAKYMA'}}, #permissionService)")
     @ApiOperation(authorizations = @Authorization("onr"), value = "Linkittää henkilöön annetun joukon duplikaatteja")
-    public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> slaveOids,
+    public List<String> linkDuplicates(@PathVariable String oid, @RequestBody List<String> duplicates,
                                        @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
-        return this.henkiloModificationService.linkHenkilos(oid, slaveOids);
+        checkLinkPermission(oid, duplicates, "DUPLIKAATTINAKYMA", permissionService);
+        return this.henkiloModificationService.linkHenkilos(oid, duplicates);
     }
 
     @PostMapping("/{oid}/forcelink")
-    @PreAuthorize("@permissionChecker.isAllowedToModifyPerson(#oid, {'OPPIJANUMEROREKISTERI': {'YKSILOINNIN_PURKU'}}, #permissionService)")
     @ApiOperation(authorizations = @Authorization("onr"), value = "Linkittää henkilöön annetun joukon duplikaatteja. purkaa duplikaattien yksilöinnin tarvittaessa")
     public List<String> forceLinkDuplicates(@PathVariable String oid, @RequestBody List<String> duplicates,
                                        @RequestHeader(value = "External-Permission-Service", required = false) ExternalPermissionService permissionService) {
+        checkLinkPermission(oid, duplicates, "YKSILOINNIN_PURKU", permissionService);
         return this.henkiloModificationService.forceLinkHenkilos(oid, duplicates);
     }
 
