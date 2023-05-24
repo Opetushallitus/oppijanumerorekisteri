@@ -7,10 +7,10 @@ import { Yksilointitieto } from '../../types/domain/oppijanumerorekisteri/yksilo
 import { NaviTab } from '../../types/navigation.type';
 
 export const enabledDuplikaattiView = (
-    oidHenkilo: string,
+    oidHenkilo: string | null | undefined,
     kayttaja: Kayttaja | null | undefined,
     masterLoading: boolean,
-    masterHenkiloOid: string
+    masterHenkiloOid?: string
 ): boolean =>
     !masterLoading &&
     (masterHenkiloOid === undefined || masterHenkiloOid === oidHenkilo) &&
