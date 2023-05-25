@@ -117,7 +117,11 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
             </DataCell>
             {!vainLuku && !isMaster && (
                 <DataCell>
-                    <Button disabled={!canLinkDuplicateToMaster} action={() => setLink({ master, duplicate: henkilo })}>
+                    <Button
+                        disabled={!canLinkDuplicateToMaster}
+                        action={() => setLink({ master, duplicate: henkilo })}
+                        dataTestId={`link-duplicate-from-${henkilo.oidHenkilo}`}
+                    >
                         {'< Yhdistä tämä duplikaatti'}
                     </Button>
                     <div className="duplicate-separator-container">
@@ -126,6 +130,7 @@ const DuplikaatitPerson = (props: DuplikaatitPersonProps) => {
                     <Button
                         disabled={!canLinkMasterToDuplicate}
                         action={() => setLink({ master: henkilo, duplicate: master })}
+                        dataTestId={`link-main-to-${henkilo.oidHenkilo}`}
                     >
                         {'Yhdistä tähän henkilöön >'}
                     </Button>
